@@ -8,9 +8,7 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const getPorts = (onError?: () => void): void => {
 		Util.sendMessage({ type: 'checkPorts' }, response => {
 			if (!response.ports || !response.ports.length) {
-				if (onError) {
-					onError();
-				};
+				onError?.();
 				return;
 			};
 

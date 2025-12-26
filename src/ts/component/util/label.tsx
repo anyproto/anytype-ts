@@ -51,17 +51,12 @@ const Label: FC<Props> = ({
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 
 	const mouseLeaveHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
-
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 
 	useEffect(() => {

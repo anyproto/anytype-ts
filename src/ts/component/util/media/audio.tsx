@@ -78,19 +78,13 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const onPlayHandler = () => {
 		isPlaying.current = true;
 		$(playIconRef.current).addClass('active');
-
-		if (onPlay) {
-			onPlay();
-		};
+		onPlay?.();
 	};
 
 	const onPauseHandler = () => {
 		isPlaying.current = false;
 		$(playIconRef.current).removeClass('active');
-
-		if (onPause) {
-			onPause();
-		};
+		onPause?.();
 	};
 
 	const play = () => {

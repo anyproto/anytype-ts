@@ -28,10 +28,7 @@ const Banner: FC<Props> = ({
 	const onCloseHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		if (onClose) {
-			onClose();
-		};
+		onClose?.();
 	};
 
 	return (

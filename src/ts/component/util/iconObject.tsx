@@ -168,9 +168,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][1] });
 		};
 		
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 	
 	const onMouseLeaveHandler = (e: any) => {
@@ -180,15 +178,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][0] });
 		};
 		
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 
 	const onMouseDown = (e: any) => {
-		if (onClick) {
-			onClick(e);
-		};
+		onClick?.(e);
 
 		if (!canEdit) {
 			return;

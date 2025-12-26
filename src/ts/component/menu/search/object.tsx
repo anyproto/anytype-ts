@@ -378,13 +378,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onOver } = data;
-
-		if (onOver) {
-			onOver(e, this, item);
-		};
+		this.props.param.data.onOver?.(e, this, item);
 	};
 	
 	onClick (e: any, item: any) {
@@ -403,9 +397,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		const process = (target: any, isNew: boolean) => {
-			if (onSelect) {
-				onSelect(target, isNew);
-			};
+			onSelect?.(target, isNew);
 
 			if (!type) {
 				return;

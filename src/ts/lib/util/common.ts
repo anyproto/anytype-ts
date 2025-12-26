@@ -577,10 +577,7 @@ class UtilCommon {
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
-
-					if (onConfirm) {
-						onConfirm();
-					};
+					onConfirm?.();
 				},
 			},
 		});
@@ -1092,10 +1089,7 @@ class UtilCommon {
 
 		item.onclick = () => {
 			electron.focus();
-
-			if (onClick) {
-				onClick();
-			};
+			onClick?.();
 		};
 	};
 

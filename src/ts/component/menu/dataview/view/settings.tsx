@@ -327,10 +327,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			switch (item.id) {
 				case 'copy': {
 					Dataview.duplicateView(rootId, blockId, { ...view, name: this.getViewName(view.name) }, sources, (message: any) => {
-						if (onSave) {
-							onSave();
-						};
-
+						onSave?.();
 						loadData(message.viewId, 0);
 
 						analytics.event('DuplicateView', {
@@ -369,9 +366,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			};
 		};
 
-		if (onSelect) {
-			onSelect();
-		};
+		onSelect?.();
 	};
 
 	getViewName (name?: string) {

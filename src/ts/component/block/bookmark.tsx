@@ -25,15 +25,11 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	};
 	
 	const onKeyDownHandler = (e: any) => {
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: any) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {

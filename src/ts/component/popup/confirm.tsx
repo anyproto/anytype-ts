@@ -102,9 +102,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			close();
 		};
 		
-		if (onConfirm) {
-			onConfirm();
-		};
+		onConfirm?.();
 	};
 
 	const onCheck = (e: any) => {
@@ -116,10 +114,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
 	const onCancelHandler = (e: any) => {
 		close();
-
-		if (onCancel) {
-			onCancel();
-		};
+		onCancel?.();
 	};
 
 	const onMouseEnter = (e: any) => {

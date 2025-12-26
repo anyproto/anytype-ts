@@ -588,9 +588,7 @@ class Action {
 		const { zip, nested, files, archived, json, route } = param;
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
-			if (onSelectPath) {
-				onSelectPath();
-			};
+			onSelectPath?.();
 
 			C.ObjectListExport(spaceId, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
 				if (message.error.code) {

@@ -45,12 +45,6 @@ const LayoutPlug = forwardRef<{}, Props>(({
 		return Math.max(300, width);
 	};
 
-	const onClickHandler = (e: any) => {
-		if (onClick) {
-			onClick(e);
-		};
-	};
-
 	const cn = [ 'layoutPlug' ];
 
 	let content: any = null;
@@ -117,7 +111,7 @@ const LayoutPlug = forwardRef<{}, Props>(({
 	return (
 		<div
 			className={cn.join(' ')}
-			onClick={onClickHandler}
+			onClick={onClick}
 		>
 			{content}
 		</div>

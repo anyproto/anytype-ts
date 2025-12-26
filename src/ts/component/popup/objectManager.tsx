@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
-import { C, I, J, keyboard, translate, U } from 'Lib';
+import { I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
 
 const ROW_HEIGHT = 30;
@@ -33,13 +33,11 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onClick = (e: any) => {
 		e.preventDefault();
 
-		if (onConfirm) {
-			onConfirm(managerRef.current.getSelected(), managerRef.current.getItemsCount());
-		};
+		onConfirm?.(managerRef.current.getSelected(), managerRef.current.getItemsCount());
 		close();
 	};
 
-	const onUpdate = (message: any) => {
+	const onUpdate = () => {
 		window.setTimeout(() => {
 			const wrap = $(`#${getId()}-innerWrap`);
 			const items = wrap.find('.items');

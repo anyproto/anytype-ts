@@ -189,9 +189,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				close();
 			};
 
-			if (onClick) {
-				onClick(S.Detail.mapper(item));
-			};
+			onClick?.(S.Detail.mapper(item));
 		};
 
 		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());

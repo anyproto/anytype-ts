@@ -137,9 +137,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 							U.Space.openDashboard();
 						};
 
-						if (onCreate) {
-							onCreate(message.objectId);
-						};
+						onCreate?.(message.objectId);
 					} 
 				}, false);
 

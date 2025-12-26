@@ -396,19 +396,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
-
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
-		};
+		this.props.onKeyDown?.(e, '', [], { from: 0, to: 0 }, this.props);
 	};
 
 	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
-
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
+		this.props.onKeyUp?.(e, '', [], { from: 0, to: 0 }, this.props);
 	};
 
 	onMouseEnter (e: any, relationKey: string, text?: string) {
