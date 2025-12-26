@@ -955,8 +955,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
-					offsetY: 4,
+					offsetY: -8,
 					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {

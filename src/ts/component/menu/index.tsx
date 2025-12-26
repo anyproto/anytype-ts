@@ -182,6 +182,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	ref = null;
 	isAnimating = false;
 	poly: any = null;
+	framePosition = 0;
 
 	state = {
 		tab: '',
@@ -432,15 +433,22 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	rebind () {
 		const id = this.getId();
+		const container = U.Common.getScrollContainer(keyboard.isPopup());
 
 		this.unbind();
 		$(window).on(`resize.${id} sidebarResize.${id}`, () => this.position());
+		container.on(`scroll.${id}`, () => {
+			raf.cancel(this.framePosition);
+			this.framePosition = raf(() => this.position());
+		});
 	};
 	
 	unbind () {
 		const id = this.getId();
+		const container = U.Common.getScrollContainer(keyboard.isPopup());
 
 		$(window).off(`resize.${id} sidebarResize.${id}`);
+		container.off(`scroll.${id}`);
 	};
 	
 	animate () {
