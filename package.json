@@ -798,10 +798,7 @@
 			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
-				"AppImage",
-				"deb",
-				"rpm",
-				"tar.gz"
+				"AppImage"
 			],
 			"description": "Anytype",
 			"publish": [
