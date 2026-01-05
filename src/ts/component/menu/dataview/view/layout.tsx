@@ -476,9 +476,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 						this.save();
 						this.menuContext?.close();
 
-						if (onChange) {
-							onChange(message);
-						};
+						onChange?.(message);
 					};
 
 					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, cb);

@@ -2276,8 +2276,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			const text = focused.getText();
-			if (U.String.checkRtl(text)) {
-				U.Data.setRtl(rootId, message.blockId);
+			const isRtl = U.String.checkRtl(text);
+			
+			if (isRtl) {
+				U.Data.setRtl(rootId, message.blockId, true);
 			};
 
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });

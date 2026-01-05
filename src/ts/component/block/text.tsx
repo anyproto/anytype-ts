@@ -505,9 +505,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
-		const isRtl = U.String.checkRtl(value);
-
-		U.Data.setRtl(rootId, block.id, isRtl);
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
@@ -786,7 +783,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		textRef.current = value;
-		U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+
+		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
+			U.Data.setRtl(rootId, block.id, U.String.checkRtl(value));
+			callBack?.();
+		});
 	};
 	
 	const onFocusHandler = (e: any) => {
