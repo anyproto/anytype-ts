@@ -31,7 +31,6 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
-	isRtl = false;
 	
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
@@ -1494,14 +1493,6 @@ class Keyboard {
 	 */
 	setComposition (v: boolean) {
 		this.isComposition = v;
-	};
-
-	/**
-	 * Sets the RTL (right-to-left) state.
-	 * @param {boolean} v - The RTL state.
-	 */
-	setRtl (v: boolean) {
-		this.isRtl = v;
 	};
 
 	/**
