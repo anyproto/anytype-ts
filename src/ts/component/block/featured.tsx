@@ -538,9 +538,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				noFlipY: true,
 				data: {
 					options,
-					onSelect: (e: any, item: any) => {
-						U.Object.openAuto(item);
-					}
+					onSelect: (e: any, item: any) => U.Object.openAuto(item),
 				}
 			});
 		});
