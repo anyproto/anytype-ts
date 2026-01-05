@@ -11,6 +11,7 @@ import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
+import BlockTransclusion from './transclusion';
 import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
@@ -31,6 +32,8 @@ import BlockEmbed from './embed';
 interface Props extends I.BlockComponent {
 	css?: any;
 	iconSize?: number;
+	isTranscluded?: boolean; // This block is being transcluded from another object
+	transclusionSourceId?: string; // ID of the transclusion block
 };
 
 const SNAP = 0.01;
@@ -271,7 +274,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Link: {
 				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'restrictions' ], true);
-				
+
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
 				};
@@ -279,6 +282,11 @@ const Block = observer(class Block extends React.Component<Props> {
 				cn.push(U.Data.linkCardClass(content.cardStyle));
 
 				blockComponent = <BlockLink key={key} ref={setRef} {...this.props} />;
+				break;
+			};
+
+			case I.BlockType.Transclusion: {
+				blockComponent = <BlockTransclusion key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 
@@ -398,40 +406,70 @@ const Block = observer(class Block extends React.Component<Props> {
 			);
 		};
 
+		// Transclusions render with minimal wrapper (no menu indentation)
+		// But still need: block classes, content wrapper (for bgColor), and children
+		if (this.props.isTranscluded) {
+			// Don't pass isTranscluded to children - only root block is transcluded
+			const childProps = { ...this.props, isTranscluded: false, transclusionSourceId: undefined };
+
+			return (
+				<div
+					ref={node => this.node = node}
+					id={`block-${id}`}
+					className={cn.join(' ')}
+					style={css}
+				>
+					<div className={cd.join(' ')}>
+						{blockComponent}
+						{additional ? <div className="additional">{additional}</div> : ''}
+						{renderChildren ? (
+							<ListChildren
+								key={`block-children-${id}`}
+								{...childProps}
+								onMouseMove={this.onMouseMove}
+								onMouseLeave={this.onMouseLeave}
+								onResizeStart={this.onResizeStart}
+							/>
+						) : ''}
+					</div>
+				</div>
+			);
+		}
+
 		return (
-			<div 
+			<div
 				ref={node => this.node = node}
-				id={`block-${id}`} 
-				className={cn.join(' ')} 
+				id={`block-${id}`}
+				className={cn.join(' ')}
 				style={css}
-				onMouseEnter={onMouseEnter} 
+				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
 				{...U.Common.dataProps({ id })}
 			>
 				<div className="wrapMenu">
-					<Icon 
-						id={`button-block-menu-${id}`} 
-						className="dnd" 
-						draggable={true} 
-						onDragStart={this.onDragStart} 
-						onMouseDown={this.onMenuDown} 
-						onClick={this.onMenuClick} 
+					<Icon
+						id={`button-block-menu-${id}`}
+						className="dnd"
+						draggable={true}
+						onDragStart={this.onDragStart}
+						onMouseDown={this.onMenuDown}
+						onClick={this.onMenuClick}
 					/>
 					{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 				</div>
-				
+
 				<div className={cd.join(' ')}>
 					{targetTop}
 					{object}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
 					{renderChildren ? (
-						<ListChildren 
-							key={`block-children-${id}`} 
-							{...this.props} 
-							onMouseMove={this.onMouseMove} 
-							onMouseLeave={this.onMouseLeave} 
-							onResizeStart={this.onResizeStart} 
+						<ListChildren
+							key={`block-children-${id}`}
+							{...this.props}
+							onMouseMove={this.onMouseMove}
+							onMouseLeave={this.onMouseLeave}
+							onResizeStart={this.onResizeStart}
 						/>
 					) : ''}
 

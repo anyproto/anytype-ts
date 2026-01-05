@@ -607,9 +607,9 @@ class Action {
 	 * Copies or cuts blocks to the clipboard.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string[]} ids - The block IDs to copy or cut.
-	 * @param {boolean} isCut - Whether to cut (true) or copy (false).
+	 * @param {I.ClipboardMode} clipboardMode - Whether to copy or cut.
 	 */
-	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
+	copyBlocks (rootId: string, ids: string[], clipboardMode: I.ClipboardMode) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
@@ -622,6 +622,7 @@ class Action {
 		};
 
 		const range = U.Common.objectCopy(focus.state.range);
+		const isCut = clipboardMode == I.ClipboardMode.Cut;
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.wrapTree(rootId, rootId);
 
@@ -663,8 +664,10 @@ class Action {
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
+					clipboardMode: clipboardMode,
 					range,
 					blocks: (message.anySlot || []).map(Mapper.From.Block),
+					rootId: rootId,
 				},
 			});
 

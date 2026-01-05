@@ -69,10 +69,23 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 
 ### Key Architectural Patterns
 
+**Objects:**
+- An **object** is the fundamental entity in Anytype with a unique ID
+- Objects contain blocks (their content structure) and have metadata (name, type, relations, etc.)
+- Objects have two key properties:
+  - **Layout** (fixed enum, `src/ts/interface/object.ts:ObjectLayout`) - Defines presentation/structure
+  - **Type** (user-extensible)
+    - Types are themselves objects with `layout: ObjectLayout.Type`
+    - Users can create new types; Anytype provides built-in library types
+- Object metadata stored in `S.Detail`, blocks stored in `S.Block` (both keyed by object ID)
+- When working within an object, its ID is called `rootId` (frontend) or `contextId` (middleware)
+
 **Block-Based Documents:**
-- Documents are composed of blocks (text, images, databases, etc.)
+- A document (informal term) is an object.
+- Objects contain blocks (text, images, databases, etc.) that form their content
 - Each block type has corresponding model, content, and component
 - Block operations handled via gRPC commands
+- Blocks have IDs unique within their containing object
 
 **MobX State Management:**
 - Reactive state with MobX stores

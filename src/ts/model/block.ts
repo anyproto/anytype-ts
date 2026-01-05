@@ -12,6 +12,7 @@ import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
 import { BlockContentTableRow } from './content/table';
 import BlockContentWidget from './content/widget';
+import BlockContentTransclusion from './content/transclusion';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -25,6 +26,7 @@ const ContentModel = {
 	dataview:	 BlockContentDataview,
 	tableRow:	 BlockContentTableRow,
 	widget:		 BlockContentWidget,
+	transclusion: BlockContentTransclusion,
 };
 
 class Block implements I.Block {
@@ -233,6 +235,10 @@ class Block implements I.Block {
 	
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
+	};
+
+	isTransclusion (): boolean {
+		return this.type == I.BlockType.Transclusion;
 	};
 
 	isTable (): boolean {

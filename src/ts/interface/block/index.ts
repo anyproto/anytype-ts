@@ -33,6 +33,7 @@ export enum BlockType {
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
 	Chat				 = 'chat',
+	Transclusion		 = 'transclusion',
 };
 
 export enum BlockPosition {
@@ -75,6 +76,7 @@ export interface BlockComponent {
 	isInsidePreview?: boolean;
 	isSelectionDisabled?: boolean;
 	isContextMenuDisabled?: boolean;
+	transclusionDepth?: number;
 	index?: any;
 	className?: string;
 	contextParam?: Partial<I.Block>;
@@ -86,7 +88,7 @@ export interface BlockComponent {
 	onMouseLeave?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onCopy?(e: any, cut: boolean): void;
+	onCopy?(e: any, clipboardMode: I.ClipboardMode): void;
 	onPaste?(e: any, props: any): void;
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
@@ -173,6 +175,7 @@ export interface Block {
 
 	isBookmark?(): boolean;
 	isLink?(): boolean;
+	isTransclusion?(): boolean;
 
 	isIcon?(): boolean;
 	isIconPage?(): boolean;
