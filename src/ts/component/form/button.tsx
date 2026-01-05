@@ -23,8 +23,11 @@ interface ButtonProps {
 
 interface ButtonRef {
 	setLoading: (v: boolean) => void;
+	isLoading: () => boolean;
 	setDisabled: (v: boolean) => void;
 	isDisabled: () => boolean;
+	setColor: (color: string) => void;
+	getColor: () => string;
 	getNode: () => HTMLDivElement | HTMLInputElement;
 };
 
@@ -35,7 +38,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	icon,
 	arrow,
 	text = '',
-	color = 'black',
+	color: initialColor = 'black',
 	className = '',
 	tooltipParam = {},
 	onClick,
@@ -46,6 +49,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	active,
 }, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ color, setColor ] = useState(initialColor);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 	const cn = [ 'button', color, className ];
 
@@ -94,9 +98,11 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 
 	useImperativeHandle(ref, () => ({
 		setLoading: (v: boolean) => setIsLoading(v),
+		isLoading: () => isLoading,
 		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
 		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
-		isLoading: () => isLoading,
+		setColor,
+		getColor: () => color,
 		getNode: () => nodeRef.current,
 	}));
 
