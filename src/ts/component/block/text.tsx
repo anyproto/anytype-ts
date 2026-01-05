@@ -44,7 +44,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = keyboard.isRtl || U.String.checkRtl(text);
+	const checkRtl = U.String.checkRtl(text);
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
