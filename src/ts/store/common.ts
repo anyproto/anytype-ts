@@ -639,17 +639,8 @@ class CommonStore {
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
 	setRightSidebarState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		if (undefined === v.noPreview) {
-			v.noPreview = true;
-		};
-		v.noPreview = Boolean(v.noPreview);
-
+		v = Object.assign({ noPreview: true }, v);
 		set(this.getRightSidebarState(isPopup), v);
-
-
-
-		console.log('setRightSidebarState', isPopup, JSON.stringify(v, null, 3));
-		console.trace();
 	};
 
 	/**
