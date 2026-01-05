@@ -557,7 +557,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	};
 
 	const save = () => {
-		const name = filterRef.current?.getValue();
+		const name = String(filterRef.current?.getValue() || '');
 		const relation = getRelation();
 		const item: any = { 
 			relationFormat: format,
@@ -734,7 +734,13 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			{!isReadonly ? (
 				<div className="section" onMouseEnter={menuClose}>
 					<div className="inputWrap">
-						<Button ref={buttonRef} id="button" type="input" text={translate(relation ? 'commonSave' : 'commonCreate')} color="blank" className="c28" />
+						<Button 
+							ref={buttonRef} 
+							type="input" 
+							text={translate(relation ? 'commonSave' : 'commonCreate')} 
+							color="blank" 
+							className="c28"
+						/>
 					</div>
 				</div>
 			) : ''}
