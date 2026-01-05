@@ -14,7 +14,6 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		loadData, unlinkCommand,
 	} = data;
 
-	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
 	const buttonRef = useRef(null);
 	const [ format, setFormat ] = useState<I.RelationType>(null);
@@ -693,7 +692,6 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	return (
 		<form 
-			ref={nodeRef}
 			className="form" 
 			onSubmit={onSubmit} 
 			onMouseDown={menuClose}

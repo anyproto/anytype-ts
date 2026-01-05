@@ -11,9 +11,8 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 	const { data, classNameWrap } = param;
 	const { 
 		rootId, blockId, readonly, noDelete, noUnlink, filter, relationId, addParam, addCommand, deleteCommand, 
-		onChange, route, saveCommand
+		onChange, route, saveCommand,
 	} = data;
-	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
 	const buttonRef = useRef(null);
 	const [ format, setFormat ] = useState<I.RelationType>(null);
@@ -407,7 +406,6 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 	return (
 		<form 
-			ref={nodeRef}
 			className="form" 
 			onSubmit={onSubmit} 
 			onMouseDown={menuClose}
