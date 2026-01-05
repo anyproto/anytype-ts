@@ -1,4 +1,4 @@
-#page.isFull { overflow-x: hidden; overflow-y: auto; }
+#page { overflow-x: hidden; overflow-y: auto; }
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);

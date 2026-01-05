@@ -599,7 +599,7 @@ class UtilCommon {
 	 * @returns {JQuery<HTMLElement>} The scroll container.
 	 */
 	getScrollContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
+		return $(`#page.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**
