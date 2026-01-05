@@ -613,12 +613,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 		switch (item.itemId) {
 			case 'clipboardCopy': {
-				Action.copyBlocks(rootId, ids, false);
+				Action.copyBlocks(rootId, ids, I.ClipboardMode.Copy);
 				break;
 			};
 
 			case 'clipboardCut': {
-				Action.copyBlocks(rootId, ids, true);
+				Action.copyBlocks(rootId, ids, I.ClipboardMode.Cut);
 				break;
 			};
 

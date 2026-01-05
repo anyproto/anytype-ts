@@ -405,3 +405,8 @@ export interface StickyScrollbarRef {
 	unbind: () => void;
 	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
 };
+
+export enum ClipboardMode {
+	Copy		= 0,
+	Cut			= 1,
+}
