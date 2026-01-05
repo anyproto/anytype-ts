@@ -31,7 +31,11 @@
 		"https://*.jawg.io",
 		"https://*.cdninstagram.com",
 		"https://*.duckduckgo.com",
-		"https://*.wikimedia.org"
+		"https://*.wikimedia.org",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
     ],
 
 	"media-src": [ 
@@ -61,7 +65,11 @@
 		"https://*.cdninstagram.com",
 		"https://*.duckduckgo.com",
 		"https://*.wikimedia.org",
-		"https://*.scdn.co"
+		"https://*.scdn.co",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
 	],
 
 	"style-src": [ 

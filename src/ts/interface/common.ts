@@ -313,14 +313,8 @@ export interface SearchIdsParam extends SearchSubscribeParam {
 };
 
 export enum SortId {
-	All			 = 'all',
-	Orphan		 = 'orphan',
-	Updated		 = 'updated',
-	Created		 = 'created',
 	Name		 = 'name',
 	LastUsed	 = 'lastUsed',
-	List		 = 'list',
-	Compact		 = 'compact',
 };
 
 export enum LoaderType {
@@ -409,4 +403,4 @@ export interface StickyScrollbarRef {
 export enum ClipboardMode {
 	Copy		= 0,
 	Cut			= 1,
-}
+};
