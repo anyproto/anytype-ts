@@ -68,11 +68,9 @@ class Keyboard {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
-
-		window.clearTimeout(this.timeoutPin);
-
 			S.Menu.closeAll([ 'blockContext' ]);
-
+			
+			window.clearTimeout(this.timeoutPin);
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
@@ -1526,7 +1524,6 @@ class Keyboard {
 			return;
 		};
 
-		// Only set timeout if this window is focused
 		if (!windowIsFocused) {
 			window.clearTimeout(this.timeoutPin);
 			return;
