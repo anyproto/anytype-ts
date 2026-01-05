@@ -34,13 +34,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, ref, readonly, noDelete, noUnlink } = data;
 		const relation = this.getRelation();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isName = relation && (relation.relationKey == 'name');
 		const isDescription = relation && (relation.relationKey == 'description');
 		const isDate = Relation.isDate(this.format);
+		const isObject = Relation.isObject(this.format);
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
@@ -177,7 +177,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					</div>
 				) : ''}
 
-				{relation && (canDuplicate || canDelete) ? (
+				{relation ? (
 					<div className="section">
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
@@ -241,7 +241,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
+		button.removeClass('accent blank').addClass(canSave ? 'accent' : 'blank');
 	};
 
 	onRelationType (e: any) {

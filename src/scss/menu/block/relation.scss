@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
+	.menu.menuBlockRelationEdit { width: var(--menu-width-icon); }
 	.menu.menuBlockRelationEdit {
 		.content { padding: 0px; max-height: 400px; }
 		.form { padding: 8px 0px; }

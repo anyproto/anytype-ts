@@ -779,6 +779,15 @@ class Relation {
 	};
 
 	/**
+	 * Checks if a relation type is a object.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if object.
+	 */
+	public isObject (type: I.RelationType) {
+		return type == I.RelationType.Object;
+	};
+
+	/**
 	 * Gets the URL scheme for a relation type.
 	 * @param {I.RelationType} type - The relation type.
 	 * @param {string} value - The value.

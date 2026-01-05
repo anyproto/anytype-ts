@@ -709,7 +709,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
+		button.removeClass('accent blank').addClass(canSave ? 'accent' : 'blank');
 	};
 
 	isAllowed () {
