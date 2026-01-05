@@ -555,7 +555,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Copy/Cut
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-			this.onCopy(e, pressed.match('x') ? true : false);
+			this.onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
 
 			ret = true;
 		});
@@ -855,7 +855,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Copy/Cut
 			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-				this.onCopy(e, pressed.match('x') ? true : false);
+				this.onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
 			});
 
 			// Undo
@@ -1846,13 +1846,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Preview.previewHide(false);
 	};
 	
-	onCopy (e: any, isCut: boolean) {
+	onCopy (e: any, clipboardMode: I.ClipboardMode) {
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = S.Block.getLeaf(rootId, rootId);
 		const { focused, range } = focus.state;
-
+		const isCut = clipboardMode == I.ClipboardMode.Cut;
 		if (!root || (readonly && isCut)) {
 			return;
 		};
@@ -1877,7 +1877,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.focus(focused, range.from, range.from, false);
 		};
 
-		Action.copyBlocks(rootId, ids, isCut);
+		Action.copyBlocks(rootId, ids, clipboardMode);
 	};
 
 	onPasteEvent (e: any, props: any, data?: any) {
