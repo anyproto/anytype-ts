@@ -50,7 +50,7 @@
 			}
 		}
 
-		.body { height: calc(100% - 36px); }
+		.body { height: calc(100% - 36px); display: flex; flex-direction: column; }
 	
 		.body.unsplash, .body.library {
 			.sections, .emptySearch { height: calc(100% - 47px); }

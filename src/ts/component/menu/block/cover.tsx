@@ -90,6 +90,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					setIsLoading(false);
 
 					if (message.error.code) {
+						setItems([]);
 						return;
 					};
 
@@ -125,6 +126,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					setIsLoading(false);
 
 					if (message.error.code) {
+						setItems([]);
 						return;
 					};
 
