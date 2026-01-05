@@ -1110,16 +1110,17 @@ class UtilData {
 	/**
 	 * Sets the RTL (right-to-left) flag for a block if not already set.
 	 * @param {string} rootId - The root object ID.
-	 * @param {string} blockId - The block ID.
+	 * @param {I.Block} block - The block.
 	 */
-	setRtl (rootId: string, blockId: string, value: boolean) {
-		const block = S.Block.getLeaf(rootId, blockId);
+	setRtl (rootId: string, block: I.Block, value: boolean) {
 		if (!block) {
 			return;
 		};
 
 		const fields = block.fields || {};
-		if (fields.isRtlDetected === value) {
+		const current = Boolean(fields.isRtlDetected);
+		
+		if (current == value) {
 			return;
 		};
 

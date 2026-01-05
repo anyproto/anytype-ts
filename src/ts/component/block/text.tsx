@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { observer, } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
@@ -32,7 +32,7 @@ const TWIN_PAIRS = {
 const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { 
-		rootId, block, readonly, isPopup, isInsideTable, checkMarkOnBackspace, 
+		rootId, block, readonly, isPopup, isInsideTable, 
 		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp, 
 		renderLinks, renderObjects, renderMentions, renderEmoji,
 	} = props;
@@ -354,12 +354,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range.to) {
-				const parsed = checkMarkOnBackspace(value, range, marksRef.current);
+				const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
 
 				if (parsed.save) {
 					e.preventDefault();
 
-					value = parsed.value;
+					value = parsed.text;
 					marksRef.current = parsed.marks;
 
 					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
@@ -785,7 +785,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			U.Data.setRtl(rootId, block.id, U.String.checkRtl(value));
+			U.Data.setRtl(rootId, block, U.String.checkRtl(value));
 			callBack?.();
 		});
 	};

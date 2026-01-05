@@ -904,6 +904,47 @@ class Mark {
 		return ![ I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
 	};
 
+	/**
+	 * Checks and handles marks on backspace action.
+	 * @param text - The current text.
+	 * @param range - The current text range.
+	 * @param oM - The original marks.
+	 * @returns The updated text, marks, range, and save flag.
+	 */
+	checkMarkOnBackspace = (text: string, range: I.TextRange, marks: I.Mark[]): { text: string, marks: I.Mark[], range: I.TextRange, save: boolean } | null => {
+		if (!range || !range.to) {
+			return { text, marks, range: null, save: false };
+		};
+
+		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
+		const filteredMarks = U.Common.arrayUnique(marks).filter(it => types.includes(it.type));
+
+		let rM = [];
+		let save = false;
+		let mark = null;
+		let r = null;
+
+		for (const m of filteredMarks) {
+			if ((m.range.from < range.from) && (m.range.to == range.to)) {
+				mark = m;
+				break;
+			};
+		};
+
+		if (mark) {
+			text = U.String.cut(text, mark.range.from, mark.range.to);
+			rM = marks.filter(it => {
+				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
+			});
+
+			rM = this.adjust(rM, mark.range.from, mark.range.from - mark.range.to);
+			r = { from: mark.range.from, to: mark.range.from };
+			save = true;
+		};
+
+		return { text, marks: rM, range: r, save };
+	};
+
 };
 
 export default new Mark();

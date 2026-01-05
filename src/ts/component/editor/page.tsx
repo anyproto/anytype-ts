@@ -2279,7 +2279,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const isRtl = U.String.checkRtl(text);
 			
 			if (isRtl) {
-				U.Data.setRtl(rootId, message.blockId, true);
+				U.Data.setRtl(rootId, S.Block.getLeaf(rootId, message.blockId), true);
 			};
 
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });

@@ -44,7 +44,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage, analyticsChatId,
 	} = props;
@@ -205,7 +205,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			const parsed = checkMarkOnBackspace(value, range.current, marks.current);
+			const parsed = Mark.checkMarkOnBackspace(value, range.current, marks.current);
 
 			if (!parsed.save) {
 				return;
@@ -213,7 +213,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			e.preventDefault();
 
-			value = parsed.value;
+			value = parsed.text;
 			setMarks(parsed.marks);
 
 			const l = value.length;
