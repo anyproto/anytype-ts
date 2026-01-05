@@ -2275,7 +2275,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Block.toggle(rootId, message.blockId, true);
 			};
 
-			if (keyboard.isRtl) {
+			const text = focused.getText();
+			if (U.String.checkRtl(text)) {
 				U.Data.setRtl(rootId, message.blockId);
 			};
 

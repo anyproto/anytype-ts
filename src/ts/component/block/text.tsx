@@ -507,11 +507,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isRtl = U.String.checkRtl(value);
 
-		keyboard.setRtl(isRtl);
-
-		if (isRtl) {
-			U.Data.setRtl(rootId, block.id);
-		};
+		U.Data.setRtl(rootId, block.id, isRtl);
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));

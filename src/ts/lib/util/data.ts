@@ -1112,21 +1112,21 @@ class UtilData {
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} blockId - The block ID.
 	 */
-	setRtl (rootId: string, blockId: string) {
+	setRtl (rootId: string, blockId: string, value: boolean) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
 		const fields = block.fields || {};
-		if (fields.isRtlDetected) {
+		if (fields.isRtlDetected === value) {
 			return;
 		};
 
-		C.BlockListSetFields(rootId, [ 
-			{ blockId: block.id, fields: { ...fields, isRtlDetected: true } } 
+		C.BlockListSetFields(rootId, [
+			{ blockId: block.id, fields: { ...fields, isRtlDetected: value } }
 		], () => {
-			C.BlockListSetAlign(rootId, [ block.id ], I.BlockHAlign.Right);
+			C.BlockListSetAlign(rootId, [ block.id ], value ? I.BlockHAlign.Right : I.BlockHAlign.Left);
 		});
 	};
 
