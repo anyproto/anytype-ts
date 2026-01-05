@@ -7,7 +7,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	const { param, close } = props;
 	const { data } = param;
-	const { product, route } = data;
+	const { product, route, onSuccess } = data;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -72,7 +72,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 				return;
 			};
 
-			close();
+			onSuccess();
 		});
 
 		analytics.event('ClickMembershipFinalization');
