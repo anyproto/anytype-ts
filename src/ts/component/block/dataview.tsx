@@ -407,14 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Record.metaSet(subId, '', { offset, viewId });
 
-		if (view.type == I.ViewType.Board) {
-			if (this.refView && this.refView.loadGroupList) {
-				this.refView.loadGroupList();
-			} else {
-				this.viewId = '';
-			};
-		} else 
-		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph ].includes(view.type)) {
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph, I.ViewType.Board ].includes(view.type)) {
 			if (this.refView && this.refView.load) {
 				this.refView.load();
 			} else {
