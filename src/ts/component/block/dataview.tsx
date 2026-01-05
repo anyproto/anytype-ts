@@ -731,7 +731,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id, object);
+					U.Object.openConfig(object);
 				} else {
 					window.setTimeout(() => this.setRecordEditingOn(e, object.id), 15);
 				};
