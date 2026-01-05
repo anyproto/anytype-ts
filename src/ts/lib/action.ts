@@ -1091,6 +1091,7 @@ class Action {
 	finalizeMembership (product: any, route: string, callBack?: () => void) {
 		const showSurveyPopup = () => {
 			if (Survey.isComplete(I.SurveyType.Cta)) {
+				S.Popup.close('membershipFinalization');
 				callBack?.();
 				return;
 			};
@@ -1100,7 +1101,7 @@ class Action {
 			const globalName = Relation.getStringValue(participant?.globalName);
 			const title = globalName ? U.String.sprintf(translate('popupConfirmMembershipSurveyTitle'), globalName) : translate('popupConfirmMembershipSurveyTitleNoName');
 
-			S.Popup.open('confirm', {
+			S.Popup.replace('membershipFinalization', 'confirm', {
 				onClose: () => callBack?.(),
 				data: {
 					icon: 'emoji',
@@ -1115,10 +1116,10 @@ class Action {
 		};
 
 		S.Popup.open('membershipFinalization', {
-			onClose: () => showSurveyPopup(),
 			data: {
 				product,
 				route,
+				onSuccess: showSurveyPopup,
 			},
 		});
 	};
