@@ -162,8 +162,8 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				focus.clear(true);
 
 				if (selection) {
-					ids = selection.getForClick(block.id, false, false);
-					selection.set(I.SelectType.Block, ids);
+					idsRef.current = selection.getForClick(block.id, false, false);
+					selection.set(I.SelectType.Block, idsRef.current);
 				};
 			};
 

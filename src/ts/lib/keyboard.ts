@@ -61,12 +61,15 @@ class Keyboard {
 
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
+		this.initPinCheck();
 		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
+
+		window.clearTimeout(this.timeoutPin);
 
 			S.Menu.closeAll([ 'blockContext' ]);
 
@@ -1508,6 +1511,7 @@ class Keyboard {
 	 */
 	initPinCheck () {
 		const { account } = S.Auth;
+		const { windowIsFocused } = S.Common;
 
 		const check = () => {
 			const { pin } = S.Common;
@@ -1519,6 +1523,12 @@ class Keyboard {
 		};
 
 		if (!account || !check()) {
+			return;
+		};
+
+		// Only set timeout if this window is focused
+		if (!windowIsFocused) {
+			window.clearTimeout(this.timeoutPin);
 			return;
 		};
 
