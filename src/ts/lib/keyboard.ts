@@ -61,15 +61,16 @@ class Keyboard {
 
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
+		this.initPinCheck();
 		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
-
 			S.Menu.closeAll([ 'blockContext' ]);
-
+			
+			window.clearTimeout(this.timeoutPin);
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
@@ -1508,6 +1509,7 @@ class Keyboard {
 	 */
 	initPinCheck () {
 		const { account } = S.Auth;
+		const { windowIsFocused } = S.Common;
 
 		const check = () => {
 			const { pin } = S.Common;
@@ -1519,6 +1521,11 @@ class Keyboard {
 		};
 
 		if (!account || !check()) {
+			return;
+		};
+
+		if (!windowIsFocused) {
+			window.clearTimeout(this.timeoutPin);
 			return;
 		};
 
