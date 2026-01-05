@@ -46,10 +46,6 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const idsRef = useRef<string[]>([]);
 
 	useEffect(() => {
-		initToggle();
-	}, []);
-	
-	useEffect(() => {
 		const { focused } = focus.state;
 
 		if (block && (focused == block.id)) {
@@ -199,7 +195,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			data: {
 				...data,
 				blockId: block.id,
-				blockIds: ids,
+				blockIds: idsRef.current,
 				rootId,
 				blockRemove,
 			}
@@ -834,8 +830,8 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				(content.state == I.FileState.Uploading) || 
 				(
 					(object.syncStatus == I.SyncStatusObject.Syncing) && 
-					(object.creator != U.Space.getCurrentParticipantId()
-				));
+					(object.creator != U.Space.getCurrentParticipantId())
+				);
 
 			if (showLoader) {
 				blockComponent = <BlockLoader key={key} ref={childRef} {...props} />;
