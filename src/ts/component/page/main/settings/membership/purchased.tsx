@@ -6,7 +6,7 @@ import { I, S, U, J, C, Action, translate, analytics } from 'Lib';
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
-	const { data } = S.Membership
+	const { data } = S.Membership;
 	const { account} = S.Auth;
 	const { dateFormat } = S.Common;
 	const { nextInvoice } = data;

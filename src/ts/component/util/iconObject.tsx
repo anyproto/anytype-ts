@@ -325,7 +325,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			if (iconImage) {
 				cn.push('withImage');
 				icn = icn.concat([ 'iconImage', `c${size}` ]);
-				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />
+				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />;
 			} else {
 				defaultIcon(di);
 			};

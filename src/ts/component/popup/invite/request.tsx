@@ -17,7 +17,7 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	let title = '';
 	let text = '';
-	let button = ''
+	let button = '';
 
 	switch (invite.inviteType) {
 		case I.InviteType.WithApprove: {

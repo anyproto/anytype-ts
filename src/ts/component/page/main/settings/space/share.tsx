@@ -28,7 +28,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 				};
 			});
 		} else {
-			setInviteData('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.None)
+			setInviteData('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.None);
 		};
 	};
 

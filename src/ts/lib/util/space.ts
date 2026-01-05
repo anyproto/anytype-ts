@@ -65,7 +65,7 @@ class UtilSpace {
 		let ret = '';
 		switch (type) {
 			case 'deeplink': {
-				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${key}`
+				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${key}`;
 				break;
 			};
 
@@ -86,7 +86,7 @@ class UtilSpace {
 		const { account } = S.Auth;
 		if (id == account.id) {
 			this.openDashboard();
-			callBack?.()
+			callBack?.();
 			return;
 		};
 

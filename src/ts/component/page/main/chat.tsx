@@ -91,7 +91,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		rebind();
 
 		return () => {
-			close()
+			close();
 			unbind();
 		};
 	}, []);

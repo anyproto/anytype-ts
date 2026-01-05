@@ -190,7 +190,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	useEffect(() => {
 		rebind();
 		return () => unbind();
-	}, [])
+	}, []);
 
 	return (
 		<div ref={nodeRef} className="membershipIntro">

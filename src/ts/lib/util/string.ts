@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import parsePhoneNumber from 'libphonenumber-js'
+import parsePhoneNumber from 'libphonenumber-js';
 import { I, U, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;

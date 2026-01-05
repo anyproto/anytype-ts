@@ -279,7 +279,7 @@ const Data = {
 					}
 				},
 			]
-		}
+		};
 	},
 
 	collections: () => ({

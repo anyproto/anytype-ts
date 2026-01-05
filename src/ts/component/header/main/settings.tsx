@@ -73,7 +73,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
 
 		if (id == 'account') {
-			return <Icon id="button-share-one-to-one" className="oneToOne withBackground" onClick={onOneToOne} />
+			return <Icon id="button-share-one-to-one" className="oneToOne withBackground" onClick={onOneToOne} />;
 		};
 
 		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {

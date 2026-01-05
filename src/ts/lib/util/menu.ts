@@ -851,7 +851,7 @@ class UtilMenu {
 					};
 				},
 			}
-		})
+		});
 	};
 
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
@@ -1635,7 +1635,7 @@ class UtilMenu {
 		const { isClosed } = sidebar.getData(panel);
 		const { vaultMessages } = S.Common;
 		const options: any[] = [
-			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages,  },
+			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
 			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
 		];
 
@@ -1667,7 +1667,7 @@ class UtilMenu {
 					};
 				},
 			},
-		})
+		});
 	};
 
 	uxTypeOptions (): I.Option[] {

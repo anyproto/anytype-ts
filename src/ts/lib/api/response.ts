@@ -593,7 +593,7 @@ export const MembershipV2GetStatus = (response: Rpc.MembershipV2.GetStatus.Respo
 	return {
 		data: Mapper.From.MembershipData(response.getData()),
 	};
-}
+};
 
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {

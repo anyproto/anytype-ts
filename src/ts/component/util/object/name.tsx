@@ -61,7 +61,7 @@ const ObjectName: FC<Props> = ({
 				},
 				canCancel: false
 			}
-		})
+		});
 	};
 
 	if (!isDeleted) {

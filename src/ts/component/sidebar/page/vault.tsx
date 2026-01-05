@@ -214,7 +214,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (vaultIsMinimal && !skipUi) {
 			const pinned = items.filter(it => it.isPinned);
-			const notPinned = items.filter(it => !it.isPinned)
+			const notPinned = items.filter(it => !it.isPinned);
 
 			if (pinned.length) {
 				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
@@ -261,7 +261,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	});
 
 	const tooltipParam = (): I.TooltipParam => {
-		let param: any = {};
+		const param: any = {};
 		if (vaultIsMinimal) {
 			param.typeY = I.MenuDirection.Center;
 			param.typeX = I.MenuDirection.Left;

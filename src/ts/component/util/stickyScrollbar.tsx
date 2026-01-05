@@ -7,7 +7,7 @@ interface Props {
 	isInline?: boolean;
 };
 
-const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>(({}, ref) => {
+const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const trackRef = useRef<HTMLDivElement>(null);

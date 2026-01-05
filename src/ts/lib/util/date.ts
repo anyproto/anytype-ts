@@ -253,7 +253,7 @@ class UtilDate {
 	 */
 	timeFormat (v: I.TimeFormat, withSeconds?: boolean): string {
 		let f = '';
-		let s = withSeconds ? ':s' : '';
+		const s = withSeconds ? ':s' : '';
 		switch (v) {
 			default:
 			case I.TimeFormat.H12:	 f = `g:i${s} A`; break;

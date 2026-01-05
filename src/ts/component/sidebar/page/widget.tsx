@@ -395,7 +395,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		const section = `#${getId()} #section-${sectionId}`
+		const section = `#${getId()} #section-${sectionId}`;
 		const wrap = `${section} .nameWrap`;
 		const element = `${section} .buttons`;
 

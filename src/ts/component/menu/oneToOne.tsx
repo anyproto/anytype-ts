@@ -34,7 +34,7 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 	};
 
 	const onCopy = () => {
-		U.Common.copyToast(translate('commonLink'), deeplink)
+		U.Common.copyToast(translate('commonLink'), deeplink);
 	};
 
 	return (
