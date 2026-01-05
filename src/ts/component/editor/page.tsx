@@ -1995,12 +1995,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		if (currentTo && (currentFrom != currentTo)) {
-			const marks = U.Common.objectCopy(block.content.marks || []).concat({ 
-				type: I.MarkType.Link, 
-				range: { from: currentFrom, to: currentTo }, 
-				param: url,
-			});
+		const marks = U.Common.objectCopy(block.content.marks || []);
+		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
+
+		if (currentTo && (currentFrom != currentTo) && !currentMark) {
+			marks.push({ type: I.MarkType.Link, range, param: url });
 
 			U.Data.blockSetText(rootId, block.id, block.content.text, marks, true, () => {
 				focus.set(block.id, { from: currentFrom, to: currentTo });
@@ -2017,7 +2016,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const canBlock = !isInsideTable && !isLocal;
 
 		const options: any[] = [
-			{ id: 'link', name: translate('editorPagePasteLink') },
+			!currentMark ? { id: 'link', name: translate('editorPagePasteLink') } : null,
 			canBlock ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
 		].filter(it => it);

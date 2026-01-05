@@ -247,7 +247,7 @@ class Mark {
 	 * @param {I.TextRange} range - The range to check.
 	 * @returns {I.Mark|null} The found mark or null.
 	 */
-	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
+	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange, additional?: I.MarkOverlap[]): any {
 		if (!range) {
 			return null;
 		};
@@ -260,7 +260,13 @@ class Mark {
 		};
 		
 		for (const mark of map[type]) {
-			if (overlaps.includes(this.overlap(range, mark.range))) {
+			const overlap = this.overlap(range, mark.range);
+
+			if (overlaps.includes(overlap)) {
+				return mark;
+			};
+
+			if (additional && additional.includes(overlap)) {
 				return mark;
 			};
 		};
