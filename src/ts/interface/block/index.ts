@@ -86,7 +86,7 @@ export interface BlockComponent {
 	onMouseLeave?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onCopy?(e: any, cut: boolean): void;
+	onCopy?(e: any, mode: I.ClipboardMode): void;
 	onPaste?(e: any, props: any): void;
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
