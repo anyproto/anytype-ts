@@ -664,8 +664,10 @@ class Action {
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
+					clipboardMode: clipboardMode,
 					range,
 					blocks: (message.anySlot || []).map(Mapper.From.Block),
+					rootId: rootId,
 				},
 			});
 

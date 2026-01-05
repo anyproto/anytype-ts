@@ -650,6 +650,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
+			case 'clipboardCopyAsReference': {
+				Action.copyBlocks(rootId, ids, I.ClipboardMode.CopyAsReference);
+				break;
+			};
+
 			case 'copyMedia': {
 				U.Common.clipboardCopyImageFromUrl(S.Common.imageUrl(targetObjectId, I.ImageSize.Large));
 				break;

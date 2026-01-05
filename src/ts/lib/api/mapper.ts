@@ -26,6 +26,7 @@ export const Mapper = {
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
 		if (v == V.CHAT)				 t = I.BlockType.Chat;
+		if (v == V.TRANSCLUSION)		 t = I.BlockType.Transclusion;
 		return t;
 	},
 
@@ -182,6 +183,16 @@ export const Mapper = {
 				cardStyle: obj.getCardstyle(),
 				description: obj.getDescription(),
 				relations: obj.getRelationsList() || [],
+			};
+		},
+
+		BlockTransclusion: (obj: Model.Block.Content.Transclusion) => {
+			const source = obj.getSource();
+			return {
+				source: {
+					rootId: source?.getRootid() || '',
+					blockId: source?.getBlockid() || '',
+				},
 			};
 		},
 
@@ -873,12 +884,23 @@ export const Mapper = {
 
 		BlockLink: (obj: any) => {
 			const content = new Model.Block.Content.Link();
-	
+
 			content.setTargetblockid(obj.targetBlockId);
 			content.setIconsize(obj.iconSize);
 			content.setCardstyle(obj.cardStyle);
 			content.setDescription(obj.description);
 			content.setRelationsList(obj.relations);
+
+			return content;
+		},
+
+		BlockTransclusion: (obj: any) => {
+			const content = new Model.Block.Content.Transclusion();
+			const source = new Model.BlockReference();
+
+			source.setRootid(obj.source?.rootId || '');
+			source.setBlockid(obj.source?.blockId || '');
+			content.setSource(source);
 
 			return content;
 		},
@@ -971,7 +993,7 @@ export const Mapper = {
 			block.setAlign(obj.hAlign);
 			block.setVerticalalign(obj.vAlign);
 			block.setBackgroundcolor(obj.bgColor);
-	
+
 			if (obj.childrenIds) {
 				block.setChildrenidsList(obj.childrenIds);
 			};

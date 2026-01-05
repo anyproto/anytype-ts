@@ -270,6 +270,7 @@ class UtilMenu {
 			{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
 			{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
+			{ id: 'clipboardCopyAsReference', icon: 'link', name: translate('commonCopyAsReference') },
 			{ isDiv: true },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];

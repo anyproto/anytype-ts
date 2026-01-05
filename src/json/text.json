@@ -239,6 +239,7 @@
 	"commonSaveAsFile": "Save as file",
 	"commonDownloadCode": "Download Code",
 	"commonCopyMedia": "Copy Media",
+	"commonCopyAsReference": "Copy As Reference",
 	"commonImage": "Image",
 	"commonOptions": "Options",
 
@@ -664,6 +665,10 @@
 	"blockTextAudio": "Upload playable audio",
 	"blockTextPdf": "Upload a PDF file",
 	"blockTextBookmark": "Save your favorite link with summary",
+	"blockTransclusionLoading": "Loading block...",
+	"blockTransclusionNotFound": "Referenced block not found",
+	"blockTransclusionError": "Error loading block",
+	"blockTransclusionDepthLimit": "Nested transclusion omitted.",
 	"blockTextCode": "Capture code snippet ",
 	"blockTextLine": "Separate information with line",
 	"blockTextDot": "Separate information with three dots",

@@ -1,0 +1,64 @@
+.block.blockTransclusion {
+	.depthLimit {
+		display: flex;
+		align-items: center;
+		padding: 12px;
+		background: var(--color-shape-tertiary);
+		border-radius: 8px;
+		cursor: help;
+
+		.icon {
+			margin-right: 8px;
+			color: var(--color-text-secondary);
+		}
+
+		.name {
+			font-family: monospace;
+			color: var(--color-text-secondary);
+			font-size: 14px;
+		}
+
+		&:hover {
+			background: var(--color-shape-highlight-medium);
+		}
+	}
+
+	.loading, .notFound, .error {
+		display: flex;
+		align-items: center;
+		padding: 12px;
+
+		.icon, .loader {
+			margin-right: 8px;
+		}
+
+		.name {
+			color: var(--color-text-secondary);
+			font-size: 14px;
+		}
+	}
+
+	.transcludedContent {
+		position: relative;
+		padding-left: 8px;
+		border-left: 2px solid var(--color-control-bg);
+
+		.transclusionIndicator {
+			position: absolute;
+			left: -10px;
+			top: 8px;
+
+			.icon {
+				color: var(--color-text-secondary);
+				font-size: 12px;
+			}
+		}
+
+		// Make transcluded blocks visually distinct
+		opacity: 0.9;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}

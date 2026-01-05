@@ -33,6 +33,7 @@ export enum BlockType {
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
 	Chat				 = 'chat',
+	Transclusion		 = 'transclusion',
 };
 
 export enum BlockPosition {
@@ -75,6 +76,7 @@ export interface BlockComponent {
 	isInsidePreview?: boolean;
 	isSelectionDisabled?: boolean;
 	isContextMenuDisabled?: boolean;
+	transclusionDepth?: number;
 	index?: any;
 	className?: string;
 	contextParam?: Partial<I.Block>;
@@ -173,6 +175,7 @@ export interface Block {
 
 	isBookmark?(): boolean;
 	isLink?(): boolean;
+	isTransclusion?(): boolean;
 
 	isIcon?(): boolean;
 	isIconPage?(): boolean;

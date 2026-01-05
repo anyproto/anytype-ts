@@ -20,6 +20,7 @@ export * from './block';
 export * from './block/dataview';
 export * from './block/layout';
 export * from './block/link';
+export * from './block/transclusion';
 export * from './block/text';
 export * from './block/file';
 export * from './block/bookmark';

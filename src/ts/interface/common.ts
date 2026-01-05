@@ -409,4 +409,5 @@ export interface StickyScrollbarRef {
 export enum ClipboardMode {
 	Copy		= 0,
 	Cut			= 1,
+	CopyAsReference = 2, // will paste as a transclusion
 }

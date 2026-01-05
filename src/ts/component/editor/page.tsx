@@ -1926,6 +1926,31 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const urls = U.String.getUrlsFromText(data.text);
 
+		// Check if this is supposed to paste as a transclusion block
+		if (data.anytype.clipboardMode === I.ClipboardMode.CopyAsReference) {
+			// TODO handle data.anytype.blocks.length != 1
+			const blockId = data.anytype.blocks[0].id;
+			// Create a transclusion block
+			const newBlock = {
+				type: I.BlockType.Transclusion,
+				content: {
+					source: {
+						h: data.anytype.source,
+						rootId : data.anytype.rootId,
+						blockId : blockId,
+					}
+				}
+			};
+
+			C.BlockCreate(rootId, focused, I.BlockPosition.Bottom, newBlock, (message: any) => {
+				if (!message.error.code && message.blockId) {
+					focus.set(message.blockId, { from: 0, to: 0 });
+					focus.apply();
+				}
+			});
+			return;
+		};
+
 		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			this.onPasteUrl(urls[0]);
 			return;
