@@ -1,125 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, analytics, keyboard, Key, translate, Dataview } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 
-const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
-	
-	n = -1;
-	refName = null;
-	isFocused = false;
-	preventSaveOnClose = false;
-	param: any = {};
-	menuContext = null;
+const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onNameFocus = this.onNameFocus.bind(this);
-		this.onNameBlur = this.onNameBlur.bind(this);
-		this.onNameEnter = this.onNameEnter.bind(this);
-	};
+	const { param, close, getId, setActive, setHover, onKeyDown, getSize } = props;
+	const { data } = param;
+	const { rootId, blockId, onSave, readonly, loadData, getView, getSources, onSelect, isInline, getTarget } = data;
+	const nameRef = useRef(null);
+	const n = useRef(-1);
+	const preventSaveOnClose = useRef(false);
+	const view = data.view.get();
+	const block = S.Block.getLeaf(rootId, blockId);
+	const nameValue = useRef(view.name);
 
-	render () {
-		const { type, name } = this.param;
-		const isReadonly = this.isReadonly();
-		const sections = this.getSections();
+	useEffect(() => {
+		rebind();
 
-		const Section = (item: any) => (
-			<div id={`section-${item.id}`} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							icon={action.icon}
-							checkbox={(type == action.id) && (item.id == 'type')}
-							onMouseEnter={e => this.onMouseEnter(e, action)}
-							onMouseLeave={e => this.onMouseLeave(e, action)}
-							onClick={e => this.onClick(e, action)} 
-						/>
-					))}
-				</div>
-			</div>
-		);
+		return () => {
+			unbind();
+			if (!preventSaveOnClose.current) {
+				save();
+			};
 
-		return (
-			<div>
-				<div className="filter isName">
-					<InputWithLabel
-						ref={ref => this.refName = ref}
-						value={name}
-						label={translate('menuDataviewViewName')}
-						readonly={isReadonly}
-						placeholder={Dataview.defaultViewName(type)}
-						maxLength={32}
-						onKeyUp={this.onKeyUp}
-						onFocus={this.onNameFocus}
-						onBlur={this.onNameBlur}
-						onMouseEnter={this.onNameEnter}
-					/>
-				</div>
-
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-
-		this.param = U.Common.objectCopy(data.view.get());
-		this.forceUpdate();
-		this.rebind();
-
-		window.setTimeout(() => this.resize(), 5);
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-
-		this.param = U.Common.objectCopy(data.view.get());
-		this.setName();
-		this.resize();
-		this.focus();
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-		if (!this.preventSaveOnClose) {
-			this.save(true);
+			S.Menu.closeAll(J.Menu.viewEdit);
 		};
+	}, []);
 
-		S.Menu.closeAll(J.Menu.viewEdit);
+	useEffect(() => {
+		setName();
+		focus();
+		setActive();
+	});
+
+	const focus = () => {
+		window.setTimeout(() => nameRef.current?.focus(), 15);
 	};
 
-	focus () {
-		window.setTimeout(() => this.refName?.focus(), 15);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	setName () {
-		const { name } = this.param;
-		
-		let n = name;
+	const setName = () => {
+		let n = view.name;
+
 		for (const i in I.ViewType) {
 			if (n == Dataview.defaultViewName(Number(i))) {
 				n = '';
@@ -127,36 +59,37 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			};
 		};
 
-		this.refName?.setValue(n);
+		nameRef.current?.setValue(n);
 	};
 	
-	onKeyDown (e: any) {
-		const { close } = this.props;
+	const onKeyDownHandler = (e: any) => {
 		const k = keyboard.eventKey(e);
 
 		let ret = false;
 
 		keyboard.shortcut('enter', e, () => {
-			this.save(true);
-			close();
+			save();
 			ret = true;
+			window.setTimeout(() => {
+				close();
+			}, 100);
 		});
 
 		if (ret) {
 			return;
 		};
 
-		if (this.isFocused) {
+		if (nameRef.current?.isFocused()) {
 			if (k != Key.down) {
 				return;
 			} else {
-				this.refName?.blur();
-				this.n = -1;
+				nameRef.current?.blur();
+				n.current = -1;
 			};
 		} else {
-			if ((k == Key.up) && !this.n) {
-				this.n = -1;
-				this.refName?.focus();
+			if ((k == Key.up) && !n.current) {
+				n.current = -1;
+				nameRef.current?.focus();
 				return;
 			};
 		};
@@ -165,64 +98,43 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			return;
 		};
 
-		this.props.onKeyDown(e);
+		onKeyDown(e);
 	};
 
-	onNameFocus () {
-		this.n = -1;
-		this.isFocused = true;
-		this.props.setActive();
+	const onKeyUp = () => {
+		nameValue.current = nameRef.current?.getValue();
+	};
 
+	const onNameFocus = () => {
+		n.current = -1;
+		setActive();
 		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 	
-	onNameBlur () {
-		this.isFocused = false;
-		this.save(true);
+	const onNameBlur = () => {
+		save();
 	};
 
-	onNameEnter () {
+	const onNameEnter = () => {
 		if (!keyboard.isMouseDisabled) {
-			this.n = -1;
-			this.props.setHover(null, false);
+			n.current = -1;
+			setHover(null, false);
 			S.Menu.closeAll(J.Menu.viewEdit);
 		};
 	};
 
-	onKeyUp (e: any, v: string) {
-		if (this.isFocused) {
-			this.param.name = v;
-		};
-	};
-
-	save (withName?: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onSave, readonly } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const view = data.view ? data.view.get() : null;
-
-		if (readonly || !block || !view) {
+	const save = () => {
+		if (isReadonly || !block || !view) {
 			return;
 		};
 
-		if (withName) {
-			this.param.name = this.getViewName();
-			view.name = this.param.name;
-		};
-
-		Dataview.viewUpdate(rootId, blockId, view.id, this.param, onSave);
+		Dataview.viewUpdate(rootId, blockId, view.id, { ...view, name: nameValue.current }, onSave);
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const { id, type } = this.param;
+	const getSections = () => {
 		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
-		const isReadonly = this.isReadonly();
-		const isBoard = type == I.ViewType.Board;
+		const isBoard = view.type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -234,7 +146,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const layoutSettings = [
-			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: Dataview.defaultViewName(type) },
+			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: Dataview.defaultViewName(view.type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
 			{ id: 'relations', name: translate('commonRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') },
 		];
@@ -248,7 +160,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
 
-		if (id && !isReadonly) {
+		if (view.id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
@@ -265,8 +177,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		return sections;
 	};
 
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -276,22 +188,19 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	onMouseLeave (e: any, item: any) {
+	const onMouseLeave = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setHover(null, false);
+			setHover(null, false);
 		};
 	};
 
-	onClick (e: any, item: any) {
-		const { id, param, close, getSize } = this.props;
-		const { data } = param;
-		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
+	const onClick = (e: any, item: any) => {
 		const view = data.view.get();
 		const current = getView();
 		const sources = getSources();
@@ -309,24 +218,23 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				width: getSize().width,
 				data,
 				noAnimation: true,
-				onOpen: context => this.menuContext = context,
 			};
 
 			if (item.data) {
 				addParam.data = Object.assign(addParam.data, item.data);
 			};
 
-			S.Menu.replace(id, item.subComponent, Object.assign(param, addParam));
+			S.Menu.replace(props.id, item.subComponent, Object.assign(param, addParam));
 			return;
 		};
 
 		if (view.id) {
-			this.preventSaveOnClose = true;
+			preventSaveOnClose.current = true;
 			close();
 
 			switch (item.id) {
 				case 'copy': {
-					Dataview.duplicateView(rootId, blockId, { ...view, name: this.getViewName(view.name) }, sources, (message: any) => {
+					Dataview.duplicateView(rootId, blockId, { ...view, name: nameValue.current }, sources, (message: any) => {
 						onSave?.();
 						loadData(message.viewId, 0);
 
@@ -369,27 +277,60 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		onSelect?.();
 	};
 
-	getViewName (name?: string) {
-		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
-	};
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const sections = getSections();
 
-	resize () {
-		const { getId, position } = this.props;
-		const obj = $(`#${getId()} .content`);
+	const Section = (item: any) => (
+		<div id={`section-${item.id}`} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical 
+						key={i} 
+						{...action} 
+						icon={action.icon}
+						onMouseEnter={e => onMouseEnter(e, action)}
+						onMouseLeave={e => onMouseLeave(e, action)}
+						onClick={e => onClick(e, action)} 
+					/>
+				))}
+			</div>
+		</div>
+	);
 
-		obj.css({ height: 'auto' });
-		position();
-	};
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		getFilterRef: () => nameRef.current,
+	}), []);
 
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, readonly } = data;
-		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	return (
+		<div>
+			<div className="filter isName">
+				<InputWithLabel
+					ref={nameRef}
+					value={view.name}
+					label={translate('menuDataviewViewName')}
+					readonly={isReadonly}
+					placeholder={Dataview.defaultViewName(view.type)}
+					maxLength={32}
+					onFocus={onNameFocus}
+					onBlur={onNameBlur}
+					onMouseEnter={onNameEnter}
+					onKeyUp={onKeyUp}
+				/>
+			</div>
 
-		return readonly || !allowedView;
-	};
-	
-});
+			{sections.map((item: any, i: number) => (
+				<Section key={i} index={i} {...item} />
+			))}
+		</div>
+	);
+
+}));
 
 export default MenuViewSettings;
