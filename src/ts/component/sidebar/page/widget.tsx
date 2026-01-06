@@ -29,6 +29,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
+		const { total } = S.Record.getMeta(J.Constant.subId.archived, '');
 		const ret = [] as I.WidgetSection[];
 
 		if (!spaceview.isChat && !spaceview.isOneToOne) {
@@ -48,7 +49,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			ret.push(I.WidgetSection.Type);
 		};
 
-		ret.push(I.WidgetSection.Bin);
+		if (total > 0) {
+			ret.push(I.WidgetSection.Bin);
+		};
 
 		return sections.filter(it => ret.includes(it.id));
 	};
