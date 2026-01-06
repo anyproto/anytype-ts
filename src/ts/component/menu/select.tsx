@@ -14,7 +14,7 @@ const LIMIT = 10;
 
 const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, onKeyDown, position, getId } = props;
+	const { param, setActive, onKeyDown, position, getId, close } = props;
 	const { data } = param;
 	const { 
 		filter, value, disabled, placeholder, noVirtualisation, menuLabel, noKeys, preventFilter, withAdd, 
@@ -356,6 +356,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		onOver,
 		getItems: () => getItems(false),
 		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
 		updateOptions,
 	}), []);
 	
