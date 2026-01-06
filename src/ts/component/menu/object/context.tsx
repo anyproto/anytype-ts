@@ -1,77 +1,41 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, focus, Action, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
 
-class MenuContext extends React.Component<I.Menu> {
+const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
+	const { param, onKeyDown, setActive, getId, getSize, close } = props;
+	const { data, className, classNameWrap } = param;
+	const { 
+		subId, getObject, isCollection, onLinkTo, route, onSelect, targetId, relationKeys, view, blockId, 
+	} = data;
+	const objectIds = data.objectIds || [];
+	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
+	const n = useRef(0);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			S.Menu.closeAll(J.Menu.objectContext);
+			unbind();
+		};
+	}, []);
 	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-	};
-
-	render () {
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div id={`section-${item.id}`} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical
-							key={i}
-							{...action}
-							icon={action.icon || action.id}
-							onMouseEnter={e => this.onMouseEnter(e, action)}
-							onClick={e => this.onClick(e, action)}
-						/>
-					))}
-				</div>
-			</div>
-		);
-
-		return (
-			<div>
-				{sections.length ? (
-					<>
-						{sections.map((item: any, i: number) => (
-							<Section key={i} index={i} {...item} />
-						))}
-					</>
-				) : (
-					<div className="item empty">{translate('menuObjectContextNoAvailableActions')}</div>
-				)}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		S.Menu.closeAll(J.Menu.objectContext);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { subId, getObject, isCollection } = data;
-		const objectIds = this.getObjectIds();
+	const getSections = () => {
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
 
@@ -106,7 +70,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedExport = data.allowedExport;
 
 		objectIds.forEach((it: string) => {
-			const object = this.getObject(subId, getObject, it);
+			const object = getObjectHandler(subId, getObject, it);
 
 			if (!object || object._empty_) {
 				return;
@@ -227,16 +191,12 @@ class MenuContext extends React.Component<I.Menu> {
 		return sections;
 	};
 
-	getObjectIds () {
-		return this.props.param.data.objectIds || [];
-	};
-
-	getObject (subId: string, getObject: (id: string) => any, id: string) {
+	const getObjectHandler = (subId: string, getObject: (id: string) => any, id: string) => {
 		return getObject ? getObject(id) : S.Detail.get(subId, id);
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -246,21 +206,14 @@ class MenuContext extends React.Component<I.Menu> {
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
-		this.onOver(e, item);
+	const onMouseEnter = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+			onOver(e, item);
+		};
 	};
 
-	onOver (e: any, item: any) {
-		const { id, param, getId, getSize, close } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { onLinkTo, route } = data;
-		const objectIds = this.getObjectIds();
-		const { space } = S.Common;
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
-
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow || !objectIds.length) {
 			S.Menu.closeAll(J.Menu.objectContext);
 			return;
@@ -276,8 +229,8 @@ class MenuContext extends React.Component<I.Menu> {
 			noAutoHover: true,
 			className,
 			classNameWrap,
-			rebind: this.rebind,
-			parentId: id,
+			rebind,
+			parentId: props.id,
 			data: {},
 		};
 
@@ -392,24 +345,15 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 
-		const { param, close, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
-		const objectIds = this.getObjectIds();
-		const space = U.Space.getSpaceview();
 		const win = $(window);
 		const length = objectIds.length;
-		const first = length == 1 ? this.getObject(subId, getObject, objectIds[0]) : null;
-		const cb = () => {
-			if (onSelect) {
-				onSelect(item.id);
-			};
-		};
+		const first = length == 1 ? getObjectHandler(subId, getObject, objectIds[0]) : null;
+		const cb = () => onSelect?.(item.id);
 
 		focus.clear(false);
 
@@ -437,7 +381,6 @@ class MenuContext extends React.Component<I.Menu> {
 					if (isCollection) {
 						C.ObjectCollectionAdd(targetId, message.ids, () => {
 							cb();
-
 							analytics.event('LinkToObject', { linkType: 'Collection', route });
 						});
 					} else {
@@ -448,7 +391,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Object.copyLink(first, space, 'web', route);
+				U.Object.copyLink(first, spaceview, 'web', route);
 				break;
 			};
 
@@ -513,7 +456,50 @@ class MenuContext extends React.Component<I.Menu> {
 			close();
 		};
 	};
+	
+	const sections = getSections();
 
-};
+	const Section = (item: any) => (
+		<div id={`section-${item.id}`} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical
+						key={i}
+						{...action}
+						icon={action.icon || action.id}
+						onMouseEnter={e => onMouseEnter(e, action)}
+						onClick={e => onClick(e, action)}
+					/>
+				))}
+			</div>
+		</div>
+	);
 
-export default MenuContext;
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{sections.length ? (
+				<>
+					{sections.map((item: any, i: number) => (
+						<Section key={i} index={i} {...item} />
+					))}
+				</>
+			) : (
+				<div className="item empty">{translate('menuObjectContextNoAvailableActions')}</div>
+			)}
+		</div>
+	);
+	
+}));
+
+export default MenuObjectContext;
