@@ -99,7 +99,6 @@ const Input = forwardRef<InputRef, Props>(({
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
 	const cn = [ 'input', `input-${inputType}`, className ];
-	const initialRender = useRef(true);
 
 	if (readonly) {
 		cn.push('isReadonly');
@@ -272,15 +271,6 @@ const Input = forwardRef<InputRef, Props>(({
 			onUnmount?.();
 		};
 	}, []);
-
-	useEffect(() => {
-		if (initialRender.current) {
-			initialRender.current = false;
-			return;
-		};
-
-		onChange?.($.Event('change'), value);
-	}, [ value ]);
 
 	useImperativeHandle(ref, () => ({
 		focus: (preventScroll?: boolean) => focus(preventScroll),
