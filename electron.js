@@ -51,16 +51,15 @@ app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
 app.removeAsDefaultProtocolClient(protocol);
 
-if (process.defaultApp) {
-	if (process.argv.length >= 2) {
-		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
-
-		if (!is.macos) {
-			deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
-		};
-	};
-} else {
+if (!process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
+};
+
+if (!is.macos && (process.argv.length >= 2)) {
+	if (process.defaultApp) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+	};
+	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
 };
 
 powerMonitor.on('suspend', () => {	
