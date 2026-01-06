@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button } from 'Component';
-import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
+import { I, C, S, U, Action, Survey, analytics, translate, J } from 'Lib';
 
 const DAYS = 30;
 
@@ -63,7 +63,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	if (account) {
 		const duration = Math.max(0, account.status.date - U.Date.now());
 		
-		days = Math.max(1, Math.floor(duration / 86400));
+		days = Math.max(1, Math.floor(duration / J.Constant.day));
 		const dt = `${days} ${U.Common.plural(days, translate('pluralDay'))}`;
 
 		// Deletion Status

@@ -282,15 +282,16 @@ class UtilDate {
 
 		const ct = this.date('d.m.Y', t);
 		const time = this.now();
+		const { day } = J.Constant;
 
 		let ret = '';
 		if (ct == this.date('d.m.Y', time)) {
 			ret = translate('commonToday');
 		} else
-		if (ct == this.date('d.m.Y', time + 86400)) {
+		if (ct == this.date('d.m.Y', time + day)) {
 			ret = translate('commonTomorrow');
 		} else
-		if (ct == this.date('d.m.Y', time - 86400)) {
+		if (ct == this.date('d.m.Y', time - day)) {
 			ret = translate('commonYesterday');
 		};
 		return ret;
@@ -362,14 +363,14 @@ class UtilDate {
 			return '';
 		};
 
-		const DAY_IN_SECONDS = 86400;
-		const y = Math.floor(t / (DAY_IN_SECONDS * 365));
+		const { day } = J.Constant;
+		const y = Math.floor(t / (day * 365));
 
-		t -= y * (DAY_IN_SECONDS * 365);
+		t -= y * (day * 365);
 
-		const d = Math.floor(t / DAY_IN_SECONDS);
+		const d = Math.floor(t / day);
 
-		t -= d * DAY_IN_SECONDS;
+		t -= d * day;
 		const h = Math.floor(t / 3600);
 
 		t -= h * 3600;

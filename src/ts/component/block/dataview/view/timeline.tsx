@@ -9,7 +9,6 @@ import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, Windo
 
 const HEIGHT = 36;
 const WIDTH = 40;
-const DAY = 86400; // seconds in a day
 const PADDING = 46;
 
 const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
@@ -62,7 +61,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		for (let i = -3; i <= 3; i++) {
-			const v = value + DAY * 30 * i;
+			const v = value + J.Constant.day * 30 * i;
 			const current = U.Date.getCalendarMonth(v, true);
 			const m = U.Date.date('n', v);
 			const y = U.Date.date('Y', v);
@@ -98,8 +97,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				return;
 			};
 
-			item[startKey] = item[startKey] + d * DAY;
-			item[endKey] = item[endKey] + d * DAY;
+			item[startKey] = item[startKey] + d * J.Constant.day;
+			item[endKey] = item[endKey] + d * J.Constant.day;
 
 			const details: any = [
 				{ key: startKey, value: item[startKey] },
@@ -114,7 +113,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			const { top } = body.offset();
 			const dx = Math.ceil((e.pageX - x) / WIDTH);
 
-			setHover(item[startKey] + dx * DAY, item[endKey] + dx * DAY);
+			setHover(item[startKey] + dx * J.Constant.day, item[endKey] + dx * J.Constant.day);
 
 			if (isCollection) {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
@@ -170,12 +169,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			const details: any = [];
 
 			if (dir < 0) {
-				item[startKey] = item[startKey] + d * DAY;
+				item[startKey] = item[startKey] + d * J.Constant.day;
 				details.push({ key: startKey, value: item[startKey] });
 			};
 
 			if (dir > 0) {
-				item[endKey] = item[endKey] + d * DAY;
+				item[endKey] = item[endKey] + d * J.Constant.day;
 				details.push({ key: endKey, value: item[endKey] });
 			};
 
@@ -211,13 +210,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					css.left = left - node.offset().left + sl + d * WIDTH;
 					css.width = width - d * WIDTH;
 
-					start += d * DAY;
+					start += d * J.Constant.day;
 				};
 
 				if (dir > 0) {
 					css.width = width + d * WIDTH;
 
-					end += d * DAY;
+					end += d * J.Constant.day;
 				};
 
 				if (duration + d < 1) {
@@ -287,7 +286,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const param = U.Date.getDateParam(Number(item[endKey]) || 0);
 		const end = U.Date.timestamp(param.y, param.m, param.d, 23, 59, 59);
 
-		return Math.ceil((end - start) / DAY);
+		return Math.ceil((end - start) / J.Constant.day);
 	};
 
 	const rowRenderer = (param: any) => {
@@ -464,7 +463,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const onArrow = (dir: number) => {
-		setValue(value + dir * DAY * 30);
+		setValue(value + dir * J.Constant.day * 30);
 	};
 
 	const onCalendar = () => {

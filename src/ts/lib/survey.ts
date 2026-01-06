@@ -111,7 +111,7 @@ class Survey {
 		const obj = Storage.getSurvey(type);
 		const timeRegister = this.getTimeRegister();
 		const lastTime = Number(obj.time) || 0;
-		const month = 86400 * 30;
+		const month = J.Constant.day * 30;
 		const registerTime = timeRegister <= time - month;
 		const cancelTime = obj.cancel && registerTime && (lastTime <= time - month * 2);
 
@@ -137,7 +137,7 @@ class Survey {
 	checkRegister (type: I.SurveyType) {
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
-		const surveyTime = timeRegister && ((U.Date.now() - 86400 * 7 - timeRegister) > 0);
+		const surveyTime = timeRegister && ((U.Date.now() - J.Constant.day * 7 - timeRegister) > 0);
 
 		if (!isComplete && surveyTime && !S.Popup.isOpen()) {
 			this.show(type);
@@ -173,7 +173,7 @@ class Survey {
 			spaceId: space,
 			filters: [
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
+				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + J.Constant.day * 3 }
 			],
 			limit: 50,
 		}, (message: any) => {
@@ -209,7 +209,7 @@ class Survey {
 	checkMultiplayer (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		const timeRegister = this.getTimeRegister();
-		const surveyTime = timeRegister && (timeRegister <= U.Date.now() - 86400 * 7);
+		const surveyTime = timeRegister && (timeRegister <= U.Date.now() - J.Constant.day * 7);
 
 		if (isComplete || this.isComplete(I.SurveyType.Shared) || !surveyTime) {
 			return;

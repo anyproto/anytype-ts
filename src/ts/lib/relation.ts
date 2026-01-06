@@ -868,11 +868,12 @@ class Relation {
 	 * @returns {number} The timestamp.
 	 */
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+		const { day } = J.Constant;
 		const time = U.Date.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
-				value = time - 86400;
+				value = time - day;
 				break;
 			};
 
@@ -884,37 +885,37 @@ class Relation {
 			};
 
 			case I.FilterQuickOption.Tomorrow: {
-				value = time + 86400;
+				value = time + day;
 				break;
 			};
 
 			case I.FilterQuickOption.LastWeek: {
-				value = time - 86400 * 7;
+				value = time - day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.LastMonth: {
-				value = time - 86400 * 30;
+				value = time - day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NextWeek: {
-				value = time + 86400 * 7;
+				value = time + day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.NextMonth: {
-				value = time + 86400 * 30;
+				value = time + day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysAgo: {
-				value = time - 86400 * value;
+				value = time - day * value;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysNow: {
-				value = time + 86400 * value;
+				value = time + day * value;
 				break;
 			};
 		};

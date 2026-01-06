@@ -12,6 +12,8 @@ export default {
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
 	namespace:			 { 0: '.any' },
 
+	day:				 86400,
+
 	allowedSchemes:		 [ 'http', 'https', 'mailto', 'tel' ],
 
 	count: {

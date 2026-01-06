@@ -215,7 +215,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	const changeDate = (dir: number) => {
 		const object = S.Detail.get(rootId, rootId);
 
-		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
+		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * J.Constant.day);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 
