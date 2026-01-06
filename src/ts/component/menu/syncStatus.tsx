@@ -382,6 +382,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				className = 'error';
 				break;
 			};
+
+			case I.SyncStatusSpace.Offline: {
+				className = 'offline';
+			};
 		};
 
 		switch (network) {
