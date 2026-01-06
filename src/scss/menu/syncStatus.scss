@@ -13,10 +13,14 @@
 
 		.icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.icons {
-			.iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; width: 28px; height: 28px; }
+			.iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; min-width: 28px; height: 28px; }
 
 			.iconWrapper {
-				.iconBg { width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
+				.iconBg { width: 100%; min-width: 28px; height: 100%; position: absolute; z-index: 0; border-radius: 18px; background: var(--color-shape-tertiary); }
+				.inner { display: flex; gap: 0px 4px; width: 100%; height: 100%; align-items: center; justify-content: center; }
+				.inner.withLabel { padding: 0px 6px; }
+				.label { @include text-small; color: var(--color-text-secondary); font-weight: 500; padding-right: 2px; z-index: 1; }
+
 				.icon { width: 20px; height: 20px; }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/default.svg'); }
@@ -25,17 +29,20 @@
 			}
 			.iconWrapper.connected {
 				.iconBg { background: rgba(55, 122, 255, 0.15); }
+				.label { color: var(--color-system-accent-100); }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/synced.svg'); }
 				.icon.p2p { background: url('~img/icon/sync/p2p/connected.svg'); }
 			}
 			.iconWrapper.connectedSlow {
 				.iconBg { background: var(--color-bg-orange); }
+				.label { color: var(--color-orange); }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/upgrade.svg'); }
 			}
 			.iconWrapper.error {
 				.iconBg { background: var(--color-bg-red); }
+				.label { color: var(--color-red); }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/error.svg'); }
 				.icon.p2p { background: url('~img/icon/sync/p2p/error.svg'); }
