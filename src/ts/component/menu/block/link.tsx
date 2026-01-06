@@ -77,13 +77,8 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onFilterClear = () => {
 		if (type !== null) {
-			if (onClear) {
-				onClear(filter);
-			};
-
-			if (onChange) {
-				onChange(type, '');
-			};
+			onClear?.(filter);
+			onChange?.(type, '');
 		};
 
 		close();
@@ -96,7 +91,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return [];
 		};
 
-		const encoded = filter.replace(/\s/g, '%20');
+		const encoded = data.filter.replace(/\s/g, '%20');
 		const urls = U.String.getUrlsFromText(encoded);
 		const items = [].concat(itemsRef.current);
 		const sections: any[] = [];
@@ -118,7 +113,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return U.Menu.sectionsMap(sections);
 	};
 
-	const getItems = (withSections: boolean) => {
+	const getItems = () => {
 		const sections = getSections();
 		
 		let items: any[] = [];
@@ -126,7 +121,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (items.length && section.children.length) {
 				items.push({ isDiv: true });
 			};
-			if (withSections && section.name) {
+			if (section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
@@ -200,20 +195,16 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (item.itemId == 'link') {
-			if (item.url && onChange) {
-				onChange(I.MarkType.Link, item.url.value);
+			if (item.url) {
+				onChange?.(I.MarkType.Link, item.url.value);
 			};
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
-				if (onChange) {
-					onChange(I.MarkType.Object, message.targetId);
-				};
+				onChange?.(I.MarkType.Object, message.targetId);
 			});
 		} else {
-			if (onChange) {
-				onChange(I.MarkType.Object, item.itemId);
-			};
+			onChange?.(I.MarkType.Object, item.itemId);
 		};
 
 		close();
@@ -234,7 +225,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const resize = () => {
-		const items = getItems(true);
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 12;
 
@@ -247,7 +238,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
-	const items = getItems(true);
+	const items = getItems();
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
@@ -342,7 +333,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => getItems(true),
+		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		getListRef: () => listRef.current,

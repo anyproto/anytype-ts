@@ -329,10 +329,19 @@ class UtilString {
 	matchPath (s: string): string {
 		s = String(s || '');
 
-		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
+		// Windows path with backslashes (optionally "file://")
+		const rw = /^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi;
+
+		// Windows file URI with drive letter + forward slashes, allowing % encodes
+		const rwu = /^(file:\/\/\/)(?:[a-zA-Z]:)(?:\/[\p{L}\p{M}\p{N}\s._%\-(),]+)+\/?$/u;
+
+		// POSIX-like file URI/path (your original)
 		const ru = /^(file:\/\/\/?)(\/[\p{L}\p{M}\p{N}\s._%\-(),]+)+\/?$/u;
 
 		let m = s.match(rw);
+		if (!m) {
+			m = s.match(rwu);
+		};
 		if (!m) {
 			m = s.match(ru);
 		};
