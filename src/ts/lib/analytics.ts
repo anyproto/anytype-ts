@@ -782,6 +782,7 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			widgetSection:		 'ScreenManageSections',
+			widget:				 'ScreenWidgetMenu',
 		};
 
 		return map[id] || '';
