@@ -82,6 +82,7 @@ export interface MenuRef {
 	getFilterRef?: () => any;
 	getListRef?: () => any;
 	beforePosition?: () => void;
+	updateOptions?: (options: any[]) => void;
 };
 
 export interface MenuItem {
