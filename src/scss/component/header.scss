@@ -77,6 +77,13 @@
 	&.withSidebarSubLeft {
 		.icon.widgetPanel { display: none; }
 	}
+
+	.icon.widgetPanel {
+		.bullet {
+			position: absolute; right: 0px; bottom: 0px; width: 12px; height: 12px; border-radius: 6px;
+			background-color: var(--color-red); border: 3px solid var(--color-bg-primary);
+		}
+	}
 }
 .header.isSmall {
 	.path, .headerBanner { visibility: hidden; overflow: hidden; width: 0px; }
