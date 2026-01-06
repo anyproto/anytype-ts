@@ -20,7 +20,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { filter } = S.Common;
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL }));
 	const n = useRef(-1);
-	const filterRef = useRef('');
 	const emptyRef = useRef(0);
 	const listRef = useRef(null);
 
@@ -220,11 +219,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		const items = getItems();
 
-		if (filter.text != filterRef.current) {
-			n.current = 0;
-			filterRef.current = filter.text;
-		};
-
 		if (!items.length && !emptyRef.current) {
 			emptyRef.current = filter.text.length;
 		};
@@ -242,6 +236,10 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		S.Menu.close('previewLatex');
 	});
+
+	useEffect(() => {
+		n.current = 0;
+	}, [ filter.text ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,

@@ -350,6 +350,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		setIndex: (i: number) => n.current = i,
 		onClick,
 		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
 	}), []);
 
 	return (
