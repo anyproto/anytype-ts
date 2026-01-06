@@ -50,9 +50,7 @@ class Keyboard {
 		win.on('mousemove.common', e => this.onMouseMove(e));
 
 		win.on('online.common offline.common', () => {
-			const { onLine } = navigator;
-
-			S.Common.isOnlineSet(onLine);
+			S.Common.isOnlineSet(navigator.onLine);
 
 			if (!S.Membership.products.length) {
 				U.Data.getMembershipData();
@@ -61,7 +59,14 @@ class Keyboard {
 
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
-		this.initPinCheck();
+
+			// Check if PIN timeout has elapsed since last activity
+			const { pin, pinTime } = S.Common;
+			if (pin && pinTime) {
+				Renderer.send('checkPinTimeout', pinTime);
+			};
+
+			this.initPinCheck();
 		});
 		
 		win.on('blur.common', () => {
@@ -69,7 +74,7 @@ class Keyboard {
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
-			
+
 			window.clearTimeout(this.timeoutPin);
 			$('.dropTarget.isOver').removeClass('isOver');
 		});

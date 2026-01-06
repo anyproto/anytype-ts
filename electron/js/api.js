@@ -20,6 +20,7 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	isPinChecked = false;
+	lastActivityTime = Date.now();
 
 	getInitData (win) {
 		const cssPath = path.join(Util.userPath(), 'custom.css');
@@ -73,6 +74,21 @@ class Api {
 
 	setPinChecked (win, isPinChecked) {
 		this.isPinChecked = isPinChecked;
+		if (isPinChecked) {
+			this.lastActivityTime = Date.now();
+		};
+	};
+
+	checkPinTimeout (win, pinTimeout) {
+		if (!this.isPinChecked || !pinTimeout) {
+			return;
+		};
+
+		const elapsed = Date.now() - this.lastActivityTime;
+		if (elapsed >= pinTimeout) {
+			this.isPinChecked = false;
+			this.pinCheck(win);
+		};
 	};
 
 	setTheme (win, theme) {
