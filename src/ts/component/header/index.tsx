@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEff
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon, Sync } from 'Component';
+import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
@@ -67,17 +67,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
-	};
-
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
 		const cnb = [ 'back', 'withBackground', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
 		const cnf = [ 'forward', 'withBackground', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
@@ -102,8 +91,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 						typeY: I.MenuDirection.Bottom,
 					}}
 				/>
-
-				<Sync id="headerSync" onClick={onSync} />
 
 				{withNavigation ? (
 					<div className="arrowWrapper">

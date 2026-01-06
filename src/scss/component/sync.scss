@@ -11,18 +11,10 @@
 	border-radius: 4px; gap: 0px 8px; justify-content: center;
 }
 .sync {
-	.icon { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-control-active); pointer-events: none; }
-	.icon.error { background-color: var(--color-red); display: block; }
+	.icon { width: 20px; height: 20px; background-image: url('~img/icon/sync/offline.svg'); pointer-events: none; }
 	.icon.synced,
-	.icon.syncing { background-color: var(--color-lime); }
-	.icon.upgrade { background-color: var(--color-yellow); }
-
-	.icon.syncing::before,
-	.icon.syncing::after {
-		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px; display: block; width: 8px; height: 8px; border-radius: 50%; 
-		background-color: var(--color-lime); animation: syncing 1.6s ease-out infinite; pointer-events: none;
-	}
-	.icon.syncing::after { animation-delay: 1.5s; }
+	.icon.syncing { background-image: url('~img/icon/sync/synced.svg'); }
+	.icon.error { background-image: url('~img/icon/sync/error.svg'); }
 
 	.name { @include text-overflow-nw; margin-right: 10px; display: none; }
 	.badge { padding-right: 10px; }
