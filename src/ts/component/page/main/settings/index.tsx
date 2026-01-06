@@ -136,6 +136,8 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		if (page) {
 			sidebar.leftPanelSubPageOpen(page, false);
 		};
+
+		sidebar.rightPanelClose(isPopup, false);
 	};
 
 	const onExport = (type: I.ExportType, param: any) => {
