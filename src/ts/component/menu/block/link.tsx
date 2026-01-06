@@ -342,7 +342,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => getItems(false),
+		getItems: () => getItems(true),
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		getListRef: () => listRef.current,

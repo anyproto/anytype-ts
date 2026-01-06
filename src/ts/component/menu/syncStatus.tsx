@@ -446,7 +446,6 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setIndex: (i: number) => n.current = i,
 			getListRef: () => listRef.current,
 	}), []);
-	
 
 	return (
 		<>
