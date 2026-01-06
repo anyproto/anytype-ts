@@ -162,7 +162,6 @@ export interface ViewComponent {
 	isInline?: boolean;
 	isCollection?: boolean;
 	className?: string;
-	refCells?: any;
 	recordId?: string;
 	recordIdx?: number;
 	getRecord?(id: string): any;
