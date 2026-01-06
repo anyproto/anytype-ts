@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -44,11 +44,16 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 
 		const PanelIcon = (item) => {
-			const { id, className } = item;
+			const { id, className, label } = item;
 			const cn = [ 'iconWrapper' ];
+			const cni = [ 'inner' ];
 
 			if (className) {
 				cn.push(className);
+			};
+
+			if (label) {
+				cni.push('withLabel');
 			};
 
 			return (
@@ -58,7 +63,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
 					<div className="iconBg" />
-					<Icon className={id} />
+					<div className={cni.join(' ')}>
+						<Icon className={id} />
+						{label ? <Label text={label} /> : ''}
+					</div>
 				</div>
 			);
 		};
@@ -322,9 +330,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		let className = '';
 		let message = '';
+		let label = '';
 
 		if (devicesCounter) {
 			message = U.String.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+
+			if (devicesCounter > 1) {
+				label = devicesCounter;
+			};
 		} else {
 			message = translate('menuSyncStatusP2PNoDevicesConnected');
 		};
@@ -343,6 +356,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		return {
 			id: 'p2p',
+			label,
 			className,
 			title: translate('menuSyncStatusInfoP2pTitle'),
 			message,
@@ -355,6 +369,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const buttons: any[] = [];
 
 		let id = '';
+		let label = '';
 		let title = '';
 		let className = '';
 		let message = '';
@@ -382,11 +397,16 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				className = 'error';
 				break;
 			};
+
+			case I.SyncStatusSpace.Offline: {
+				className = 'offline';
+			};
 		};
 
 		switch (network) {
 			case I.SyncStatusNetwork.Anytype: {
 				id = 'network';
+				label = translate('menuSyncStatusLabelAnyNetwork');
 				title = translate('menuSyncStatusInfoNetworkTitle');
 
 				if (isConnected) {
@@ -420,6 +440,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			case I.SyncStatusNetwork.SelfHost: {
 				id = 'self';
+				label = translate('menuSyncStatusLabelCustom');
 				title = translate('menuSyncStatusInfoSelfTitle');
 
 				switch (status) {
@@ -451,7 +472,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 		};
 
-		return { id, className, title, message, buttons };
+		return { id, label, className, title, message, buttons };
 	};
 
 	resize () {

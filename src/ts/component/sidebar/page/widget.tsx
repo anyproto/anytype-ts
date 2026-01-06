@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -363,6 +363,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 	};
 
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
+
 	const onRecentlyOpen = () => {
 		S.Menu.open('searchObject', {
 			className: 'single fixed widthValue',
@@ -588,6 +599,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					/>
 				</div>
 				<div className="side right">
+					<Sync id="headerSync" onClick={onSync} />
+
 					<Icon 
 						id="button-recently-open"
 						className="clock withBackground"
