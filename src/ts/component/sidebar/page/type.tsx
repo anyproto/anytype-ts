@@ -26,7 +26,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultViewType: I.ViewType.List,
+			defaultViewType: I.ViewType.Grid,
 		}, details);
 
 		return U.Common.objectCopy(details.isNew ? newType : type || newType);

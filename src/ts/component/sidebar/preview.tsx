@@ -20,13 +20,13 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultViewType: I.ViewType.List,
+		defaultViewType: I.ViewType.Grid,
 		headerRelationsLayout: I.FeaturedRelationLayout.Inline,
 		recommendedFeaturedRelations: [],
 		recommendedFileRelations: [],
 	});
 	const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, layoutWidth, headerRelationsLayout } = object;
-	const viewType = Number(object.defaultViewType) || I.ViewType.List;
+	const viewType = Number(object.defaultViewType) || I.ViewType.Grid;
 	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).
 		map(key => S.Record.getRelationById(key)).
 		filter(it => it && !it.isArchived);

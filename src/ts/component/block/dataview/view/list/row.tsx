@@ -120,7 +120,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 					getRecord={() => record}
 					subId={subId}
 					relationKey={relation.relationKey}
-					viewType={I.ViewType.List}
+					viewType={view.type}
 					idPrefix={idPrefix}
 					onClick={e => onCellClickHandler(e, relation)}
 					isInline={true}
