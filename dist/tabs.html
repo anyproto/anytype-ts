@@ -48,8 +48,8 @@
 				display: flex; flex-direction: row; align-items: center; position: relative;
 			}
 
-			.tab.noClose .icon.close {
-				display: none !important;
+			.tab.noClose {
+				.icon.close { display: none !important; }
 			}
 
 			.tab.active { color: var(--color-text-primary); }
@@ -59,8 +59,8 @@
 
 			.tab:has(+ .tab.active) .div { display: none; }
 
+			.tab.isAdd { flex: 0 0 auto; }
 			.tab.isAdd {
-				flex: 0 0 auto;
 				.icon { background-image: url('./img/icon/plus.svg'); }
 			}
 
