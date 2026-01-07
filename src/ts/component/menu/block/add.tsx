@@ -1,272 +1,88 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
+import { set } from 'lodash';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
-interface State {
-	items: any[];
-};
-
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu, State> {
+const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	emptyLength = 0;
-	timeout = 0;
-	cache: any = {};
-	refList: any = null;
-	n = 0;
-	filter = '';
-	state = {
-		items: [],
-	};
 	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onClick = this.onClick.bind(this);
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const { filter } = S.Common;
-		const items = this.getItems();
-		const block = S.Block.getLeaf(rootId, blockId);
-		const idPrefix = 'menuBlockAdd';
+	const { param, getId, getSize, close, setActive, onKeyDown, position } = props;
+	const { data, className, classNameWrap } = param;
+	const { rootId, blockId, onSelect, blockCreate } = data;
+	const { filter } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
+	const block = S.Block.getLeaf(rootId, blockId);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const listRef = useRef(null);
+	const itemsRef = useRef([]);
+	const emptyLength = useRef(0);
+	const n = useRef(0);
 
-		const rowRenderer = (param: any) => {
-			const { index } = param;
-			const item: any = items[index];
-			
-			let content = null;
-			if (item.isRelationAdd) {
-				content = (
-					<div 
-						id="item-relation-add" 
-						className="item add" 
-						onClick={e => this.onClick(e, item)} 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						style={param.style}
-					>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else 
-			if (item.isRelation) {
-				content = (
-					<div 
-						id={`item-${item.id}`}
-						className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						onClick={e => this.onClick(e, item)} 
-						style={param.style}
-					>
-						<div className="info">
-							{item.name}
-						</div>
-						<div
-							id={Relation.cellId(idPrefix, item.relationKey, rootId)} 
-							className={[ 'cell', Relation.className(item.format) ].join(' ')} 
-						>
-							<Cell 
-								rootId={rootId}
-								subId={rootId}
-								block={block}
-								relationKey={item.relationKey}
-								getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
-								viewType={I.ViewType.Grid}
-								idPrefix={idPrefix}
-								pageContainer={U.Common.getCellContainer('menuBlockAdd')}
-								readonly={true}
-								canOpen={false}
-								placeholder={translate('placeholderCellCommon')}
-								menuParam={{ classNameWrap: 'fromBlock' }}
-							/>
-						</div>
-					</div>
-				);
-			} else {
-				const cn = [];
-				const icn: string[] = [ 'inner' ];
-					
-				if (item.isTextColor) {
-					icn.push(`textColor textColor-${item.value || 'default'}`);
-				};
-				if (item.isBgColor) {
-					icn.push(`bgColor bgColor-${item.value || 'default'}`);
-				};
-				
-				if (item.isTextColor || item.isBgColor) {
-					item.icon = 'color';
-					item.inner = <div className={icn.join(' ')} />;
-				};
+	useEffect(() => {
+		rebind();
+		checkFilter();
+		resize();
 
-				if (item.isBig) {
-					cn.push('isBig');
-				};
-
-				if (item.isHidden) {
-					cn.push('isHidden');
-				};
-
-				if (item.isObject) {
-					item.object = { ...item, layout: I.ObjectLayout.Type };
-					item.iconSize = 40;
-				};
-				
-				content = (
-					<MenuItemVertical 
-						key={[ item.id, index ].join('-')} 
-						{...item} 
-						index={index}
-						className={cn.join(' ')}
-						withDescription={item.withDescription} 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						onClick={e => this.onClick(e, item)} 
-						style={param.style}
-					/>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					{...param}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={index}
-				>
-					{content}
-				</CellMeasurer>
-			);
+		return () => {
+			S.Menu.closeAll(J.Menu.add);
+			unbind();
 		};
-
-		return (
-			<div className="wrap">
-				{!items.length ? (
-					<div className="item empty">{translate('commonFilterEmpty')}</div>
-				) : (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index], index)}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				)}
-			</div>
-		);
-	};
+	}, [])	;
 	
-	componentDidMount () {
-		const { getId } = this.props;
-		const items = this.getItems();
-		
-		this.rebind();
-		this.checkFilter();
-		this.resize();
+	useEffect(() => {
+		checkFilter();
+		resize();
+		setActive();
+	});
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i], i),
-			keyMapper: i => (items[i] || {}).id,
-		});
-		
-		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => window.clearTimeout(this.timeout));
-	};
-	
-	componentDidUpdate () {
-		const { filter } = S.Common;
-		const items = this.getItems();
+	useEffect(() => {
+		const items = getItems();
 		const itemsWithoutSections = items.filter(it => !it.isSection);
 
-		if (!itemsWithoutSections.length && !this.emptyLength) {
-			this.emptyLength = filter.text.length;
+		if (!itemsWithoutSections.length && !emptyLength.current) {
+			emptyLength.current = filter.text.length;
 		};
 
-		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
-			this.props.close();
+		if ((filter.text.length - emptyLength.current > 3) && !items.length) {
+			close();
 			return;
 		};
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i], i),
-			keyMapper: i => (items[i] || {}).id,
-		});
+		n.current = 0;
+		loadObjects();
+	}, [ filter.text ]);
 
-		if (this.filter != filter.text) {
-			this.n = 0;
-			this.filter = filter.text;
-			this.loadObjects();
-			return;
-		};
-
-		this.checkFilter();
-		this.resize();
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		S.Menu.closeAll(J.Menu.add);
-	};
-
-	checkFilter () {
-		const { getId } = this.props;
-		const { filter } = S.Common;
-
+	const checkFilter = () => {
 		$(`#${getId()}`).toggleClass('withFilter', !!filter);
 	};
 	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	loadObjects () {
+	const loadObjects = () => {
 		const filter = S.Common.filterText;
 
 		if (!filter) {
-			this.setState({ items: [] });
+			itemsRef.current = [];
+			setDummy(dummy + 1);
 			return;
 		};
-
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
 
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
@@ -286,14 +102,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			fullText: filter,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			this.setState({ items: message.records || [] });
+			itemsRef.current = message.records || [];
+			setDummy(dummy + 1);
 		});
 	};
 
-	getRelations () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+	const getRelations = () => {
 		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = U.Object.isTemplateType(object.type);
 		const objectKeys = S.Detail.getKeys(rootId, rootId);
@@ -316,18 +130,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true, aliases: [ 'relation' ] }));
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { filter } = S.Common;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		
+	const getSections = () => {
 		if (!block) {
 			return [];
 		};
 
-		const items = (this.state.items || []).map((it: any) => {
+		const items = (itemsRef.current || []).map((it: any) => {
 			return { 
 				...it, 
 				object: { ...it }, 
@@ -343,7 +151,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
 			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
 			{ id: 'type', name: translate('menuBlockAddSectionType'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
-			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: this.getRelations(), isBig: false, withDescription: false },
+			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: getRelations(), isBig: false, withDescription: false },
 			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items, isBig: false, withDescription: false },
 			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
 		].map(s => ({ 
@@ -389,8 +197,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		return U.Menu.sectionsMap(sections);
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -403,25 +211,21 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		return items;
 	};
 	
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item);
-			this.onOver(e, item);
+			setActive(item);
+			onOver(e, item);
 		};
 	};
 
-	getMenuParam () {
-		const { id, param, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId } = data;
-
+	const getMenuParam = () => {
 		return {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			className,
 			classNameWrap,
-			rebind: this.rebind,
-			parentId: id,
+			rebind,
+			parentId: props.id,
 			data: {
 				rootId,
 				skipIds: [ rootId ],
@@ -431,17 +235,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		};
 	};
 	
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.add);
 			return;
 		};
 
-		const { param, getId, close } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const { filter } = S.Common;
-		const block = S.Block.getLeaf(rootId, blockId);
 		const text = U.String.cut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -450,7 +249,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			return;
 		};
 
-		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			isSub: true,
 			element: `#${getId()} #item-${item.id}`,
@@ -497,7 +296,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 					onClick: (item: any) => {
 						menuParam.data.onSelect();
 
-						this.moveToPage(item.id);
+						moveToPage(item.id);
 						close();
 					},
 				});
@@ -513,30 +312,20 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		};
 	};
 	
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		if (item.arrow && !item.skipOver) {
+		if (item.arrow && !item.skipOver || !block) {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onSelect, blockCreate } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-
-		if (!block) {
-			return;
-		};
-
 		keyboard.setFocus(false);
 
 		const win = $(window);
-		const { filter } = S.Common;
 		const text = String(data.text || '');
 		const length = text.length;
-		const onCommand = (blockId: string) => {
-			const block = S.Block.getLeaf(rootId, blockId);
+		const onCommand = (id: string) => {
+			const block = S.Block.getLeaf(rootId, id);
 
 			if (block && block.isText()) {
 				focus.set(blockId, { from: length, to: length });
@@ -549,7 +338,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
 		const rect = $(`#${getId()}`).get(0).getBoundingClientRect();
-		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			rect,
 			offsetX: 0,
@@ -833,10 +622,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		U.Data.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 
-	moveToPage (typeId: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
+	const moveToPage = (typeId: string) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
@@ -847,14 +633,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		U.Data.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems().slice(0, LIMIT);
+	const resize = () => {
+		const items = getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 		
 		let height = 16;
 		for (let i = 0; i < items.length; ++i) {
-			height += this.getRowHeight(items[i], i);
+			height += getRowHeight(items[i], i);
 		};
 		height = Math.max(HEIGHT_ITEM + 18, height);
 
@@ -862,7 +647,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		position();
 	};
 
-	getRowHeight (item: any, index: number) {
+	const getRowHeight = (item: any, index: number) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection && (index > 0)) {
 			h = HEIGHT_SECTION;
@@ -873,19 +658,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		return h;
 	};
 
-	scrollToRow (items: any[], index: number) {
-		if (!this.refList || !items.length) {
+	const scrollToRow = (items: any[], index: number) => {
+		if (!listRef.current || !items.length) {
 			return;
 		};
 
-		const listHeight = this.refList.props.height;
-		const itemHeight = this.getRowHeight(items[index], index);
+		const listHeight = listRef.current.props.height;
+		const itemHeight = getRowHeight(items[index], index);
 
 		let offset = 0;
 		let total = 0;
 
 		for (let i = 0; i < items.length; ++i) {
-			const h = this.getRowHeight(items[i], i);
+			const h = getRowHeight(items[i], i);
 
 			if (i < index) {
 				offset += h;
@@ -900,9 +685,164 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		};
 
 		offset = Math.min(offset, total - listHeight + 16);
-		this.refList.scrollToPosition(offset);
+		listRef.current.scrollToPosition(offset);
 	};
 
-});
+	const items = getItems();
+
+	const rowRenderer = (param: any) => {
+		const { index } = param;
+		const item: any = items[index];
+		
+		let content = null;
+		if (item.isRelationAdd) {
+			content = (
+				<div 
+					id="item-relation-add" 
+					className="item add" 
+					onClick={e => onClick(e, item)} 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					style={param.style}
+				>
+					<Icon className="plus" />
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else 
+		if (item.isRelation) {
+			content = (
+				<div 
+					id={`item-${item.id}`}
+					className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					onClick={e => onClick(e, item)} 
+					style={param.style}
+				>
+					<div className="info">
+						{item.name}
+					</div>
+					<div
+						id={Relation.cellId(getId(), item.relationKey, rootId)} 
+						className={[ 'cell', Relation.className(item.format) ].join(' ')} 
+					>
+						<Cell 
+							rootId={rootId}
+							subId={rootId}
+							block={block}
+							relationKey={item.relationKey}
+							getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
+							viewType={I.ViewType.Grid}
+							idPrefix={getId()}
+							pageContainer={U.Common.getCellContainer('menuBlockAdd')}
+							readonly={true}
+							canOpen={false}
+							placeholder={translate('placeholderCellCommon')}
+							menuParam={{ classNameWrap: 'fromBlock' }}
+						/>
+					</div>
+				</div>
+			);
+		} else {
+			const cn = [];
+			const icn: string[] = [ 'inner' ];
+				
+			if (item.isTextColor) {
+				icn.push(`textColor textColor-${item.value || 'default'}`);
+			};
+			if (item.isBgColor) {
+				icn.push(`bgColor bgColor-${item.value || 'default'}`);
+			};
+			
+			if (item.isTextColor || item.isBgColor) {
+				item.icon = 'color';
+				item.inner = <div className={icn.join(' ')} />;
+			};
+
+			if (item.isBig) {
+				cn.push('isBig');
+			};
+
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+
+			if (item.isObject) {
+				item.object = { ...item, layout: I.ObjectLayout.Type };
+				item.iconSize = 40;
+			};
+			
+			content = (
+				<MenuItemVertical 
+					key={[ item.id, index ].join('-')} 
+					{...item} 
+					index={index}
+					className={cn.join(' ')}
+					withDescription={item.withDescription} 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					onClick={e => onClick(e, item)} 
+					style={param.style}
+				/>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				{...param}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div className="wrap">
+			{!items.length ? (
+				<div className="item empty">{translate('commonFilterEmpty')}</div>
+			) : (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => true}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurementCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index], index)}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			)}
+		</div>
+	);
+	
+}));
 
 export default MenuBlockAdd;
