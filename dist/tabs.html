@@ -31,14 +31,19 @@
 			.tab { padding: 8px 12px; cursor: default; width: 204px; position: relative; z-index: 1; color: #828282; }
 			.tab.noClose {}
 			.tab.active { color: #000; }
-			.tab.isAdd {}
+			.tab.isAdd {
+				.icon { 
+					width: 20px; height: 20px; background-image: url('./img/icon/plus.svg'); background-size: contain; 
+					background-position: center; background-repeat: no-repeat;
+				}
+			}
 
 			.tab {
 				.clickable { display: flex; flex-direction: row; gap: 0px 6px; }
-				.name { height: 20px; line-height: 20px; }
+				.name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
 				.image { 
 					width: 20px; height: 20px; background-size: 18px; background-position: center; background-repeat: no-repeat;
-
+					flex-shrink: 0;
 				}
 				.icon.close { 
 				}
@@ -80,8 +85,55 @@
 						width: active.outerWidth(),
 						transform: `translate3d(${offset.left}px, 0px, 0px)`
 					});
+				};
 
-					console.log('Set active tab:', id);
+				const renderTab = (item) => {
+					const title = String(item.data.title || 'New tab');
+					const icon = String(item.data.icon || '');
+
+					const tab = $(`
+						<div id="tab-${item.id}" class="tab">
+							<div class="clickable">
+								<div class="name">${title}</div>
+							</div>	
+							<div class="icon close"></div>
+						</div>
+					`);
+
+					const clickable = tab.find('.clickable');
+					if (icon) {
+						clickable.prepend($(`<div class="image" style="background-image: url('${icon}')" />`));
+					};
+
+					clickable.off('click').on('click', () => {
+						electron.Api(winId, 'setActiveTab', item.id);
+						setActive(item.id, true);
+					});
+
+					tab.find('.icon.close').off('click').on('click', (e) => {
+						e.stopPropagation();
+						electron.Api(winId, 'removeTab', [ tab.id, true ]);
+					});
+
+					if (tabs.length === 1) {
+						tab.addClass('noClose');
+					};
+
+					return tab;
+				};
+
+				const renderAdd = () => {
+					const tab = $(`
+						<div class="tab isAdd">
+							<div class="icon"></div>
+						</div>
+					`);
+
+					tab.off('click').on('click', () => {
+						electron.Api(winId, 'createTab');
+					});
+
+					return tab;
 				};
 
 				const setTabs = (tabs, id) => {
@@ -89,53 +141,21 @@
 
 					tabs = tabs || [];
 					tabs.forEach((it, i) => {
-						const data = it.data || {};
-						const title = String(data.title || 'New tab');
-						const icon = String(data.icon || '');
-
-						const tab = $(`
-							<div id="tab-${it.id}" class="tab">
-								<div class="clickable">
-									<div class="name">${title}</div>
-								</div>	
-								<div class="icon close"></div>
-							</div>
-						`);
-
-						container.append(tab);
-
-						const clickable = tab.find('.clickable');
-
-						if (icon) {
-							clickable.prepend($(`<div class="image" style="background-image: url('${icon}')" />`));
-						};
-
-						if (tabs.length === 1) {
-							tab.find('.icon.close').remove();
-							tab.addClass('noClose');
-						};
-
-						clickable.off('click').on('click', () => {
-							electron.Api(winId, 'setActiveTab', it.id);
-							setActive(it.id, true);
-						});
-
-						tab.find('.icon.close').off('click').on('click', (e) => {
-							e.stopPropagation();
-							electron.Api(winId, 'removeTab', [ it.id, true ]);
-						});
+						container.append(renderTab(it));
 					});
 
-					const plus = $('<div class="tab isAdd"><div class="name">+</div></div>');			
-					container.append(plus);
-
-					plus.off('click').on('click', () => electron.Api(winId, 'createTab'));
-			
+					container.append(renderAdd());
 					setActive(id, false);
 				};
 
 				electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
 				electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
+				electron.on('update-tab', (e, tab) => {
+					const existing = container.find(`#tab-${tab.id}`);
+					if (existing.length) {
+						existing.replaceWith(renderTab(tab));
+					};
+				});
 			});
 		</script>
 	</body>

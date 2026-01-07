@@ -290,7 +290,7 @@ class WindowManager {
 		};
 
 		view.data = Object.assign(view.data || {}, data);
-		this.updateTabsBar(win, id);
+		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
 	removeTab (win, id, updateActive) {
