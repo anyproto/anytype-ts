@@ -83,7 +83,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 				listRef.current?.recomputeRowHeights(0);
 			});
 		};
-	}, [ columnCount, cardHeight, width, records.length ]);
+	}, [ columnCount, cardHeight, width, records.length, coverRelationKey ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
@@ -108,7 +108,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 			case I.CardSize.Large:	 ret = card.large; break;
 		};
 
-		return Math.max(1, Math.round((width - margin) / ret));
+		return Math.max(1, Math.floor((width - margin) / ret));
 	};
 
 	const onResize = ({ width }) => {
