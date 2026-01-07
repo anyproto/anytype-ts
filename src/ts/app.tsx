@@ -260,59 +260,53 @@ const App: FC = () => {
 		};
 
 		if (accountId) {
-			if (isChild || (activeIndex > 0)) {
-				Renderer.send('keytarGet', accountId).then(phrase => {
-					U.Data.createSession(phrase, '', token, () => {
-						C.AccountSelect(accountId, '', 0, '', (message: any) => {
-							if (message.error.code) {
-								console.error('[App.onInit]:', message.error.description);
-								return;
-							};
+			Renderer.send('keytarGet', accountId).then(phrase => {
+				U.Data.createSession(phrase, '', token, () => {
+					C.AccountSelect(accountId, '', 0, '', (message: any) => {
+						if (message.error.code) {
+							console.error('[App.onInit]:', message.error.description);
+							return;
+						};
 
-							const { account } = message;
+						const { account } = message;
 
-							if (!account) {
-								console.error('[App.onInit]: Account not found');
-								return;
-							};
+						if (!account) {
+							console.error('[App.onInit]: Account not found');
+							return;
+						};
 
-							keyboard.setPinChecked(isPinChecked);
-							S.Auth.accountSet(account);
-							S.Common.redirectSet(route);
-							S.Common.configSet(account.config, false);
+						keyboard.setPinChecked(isPinChecked);
+						S.Auth.accountSet(account);
+						S.Common.redirectSet(route);
+						S.Common.configSet(account.config, false);
 
-							const param = route ? U.Router.getParam(route) : {};
-							const spaceId = param.spaceId || Storage.get('spaceId');
-							const routeParam = { 
-								onRouteChange: hide,
-							};
+						const param = route ? U.Router.getParam(route) : {};
+						const spaceId = param.spaceId || Storage.get('spaceId');
+						const routeParam = { 
+							onRouteChange: hide,
+						};
 
-							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, routeParam, true);
-							} else {
-								U.Data.onAuthWithoutSpace(routeParam);
-							};
+						if (spaceId) {
+							U.Router.switchSpace(spaceId, '', false, routeParam, true);
+						} else {
+							U.Data.onAuthWithoutSpace(routeParam);
+						};
 
-							U.Data.onInfo(account.info);
-							U.Data.onAuthOnce();
-						});
+						U.Data.onInfo(account.info);
+						U.Data.onAuthOnce();
 					});
 				});
+			});
 
-				win.off('unload').on('unload', (e: any) => {
-					if (!S.Auth.token) {
-						return;
-					};
+			win.off('unload').on('unload', (e: any) => {
+				if (!S.Auth.token) {
+					return;
+				};
 
-					e.preventDefault();
-					U.Data.closeSession(() => window.close());
-					return false;
-				});
-			} else {
-				S.Common.redirectSet(route);
-				U.Router.go('/auth/setup/init', { replace: true });
-				cb();
-			};
+				e.preventDefault();
+				U.Data.closeSession(() => window.close());
+				return false;
+			});
 		} else {
 			cb();
 		};

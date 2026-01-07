@@ -36,7 +36,7 @@
 				width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute; 
 				border-radius: 16px; z-index: 1;
 			}
-			#marker.anim { transition: all 0.2s ease-in-out; }
+			#marker.anim { transition: transform 0.1s ease-in-out; }
 
 			.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; }
 			.icon.withBackground { border-radius: 10px; }
@@ -44,8 +44,8 @@
 
 			.tab {
 				padding: 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
-				color: var(--color-text-secondary);
-				display: flex; flex-direction: row; align-items: center; position: relative;
+				color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative;
+				transition: color 0.1s ease-in-out;
 			}
 
 			.tab.noClose {
