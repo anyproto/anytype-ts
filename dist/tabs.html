@@ -7,52 +7,81 @@
 		<script src="./js/jquery.js"></script>
 
 		<style type="text/css">
-			* { margin: 0px; padding: 0px; box-sizing: border-box; }
+			* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
 	
 			@font-face {
 				font-family: 'Inter'; font-style: normal; font-weight: 500;
 				src: url('./font/inter/medium.woff2') format('woff2');
 			}
 
-			body { font-family: 'Inter', sans-serif; font-size: 14px; color: #000; background: transparent; }
-
-			#tabs { display: flex; flex-direction: row; height: 28px; padding: 4px 12px 0px 12px; -webkit-app-region: drag; }
-			#tabs.platform-darwin { padding-left: 76px; }
-
-			.tab { 
-				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 2px 0px 8px; 
-				cursor: default; flex-basis: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px; overflow: hidden;
-				flex: 1 1; max-width: 200px;
+			body { 
+				font-family: 'Inter', sans-serif; font-size: 14px; color: #000; background: transparent; 
+				font-weight: 500; line-height: 22px; letter-spacing: -0.12px; padding: 8px;
 			}
-			.tab.noClose { padding-right: 8px; }
-			.tab.active { background-color: #f7f7f7; }
-			.tab.isAdd { justify-content: center; font-size: 18px; font-weight: bold; flex-basis: 28px; padding: 0px 8px; flex-grow: 0; flex-shrink: 0; }
+			body.platform-darwin { padding-left: 88px; }
+
+			.container { position: relative; }
+			#tabs { display: flex; flex-direction: row; background: #f2f2f2; border-radius: 18px; }
+			#marker { 
+				width: 200px; height: calc(100% - 4px); background: #fff; left: 2px; top: 2px; position: absolute; 
+				border-radius: 16px;
+			}
+			#marker.anim { transition: all 0.2s ease-in-out; }
+
+			.tab { padding: 8px 12px; cursor: default; width: 204px; position: relative; z-index: 1; color: #828282; }
+			.tab.noClose {}
+			.tab.active { color: #000; }
+			.tab.isAdd {}
 
 			.tab {
-				.clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; overflow: hidden; }
-				.name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-				.image { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
-				.icon.close { 
-					width: 20px; height: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; 
-					background-image: url('./img/icon/close.svg'); flex-shrink: 0; border-radius: 6px; background-size: 16px;
+				.clickable { display: flex; flex-direction: row; gap: 0px 6px; }
+				.name { height: 20px; line-height: 20px; }
+				.image { 
+					width: 20px; height: 20px; background-size: 18px; background-position: center; background-repeat: no-repeat;
+
 				}
-				.icon.close:hover { background-color: rgba(0, 0, 0, 0.05); }
+				.icon.close { 
+				}
+				.icon.close:hover {}
 			}
 		</style>
 	</head>
 	<body>
-		<div id="tabs"></div>
+		<div class="container">
+			<div id="tabs"></div>
+			<div id="marker"></div>
+		</div>
 
 		<script type="text/javascript">
 			$(document).ready(() => {
+				const body = $('body');
 				const electron = window.Electron;
 				const currentWindow = electron.currentWindow();
 				const winId = Number(currentWindow?.windowId) || 0;
-				const container = $('#tabs').addClass(`platform-${electron.platform}`);
+				const container = $('#tabs');
+				const marker = $('#marker');
 
-				const setActive = (id) => {
+				body.addClass(`platform-${electron.platform}`);
+
+				const setActive = (id, animate) => {
 					container.find('.tab.active').removeClass('active');
-					container.find(`#tab-${id}`).addClass('active');
+
+					const active = container.find(`#tab-${id}`);
+					if (!active.length) {
+						return;
+					};
+
+					const offset = active.position();
+
+					active.addClass('active');
+
+					marker.toggleClass('anim', animate);
+					marker.css({
+						width: active.outerWidth(),
+						transform: `translate3d(${offset.left}px, 0px, 0px)`
+					});
+
+					console.log('Set active tab:', id);
 				};
 
 				const setTabs = (tabs, id) => {
@@ -78,7 +107,7 @@
 						const clickable = tab.find('.clickable');
 
 						if (icon) {
-							clickable.prepend($(`<img src="${icon}" class="image" />`));
+							clickable.prepend($(`<div class="image" style="background-image: url('${icon}')" />`));
 						};
 
 						if (tabs.length === 1) {
@@ -87,8 +116,8 @@
 						};
 
 						clickable.off('click').on('click', () => {
-							electron.Api(winId, 'setActiveTab', Number(i));
-							setActive(i);
+							electron.Api(winId, 'setActiveTab', it.id);
+							setActive(it.id, true);
 						});
 
 						tab.find('.icon.close').off('click').on('click', (e) => {
@@ -102,7 +131,7 @@
 
 					plus.off('click').on('click', () => electron.Api(winId, 'createTab'));
 			
-					setActive(id);
+					setActive(id, false);
 				};
 
 				electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));

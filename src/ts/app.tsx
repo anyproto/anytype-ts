@@ -505,7 +505,6 @@ const App: FC = () => {
 					) : ''}
 
 					<MenuBar />
-					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
 

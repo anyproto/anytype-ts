@@ -63,7 +63,7 @@
 
 	> .bottom { position: relative; }
 	> .bottom {
-		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-highlight-light-solid) 100%); }
+		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 100%); }
 
 		&.isMinimal { height: 56px; display: flex; align-items: flex-end; transition: height $easeInQuint 0.15s; }
 		&.isMinimal {
@@ -126,7 +126,7 @@
 			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
 		}
 
-		&.isDragging { z-index: 1; background-color: var(--color-shape-highlight-light-solid); }
+		&.isDragging { z-index: 1; background-color: var(--color-bg-primary); }
 
 		&.isLoading {
 			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 32px; height: 32px; }

@@ -38,10 +38,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		return isSpace ? getSpaceSettings() : getAppSettings();
 	};
 
-	const getSections = (): any[] => {
-		return isSpace ? getSpaceSettings() : getAppSettings();
-	};
-
 	const getSpaceSettings = () => {
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();

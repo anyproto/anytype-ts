@@ -72,8 +72,8 @@ class Util {
 		theme = String(theme || '');
 
 		const bg = {
-			'': '#f7f7f7',
-			dark: '#1e1e1e',
+			'': '#fff',
+			dark: '#171717',
 		};
 		return bg[theme];
 	};
