@@ -548,6 +548,16 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		);
 	};
 
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
 	return (
 		<div>
 			{sectionPage}
