@@ -22,7 +22,7 @@
 	.pageWrapper { padding: 8px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
-		&.isClosed { padding: 0px; }
+		&.isClosed { padding-left: 0px; }
 	}
 
 	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
