@@ -246,7 +246,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 								isSub: true,
 								className,
 								classNameWrap,
-								rebind: menuContext.ref?.rebind,
+								rebind: menuContext.getChildRef()?.rebind,
 								parentId: menuContext.props.id,
 								data: {
 									rootId,

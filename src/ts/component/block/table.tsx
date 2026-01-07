@@ -221,9 +221,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				onSwitch: (e: any, item: any) => {
 					if (item.onSwitch) {
 						item.onSwitch(e, !item.switchValue, () => {
-							if (menuContext.ref && menuContext.ref.updateOptions) {
-								menuContext.ref.updateOptions(getOptions(type, rowId, columnId, cellId));
-							};
+							menuContext.getChildRef()?.updateOptions?.(getOptions(type, rowId, columnId, cellId));
 						});
 					};
 				},
@@ -247,7 +245,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						onOpen: context => menuSubContext = context,
-						rebind: menuContext.ref.rebind,
+						rebind: menuContext.getChildRef()?.rebind,
 						parentId: menuContext.props.id,	
 						data: {
 							rootId, 

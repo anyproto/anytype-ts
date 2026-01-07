@@ -146,7 +146,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 
 				menuParam = Object.assign(menuParam, {
 					className: 'single',
-					rebind: menuContext.current.ref.rebind,
+					rebind: menuContext.current.getChildRef()?.rebind,
 					parentId: menuContext.current.props.id,
 				});
 

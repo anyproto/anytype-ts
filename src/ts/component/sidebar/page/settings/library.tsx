@@ -233,8 +233,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 					storageSet(storage);
 					initSort();
 					load();
-
-					menuContext.ref.updateOptions(U.Menu.getLibrarySortOptions(sortId.current, sortType.current));
+					menuContext.getChildRef()?.updateOptions?.(U.Menu.getLibrarySortOptions(sortId.current, sortType.current));
 				},
 			}
 		});

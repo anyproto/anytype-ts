@@ -348,7 +348,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
-		const { getId, getSize } = menuContext.current;
+		const { getId, getSize, close } = menuContext.current;
 		const types = Relation.getGroupTypes(type);
 
 		S.Menu.open('relationSuggest', { 
@@ -368,14 +368,12 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				types,
 				skipKeys: relations.map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					const cb = (message: any) => {
+					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, (message: any) => {
 						saveParam.current[id] = relation.relationKey;
 						save();
-						menuContext.current?.close();
+						close();
 						onChange?.(message);
-					};
-
-					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, cb);
+					});
 				},
 			}
 		});

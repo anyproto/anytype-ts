@@ -120,7 +120,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			};
 
 			save(values);
-			menuContext.current?.ref?.updateOptions(getTypeOptions());
+			menuContext.current?.getChildRef()?.updateOptions(getTypeOptions());
 		};
 
 		return S.Record.getTypes().

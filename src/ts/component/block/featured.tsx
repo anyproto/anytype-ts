@@ -330,7 +330,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			offsetX: menuContext.current.getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			rebind: menuContext.current.ref.rebind,
+			rebind: menuContext.current.getChildRef().rebind,
 			parentId: menuContext.current.props.id,
 			data: {
 				isBig: true,
