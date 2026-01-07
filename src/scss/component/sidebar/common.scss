@@ -30,12 +30,12 @@
 		}
 	}
 
-	.pageWrapper { padding: 4px 0px 0px 0px; z-index: 2; display: flex; }
+	.pageWrapper { padding: 8px 0px 8px 8px; z-index: 2; display: flex; }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; padding: 4px 0px; }
+	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
 		
