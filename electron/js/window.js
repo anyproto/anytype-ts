@@ -229,7 +229,7 @@ class WindowManager {
 
 	createTab (win, param) {
 		const id = randomUUID();
-		const view = new WebContentsView({ 
+		const view = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}` ],
@@ -247,6 +247,8 @@ class WindowManager {
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
 		remote.enable(view.webContents);
+
+		Util.send(win, 'create-tab', { id: view.id, data: view.data });
 		this.setActiveTab(win, id);
 	};
 
@@ -274,7 +276,7 @@ class WindowManager {
 		win.activeIndex = index;
 		win.contentView.addChildView(view);
 
-		this.updateTabsBar(win, id);
+		Util.send(win, 'set-active-tab', id);
 	};
 
 	updateTab (win, id, data) {
@@ -293,7 +295,7 @@ class WindowManager {
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
-	removeTab (win, id, updateActive) {
+	removeTab (win, id, updateActive, updateBar) {
 		id = String(id || '');
 
 		if (!id || !win.views || (win.views.length <= 1)) {
@@ -310,7 +312,12 @@ class WindowManager {
 		win.views.splice(index, 1);
 
 		if (updateActive) {
-			this.setActiveTab(win, win.views[index - 1]?.id);
+			const newIndex = index < win.views.length ? index : index - 1;
+			this.setActiveTab(win, win.views[newIndex]?.id);
+		};
+
+		if (updateBar !== false) {
+			Util.send(win, 'remove-tab', id);
 		};
 	};
 
@@ -324,13 +331,10 @@ class WindowManager {
 		const views = win.views.filter(it => it.id != id);
 
 		views.forEach(view => {
-			this.removeTab(win, view.id);
+			this.removeTab(win, view.id, false, false);
 		});
 
 		this.setActiveTab(win, id);
-	};
-
-	updateTabsBar (win, id) {
 		Util.send(win, 'update-tabs', win.views.map(it => ({ id: it.id, data: it.data })), id);
 	};
 

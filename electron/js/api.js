@@ -38,6 +38,7 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
 			token: String(win.token || ''),
+			activeIndex: win.activeIndex || 0,
 		};
 	};
 

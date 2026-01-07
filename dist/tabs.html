@@ -7,6 +7,15 @@
 		<script src="./js/jquery.js"></script>
 
 		<style type="text/css">
+			:root {
+				--color-text-primary: #252525;
+				--color-text-secondary: #828282;
+				--color-bg-primary: #fff;
+				--color-shape-tertiary: #f2f2f2;
+				--color-shape-highlight-dark: rgba(0, 0, 0, 0.11);
+				--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
+			}
+
 			* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
 	
 			@font-face {
@@ -15,39 +24,59 @@
 			}
 
 			body { 
-				font-family: 'Inter', sans-serif; font-size: 14px; color: #000; background: transparent; 
+				font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent; 
 				font-weight: 500; line-height: 22px; letter-spacing: -0.12px; padding: 8px;
 			}
 			body.platform-darwin { padding-left: 88px; }
 
 			.container { position: relative; }
-			#tabs { display: flex; flex-direction: row; background: #f2f2f2; border-radius: 18px; }
+
+			#tabs { display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; }
 			#marker { 
-				width: 200px; height: calc(100% - 4px); background: #fff; left: 2px; top: 2px; position: absolute; 
-				border-radius: 16px;
+				width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute; 
+				border-radius: 16px; z-index: 1;
 			}
 			#marker.anim { transition: all 0.2s ease-in-out; }
 
-			.tab { padding: 8px 12px; cursor: default; width: 204px; position: relative; z-index: 1; color: #828282; }
-			.tab.noClose {}
-			.tab.active { color: #000; }
+			.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; }
+			.icon.withBackground { border-radius: 10px; }
+			.icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
+
+			.tab {
+				padding: 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+				color: var(--color-text-secondary);
+				display: flex; flex-direction: row; align-items: center; position: relative;
+			}
+
+			.tab.noClose .icon.close {
+				display: none !important;
+			}
+
+			.tab.active { color: var(--color-text-primary); }
+			.tab.active {
+				.div { display: none; }
+			}
+
+			.tab:has(+ .tab.active) .div { display: none; }
+
 			.tab.isAdd {
-				.icon { 
-					width: 20px; height: 20px; background-image: url('./img/icon/plus.svg'); background-size: contain; 
-					background-position: center; background-repeat: no-repeat;
-				}
+				flex: 0 0 auto;
+				.icon { background-image: url('./img/icon/plus.svg'); }
 			}
 
 			.tab {
-				.clickable { display: flex; flex-direction: row; gap: 0px 6px; }
+				.clickable {
+					display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: relative; z-index: 2;
+					overflow: hidden; flex-grow: 1; padding-left: 6px;
+				}
 				.name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
-				.image { 
-					width: 20px; height: 20px; background-size: 18px; background-position: center; background-repeat: no-repeat;
-					flex-shrink: 0;
+				.icon { background-size: 18px; flex-shrink: 0; }
+				.icon.close { background-image: url('./img/icon/close.svg'); }
+
+				.div {
+					position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
+					z-index: 0; right: 0px;
 				}
-				.icon.close { 
-				}
-				.icon.close:hover {}
 			}
 		</style>
 	</head>
@@ -88,6 +117,9 @@
 				};
 
 				const renderTab = (item) => {
+					item = item || {};
+					item.data = item.data || {};
+
 					const title = String(item.data.title || 'New tab');
 					const icon = String(item.data.icon || '');
 
@@ -95,14 +127,15 @@
 						<div id="tab-${item.id}" class="tab">
 							<div class="clickable">
 								<div class="name">${title}</div>
-							</div>	
-							<div class="icon close"></div>
+								<div class="icon close withBackground"></div>
+							</div>
+							<div class="div"></div>
 						</div>
 					`);
 
 					const clickable = tab.find('.clickable');
 					if (icon) {
-						clickable.prepend($(`<div class="image" style="background-image: url('${icon}')" />`));
+						clickable.prepend($(`<div class="icon" style="background-image: url('${icon}')" />`));
 					};
 
 					clickable.off('click').on('click', () => {
@@ -112,12 +145,8 @@
 
 					tab.find('.icon.close').off('click').on('click', (e) => {
 						e.stopPropagation();
-						electron.Api(winId, 'removeTab', [ tab.id, true ]);
+						electron.Api(winId, 'removeTab', [ item.id, true ]);
 					});
-
-					if (tabs.length === 1) {
-						tab.addClass('noClose');
-					};
 
 					return tab;
 				};
@@ -125,7 +154,7 @@
 				const renderAdd = () => {
 					const tab = $(`
 						<div class="tab isAdd">
-							<div class="icon"></div>
+							<div class="icon withBackground"></div>
 						</div>
 					`);
 
@@ -134,6 +163,15 @@
 					});
 
 					return tab;
+				};
+
+				const updateNoClose = () => {
+					const tabs = container.find('.tab:not(.isAdd)');
+					if (tabs.length === 1) {
+						tabs.addClass('noClose');
+					} else {
+						tabs.removeClass('noClose');
+					};
 				};
 
 				const setTabs = (tabs, id) => {
@@ -145,16 +183,34 @@
 					});
 
 					container.append(renderAdd());
+					updateNoClose();
 					setActive(id, false);
 				};
 
 				electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
+
 				electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
+
+				electron.on('set-active-tab', (e, id) => setActive(id, true));
+
+				electron.on('create-tab', (e, tab) => {
+					const existing = container.find(`#tab-${tab.id}`);
+					if (!existing.length) {
+						container.find('.tab.isAdd').before(renderTab(tab));
+						updateNoClose();
+					};
+				});
+
 				electron.on('update-tab', (e, tab) => {
 					const existing = container.find(`#tab-${tab.id}`);
 					if (existing.length) {
 						existing.replaceWith(renderTab(tab));
 					};
+				});
+
+				electron.on('remove-tab', (e, id) => {
+					container.find(`#tab-${id}`).remove();
+					updateNoClose();
 				});
 			});
 		</script>

@@ -21,6 +21,7 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
+import { transition } from 'd3';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -196,7 +197,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 		
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, activeIndex } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -239,7 +240,11 @@ const App: FC = () => {
 		};
 
 		const cb = () => {
+			const t = activeIndex > 0 ? 50 : 300;
+
+			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
+			anim.css({ transitionDuration: `${t}ms` });
 
 			window.setTimeout(() => {
 				raf(() => anim.removeClass('from'));
@@ -248,10 +253,10 @@ const App: FC = () => {
 
 					window.setTimeout(() => {
 						rootLoader.css({ opacity: 0 });
-						window.setTimeout(() => hide(), 300);
-					}, 500);
-				}, 1500);
-			}, 1000);
+						window.setTimeout(() => hide(), t);
+					}, activeIndex );
+				}, t * 5);
+			}, t * 3);
 		};
 
 		if (accountId) {
