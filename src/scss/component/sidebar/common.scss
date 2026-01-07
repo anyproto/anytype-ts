@@ -2,17 +2,6 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
-.sidebarHeadIcon
-.sidebarHeadIcon {
-	&.sidebarAnimation { transition-property: left; }
-	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
-}
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 74px; display: block; }
-#sidebarLeftButton.withSidebarLeft { background-image: url('~img/icon/widget/toggle1.svg'); }
-#sidebarLeftButton.withMinimalVault { display: none !important; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
@@ -30,9 +19,10 @@
 		}
 	}
 
-	.pageWrapper { padding: 8px 0px 8px 8px; z-index: 2; display: flex; }
+	.pageWrapper { padding: 8px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
+		&.isClosed { padding: 0px; }
 	}
 
 	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
@@ -40,11 +30,6 @@
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
 		
 		&.sidebarAnimation { transition-property: transform; }
-
-		&:not(.withSidebarLeft) {
-			.sidebarPage { margin-left: 4px; width: calc(100% - 4px); }
-		}
-
 		&.isClosing,
 		&.isOpening { 
 			.sidebarPage {
@@ -115,28 +100,6 @@ html.platformMac {
 			.sidebarPage {
 				> .head {
 					.side.left { transition: padding-left $transitionSidebarTime linear; }
-				}
-			}
-		}
-
-		.subPageWrapper:not(.withSidebarLeft) {
-			.sidebarPage {
-				> .head {
-					.side.left { padding-left: 90px; }
-				}
-			}
-		}
-	}
-
-	.isFullScreen {
-		#sidebarLeftButton { left: 16px; }
-
-		.sidebar {
-			.subPageWrapper:not(.withSidebarLeft) {
-				.sidebarPage {
-					> .head {
-						.side.left { padding-left: 36px; }
-					}
 				}
 			}
 		}

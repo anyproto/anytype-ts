@@ -8,6 +8,7 @@
 		.name { @include text-overflow-nw; }
 
 		&.withMessages { padding-left: 16px; padding-right: 16px; }
+		&.isMinimal { height: 8px; }
 	}
 
 	> .body { padding: 0px; overflow: hidden; }

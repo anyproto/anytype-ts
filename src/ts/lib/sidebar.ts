@@ -498,7 +498,6 @@ class Sidebar {
 		const objRight = this.rightPanelGetNode(isPopup);
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
 		const dummyLeft = $('#sidebarDummyLeft');
-		const leftButton = $('#sidebarLeftButton');
 
 		if ((widthLeft === null) && objLeft && objLeft.length) {
 			widthLeft = objLeft.outerWidth();
@@ -548,10 +547,6 @@ class Sidebar {
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
 			
-			leftButton.toggleClass('sidebarAnimation', animate);
-			leftButton.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			leftButton.toggleClass('withMinimalVault', isVaultMinimal);
-
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			pageFlex.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);

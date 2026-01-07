@@ -93,22 +93,6 @@
 	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
-.header:not(.withSidebarTotalLeft) {
-	.side.left { padding-left: 106px; }
-}
-
-html:not(.platformMac) {
-	.header:not(.withSidebarTotalLeft) {
-		.side.left { padding-left: 52px; }
-	}
-}
-
-body.isFullScreen {
-	.header:not(.withSidebarTotalLeft) {
-		.side.left { padding-left: 52px; }
-	}
-}
-
 .header.authIndex { height: 44px; width: 100% !important; }
 .header.authIndex {
 	.side.left { padding: 86px; }
