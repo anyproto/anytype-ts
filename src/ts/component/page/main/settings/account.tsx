@@ -119,7 +119,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 								<Button
 									color="blank"
 									text={translate('membershipUpsellAnyIdExplorePlans')}
-									onClick={() => Action.openSettings('membership', analytics.route.settingsAccount)}
+									onClick={onUpsell}
 								/>
 							</div>
 						</div>

@@ -278,11 +278,7 @@ class UtilData {
 			return;
 		};
 
-		C.ObjectOpen(widgets, '', space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
-				return;
-			};
-
+		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				S.Common.pinInit(() => {
 					keyboard.initPinCheck();

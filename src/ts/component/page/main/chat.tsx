@@ -33,7 +33,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const open = () => {
 		idRef.current = rootId;
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 

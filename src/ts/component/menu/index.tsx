@@ -173,7 +173,6 @@ const Components: any = {
 
 interface RefProps extends I.MenuRef {
 	getChildRef: () => any;
-	ref: any;
 	close: (callBack?: () => void) => void;
 	getId: () => string;
 	getSize: () => { width: number; height: number; };

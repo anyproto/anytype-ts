@@ -45,7 +45,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 

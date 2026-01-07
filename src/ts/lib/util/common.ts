@@ -521,44 +521,34 @@ class UtilCommon {
 	 * @param {any} context - The React context or component.
 	 * @returns {boolean} True if no critical error, false otherwise.
 	 */
-	checkErrorOnOpen (rootId: string, code: number, context: any): boolean {
+	checkErrorOnOpen (rootId: string, code: number): boolean {
 		if (!rootId || !code) {
 			return true;
-		};
-
-		if (context) {
-			context.setState({ isLoading: false });
 		};
 
 		if (!this.checkErrorCommon(code)) {
 			return false;
 		};
 
-		if ([ J.Error.Code.NOT_FOUND, J.Error.Code.OBJECT_DELETED ].includes(code)) {
-			if (context) {
-				context.setState({ isDeleted: true });
-			};
-		} else {
-			const logPath = this.getElectron().logPath();
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'error',
+				title: translate('commonError'),
+				text: translate('popupConfirmObjectOpenErrorText'),
+				textConfirm: translate('popupConfirmObjectOpenErrorButton'),
+				onConfirm: () => {
+					const logPath = this.getElectron().logPath();
 
-			S.Popup.open('confirm', {
-				data: {
-					icon: 'error',
-					title: translate('commonError'),
-					text: translate('popupConfirmObjectOpenErrorText'),
-					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
-					onConfirm: () => {
-						C.DebugTree(rootId, logPath, false, (message: any) => {
-							if (!message.error.code) {
-								Action.openPath(logPath);
-							};
-						});
+					C.DebugTree(rootId, logPath, false, (message: any) => {
+						if (!message.error.code) {
+							Action.openPath(logPath);
+						};
+					});
 
-						U.Space.openDashboard();
-					}
-				},
-			});
-		};
+					U.Space.openDashboard();
+				}
+			},
+		});
 
 		return false;
 	};
