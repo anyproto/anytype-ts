@@ -667,6 +667,17 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			</div>
 		</div>
 	);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => filterRef.current,
+		onClick,
+		onOver,
+	}), []);
 	
 	return (
 		<div>
