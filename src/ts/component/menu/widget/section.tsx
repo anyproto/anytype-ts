@@ -191,6 +191,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		onSortEnd,
 	}), []);
 	
 	return (

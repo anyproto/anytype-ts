@@ -758,19 +758,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getIndex (): number {
-		if (!this.ref) {
-			return -1;
-		};
-
-		return this.ref.getIndex ? this.ref.getIndex() : this.ref.n;
+		return this.ref ? Number(this.ref.getIndex?.()) || 0 : -1;
 	};
 
 	setIndex (n: number) {
-		if (!this.ref) {
-			return;
-		};
-
-		this.ref.setIndex ? this.ref.setIndex(n) : this.ref.n = n;
+		this.ref?.setIndex?.(n);
 	};
 
 	onKeyDown (e: any) {
@@ -952,36 +944,20 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getInputRef () {
-		if (!this.ref) {
-			return null;
-		};
-		if (this.ref.getFilterRef) {
-			return this.ref.getFilterRef();
-		};
-		return this.ref.refFilter || this.ref.refName;
+		return this.ref?.getFilterRef?.();
 	};
 
 	getListRef () {
-		if (!this.ref) {
-			return null;
-		};
-
-		if (this.ref.refList) {
-			return this.ref.refList;
-		} else 
-		if (this.ref.getListRef) {
-			return this.ref.getListRef();
-		};
-
-		return null;
+		return this.ref?.getListRef?.();
 	};
 
 	onSortMove (dir: number) {
+		const items = this.ref.getItems();
 		const index = this.getIndex();
 
 		this.setIndex(index + dir);
 		this.checkIndex();
-		this.ref.onSortEnd({ oldIndex: index, newIndex: index + dir });
+		this.ref.onSortEnd({ active: items[index], over: items[this.getIndex()] });
 	};
 
 	checkIndex () {

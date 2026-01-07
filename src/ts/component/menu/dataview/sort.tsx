@@ -362,6 +362,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setIndex: (i: number) => n.current = i,
 		onClick,
 		getListRef: () => listRef.current,
+		onSortEnd,
 	}), []);
 	
 	return (

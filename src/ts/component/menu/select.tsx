@@ -18,7 +18,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { 
 		filter, value, disabled, placeholder, noVirtualisation, menuLabel, noKeys, preventFilter, withAdd, 
-		canSelectInitial, onSelect, noClose, noScroll, maxHeight, noFilter, 
+		canSelectInitial, onSelect, noClose, noScroll, maxHeight, noFilter, onSwitch,
 	} = data;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
 	const filterRef = useRef(null);
@@ -145,16 +145,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		
 		if (!disabled && onSelect) {
 			onSelect(e, item);
-		};
-	};
-
-	const onSwitch = (e: any, item: any) => {
-		const { param } = props;
-		const { data } = param;
-		const { onSwitch } = data;
-
-		if (onSwitch) {
-			onSwitch(e, item);
 		};
 	};
 
@@ -358,6 +348,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getListRef: () => listRef.current,
 		getFilterRef: () => filterRef.current,
 		updateOptions,
+		onSwitch,
 	}), []);
 	
 	return (

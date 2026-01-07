@@ -63,35 +63,25 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	};
 	
 	const onKeyDownHandler = (e: any) => {
-		const k = keyboard.eventKey(e);
-
 		let ret = false;
 
-		keyboard.shortcut('enter', e, () => {
-			save();
-			ret = true;
-			window.setTimeout(() => {
-				close();
-			}, 100);
-		});
-
-		if (ret) {
-			return;
-		};
-
 		if (nameRef.current?.isFocused()) {
-			if (k != Key.down) {
-				return;
-			} else {
+			keyboard.shortcut('arrowdown', e, () => {
 				nameRef.current?.blur();
-				n.current = -1;
-			};
-		} else {
-			if ((k == Key.up) && !n.current) {
-				n.current = -1;
+				n.current = 0;
+			});
+
+			keyboard.shortcut('enter', e, () => {
+				save();
+				ret = true;
+				window.setTimeout(() => close(), 100);
+			});
+		} else 
+		if (!n.current) {
+			keyboard.shortcut('arrowup', e, () => {
 				nameRef.current?.focus();
-				return;
-			};
+				n.current = -1;
+			});
 		};
 
 		if (ret) {
