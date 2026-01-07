@@ -5,7 +5,6 @@ import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
@@ -218,7 +217,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getRowHeight = (item: any) => {
 		let h = HEIGHT_ITEM;
-		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
