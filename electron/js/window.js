@@ -295,7 +295,7 @@ class WindowManager {
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
-	removeTab (win, id, updateActive, updateBar) {
+	removeTab (win, id, updateActive) {
 		id = String(id || '');
 
 		if (!id || !win.views || (win.views.length <= 1)) {
@@ -310,14 +310,11 @@ class WindowManager {
 		};
 
 		win.views.splice(index, 1);
+		Util.send(win, 'remove-tab', id);
 
 		if (updateActive) {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
-		};
-
-		if (updateBar !== false) {
-			Util.send(win, 'remove-tab', id);
 		};
 	};
 
@@ -331,11 +328,10 @@ class WindowManager {
 		const views = win.views.filter(it => it.id != id);
 
 		views.forEach(view => {
-			this.removeTab(win, view.id, false, false);
+			this.removeTab(win, view.id, false);
 		});
 
 		this.setActiveTab(win, id);
-		Util.send(win, 'update-tabs', win.views.map(it => ({ id: it.id, data: it.data })), id);
 	};
 
 	getPreferencesForNewWindow () {

@@ -167,11 +167,7 @@
 
 				const updateNoClose = () => {
 					const tabs = container.find('.tab:not(.isAdd)');
-					if (tabs.length === 1) {
-						tabs.addClass('noClose');
-					} else {
-						tabs.removeClass('noClose');
-					};
+					tabs.toggleClass('noClose', tabs.length == 1);
 				};
 
 				const setTabs = (tabs, id) => {
@@ -191,7 +187,7 @@
 
 				electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
 
-				electron.on('set-active-tab', (e, id) => setActive(id, true));
+				electron.on('set-active-tab', (e, id) => setActive(id, false));
 
 				electron.on('create-tab', (e, tab) => {
 					const existing = container.find(`#tab-${tab.id}`);

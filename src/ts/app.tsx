@@ -21,7 +21,7 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
-import { transition } from 'd3';
+import { active, transition } from 'd3';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -260,7 +260,7 @@ const App: FC = () => {
 		};
 
 		if (accountId) {
-			if (isChild) {
+			if (isChild || (activeIndex > 0)) {
 				Renderer.send('keytarGet', accountId).then(phrase => {
 					U.Data.createSession(phrase, '', token, () => {
 						C.AccountSelect(accountId, '', 0, '', (message: any) => {
