@@ -53,11 +53,8 @@
 			}
 
 			.tab.active { color: var(--color-text-primary); }
-			.tab.active {
-				.div { display: none; }
-			}
-
-			.tab:has(+ .tab.active) .div { display: none; }
+			.tab.active .div { display: none; }
+			.tab.hideDiv .div { display: none; }
 
 			.tab.isAdd { flex: 0 0 auto; }
 			.tab.isAdd {
@@ -99,6 +96,7 @@
 
 				const setActive = (id, animate) => {
 					container.find('.tab.active').removeClass('active');
+					container.find('.tab.hideDiv').removeClass('hideDiv');
 
 					const active = container.find(`#tab-${id}`);
 					if (!active.length) {
@@ -108,6 +106,9 @@
 					const offset = active.position();
 
 					active.addClass('active');
+
+					// Hide divider on the previous tab
+					active.prev('.tab:not(.isAdd)').addClass('hideDiv');
 
 					marker.toggleClass('anim', animate);
 					marker.css({
