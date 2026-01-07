@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
-import { set } from 'lodash';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -12,8 +11,6 @@ const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
 const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
-	
-	emptyLength = 0;
 	
 	const { param, getId, getSize, close, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;

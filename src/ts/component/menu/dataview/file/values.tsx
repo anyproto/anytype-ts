@@ -235,8 +235,6 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	useImperativeHandle(ref, () => ({
 		getItems,
-		getIndex: () => n.current,
-		setIndex: (i: number) => n.current = i,
 		onSortEnd,
 	}), []);
 

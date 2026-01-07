@@ -1,8 +1,9 @@
-const { app, BrowserWindow, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
+const { randomUUID } = require('crypto');
 
 const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
@@ -15,6 +16,7 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
+const TAB_BAR_HEIGHT = 44;
 
 class WindowManager {
 
@@ -30,19 +32,8 @@ class WindowManager {
 			backgroundColor: bgColor,
 			show: false,
 			titleBarStyle: 'hidden-inset',
-			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
-				additionalArguments: [],
-			},
 		}, param);
-
-		param.webPreferences = Object.assign({
-			nativeWindowOpen: true,
-			contextIsolation: true,
-			nodeIntegration: false,
-			spellcheck: true,
-			sandbox: false,
-		}, param.webPreferences);
+		param.webPreferences = Object.assign(this.getPreferencesForNewWindow(), param.webPreferences || {});
 
 		let win = new BrowserWindow(param);
 
@@ -52,10 +43,6 @@ class WindowManager {
 		win.windowId = win.id;
 
 		this.list.add(win);
-
-		win.on('close', () => {
-			Util.send(win, 'will-close-window', win.id);
-		});
 
 		win.on('closed', () => {
 			this.list.delete(win);
@@ -138,16 +125,24 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		win.loadURL(is.development ? `http://localhost:${port}` : `file://${path.join(Util.appPath, 'dist', 'index.html')}`);
+		win.loadURL(this.getUrlForNewWindow());
 
 		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
+		win.on('resize', () => {
+			const { width, height } = win.getBounds();
+
+			if (win.views && win.views[win.activeIndex]) {
+				win.views[win.activeIndex].setBounds({ x: 0, y: TAB_BAR_HEIGHT, width, height: height - TAB_BAR_HEIGHT });
+			};
+		});
 
 		if (is.development) {
 			win.toggleDevTools();
 		};
 
+		this.createTab(win);
 		return win;
 	};
 
@@ -230,6 +225,148 @@ class WindowManager {
 				});
 				break;
 		};
+	};
+
+	createTab (win, param) {
+		const id = randomUUID();
+		const view = new WebContentsView({ 
+			webPreferences: {
+				...this.getPreferencesForNewWindow(),
+				additionalArguments: [ `--tab-id=${id}` ],
+			},
+		});
+
+		win.views = win.views || [];
+		win.activeIndex = win.activeIndex || 0;
+		win.views.push(view);
+
+		view.id = id;
+		view.data = {};
+		view.webContents.loadURL(this.getUrlForNewTab());
+
+		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
+
+		remote.enable(view.webContents);
+		this.setActiveTab(win, id);
+	};
+
+	setActiveTab (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		if (win.views[win.activeIndex]) {
+			win.contentView.removeChildView(win.views[win.activeIndex]);
+		};
+
+		const bounds = win.getBounds();
+		const index = win.views.findIndex(it => it.id == id);
+
+		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
+
+		win.activeIndex = index;
+		win.contentView.addChildView(view);
+
+		this.updateTabsBar(win, id);
+	};
+
+	updateTab (win, id, data) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		view.data = Object.assign(view.data || {}, data);
+		this.updateTabsBar(win, id);
+	};
+
+	removeTab (win, id, updateActive) {
+		id = String(id || '');
+
+		if (!id || !win.views || (win.views.length <= 1)) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		const index = win.views.findIndex(it => it.id == id);
+
+		if (win.activeIndex == index) {
+			win.contentView.removeChildView(view);
+		};
+
+		win.views.splice(index, 1);
+
+		if (updateActive) {
+			this.setActiveTab(win, win.views[index - 1]?.id);
+		};
+	};
+
+	closeOtherTabs (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const views = win.views.filter(it => it.id != id);
+
+		views.forEach(view => {
+			this.removeTab(win, view.id);
+		});
+
+		this.setActiveTab(win, id);
+	};
+
+	updateTabsBar (win, id) {
+		Util.send(win, 'update-tabs', win.views.map(it => ({ id: it.id, data: it.data })), id);
+	};
+
+	getPreferencesForNewWindow () {
+		return {
+			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
+			nativeWindowOpen: true,
+			contextIsolation: true,
+			nodeIntegration: false,
+			spellcheck: true,
+			sandbox: false,
+			additionalArguments: [],
+		};
+	};
+
+	getUrlForNewWindow () {
+		return is.development ? `http://localhost:${port}/tabs.html` : 'file://' + path.join(Util.appPath, 'dist', 'tabs.html');
+	};
+
+	getUrlForNewTab () {
+		return this.getUrlForNewWindow().replace('tabs.html', 'index.html');
+	};
+
+	getScreenSize () {
+		const ret = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+
+		try {
+			const { screen } = require('electron');
+			const primaryDisplay = screen.getPrimaryDisplay();
+			const { width, height } = primaryDisplay.workAreaSize;
+
+			ret.width = width;
+			ret.height = height;
+		} catch (e) {};
+
+		return ret;
 	};
 
 	getWindowPosition (param, displayWidth, displayHeight) {

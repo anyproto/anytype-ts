@@ -1247,7 +1247,7 @@ class Keyboard {
 		};
 
 		const match = this.getMatch();
-		const action = match?.params?.action;
+		const { action, id } = match.params;
 		const titles = {
 			index: translate('commonDashboard'),
 			graph: translate('commonGraph'),
@@ -1255,11 +1255,27 @@ class Keyboard {
 			archive: translate('commonBin'),
 		};
 
-		if (titles[action]) {
-			U.Data.setWindowTitleText(titles[action]);
+		let title = titles[action];
+
+		if (action == 'settings') {
+			const map = U.Menu.settingsSectionsMap();
+			const mapped = map[id];
+
+			title = [ translate('commonSettings') ];
+			if (mapped) {
+				title.push(mapped);
+			};
+
+			title = title.join(' › ');
+		};
+
+		if (title) {
+			U.Data.setWindowTitleText(title);
+			U.Data.setTabTitleText(title);
 		} else {
 			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
+			U.Data.setTabTitle(rootId, rootId);
 		};
 	};
 

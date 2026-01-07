@@ -213,7 +213,7 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpenedByWindowId(S.Common.windowId);
+		let home = Storage.getLastOpenedByTabId(S.Common.tabId);
 
 		// Invalid data protection
 		if (!home || !home.id) {

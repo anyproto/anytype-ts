@@ -1791,10 +1791,39 @@ class UtilMenu {
 				},
 			},
 		});
-
 	};
 
+	settingsSectionsMap () {
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		const types = U.Common.plural(10, translate('pluralObjectType'));
+		const relations = U.Common.plural(10, translate('pluralProperty'));
 
+		return {
+			exportIndex: translate('commonExport'),
+			importIndex: translate('commonImport'),
+			spaceIndex: translate('pageSettingsSpaceGeneral'),
+			spaceShare: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers'),
+			spaceNotifications: translate('commonNotifications'),
+			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
+			archive: translate('commonBin'),
+			types,
+			relations,
+			integrations: translate('pageSettingsSpaceIntegrations'),
+			index: translate('popupSettingsProfileTitle'),
+			account: translate('popupSettingsProfileTitle'),
+			personal: translate('popupSettingsPersonalTitle'),
+			language: translate('pageSettingsLanguageTitle'),
+			pinIndex: translate('popupSettingsPinTitle'),
+			phrase: translate('popupSettingsPhraseTitle'),
+			membership: translate('popupSettingsMembershipTitle'),
+			dataIndex: translate('popupSettingsLocalStorageTitle'),
+			spaceList: translate('popupSettingsSpacesListTitle'),
+			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
+			api: translate('popupSettingsApiTitle'),
+			set: types,
+			relation: relations,
+		};
+	};
 
 };
 

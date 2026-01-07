@@ -23,9 +23,7 @@ class Api {
 	lastActivityTime = Date.now();
 
 	getInitData (win) {
-		const cssPath = path.join(Util.userPath(), 'custom.css');
 		const route = win.route || '';
-		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
 
 		win.route = '';
 
@@ -38,7 +36,7 @@ class Api {
 			route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
-			css: String(css || ''),
+			css: Util.getCss(),
 			token: String(win.token || ''),
 		};
 	};
@@ -376,6 +374,33 @@ class Api {
 
 	setToken (win, token) {
 		win.token = token;
+	};
+
+	createTab (win) {
+		WindowManager.createTab(win);
+	};
+
+	getTabs (win) {
+		return { 
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })), 
+			id: win.views[win.activeIndex || 0]?.id,
+		};
+	};
+
+	setActiveTab (win, id) {
+		WindowManager.setActiveTab(win, id);
+	};
+
+	updateTab (win, id, data) {
+		WindowManager.updateTab(win, id, data);
+	};
+
+	removeTab (win, id, updateActive) {
+		WindowManager.removeTab(win, id, updateActive);
+	};
+
+	closeOtherTabs (win, id) {
+		WindowManager.closeOtherTabs(win, id);
 	};
 
 };

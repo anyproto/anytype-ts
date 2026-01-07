@@ -156,7 +156,7 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-window', onWillCloseWindow);
+		Renderer.on('will-close-tab', onWillCloseTab);
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
@@ -213,6 +213,7 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
+		S.Common.tabIdSet(electron.tabId());
 		S.Common.setLeftSidebarState('vault', '');
 
 		Action.checkDefaultSpellingLang();
@@ -312,8 +313,8 @@ const App: FC = () => {
 		};
 	};
 
-	const onWillCloseWindow = (e: any, windowId: string) => {
-		Storage.deleteLastOpenedByWindowId([ windowId ]);
+	const onWillCloseTab = (e: any, tabId: string) => {
+		Storage.deleteLastOpenedByTabId([ tabId ]);
 	};
 
 	const onPopup = (e: any, id: string, param: any, close?: boolean) => {

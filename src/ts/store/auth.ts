@@ -275,6 +275,7 @@ class AuthStore {
 			Storage.logout();
 
 			Renderer.send('setBadge', '');
+			Renderer.send('closeOtherTabs', S.Common.tabId);
 		});
 	};
 
