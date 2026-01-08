@@ -2107,6 +2107,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const isCallout = focused.isTextCallout();
 		const isQuote = focused.isTextQuote();
 		const isList = focused.isTextList();
+		const isCheckbox = focused.isTextCheckbox();
 		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
 		const childrenIds = S.Block.getChildrenIds(rootId, focused.id);
@@ -2116,7 +2117,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		let mode = I.BlockSplitMode.Bottom;
 
 		if (isList || (!isTitle && ((range.from != length) || (range.to != length)))) {
-			style = range.to ? content.style : I.TextStyle.Paragraph;
+			if (isCheckbox && !range.to) {
+				style = content.style;
+			} else {
+				style = range.to ? content.style : I.TextStyle.Paragraph;
+			};
 			mode = range.to ? I.BlockSplitMode.Bottom : I.BlockSplitMode.Top;
 		};
 
