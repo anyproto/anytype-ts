@@ -120,7 +120,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, null)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 

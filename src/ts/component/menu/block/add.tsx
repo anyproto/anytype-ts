@@ -13,8 +13,6 @@ const LIMIT = 10;
 
 const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	emptyLength = 0;
-	
 	const { param, getId, getSize, close, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, onSelect, blockCreate } = data;
