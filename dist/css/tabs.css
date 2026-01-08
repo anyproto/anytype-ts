@@ -19,21 +19,21 @@ body {
 }
 body.platform-darwin { padding-left: 88px; }
 
-.container { position: relative; transition: opacity 0.15s ease-in-out; }
+.container { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; }
 .container.isHidden { opacity: 0; pointer-events: none; }
 
-#tabs { 
+#tabs {
 	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
-	overflow-y: hidden;
+	overflow-y: hidden; -webkit-app-region: no-drag;
 }
 #tabs::-webkit-scrollbar { display: none; }
 #marker {
 	width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute;
-	border-radius: 16px; z-index: 1; pointer-events: none;
+	border-radius: 16px; z-index: 1; pointer-events: none; -webkit-app-region: no-drag;
 }
 #marker.anim { transition: width, left 0.1s ease-in-out; }
 
-.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; }
+.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; -webkit-app-region: no-drag; }
 .icon.withBackground { border-radius: 10px; }
 .icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
 
@@ -56,13 +56,14 @@ body.platform-darwin { padding-left: 88px; }
 
 .tab .clickable {
 	display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; padding-left: 6px;
+	-webkit-app-region: no-drag;
 }
-.tab .name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
-.tab .icon { background-size: 18px; flex-shrink: 0; }
+.tab .name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
+.tab .icon { background-size: 18px; flex-shrink: 0; -webkit-app-region: no-drag; }
 .tab .icon.close { background-image: url('../img/icon/close.svg'); }
 
 .tab .div {
 	position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
 	z-index: 0; right: 0px;
 }
-.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); }
+.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }

@@ -1,6 +1,6 @@
 #menuBar { 
 	height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
-	flex-direction: row;
+	flex-direction: row; -webkit-app-region: drag; 
 }
 #menuBar {
 	.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; @include text-small; font-weight: 500; }
