@@ -294,15 +294,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		return ret;
 	};
 
-	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'name', 'iconName' ], true);
-
-		let src = '';
-		if (type.iconName) {
-			src = U.Object.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
-		} else {
-			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
-		};
+	const defaultIcon = () => {
+		const src = U.Object.defaultIcon(layout, object.type, size);
 
 		cn.push('withDefault');
 		icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
@@ -311,14 +304,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	switch (layout) {
 		default: {
-			let di = 'page';
-			switch (layout) {
-				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat: di = 'chat'; break;
-				case I.ObjectLayout.Collection: di = 'collection'; break;
-				case I.ObjectLayout.Set: di = 'set'; break;
-			};
-
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
 			} else
@@ -327,13 +312,13 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				icn = icn.concat([ 'iconImage', `c${size}` ]);
 				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />;
 			} else {
-				defaultIcon(di);
+				defaultIcon();
 			};
 			break;
 		};
 
 		case I.ObjectLayout.Date:
-			defaultIcon('date');
+			defaultIcon();
 			break;
 
 		case I.ObjectLayout.Human: 
@@ -360,7 +345,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Note: {
-			defaultIcon('page');
+			defaultIcon();
 			break;
 		};
 
@@ -379,7 +364,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
 			} else {
-				defaultIcon('type');
+				defaultIcon();
 			};
 			break;
 		};
@@ -401,7 +386,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 			} else {
-				defaultIcon('bookmark');
+				defaultIcon();
 			};
 			break;
 		};
