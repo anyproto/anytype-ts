@@ -232,7 +232,10 @@ $(document).ready(() => {
 			return;
 		};
 
-		existing.replaceWith(renderTab(tab));
+		const obj = renderTab(tab);
+		obj.attr({ class: existing.attr('class') });
+
+		existing.replaceWith(obj);
 		setTimeout(() => initSortable(), 10);
 	});
 

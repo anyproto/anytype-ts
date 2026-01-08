@@ -43,7 +43,6 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
-			token: String(win.token || ''),
 			activeIndex: win.activeIndex || 0,
 			isSingleTab: win.views && (win.views.length == 1),
 		};
@@ -389,10 +388,6 @@ class Api {
 
 	toggleFullScreen (win) {
 		win.setFullScreen(!win.isFullScreen());
-	};
-
-	setToken (win, token) {
-		win.token = token;
 	};
 
 	createTab (win) {
