@@ -31,7 +31,19 @@
 	}
 
 	.menu.menuDataviewText.fromBlockFeatured {
-		.content { padding: 8px 14px; }
+		.inputWrapper { margin: 0px 8px; padding: 3px 8px; border-radius: 6px; position: relative; }
+		.inputWrapper {
+			.icon.clear { display: none; width: 20px; height: 20px; background: url('~img/icon/menu/clear.svg') 50% 50% / 10px 10px no-repeat; position: absolute; right: 8px; top: 4px; }
+		}
+		.inputWrapper:not(.focused) { cursor: default; padding-right: 28px; }
+		.inputWrapper:not(.focused):hover { background: var(--color-shape-highlight-medium); }
+		.inputWrapper:not(.focused):hover {
+			.icon.clear { display: block; }
+		}
+
+		.items {
+			&:before { content: ''; display: block; height: 1px; background: var(--color-shape-secondary); margin: 8px 16px;  }
+		}
 	}
 
 	.menu.menuDataviewText.fromSidebar {

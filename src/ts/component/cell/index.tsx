@@ -315,7 +315,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Phone: {
 				if (noInplace) {
 					param = Object.assign(param, { width: J.Size.menu.value });
-					param.data = Object.assign(param.data, { noResize: true });
+					param.data = Object.assign(param.data, {
+						noResize: true,
+						actions: value ? U.Menu.relationTextActions(relation.format) : [],
+					});
 					menuId = 'dataviewText';
 					closeIfOpen = false;
 

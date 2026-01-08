@@ -1794,7 +1794,33 @@ class UtilMenu {
 
 	};
 
+	relationTextActions (relationFormat: I.RelationType): any[] {
+		const canCopy = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(relationFormat);
+		const ret = [];
 
+		switch (relationFormat) {
+			case I.RelationType.Url: {
+				ret.push({ id: 'openInBrowser', icon: 'browse', name: translate('menuDataviewTextActionsOpenInBrowser') });
+				break;
+			};
+
+			case I.RelationType.Email: {
+				ret.push({ id: 'sendEmail', icon: 'email', name: translate('menuDataviewTextActionsSendEmail') });
+				break;
+			};
+
+			case I.RelationType.Phone: {
+				ret.push({ id: 'call', icon: 'phone', name: translate('menuDataviewTextActionsCall') });
+				break;
+			};
+		};
+
+		if (canCopy) {
+			ret.push({ id: 'copy', icon: 'copy', name: translate('commonCopy') });
+		};
+
+		return ret;
+	};
 
 };
 

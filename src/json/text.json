@@ -1798,6 +1798,10 @@
 	"menuDataviewNewTemplate": "Template for this View",
 	"menuDataviewNewType": "Default Type for this View",
 
+	"menuDataviewTextActionsOpenInBrowser": "Open in browser",
+	"menuDataviewTextActionsSendEmail": "Send email",
+	"menuDataviewTextActionsCall": "Call",
+
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
