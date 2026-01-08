@@ -348,6 +348,36 @@ class WindowManager {
 		this.setActiveTab(win, id);
 	};
 
+	reorderTabs (win, tabIds) {
+		if (!win.views || !tabIds || !tabIds.length) {
+			return;
+		};
+
+		// Reorder the views array based on the new tab order
+		const newViews = [];
+		tabIds.forEach(id => {
+			const view = win.views.find(v => v.id == id);
+			if (view) {
+				newViews.push(view);
+			};
+		});
+
+		// Update the views array
+		win.views = newViews;
+
+		// Update active index
+		const activeView = win.views[win.activeIndex];
+		if (activeView) {
+			win.activeIndex = win.views.findIndex(v => v.id == activeView.id);
+		};
+
+		// Send updated tabs list to tabs.html
+		Util.send(win, 'update-tabs',
+			win.views.map(it => ({ id: it.id, data: it.data })),
+			win.views[win.activeIndex]?.id
+		);
+	};
+
 	getPreferencesForNewWindow () {
 		return {
 			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
@@ -409,7 +439,7 @@ class WindowManager {
 
 	getTabBarHeight (win) {
 		const ConfigManager = require('./config.js');
-		const alwaysShow = ConfigManager.config.alwaysShowTabbar;
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && win.views.length > 1;
 		const shouldShow = alwaysShow || hasMultipleTabs;
 		return shouldShow ? TAB_BAR_HEIGHT : 0;
@@ -417,7 +447,7 @@ class WindowManager {
 
 	updateTabBarVisibility (win) {
 		const ConfigManager = require('./config.js');
-		const alwaysShow = ConfigManager.config.alwaysShowTabbar;
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
 		const isSingleTab = win.views && (win.views.length == 1);
 		const isVisible = alwaysShow || hasMultipleTabs;

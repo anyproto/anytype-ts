@@ -39,6 +39,7 @@ class Api {
 			css: Util.getCss(),
 			token: String(win.token || ''),
 			activeIndex: win.activeIndex || 0,
+			isSingleTab: win.views && (win.views.length == 1),
 		};
 	};
 
@@ -68,8 +69,8 @@ class Api {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
-			// Update tab bar visibility if alwaysShowTabbar changed
-			if ('alwaysShowTabbar' in config) {
+			// Update tab bar visibility if alwaysShowTabs changed
+			if ('alwaysShowTabs' in config) {
 				WindowManager.updateTabBarVisibility(win);
 			};
 
@@ -119,7 +120,6 @@ class Api {
 	setHideTray (win, show) {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
 			this.initMenu(win);
 		});
 	};
@@ -130,6 +130,12 @@ class Api {
 
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
+		});
+	};
+
+	setAlwaysShowTabs (win, show) {
+		this.setConfig(win, { alwaysShowTabs: show }, () => {
+			WindowManager.updateTabBarVisibility(win);
 		});
 	};
 
@@ -408,6 +414,10 @@ class Api {
 
 	closeOtherTabs (win, id) {
 		WindowManager.closeOtherTabs(win, id);
+	};
+
+	reorderTabs (win, tabIds) {
+		WindowManager.reorderTabs(win, tabIds);
 	};
 
 };

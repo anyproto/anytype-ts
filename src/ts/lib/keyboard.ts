@@ -1941,8 +1941,8 @@ class Keyboard {
 	};
 
 	setBodyClass () {
-		const { config } = S.Common;
-		const { showMenuBar } = config;
+		const { config, singleTab } = S.Common;
+		const { showMenuBar, alwaysShowTabs } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
@@ -1959,6 +1959,9 @@ class Keyboard {
 		};
 		if (theme) {
 			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
+		if (singleTab && !alwaysShowTabs) {
+			cn.push('isSingleTab');
 		};
 
 		$('html').attr({ class: cn.join(' ') });

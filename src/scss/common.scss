@@ -45,8 +45,6 @@ input, textarea, select { font-family: 'Inter'; }
 #selection { flex-grow: 1; overflow: hidden; }
 .swiper-navigation-icon { display: none !important; }
 
-#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; }
-
 #root-loader { 
 	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-bg-primary); z-index: 10000;
 	transition: opacity 0.3s ease-in-out; 
@@ -187,48 +185,54 @@ a { color: var(--color-text-primary); }
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
 
-html.platformWindows {
-	body { overflow-y: overlay; }
-}
+html {
+	&.platformMac.isSingleTab {
+		#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; }
+	}
 
-html.platformLinux {
-	body { overflow-y: auto; }
-}
+	&.platformWindows {
+		body { overflow-y: overlay; }
+	}
 
-html.platformWindows, html.platformLinux {
-	::-webkit-scrollbar { width: 10px; height: 10px; }
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
-	::-webkit-scrollbar-corner { background-color: transparent; }
-	::-webkit-scrollbar-button { display: none; }
-}
+	&.platformLinux {
+		body { overflow-y: auto; }
+	}
 
-html.platformWindows.withMenuBar {
-	@import "./component/menuBar";
+	&.platformWindows, &.platformLinux {
+		::-webkit-scrollbar { width: 10px; height: 10px; }
+		::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
+		::-webkit-scrollbar-corner { background-color: transparent; }
+		::-webkit-scrollbar-button { display: none; }
+	}
 
-	.sidebar { margin-top: 28px; height: calc(100% - 28px); }
-	.sidebar {
-		.subPageWrapper:not(.withSidebarLeft) {
-			.sidebarPage {
-				> .head {
-					.side.left	{ padding-left: 36px; }
+	&.platformWindows.withMenuBar {
+		@import "./component/menuBar";
+
+		.sidebar { margin-top: 28px; height: calc(100% - 28px); }
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						.side.left	{ padding-left: 36px; }
+					}
 				}
+			}
+		}
+
+		.popups {
+			.popup.popupShortcut {
+				.innerWrap { top: 28px; height: calc(100% - 28px); }
 			}
 		}
 	}
 
-	.popups {
-		.popup.popupShortcut {
-			.innerWrap { top: 28px; height: calc(100% - 28px); }
-		}
-	}
-}
-
-html.platformLinux {
-	.sidebar {
-		.subPageWrapper:not(.withSidebarLeft) {
-			.sidebarPage {
-				> .head {
-					.side.left	{ padding-left: 36px; }
+	&.platformLinux {
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						.side.left	{ padding-left: 36px; }
+					}
 				}
 			}
 		}

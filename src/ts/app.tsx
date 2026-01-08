@@ -198,7 +198,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 		
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, activeIndex } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, activeIndex, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -217,6 +217,7 @@ const App: FC = () => {
 		S.Common.windowIdSet(id);
 		S.Common.tabIdSet(electron.tabId());
 		S.Common.setLeftSidebarState('vault', '');
+		S.Common.singleTabSet(isSingleTab);
 
 		Action.checkDefaultSpellingLang();
 		keyboard.setBodyClass();

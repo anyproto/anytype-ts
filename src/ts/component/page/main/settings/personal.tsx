@@ -11,7 +11,7 @@ enum ChatKey {
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
-	const { hideTray, showMenuBar, alwaysShowTabbar } = config;
+	const { hideTray, showMenuBar, alwaysShowTabs } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
 
@@ -84,7 +84,13 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 				<div className="item">
 					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
-					<Switch className="big" value={alwaysShowTabbar} onChange={(e: any, v: boolean) => S.Common.alwaysShowTabbarSet(v)} />
+					<Switch 
+						className="big" 
+						value={alwaysShowTabs} 
+						onChange={(e: any, v: boolean) => {
+							Renderer.send('setAlwaysShowTabs', v);
+						}
+					} />
 				</div>
 
 				<div className="item">

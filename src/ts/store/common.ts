@@ -616,15 +616,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets the always show tabbar value.
-	 * @param {boolean} v - The always show tabbar value.
-	 */
-	alwaysShowTabbarSet (v: boolean) {
-		this.configSet({ alwaysShowTabbar: Boolean(v) });
-		Renderer.send('setConfig', { alwaysShowTabbar: Boolean(v) });
-	};
-
-	/**
 	 * Sets the hide sidebar value.
 	 * @param {boolean} v - The hide sidebar value.
 	 */
@@ -693,9 +684,6 @@ class CommonStore {
 	 */
 	singleTabSet (v: boolean) {
 		this.isSingleTab = v;
-
-		$('body').toggleClass('isSingleTab', v);
-		$(window).trigger('resize');
 	};
 
 	/**
@@ -911,6 +899,8 @@ class CommonStore {
 
 		this.configObj.debug = this.configObj.debug || {};
 		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
+
+		this.singleTabSet(this.isSingleTab);
 	};
 
 	/**
