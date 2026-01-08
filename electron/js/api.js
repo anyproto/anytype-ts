@@ -23,9 +23,15 @@ class Api {
 	lastActivityTime = Date.now();
 
 	getInitData (win) {
-		const route = win.route || '';
+		let route = win.route || '';
 
 		win.route = '';
+
+		// Try to get route from active tab data
+		if (!route && win.views && win.views[win.activeIndex || 0]) {
+			const activeView = win.views[win.activeIndex || 0];
+			route = activeView.data?.route || '';
+		};
 
 		return {
 			id: win.id,
@@ -418,6 +424,10 @@ class Api {
 
 	reorderTabs (win, tabIds) {
 		WindowManager.reorderTabs(win, tabIds);
+	};
+
+	updateTabRoute (win, tabId, route) {
+		WindowManager.updateTab(win, tabId, { route });
 	};
 
 };

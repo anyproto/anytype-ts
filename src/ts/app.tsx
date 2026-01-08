@@ -288,12 +288,12 @@ const App: FC = () => {
 							U.Data.onAuthOnce();
 
 							const param = route ? U.Router.getParam(route) : {};
-							const routeParam = { 
+							const routeParam = {
 								onRouteChange: hide,
 							};
 
 							if (param.spaceId) {
-								U.Router.switchSpace(param.param.spaceIdspaceId, '', false, routeParam, true);
+								U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
 							} else {
 								U.Router.go('/main/void/select', routeParam);
 							};
@@ -495,6 +495,19 @@ const App: FC = () => {
 	};
 
 	useEffect(() => init(), []);
+
+	useEffect(() => {
+		// Listen to route changes and save to tab data
+		const unlisten = history.listen((location) => {
+			const route = location.pathname;
+			const tabId = S.Common.tabId;
+			if (tabId) {
+				Renderer.send('updateTabRoute', tabId, route);
+			};
+		});
+
+		return () => unlisten();
+	}, []);
 
 	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	
