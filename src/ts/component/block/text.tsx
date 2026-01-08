@@ -353,25 +353,25 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
+			if (range.to) {
+				const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
 
-			if (parsed.save) {
-				// Special mark (mention/emoji) deletion
-				e.preventDefault();
+				if (parsed.save) {
+					e.preventDefault();
 
-				value = parsed.text;
-				marksRef.current = parsed.marks;
+					value = parsed.text;
+					marksRef.current = parsed.marks;
 
-				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
-					focus.set(block.id, parsed.range);
-					focus.apply();
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+						focus.set(block.id, parsed.range);
+						focus.apply();
 
-					onKeyDown(e, value, marksRef.current, range, props);
-				});
-				ret = true;
-			} else
+						onKeyDown(e, value, marksRef.current, range, props);
+					});
+					ret = true;
+				};
+			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
-				// Backspace at cursor position 0
 				if (block.canHaveMarks()) {
 					const parsed = getMarksFromHtml();
 
