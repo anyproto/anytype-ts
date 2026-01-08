@@ -33,7 +33,7 @@ class UtilSpace {
 			U.Space.openDashboard(param);
 		} else {
 			U.Router.go('/main/void/select', param);
-			sidebar.leftPanelSubPageClose(false);
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};
 
@@ -57,7 +57,7 @@ class UtilSpace {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
 			U.Router.go('/main/void/error', param);
-			sidebar.leftPanelSubPageClose(false);
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};
 

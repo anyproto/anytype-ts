@@ -41,7 +41,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	useEffect(() => {
 		if (id == 'select') {
 			S.Common.setLeftSidebarState('vault', '');
-			sidebar.leftPanelSubPageClose(false);
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	}, []);
 

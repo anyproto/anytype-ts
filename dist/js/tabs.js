@@ -26,7 +26,11 @@ $(document).ready(() => {
 		active.addClass('active');
 
 		// Hide divider on the previous tab
-		active.prev('.tab:not(.isAdd)').addClass('hideDiv');
+		const tabs = container.find('.tab:not(.isAdd)');
+		const activeIndex = tabs.index(active);
+		if (activeIndex > 0) {
+			tabs.eq(activeIndex - 1).addClass('hideDiv');
+		};
 
 		marker.toggleClass('anim', animate);
 		marker.css({

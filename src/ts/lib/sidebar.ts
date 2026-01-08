@@ -294,7 +294,7 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
-	leftPanelSubPageClose (animate: boolean) {
+	leftPanelSubPageClose (animate: boolean, save: boolean = true) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -318,8 +318,8 @@ class Sidebar {
 		this.resizePage(false, width, null, animate);
 
 		window.setTimeout(() => {
-			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, true);
-			
+			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, save);
+
 			objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			subPageWrapperLeft.removeClass('sidebarAnimation isClosing').css({ transform: '' });
 			dummyLeft.removeClass('sidebarAnimation');
