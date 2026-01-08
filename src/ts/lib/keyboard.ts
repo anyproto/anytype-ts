@@ -1249,7 +1249,6 @@ class Keyboard {
 		const match = this.getMatch();
 		const { action, id } = match.params;
 		const titles = {
-			index: translate('commonDashboard'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),
