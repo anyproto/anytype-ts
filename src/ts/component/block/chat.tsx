@@ -41,6 +41,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
 	const namespace = U.Common.getEventNamespace(isPopup);
+	const jumpIds = useRef([]);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -586,10 +587,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		scrolledItems.current.clear();
 	};
 
-	const onScrollToBottomClick = () => {
-		loadMessages(1, true, () => scrollToBottom(true));
-	};
-
 	const getMessageScrollOffset = (id: string): number => {
 		const ref = messageRefs.current[id];
 		if (!ref) {
@@ -753,6 +750,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 	};
 
+	const onScrollToBottomClick = () => {
+		if (jumpIds.current.length) {
+			const idx = jumpIds.current.length - 1;
+
+			scrollToMessage(jumpIds.current[idx], true, true);
+			jumpIds.current.splice(idx, 1);
+		} else {
+			loadMessages(1, true, () => scrollToBottom(true));
+		};
+	};
+
 	const onReplyEdit = (e: MouseEvent, message: any) => {
 		formRef.current.onReply(message);
 		scrollToBottomCheck();
@@ -766,6 +774,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (message) {
 			scrollToMessage(message.id, true, true);
+			jumpIds.current.push(item.id);
 			return;
 		};
 
@@ -860,6 +869,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
+
+		if (v) {
+			jumpIds.current = [];
+		};
 	};
 
 	const setAutoLoadDisabled = (v: boolean) => {
