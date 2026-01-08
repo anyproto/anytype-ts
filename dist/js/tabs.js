@@ -66,6 +66,8 @@ $(document).ready(() => {
 
 		const title = String(item.data.title || 'New tab');
 		const icon = String(item.data.icon || '');
+		const layout = Number(item.data.layout) || 0;
+		const uxType = Number(item.data.uxType) || 0;
 
 		const tab = $(`
 			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
@@ -79,7 +81,11 @@ $(document).ready(() => {
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
-			clickable.prepend($(`<div class="icon" style="background-image: url('${icon}')" />`));
+			clickable.prepend($(`
+				<div className="iconWrapper">
+					<div class="icon object layout${layout} uxType${uxType}" style="background-image: url('${icon}')" />
+				</div>
+			`));
 		};
 
 		clickable.off('click').on('click', () => {

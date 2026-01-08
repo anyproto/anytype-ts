@@ -822,7 +822,7 @@ class UtilData {
 	 * @param {string} text - The text to set as the tab title.
 	 */
 	setTabTitleText (text: string) {
-		Renderer.send('updateTab', S.Common.tabId, { title: text, icon: '' });
+		Renderer.send('updateTab', S.Common.tabId, { title: text, icon: '', layout: I.ObjectLayout.Page });
 	};
 
 	/**
@@ -831,7 +831,7 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setTabTitle (rootId: string, objectId: string) {
-		const object = S.Detail.get(rootId, objectId, []);
+		const object = S.Detail.get(rootId, objectId);
 		if (object._empty_) {
 			return;
 		};
@@ -839,6 +839,8 @@ class UtilData {
 		Renderer.send('updateTab', S.Common.tabId, { 
 			title: U.Object.name(object, true),
 			icon: U.Graph.imageSrc(object),
+			layout: object.layout,
+			uxType: object.spaceUxType,
 		});
 	};
 

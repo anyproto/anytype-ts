@@ -1247,6 +1247,7 @@ class Keyboard {
 		};
 
 		const match = this.getMatch();
+		const rootId = this.getRootId();
 		const { action, id } = match.params;
 		const titles = {
 			graph: translate('commonGraph'),
@@ -1272,7 +1273,6 @@ class Keyboard {
 			U.Data.setWindowTitleText(title);
 			U.Data.setTabTitleText(title);
 		} else {
-			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
 			U.Data.setTabTitle(rootId, rootId);
 		};

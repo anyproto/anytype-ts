@@ -51,8 +51,6 @@ class UtilSpace {
 			spaces = spaces.filter(filter);
 		};
 
-		console.log('SPACES', spaces);
-
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
