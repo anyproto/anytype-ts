@@ -408,12 +408,19 @@ class WindowManager {
 	};
 
 	getTabBarHeight (win) {
-		return (win.views && win.views.length > 1) ? TAB_BAR_HEIGHT : 0;
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabbar;
+		const hasMultipleTabs = win.views && win.views.length > 1;
+		const shouldShow = alwaysShow || hasMultipleTabs;
+		return shouldShow ? TAB_BAR_HEIGHT : 0;
 	};
 
 	updateTabBarVisibility (win) {
-		const isVisible = win.views && (win.views.length > 1);
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabbar;
+		const hasMultipleTabs = win.views && (win.views.length > 1);
 		const isSingleTab = win.views && (win.views.length == 1);
+		const isVisible = alwaysShow || hasMultipleTabs;
 
 		// Send to tabs.html window (tab bar UI)
 		Util.send(win, 'update-tab-bar-visibility', isVisible);

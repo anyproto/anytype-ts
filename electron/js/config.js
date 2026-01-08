@@ -25,6 +25,10 @@ class ConfigManager {
 				this.config.showMenuBar = true;
 			};
 
+			if (undefined === this.config.alwaysShowTabbar) {
+				this.config.alwaysShowTabbar = false;
+			};
+
 			this.checkChannel();
 			this.checkTheme();
 

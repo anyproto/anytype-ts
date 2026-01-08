@@ -67,6 +67,12 @@ class Api {
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
+
+			// Update tab bar visibility if alwaysShowTabbar changed
+			if ('alwaysShowTabbar' in config) {
+				WindowManager.updateTabBarVisibility(win);
+			};
+
 			callBack?.();
 		});
 	};
