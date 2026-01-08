@@ -31,7 +31,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
-	
+
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
@@ -1946,8 +1946,8 @@ class Keyboard {
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
-		const cn = [ 
-			this.getPageClass('body', false), 
+		const cn = [
+			this.getPageClass('body', false),
 			U.String.toCamelCase([ 'platform', platform ].join('-')),
 		];
 

@@ -382,8 +382,8 @@ class Api {
 	};
 
 	getTabs (win) {
-		return { 
-			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })), 
+		return {
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
 			id: win.views[win.activeIndex || 0]?.id,
 		};
 	};

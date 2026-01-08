@@ -30,6 +30,7 @@ class CommonStore {
 	public defaultType = null;
 	public pinTimeId = null;
 	public isFullScreen = false;
+	public isSingleTab = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -132,6 +133,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
+			isSingleTab: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
@@ -247,6 +249,10 @@ class CommonStore {
 
 	get fullscreen (): boolean {
 		return this.isFullScreen;
+	};
+
+	get singleTab (): boolean {
+		return this.isSingleTab;
 	};
 
 	get pin (): string {
@@ -669,6 +675,17 @@ class CommonStore {
 		this.isFullScreen = v;
 
 		$('body').toggleClass('isFullScreen', v);
+		$(window).trigger('resize');
+	};
+
+	/**
+	 * Sets the single tab mode.
+	 * @param {boolean} v - The single tab mode value.
+	 */
+	singleTabSet (v: boolean) {
+		this.isSingleTab = v;
+
+		$('body').toggleClass('isSingleTab', v);
 		$(window).trigger('resize');
 	};
 

@@ -23,13 +23,14 @@
 				src: url('./font/inter/medium.woff2') format('woff2');
 			}
 
-			body { 
-				font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent; 
+			body {
+				font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent;
 				font-weight: 500; line-height: 22px; letter-spacing: -0.12px; padding: 8px;
 			}
 			body.platform-darwin { padding-left: 88px; }
 
-			.container { position: relative; }
+			.container { position: relative; transition: opacity 0.15s ease-in-out; }
+			.container.isHidden { opacity: 0; pointer-events: none; }
 
 			#tabs { display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; }
 			#marker { 
@@ -182,6 +183,9 @@
 					container.append(renderAdd());
 					updateNoClose();
 					setActive(id, false);
+
+					// Update visibility based on tab count
+					$('.container').toggleClass('isHidden', tabs.length <= 1);
 				};
 
 				electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
@@ -208,6 +212,10 @@
 				electron.on('remove-tab', (e, id) => {
 					container.find(`#tab-${id}`).remove();
 					updateNoClose();
+				});
+
+				electron.on('update-tab-bar-visibility', (e, isVisible) => {
+					$('.container').toggleClass('isHidden', !isVisible);
 				});
 			});
 		</script>

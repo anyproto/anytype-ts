@@ -134,7 +134,8 @@ class WindowManager {
 			const { width, height } = win.getBounds();
 
 			if (win.views && win.views[win.activeIndex]) {
-				win.views[win.activeIndex].setBounds({ x: 0, y: TAB_BAR_HEIGHT, width, height: height - TAB_BAR_HEIGHT });
+				const tabBarHeight = this.getTabBarHeight(win);
+				win.views[win.activeIndex].setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
 			};
 		});
 
@@ -246,10 +247,20 @@ class WindowManager {
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
+		// Send initial single tab state when view finishes loading
+		view.webContents.once('did-finish-load', () => {
+			const isSingleTab = win.views && (win.views.length == 1);
+			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
+
+			// Also update tab bar visibility in case state changed during loading
+			this.updateTabBarVisibility(win);
+		});
+
 		remote.enable(view.webContents);
 
 		Util.send(win, 'create-tab', { id: view.id, data: view.data });
 		this.setActiveTab(win, id);
+		this.updateTabBarVisibility(win);
 	};
 
 	setActiveTab (win, id) {
@@ -270,8 +281,9 @@ class WindowManager {
 
 		const bounds = win.getBounds();
 		const index = win.views.findIndex(it => it.id == id);
+		const tabBarHeight = this.getTabBarHeight(win);
 
-		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
+		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
 
 		win.activeIndex = index;
 		win.contentView.addChildView(view);
@@ -316,6 +328,8 @@ class WindowManager {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
 		};
+
+		this.updateTabBarVisibility(win);
 	};
 
 	closeOtherTabs (win, id) {
@@ -391,6 +405,34 @@ class WindowManager {
 		};
 
 		return { x, y };
+	};
+
+	getTabBarHeight (win) {
+		return (win.views && win.views.length > 1) ? TAB_BAR_HEIGHT : 0;
+	};
+
+	updateTabBarVisibility (win) {
+		const isVisible = win.views && (win.views.length > 1);
+		const isSingleTab = win.views && (win.views.length == 1);
+
+		// Send to tabs.html window (tab bar UI)
+		Util.send(win, 'update-tab-bar-visibility', isVisible);
+
+		// Send to all renderer views (for body class)
+		Util.sendToAllTabs(win, 'set-single-tab', isSingleTab);
+
+		// Update active view bounds
+		if (win.views && win.views[win.activeIndex]) {
+			const bounds = win.getBounds();
+			const tabBarHeight = this.getTabBarHeight(win);
+
+			win.views[win.activeIndex].setBounds({
+				x: 0,
+				y: tabBarHeight,
+				width: bounds.width,
+				height: bounds.height - tabBarHeight,
+			});
+		};
 	};
 
 	sendToAll () {
