@@ -283,20 +283,20 @@ const App: FC = () => {
 							S.Common.redirectSet(route);
 							S.Common.configSet(account.config, false);
 
+							U.Data.onInfo(account.info);
+							S.Common.spaceSet('');
+							U.Data.onAuthOnce();
+
 							const param = route ? U.Router.getParam(route) : {};
-							const spaceId = param.spaceId || Storage.get('spaceId');
 							const routeParam = { 
 								onRouteChange: hide,
 							};
 
-							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, routeParam, true);
+							if (param.spaceId) {
+								U.Router.switchSpace(param.param.spaceIdspaceId, '', false, routeParam, true);
 							} else {
-								U.Data.onAuthWithoutSpace(routeParam);
+								U.Router.go('/main/void/select', routeParam);
 							};
-
-							U.Data.onInfo(account.info);
-							U.Data.onAuthOnce();
 						});
 					});
 				});

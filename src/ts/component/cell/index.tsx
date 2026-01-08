@@ -318,7 +318,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					param.data = Object.assign(param.data, { noResize: true });
 					menuId = 'dataviewText';
 					closeIfOpen = false;
-
 					break;
 				};
 

@@ -45,11 +45,13 @@ class UtilSpace {
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
 		param = param || {};
 
-		let spaces = this.getList();
+		let spaces = U.Menu.getVaultItems();
 
 		if (filter) {
 			spaces = spaces.filter(filter);
 		};
+
+		console.log('SPACES', spaces);
 
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);

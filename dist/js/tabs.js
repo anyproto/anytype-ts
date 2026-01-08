@@ -5,7 +5,10 @@ $(document).ready(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+
 	let sortable = null;
+	let isDragging = false;
+	let draggedActiveId = null;
 
 	body.addClass(`platform-${electron.platform}`);
 
@@ -27,9 +30,30 @@ $(document).ready(() => {
 
 		marker.toggleClass('anim', animate);
 		marker.css({
-			width: active.outerWidth(),
-			transform: `translate3d(${offset.left}px, 0px, 0px)`
+			width: active.outerWidth() - 4,
+			left: offset.left + 2,
 		});
+	};
+
+	const updateMarkerPosition = () => {
+		if (!isDragging || !draggedActiveId) {
+			return;
+		};
+
+		const active = container.find(`#tab-${draggedActiveId}`);
+		if (!active.length) {
+			return;
+		};
+
+		const offset = active.offset();
+		const containerOffset = container.offset();
+
+		if (offset && containerOffset) {
+			marker.css({ 
+				width: active.outerWidth() - 4, 
+				left: offset.left - containerOffset.left + 2,
+			});
+		};
 	};
 
 	const renderTab = (item) => {
@@ -40,7 +64,7 @@ $(document).ready(() => {
 		const icon = String(item.data.icon || '');
 
 		const tab = $(`
-			<div id="tab-${item.id}" class="tab">
+			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
 				<div class="clickable">
 					<div class="name">${title}</div>
 					<div class="icon close withBackground"></div>
@@ -86,82 +110,73 @@ $(document).ready(() => {
 		tabs.toggleClass('noClose', tabs.length == 1);
 	};
 
-	let dragAnimationFrame = null;
-	let isDraggingActive = false;
-
-	const updateMarkerDuringDrag = () => {
-		if (!isDraggingActive) return;
-
-		const activeTab = container.find('.tab.active');
-		if (activeTab.length) {
-			const offset = activeTab.position();
-			if (offset && offset.left !== undefined) {
-				marker.css({
-					width: activeTab.outerWidth(),
-					transform: `translate3d(${offset.left}px, 0px, 0px)`
-				});
-			};
-		};
-
-		if (isDraggingActive) {
-			dragAnimationFrame = requestAnimationFrame(updateMarkerDuringDrag);
-		};
-	};
-
 	const initSortable = () => {
 		if (sortable) {
 			sortable.destroy();
+			sortable = null;
+		};
+
+		const tabs = container.find('.tab:not(.isAdd)');
+		if (!tabs.length) {
+			return;
 		};
 
 		sortable = new Sortable(container[0], {
-			animation: 150,
+			animation: 0,
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
 			onStart: (evt) => {
-				// Check if dragging active tab
-				if ($(evt.item).hasClass('active')) {
-					isDraggingActive = true;
+				isDragging = true;
 
-					// Disable marker animation and pointer events during drag
+				const item = $(evt.item);
+				if (item.hasClass('active')) {
+					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
-
-					// Start continuous marker updates
-					updateMarkerDuringDrag();
+				};
+			},
+			onChange: (evt) => {
+				if (draggedActiveId) {
+					setTimeout(() => updateMarkerPosition(), 40);
 				};
 			},
 			onEnd: (evt) => {
-				// Stop continuous updates
-				if (dragAnimationFrame) {
-					cancelAnimationFrame(dragAnimationFrame);
-					dragAnimationFrame = null;
-				};
-				isDraggingActive = false;
+				isDragging = false;
+				const wasActive = draggedActiveId !== null;
+				draggedActiveId = null;
 
-				// Re-enable marker animation and pointer events
-				marker.addClass('anim').css('pointer-events', '');
+				if (wasActive) {
+					marker.addClass('anim').css('pointer-events', '');
+				};
 
 				const tabIds = [];
 				container.find('.tab:not(.isAdd)').each((i, el) => {
-					const id = $(el).attr('id').replace('tab-', '');
-					tabIds.push(id);
+					const id = $(el).attr('data-id');
+					if (id) {
+						tabIds.push(id);
+					};
 				});
 
-				// Wrap tabIds in array to preserve it through Electron API
-				electron.Api(winId, 'reorderTabs', [ tabIds ]);
+				if (tabIds.length > 0) {
+					electron.Api(winId, 'reorderTabs', [ tabIds ]);
+				};
 
-				// Update marker position after drag
+				// Update marker position after a short delay
 				setTimeout(() => {
-					const activeId = container.find('.tab.active').attr('id')?.replace('tab-', '');
+					const activeId = container.find('.tab.active').attr('data-id');
 					if (activeId) {
-						setActive(activeId, true);
+						//setActive(activeId, true);
 					};
-				}, 0);
+				}, 50);
 			}
 		});
 	};
 
 	const setTabs = (tabs, id) => {
+		if (isDragging) {
+			return; // Don't update during drag
+		};
+
 		container.empty();
 
 		tabs = tabs || [];
@@ -176,8 +191,8 @@ $(document).ready(() => {
 		// Update visibility based on tab count
 		$('.container').toggleClass('isHidden', tabs.length <= 1);
 
-		// Initialize sortable
-		initSortable();
+		// Initialize sortable after a slight delay to ensure DOM is ready
+		setTimeout(() => initSortable(), 10);
 	};
 
 	electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
@@ -187,38 +202,36 @@ $(document).ready(() => {
 	electron.on('set-active-tab', (e, id) => setActive(id, false));
 
 	electron.on('create-tab', (e, tab) => {
-		const existing = container.find(`#tab-${tab.id}`);
-		if (!existing.length) {
-			container.find('.tab.isAdd').before(renderTab(tab));
-			updateNoClose();
+		if (isDragging) return;
 
-			// Reinitialize sortable after DOM update
-			requestAnimationFrame(() => {
-				initSortable();
-			});
+		const existing = container.find(`#tab-${tab.id}`);
+		if (existing.length) {
+			existing.remove();
 		};
+
+		container.find('.tab.isAdd').before(renderTab(tab));
+		updateNoClose();
+		setTimeout(() => initSortable(), 10);
 	});
 
 	electron.on('update-tab', (e, tab) => {
-		const existing = container.find(`#tab-${tab.id}`);
-		if (existing.length) {
-			existing.replaceWith(renderTab(tab));
+		if (isDragging) return;
 
-			// Reinitialize sortable after DOM update
-			requestAnimationFrame(() => {
-				initSortable();
-			});
+		const existing = container.find(`#tab-${tab.id}`);
+		if (!existing.length) {
+			return;
 		};
+
+		existing.replaceWith(renderTab(tab));
+		setTimeout(() => initSortable(), 10);
 	});
 
 	electron.on('remove-tab', (e, id) => {
+		if (isDragging) return;
+
 		container.find(`#tab-${id}`).remove();
 		updateNoClose();
-
-		// Reinitialize sortable after DOM update
-		requestAnimationFrame(() => {
-			initSortable();
-		});
+		setTimeout(() => initSortable(), 10);
 	});
 
 	electron.on('update-tab-bar-visibility', (e, isVisible) => {
