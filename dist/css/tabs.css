@@ -16,10 +16,11 @@
 body {
 	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent;
 	font-weight: 500; line-height: 22px; letter-spacing: -0.12px; padding: 8px; -webkit-app-region: drag;
+	overflow: hidden;
 }
 body.platform-darwin { padding-left: 88px; }
 
-.container { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; }
+.container { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; width: 100%; }
 .container.isHidden { opacity: 0; pointer-events: none; }
 
 #tabs {

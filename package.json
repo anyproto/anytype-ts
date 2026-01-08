@@ -201,6 +201,7 @@
 		],
 		"asarUnpack": [
 			"dist/index.html",
+			"dist/tabs.html",
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
@@ -250,6 +251,7 @@
 			"build",
 			"!dist/*",
 			"dist/index.html",
+			"dist/tabs.html",
 			"dist/embed/**/*",
 			"dist/challenge/**/*",
 			"dist/lib/**/*",
