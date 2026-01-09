@@ -351,8 +351,6 @@ html.themeDark {
 
 	/* Sidebar */
 
-	.sidebar { box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
-	.sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
 	.sidebar {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
