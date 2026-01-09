@@ -300,9 +300,6 @@ class WindowManager {
 		};
 
 		view.data = Object.assign(view.data || {}, data);
-
-		console.log('UPDATE TAB DATA', { id: view.id, data: view.data });
-
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
@@ -323,12 +320,12 @@ class WindowManager {
 		win.views.splice(index, 1);
 		Util.send(win, 'remove-tab', id);
 
+		this.updateTabBarVisibility(win);
+
 		if (updateActive) {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
 		};
-
-		this.updateTabBarVisibility(win);
 	};
 
 	closeOtherTabs (win, id) {
