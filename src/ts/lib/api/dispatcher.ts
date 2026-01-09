@@ -25,7 +25,7 @@ const SORT_IDS = [
 	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
 
 class Dispatcher {
 
@@ -1370,9 +1370,9 @@ class Dispatcher {
 				message.error = { code, description };
 
 				if (message.error.code) {
-					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
+					if (!SKIP_ERRORS.includes(type)) {
+						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-					if (!SKIP_SENTRY_ERRORS.includes(type)) {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};

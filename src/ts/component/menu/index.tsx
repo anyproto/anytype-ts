@@ -249,6 +249,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			};
 
 			rebindPrevious();
+			raf.cancel(framePosition.current);
 		};
 	}, []);
 
@@ -281,8 +282,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (rebind) {
-			rebind();
+		if (param.rebind) {
+			param.rebind();
 		} else
 		if (data.rebind) {
 			data.rebind();

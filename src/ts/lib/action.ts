@@ -754,7 +754,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: spaceview.spaceAccessType, route });
 						};
 					});
 				},
