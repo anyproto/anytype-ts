@@ -1250,6 +1250,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const { action, id } = match.params;
 		const titles = {
+			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),

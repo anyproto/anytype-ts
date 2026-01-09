@@ -7,16 +7,16 @@
 }
 
 .pageMainVoid {
-	.wrapper { width: 704px; height: 100vh; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
-		.container { text-align: center; }
+		.frame { text-align: center; }
 		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
 		.icon { width: 100%; height: 100%; }
 
 		.title { @include text-header3; margin-bottom: 4px; }
-		.label { margin-bottom: 24px; }
 
-		.buttons { display: flex; gap: 0px 8px; }
+		.buttons { display: flex; gap: 0px 8px; margin: 24px 0px 0px 0px; justify-content: center; }
+		.buttons:empty { display: none; }
 		.button { width: 176px; }
 
 		&.voidError {
