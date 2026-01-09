@@ -14,11 +14,7 @@ body.rowResize { cursor: row-resize !important; }
 body.rowResize * { cursor: row-resize !important; user-select: none !important; }
 body.wResize { cursor: w-resize !important; }
 body.eResize { cursor: e-resize !important; }
-
 body.grab, body.isDragging { cursor: grab !important; }
-body.isFullScreen {
-	#menuBar { display: none; }
-}
 
 :focus { outline: 0px; }
 ::selection { background-color: var(--color-system-selection); }
@@ -186,11 +182,28 @@ a { color: var(--color-text-primary); }
 @import "./theme/dark/common.scss";
 
 html {
+	&.isSingleTab {
+		.pageFlex { padding: 0px; }
+		.sidebar {
+			.subPageWrapper { padding: 0px; }
+			.sidebarPage.pageWidget > .body { padding-bottom: 8px; }
+		}
+	}
+
 	&.platformMac.isSingleTab {
 		#menuBar { 
 			position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; 
 			-webkit-app-region: drag;
 		}
+		&:not(.isFullScreen) {
+			.sidebar {
+				.pageWrapper { padding-top: 52px; }
+			}
+		}
+	}
+
+	&.isFullScreen {
+		#menuBar { display: none; }
 	}
 
 	&.platformWindows {

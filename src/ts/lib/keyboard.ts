@@ -1941,7 +1941,7 @@ class Keyboard {
 	};
 
 	setBodyClass () {
-		const { config, singleTab } = S.Common;
+		const { config, singleTab, isFullScreen } = S.Common;
 		const { showMenuBar, alwaysShowTabs } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
@@ -1956,6 +1956,9 @@ class Keyboard {
 		};
 		if (showMenuBar) {
 			cn.push('withMenuBar');
+		};
+		if (isFullScreen) {
+			cn.push('isFullScreen');
 		};
 		if (theme) {
 			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));

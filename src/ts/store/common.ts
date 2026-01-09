@@ -30,7 +30,7 @@ class CommonStore {
 	public defaultType = null;
 	public pinTimeId = null;
 	public isFullScreen = false;
-	public isSingleTab = false;
+	public singleTabValue = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -133,7 +133,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
-			isSingleTab: observable,
+			singleTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
@@ -169,6 +169,7 @@ class CommonStore {
 			vaultIsMinimal: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
+			singleTab: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -195,6 +196,7 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			singleTabSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -252,7 +254,7 @@ class CommonStore {
 	};
 
 	get singleTab (): boolean {
-		return this.isSingleTab;
+		return this.singleTabValue;
 	};
 
 	get pin (): string {
@@ -673,9 +675,6 @@ class CommonStore {
 	 */
 	fullscreenSet (v: boolean) {
 		this.isFullScreen = v;
-
-		$('body').toggleClass('isFullScreen', v);
-		$(window).trigger('resize');
 	};
 
 	/**
@@ -683,7 +682,7 @@ class CommonStore {
 	 * @param {boolean} v - The single tab mode value.
 	 */
 	singleTabSet (v: boolean) {
-		this.isSingleTab = v;
+		this.singleTabValue = v;
 	};
 
 	/**
@@ -900,7 +899,7 @@ class CommonStore {
 		this.configObj.debug = this.configObj.debug || {};
 		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
 
-		this.singleTabSet(this.isSingleTab);
+		this.singleTabSet(this.singleTab);
 	};
 
 	/**

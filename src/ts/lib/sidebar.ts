@@ -486,6 +486,8 @@ class Sidebar {
 			window.setTimeout(() => this.setAnimating(false), J.Constant.delay.sidebar);
 		};
 
+		const { config, singleTab } = S.Common;
+		const { alwaysShowTabs } = config;
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
@@ -493,7 +495,6 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft, isPopup);
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
-		const isVaultMinimal = S.Common.vaultIsMinimal && !dataLeft.isClosed;
 		const objLeft = this.leftPanelGetNode();
 		const objRight = this.rightPanelGetNode(isPopup);
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
@@ -524,9 +525,10 @@ class Sidebar {
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 		const pageCss: any = { width: pageWidth };
+		const offset = singleTab && !alwaysShowTabs ? 0 : 16;
 
 		if (!isPopup) {
-			pageCss.height = U.Common.getAppContainerHeight() - 8;
+			pageCss.height = U.Common.getAppContainerHeight() - offset;
 		};
 
 		header.css({ width: '' }).toggleClass('sidebarAnimation', animate);
