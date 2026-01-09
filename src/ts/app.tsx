@@ -307,7 +307,7 @@ const App: FC = () => {
 		};
 
 		Renderer.send('getTab', tabId).then((tab: any) => {
-			if (tab.token) {
+			if (tab && tab.token) {
 				onObtainToken(tab.token);
 			} else {
 				Renderer.send('keytarGet', accountId).then(phrase => {
