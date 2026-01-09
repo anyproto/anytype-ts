@@ -139,10 +139,6 @@ class WindowManager {
 			};
 		});
 
-		if (is.development) {
-			win.toggleDevTools();
-		};
-
 		this.createTab(win);
 		return win;
 	};

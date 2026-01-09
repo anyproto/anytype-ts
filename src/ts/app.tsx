@@ -244,7 +244,7 @@ const App: FC = () => {
 		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			const t = activeIndex > 0 ? 10 : 300;
+			const t = activeIndex > 0 ? 50 : 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
@@ -327,6 +327,7 @@ const App: FC = () => {
 
 	const onWillCloseTab = (e: any, tabId: string) => {
 		Storage.deleteLastOpenedByTabId([ tabId ]);
+		U.Data.closeSession();
 	};
 
 	const onPopup = (e: any, id: string, param: any, close?: boolean) => {
