@@ -127,10 +127,6 @@ class WindowManager {
 
 		win.loadURL(this.getUrlForNewWindow());
 
-		win.webContents.once('did-finish-load', () => {
-			Util.send(win, 'set-theme', Util.getTheme());
-		});
-
 		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
