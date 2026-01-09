@@ -250,4 +250,8 @@ $(document).ready(() => {
 	electron.on('update-tab-bar-visibility', (e, isVisible) => {
 		$('.container').toggleClass('isHidden', !isVisible);
 	});
+
+	electron.on('set-theme', (e, theme) => {
+		$('html').toggleClass('themeDark', theme == 'dark');
+	});
 });

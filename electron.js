@@ -139,6 +139,7 @@ nativeTheme.on('updated', () => {
 	Api.setBackground(isDark ? 'dark' : '');
 
 	WindowManager.sendToAll('native-theme', isDark);
+	WindowManager.sendToAll('set-theme', Util.getTheme());
 });
 
 function createWindow () {
