@@ -314,7 +314,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
 				const options = [
-					{ id: 'go', icon: `go${relation.format}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'go', icon: `go-${I.RelationType[relation.format].toLowerCase()}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
 					{ id: 'copy', icon: 'copy', name: translate('commonCopy') },
 				];
 				if (relation.relationKey == 'source') {
