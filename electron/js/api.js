@@ -406,6 +406,11 @@ class Api {
 		WindowManager.setActiveTab(win, id);
 	};
 
+	getTab (win, id) {
+		const view = (win.views || []).find(it => it.id == id);
+		return view ? { id: view.id, data: view.data } : null;
+	};
+
 	updateTab (win, id, data) {
 		WindowManager.updateTab(win, id, data);
 	};
@@ -420,12 +425,6 @@ class Api {
 
 	reorderTabs (win, tabIds) {
 		WindowManager.reorderTabs(win, tabIds);
-	};
-
-	updateTabRoute (win, tabId, route) {
-		console.log('Api.updateTabRoute', tabId, route);
-
-		WindowManager.updateTab(win, tabId, { route });
 	};
 
 };

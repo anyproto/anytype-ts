@@ -56,6 +56,7 @@ class AuthStore {
 	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
+		Renderer.send('updateTab', U.Common.getElectron().tabId(), { token: this.token });
 	};
 
 	/**

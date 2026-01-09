@@ -304,6 +304,9 @@ class WindowManager {
 		};
 
 		view.data = Object.assign(view.data || {}, data);
+
+		console.log('UPDATE TAB DATA', { id: view.id, data: view.data });
+
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 

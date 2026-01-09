@@ -198,7 +198,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, activeIndex, isSingleTab } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -208,6 +208,7 @@ const App: FC = () => {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
+		const tabId = electron.tabId();
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
@@ -215,7 +216,7 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
-		S.Common.tabIdSet(electron.tabId());
+		S.Common.tabIdSet(tabId);
 		S.Common.setLeftSidebarState('vault', '');
 		S.Common.singleTabSet(isSingleTab);
 
@@ -261,58 +262,57 @@ const App: FC = () => {
 			}, t * 3);
 		};
 
+		const onObtainToken = (token: string) => {
+			if (!token) {
+				return;
+			};
+
+			S.Auth.tokenSet(token);
+			C.AccountSelect(accountId, '', 0, '', (message: any) => {
+				if (message.error.code) {
+					console.error('[App.onInit]:', message.error.description);
+					return;
+				};
+
+				const { account } = message;
+
+				if (!account) {
+					console.error('[App.onInit]: Account not found');
+					return;
+				};
+
+				keyboard.setPinChecked(isPinChecked);
+				S.Auth.accountSet(account);
+				S.Common.redirectSet(route);
+				S.Common.configSet(account.config, false);
+
+				U.Data.onInfo(account.info);
+				S.Common.spaceSet('');
+				U.Data.onAuthOnce();
+
+				const param = route ? U.Router.getParam(route) : {};
+				const routeParam = { replace: true, onFadeIn: hide };
+
+				if (param.spaceId) {
+					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+				} else {
+					U.Router.go('/main/void/select', routeParam);
+				};
+			});
+		};
+
 		if (accountId) {
-			if (isChild || (activeIndex > 0)) {
-				Renderer.send('keytarGet', accountId).then(phrase => {
-					U.Data.createSession(phrase, '', token, () => {
-						C.AccountSelect(accountId, '', 0, '', (message: any) => {
-							if (message.error.code) {
-								console.error('[App.onInit]:', message.error.description);
-								return;
-							};
-
-							const { account } = message;
-
-							if (!account) {
-								console.error('[App.onInit]: Account not found');
-								return;
-							};
-
-							keyboard.setPinChecked(isPinChecked);
-							S.Auth.accountSet(account);
-							S.Common.redirectSet(route);
-							S.Common.configSet(account.config, false);
-
-							U.Data.onInfo(account.info);
-							S.Common.spaceSet('');
-							U.Data.onAuthOnce();
-
-							const param = route ? U.Router.getParam(route) : {};
-							const routeParam = { replace: true, onFadeIn: hide };
-
-							if (param.spaceId) {
-								U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
-							} else {
-								U.Router.go('/main/void/select', routeParam);
-							};
+			Renderer.send('getTab', tabId).then((tab: any) => {
+				if (tab.token) {
+					onObtainToken(tab.token);
+				} else {
+					Renderer.send('keytarGet', accountId).then(phrase => {
+						U.Data.createSession(phrase, '', '', (message: any) => {
+							onObtainToken(message.token);
 						});
 					});
-				});
-
-				win.off('unload').on('unload', (e: any) => {
-					if (!S.Auth.token) {
-						return;
-					};
-
-					e.preventDefault();
-					U.Data.closeSession(() => window.close());
-					return false;
-				});
-			} else {
-				S.Common.redirectSet(route);
-				U.Router.go('/auth/setup/init', { replace: true });
-				cb();
-			};
+				};
+			});
 		} else {
 			cb();
 		};

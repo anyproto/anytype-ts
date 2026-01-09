@@ -154,7 +154,7 @@ class UtilRouter {
 			this.history.push(newRoute);
 
 			if (updateTabRoute) {
-				Renderer.send('updateTabRoute', U.Common.getElectron().tabId(), route);
+				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
 			};
 
 			onRouteChange?.();
