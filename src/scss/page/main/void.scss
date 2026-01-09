@@ -9,7 +9,7 @@
 .pageMainVoid {
 	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
-		.frame { text-align: center; }
+		.frame { text-align: center; position: absolute; }
 		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
 		.icon { width: 100%; height: 100%; }
 
