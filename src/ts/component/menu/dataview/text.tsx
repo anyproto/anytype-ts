@@ -1,35 +1,90 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable } from 'Component';
-import { I, J, U } from 'Lib';
+import { Editable, MenuItemVertical, Icon } from 'Component';
+import { I, J, U, S, keyboard, Action, Relation, analytics } from 'Lib';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, position } = props;
+	const { param, getId, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
-	const { value, placeholder, canEdit, noResize, cellId, onChange } = data;
-	const nodeRef = useRef(null);
+	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect } = data;
+	const relation = S.Record.getRelationByKey(relationKey);
+	const { relationFormat } = relation;
+	const isSingleLine = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(relationFormat);
+	const inputWrapper = useRef(null);
+	const inputRef = useRef(null);
+	const n = useRef(-1);
 	const length = value.length;
 	const valueRef = useRef(value);
 
 	useEffect(() => {
-		if (nodeRef.current) {
-			nodeRef.current.setValue(U.String.htmlSpecialChars(value));
-			nodeRef.current.setRange({ from: length, to: length });
-			nodeRef.current.placeholderCheck();
-		};
-
-		resize();
+		rebind();
 
 		return () => {
 			save();
+			unbind();
 		};
 	});
 
+	const rebind = () => {
+		unbind();
+		if (inputRef.current) {
+			inputRef.current.setValue(U.String.htmlSpecialChars(value));
+			inputRef.current.setRange({ from: length, to: length });
+			inputRef.current.placeholderCheck();
+			inputRef.current.setFocus();
+		};
+		resize();
+
+		window.setTimeout(() => {
+			setActive();
+			$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		}, 15);
+	};
+
+	const unbind = () => {
+		$(window).off('keydown.menu');
+	};
+
 	const getValue = () => {
-		return String(nodeRef.current?.getTextValue() || '').trim();
+		return String(inputRef.current?.getTextValue() || '').trim();
+	};
+
+	const onKeyDownHandler = (e: any) => {
+		let ret = false;
+
+		if (inputRef.current?.isFocused()) {
+			keyboard.shortcut('arrowdown', e, () => {
+				inputRef.current?.setBlur();
+			});
+
+			if (isSingleLine) {
+				keyboard.shortcut(`enter`, e, () => {
+					e.preventDefault();
+					ret = true;
+					close();
+				});
+			};
+		} else
+		if (!n.current) {
+			keyboard.shortcut('arrowup', e, () => {
+				inputRef.current?.setFocus();
+				n.current = -1;
+			});
+			keyboard.shortcut(`enter`, e, () => {
+				e.preventDefault();
+				ret = true;
+				onClick(e, actions[n.current]);
+			});
+		};
+
+		if (ret) {
+			return;
+		};
+
+		onKeyDown(e);
 	};
 
 	const onInput = () => {
@@ -61,15 +116,87 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		});
 	};
 
+	const onClick = (e: any, action: any) => {
+		onSelect(e, action);
+		close();
+	};
+
+	const onMouseEnter = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+		};
+	};
+
+	const onMouseLeave = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setHover(null, false);
+		};
+		if (inputRef.current?.isFocused()) {
+			n.current = -1;
+		};
+	};
+
+	const onFocus = () => {
+		setHover(null, false);
+		$(inputWrapper.current).addClass('focused');
+	};
+
+	const onBlur = () => {
+		$(inputWrapper.current).removeClass('focused');
+	};
+
+	const onClear = () => {
+		inputRef.current.setValue('');
+		inputRef.current.placeholderCheck();
+		inputRef.current.setFocus();
+	};
+
+	let menuItems: any = null;
+	if (actions.length) {
+		menuItems = (
+			<div className="items">
+				{actions.map((action: any, i: number) => (
+					<MenuItemVertical
+						key={i}
+						{...action}
+						icon={action.icon}
+						onClick={e => onClick(e, action)}
+						onMouseEnter={e => onMouseEnter(e, action)}
+						onMouseLeave={e => onMouseLeave(e, action)}
+					/>
+				))}
+			</div>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		getItems: () => actions,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+	}), []);
+
 	return (
-		<Editable
-			ref={nodeRef}
-			id="input"
-			placeholder={placeholder}
-			readonly={!canEdit}
-			onInput={onInput}
-			onPaste={onInput}
-		/>
+		<div className="innerWrapper">
+			<div
+				ref={inputWrapper}
+				className="inputWrapper"
+				onMouseEnter={() => setHover(null, false)}
+			>
+				<Editable
+					ref={inputRef}
+					id="input"
+					placeholder={placeholder}
+					readonly={!canEdit}
+					onInput={onInput}
+					onPaste={onInput}
+					onFocus={onFocus}
+					onBlur={onBlur}
+				/>
+
+				<Icon className="clear" onClick={onClear} />
+			</div>
+			{menuItems}
+		</div>
 	);
 
 }));

@@ -498,20 +498,29 @@ class Action {
 		});
 
 		if (types.length) {
-			S.Popup.open('objectManager', {
-				className: 'archiveType',
-				data: {
-					type: I.ObjectManagerPopup.TypeArchive,
-					objects: types,
-					onConfirm: (selectedIds, totalCount) => {
-						cb(ids.concat(selectedIds));
+			const filters = [
+				{ relationKey: 'type', condition: I.FilterCondition.In, value: types.map(({ id }) => id) }
+			];
+			U.Subscription.search({ filters }, (message: any) => {
+				if (message.records.length) {
+					S.Popup.open('objectManager', {
+						className: 'archiveType',
+						data: {
+							type: I.ObjectManagerPopup.TypeArchive,
+							objects: types,
+							onConfirm: (selectedIds, totalCount) => {
+								cb(ids.concat(selectedIds));
 
-						analytics.event('ClickDeleteType', { suggestCount: totalCount, count: selectedIds.length });
-					},
-				},
+								analytics.event('ClickDeleteType', { suggestCount: totalCount, count: selectedIds.length });
+							},
+						},
+					});
+
+					analytics.event('ScreenDeleteType', { route });
+				} else {
+					cb(ids);
+				};
 			});
-
-			analytics.event('ScreenDeleteType', { route });
 		} else {
 			cb(ids);
 		};
