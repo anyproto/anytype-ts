@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
@@ -1942,7 +1943,7 @@ class Keyboard {
 
 	setBodyClass () {
 		const { config, singleTab, isFullScreen } = S.Common;
-		const { showMenuBar, alwaysShowTabs } = config;
+		const { showMenuBar, alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
@@ -1951,7 +1952,10 @@ class Keyboard {
 			U.String.toCamelCase([ 'platform', platform ].join('-')),
 		];
 
-		if (config.debug.ui) {
+		if (theme) {
+			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
+		if (debug.ui) {
 			cn.push('debug');
 		};
 		if (showMenuBar) {
@@ -1959,9 +1963,6 @@ class Keyboard {
 		};
 		if (isFullScreen) {
 			cn.push('isFullScreen');
-		};
-		if (theme) {
-			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
 		};
 		if (singleTab && !alwaysShowTabs) {
 			cn.push('isSingleTab');

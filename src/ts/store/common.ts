@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
-import { I, M, S, U, J, Storage, Renderer } from 'Lib';
+import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -897,9 +897,9 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
-
 		this.singleTabSet(this.singleTab);
+		
+		keyboard.setBodyClass();
 	};
 
 	/**
