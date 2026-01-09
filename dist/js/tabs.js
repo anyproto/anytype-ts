@@ -72,6 +72,7 @@ $(() => {
 		const icon = String(item.data.icon || '');
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
+		const isImage = Boolean(item.data.isImage);
 
 		const tab = $(`
 			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
@@ -85,9 +86,14 @@ $(() => {
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
+			const cn = [ 'icon', 'object', `layout${layout}`, `uxType${uxType}` ];
+			if (isImage) {
+				cn.push('isImage');
+			};
+
 			clickable.prepend($(`
 				<div className="iconWrapper">
-					<div class="icon object layout${layout} uxType${uxType}" style="background-image: url('${icon}')" />
+					<div class="${cn.join(' ')}" style="background-image: url('${icon}')" />
 				</div>
 			`));
 		};

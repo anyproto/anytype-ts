@@ -75,43 +75,9 @@ body.platform-darwin { padding-left: 88px; }
 .tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tab .icon.object { width: 18px; height: 18px; }
 .tab .icon.object.layout1,
-.tab .icon.object.layout10.uxType3,
-.tab .icon.object.layout10.uxType4,
-.tab .icon.object.layout22 { border-radius: 50% }
-
-/*
-Page		 = 0,
-	Human		 = 1,
-	Task		 = 2,
-	Set			 = 3,
-	Type		 = 4,
-	Relation	 = 5,
-	File		 = 6,
-	Dashboard	 = 7,
-	Image		 = 8,
-	Note		 = 9,
-	Space		 = 10,
-	Bookmark	 = 11,
-	OptionList	 = 12,
-	Option		 = 13,
-	Collection	 = 14,
-	Audio		 = 15,
-	Video		 = 16,
-	Date		 = 17,
-	SpaceView	 = 18,
-	Participant	 = 19,
-	Pdf			 = 20,
-	ChatOld		 = 21,
-	Chat		 = 22,
-
-	Empty		 = 100,
-	Navigation	 = 101,
-	Graph		 = 102,
-	History		 = 103,
-	Archive		 = 104,
-	Block		 = 105,
-	Settings	 = 106,
-*/
+.tab .icon.object.layout10.uxType3.isImage,
+.tab .icon.object.layout10.uxType4.isImage,
+.tab .icon.object.layout22.isImage { border-radius: 50% }
 
 .tab .div {
 	position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);

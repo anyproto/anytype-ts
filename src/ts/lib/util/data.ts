@@ -841,6 +841,7 @@ class UtilData {
 			icon: U.Graph.imageSrc(object),
 			layout: object.layout,
 			uxType: object.spaceUxType,
+			isImage: object.iconImage,
 		});
 	};
 
