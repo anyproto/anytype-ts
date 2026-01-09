@@ -18,7 +18,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					S.Auth.logout(true, true);
-					U.Router.go('/', { replace: true });
+					U.Router.go('/auth/select', { replace: true });
 				},
 			},
 		});
@@ -44,7 +44,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	};
 
 	const onLogout = () => {
-		U.Router.go('/', { 
+		U.Router.go('/auth/select', { 
 			replace: true, 
 			animate: true,
 			onFadeIn: () => {

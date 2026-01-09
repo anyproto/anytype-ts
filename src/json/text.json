@@ -354,6 +354,7 @@
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
+	"electronMenuNewTab": "New Tab",
 
 	"month1": "January",
 	"month2": "February",
@@ -831,6 +832,7 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalVaultStyle": "Vault density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
+	"popupSettingsPersonalAlwaysShowTabbar": "Always show tabbar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
@@ -1431,6 +1433,7 @@
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
 	"popupShortcutMainBasics28": "Toggle Widget panel",
+	"popupShortcutMainBasics29": "New Tab",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",

@@ -603,7 +603,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{!vaultIsMinimal ? iconCreate() : ''}
+					{!vaultIsMinimal ? (
+						<>
+							{iconCreate()}
+							<Icon 
+								className="toggle withBackground"
+								tooltipParam={{ 
+									text: translate('popupShortcutMainBasics15'), 
+									caption: keyboard.getCaption('toggleSidebar'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+								onClick={() => sidebar.leftPanelToggle()}
+								onMouseDown={e => e.stopPropagation()}
+							/>
+						</>
+					) : ''}
 				</div>
 			</div>
 			{!vaultIsMinimal ? (

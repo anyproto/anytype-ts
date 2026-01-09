@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
-import { I, M, S, U, J, Storage, Renderer } from 'Lib';
+import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -30,6 +30,7 @@ class CommonStore {
 	public defaultType = null;
 	public pinTimeId = null;
 	public isFullScreen = false;
+	public singleTabValue = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -57,6 +58,7 @@ class CommonStore {
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
+	public tabId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
@@ -131,6 +133,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
+			singleTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
@@ -166,6 +169,7 @@ class CommonStore {
 			vaultIsMinimal: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
+			singleTab: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -192,6 +196,7 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			singleTabSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -246,6 +251,10 @@ class CommonStore {
 
 	get fullscreen (): boolean {
 		return this.isFullScreen;
+	};
+
+	get singleTab (): boolean {
+		return this.singleTabValue;
 	};
 
 	get pin (): string {
@@ -666,9 +675,14 @@ class CommonStore {
 	 */
 	fullscreenSet (v: boolean) {
 		this.isFullScreen = v;
+	};
 
-		$('body').toggleClass('isFullScreen', v);
-		$(window).trigger('resize');
+	/**
+	 * Sets the single tab mode.
+	 * @param {boolean} v - The single tab mode value.
+	 */
+	singleTabSet (v: boolean) {
+		this.singleTabValue = v;
 	};
 
 	/**
@@ -883,7 +897,9 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
+		this.singleTabSet(this.singleTab);
+		
+		keyboard.setBodyClass();
 	};
 
 	/**
@@ -916,6 +932,14 @@ class CommonStore {
 	 */
 	windowIdSet (id: string) {
 		this.windowId = String(id || '');
+	};
+
+	/**
+	 * Sets the tab ID.
+	 * @param {string} id - The tab ID.
+	 */
+	tabIdSet (id: string) {
+		this.tabId = String(id || '');
 	};
 
 	/**

@@ -22,12 +22,17 @@ class Api {
 	isPinChecked = false;
 	lastActivityTime = Date.now();
 
-	getInitData (win) {
-		const cssPath = path.join(Util.userPath(), 'custom.css');
-		const route = win.route || '';
-		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+	getInitData (win, tabId) {
+		let route = win.route || '';
 
 		win.route = '';
+
+		// Try to get route from active tab data
+		if (!route && tabId && win.views && (win.views.length > 0)) {
+			const tab = win.views.find(it => it.id == tabId);
+
+			route = tab?.data?.route || '';
+		};
 
 		return {
 			id: win.id,
@@ -38,8 +43,9 @@ class Api {
 			route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
-			css: String(css || ''),
-			token: String(win.token || ''),
+			css: Util.getCss(),
+			activeIndex: win.activeIndex || 0,
+			isSingleTab: win.views && (win.views.length == 1),
 		};
 	};
 
@@ -68,6 +74,12 @@ class Api {
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
+
+			// Update tab bar visibility if alwaysShowTabs changed
+			if ('alwaysShowTabs' in config) {
+				WindowManager.updateTabBarVisibility(win);
+			};
+
 			callBack?.();
 		});
 	};
@@ -114,7 +126,6 @@ class Api {
 	setHideTray (win, show) {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
 			this.initMenu(win);
 		});
 	};
@@ -125,6 +136,12 @@ class Api {
 
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
+		});
+	};
+
+	setAlwaysShowTabs (win, show) {
+		this.setConfig(win, { alwaysShowTabs: show }, () => {
+			WindowManager.updateTabBarVisibility(win);
 		});
 	};
 
@@ -374,8 +391,40 @@ class Api {
 		win.setFullScreen(!win.isFullScreen());
 	};
 
-	setToken (win, token) {
-		win.token = token;
+	createTab (win) {
+		WindowManager.createTab(win);
+	};
+
+	getTabs (win) {
+		return {
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
+			id: win.views[win.activeIndex || 0]?.id,
+		};
+	};
+
+	setActiveTab (win, id) {
+		WindowManager.setActiveTab(win, id);
+	};
+
+	getTab (win, id) {
+		const view = (win.views || []).find(it => it.id == id);
+		return view ? { id: view.id, data: view.data } : null;
+	};
+
+	updateTab (win, id, data) {
+		WindowManager.updateTab(win, id, data);
+	};
+
+	removeTab (win, id, updateActive) {
+		WindowManager.removeTab(win, id, updateActive);
+	};
+
+	closeOtherTabs (win, id) {
+		WindowManager.closeOtherTabs(win, id);
+	};
+
+	reorderTabs (win, tabIds) {
+		WindowManager.reorderTabs(win, tabIds);
 	};
 
 };

@@ -21,7 +21,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 	};
 
 	useEffect(() => {

@@ -281,6 +281,7 @@ export interface RouteParam {
 	replace: boolean;
 	animate: boolean;
 	delay: number;
+	updateTabRoute: boolean;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;

@@ -13,10 +13,11 @@
 			#bubble-loader {
 				position: absolute; width: 154px; height: 154px; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0); z-index: 10001;
 				display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all cubic-bezier(0.5, 0, 0.75, 0) 1s;
+				transform-origin: 50% 50%;
 			}
 			#bubble-loader .bubble { animation: bubble ease-in-out infinite 3.2s; border-radius: 50%; width: 100%; height: 100%; background-color: transparent; }
 			#bubble-loader .bubble .img { width: 100%; height: 100%; background-size: 100%; background-image: url('./img/icon/bubble.svg'); transition: opacity cubic-bezier(0.5, 0, 0.75, 0) 1s; }
-			#bubble-loader.inflate { transform: scale3d(10,10,1); }
+			#bubble-loader.inflate { transform: scale3d(20,20,1); }
 			#bubble-loader.inflate .bubble { transition: background-color ease-in-out 1s; animation-play-state: paused; }
 			#bubble-loader.inflate .bubble .img { opacity: 0; }
 

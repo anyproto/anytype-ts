@@ -36,6 +36,7 @@ const keyMap = {
 		status: 'participantStatus',
 	},
 };
+keyMap[I.ObjectLayout.Space] = keyMap[I.ObjectLayout.SpaceView];
 
 class DetailStore {
 

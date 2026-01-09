@@ -779,6 +779,31 @@ class UtilObject {
 		return svg;
 	};
 
+	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
+		const theme = S.Common.getThemeClass();
+		const type = S.Detail.get(J.Constant.subId.type, typeId, [ 'name', 'iconName' ], true);
+
+		let src = '';
+		if (type.iconName) {
+			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
+		} else {
+			let id = '';
+			switch (layout) {
+				default: id = 'page'; break;
+				case I.ObjectLayout.ChatOld:
+				case I.ObjectLayout.Chat: id = 'chat'; break;
+				case I.ObjectLayout.Collection: id = 'collection'; break;
+				case I.ObjectLayout.Set: id = 'set'; break;
+				case I.ObjectLayout.Date: id = 'date'; break;
+				case I.ObjectLayout.Type: id = 'type'; break;
+				case I.ObjectLayout.Bookmark: id = 'page'; break;
+			};
+			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
+		};
+
+		return src;
+	};
+
 	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
 		if (!spaceview) {
 			return I.NotificationMode.All;

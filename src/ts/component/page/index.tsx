@@ -33,7 +33,7 @@ import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
 
 const Components = {
-	'index/index':			 PageAuthSelect,
+	'index/index':			 PageMainBlank,
 
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
@@ -67,6 +67,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
+	const { isFullScreen, singleTab } = S.Common;
 	const ns = U.Common.getEventNamespace(isPopup);
 	const childRef = useRef(null);
 	const match = keyboard.getMatch(isPopup);
@@ -106,7 +107,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (isMain && !account) {
-			U.Router.go('/', { replace: true });
+			U.Router.go('/auth/select', { replace: true });
 			return;
 		};
 

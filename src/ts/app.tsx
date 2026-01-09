@@ -21,6 +21,7 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
+import { active, transition } from 'd3';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -127,7 +128,7 @@ const App: FC = () => {
 	const nodeRef = useRef(null);
 
 	const init = () => {
-		const { version, arch, getGlobal } = electron;
+		const { version, arch, getGlobal, tabId } = electron;
 
 		U.Router.init(history);
 		U.Smile.init();
@@ -135,7 +136,7 @@ const App: FC = () => {
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
-		Renderer.send('getInitData').then((data: any) => onInit(data));
+		Renderer.send('getInitData', tabId()).then((data: any) => onInit(data));
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
@@ -156,7 +157,8 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-window', onWillCloseWindow);
+		Renderer.on('will-close-tab', onWillCloseTab);
+		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
@@ -195,8 +197,8 @@ const App: FC = () => {
 
 	const onInit = (data: any) => {
 		data = data || {};
-		
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -206,6 +208,7 @@ const App: FC = () => {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
+		const tabId = electron.tabId();
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
@@ -213,7 +216,9 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
+		S.Common.tabIdSet(tabId);
 		S.Common.setLeftSidebarState('vault', '');
+		S.Common.singleTabSet(isSingleTab);
 
 		Action.checkDefaultSpellingLang();
 		keyboard.setBodyClass();
@@ -232,13 +237,18 @@ const App: FC = () => {
 		body.addClass('over');
 
 		const hide = () => {
-			rootLoader.remove(); 
+			rootLoader.remove();
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
+		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
+			const t = activeIndex > 0 ? 50 : 300;
+
+			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
+			anim.css({ transitionDuration: `${t}ms` });
 
 			window.setTimeout(() => {
 				raf(() => anim.removeClass('from'));
@@ -247,73 +257,77 @@ const App: FC = () => {
 
 					window.setTimeout(() => {
 						rootLoader.css({ opacity: 0 });
-						window.setTimeout(() => hide(), 300);
-					}, 500);
-				}, 1500);
-			}, 1000);
+						window.setTimeout(() => hide(), t);
+					}, activeIndex );
+				}, t * 5);
+			}, t * 3);
 		};
 
-		if (accountId) {
-			if (isChild) {
+		const onObtainToken = (token: string) => {
+			if (!token) {
+				return;
+			};
+
+			S.Auth.tokenSet(token);
+			C.AccountSelect(accountId, '', 0, '', (message: any) => {
+				if (message.error.code) {
+					console.error('[App.onInit]:', message.error.description);
+					return;
+				};
+
+				const { account } = message;
+
+				if (!account) {
+					console.error('[App.onInit]: Account not found');
+					return;
+				};
+
+				keyboard.setPinChecked(isPinChecked);
+				S.Auth.accountSet(account);
+				S.Common.redirectSet(route);
+				S.Common.configSet(account.config, false);
+
+				U.Data.onInfo(account.info);
+				S.Common.spaceSet('');
+				U.Data.onAuthOnce();
+
+				const param = route ? U.Router.getParam(route) : {};
+
+				if (param.spaceId) {
+					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+				} else {
+					U.Router.go('/main/void/select', routeParam);
+				};
+			});
+		};
+
+		if (!accountId) {
+			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			return;
+		};
+
+		Renderer.send('getTab', tabId).then((tab: any) => {
+			if (tab && tab.token) {
+				onObtainToken(tab.token);
+			} else {
 				Renderer.send('keytarGet', accountId).then(phrase => {
-					U.Data.createSession(phrase, '', token, () => {
-						C.AccountSelect(accountId, '', 0, '', (message: any) => {
-							if (message.error.code) {
-								console.error('[App.onInit]:', message.error.description);
-								return;
-							};
-
-							const { account } = message;
-
-							if (!account) {
-								console.error('[App.onInit]: Account not found');
-								return;
-							};
-
-							keyboard.setPinChecked(isPinChecked);
-							S.Auth.accountSet(account);
+					U.Data.createSession(phrase, '', '', (message: any) => {
+						if (message.error.code) {
 							S.Common.redirectSet(route);
-							S.Common.configSet(account.config, false);
+							U.Router.go('/auth/setup/init', routeParam);
+							return;
+						};
 
-							const param = route ? U.Router.getParam(route) : {};
-							const spaceId = param.spaceId || Storage.get('spaceId');
-							const routeParam = { 
-								onRouteChange: hide,
-							};
-
-							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', false, routeParam, true);
-							} else {
-								U.Data.onAuthWithoutSpace(routeParam);
-							};
-
-							U.Data.onInfo(account.info);
-							U.Data.onAuthOnce();
-						});
+						onObtainToken(message.token);
 					});
 				});
-
-				win.off('unload').on('unload', (e: any) => {
-					if (!S.Auth.token) {
-						return;
-					};
-
-					e.preventDefault();
-					U.Data.closeSession(() => window.close());
-					return false;
-				});
-			} else {
-				S.Common.redirectSet(route);
-				U.Router.go('/auth/setup/init', { replace: true });
-				cb();
 			};
-		} else {
-			cb();
-		};
+		});
 	};
 
-	const onWillCloseWindow = (e: any, windowId: string) => {
-		Storage.deleteLastOpenedByWindowId([ windowId ]);
+	const onWillCloseTab = (e: any, tabId: string) => {
+		Storage.deleteLastOpenedByTabId([ tabId ]);
+		U.Data.closeSession();
 	};
 
 	const onPopup = (e: any, id: string, param: any, close?: boolean) => {
@@ -504,7 +518,6 @@ const App: FC = () => {
 					) : ''}
 
 					<MenuBar />
-					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
 

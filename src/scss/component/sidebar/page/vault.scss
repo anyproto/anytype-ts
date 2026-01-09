@@ -1,12 +1,14 @@
+.sidebarPage.pageVault { background: var(--color-shape-highlight-light-solid); border-radius: 16px; }
 .sidebarPage.pageVault {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;
+		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
 	}
 	> .head {
 		.name { @include text-overflow-nw; }
 
 		&.withMessages { padding-left: 16px; padding-right: 16px; }
+		&.isMinimal { height: 8px; }
 	}
 
 	> .body { padding: 0px; overflow: hidden; }
@@ -79,7 +81,7 @@
 	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
 	.filterWrapper { padding: 8px 12px; overflow: hidden; }
 
-	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; border-radius: 8px; -webkit-app-region: no-drag; }
+	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; border-radius: 12px; -webkit-app-region: no-drag; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.iconWrap {
@@ -126,7 +128,7 @@
 			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
 		}
 
-		&.isDragging { z-index: 1; background-color: var(--color-shape-highlight-light-solid); }
+		&.isDragging { z-index: 1; background-color: var(--color-bg-primary); }
 
 		&.isLoading {
 			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 32px; height: 32px; }

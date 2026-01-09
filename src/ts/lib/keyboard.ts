@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
@@ -31,7 +32,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
-	
+
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
@@ -1247,19 +1248,35 @@ class Keyboard {
 		};
 
 		const match = this.getMatch();
-		const action = match?.params?.action;
+		const rootId = this.getRootId();
+		const { action, id } = match.params;
 		const titles = {
-			index: translate('commonDashboard'),
+			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),
 		};
 
-		if (titles[action]) {
-			U.Data.setWindowTitleText(titles[action]);
+		let title = titles[action];
+
+		if (action == 'settings') {
+			const map = U.Menu.settingsSectionsMap();
+			const mapped = map[id];
+
+			title = [ translate('commonSettings') ];
+			if (mapped) {
+				title.push(mapped);
+			};
+
+			title = title.join(' › ');
+		};
+
+		if (title) {
+			U.Data.setWindowTitleText(title);
+			U.Data.setTabTitleText(title);
 		} else {
-			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
+			U.Data.setTabTitle(rootId, rootId);
 		};
 	};
 
@@ -1925,24 +1942,30 @@ class Keyboard {
 	};
 
 	setBodyClass () {
-		const { config } = S.Common;
-		const { showMenuBar } = config;
+		const { config, singleTab, isFullScreen } = S.Common;
+		const { showMenuBar, alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
-		const cn = [ 
-			this.getPageClass('body', false), 
+		const cn = [
+			this.getPageClass('body', false),
 			U.String.toCamelCase([ 'platform', platform ].join('-')),
 		];
 
-		if (config.debug.ui) {
+		if (theme) {
+			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
+		if (debug.ui) {
 			cn.push('debug');
 		};
 		if (showMenuBar) {
 			cn.push('withMenuBar');
 		};
-		if (theme) {
-			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		if (isFullScreen) {
+			cn.push('isFullScreen');
+		};
+		if (singleTab && !alwaysShowTabs) {
+			cn.push('isSingleTab');
 		};
 
 		$('html').attr({ class: cn.join(' ') });

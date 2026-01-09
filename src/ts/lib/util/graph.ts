@@ -62,11 +62,7 @@ class UtilGraph {
 					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				} else
 				if (d.iconName) {
-					src = U.Common.updateSvg(require(`img/icon/type/default/${d.iconName}.svg`), { 
-						id: d.iconName, 
-						size: 100, 
-						fill: U.Common.iconBgByOption(d.iconOption),
-					});
+					src = U.Object.typeIcon(d.iconName, d.iconOption, 100);
 				} else
 				if (d.iconEmoji) {
 					const code = U.Smile.getCode(d.iconEmoji);
@@ -95,6 +91,8 @@ class UtilGraph {
 						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
+				} else {
+					src = U.Object.defaultIcon(d.layout, d.type, 100);
 				};
 				break;
 			};

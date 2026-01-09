@@ -1,12 +1,12 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Button } from 'Component';
+import { Icon, Title, Label, Button, Frame } from 'Component';
 import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
 
 const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const spaces = U.Space.getList().filter(it => it.isLocalOk);
+	const spaces = U.Menu.getVaultItems().filter(it => it.isLocalOk);
 	const match = keyboard.getMatch(isPopup);
 	const { id } = match.params || {};
 	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
@@ -41,6 +41,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	useEffect(() => {
 		if (id == 'select') {
 			S.Common.setLeftSidebarState('vault', '');
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	}, []);
 
@@ -52,7 +53,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return (
 		<div className={cn.join(' ')}>
-			<div className="container">
+			<Frame>
 				<div className="iconWrapper">
 					<Icon />
 				</div>
@@ -60,8 +61,10 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				<Title text={title} />
 				<Label text={text} />
 
-				{button}
-			</div>
+				<div className="buttons">
+					{button}
+				</div>
+			</Frame>
 		</div>
 	);
 

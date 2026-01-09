@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Action, keyboard } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -131,6 +131,11 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
+		let updateTabRoute = param.updateTabRoute;
+		if (updateTabRoute === undefined) {
+			updateTabRoute = true;
+		};
+
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
 			timeout = S.Popup.getTimeout();
@@ -146,7 +151,12 @@ class UtilRouter {
 		};
 
 		const change = () => {
-			this.history.push(newRoute); 
+			this.history.push(newRoute);
+
+			if (updateTabRoute) {
+				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
+			};
+
 			onRouteChange?.();
 		};
 
@@ -237,18 +247,13 @@ class UtilRouter {
 						});
 					}, J.Constant.delay.popup);
 				} else {
-					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
-
-					if (spaces.length) {
-						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
-					} else {
-						U.Router.go('/main/void/error', routeParam);
-					};
+					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk);
 				};
 				return;
 			};
 
 			this.go('/main/blank', { 
+				updateTabRoute: false,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
 

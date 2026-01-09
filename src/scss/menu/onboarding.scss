@@ -103,7 +103,7 @@
 .onboardingElement {
 	* { transition: none !important; }
 
-	&#sidebarPageVault { background-color: var(--color-shape-highlight-light-solid) !important; }
+	&#sidebarPageVault { background-color: var(--color-bg-primary) !important; }
 
 	&.icon.withBackground,
 	&.widgetSection > .items > .widget { background-color: var(--color-bg-primary) !important; }

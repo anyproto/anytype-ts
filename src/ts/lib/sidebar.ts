@@ -294,7 +294,7 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
-	leftPanelSubPageClose (animate: boolean) {
+	leftPanelSubPageClose (animate: boolean, save: boolean = true) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -318,8 +318,8 @@ class Sidebar {
 		this.resizePage(false, width, null, animate);
 
 		window.setTimeout(() => {
-			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, true);
-			
+			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, save);
+
 			objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			subPageWrapperLeft.removeClass('sidebarAnimation isClosing').css({ transform: '' });
 			dummyLeft.removeClass('sidebarAnimation');
@@ -486,6 +486,8 @@ class Sidebar {
 			window.setTimeout(() => this.setAnimating(false), J.Constant.delay.sidebar);
 		};
 
+		const { config, singleTab } = S.Common;
+		const { alwaysShowTabs } = config;
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
@@ -493,12 +495,10 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft, isPopup);
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
-		const isVaultMinimal = S.Common.vaultIsMinimal && !dataLeft.isClosed;
 		const objLeft = this.leftPanelGetNode();
 		const objRight = this.rightPanelGetNode(isPopup);
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
 		const dummyLeft = $('#sidebarDummyLeft');
-		const leftButton = $('#sidebarLeftButton');
 
 		if ((widthLeft === null) && objLeft && objLeft.length) {
 			widthLeft = objLeft.outerWidth();
@@ -525,9 +525,10 @@ class Sidebar {
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 		const pageCss: any = { width: pageWidth };
+		const offset = singleTab && !alwaysShowTabs ? 0 : 16;
 
 		if (!isPopup) {
-			pageCss.height = U.Common.getAppContainerHeight() - 8;
+			pageCss.height = U.Common.getAppContainerHeight() - offset;
 		};
 
 		header.css({ width: '' }).toggleClass('sidebarAnimation', animate);
@@ -548,10 +549,6 @@ class Sidebar {
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
 			
-			leftButton.toggleClass('sidebarAnimation', animate);
-			leftButton.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			leftButton.toggleClass('withMinimalVault', isVaultMinimal);
-
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			pageFlex.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);

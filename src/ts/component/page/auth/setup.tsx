@@ -133,7 +133,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const onCancel = () => {
 		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 	};
 	
 	useEffect(() => {

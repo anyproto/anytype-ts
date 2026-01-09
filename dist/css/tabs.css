@@ -1,0 +1,111 @@
+:root {
+	--color-text-primary: #252525;
+	--color-text-secondary: #828282;
+	--color-bg-primary: #fff;
+	--color-shape-tertiary: #f2f2f2;
+	--color-shape-highlight-dark: rgba(0, 0, 0, 0.11);
+	--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
+}
+
+@font-face {
+	font-family: 'Inter'; font-style: normal; font-weight: 500; src: url('../font/inter/medium.woff2') format('woff2');
+}
+
+* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
+
+body {
+	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent;
+	font-weight: 500; line-height: 22px; letter-spacing: -0.12px; padding: 8px; -webkit-app-region: drag;
+	overflow: hidden;
+}
+body.platform-darwin { padding-left: 88px; }
+
+.container { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; width: 100%; }
+.container.isHidden { opacity: 0; pointer-events: none; }
+
+#tabs {
+	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
+	overflow-y: hidden; -webkit-app-region: no-drag;
+}
+#tabs::-webkit-scrollbar { display: none; }
+#marker {
+	width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute;
+	border-radius: 16px; z-index: 1; pointer-events: none; -webkit-app-region: no-drag;
+}
+#marker.anim { transition: width, left 0.1s ease-in-out; }
+
+.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; -webkit-app-region: no-drag; }
+.icon.withBackground { border-radius: 10px; }
+.icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
+
+.tab {
+	padding: 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+	color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
+	transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
+}
+
+.tab:not(.isAdd):active { cursor: grabbing; }
+
+.tab.noClose .icon.close { display: none !important; }
+
+.tab.active { color: var(--color-text-primary); }
+.tab.active .div { display: none; }
+.tab.hideDiv .div { display: none; }
+
+.tab.isAdd { flex: 0 0 auto; min-width: 32px; }
+.tab.isAdd .icon { background-image: url('../img/icon/plus.svg'); }
+
+.tab .clickable {
+	display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; padding-left: 6px;
+	-webkit-app-region: no-drag;
+}
+.tab .icon { flex-shrink: 0; }
+.tab .name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
+.tab .icon.close { background-image: url('../img/icon/close.svg'); }
+
+.tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tab .icon.object { width: 18px; height: 18px; }
+.tab .icon.object.layout1,
+.tab .icon.object.layout10.uxType3,
+.tab .icon.object.layout10.uxType4,
+.tab .icon.object.layout22 { border-radius: 50% }
+
+/*
+Page		 = 0,
+	Human		 = 1,
+	Task		 = 2,
+	Set			 = 3,
+	Type		 = 4,
+	Relation	 = 5,
+	File		 = 6,
+	Dashboard	 = 7,
+	Image		 = 8,
+	Note		 = 9,
+	Space		 = 10,
+	Bookmark	 = 11,
+	OptionList	 = 12,
+	Option		 = 13,
+	Collection	 = 14,
+	Audio		 = 15,
+	Video		 = 16,
+	Date		 = 17,
+	SpaceView	 = 18,
+	Participant	 = 19,
+	Pdf			 = 20,
+	ChatOld		 = 21,
+	Chat		 = 22,
+
+	Empty		 = 100,
+	Navigation	 = 101,
+	Graph		 = 102,
+	History		 = 103,
+	Archive		 = 104,
+	Block		 = 105,
+	Settings	 = 106,
+*/
+
+.tab .div {
+	position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
+	z-index: 0; right: 0px;
+}
+.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }

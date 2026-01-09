@@ -56,7 +56,7 @@ class AuthStore {
 	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
-		Renderer.send('setToken', this.token);
+		Renderer.send('updateTab', U.Common.getElectron().tabId(), { token: this.token });
 	};
 
 	/**
@@ -275,6 +275,7 @@ class AuthStore {
 			Storage.logout();
 
 			Renderer.send('setBadge', '');
+			Renderer.send('closeOtherTabs', S.Common.tabId);
 		});
 	};
 
