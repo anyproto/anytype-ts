@@ -241,6 +241,7 @@ const App: FC = () => {
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
+		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
 			const t = activeIndex > 0 ? 10 : 300;
@@ -291,7 +292,6 @@ const App: FC = () => {
 				U.Data.onAuthOnce();
 
 				const param = route ? U.Router.getParam(route) : {};
-				const routeParam = { replace: true, onFadeIn: hide };
 
 				if (param.spaceId) {
 					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
@@ -301,21 +301,28 @@ const App: FC = () => {
 			});
 		};
 
-		if (accountId) {
-			Renderer.send('getTab', tabId).then((tab: any) => {
-				if (tab.token) {
-					onObtainToken(tab.token);
-				} else {
-					Renderer.send('keytarGet', accountId).then(phrase => {
-						U.Data.createSession(phrase, '', '', (message: any) => {
-							onObtainToken(message.token);
-						});
-					});
-				};
-			});
-		} else {
+		if (!accountId) {
 			cb();
+			return;
 		};
+
+		Renderer.send('getTab', tabId).then((tab: any) => {
+			if (tab.token) {
+				onObtainToken(tab.token);
+			} else {
+				Renderer.send('keytarGet', accountId).then(phrase => {
+					U.Data.createSession(phrase, '', '', (message: any) => {
+						if (message.error.code) {
+							S.Common.redirectSet(route);
+							U.Router.go('/auth/setup/init', routeParam);
+							return;
+						};
+
+						onObtainToken(message.token);
+					});
+				});
+			};
+		});
 	};
 
 	const onWillCloseTab = (e: any, tabId: string) => {
