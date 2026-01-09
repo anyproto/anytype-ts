@@ -128,7 +128,7 @@ const App: FC = () => {
 	const nodeRef = useRef(null);
 
 	const init = () => {
-		const { version, arch, getGlobal } = electron;
+		const { version, arch, getGlobal, tabId } = electron;
 
 		U.Router.init(history);
 		U.Smile.init();
@@ -136,7 +136,7 @@ const App: FC = () => {
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
-		Renderer.send('getInitData').then((data: any) => onInit(data));
+		Renderer.send('getInitData', tabId()).then((data: any) => onInit(data));
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
@@ -242,7 +242,7 @@ const App: FC = () => {
 		};
 
 		const cb = () => {
-			const t = activeIndex > 0 ? 50 : 300;
+			const t = activeIndex > 0 ? 10 : 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
@@ -263,11 +263,6 @@ const App: FC = () => {
 
 		if (accountId) {
 			if (isChild || (activeIndex > 0)) {
-				// For new tabs, hide loaders immediately to prevent flash
-				bubbleLoader.hide();
-				setIsLoading(false);
-				body.removeClass('over');
-
 				Renderer.send('keytarGet', accountId).then(phrase => {
 					U.Data.createSession(phrase, '', token, () => {
 						C.AccountSelect(accountId, '', 0, '', (message: any) => {
@@ -293,11 +288,12 @@ const App: FC = () => {
 							U.Data.onAuthOnce();
 
 							const param = route ? U.Router.getParam(route) : {};
+							const routeParam = { replace: true, onFadeIn: hide };
 
 							if (param.spaceId) {
-								U.Router.switchSpace(param.spaceId, '', false, {}, true);
+								U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
 							} else {
-								U.Router.go('/main/void/select', {});
+								U.Router.go('/main/void/select', routeParam);
 							};
 						});
 					});
@@ -497,19 +493,6 @@ const App: FC = () => {
 	};
 
 	useEffect(() => init(), []);
-
-	useEffect(() => {
-		// Listen to route changes and save to tab data
-		const unlisten = history.listen((location) => {
-			const route = location.pathname;
-			const tabId = S.Common.tabId;
-			if (tabId) {
-				Renderer.send('updateTabRoute', tabId, route);
-			};
-		});
-
-		return () => unlisten();
-	}, []);
 
 	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	

@@ -22,15 +22,16 @@ class Api {
 	isPinChecked = false;
 	lastActivityTime = Date.now();
 
-	getInitData (win) {
+	getInitData (win, tabId) {
 		let route = win.route || '';
 
 		win.route = '';
 
 		// Try to get route from active tab data
-		if (!route && win.views && win.views[win.activeIndex || 0]) {
-			const activeView = win.views[win.activeIndex || 0];
-			route = activeView.data?.route || '';
+		if (!route && tabId && win.views && (win.views.length > 0)) {
+			const tab = win.views.find(it => it.id == tabId);
+
+			route = tab?.data?.route || '';
 		};
 
 		return {
@@ -422,6 +423,8 @@ class Api {
 	};
 
 	updateTabRoute (win, tabId, route) {
+		console.log('Api.updateTabRoute', tabId, route);
+
 		WindowManager.updateTab(win, tabId, { route });
 	};
 
