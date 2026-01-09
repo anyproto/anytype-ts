@@ -9,7 +9,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	
 	const { param, getId, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
-	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [] } = data;
+	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect } = data;
 	const relation = S.Record.getRelationByKey(relationKey);
 	const { relationFormat } = relation;
 	const isSingleLine = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(relationFormat);
@@ -64,7 +64,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				keyboard.shortcut(`enter`, e, () => {
 					e.preventDefault();
 					ret = true;
-					save();
+					close();
 				});
 			};
 		} else
@@ -117,22 +117,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	};
 
 	const onClick = (e: any, action: any) => {
-		switch (action.id) {
-			case 'openInBrowser':
-			case 'sendEmail':
-			case 'call': {
-				Action.openUrl(Relation.checkUrlScheme(relation.format, value));
-				analytics.event('RelationUrlOpen');
-				break;
-			};
-
-			case 'copy': {
-				U.Common.clipboardCopy({ text: value, html: value });
-				analytics.event('RelationUrlCopy');
-				break;
-			};
-		};
-
+		onSelect(e, action);
 		close();
 	};
 
