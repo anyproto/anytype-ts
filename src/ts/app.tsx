@@ -197,7 +197,7 @@ const App: FC = () => {
 
 	const onInit = (data: any) => {
 		data = data || {};
-		
+
 		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, activeIndex, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
@@ -236,7 +236,7 @@ const App: FC = () => {
 		body.addClass('over');
 
 		const hide = () => {
-			rootLoader.remove(); 
+			rootLoader.remove();
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
@@ -263,6 +263,11 @@ const App: FC = () => {
 
 		if (accountId) {
 			if (isChild || (activeIndex > 0)) {
+				// For new tabs, hide loaders immediately to prevent flash
+				bubbleLoader.hide();
+				setIsLoading(false);
+				body.removeClass('over');
+
 				Renderer.send('keytarGet', accountId).then(phrase => {
 					U.Data.createSession(phrase, '', token, () => {
 						C.AccountSelect(accountId, '', 0, '', (message: any) => {
@@ -288,14 +293,11 @@ const App: FC = () => {
 							U.Data.onAuthOnce();
 
 							const param = route ? U.Router.getParam(route) : {};
-							const routeParam = {
-								onRouteChange: hide,
-							};
 
 							if (param.spaceId) {
-								U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+								U.Router.switchSpace(param.spaceId, '', false, {}, true);
 							} else {
-								U.Router.go('/main/void/select', routeParam);
+								U.Router.go('/main/void/select', {});
 							};
 						});
 					});

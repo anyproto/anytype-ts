@@ -237,13 +237,7 @@ class UtilRouter {
 						});
 					}, J.Constant.delay.popup);
 				} else {
-					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
-
-					if (spaces.length) {
-						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
-					} else {
-						U.Router.go('/main/void/error', routeParam);
-					};
+					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk);
 				};
 				return;
 			};
