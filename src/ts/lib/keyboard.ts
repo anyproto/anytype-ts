@@ -1967,6 +1967,9 @@ class Keyboard {
 		if (singleTab && !alwaysShowTabs) {
 			cn.push('isSingleTab');
 		};
+		if (S.Common.vaultIsMinimal) {
+			cn.push('vaultIsMinimal');
+		};
 
 		$('html').attr({ class: cn.join(' ') });
 	};

@@ -182,7 +182,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			if (panel == I.SidebarPanel.Left) {
 				const w = vaultIsMinimal ? J.Size.sidebar.default.min : J.Size.sidebar.left.min;
 
-				sidebar.setWidth(panel, false, w, true);
+				if (sidebar.getData(panel).isClosed) {
+					sidebar.toggle(panel);
+				} else {
+					sidebar.setWidth(panel, false, w, true);
+				};
 			} else {
 				sidebar.toggle(panel, subPage);
 			};

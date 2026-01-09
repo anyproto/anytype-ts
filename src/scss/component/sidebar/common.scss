@@ -104,6 +104,18 @@ html.platformMac {
 			}
 		}
 	}
+
+	&.isSingleTab {
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						> .left { padding-left: 72px; }
+					}
+				}
+			}
+		}
+	}
 }
 
 html:not(.platformMac) {
