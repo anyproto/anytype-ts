@@ -1794,8 +1794,6 @@ class UtilMenu {
 
 	};
 
-
-
 };
 
 export default new UtilMenu();

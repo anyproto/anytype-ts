@@ -1708,9 +1708,9 @@
 	"menuDataviewFilterNewFilter": "New filter",
 	"menuDataviewViewEditView": "Edit view",
 
-	"menuDataviewUrlActionGo7": "Open link",
-	"menuDataviewUrlActionGo8": "Mail to",
-	"menuDataviewUrlActionGo9": "Call to",
+	"menuDataviewUrlActionGo7": "Open in browser",
+	"menuDataviewUrlActionGo8": "Send email",
+	"menuDataviewUrlActionGo9": "Call",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
 	"menuDataviewCreateBookmarkContent": "Include page content",
