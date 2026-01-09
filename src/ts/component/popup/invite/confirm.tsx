@@ -12,7 +12,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { icon, identity, route, spaceId } = data;
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
-	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
 	const onMembership = (type: string) => {
 		S.Popup.closeAll(null, () => Action.membershipUpgrade({ type, route: analytics.route.inviteConfirm }));
@@ -62,8 +62,8 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		}, (message: any) => {
 			const records = (message.records || []).filter(it => it.isActive);
 
-			readerLimt.current = space.readersLimit - records.length;
-			writerLimit.current = space.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
+			readerLimt.current = spaceview?.readersLimit - records.length;
+			writerLimit.current = spaceview?.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
 
 			setIsLoading(false);
 		});
@@ -100,7 +100,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 			</div>
 
-			<Title text={U.String.sprintf(translate('popupInviteConfirmTitle'), name, U.String.shorten(space.name, 32))} />
+			<Title text={U.String.sprintf(translate('popupInviteConfirmTitle'), name, U.String.shorten(spaceview?.name, 32))} />
 
 			<div className="buttons">
 				<div className="sides">

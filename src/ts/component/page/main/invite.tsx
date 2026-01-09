@@ -62,16 +62,16 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		const cb = (message: any) => {
-			const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 			if (message.error.code) {
 				onError(message.error.code, 'SpaceInviteView');
 			} else 
-			if (space) {
-				if (space.isAccountJoining) {
+			if (spaceview) {
+				if (spaceview.isAccountJoining) {
 					Action.inviteRequest();
 				} else
-				if (!space.isAccountRemoving && !space.isAccountDeleted) {
+				if (!spaceview.isAccountRemoving && !spaceview.isAccountDeleted) {
 					U.Router.switchSpace(message.spaceId, '', false, {}, false);
 				} else {
 					request(message);

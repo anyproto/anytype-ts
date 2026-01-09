@@ -713,16 +713,16 @@ class Action {
 	 * @param {function} [callBack] - Optional callback after removal.
 	 */
 	removeSpace (id: string, route: string, forceDelete?: boolean, callBack?: (message: any) => void) {
-		const space = U.Space.getSpaceviewBySpaceId(id);
+		const spaceview = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!space) {
+		if (!spaceview) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = isOwner ? space.name : U.String.shorten(space.name, 32);
+		const name = isOwner ? spaceview.name : U.String.shorten(spaceview.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
-		const confirmMessage = isOwner ? space.name : '';
+		const confirmMessage = isOwner ? spaceview.name : '';
 
 		let title = U.String.sprintf(translate(`space${suffix}WarningTitle`), name);
 		let text = U.String.sprintf(translate(`space${suffix}WarningText`), name);
