@@ -210,6 +210,14 @@ html {
 					}
 				}
 			}
+
+			&.leftSidebarClosed {
+				.pageFlex {
+					#header {
+						> .side.left { padding-left: 80px; }
+					}
+				}
+			}
 		}
 	}
 

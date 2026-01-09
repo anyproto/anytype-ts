@@ -28,7 +28,12 @@
 	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
-		
+		.sidebarPage {
+			> .head {
+				> .left { gap: 0px 8px; }
+			}
+		}
+
 		&.sidebarAnimation { transition-property: transform; }
 		&.isClosing,
 		&.isOpening { 

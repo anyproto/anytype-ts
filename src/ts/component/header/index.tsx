@@ -70,6 +70,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
 		const { status } = S.Auth.getSyncStatus(S.Common.space);
 		const { isClosed } = sidebar.getData(I.SidebarPanel.SubLeft);
+		const { vaultIsClosed } = S.Common;
 
 		let bullet = null;
 		if (isClosed && [ I.SyncStatusSpace.Error, I.SyncStatusSpace.Upgrade ].includes(status)) {
@@ -81,6 +82,16 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
+				{vaultIsClosed ? (
+					<Icon
+						className="vaultToggle withBackground"
+						onClick={() => sidebar.leftPanelToggle()}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 				<Icon 
 					className="widgetPanel withBackground" 
 					onClick={() => sidebar.leftPanelSubPageToggle('widget')}
