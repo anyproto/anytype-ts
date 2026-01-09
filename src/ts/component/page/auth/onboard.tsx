@@ -141,7 +141,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 
 		if (stage == Stage.Phrase) {
-			Animation.from(() => U.Router.go('/', { replace: true }));
+			Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 		} else {
 			setStage(stage - 1);
 		};

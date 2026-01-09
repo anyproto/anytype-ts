@@ -32,7 +32,7 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 		if (account) {
 			redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
 		} else {
-			U.Router.go('/', { replace: true });
+			U.Router.go('/auth/select', { replace: true });
 		};
 
 		S.Common.redirectSet('');

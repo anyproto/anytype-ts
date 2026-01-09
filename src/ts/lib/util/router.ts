@@ -131,8 +131,6 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
-		console.log('GO', newRoute, param);
-
 		let updateTabRoute = param.updateTabRoute;
 		if (updateTabRoute === undefined) {
 			updateTabRoute = true;

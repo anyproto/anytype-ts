@@ -33,7 +33,7 @@ import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
 
 const Components = {
-	'index/index':			 PageAuthSelect,
+	'index/index':			 PageMainBlank,
 
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
@@ -106,7 +106,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (isMain && !account) {
-			U.Router.go('/', { replace: true });
+			U.Router.go('/auth/select', { replace: true });
 			return;
 		};
 

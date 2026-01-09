@@ -302,7 +302,7 @@ const App: FC = () => {
 		};
 
 		if (!accountId) {
-			cb();
+			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
 			return;
 		};
 
