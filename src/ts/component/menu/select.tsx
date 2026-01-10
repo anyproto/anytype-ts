@@ -63,8 +63,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		
 		n.current = -1;
-		top.current = 0
-		listRef.current?.scrollToPosition(top.current);;
+		top.current = 0;
+		listRef.current?.scrollToPosition(top.current);
 	}, [ filter ]);
 
 	const rebind = () => {

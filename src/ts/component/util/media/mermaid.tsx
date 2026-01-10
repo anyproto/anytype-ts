@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
-import elkLayouts from "@mermaid-js/layout-elk";
+import elkLayouts from '@mermaid-js/layout-elk';
 import { observer } from 'mobx-react';
 import { J, S, U } from 'Lib';
 
