@@ -600,7 +600,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	return (
 		<>
 			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
-				<div className="side left" />
+				<div className="side left">
+					{!vaultIsMinimal ? (
+						<div className="name">
+							{translate('popupSettingsSpacesListTitle')}
+						</div>
+					) : ''}
+				</div>
 				<div className="side center" />
 				<div className="side right">
 					{!vaultIsMinimal ? (
