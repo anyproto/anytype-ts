@@ -16,7 +16,7 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
-const TAB_BAR_HEIGHT = 44;
+const TAB_BAR_HEIGHT = 52;
 
 class WindowManager {
 

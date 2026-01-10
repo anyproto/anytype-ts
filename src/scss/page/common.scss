@@ -1,7 +1,7 @@
 #page { overflow-x: hidden; overflow-y: auto; overscroll-behavior: none; scrollbar-gutter: stable; }
 
 .pageFlex { 
-	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; padding: 8px 8px 8px 0px;
+	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; padding: 0px 8px 8px 0px;
 	background: var(--color-bg-primary);
 }
 .pageFlex {

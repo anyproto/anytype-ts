@@ -183,11 +183,13 @@ a { color: var(--color-text-primary); }
 
 html {
 	&.isSingleTab {
+		.pageWrapper { padding-top: 8px; }
+		.subPageWrapper { padding: 0px; }
 		.pageFlex { padding: 0px; }
-		.sidebar {
-			.subPageWrapper { padding: 0px; }
-			.sidebarPage.pageWidget > .body { padding-bottom: 8px; }
-		}
+	}
+
+	&:not(.isSingleTab) {
+		.sidebarPage.pageWidget > .body { padding-bottom: 0px; }
 	}
 
 	&.platformMac.isSingleTab {
