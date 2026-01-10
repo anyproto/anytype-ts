@@ -592,8 +592,7 @@
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
-	"pageSettingsSpaceDeleteSpace": "Delete Space",
-
+	"pageSettingsSpaceDeleteSpace": "Delete Channel",
 	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
 
 	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
