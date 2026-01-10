@@ -196,8 +196,19 @@ html {
 			-webkit-app-region: drag;
 		}
 		&:not(.isFullScreen) {
-			.sidebar {
+			.sidebar.isMinimal {
 				.pageWrapper { padding-top: 52px; }
+			}
+			.sidebar:not(.isMinimal) {
+				.sidebarPage.pageVault {
+					> .head { height: 36px; }
+					> .head {
+						.side.left {
+							.name { display: none; }
+						}
+					}
+					.filterWrapper { padding-top: 8px; }
+				}
 			}
 		}
 	}
