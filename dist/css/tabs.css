@@ -48,7 +48,7 @@ body.platform-darwin { padding-left: 88px; }
 .icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
 
 .tab {
-	padding: 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+	padding: 8px 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
 	color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 	transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 }
