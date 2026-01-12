@@ -104,7 +104,12 @@ class WindowManager {
 
 		if (!isChild) {
 			try {
-				state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+				state = windowStateKeeper({
+					defaultWidth: DEFAULT_WIDTH,
+					defaultHeight: DEFAULT_HEIGHT,
+					maximize: true,
+					fullScreen: true,
+				});
 
 				param = Object.assign(param, {
 					x: state.x,
@@ -112,7 +117,9 @@ class WindowManager {
 					width: state.width,
 					height: state.height,
 				});
-			} catch (e) {};
+			} catch (e) {
+				console.error('[WindowManager] Failed to restore window state:', e);
+			};
 		} else {
 			const { width, height } = this.getScreenSize();
 
@@ -127,7 +134,15 @@ class WindowManager {
 
 		win.loadURL(this.getUrlForNewWindow());
 
-		win.once('ready-to-show', () => win.show());
+		win.once('ready-to-show', () => {
+			if (!isChild && state.isMaximized) {
+				win.maximize();
+			};
+			if (!isChild && state.isFullScreen) {
+				win.setFullScreen(true);
+			};
+			win.show();
+		});
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 		win.on('resize', () => {
