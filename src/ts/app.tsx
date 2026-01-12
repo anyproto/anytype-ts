@@ -222,6 +222,8 @@ const App: FC = () => {
 		S.Common.setLeftSidebarState('vault', '');
 		S.Common.singleTabSet(isSingleTab);
 
+		U.Data.updateTabsDimmer();
+
 		Action.checkDefaultSpellingLang();
 		keyboard.setBodyClass();
 
