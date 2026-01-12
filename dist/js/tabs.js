@@ -2,6 +2,7 @@ $(() => {
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
+	const isFullScreen = electron.isFullScreen();
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
@@ -12,6 +13,8 @@ $(() => {
 	let draggedActiveId = null;
 
 	body.addClass(`platform-${electron.platform}`);
+	body.toggleClass('isFullScreen', isFullScreen);
+	
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
 	};
@@ -267,6 +270,14 @@ $(() => {
 
 	electron.on('set-tabs-dimmer', (e, show) => {
 		body.toggleClass('showDimmer', show);
+	});
+
+	electron.on('enter-full-screen', () => {
+		body.addClass('isFullScreen');
+	});
+
+	electron.on('leave-full-screen', () => {
+		body.removeClass('isFullScreen');
 	});
 
 	function ucFirst (str) {
