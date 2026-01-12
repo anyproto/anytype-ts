@@ -265,6 +265,10 @@ $(() => {
 		$('html').toggleClass('themeDark', theme == 'dark');
 	});
 
+	electron.on('set-tabs-dimmer', (e, show) => {
+		body.toggleClass('showDimmer', show);
+	});
+
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};

@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';

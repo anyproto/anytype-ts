@@ -969,7 +969,8 @@ class UtilMenu {
 							const { ww, wh } = U.Common.getWindowDimensions();
 							return { x: 0, y: 0, width: ww, height: wh };
 						},
-						classNameWrap: 'fixed visibleDimmer',
+						classNameWrap: 'fixed',
+						visibleDimmer: true,
 						vertical: I.MenuDirection.Center,
 						horizontal: I.MenuDirection.Center,
 					}));

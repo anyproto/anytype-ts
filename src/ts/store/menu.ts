@@ -44,6 +44,7 @@ class MenuStore {
 			this.menuList.push({ id, param });
 		};
 
+		U.Data.updateTabsDimmer();
 		Preview.previewHide(true);
 	};
 
@@ -183,8 +184,11 @@ class MenuStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 
+		const filtered = this.menuList.filter(it => it.id != id);
+		U.Data.updateTabsDimmer(null, filtered);
+
 		const onTimeout = () => {
-			this.menuList = this.menuList.filter(it => it.id != id);
+			this.menuList = filtered;
 
 			onClose?.();
 			callBack?.();

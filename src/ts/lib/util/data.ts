@@ -1256,6 +1256,13 @@ class UtilData {
 		});
 	};
 
+	updateTabsDimmer (popupList?: I.Popup[], menuList?: I.Menu[]) {
+		const popups = (popupList || S.Popup.list).some(it => !S.Popup.noDimmerIds().includes(it.id));
+		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);
+
+		Renderer.send('setTabsDimmer', popups || menus);
+	};
+
 };
 
 export default new UtilData();

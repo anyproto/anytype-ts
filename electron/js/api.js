@@ -432,6 +432,10 @@ class Api {
 		WindowManager.reorderTabs(win, tabIds);
 	};
 
+	setTabsDimmer (win, show) {
+		Util.send(win, 'set-tabs-dimmer', show);
+	};
+
 };
 
 module.exports = new Api();
