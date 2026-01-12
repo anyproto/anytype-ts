@@ -144,6 +144,13 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
+		// Check if challenge window already exists
+		for (const win of this.list) {
+			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
+				return win;
+			};
+		};
+
 		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
