@@ -198,17 +198,13 @@ html {
 			-webkit-app-region: drag;
 		}
 		&:not(.isFullScreen) {
-			&.vaultIsMinimal {
-				.sidebar {
-					.pageWrapper { padding-top: 52px; }
-				}
+			.sidebar.isMinimal {
+				.pageWrapper { padding-top: 52px; }
 			}
-			&:not(.vaultIsMinimal) {
-				.sidebar {
-					.pageWrapper {
-						.sidebarPage.pageVault {
-							> .head { height: 36px; margin-bottom: 8px; }
-						}
+			.sidebar:not(.isMinimal) {
+				.pageWrapper {
+					.sidebarPage.pageVault {
+						> .head { height: 36px; margin-bottom: 8px; }
 					}
 				}
 			}

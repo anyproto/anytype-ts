@@ -70,6 +70,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			cn.push('spaceSettingsLibrary');
 		};
 
+		if ((id == 'vault') && vaultIsMinimal) {
+			cn.push('isMinimal');
+		};
+
 		return cn.join(' ');
 	};
 

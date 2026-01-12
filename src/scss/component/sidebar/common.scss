@@ -82,7 +82,7 @@
 	.subPageWrapper.withSidebarLeft {
 		.head {
 			> .side.left {
-				.vaultToggle { display: none; }
+				.icon.vaultToggle { display: none; }
 			}
 		}
 	}
@@ -132,7 +132,9 @@ html.platformMac {
 }
 
 html:not(.platformMac) {
-	.sidebarPage.pageVault {
-		> .head.isMinimal { display: none; }
+	.sidebar.isMinimal {
+		.sidebarPage.pageVault {
+			> .head { display: none; }
+		}
 	}
 }
