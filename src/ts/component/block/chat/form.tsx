@@ -72,6 +72,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const attachmentsSubId = subId + namespace;
 	const spaceview = U.Space.getSpaceview();
+	const electron = U.Common.getElectron();
 	
 	let attachments = S.Chat.getAttachments(attachmentsSubId);
 
@@ -391,7 +392,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
 		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
@@ -571,7 +571,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const electron = U.Common.getElectron();
 		const list = Array.from(e.dataTransfer.files).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
@@ -641,7 +640,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onFileInputChange = (e: any) => {
 		const files = Array.from(e.target.files || []) as File[];
-		const electron = U.Common.getElectron();
 		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => !electron.isDirectory(it.path));
 
 		if (list.length) {
@@ -1235,7 +1233,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const getObjectFromFile = (file: File) => {
-		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
 		const mime = file.type || electron.fileMime(path);
 		const ext = electron.fileExt(path);
@@ -1250,8 +1247,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 		};
 
+		console.log('getObjectFromFile', file, path);
+
 		return {
-			id: sha1(path),
+			id: sha1(path + file.lastModified + file.size),
 			name: file.name,
 			layout,
 			type: type?.id,
