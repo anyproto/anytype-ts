@@ -417,6 +417,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
+			// Force synchronous reflow before measuring widths
+			void node[0]?.offsetWidth;
 		};
 
 		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());

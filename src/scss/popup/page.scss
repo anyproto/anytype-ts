@@ -22,8 +22,9 @@
 
 		.header {
 			.side.left { padding-left: 12px !important; }
-			.icon.toggle { display: none; }
-			.icon.widgetPanel { display: none; }
+			.icon.toggle, 
+			.icon.widgetPanel,
+			.icon.vaultToggle { display: none; }
 			.icon.expand { display: block; }
 		}
 		.footer { display: none; }
