@@ -16,7 +16,7 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
-const TAB_BAR_HEIGHT = 44;
+const TAB_BAR_HEIGHT = 52;
 
 class WindowManager {
 
@@ -91,7 +91,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 10, y: 18 };
+			param.trafficLightPosition = { x: 18, y: 18 };
 		} else
 		if (is.windows) {
 			param.frame = false;
@@ -144,6 +144,13 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
+		// Check if challenge window already exists
+		for (const win of this.list) {
+			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
+				return win;
+			};
+		};
+
 		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
@@ -247,6 +254,12 @@ class WindowManager {
 		view.webContents.once('did-finish-load', () => {
 			const isSingleTab = win.views && (win.views.length == 1);
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
+
+			// Apply zoom level from config
+			const zoom = Number(ConfigManager.config.zoom) || 0;
+			if (zoom) {
+				view.webContents.setZoomLevel(zoom);
+			};
 
 			// Also update tab bar visibility in case state changed during loading
 			this.updateTabBarVisibility(win);

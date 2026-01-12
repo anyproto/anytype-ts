@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow } = require('electron');
+const { app, shell, BrowserWindow, Notification } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -21,6 +21,7 @@ class Api {
 
 	isPinChecked = false;
 	lastActivityTime = Date.now();
+	notificationCallbacks = new Map();
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -106,6 +107,8 @@ class Api {
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
 		this.setBackground(win, theme);
+		
+		WindowManager.sendToAll('set-theme', Util.getTheme());
 	};
 
 	setBackground (win, theme) {
@@ -118,8 +121,11 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		win.webContents.setZoomLevel(zoom);
-		Util.send(win, 'zoom');
+		const view = win.views?.[win.activeIndex];
+		if (view && view.webContents) {
+			view.webContents.setZoomLevel(zoom);
+			Util.sendToActiveTab(win, 'zoom');
+		};
 		this.setConfig(win, { zoom });
 	};
 
@@ -425,6 +431,38 @@ class Api {
 
 	reorderTabs (win, tabIds) {
 		WindowManager.reorderTabs(win, tabIds);
+	};
+
+	setTabsDimmer (win, show) {
+		Util.send(win, 'set-tabs-dimmer', show);
+	};
+
+	notification (win, param) {
+		const { title, text, cmd, payload } = param || {};
+
+		if (!text) {
+			return;
+		};
+
+		const notification = new Notification({
+			title: String(title || ''),
+			body: String(text || ''),
+		});
+
+		notification.on('click', () => {
+			this.focusWindow(win);
+
+			if (cmd) {
+				Util.sendToActiveTab(win, 'notification-callback', cmd, payload);
+			};
+		});
+
+		notification.show();
+	};
+
+	payloadBroadcast (win, payload) {
+		this.focusWindow(win);
+		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
 };

@@ -159,6 +159,8 @@ const App: FC = () => {
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-tab', onWillCloseTab);
 		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
+		Renderer.on('notification-callback', onNotificationCallback);
+		Renderer.on('payload-broadcast', onPayloadBroadcast);
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
@@ -328,6 +330,35 @@ const App: FC = () => {
 	const onWillCloseTab = (e: any, tabId: string) => {
 		Storage.deleteLastOpenedByTabId([ tabId ]);
 		U.Data.closeSession();
+	};
+
+	const onNotificationCallback = (e: any, cmd: string, payload: any) => {
+		switch (cmd) {
+			case 'openChat': {
+				U.Object.openRoute(payload);
+				analytics.event('OpenChatFromNotification');
+				break;
+			};
+		};
+	};
+
+	const onPayloadBroadcast = (e: any, payload: any) => {
+		switch (payload.type) {
+			case 'openObject': {
+				const { object } = payload;
+
+				U.Object.openAuto(object);
+				analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
+				break;
+			};
+
+			case 'analyticsEvent': {
+				const { code, param } = payload;
+
+				analytics.event(code, param);
+				break;
+			};
+		};
 	};
 
 	const onPopup = (e: any, id: string, param: any, close?: boolean) => {

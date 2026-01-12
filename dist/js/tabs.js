@@ -1,16 +1,20 @@
-$(document).ready(() => {
+$(() => {
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const theme = Electron.getTheme();
 
 	let sortable = null;
 	let isDragging = false;
 	let draggedActiveId = null;
 
 	body.addClass(`platform-${electron.platform}`);
+	if (theme) {
+		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
+	};
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');
@@ -68,6 +72,7 @@ $(document).ready(() => {
 		const icon = String(item.data.icon || '');
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
+		const isImage = Boolean(item.data.isImage);
 
 		const tab = $(`
 			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
@@ -81,9 +86,14 @@ $(document).ready(() => {
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
+			const cn = [ 'icon', 'object', `layout${layout}`, `uxType${uxType}` ];
+			if (isImage) {
+				cn.push('isImage');
+			};
+
 			clickable.prepend($(`
 				<div className="iconWrapper">
-					<div class="icon object layout${layout} uxType${uxType}" style="background-image: url('${icon}')" />
+					<div class="${cn.join(' ')}" style="background-image: url('${icon}')" />
 				</div>
 			`));
 		};
@@ -250,4 +260,16 @@ $(document).ready(() => {
 	electron.on('update-tab-bar-visibility', (e, isVisible) => {
 		$('.container').toggleClass('isHidden', !isVisible);
 	});
+
+	electron.on('set-theme', (e, theme) => {
+		$('html').toggleClass('themeDark', theme == 'dark');
+	});
+
+	electron.on('set-tabs-dimmer', (e, show) => {
+		body.toggleClass('showDimmer', show);
+	});
+
+	function ucFirst (str) {
+		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+	};
 });

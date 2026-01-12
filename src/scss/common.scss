@@ -183,11 +183,13 @@ a { color: var(--color-text-primary); }
 
 html {
 	&.isSingleTab {
+		.pageWrapper { padding-top: 8px; }
+		.subPageWrapper { padding: 0px; }
 		.pageFlex { padding: 0px; }
-		.sidebar {
-			.subPageWrapper { padding: 0px; }
-			.sidebarPage.pageWidget > .body { padding-bottom: 8px; }
-		}
+	}
+
+	&:not(.isSingleTab) {
+		.sidebarPage.pageWidget > .body { padding-bottom: 0px; }
 	}
 
 	&.platformMac.isSingleTab {
@@ -216,6 +218,17 @@ html {
 					#header {
 						> .side.left { padding-left: 80px; }
 					}
+				}
+			}
+			.sidebar:not(.isMinimal) {
+				.sidebarPage.pageVault {
+					> .head { height: 36px; }
+					> .head {
+						.side.left {
+							.name { display: none; }
+						}
+					}
+					.filterWrapper { padding-top: 8px; }
 				}
 			}
 		}

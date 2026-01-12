@@ -138,14 +138,12 @@
 			.cellContent.isName { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 
 			.cell.isName.canEdit:hover {
-				.name { width: calc(100% - 40px) !important; }
 				.icon.edit { display: block; }
 				.chatCounter { display: none;}
 			}
 
 			.row.isNote {
 				.cell.isName.canEdit:hover {
-					.name { width: 100% !important; }
 					.icon.edit { display: none; }
 					.chatCounter { display: block; }
 				}
@@ -228,13 +226,15 @@
 	.block.blockDataview.isInline {
 		.viewContent.viewGrid { padding: 0px; }
 		.viewContent.viewGrid {
-			.row { height: 40px; }
+			&:not(.wrapContent) {
+				.row, .cell { height: 40px; }
+			}
 
 			.cellHead:first-child {
 				.flex { padding-left: 0px; }
 			}
 
-			.cell { height: 40px; padding: 10px 14px; }
+			.cell { padding: 10px 14px; }
 			.cell:first-child { padding-left: 0px; }
 
 			.cell.isEditing { padding: 0px; }

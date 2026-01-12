@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage, Renderer } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -185,7 +185,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const { 
 		element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack,
 		initialTab, onOpen, noAutoHover, isSub, noAnimation, parentId, classNameWrap, recalcRect, fixedX, fixedY, 
-		noFlipX, noFlipY, stickToElementEdge, noBorderX, noBorderY, noClose, commonFilter,
+		noFlipX, noFlipY, stickToElementEdge, noBorderX, noBorderY, noClose, commonFilter, visibleDimmer,
 	} = param;
 	const { data } = param;
 	const { preventFilter } = data;
@@ -242,13 +242,14 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			if (el && el.length) {
 				el.removeClass('hover');
 			};
-			
+
 			if (isSub) {
 				polyRef.current.hide();
 				window.clearTimeout(timeoutPoly.current);
 			};
 
 			rebindPrevious();
+			raf.cancel(framePosition.current);
 		};
 	}, []);
 
@@ -281,8 +282,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (rebind) {
-			rebind();
+		if (param.rebind) {
+			param.rebind();
 		} else
 		if (data.rebind) {
 			data.rebind();
@@ -296,6 +297,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		if (classNameWrap) {
 			cn.push(classNameWrap);	
+		};
+
+		if (visibleDimmer) {
+			cn.push('visibleDimmer');
 		};
 
 		if (S.Popup.isOpen()) {

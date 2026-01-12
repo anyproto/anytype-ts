@@ -7,6 +7,15 @@
 	--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
 }
 
+html.themeDark {
+	--color-text-primary: #f8f8f8;
+	--color-text-secondary: #ababab;
+	--color-bg-primary: #171717;
+	--color-shape-tertiary: #232323;
+	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
+	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
+}
+
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 500; src: url('../font/inter/medium.woff2') format('woff2');
 }
@@ -39,7 +48,7 @@ body.platform-darwin { padding-left: 88px; }
 .icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
 
 .tab {
-	padding: 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+	padding: 8px 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
 	color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 	transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 }
@@ -66,46 +75,18 @@ body.platform-darwin { padding-left: 88px; }
 .tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tab .icon.object { width: 18px; height: 18px; }
 .tab .icon.object.layout1,
-.tab .icon.object.layout10.uxType3,
-.tab .icon.object.layout10.uxType4,
-.tab .icon.object.layout22 { border-radius: 50% }
-
-/*
-Page		 = 0,
-	Human		 = 1,
-	Task		 = 2,
-	Set			 = 3,
-	Type		 = 4,
-	Relation	 = 5,
-	File		 = 6,
-	Dashboard	 = 7,
-	Image		 = 8,
-	Note		 = 9,
-	Space		 = 10,
-	Bookmark	 = 11,
-	OptionList	 = 12,
-	Option		 = 13,
-	Collection	 = 14,
-	Audio		 = 15,
-	Video		 = 16,
-	Date		 = 17,
-	SpaceView	 = 18,
-	Participant	 = 19,
-	Pdf			 = 20,
-	ChatOld		 = 21,
-	Chat		 = 22,
-
-	Empty		 = 100,
-	Navigation	 = 101,
-	Graph		 = 102,
-	History		 = 103,
-	Archive		 = 104,
-	Block		 = 105,
-	Settings	 = 106,
-*/
+.tab .icon.object.layout10.uxType3.isImage,
+.tab .icon.object.layout10.uxType4.isImage,
+.tab .icon.object.layout22.isImage { border-radius: 50% }
 
 .tab .div {
 	position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
 	z-index: 0; right: 0px;
 }
 .sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }
+
+body::after {
+	content: ''; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0);
+	pointer-events: none; transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1); z-index: 100;
+}
+body.showDimmer::after { background: rgba(0, 0, 0, 0.25); }

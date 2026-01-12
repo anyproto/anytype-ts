@@ -841,6 +841,7 @@ class UtilData {
 			icon: U.Graph.imageSrc(object),
 			layout: object.layout,
 			uxType: object.spaceUxType,
+			isImage: object.iconImage,
 		});
 	};
 
@@ -1253,6 +1254,13 @@ class UtilData {
 			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
 		});
+	};
+
+	updateTabsDimmer (popupList?: I.Popup[], menuList?: I.Menu[]) {
+		const popups = (popupList || S.Popup.list).some(it => !S.Popup.noDimmerIds().includes(it.id));
+		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);
+
+		Renderer.send('setTabsDimmer', popups || menus);
 	};
 
 };

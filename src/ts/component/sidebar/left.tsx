@@ -42,6 +42,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
 
+	if (vaultIsMinimal) {
+		cn.push('isMinimal');
+	};
+
 	const getComponentId = (id: string) => {
 		id = String(id || '');
 		return U.String.toCamelCase(id.replace(/\//g, '-'));

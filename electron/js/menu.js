@@ -223,8 +223,8 @@ class MenuManager {
 					Separator,
 
 					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
-					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.getView().getZoomLevel() + 1) },
-					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.getView().getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.getView().webContents.getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.getView().webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
 						label: Util.translate('electronMenuFullScreen'), accelerator: this.getAccelerator('toggleFullScreen'), type: 'checkbox', checked: this.win.isFullScreen(),

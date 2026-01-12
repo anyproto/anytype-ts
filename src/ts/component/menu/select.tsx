@@ -63,8 +63,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		
 		n.current = -1;
-		top.current = 0
-		listRef.current?.scrollToPosition(top.current);;
+		top.current = 0;
+		listRef.current?.scrollToPosition(top.current);
 	}, [ filter ]);
 
 	const rebind = () => {
@@ -120,7 +120,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		if (!keyboard.isMouseDisabled && !item.isSection && !item.isDiv) {
+		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
 			onOver(e, item);
 		};
@@ -349,7 +349,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		updateOptions,
 		onSwitch,
-	}), []);
+	}));
 	
 	return (
 		<>

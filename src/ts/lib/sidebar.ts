@@ -537,7 +537,7 @@ class Sidebar {
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 		const pageCss: any = { width: pageWidth };
-		const offset = singleTab && !alwaysShowTabs ? 0 : 16;
+		const offset = singleTab && !alwaysShowTabs ? 0 : 8;
 
 		if (!isPopup) {
 			pageCss.height = U.Common.getAppContainerHeight() - offset;
