@@ -45,7 +45,6 @@ class CommonStore {
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
-	public vaultIsClosedValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -150,7 +149,6 @@ class CommonStore {
 			updateVersionValue: observable,
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
-			vaultIsClosedValue: observable,
 			widgetSectionsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
@@ -169,7 +167,6 @@ class CommonStore {
 			firstDay: computed,
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
-			vaultIsClosed: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			singleTab: computed,
@@ -196,7 +193,6 @@ class CommonStore {
 			firstDaySet: action,
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
-			vaultIsClosedSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -392,10 +388,6 @@ class CommonStore {
 
 	get vaultIsMinimal (): any {
 		return this.boolGet('vaultIsMinimal');
-	};
-
-	get vaultIsClosed (): any {
-		return this.boolGet('vaultIsClosed');
 	};
 
 	/**
@@ -881,14 +873,6 @@ class CommonStore {
 	 */
 	vaultIsMinimalSet (v: boolean) {
 		this.boolSet('vaultIsMinimal', v);
-	};
-
-	/**
-	 * Sets the vault isClosed value.
-	 * @param {boolean} v - The vault isClosed value.
-	 */
-	vaultIsClosedSet (v: boolean) {
-		this.boolSet('vaultIsClosed', v);
 	};
 
 	/**

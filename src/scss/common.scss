@@ -213,11 +213,10 @@ html {
 				}
 			}
 
-			.pageFlex:not(.withSidebarTotalLeft) {
-				#header {
-					> .side.left { padding-left: 80px; }
-				}
+			#header:not(.withSidebarTotalLeft) {
+				> .side.left { padding-left: 80px; }
 			}
+
 			.sidebar:not(.isMinimal) {
 				.sidebarPage.pageVault {
 					> .head { height: 36px; }

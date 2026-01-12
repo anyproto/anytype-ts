@@ -12,7 +12,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup, getId } = props;
-	const { space, widgetSections, recentEditMode, vaultIsClosed } = S.Common;
+	const { space, widgetSections, recentEditMode } = S.Common;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -591,16 +591,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		head = (
 			<>
 				<div className="side left">
-					{vaultIsClosed ? (
-						<Icon
-							className="vaultToggle withBackground"
-							onClick={() => sidebar.leftPanelToggle()}
-							tooltipParam={{
-								text: translate('commonVault'),
-								typeY: I.MenuDirection.Bottom,
-							}}
-						/>
-					) : ''}
+					<Icon
+						className="vaultToggle withBackground"
+						onClick={() => sidebar.leftPanelToggle()}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
 					<Icon 
 						className="widgetPanel withBackground" 
 						onClick={() => sidebar.leftPanelSubPageToggle('widget')}

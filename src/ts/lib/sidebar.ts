@@ -144,7 +144,6 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			pageWrapperLeft.removeClass('anim').addClass('isClosed');
-			this.leftPanelCheckToggles();
 		}, animate ? J.Constant.delay.sidebar : 0);
 
 		analytics.event('CollapseVault');
@@ -183,7 +182,6 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			pageWrapperLeft.removeClass('anim');
-			this.leftPanelCheckToggles();
 		}, animate ? J.Constant.delay.sidebar : 0);
 
 		analytics.event('ExpandVault');
@@ -327,7 +325,6 @@ class Sidebar {
 			dummyLeft.removeClass('sidebarAnimation');
 
 			this.resizePage(false, null, null, false);
-			this.leftPanelCheckToggles();
 		}, animate ? J.Constant.delay.sidebar : 0);
 
 		analytics.event('CollapseWidgetPanel');
@@ -373,7 +370,6 @@ class Sidebar {
 				dummyLeft.removeClass('sidebarAnimation');
 
 				this.resizePage(false, null, null, false);
-				this.leftPanelCheckToggles();
 			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 
@@ -388,13 +384,6 @@ class Sidebar {
 		} else {
 			this.leftPanelSubPageClose(true);
 		};
-	};
-
-	leftPanelCheckToggles () {
-		const leftClosed = this.getData(I.SidebarPanel.Left).isClosed;
-		const leftSubClosed = this.getData(I.SidebarPanel.SubLeft).isClosed;
-
-		S.Common.vaultIsClosedSet(leftClosed);
 	};
 
 	/**
@@ -559,6 +548,8 @@ class Sidebar {
 
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
+
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);

@@ -79,6 +79,14 @@
 		.resize-h { display: none; }
 	}
 
+	.subPageWrapper.withSidebarLeft {
+		.head {
+			> .side.left {
+				.vaultToggle { display: none; }
+			}
+		}
+	}
+
 	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
 	&.right {
 		.resize-h { left: -12px; }

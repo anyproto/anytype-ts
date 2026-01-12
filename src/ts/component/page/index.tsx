@@ -67,7 +67,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
-	const { isFullScreen, singleTab, vaultIsMinimal, vaultIsClosed } = S.Common;
+	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Common.getEventNamespace(isPopup);
 	const childRef = useRef(null);
 	const match = keyboard.getMatch(isPopup);
