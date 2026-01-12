@@ -548,6 +548,8 @@ class Sidebar {
 
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
+
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);

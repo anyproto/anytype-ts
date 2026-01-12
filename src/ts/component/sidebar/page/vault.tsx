@@ -40,12 +40,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		cnb.push('withMessages');
 	};
 
-	if (vaultIsMinimal) {
-		cnh.push('isMinimal');
-		cnb.push('isMinimal');
-		cnf.push('isMinimal');
-	};
-
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
 		const ns = 'sidebarPageVault';

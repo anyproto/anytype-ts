@@ -65,6 +65,7 @@
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
+	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 	.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
@@ -74,6 +75,9 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
 
+	&.withSidebarTotalLeft {
+		.icon.vaultToggle { display: none; }
+	}
 	&.withSidebarSubLeft {
 		.icon.widgetPanel { display: none; }
 	}

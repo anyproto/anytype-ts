@@ -226,6 +226,7 @@
 	"commonUpdateAvailable": "Update Available",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
+	"commonVault": "Vault",
 	"commonWidgets": "Widgets",
 	"commonLearnMore": "Learn more",
 	"commonSeeChanges": "See Changes",

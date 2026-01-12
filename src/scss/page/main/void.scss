@@ -9,9 +9,13 @@
 .pageMainVoid {
 	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
+		.icon.vaultToggle { position: absolute; left: 12px; top: 12px; background-image: url('~img/icon/widget/toggle0.svg'); }
+
 		.frame { text-align: center; position: absolute; }
 		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
-		.icon { width: 100%; height: 100%; }
+		.iconWrapper {
+			.icon { width: 100%; height: 100%; }
+		}
 
 		.title { @include text-header3; margin-bottom: 4px; }
 
@@ -21,12 +25,16 @@
 
 		&.voidError {
 			.iconWrapper { width: 72px; height: 72px; margin: 0px auto 10px; }
-			.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+			.iconWrapper {
+				.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+			}
 		}
 
 		&.voidSelect {
 			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
-			.icon { background-image: url('~img/icon/void/select.svg'); }
+			.iconWrapper {
+				.icon { background-image: url('~img/icon/void/select.svg'); }
+			}
 			.label { width: 242px; color: var(--color-text-secondary); }
 		}
 	}
