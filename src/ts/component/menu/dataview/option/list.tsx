@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
@@ -22,6 +22,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const value = Relation.getArrayValue(data.value);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
+	const [ activeId, setActiveId ] = useState<string | null>(null);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const n = useRef(-1);
@@ -207,12 +208,21 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onSortStart = () => {
+	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
+		setActiveId(e.active.id);
+	};
+
+	const onSortCancel = () => {
+		keyboard.disableSelection(false);
+		setActiveId(null);
 	};
 
 	const onSortEnd = (result: any) => {
 		const { active, over } = result;
+
+		setActiveId(null);
+		keyboard.disableSelection(false);
 
 		if (!active || !over) {
 			return;
@@ -226,8 +236,6 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		U.Data.sortByOrderIdRequest(SUB_ID, newItems, callBack => {
 			C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), callBack);
 		});
-
-		keyboard.disableSelection(false);
 	};
 
 	const load = () => {
@@ -315,6 +323,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			...item.style,
 			transform: CSS.Transform.toString(transform),
 			transition,
+			opacity: isDragging ? 0 : 1,
 		};
 
 		let content = null;
@@ -367,6 +376,37 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		};
 
 		return content;
+	};
+
+	const DragOverlayContent = ({ item }: { item: any }) => {
+		if (!item || item.id == 'add' || item.isSection) {
+			return null;
+		};
+
+		const active = value.includes(item.id);
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
+		const cn = [ 'item', 'isDragging' ];
+
+		if (active) {
+			cn.push('withCheckbox');
+		};
+
+		return (
+			<div
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
+				style={{ height: HEIGHT }}
+			>
+				{canEdit ? <Icon className="dnd" /> : ''}
+				<div className="clickable">
+					<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
+				</div>
+				<div className="buttons">
+					{active ? <Icon className="chk" /> : ''}
+					{isAllowed ? <Icon className="more" /> : ''}
+				</div>
+			</div>
+		);
 	};
 
 	const rowRenderer = ({ key, parent, index, style }) => {
@@ -441,6 +481,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 						collisionDetection={closestCenter}
 						onDragStart={onSortStart}
 						onDragEnd={onSortEnd}
+						onDragCancel={onSortCancel}
 						modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 					>
 						<SortableContext
@@ -473,6 +514,9 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 								)}
 							</InfiniteLoader>
 						</SortableContext>
+						<DragOverlay>
+							{activeId ? <DragOverlayContent item={items.find(it => it.id === activeId)} /> : null}
+						</DragOverlay>
 					</DndContext>
 				) : (
 					<div className="item empty">{empty}</div>

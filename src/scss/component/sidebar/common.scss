@@ -28,7 +28,12 @@
 	.subPageWrapper { width: 336px; display: flex; padding: 0px 0px 8px 0px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
-		
+		.sidebarPage {
+			> .head {
+				> .left { gap: 0px 8px; }
+			}
+		}
+
 		&.sidebarAnimation { transition-property: transform; }
 		&.isClosing,
 		&.isOpening { 
@@ -74,6 +79,14 @@
 		.resize-h { display: none; }
 	}
 
+	.subPageWrapper.withSidebarLeft {
+		.head {
+			> .side.left {
+				.icon.vaultToggle { display: none; }
+			}
+		}
+	}
+
 	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
 	&.right {
 		.resize-h { left: -12px; }
@@ -104,10 +117,24 @@ html.platformMac {
 			}
 		}
 	}
+
+	&.isSingleTab {
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						> .left { padding-left: 72px; }
+					}
+				}
+			}
+		}
+	}
 }
 
 html:not(.platformMac) {
-	.sidebarPage.pageVault {
-		> .head.isMinimal { display: none; }
+	.sidebar.isMinimal {
+		.sidebarPage.pageVault {
+			> .head { display: none; }
+		}
 	}
 }

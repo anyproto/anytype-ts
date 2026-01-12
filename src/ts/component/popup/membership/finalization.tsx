@@ -58,6 +58,10 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	const onConfirm = (e: any) => {
 		e.preventDefault();
 
+		if (isLoading) {
+			return;
+		};
+
 		const name = nameRef.current?.getValue() || '';
 
 		setStatus('');

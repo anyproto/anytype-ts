@@ -17,6 +17,14 @@
 		#page { border-top-left-radius: 0px; border-bottom-left-radius: 0px; }
 	}
 
+	&.withSidebarLeft {
+		.pageMainVoid {
+			.wrapper {
+				> .icon.vaultToggle { display: none; }
+			}
+		}
+	}
+
 	&.sidebarAnimation { transition-property: padding; }
 }
 

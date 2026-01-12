@@ -202,6 +202,18 @@ html {
 				.pageWrapper { padding-top: 52px; }
 			}
 			.sidebar:not(.isMinimal) {
+				.pageWrapper {
+					.sidebarPage.pageVault {
+						> .head { height: 36px; margin-bottom: 8px; }
+					}
+				}
+			}
+
+			#header:not(.withSidebarTotalLeft) {
+				> .side.left { padding-left: 80px; }
+			}
+
+			.sidebar:not(.isMinimal) {
 				.sidebarPage.pageVault {
 					> .head { height: 36px; }
 					> .head {

@@ -53,6 +53,15 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return (
 		<div className={cn.join(' ')}>
+			<Icon
+				className="vaultToggle withBackground"
+				onClick={() => sidebar.leftPanelToggle()}
+				tooltipParam={{
+					text: translate('commonVault'),
+					typeY: I.MenuDirection.Bottom,
+				}}
+			/>
+
 			<Frame>
 				<div className="iconWrapper">
 					<Icon />
