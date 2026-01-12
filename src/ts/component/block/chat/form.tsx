@@ -400,6 +400,20 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const html = String(clipboard.getData('text/html') || '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
+		// If pasted content is a pure URL and there's a selection, create a link mark
+		const urls = U.String.getUrlsFromText(text);
+		if (urls.length && (urls[0].value == text) && (from != to)) {
+			const url = urls[0].value;
+			const currentMark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
+
+			if (!currentMark) {
+				marks.current.push({ type: I.MarkType.Link, range: { from, to }, param: url });
+				setMarks(marks.current);
+				updateMarkup(current, range.current);
+				return;
+			};
+		};
+
 		let newText = '';
 		let newMarks: I.Mark[] = [];
 
