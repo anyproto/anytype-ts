@@ -1147,7 +1147,7 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid();
 		} else {
 			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
 		};
@@ -1380,6 +1380,14 @@ class Keyboard {
 	 */
 	isMainChat () {
 		return this.isMain() && (this.getRouteMatch().params.action == 'chat');
+	};
+
+	/**
+	 * Returns true if the current context is the main void view.
+	 * @returns {boolean}
+	 */
+	isMainVoid () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'void');
 	};
 
 	/**
