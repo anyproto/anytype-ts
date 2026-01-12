@@ -120,8 +120,11 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		win.webContents.setZoomLevel(zoom);
-		Util.send(win, 'zoom');
+		const view = win.views?.[win.activeIndex];
+		if (view && view.webContents) {
+			view.webContents.setZoomLevel(zoom);
+			Util.sendToActiveTab(win, 'zoom');
+		};
 		this.setConfig(win, { zoom });
 	};
 

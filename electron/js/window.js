@@ -248,6 +248,12 @@ class WindowManager {
 			const isSingleTab = win.views && (win.views.length == 1);
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
 
+			// Apply zoom level from config
+			const zoom = Number(ConfigManager.config.zoom) || 0;
+			if (zoom) {
+				view.webContents.setZoomLevel(zoom);
+			};
+
 			// Also update tab bar visibility in case state changed during loading
 			this.updateTabBarVisibility(win);
 		});
