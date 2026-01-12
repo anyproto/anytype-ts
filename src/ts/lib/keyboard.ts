@@ -1787,8 +1787,8 @@ class Keyboard {
 			pressed = pressed.concat(metaKeys);
 		};
 
-		// Cmd + Alt + N hack
-		if (which == J.Key.dead) {
+		// Cmd + Alt + N hack (only apply when both cmd and alt are pressed)
+		if ((which == J.Key.dead) && metaKeys.includes('cmd') && metaKeys.includes('alt')) {
 			pressed.push('n');
 		};
 
