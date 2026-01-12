@@ -110,14 +110,13 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
-		const { config, windowId, windowIsFocused } = S.Common;
+		const { config, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const isMainWindow = windowId == '1';
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
-		
+
 		if (traceId) {
 			ctx.push(traceId);
 		};
@@ -173,10 +172,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallenge': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('showChallenge', {
 						...mapped,
 						theme: S.Common.getThemeClass(),
@@ -186,10 +181,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallengeHide': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('hideChallenge', mapped);
 					break;
 				};
@@ -908,8 +899,11 @@ class Dispatcher {
 
 					S.Notification.add(item);
 
-					if (isMainWindow && !windowIsFocused) {
-						U.Common.notification(item);
+					if (!windowIsFocused) {
+						Renderer.send('notification', {
+							title: item.title,
+							text: item.text,
+						});
 					};
 					break;
 				};
@@ -920,31 +914,10 @@ class Dispatcher {
 				};
 
 				case 'PayloadBroadcast': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					let payload: any = {};
 					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
 
-					switch (payload.type) {
-						case 'openObject': {
-							const { object } = payload;
-
-							U.Object.openAuto(object);
-							Renderer.send('focusWindow');
-
-							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
-							break;
-						};
-
-						case 'analyticsEvent': {
-							const { code, param } = payload;
-
-							analytics.event(code, param);
-							break;
-						};
-					};
+					Renderer.send('payloadBroadcast', payload);
 					break;
 				};
 
@@ -988,7 +961,7 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+					if (showNotification && notification && !windowIsFocused && (message.creator != account.id)) {
 						const title = [];
 
 						if (spaceview) {
@@ -1002,12 +975,11 @@ class Dispatcher {
 							};
 						};
 
-						U.Common.notification({ 
-							title: title.join(' - '), 
+						Renderer.send('notification', {
+							title: title.join(' - '),
 							text: notification,
-						}, () => {
-							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
-							analytics.event('OpenChatFromNotification');
+							cmd: 'openChat',
+							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 						});
 					};
 

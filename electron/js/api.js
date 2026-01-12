@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow } = require('electron');
+const { app, shell, BrowserWindow, Notification } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -21,6 +21,7 @@ class Api {
 
 	isPinChecked = false;
 	lastActivityTime = Date.now();
+	notificationCallbacks = new Map();
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -434,6 +435,34 @@ class Api {
 
 	setTabsDimmer (win, show) {
 		Util.send(win, 'set-tabs-dimmer', show);
+	};
+
+	notification (win, param) {
+		const { title, text, cmd, payload } = param || {};
+
+		if (!text) {
+			return;
+		};
+
+		const notification = new Notification({
+			title: String(title || ''),
+			body: String(text || ''),
+		});
+
+		notification.on('click', () => {
+			this.focusWindow(win);
+
+			if (cmd) {
+				Util.sendToActiveTab(win, 'notification-callback', cmd, payload);
+			};
+		});
+
+		notification.show();
+	};
+
+	payloadBroadcast (win, payload) {
+		this.focusWindow(win);
+		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
 };
