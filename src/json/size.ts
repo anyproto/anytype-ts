@@ -14,7 +14,7 @@ export default {
 		left: { min: 72, max: 480, default: 284 }
 	},
 
-	vaultStripeMaxWidth: 128,
+	vaultStripeMaxWidth: 160,
 
 	table: {
 		min: 50,
