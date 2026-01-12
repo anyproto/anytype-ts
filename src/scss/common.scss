@@ -213,11 +213,9 @@ html {
 				}
 			}
 
-			&.leftSidebarClosed {
-				.pageFlex {
-					#header {
-						> .side.left { padding-left: 80px; }
-					}
+			.pageFlex:not(.withSidebarTotalLeft) {
+				#header {
+					> .side.left { padding-left: 80px; }
 				}
 			}
 			.sidebar:not(.isMinimal) {

@@ -1942,7 +1942,7 @@ class Keyboard {
 	};
 
 	setBodyClass () {
-		const { config, singleTab, isFullScreen, vaultIsMinimal, leftSidebarIsClosed } = S.Common;
+		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
 		const { showMenuBar, alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
@@ -1969,9 +1969,6 @@ class Keyboard {
 		};
 		if (vaultIsMinimal) {
 			cn.push('vaultIsMinimal');
-		};
-		if (leftSidebarIsClosed) {
-			cn.push('leftSidebarClosed');
 		};
 
 		$('html').attr({ class: cn.join(' ') });

@@ -395,7 +395,6 @@ class Sidebar {
 		const leftSubClosed = this.getData(I.SidebarPanel.SubLeft).isClosed;
 
 		S.Common.vaultIsClosedSet(leftClosed);
-		S.Common.leftSidebarIsClosedSet(leftClosed && leftSubClosed);
 	};
 
 	/**
