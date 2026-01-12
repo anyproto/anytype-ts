@@ -269,6 +269,14 @@ $(() => {
 		body.toggleClass('showDimmer', show);
 	});
 
+	electron.on('enter-full-screen', () => {
+		body.addClass('isFullScreen');
+	});
+
+	electron.on('leave-full-screen', () => {
+		body.removeClass('isFullScreen');
+	});
+
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
