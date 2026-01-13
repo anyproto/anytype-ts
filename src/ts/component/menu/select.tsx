@@ -139,13 +139,13 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (!noClose) {
-			close();
+		const cb = () => {
+			if (!disabled && onSelect) {
+				onSelect(e, item);
+			};
 		};
-		
-		if (!disabled && onSelect) {
-			onSelect(e, item);
-		};
+
+		noClose ? cb() : close(cb);
 	};
 
 	const onFilterChange = (v: string) => {
