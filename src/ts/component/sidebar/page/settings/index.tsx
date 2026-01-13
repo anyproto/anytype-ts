@@ -164,7 +164,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			U.Space.openDashboard();
 			S.Common.setLeftSidebarState('vault', 'widget');
 		} else {
-			sidebar.leftPanelSubPageClose(true);
+			U.Router.go('/main/void/select', { replace: true });
 		};
 	};
 
