@@ -29,8 +29,8 @@ const getSections = () => {
 					name: translate('popupShortcutBasics'), children: [
 						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
-						{ id: 'newWindow', name: translate('popupShortcutMainBasics29'), keys: [ cmdKey, 'shift', 'n' ] },
-						{ id: 'newTab', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 't' ] },
+						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
+						{ id: 'newTab', name: translate('popupShortcutMainBasics29'), keys: [ cmdKey, 't' ] },
 						isWin ? { id: 'systemMenu', name: translate('electronMenuShowMenu'), keys: [] } : null,
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },

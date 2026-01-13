@@ -28,6 +28,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	const scrollRef = useRef(null);
 	const scrollWrapRef = useRef(null);
 	const view = getView();
+	const relations = getVisibleRelations();
 
 	useEffect(() => {
 		resize();
@@ -41,7 +42,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	useEffect(() => {
 		cache.current.clearAll();
 		listRef.current?.recomputeRowHeights(0);
-	}, [ view.wrapContent ]);
+	}, [ view.wrapContent, relations.length ]);
 
 	useEffect(() => {
 		rebind();
@@ -163,7 +164,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const resizeColumns = (relationKey: string, width: number) => {
 		const node = $(nodeRef.current);
-		const relations = getVisibleRelations();
 		const widths = getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
@@ -180,7 +180,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const getColumnWidths = (relationKey: string, width: number): any => {
-		const relations = getVisibleRelations();
 		const columns: any = {};
 		
 		relations.forEach(it => {
@@ -245,7 +244,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const onResizeEnd = (e: any, relationKey: string, ox: number) => {
 		const node = $(nodeRef.current);
-		const relations = getVisibleRelations();
 		const width = checkWidth(e.pageX - ox);
 
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
@@ -316,7 +314,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			return;
 		};
 
-		const relations = getVisibleRelations();
 		const ids = relations.map(it => it.relationKey);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
@@ -398,7 +395,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
-	const relations = getVisibleRelations();
 	const records = getRecords();
 	const { offset, total } = S.Record.getMeta(getSubId(), '');
 	const limit = getLimit();

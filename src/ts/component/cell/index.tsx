@@ -288,9 +288,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const wh = win.height();
-					const hh = J.Size.header;
-					const height = Math.min(wh - hh - 20, cell.outerHeight());
+					const { wh } = U.Common.getWindowDimensions();
+					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
+
+					console.log(cell, cell.outerHeight(), height);
 
 					param = Object.assign(param, {
 						noFlipX: true,
@@ -419,6 +420,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				S.Common.cellId = cellId;
 				
 				const isOpen = S.Menu.isOpen(menuId);
+
+				console.log('Open menu:', menuId, param);
 
 				S.Menu.open(menuId, param);
 				withMenu.current = true;
