@@ -435,13 +435,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 				if (!rc) {
 					const anchor = range.current.anchor !== undefined ? range.current.anchor : range.current.start;
+					
 					// Find extent: the point that's different from anchor (handles backward selection)
 					let extent = anchor;
-					if (range.current.start !== undefined && range.current.start !== anchor) {
+					if ((range.current.start !== undefined) && (range.current.start !== anchor)) {
 						extent = range.current.start;
-					} else if (range.current.end !== undefined && range.current.end !== anchor) {
+					} else if ((range.current.end !== undefined) && (range.current.end !== anchor)) {
 						extent = range.current.end;
 					};
+
 					focus.set(focusedId.current, { from: Math.min(anchor, extent), to: Math.max(anchor, extent) });
 					focus.apply();
 
