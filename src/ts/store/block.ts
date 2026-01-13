@@ -937,6 +937,144 @@ class BlockStore {
 	};
 
 	/**
+	 * Checks if a block is hidden under a collapsed header.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {boolean} True if the block is hidden under a collapsed header.
+	 */
+	isBlockHiddenByHeader (rootId: string, blockId: string): boolean {
+		const toggles = Storage.getToggle(rootId);
+		if (!toggles.length) {
+			return false;
+		};
+
+		// Get all blocks in document order
+		const flatList: { block: I.Block; isNested: boolean }[] = [];
+
+		const collectBlocks = (id: string, isNested: boolean) => {
+			const block = this.getLeaf(rootId, id);
+			if (!block) return;
+
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+
+			if (!block.isPage()) {
+				flatList.push({ block, isNested });
+			};
+
+			const childrenIds = this.getChildrenIds(rootId, id);
+			for (const childId of childrenIds) {
+				collectBlocks(childId, childrenNested);
+			};
+		};
+
+		collectBlocks(rootId, false);
+
+		// Find the block index
+		const blockIndex = flatList.findIndex(item => item.block.id === blockId);
+		if (blockIndex < 0) {
+			return false;
+		};
+
+		// Check if any header before this block hides it
+		for (let i = 0; i < blockIndex; i++) {
+			const { block, isNested } = flatList[i];
+
+			if (isNested) continue;
+
+			const headerLevel = this.getHeaderLevel(block);
+			if (headerLevel === 0) continue;
+
+			const isToggled = toggles.includes(block.id);
+			if (!isToggled) continue;
+
+			// Check if this header hides the target block
+			for (let j = i + 1; j < flatList.length; j++) {
+				const { block: nextBlock, isNested: nextIsNested } = flatList[j];
+
+				const nextHeaderLevel = this.getHeaderLevel(nextBlock);
+				if (nextHeaderLevel > 0 && !nextIsNested && nextHeaderLevel <= headerLevel) {
+					break;
+				};
+
+				if (nextBlock.id === blockId) {
+					return true;
+				};
+			};
+		};
+
+		return false;
+	};
+
+	/**
+	 * Gets the header that hides a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {I.Block|null} The header block that hides this block, or null.
+	 */
+	getHidingHeader (rootId: string, blockId: string): I.Block {
+		const toggles = Storage.getToggle(rootId);
+		if (!toggles.length) {
+			return null;
+		};
+
+		const flatList: { block: I.Block; isNested: boolean }[] = [];
+
+		const collectBlocks = (id: string, isNested: boolean) => {
+			const block = this.getLeaf(rootId, id);
+			if (!block) return;
+
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+
+			if (!block.isPage()) {
+				flatList.push({ block, isNested });
+			};
+
+			const childrenIds = this.getChildrenIds(rootId, id);
+			for (const childId of childrenIds) {
+				collectBlocks(childId, childrenNested);
+			};
+		};
+
+		collectBlocks(rootId, false);
+
+		const blockIndex = flatList.findIndex(item => item.block.id === blockId);
+		if (blockIndex < 0) {
+			return null;
+		};
+
+		// Find the header that hides this block (closest one)
+		let hidingHeader: I.Block = null;
+
+		for (let i = 0; i < blockIndex; i++) {
+			const { block, isNested } = flatList[i];
+
+			if (isNested) continue;
+
+			const headerLevel = this.getHeaderLevel(block);
+			if (headerLevel === 0) continue;
+
+			const isToggled = toggles.includes(block.id);
+			if (!isToggled) continue;
+
+			for (let j = i + 1; j < flatList.length; j++) {
+				const { block: nextBlock, isNested: nextIsNested } = flatList[j];
+
+				const nextHeaderLevel = this.getHeaderLevel(nextBlock);
+				if (nextHeaderLevel > 0 && !nextIsNested && nextHeaderLevel <= headerLevel) {
+					break;
+				};
+
+				if (nextBlock.id === blockId) {
+					hidingHeader = block;
+					break;
+				};
+			};
+		};
+
+		return hidingHeader;
+	};
+
+	/**
 	 * Updates header toggle visibility for all blocks.
 	 * Hides blocks that are under collapsed headers.
 	 * @param {string} rootId - The root ID.
