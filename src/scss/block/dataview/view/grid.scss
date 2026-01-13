@@ -7,7 +7,7 @@
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
 
-		.rowFoot { box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-top: -2px; height: 48px; }
+		.rowFoot { box-shadow: 0px 1px var(--color-shape-secondary) inset; height: 48px; }
 
 		#rowHeadClone { position: fixed !important; background: var(--color-bg-primary); z-index: 1; }
 		#rowHeadClone::after { content: ''; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: -1px; }
@@ -102,6 +102,7 @@
 			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
+			.icon.drag { top: 18px; margin: 0px; }
 
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
@@ -109,6 +110,7 @@
 			.row:hover {
 				.icon.drag { opacity: 1; }
 			}
+			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
@@ -135,7 +137,7 @@
 			}
 
 			.cell.isName, .cellContent.isName { cursor: default; }
-			.cellContent.isName { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
+			.cellContent.isName { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; }
 
 			.cell.isName.canEdit:hover {
 				.icon.edit { display: block; }

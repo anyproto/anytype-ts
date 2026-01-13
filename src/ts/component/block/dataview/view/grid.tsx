@@ -259,10 +259,13 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			};
 		});
 
-		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, { 
-			...view.getRelation(relationKey), 
+		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, {
+			...view.getRelation(relationKey),
 			width,
 		});
+
+		cache.current.clearAll();
+		listRef.current?.recomputeRowHeights(0);
 
 		window.setTimeout(() => keyboard.setResize(false), 50);
 	};
