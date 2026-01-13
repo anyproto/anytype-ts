@@ -400,6 +400,8 @@ class WindowManager {
 			win.views.map(it => ({ id: it.id, data: it.data })),
 			win.views[win.activeIndex]?.id
 		);
+
+		this.updateTabBarVisibility(win);
 	};
 
 	getPreferencesForNewWindow () {

@@ -437,6 +437,7 @@ class Action {
 		analytics.event('ShowDeletionWarning');
 
 		S.Popup.open('confirm', {
+			preventMenuClose: true,
 			data: {
 				title: U.String.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),

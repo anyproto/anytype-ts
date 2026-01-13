@@ -31,8 +31,6 @@ class MenuStore {
 	 * @param {I.MenuParam} param - The menu parameters.
 	 */
 	open (id: string, param: I.MenuParam) {
-		console.log('OPEN', id);
-
 		if (!id) {
 			return;
 		};
@@ -168,6 +166,11 @@ class MenuStore {
 	close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 		if (!item) {
+			callBack?.();
+			return;
+		};
+
+		if (this.isAnimating(id)) {
 			callBack?.();
 			return;
 		};

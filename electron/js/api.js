@@ -402,9 +402,14 @@ class Api {
 	};
 
 	getTabs (win) {
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const hasMultipleTabs = win.views && win.views.length > 1;
+
 		return {
 			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
 			id: win.views[win.activeIndex || 0]?.id,
+			isVisible: alwaysShow || hasMultipleTabs,
 		};
 	};
 

@@ -73,10 +73,12 @@ body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
 .tab .icon.close { background-image: url('../img/icon/close.svg'); }
 
 .tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.tab .icon.object { width: 18px; height: 18px; }
+.tab .icon.object { width: 18px; height: 18px; background-size: cover; }
 .tab .icon.object.layout1,
 .tab .icon.object.layout10.uxType3.isImage,
 .tab .icon.object.layout10.uxType4.isImage,
+.tab .icon.object.layout18.uxType3.isImage,
+.tab .icon.object.layout18.uxType4.isImage,
 .tab .icon.object.layout22.isImage { border-radius: 50% }
 
 .tab .div {

@@ -193,7 +193,7 @@ $(() => {
 		});
 	};
 
-	const setTabs = (tabs, id) => {
+	const setTabs = (tabs, id, isVisible) => {
 		if (isDragging) {
 			return; // Don't update during drag
 		};
@@ -209,14 +209,16 @@ $(() => {
 		updateNoClose();
 		setActive(id, false);
 
-		// Update visibility based on tab count
-		$('.container').toggleClass('isHidden', tabs.length <= 1);
+		// Set visibility if provided
+		if (typeof isVisible === 'boolean') {
+			$('.container').toggleClass('isHidden', !isVisible);
+		};
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
 		setTimeout(() => initSortable(), 10);
 	};
 
-	electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
+	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible));
 
 	electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
 
