@@ -1176,6 +1176,8 @@ class Dispatcher {
 			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
 				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
 			};
+
+			keyboard.setWindowTitle();
 		};
 
 		if (undefined !== details.setOf) {
