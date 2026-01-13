@@ -53,6 +53,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		initToggle();
+		initHeaderToggle();
 	});
 
 	const initToggle = () => {
@@ -60,12 +61,26 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};
-	
+
+	const initHeaderToggle = () => {
+		if (block && block.id && block.isTextHeader()) {
+			const node = $(nodeRef.current);
+			node.toggleClass('isToggled', Storage.checkToggle(rootId, block.id));
+		};
+	};
+
 	const onToggle = (e: any) => {
 		const node = $(nodeRef.current);
-		
+
 		S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
 		focus.apply();
+	};
+
+	const onHeaderToggle = (e: any) => {
+		e.stopPropagation();
+
+		const node = $(nodeRef.current);
+		S.Block.headerToggle(rootId, block.id, !node.hasClass('isToggled'));
 	};
 	
 	const onDragStart = (e: any) => {
@@ -791,12 +806,13 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			blockComponent = (
-				<BlockText 
-					key={key} 
-					ref={childRef} 
-					{...props} 
-					onToggle={onToggle} 
-					renderLinks={renderLinks} 
+				<BlockText
+					key={key}
+					ref={childRef}
+					{...props}
+					onToggle={onToggle}
+					onHeaderToggle={onHeaderToggle}
+					renderLinks={renderLinks}
 					renderMentions={renderMentions}
 					renderObjects={renderObjects}
 					renderEmoji={renderEmoji}

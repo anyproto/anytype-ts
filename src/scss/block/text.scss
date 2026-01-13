@@ -301,6 +301,28 @@
 	.block.blockText.textHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
 	.block.blockText.textHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
+
+	/* Header Toggle */
+
+	.block.blockText.textHeader1,
+	.block.blockText.textHeader2,
+	.block.blockText.textHeader3 {
+		> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
+			.marker.markerHeader {
+				img { transform: rotateZ(90deg); }
+			}
+		}
+
+		&.isToggled {
+			> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
+				.marker.markerHeader {
+					img { transform: rotateZ(-90deg); }
+				}
+			}
+		}
+	}
+
+	.block.isHeaderChildHidden { display: none !important; }
 }
 
 .editorWrapper.isTask {

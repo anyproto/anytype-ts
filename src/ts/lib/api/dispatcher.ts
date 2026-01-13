@@ -138,6 +138,7 @@ class Dispatcher {
 		let updateParents = false;
 		let updateNumbers = false;
 		let updateMarkup = false;
+		let updateHeadersToggle = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
@@ -233,6 +234,7 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
+					updateHeadersToggle = true;
 					break;
 				};
 
@@ -254,6 +256,7 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
+					updateHeadersToggle = true;
 					break;
 				};
 
@@ -264,6 +267,7 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
+					updateHeadersToggle = true;
 					break;
 				};
 
@@ -1124,11 +1128,15 @@ class Dispatcher {
 			};
 
 			if (updateNumbers) {
-				S.Block.updateNumbers(rootId); 
+				S.Block.updateNumbers(rootId);
 			};
 
 			if (updateMarkup) {
 				S.Block.updateMarkup(rootId);
+			};
+
+			if (updateHeadersToggle) {
+				S.Block.updateHeadersToggle(rootId);
 			};
 		});
 	};
@@ -1275,8 +1283,9 @@ class Dispatcher {
 		};
 
 		S.Block.updateStructureParents(contextId);
-		S.Block.updateNumbers(contextId); 
+		S.Block.updateNumbers(contextId);
 		S.Block.updateMarkup(contextId);
+		S.Block.updateHeadersToggle(contextId);
 
 		keyboard.setWindowTitle();
 
