@@ -84,7 +84,7 @@ class UtilObject {
 			this.openPopup(object, param);
 		} else
 		if ((e.metaKey || e.ctrlKey)) {
-			this.openWindow(object);
+			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
 		};
