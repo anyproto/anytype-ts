@@ -253,6 +253,7 @@ class WindowManager {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}` ],
 			},
+			...param,
 		});
 
 		win.views = win.views || [];
@@ -260,7 +261,7 @@ class WindowManager {
 		win.views.push(view);
 
 		view.id = id;
-		view.data = {};
+		view.data = { ...param };
 		view.webContents.loadURL(this.getUrlForNewTab());
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
@@ -353,6 +354,16 @@ class WindowManager {
 		if (updateActive) {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
+		};
+	};
+
+	closeActiveTab (win) {
+		const Api = require('./api.js');
+
+		if (win.views.length > 1) {
+			this.removeTab(win, win.views[win.activeIndex].id, true);
+		} else {
+			Api.close(win);
 		};
 	};
 

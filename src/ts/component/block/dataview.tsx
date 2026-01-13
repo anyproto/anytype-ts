@@ -788,6 +788,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				view,
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedRelation: true,
 				allowedCollection: true,
 				allowedExport: true,

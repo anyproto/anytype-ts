@@ -84,7 +84,7 @@ class UtilObject {
 			this.openPopup(object, param);
 		} else
 		if ((e.metaKey || e.ctrlKey)) {
-			this.openWindow(object);
+			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
 		};
@@ -120,6 +120,10 @@ class UtilObject {
 
 	openWindow (object: any) {
 		Renderer.send('openWindow', this.route(object), S.Auth.token);
+	};
+
+	openTab (object: any) {
+		Renderer.send('openTab', this.route(object));
 	};
 
 	openPopup (object: any, param?: any) {
