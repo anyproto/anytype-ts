@@ -533,6 +533,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				subId: J.Constant.subId.search,
 				route,
 				objectIds: [ item.id ],
+				allowedNewTab: true,
 			},
 		});
 	};

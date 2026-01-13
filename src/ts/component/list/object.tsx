@@ -102,6 +102,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 				relationKeys: getKeys(),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedCollection: true,
 				allowedExport: true,
 				allowedType: true,

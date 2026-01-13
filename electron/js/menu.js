@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
+const Api = require("./api");
 const Separator = { type: 'separator' };
 
 const DEFAULT_SHORTCUTS = {
@@ -158,7 +159,19 @@ class MenuManager {
 
 					Separator,
 
-					{ role: 'close', label: Util.translate('electronMenuClose') },
+					{
+						label: Util.translate('electronMenuCloseTab'),
+						accelerator: this.getAccelerator('closeTab'),
+						click: () => {
+							WindowManager.closeActiveTab(this.win);
+						},
+					},
+					{
+						label: Util.translate('electronMenuClose'),
+						click: () => {
+							Api.close(this.win);
+						},
+					},
 				]
 			},
 			{

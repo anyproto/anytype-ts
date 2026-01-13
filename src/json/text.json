@@ -356,6 +356,7 @@
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
 	"electronMenuNewTab": "New Tab",
+	"electronMenuCloseTab": "Close Tab",
 
 	"month1": "January",
 	"month2": "February",
@@ -1843,6 +1844,8 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
+	"menuObjectOpenInNewTab": "Open in New Tab",
+	"menuObjectOpenInNewWindow": "Open in New Window",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
