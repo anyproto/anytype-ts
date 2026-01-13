@@ -1,4 +1,5 @@
 $(() => {
+	const win = $(window);
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
@@ -10,7 +11,8 @@ $(() => {
 
 	let sortable = null;
 	let isDragging = false;
-	let draggedActiveId = null;
+	let draggedActiveId = '';
+	let activeId = ''
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
@@ -28,8 +30,6 @@ $(() => {
 			return;
 		};
 
-		const offset = active.position();
-
 		active.addClass('active');
 
 		// Hide divider on the previous tab
@@ -39,19 +39,17 @@ $(() => {
 			tabs.eq(activeIndex - 1).addClass('hideDiv');
 		};
 
+		activeId = id;
 		marker.toggleClass('anim', animate);
-		marker.css({
-			width: active.outerWidth() - 4,
-			left: offset.left + 2,
-		});
+		updateMarkerPosition(id);
 	};
 
-	const updateMarkerPosition = () => {
-		if (!isDragging || !draggedActiveId) {
+	const updateMarkerPosition = (id) => {
+		if (!id) {
 			return;
 		};
 
-		const active = container.find(`#tab-${draggedActiveId}`);
+		const active = container.find(`#tab-${id}`);
 		if (!active.length) {
 			return;
 		};
@@ -160,7 +158,7 @@ $(() => {
 			},
 			onChange: (evt) => {
 				if (draggedActiveId) {
-					setTimeout(() => updateMarkerPosition(), 40);
+					setTimeout(() => updateMarkerPosition(draggedActiveId), 40);
 				};
 			},
 			onEnd: (evt) => {
@@ -280,7 +278,12 @@ $(() => {
 		body.removeClass('isFullScreen');
 	});
 
+	win.off('resize.tabs').on('resize.tabs', () => {
+		updateMarkerPosition(activeId);
+	});
+
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
+
 });
