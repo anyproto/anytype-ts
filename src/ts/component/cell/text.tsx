@@ -52,6 +52,27 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 	};
 
+	const onKeyDown = (e: any, v: string) => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		keyboard.shortcut('escape, enter, enter+shift', e, pressed => {
+			e.preventDefault();
+
+			save(v, () => {
+				S.Menu.closeAll(J.Menu.cell);
+
+				range.current = null;
+				setEditingHandler(false);
+
+				if (onRecordAdd && (pressed == 'enter')) {
+					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
+				};
+			});
+		});
+	};
+
 	const onKeyUp = (e: any, v: string) => {
 		if (isLongText) {
 			return;
@@ -62,26 +83,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		setValue(v);
-
-		if (keyboard.isComposition) {
-			return;
-		};
-
-		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
-			e.preventDefault();
-			e.persist();
-
-			save(v, () => {
-				S.Menu.closeAll(J.Menu.cell);
-
-				range.current = null;
-				setEditingHandler(false);
-
-				if (onRecordAdd && pressed.match('shift')) {
-					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
-				};
-			});
-		});
 	};
 
 	const onKeyUpDate = (e: any, v: any) => {
@@ -225,12 +226,13 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			);
 		} else {
 			EditorComponent = (item: any) => (
-				<Input 
+				<Input
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
-					ref={inputRef} 
-					id="input" 
-					{...item} 
+					ref={inputRef}
+					id="input"
+					{...item}
 					placeholder={placeholder}
+					onKeyDown={onKeyDown}
 					onKeyUp={onKeyUp}
 				/>
 			);
