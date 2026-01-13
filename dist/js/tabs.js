@@ -151,6 +151,8 @@ $(() => {
 				isDragging = true;
 
 				const item = $(evt.item);
+				item.css('visibility', 'hidden');
+
 				if (item.hasClass('active')) {
 					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
@@ -163,6 +165,10 @@ $(() => {
 			},
 			onEnd: (evt) => {
 				isDragging = false;
+
+				const item = $(evt.item);
+				item.css('visibility', '');
+
 				const wasActive = draggedActiveId !== null;
 				draggedActiveId = null;
 
@@ -181,14 +187,6 @@ $(() => {
 				if (tabIds.length > 0) {
 					electron.Api(winId, 'reorderTabs', [ tabIds ]);
 				};
-
-				// Update marker position after a short delay
-				setTimeout(() => {
-					const activeId = container.find('.tab.active').attr('data-id');
-					if (activeId) {
-						//setActive(activeId, true);
-					};
-				}, 50);
 			}
 		});
 	};

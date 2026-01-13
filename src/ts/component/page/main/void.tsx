@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Frame } from 'Component';
 import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
@@ -52,29 +53,36 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}, [ spaces, spaces.length ]);
 
 	return (
-		<div className={cn.join(' ')}>
-			<Icon
-				className="vaultToggle withBackground"
-				onClick={() => sidebar.leftPanelToggle()}
-				tooltipParam={{
-					text: translate('commonVault'),
-					typeY: I.MenuDirection.Bottom,
-				}}
-			/>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				className={cn.join(' ')}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				<Icon
+					className="vaultToggle withBackground"
+					onClick={() => sidebar.leftPanelToggle()}
+					tooltipParam={{
+						text: translate('commonVault'),
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
 
-			<Frame>
-				<div className="iconWrapper">
-					<Icon />
-				</div>
+				<Frame>
+					<div className="iconWrapper">
+						<Icon />
+					</div>
 
-				<Title text={title} />
-				<Label text={text} />
+					<Title text={title} />
+					<Label text={text} />
 
-				<div className="buttons">
-					{button}
-				</div>
-			</Frame>
-		</div>
+					<div className="buttons">
+						{button}
+					</div>
+				</Frame>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));
