@@ -57,6 +57,7 @@ if (disableGpu) {
 	app.disableHardwareAcceleration();
 	app.commandLine.appendSwitch('disable-gpu');
 	app.commandLine.appendSwitch('disable-gpu-compositing');
+	
 	console.log('[GPU] Hardware acceleration disabled');
 };
 
