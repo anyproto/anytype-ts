@@ -165,9 +165,10 @@ html.printMedia.print {
 		.block.blockTable { width: 100% !important; margin: 0px !important; }
 		.block.blockTable {
 			.scrollWrap > .inner { width: 100% !important; }
-			.row { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; }
 		}
 	}
+
+	.row[data-print-columns] { grid-template-columns: var(--print-columns) !important; }
 }
 
 html.printMedia.withPopup {

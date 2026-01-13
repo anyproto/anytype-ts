@@ -1070,7 +1070,7 @@ class Keyboard {
 		const html = $('html');
 
 		html.addClass('printMedia');
-		
+
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
@@ -1083,6 +1083,23 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
+		// Convert table column widths from pixels to percentages to preserve proportions
+		$('.block.blockTable .row').each((_, row) => {
+			const style = row.style.gridTemplateColumns;
+			if (!style) {
+				return;
+			};
+
+			const widths = style.split(' ').map(w => parseFloat(w) || 0);
+			const total = widths.reduce((sum, w) => sum + w, 0);
+
+			if (total > 0) {
+				const percentages = widths.map(w => `${(w / total) * 100}%`).join(' ');
+				row.style.setProperty('--print-columns', percentages);
+				row.setAttribute('data-print-columns', 'true');
+			};
+		});
+
 		focus.clearRange(true);
 	};
 
@@ -1092,6 +1109,13 @@ class Keyboard {
 	printRemove () {
 		$('html').removeClass('withPopup printMedia print save');
 		S.Common.setThemeClass();
+
+		// Clean up table print columns
+		$('.block.blockTable .row[data-print-columns]').each((_, row) => {
+			row.style.removeProperty('--print-columns');
+			row.removeAttribute('data-print-columns');
+		});
+
 		$(window).trigger('resize');
 	};
 
