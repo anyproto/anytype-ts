@@ -122,6 +122,10 @@ class UtilObject {
 		Renderer.send('openWindow', this.route(object), S.Auth.token);
 	};
 
+	openTab (object: any) {
+		Renderer.send('openTab', this.route(object));
+	};
+
 	openPopup (object: any, param?: any) {
 		if (!object) {
 			return;

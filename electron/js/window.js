@@ -253,6 +253,7 @@ class WindowManager {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}` ],
 			},
+			...param,
 		});
 
 		win.views = win.views || [];
@@ -260,7 +261,7 @@ class WindowManager {
 		win.views.push(view);
 
 		view.id = id;
-		view.data = {};
+		view.data = { ...param };
 		view.webContents.loadURL(this.getUrlForNewTab());
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));

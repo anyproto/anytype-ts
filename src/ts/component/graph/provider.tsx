@@ -544,6 +544,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				getObject: id => getNode(id),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedCollection: true,
 				allowedExport: true,
 				allowedType: true,

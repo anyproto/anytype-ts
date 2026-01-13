@@ -199,6 +199,10 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
+	openTab (win, route) {
+		WindowManager.createTab(win, { route });
+	};
+
 	openUrl (win, url) {
 		shell.openExternal(url);
 	};
