@@ -22,6 +22,7 @@ const DEFAULT_SHORTCUTS = {
 	close: [ 'CmdOrCtrl', 'Q' ],
 	createSpace: [],
 	newTab: [ 'CmdOrCtrl', 'T' ],
+	closeTab: [ 'CmdOrCtrl', 'W' ],
 };
 
 class MenuManager {

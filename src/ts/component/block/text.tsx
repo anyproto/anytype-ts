@@ -535,7 +535,17 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const d = range.from - filter.from;
 
 				if (d >= 0) {
-					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					// Get text from filter.from to cursor
+					let part = value.substring(filter.from, filter.from + d);
+
+					// Also include the word after cursor (for when @ is typed before existing text)
+					const textAfterCursor = value.substring(filter.from + d);
+					const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+					if (wordMatch) {
+						part += wordMatch[1];
+					};
+
+					part = part.replace(/^\//, '');
 					S.Common.filterSetText(part);
 				};
 			}, 30);
@@ -685,9 +695,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const element = $(`#block-${block.id}`);
 
 		let value = getTextValue();
+
+		// Extract the word after the cursor to use as initial filter (for when @ is typed before existing text)
+		const textAfterCursor = value.substring(range.from);
+		const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+		const nextWord = wordMatch ? wordMatch[1] : '';
+
 		value = U.String.cut(value, range.from - d, range.from);
 
-		S.Common.filterSet(range.from - d, '');
+		S.Common.filterSet(range.from - d, nextWord);
 
 		raf(() => {
 			S.Menu.open('blockMention', {
