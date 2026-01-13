@@ -208,8 +208,7 @@
 		}
 
 		.viewContent.viewGrid.wrapContent {
-			.row { height: auto; }
-			.cell { height: auto; }
+			.row, .dropTarget, .selectionTarget, .cell { height: 100%; }
 
 			.cellContent { overflow: visible; height: auto; }
 			.cellContent {

@@ -274,9 +274,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const rebindPrevious = () => {
 		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
 
-		if (childRef.current && childRef.current.unbind) {
-			childRef.current.unbind();
-		};
+		childRef.current?.unbind?.();
 
 		if (!canRebind) {
 			return;

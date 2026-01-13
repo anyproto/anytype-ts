@@ -291,8 +291,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					const { wh } = U.Common.getWindowDimensions();
 					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
-					console.log(cell, cell.outerHeight(), height);
-
 					param = Object.assign(param, {
 						noFlipX: true,
 						horizontal: I.MenuDirection.Left,
@@ -389,9 +387,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Checkbox: {
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.onClick?.(e);
 				ret = true;
 				break; 
 			};
@@ -420,8 +416,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				S.Common.cellId = cellId;
 				
 				const isOpen = S.Menu.isOpen(menuId);
-
-				console.log('Open menu:', menuId, param);
 
 				S.Menu.open(menuId, param);
 				withMenu.current = true;
