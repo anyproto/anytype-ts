@@ -170,11 +170,6 @@ class MenuStore {
 			return;
 		};
 
-		if (this.isAnimating(id)) {
-			callBack?.();
-			return;
-		};
-
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : J.Constant.delay.menu;
