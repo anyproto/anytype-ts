@@ -226,10 +226,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
 		const container = U.Common.getScrollContainer(isPopup);
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
+		const selection = S.Common.getRef('selectionProvider');
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		container.off(`scroll.${ns}`);
 		Renderer.remove(`commandEditor`);
+		selection?.setContextMenuHandler(null);
 	};
 
 	const rebind = () => {
@@ -257,7 +259,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const menuOpen = menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			const top = Storage.getScroll('editor', rootId, isPopup);
-			
+
 			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				raf(() => focus.apply());
@@ -272,6 +274,34 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		container.on(`scroll.${ns}`, () => onScroll());
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => onCommand(cmd, arg));
+
+		// Register context menu handler for block selection
+		selection?.setContextMenuHandler((e, blockIds) => {
+			const root = S.Block.getLeaf(rootId, rootId);
+
+			if (!root || root.isLocked() || isReadonly()) {
+				return;
+			};
+
+			S.Menu.closeAll([], () => {
+				S.Menu.open('blockAction', {
+					rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
+					classNameWrap: 'fromBlock',
+					noFlipX: true,
+					subIds: J.Menu.action,
+					onClose: () => {
+						selection?.clear();
+						focus.apply();
+					},
+					data: {
+						blockId: blockIds[0],
+						blockIds,
+						rootId,
+						blockRemove,
+					}
+				});
+			});
+		});
 	};
 	
 	const onMouseMove = (e: any) => {

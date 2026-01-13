@@ -9,6 +9,8 @@ interface Props {
 	children?: React.ReactNode;
 };
 
+type ContextMenuHandler = (e: React.MouseEvent, ids: string[]) => void;
+
 interface SelectionRefProps {
 	get(type: I.SelectType): string[];
 	getForClick(id: string, withChildren: boolean, save: boolean): string[];
@@ -20,6 +22,7 @@ interface SelectionRefProps {
 	setIsSelecting(v: boolean): void;
 	hide(): void;
 	rebind(): void;
+	setContextMenuHandler(handler: ContextMenuHandler | null): void;
 };
 
 const THRESHOLD = 20;
@@ -47,6 +50,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const rectRef = useRef(null);
 	const allowRect = useRef(false);
 	const target = useRef(null);
+	const contextMenuHandler = useRef<ContextMenuHandler | null>(null);
 
 	const rebind = () => {
 		unbind();
@@ -242,25 +246,31 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 				
 				const rootId = keyboard.getRootId();
-				const ids = get(I.SelectType.Block, true);
+				const currentIds = get(I.SelectType.Block, false);
 				const target = $(e.target).closest('.selectionTarget');
 				const id = target.attr('data-id');
-				const type = target.attr('data-type');
+				const type = target.attr('data-type') as I.SelectType;
 
-				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
-					const first = ids.length ? ids[0] : focusedId.current;
-					const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
-					const list = S.Block.unwrapTree(tree);
-					const idxStart = list.findIndex(it => it.id == first);
-					const idxEnd = list.findIndex(it => it.id == id);
-					const start = idxStart < idxEnd ? idxStart : idxEnd;
-					const end = idxStart < idxEnd ? idxEnd : idxStart;
-					const slice = list.slice(start, end + 1).
-						map(it => new M.Block(it)).
-						filter(it => it.isSelectable()).
-						map(it => it.id);
+				if (target.length && e.shiftKey && (type == I.SelectType.Block)) {
+					const first = (currentIds.length && currentIds[0]) ? currentIds[0] : focusedId.current;
 
-					set(type, ids.concat(slice));
+					if (first && id && (first !== id)) {
+						const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+						const list = S.Block.unwrapTree(tree);
+						const idxStart = list.findIndex(it => it.id == first);
+						const idxEnd = list.findIndex(it => it.id == id);
+
+						if ((idxStart !== -1) && (idxEnd !== -1)) {
+							const start = Math.min(idxStart, idxEnd);
+							const end = Math.max(idxStart, idxEnd);
+							const slice = list.slice(start, end + 1).
+								map(it => new M.Block(it)).
+								filter(it => it.isSelectable()).
+								map(it => it.id);
+
+							set(type, slice);
+						};
+					};
 				};
 			};
 		} else {
@@ -411,6 +421,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			if (!range.current) {
 				focusedId.current = selected.attr('data-id');
 				range.current = rc;
+			} else if (rc) {
+				// Update the range extent while preserving the anchor point
+				// This handles backward selection when mouse moves out and back
+				const anchor = range.current.anchor !== undefined ? range.current.anchor : range.current.start;
+				range.current = { ...rc, anchor };
 			};
 
 			if (range.current) {
@@ -419,7 +434,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 
 				if (!rc) {
-					focus.set(focusedId.current, { from: range.current.start, to: range.current.end });
+					const anchor = range.current.anchor !== undefined ? range.current.anchor : range.current.start;
+					// Find extent: the point that's different from anchor (handles backward selection)
+					let extent = anchor;
+					if (range.current.start !== undefined && range.current.start !== anchor) {
+						extent = range.current.start;
+					} else if (range.current.end !== undefined && range.current.end !== anchor) {
+						extent = range.current.end;
+					};
+					focus.set(focusedId.current, { from: Math.min(anchor, extent), to: Math.max(anchor, extent) });
 					focus.apply();
 
 					allowRect.current = false;
@@ -613,6 +636,36 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		$('html').toggleClass('isSelecting', v);
 	};
 
+	const handleContextMenu = (e: React.MouseEvent) => {
+		const handler = contextMenuHandler.current;
+
+		if (!handler) {
+			return;
+		};
+
+		const selectedIds = get(I.SelectType.Block, false);
+
+		if (!selectedIds.length) {
+			return;
+		};
+
+		// Check if clicking on a block that will handle its own context menu
+		const el = $(e.target);
+		const block = el.closest('.block');
+		if (block.length && block.find('.dropTarget').length) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		handler(e, selectedIds);
+	};
+
+	const setContextMenuHandler = (handler: ContextMenuHandler | null) => {
+		contextMenuHandler.current = handler;
+	};
+
 	useEffect(() => {
 		rebind();
 		return () => unbind();
@@ -629,13 +682,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		setIsSelecting,
 		hide,
 		rebind,
+		setContextMenuHandler,
 	}));
 
 	return (
-		<div 
-			id="selection" 
-			className="selection" 
+		<div
+			id="selection"
+			className="selection"
 			onMouseDown={onMouseDown}
+			onContextMenu={handleContextMenu}
 		>
 			<div ref={rectRef} id="selection-rect" />
 			{children}
