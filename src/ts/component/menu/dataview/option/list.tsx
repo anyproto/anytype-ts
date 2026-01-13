@@ -26,7 +26,6 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const n = useRef(-1);
-	const filterValueRef = useRef('');
 	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -104,8 +103,8 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			};
 		};
 
-		filterValueRef.current = '';
-		onFilterChange('');
+		filterRef.current?.setValue('');
+		data.filter = '';
 	};
 
 	const onValueAdd = (id: string) => {
@@ -439,14 +438,15 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (filterValueRef.current != filter) {
-			n.current = 0;
-		};
-
 		setActive();
 		position();
 		resize();
 	});
+
+	useEffect(() => {
+		n.current = 0;
+		load();
+	}, [ filter ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
