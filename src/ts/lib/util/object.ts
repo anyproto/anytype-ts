@@ -737,6 +737,7 @@ class UtilObject {
 		sidebar.rightPanelToggle(isPopup, { 
 			page: 'type', 
 			rootId: '',
+			noPreview: false,
 			details: {
 				...this.getNewTypeDetails(),
 				...details,

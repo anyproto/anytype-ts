@@ -470,6 +470,10 @@ class WindowManager {
 	};
 
 	updateTabBarVisibility (win) {
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
@@ -483,11 +487,12 @@ class WindowManager {
 		Util.sendToAllTabs(win, 'set-single-tab', isSingleTab);
 
 		// Update active view bounds
-		if (win.views && win.views[win.activeIndex]) {
+		const view = win.views?.[win.activeIndex];
+		if (view && !view.webContents?.isDestroyed()) {
 			const bounds = win.getBounds();
 			const tabBarHeight = this.getTabBarHeight(win);
 
-			win.views[win.activeIndex].setBounds({
+			view.setBounds({
 				x: 0,
 				y: tabBarHeight,
 				width: bounds.width,
