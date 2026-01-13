@@ -14,6 +14,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const objectIds = data.objectIds || [];
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
+	const participantId = U.Space.getCurrentParticipantId();
 	const n = useRef(0);
 
 	useEffect(() => {
@@ -89,6 +90,10 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
+			if (spaceview.isOneToOne && (object.creator != participantId)) {
+				allowedArchive = false;
+			};
+
 			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
