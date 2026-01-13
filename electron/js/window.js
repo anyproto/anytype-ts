@@ -357,6 +357,16 @@ class WindowManager {
 		};
 	};
 
+	closeActiveTab (win) {
+		const Api = require('./api.js');
+
+		if (win.views.length > 1) {
+			this.removeTab(win, win.views[win.activeIndex].id, true);
+		} else {
+			Api.close(win);
+		};
+	};
+
 	closeOtherTabs (win, id) {
 		id = String(id || '');
 
