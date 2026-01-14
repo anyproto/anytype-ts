@@ -74,7 +74,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		let output = [];
 		let more = 0;
 		let label = '';
-		let canAdd = false;
 
 		const checkMore = (arr: any[]) => {
 			output = arr.slice(0, J.Constant.limit.relation.option);
@@ -88,7 +87,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 			case I.RelationType.Object: {
 				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
 
-				canAdd = canWrite;
 				label = U.Common.plural(types.length, translate('pluralObjectType'));
 
 				checkMore(types);
@@ -105,15 +103,13 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 						return 0;
 					});
 
-				canAdd = canWrite;
 				label = U.Common.plural(relationsOptions.length, translate('pluralOption'));
-
 				checkMore(relationsOptions);
 				break;
 			};
 		};
 
-		return { output, more, label, canAdd };
+		return { output, more, label, canAdd: canWrite };
 	};
 
 	const onSetAdd = () => {
@@ -154,6 +150,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		switch (relationFormat) {
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
+				/*
 				if (!canWrite) {
 					break;
 				};
@@ -165,6 +162,8 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 						option,
 					}
 				});
+				*/
+				onOptionMore();
 				break;
 			};
 
@@ -384,7 +383,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		};
 	};
 
-	if (options && more > 0) {
+	if (options && (more > 0)) {
 		withMore = true;
 		options.push(<div key="optionMore" className="more" onClick={onOptionMore}>{more} {translate('commonMore')}...</div>);
 	};
@@ -392,11 +391,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	if (options && canAdd && !isReadonlyRelation) {
 		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
 
-		if (withMore) {
-			options.unshift(add);
-		} else {
-			options.push(add);
-		};
+		withMore ? options.unshift(add) : options.push(add);
 	};
 
 	if (!output.length && (!canAdd || isReadonlyRelation)) {
