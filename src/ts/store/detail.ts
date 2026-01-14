@@ -38,6 +38,21 @@ const keyMap = {
 };
 keyMap[I.ObjectLayout.Space] = keyMap[I.ObjectLayout.SpaceView];
 
+/**
+ * DetailStore manages object details (properties/relations) for all objects.
+ *
+ * Key responsibilities:
+ * - Storing and retrieving object details by root ID and object ID
+ * - Mapping raw details to typed objects with layout-specific properties
+ * - Providing computed/derived properties based on object layout
+ * - Managing MobX observability for reactive UI updates
+ *
+ * Details are the properties/relations of objects - name, icon, type, custom
+ * relations, etc. The store provides layout-aware mappers that add convenience
+ * properties (e.g., isOwner, isWriter for Participants).
+ *
+ * Structure: Map<rootId, Map<objectId, Map<relationKey, Detail>>>
+ */
 class DetailStore {
 
 	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();

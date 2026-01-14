@@ -10,13 +10,13 @@ import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 
-const SORT_IDS = [ 
-	'BlockAdd', 
-	'BlockDelete', 
-	'BlockSetChildrenIds', 
-	'ObjectDetailsSet', 
-	'ObjectDetailsAmend', 
-	'ObjectDetailsUnset', 
+const SORT_IDS = [
+	'BlockAdd',
+	'BlockDelete',
+	'BlockSetChildrenIds',
+	'ObjectDetailsSet',
+	'ObjectDetailsAmend',
+	'ObjectDetailsUnset',
 	'SubscriptionCounters',
 	'BlockDataviewRelationSet',
 	'BlockDataviewRelationDelete',
@@ -24,9 +24,22 @@ const SORT_IDS = [
 	'BlockDataviewViewUpdate',
 	'BlockDataviewViewDelete',
 ];
+
 const SKIP_IDS = [ 'BlockSetCarriage' ];
 const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
 
+/**
+ * Dispatcher class handles all communication between the Electron frontend
+ * and the anytype-heart middleware via gRPC.
+ *
+ * This is the central hub for:
+ * - Sending commands to the middleware (request method)
+ * - Receiving and processing real-time events via streaming (event method)
+ * - Managing the gRPC connection lifecycle
+ *
+ * The dispatcher maintains a persistent stream connection for receiving
+ * events and provides request/response handling for commands.
+ */
 class Dispatcher {
 
 	service: Service.ClientCommandsClient = null;
@@ -35,6 +48,11 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects = 0;
 
+	/**
+	 * Initialize the gRPC client with the middleware server address.
+	 * Must be called before any other dispatcher operations.
+	 * @param address - The gRPC server address (e.g., 'http://localhost:31007')
+	 */
 	init (address: string) {
 		address = String(address || '');
 
@@ -49,6 +67,11 @@ class Dispatcher {
 		});
 	};
 
+	/**
+	 * Start the event stream connection to receive real-time updates from middleware.
+	 * Sets up listeners for data, status, and end events with automatic reconnection.
+	 * Requires authentication token to be set in S.Auth.token.
+	 */
 	startStream () {
 		if (!S.Auth.token) {
 			console.error('[Dispatcher.startStream] No token');
@@ -85,6 +108,10 @@ class Dispatcher {
 		});
 	};
 
+	/**
+	 * Stop the active event stream connection.
+	 * Cancels the stream and clears the reference.
+	 */
 	stopStream () {
 		if (this.stream) {
 			this.stream.cancel();
@@ -92,6 +119,11 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Attempt to reconnect the event stream with exponential backoff.
+	 * Reconnection intervals: 3s for first 20 attempts, 5s for next 20, then 60s.
+	 * Counter resets after 40 attempts.
+	 */
 	reconnect () {
 		let t = 3;
 		if (this.reconnects == 20) {
@@ -109,6 +141,15 @@ class Dispatcher {
 		}, t * 1000);
 	};
 
+	/**
+	 * Process an incoming event from the middleware.
+	 * Routes events to appropriate handlers based on event type and updates
+	 * the application state accordingly.
+	 *
+	 * @param event - The protobuf event object from middleware
+	 * @param isSync - Whether this is a synchronous event (from a command response)
+	 * @param skipDebug - Whether to skip debug logging for this event
+	 */
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
 		const { config, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
@@ -1133,10 +1174,26 @@ class Dispatcher {
 		});
 	};
 
+	/**
+	 * Extract unique subscription IDs by removing dependency suffixes.
+	 * Subscription IDs may contain '/dep' suffixes for dependency tracking.
+	 * @param subIds - Array of subscription IDs (may include '/dep' suffixes)
+	 * @returns Array of unique base subscription IDs
+	 */
 	getUniqueSubIds (subIds: string[]) {
 		return U.Common.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
+	/**
+	 * Update object details across all relevant subscription stores.
+	 * Handles special cases for space subscriptions and dashboard updates.
+	 *
+	 * @param details - Object containing detail key-value pairs to update
+	 * @param rootId - The root/context ID for the update
+	 * @param id - The object ID being updated
+	 * @param subIds - Array of subscription IDs that should receive the update
+	 * @param clear - If true, replace all details; if false, merge with existing
+	 */
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		subIds = this.getUniqueSubIds(subIds);
 		subIds.forEach(subId => S.Detail.update(subId, { id, details }, clear));
@@ -1190,6 +1247,15 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Update the position of a record within a subscription's ordered list.
+	 * Used for maintaining correct sort order when items are added or moved.
+	 *
+	 * @param subId - Subscription ID containing the record list
+	 * @param id - ID of the record to position
+	 * @param afterId - ID of the record after which to place the item (empty for start)
+	 * @param isAdding - Whether this is a new addition (skip if already exists)
+	 */
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 		if (dep) {
@@ -1222,6 +1288,15 @@ class Dispatcher {
 		S.Record.recordsSet(sid, '', records);
 	};
 
+	/**
+	 * Comparator function for sorting events by their type priority.
+	 * Events in SORT_IDS are processed in array order to ensure
+	 * dependent operations (e.g., BlockAdd before BlockSetChildrenIds) work correctly.
+	 *
+	 * @param c1 - First event message
+	 * @param c2 - Second event message
+	 * @returns Negative if c1 should come first, positive if c2 should come first
+	 */
 	sort (c1: any, c2: any) {
 		const t1 = Mapper.Event.Type(c1.getValueCase());
 		const t2 = Mapper.Event.Type(c2.getValueCase());
@@ -1233,6 +1308,15 @@ class Dispatcher {
 		return 0;
 	};
 
+	/**
+	 * Process an ObjectView response and initialize block/detail stores.
+	 * Called when opening or showing an object to populate the UI state.
+	 *
+	 * @param rootId - Root object ID
+	 * @param traceId - Trace ID for the operation (used for context disambiguation)
+	 * @param objectView - The ObjectView data from middleware containing blocks and details
+	 * @param needCheck - Whether to check for existing popup structures to avoid duplicates
+	 */
 	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
 		const structure: any[] = [];
@@ -1285,6 +1369,14 @@ class Dispatcher {
 		$(window).trigger('objectView');
 	};
 
+	/**
+	 * Send a command request to the middleware and handle the response.
+	 * This is the main method for all command-based communication with anytype-heart.
+	 *
+	 * @param type - The command type name (e.g., 'ObjectOpen', 'BlockCreate')
+	 * @param data - The protobuf request object with command parameters
+	 * @param callBack - Optional callback invoked with the processed response
+	 */
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
 
@@ -1388,6 +1480,13 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Determine if a request should be logged based on debug configuration.
+	 * Respects separate flags for general requests vs subscription commands.
+	 *
+	 * @param type - The command type name
+	 * @returns True if the request should be logged
+	 */
 	needRequestLog (type: string) {
 		const { config } = S.Common;
 		const debugRequest = config.flagsMw.request;
@@ -1403,6 +1502,14 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Determine if an event should be logged based on debug configuration.
+	 * Events are categorized into: general events, sync events, file events, and subscribe events.
+	 * Each category has its own debug flag.
+	 *
+	 * @param type - The event type name
+	 * @returns True if the event should be logged
+	 */
 	needEventLog (type: string) {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;

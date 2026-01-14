@@ -1,6 +1,23 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import { S, Decode, Mapper } from 'Lib';
 
+/**
+ * Response handlers for gRPC command responses.
+ *
+ * Each exported function corresponds to a middleware command and transforms
+ * the protobuf response into a plain JavaScript object for use in the application.
+ *
+ * Naming convention: Function names match the command names exactly
+ * (e.g., ObjectCreate handles Rpc.Object.Create.Response)
+ *
+ * These functions are called by the Dispatcher when processing command responses.
+ */
+
+/**
+ * Helper to extract and decode details from a response object.
+ * @param o - Response object with getDetails() method
+ * @returns Decoded details object or empty object if none
+ */
 const details = (o: any) => {
 	return o ? S.Detail.mapper(Decode.struct(o.getDetails())) : {};
 };
