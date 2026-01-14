@@ -26,7 +26,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
-		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick,
 	} = props;
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
@@ -125,7 +125,18 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isFilter = component == 'dataviewFilterList';
 		const isSort = component == 'dataviewSort';
 
-		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
+		if (!readonly && isFilter) {
+			onFilterAddClick({
+				classNameWrap: 'fromBlock',
+				element,
+				horizontal: I.MenuDirection.Center,
+				offsetY: 10,
+				noFlipY: true,
+			});
+			return;
+		};
+
+		if (!readonly && (isSort && !view.sorts.length)) {
 			sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				onButton(element, component);
 			});

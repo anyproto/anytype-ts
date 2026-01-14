@@ -10,23 +10,23 @@ interface Props extends I.ViewComponent {
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, block, className, isInline, isCollection, getView, onFilterAdd, loadData, readonly, getTarget } = props;
+	const { rootId, block, className, isInline, isCollection, getView, onFilterAddClick, loadData, readonly, getTarget } = props;
 	const blockId = block.id;
 	const view = getView();
 	const filters = view?.filters;
 	const nodeRef = useRef(null);
-
-	if (!view || !filters.length) {
-		return null;
-	};
-
-	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
 	}).filter(it => it.relation);
+
+	if (!view || !items.length) {
+		return null;
+	};
+
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 	const cn = [ 'dataviewFilters' ];
 
@@ -71,24 +71,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 		};
 
-		U.Menu.sortOrFilterRelationSelect(menuParam, {
-			rootId,
-			blockId,
-			getView,
-			onSelect: item => {
-				const conditions = Relation.filterConditionsByType(item.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				const quickOptions = Relation.filterQuickOptions(item.format, condition);
-				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
-
-				onFilterAdd({
-					relationKey: item.relationKey ? item.relationKey : item.id,
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(item, null, false),
-					quickOption,
-				})
-			},
-		});
+		onFilterAddClick(menuParam);
 	};
 
 	const onRemove = (e: any, item: any) => {

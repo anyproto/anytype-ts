@@ -1032,6 +1032,27 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
+	const onFilterAddClick = (menuParam: I.MenuParam) => {
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
+			rootId,
+			blockId: block.id,
+			getView,
+			onSelect: item => {
+				const conditions = Relation.filterConditionsByType(item.format);
+				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+				const quickOptions = Relation.filterQuickOptions(item.format, condition);
+				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+
+				onFilterAdd({
+					relationKey: item.relationKey ? item.relationKey : item.id,
+					condition: condition as I.FilterCondition,
+					value: Relation.formatValue(item, null, false),
+					quickOption,
+				});
+			},
+		});
+	};
+
 	const onFilterAdd = (item: any, callBack?: () => void) => {
 		const view = getView();
 		const object = getTarget();
@@ -1508,6 +1529,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		onTemplateAdd,
 		onSortAdd,
 		onFilterAdd,
+		onFilterAddClick,
 		isAllowedObject,
 		isAllowedDefaultType,
 		onSourceSelect,

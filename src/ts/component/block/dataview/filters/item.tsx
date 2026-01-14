@@ -85,18 +85,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			list = Relation.getOptions(value);
 
 			if (list.length) {
-				v = (
-					<>
-						{list.map((item: any) => (
-							<Tag
-								key={item.id}
-								text={item.name}
-								color={item.color}
-								className={Relation.selectClassName(relation.format)}
-							/>
-						))}
-					</>
-				);
+				v = list.map(it => it.name).join(', ');
 			} else {
 				v = 'empty';
 			};
@@ -119,13 +108,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
 			list = list.filter(it => !it._empty_);
 
-			v = (
-				<>
-					{list.map((item: any, i: number) => {
-						return <Item key={i} {...item} />;
-					})}
-				</>
-			);
+			v = list.map(it => it.name).join(', ');
 			break;
 		};
 	};
