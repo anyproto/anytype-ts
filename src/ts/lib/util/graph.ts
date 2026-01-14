@@ -1,5 +1,16 @@
 import { I, S, U, J, Relation } from 'Lib';
 
+/**
+ * UtilGraph provides utilities for the graph visualization feature.
+ *
+ * Key responsibilities:
+ * - Generating image sources for graph nodes based on object layouts
+ * - Handling different icon types (emoji, image, type icons)
+ * - Providing fallback icons for objects without custom icons
+ *
+ * The graph view displays objects as nodes with connections,
+ * and this utility helps determine how each node should be visually represented.
+ */
 class UtilGraph {
 
 	/**

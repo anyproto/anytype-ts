@@ -5,15 +5,30 @@ import React from 'react';
 import { SidebarPanel } from 'Interface';
 
 interface SpaceContextParam {
-	isSharePage?: boolean; 
-	noManage?: boolean; 
-	noMembers?: boolean; 
+	isSharePage?: boolean;
+	noManage?: boolean;
+	noMembers?: boolean;
 	withPin?: boolean;
 	withDelete?: boolean;
-	noShare?: boolean; 
+	noShare?: boolean;
 	route: string;
 };
 
+/**
+ * UtilMenu provides utilities for generating menu items and handling menu operations.
+ *
+ * Key responsibilities:
+ * - Block menu items (text, list, media, embed, link, object blocks)
+ * - Turn/transform menu items (converting blocks between types)
+ * - Action menu items (copy, paste, delete, move)
+ * - Color and alignment options
+ * - Widget and dataview configuration menus
+ * - Space context menus and settings
+ * - Import/export format options
+ *
+ * Most methods return arrays of menu items with standardized structure
+ * including id, name, icon, and optional descriptions/callbacks.
+ */
 class UtilMenu {
 
 	menuContext = null;

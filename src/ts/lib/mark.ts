@@ -62,6 +62,20 @@ const Order = [
 	I.MarkType.Code,
 ];
 
+/**
+ * Mark handles text formatting marks (bold, italic, links, mentions, etc.).
+ *
+ * Key responsibilities:
+ * - Toggling marks on/off with proper overlap handling
+ * - Converting marks to/from HTML representation
+ * - Parsing markdown syntax into marks
+ * - Adjusting mark ranges when text is inserted/deleted
+ * - Handling special marks like mentions and emojis
+ *
+ * Marks are stored as ranges with type and optional parameters.
+ * They can overlap and are processed in a specific priority order
+ * to produce correct nested HTML output.
+ */
 class Mark {
 
 	/**

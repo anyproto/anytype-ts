@@ -2,6 +2,19 @@ import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';
 
+/**
+ * Focus manages the focus state and text selection within the application.
+ *
+ * Key responsibilities:
+ * - Tracking which block/element is currently focused
+ * - Managing text selection ranges within focusable elements
+ * - Applying focus state to the DOM
+ * - Scrolling focused elements into view
+ * - Backup/restore functionality for temporary focus changes
+ *
+ * The focus state includes both the focused element ID and the
+ * text selection range within that element.
+ */
 class Focus {
 	
 	state: I.FocusState = { 
