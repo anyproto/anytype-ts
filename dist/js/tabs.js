@@ -74,19 +74,25 @@ $(() => {
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
 		const isImage = Boolean(item.data.isImage);
+		const isHomeTab = Boolean(item.data.isHomeTab);
+
+		const cn = [ 'tab' ];
+		if (isHomeTab) {
+			cn.push('isHome');
+		};
 
 		const tab = $(`
-			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
+			<div id="tab-${item.id}" class="${cn.join(' ')}" data-id="${item.id}">
 				<div class="clickable">
-					<div class="name">${title}</div>
-					<div class="icon close withBackground"></div>
+					${isHomeTab ? '<div class="icon home"></div>' : `<div class="name">${title}</div>`}
+					${!isHomeTab ? '<div class="icon close withBackground"></div>' : ''}
 				</div>
 				<div class="div"></div>
 			</div>
 		`);
 
 		const clickable = tab.find('.clickable');
-		if (icon) {
+		if (!isHomeTab && icon) {
 			const cn = [ 'icon', 'object', `layout${layout}`, `uxType${uxType}` ];
 			if (isImage) {
 				cn.push('isImage');
@@ -104,10 +110,12 @@ $(() => {
 			setActive(item.id, true);
 		});
 
-		tab.find('.icon.close').off('click').on('click', (e) => {
-			e.stopPropagation();
-			electron.Api(winId, 'removeTab', [ item.id, true ]);
-		});
+		if (!isHomeTab) {
+			tab.find('.icon.close').off('click').on('click', (e) => {
+				e.stopPropagation();
+				electron.Api(winId, 'removeTab', [ item.id, true ]);
+			});
+		};
 
 		return tab;
 	};
@@ -144,8 +152,8 @@ $(() => {
 
 		sortable = new Sortable(container[0], {
 			animation: 0,
-			draggable: '.tab:not(.isAdd)',
-			filter: '.icon.close',
+			draggable: '.tab:not(.isAdd):not(.isHome)',
+			filter: '.icon.close, .tab.isHome',
 			preventOnFilter: false,
 			onStart: (evt) => {
 				isDragging = true;

@@ -258,10 +258,14 @@ class WindowManager {
 
 		win.views = win.views || [];
 		win.activeIndex = win.activeIndex || 0;
+
+		// First tab is the home tab
+		const isHomeTab = win.views.length === 0;
+
 		win.views.push(view);
 
 		view.id = id;
-		view.data = { ...param };
+		view.data = { ...param, isHomeTab };
 		view.webContents.loadURL(this.getUrlForNewTab());
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
@@ -314,6 +318,9 @@ class WindowManager {
 		win.contentView.addChildView(view);
 
 		Util.send(win, 'set-active-tab', id);
+
+		// Notify the tab renderer about home tab status
+		Util.sendToTab(win, id, 'set-home-tab', Boolean(view.data?.isHomeTab));
 	};
 
 	updateTab (win, id, data) {
@@ -340,6 +347,12 @@ class WindowManager {
 		};
 
 		const view = win.views.find(it => it.id == id);
+
+		// Cannot remove home tab
+		if (view?.data?.isHomeTab) {
+			return;
+		};
+
 		const index = win.views.findIndex(it => it.id == id);
 
 		if (win.activeIndex == index) {
@@ -386,6 +399,12 @@ class WindowManager {
 	reorderTabs (win, tabIds) {
 		if (!win.views || !tabIds || !tabIds.length) {
 			return;
+		};
+
+		// Ensure home tab stays at position 0
+		const homeView = win.views.find(v => v.data?.isHomeTab);
+		if (homeView && tabIds[0] !== homeView.id) {
+			tabIds = [ homeView.id, ...tabIds.filter(id => id !== homeView.id) ];
 		};
 
 		// Reorder the views array based on the new tab order

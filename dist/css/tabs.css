@@ -64,6 +64,12 @@ body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
 .tab.isAdd { flex: 0 0 auto; min-width: 32px; }
 .tab.isAdd .icon { background-image: url('../img/icon/plus.svg'); }
 
+.tab.isHome { flex: 0 0 auto; min-width: 44px; max-width: 44px; cursor: default; }
+.tab.isHome .icon.home { background-image: url('../img/icon/home.svg'); }
+.tab.isHome .name { display: none; }
+.tab.isHome .icon.close { display: none; }
+.tab.isHome:active { cursor: default; }
+
 .tab .clickable {
 	display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; padding-left: 6px;
 	-webkit-app-region: no-drag;

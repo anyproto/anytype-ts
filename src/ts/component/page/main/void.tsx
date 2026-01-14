@@ -60,14 +60,16 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					transition: { duration: 0.2, delay: 0.1 },
 				})}
 			>
-				<Icon
-					className="vaultToggle withBackground"
-					onClick={() => sidebar.leftPanelToggle()}
-					tooltipParam={{
-						text: translate('commonVault'),
-						typeY: I.MenuDirection.Bottom,
-					}}
-				/>
+				{S.Common.isHomeTab ? (
+					<Icon
+						className="vaultToggle withBackground"
+						onClick={() => sidebar.leftPanelToggle()}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : null}
 
 				<Frame>
 					<div className="iconWrapper">

@@ -120,3 +120,41 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
+
+## Tab System Architecture
+
+### Overview
+The application uses a multi-tab architecture where each tab is a separate `WebContentsView` in Electron.
+
+### Key Files
+- `electron/js/window.js` - Tab management (createTab, setActiveTab, removeTab, reorderTabs)
+- `dist/js/tabs.js` - Tab bar UI rendering and drag/drop with Sortable.js
+- `dist/css/tabs.css` - Tab bar styling
+- `electron/js/api.js` - Tab-related API methods (getTabs, getTab, updateTab)
+
+### Tab Communication
+- **Main → Tab Bar**: `Util.send(win, 'event-name', ...)` - sends to tabs.html
+- **Main → Specific Tab**: `Util.sendToTab(win, tabId, 'event-name', ...)` - sends to specific view
+- **Main → All Tabs**: `Util.sendToAllTabs(win, 'event-name', ...)` - broadcasts to all views
+- **Tab → Main**: `Renderer.send('command', ...)` via IPC
+
+### Tab State
+- Each tab stores data in `view.data` object (title, icon, route, isHomeTab, etc.)
+- Renderer accesses tab state via `S.Common.tabId`, `S.Common.isHomeTab`, `S.Common.singleTab`
+- Tab bar visibility controlled by `config.alwaysShowTabs` and tab count
+
+### Home Tab
+- First tab (index 0) is the "home tab" with special behavior:
+  - Marked with `isHomeTab: true` in `view.data`
+  - Displays home icon instead of object icon/name
+  - Cannot be dragged or closed
+  - Other tabs cannot be dropped at position 0
+  - Only tab where vault toggle is visible and vault can be opened
+- Non-home tabs have vault panel closed with no toggle button
+
+### Adding Tab Features
+1. Add data to `view.data` in `window.js` createTab()
+2. Include in API responses (`api.js` getInitData/getTab)
+3. Add IPC handler in `app.tsx` registerIpcEvents()
+4. Add state to `store/common.ts` (observable, getter, action)
+5. Update UI components to use the new state

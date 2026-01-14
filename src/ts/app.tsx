@@ -159,6 +159,7 @@ const App: FC = () => {
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-tab', onWillCloseTab);
 		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
+		Renderer.on('set-home-tab', (e: any, v: boolean) => S.Common.isHomeTabSet(v));
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
 
@@ -200,7 +201,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab, isHomeTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -221,6 +222,7 @@ const App: FC = () => {
 		S.Common.tabIdSet(tabId);
 		S.Common.setLeftSidebarState('vault', '');
 		S.Common.singleTabSet(isSingleTab);
+		S.Common.isHomeTabSet(isHomeTab);
 
 		U.Data.updateTabsDimmer();
 
@@ -228,6 +230,11 @@ const App: FC = () => {
 		keyboard.setBodyClass();
 
 		sidebar.init(false);
+
+		// Close vault on non-home tabs (after sidebar.init to override stored state)
+		if (!isHomeTab) {
+			sidebar.leftPanelClose(false);
+		};
 		analytics.init();
 
 		if (redirect) {

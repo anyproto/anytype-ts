@@ -31,6 +31,7 @@ class CommonStore {
 	public pinTimeId = null;
 	public isFullScreen = false;
 	public singleTabValue = false;
+	public isHomeTabValue = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -134,6 +135,7 @@ class CommonStore {
 			defaultType: observable,
 			isFullScreen: observable,
 			singleTabValue: observable,
+			isHomeTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
@@ -170,6 +172,7 @@ class CommonStore {
 			widgetSections: computed,
 			recentEditMode: computed,
 			singleTab: computed,
+			isHomeTab: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -197,6 +200,7 @@ class CommonStore {
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
 			singleTabSet: action,
+			isHomeTabSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -255,6 +259,10 @@ class CommonStore {
 
 	get singleTab (): boolean {
 		return this.singleTabValue;
+	};
+
+	get isHomeTab (): boolean {
+		return this.isHomeTabValue;
 	};
 
 	get pin (): string {
@@ -683,6 +691,14 @@ class CommonStore {
 	 */
 	singleTabSet (v: boolean) {
 		this.singleTabValue = v;
+	};
+
+	/**
+	 * Sets the home tab mode.
+	 * @param {boolean} v - Whether this is the home tab.
+	 */
+	isHomeTabSet (v: boolean) {
+		this.isHomeTabValue = v;
 	};
 
 	/**

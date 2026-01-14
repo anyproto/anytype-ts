@@ -29,9 +29,9 @@ class Api {
 		win.route = '';
 
 		// Try to get route from active tab data
-		if (!route && tabId && win.views && (win.views.length > 0)) {
-			const tab = win.views.find(it => it.id == tabId);
+		const tab = tabId && win.views && (win.views.length > 0) ? win.views.find(it => it.id == tabId) : null;
 
+		if (!route && tab) {
 			route = tab?.data?.route || '';
 		};
 
@@ -47,6 +47,7 @@ class Api {
 			css: Util.getCss(),
 			activeIndex: win.activeIndex || 0,
 			isSingleTab: win.views && (win.views.length == 1),
+			isHomeTab: tab?.data?.isHomeTab || false,
 		};
 	};
 
@@ -423,7 +424,7 @@ class Api {
 
 	getTab (win, id) {
 		const view = (win.views || []).find(it => it.id == id);
-		return view ? { id: view.id, data: view.data } : null;
+		return view ? { id: view.id, data: view.data, isHomeTab: view.data?.isHomeTab || false } : null;
 	};
 
 	updateTab (win, id, data) {
