@@ -65,6 +65,7 @@
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
+	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 	.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
@@ -74,8 +75,18 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
 
+	&.withSidebarTotalLeft {
+		.icon.vaultToggle { display: none; }
+	}
 	&.withSidebarSubLeft {
 		.icon.widgetPanel { display: none; }
+	}
+
+	.icon.widgetPanel {
+		.bullet {
+			position: absolute; right: 0px; bottom: 0px; width: 12px; height: 12px; border-radius: 6px;
+			background-color: var(--color-red); border: 3px solid var(--color-bg-primary);
+		}
 	}
 }
 .header.isSmall {
@@ -86,23 +97,7 @@
 	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
-.header:not(.withSidebarTotalLeft) {
-	.side.left { padding-left: 120px; }
-}
-
-html:not(.platformMac) {
-	.header:not(.withSidebarTotalLeft) {
-		.side.left { padding-left: 52px; }
-	}
-}
-
-body.isFullScreen {
-	.header:not(.withSidebarTotalLeft) {
-		.side.left { padding-left: 52px; }
-	}
-}
-
-.header.authIndex { height: 44px; width: 100% !important; }
+.header.authIndex { height: 52px; width: 100% !important; }
 .header.authIndex {
 	.side.left { padding: 86px; }
 
@@ -142,7 +137,7 @@ html.bodyAuthSelect {
 	}
 }
 
-.header.isCommon { background: var(--color-bg-primary); height: 44px; }
+.header.isCommon { background: var(--color-bg-primary); height: 52px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {

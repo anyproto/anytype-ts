@@ -15,9 +15,9 @@
 	}
 
 	@keyframes dots-accent {
-		0% { background-color: var(--color-system-accent); }
-		32% { background-color: var(--color-system-accent); }
-		100% { background-color: var(--color-bg-primary); }
+		0% { background-color: rgba(255,255,255,0); }
+		32% { background-color: rgba(255,255,255,0); }
+		100% { background-color: #fff; }
 	}
 
 	.loader {

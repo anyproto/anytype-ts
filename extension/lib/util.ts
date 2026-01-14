@@ -52,17 +52,13 @@ class Util {
 		S.Auth.appKeySet(appKey);
 		U.Data.createSession('', appKey, '', (message: any) => {
 			if (message.error.code) {
-				if (onError) {
-					onError(message.error);
-				};
+				onError?.(message.error);
 				return;
 			};
 
 			C.AccountSelect(message.accountId, '', 0, '', (message: any) => {
 				if (message.error.code) {
-					if (onError) {
-						onError(message.error);
-					};
+					onError?.(message.error);
 					return;
 				};
 
@@ -70,10 +66,7 @@ class Util {
 				S.Common.configSet(message.account.config, false);
 
 				U.Data.onInfo(message.account.info);
-
-				if (onSuccess) {
-					onSuccess();
-				};
+				onSuccess?.();
 			});
 		});
 	};

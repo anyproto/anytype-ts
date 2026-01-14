@@ -104,7 +104,7 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
 		].map((it: any) => {
-			it.icon = 'linkStyle' + it.id;
+			it.icon = `linkStyle${it.id}`;
 			return it;
 		});
 	};
@@ -168,12 +168,12 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		const itemIconSize = canIconSize ? { id: 'iconSize', name: translate('commonIcon'), caption: icon.name, arrow: true } : null;
 		const itemIconSwitch = canIconSwitch ? { id: 'iconSwitch', name: translate('commonIcon'), withSwitch: true, switchValue: (icon.id != I.LinkIconSize.None) } : null;
 		const itemCover = canCover ? { id: 'cover', name: translate('menuBlockLinkSettingsCover'), withSwitch: true, switchValue: hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
+		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: `relation ${Relation.className(I.RelationType.ShortText)}` };
 		const itemDescription = canDescription ? { 
-			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: 'relation ' + Relation.className(I.RelationType.LongText),
+			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: `relation ${Relation.className(I.RelationType.LongText)}`,
 			caption: description.name, arrow: true
 		} : null;
-		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: hasRelationKey('type') };
+		const itemType = { id: 'type', name: translate('commonObjectType'), icon: `relation ${Relation.className(I.RelationType.Object)}`, withSwitch: true, switchValue: hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },

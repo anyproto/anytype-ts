@@ -32,10 +32,12 @@
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
 		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
-		.icon.widgetPanel { background-image: url('~img/icon/header/widget1.svg'); }
+		.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
 		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 		.icon.clock { background-image: url('~img/icon/sidebar/clock.svg'); }
+		.icon.toggle { background-image: url('~img/icon/widget/toggle1.svg'); }
+		.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 		.sync { -webkit-app-region: no-drag; }
 	}
@@ -66,7 +68,7 @@
 	}
 
 	> .body {
-		padding: 8px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 8px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 		flex-grow: 1;
 	}
 	> .body {

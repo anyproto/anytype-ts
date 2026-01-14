@@ -37,10 +37,10 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
-	const hasSources = (isCollection || getSources().length);
 	const isAllowedObject = props.isAllowedObject();
 	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
+	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || isCollection;
+
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -246,7 +246,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const view = getView();
 		const type = S.Record.getTypeById(object.type);
 		
-		let viewType = I.ViewType.List;
+		let viewType = I.ViewType.Grid;
 		if (type && (undefined !== type.defaultViewType)) {
 			viewType = type.defaultViewType;
 		};
@@ -383,10 +383,12 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		win.off('keydown.filter').on('keydown.filter', (e: any) => {
 			e.stopPropagation();
 
-			keyboard.shortcut('escape', e, () => {
-				onFilterHide();
-				win.off('keydown.filter');
-			});
+			if (!isPopup && !keyboard.isPopup()) {
+				keyboard.shortcut('escape', e, () => {
+					onFilterHide();
+					win.off('keydown.filter');
+				});
+			};
 		});
 	};
 
@@ -415,6 +417,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
+			// Force synchronous reflow before measuring widths
+			void node[0]?.offsetWidth;
 		};
 
 		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());

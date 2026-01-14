@@ -25,6 +25,14 @@ class ConfigManager {
 				this.config.showMenuBar = true;
 			};
 
+			if (undefined === this.config.alwaysShowTabs) {
+				this.config.alwaysShowTabs = false;
+			};
+
+			if (undefined === this.config.hardwareAcceleration) {
+				this.config.hardwareAcceleration = true;
+			};
+
 			this.checkChannel();
 			this.checkTheme();
 

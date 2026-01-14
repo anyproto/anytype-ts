@@ -1,7 +1,7 @@
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 44px;
+		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2;
 	}
 	> .head {
@@ -61,7 +61,7 @@
 		}
 	}
 
-	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; padding-bottom: 12px; }
+	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		@keyframes shake1 {

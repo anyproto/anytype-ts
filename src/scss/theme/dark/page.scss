@@ -157,28 +157,32 @@
 	}
 
 	.pageSettingsMembership {
-		.swiper {
-			.slide,
-			.tier { background: var(--color-shape-tertiary) !important; }
-		}
+		.membershipIntro {
+			.tiers {
+				.tier {
+					.features {
+						.label:before { background: url('#{$themePath}/icon/membership/tick.svg'); }
+					}
+				}
+			}
 
-		.swiper.featuresList {
-			.slide.c0 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
-			}
-			.slide.c1 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
-			}
-			.slide.c2 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
-			}
-			.slide.c3 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
+			.actions {
+				.action {
+					.icon.activation { background-image: url('#{$themePath}/icon/membership/activation.svg'); }
+					.icon.contact { background-image: url('#{$themePath}/icon/membership/contact.svg'); }
+				}
 			}
 		}
-
-		.actionItems {
-			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+		.membershipPurchased {
+			.section {
+				.item { background: var(--color-bg-secondary); }
+				.item.current {
+					&.blue { box-shadow: 0px 0px 32px 0px rgba(54, 56, 78, 0.50); }
+					&.red { box-shadow: 0px 0px 32px 0px rgba(68, 42, 42, 0.50); }
+					&.purple,
+					&.default { box-shadow: 0px 0px 32px 0px rgba(158, 105, 156, 0.20); }
+				}
+			}
 		}
 	}
 

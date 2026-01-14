@@ -98,8 +98,15 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		);
 	};
 
-	const renderImage = (withBlur?: boolean) => {
+	const renderImage = () => {
 		const { object } = props;
+		const ratio = object.widthInPixels / object.heightInPixels;
+		const withBlur = ratio != 1;
+
+		cn.push('isImage');
+		if (withBlur) {
+			cn.push('withBlur');
+		};
 
 		if (!src.current) {
 			if (object.isTmp && object.file) {
@@ -144,7 +151,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		return (
-			<div className="imgWrapper" onClick={onPreviewHandler}>
+			<div className="mediaWrapper" onClick={onPreviewHandler}>
 				{blur}
 				<img
 					id="image"
@@ -163,12 +170,14 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const src = S.Common.fileUrl(object.id);
 
 		return (
-			<MediaVideo 
-				src={src} 
-				onClick={onPreviewHandler}
-				canPlay={false}
-				onSyncStatusClick={onSyncStatusClick}
-			/>
+			<div className="mediaWrapper" onClick={onPreviewHandler}>
+				<MediaVideo 
+					src={src} 
+					onClick={onPreviewHandler}
+					canPlay={false}
+					onSyncStatusClick={onSyncStatusClick}
+				/>
+			</div>
 		);
 	};
 
@@ -266,9 +275,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				canCancel: false,
 				onConfirm: () => {
 					if (syncError == I.SyncStatusError.IncompatibleVersion) {
-						window.setTimeout(() => {
-							Renderer.send('updateCheck');
-						}, J.Constant.delay.popup);
+						window.setTimeout(() => Renderer.send('updateCheck'), J.Constant.delay.popup);
 					};
 
 					if (syncError == I.SyncStatusError.Oversized) {
@@ -310,18 +317,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		cn.push('isDownload');
 	};
 
-	const imageContent = () => {
-		let withBlur = false;
-
-		cn.push('isImage');
-		if ((object.widthInPixels < 360) || (object.heightInPixels < 360)) {
-			withBlur = true;
-			cn.push('withBlur');
-		};
-
-		return renderImage(withBlur);
-	};
-
 	switch (object.layout) {
 		case I.ObjectLayout.File: {
 			if (showAsFile) {
@@ -337,7 +332,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 							break;
 						};
 
-						content = imageContent();
+						content = renderImage();
 						break;
 					};
 				};
@@ -350,7 +345,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				break;
 			};
 			
-			content = imageContent();
+			content = renderImage();
 			break;
 
 		case I.ObjectLayout.Video: {

@@ -28,8 +28,10 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onEmptyToggle = (e: any) => {
 		C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
+			window.setTimeout(() => {
+				focus.set(message.blockId, { from: 0, to: 0 });
+				focus.apply();
+			}, 0);
 		});
 	};
 
@@ -64,7 +66,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 	
 	if (isRow) {
 		ColResize = (item: any) => (
-			<div className={[ 'colResize', 'c' + item.index ].join(' ')}>
+			<div className={[ 'colResize', `c${item.index}` ].join(' ')}>
 				<div className="inner" onMouseDown={e => onResizeStart(e, item.index)} onDragStart={e => e.stopPropagation()}>
 					<div className="line" />
 				</div>
@@ -103,7 +105,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 							block={item} 
 							css={css} 
 							className={cn.join(' ')} 
-							index={index + '-' + i} 
+							index={[ index, i ].join('-')} 
 						/>
 					</React.Fragment>
 				);

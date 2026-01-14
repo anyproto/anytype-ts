@@ -5,6 +5,8 @@ import { observer } from 'mobx-react';
 import { Icon, Label, Error } from 'Component';
 import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
 
+const STORAGE_KEY = 'progress';
+
 const Progress: FC = observer(() => {
 
 	const { show } = S.Progress;
@@ -31,7 +33,7 @@ const Progress: FC = observer(() => {
 		return (
 			<div className="item">
 				<div className="nameWrap">
-					<Label text={translate(U.Common.toCamelCase(`progress-${item.type}`))} />
+					<Label text={translate(U.String.toCamelCase(`progress-${item.type}`))} />
 					{canCancel ? <Icon className="close" onClick={() => onCancel(item.id)} /> : ''}
 				</div>
 
@@ -66,13 +68,13 @@ const Progress: FC = observer(() => {
 	};
 
 	const onDragMove = (e: any) => {
-		const obj = Storage.get('progress') || {};
+		const obj = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY)) || {};
 		const win = $(window);
 		const x = e.pageX - dx.current - win.scrollLeft();
 		const y = e.pageY - dy.current - win.scrollTop();
 
 		setStyle(x, y);
-		Storage.set('progress', { ...obj, x, y });
+		Storage.set(STORAGE_KEY, { ...obj, x, y }, Storage.isLocal(STORAGE_KEY));
 	};
 
 	const onDragEnd = (e: any) => {
@@ -101,7 +103,7 @@ const Progress: FC = observer(() => {
 
 	const resize = () => {
 		const obj = $(innerRef.current);
-		const coords = Storage.get('progress');
+		const coords = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
 		height.current = obj.outerHeight();
 		width.current = obj.outerWidth();

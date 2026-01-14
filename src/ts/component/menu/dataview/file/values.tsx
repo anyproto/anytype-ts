@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -16,6 +16,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	const { data, classNameWrap } = param;
 	const { canEdit, onChange, subId } = data;
 	const value = Relation.getArrayValue(data.value);
+	const n = useRef(0);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -232,6 +233,11 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			S.Menu.closeAll([ 'dataviewFileList' ]);
 		};
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		getItems,
+		onSortEnd,
+	}), []);
 
 	return (
 		<div className="wrap">

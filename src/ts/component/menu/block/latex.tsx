@@ -20,7 +20,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { filter } = S.Common;
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL }));
 	const n = useRef(-1);
-	const filterRef = useRef('');
 	const emptyRef = useRef(0);
 	const listRef = useRef(null);
 
@@ -76,7 +75,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getSections = () => {
-		const filter = U.Common.regexEscape(S.Common.filter.text);
+		const filter = U.String.regexEscape(S.Common.filter.text);
 
 		let sections = U.Menu.sectionsMap(J.Latex);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
@@ -93,7 +92,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (filter) {
 			sections = U.Menu.sectionsFilter(sections, filter);
 
-			const regS = new RegExp('/^' + filter + '/', 'gi');
+			const regS = new RegExp(`/^${filter}/`, 'gi');
 
 			sections = sections.map((s: any) => {
 				s._sortWeight_ = 0;
@@ -180,7 +179,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			content = (
 				<div
-					id={'item-' + item.id}
+					id={`item-${item.id}`}
 					className="item"
 					style={param.style}
 					onMouseEnter={e => onMouseEnter(e, item)}
@@ -188,7 +187,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				>
 					{isTemplate ? (
 						<div className="inner">
-							<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
+							<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
 						</div>
 					) : (
 						<div className="name">{name}</div>
@@ -220,11 +219,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		const items = getItems();
 
-		if (filter.text != filterRef.current) {
-			n.current = 0;
-			filterRef.current = filter.text;
-		};
-
 		if (!items.length && !emptyRef.current) {
 			emptyRef.current = filter.text.length;
 		};
@@ -242,6 +236,10 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		S.Menu.close('previewLatex');
 	});
+
+	useEffect(() => {
+		n.current = 0;
+	}, [ filter.text ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,

@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
@@ -31,8 +32,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
-	isRtl = false;
-	
+
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
@@ -51,26 +51,32 @@ class Keyboard {
 		win.on('mousemove.common', e => this.onMouseMove(e));
 
 		win.on('online.common offline.common', () => {
-			const { onLine } = navigator;
+			S.Common.isOnlineSet(navigator.onLine);
 
-			S.Common.isOnlineSet(onLine);
-
-			if (!S.Common.membershipTiers.length) {
-				U.Data.getMembershipTiers(false);
+			if (!S.Membership.products.length) {
+				U.Data.getMembershipData();
 			};
 		});
 
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
+
+			// Check if PIN timeout has elapsed since last activity
+			const { pin, pinTime } = S.Common;
+			if (pin && pinTime) {
+				Renderer.send('checkPinTimeout', pinTime);
+			};
+
+			this.initPinCheck();
 		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
-
 			S.Menu.closeAll([ 'blockContext' ]);
 
+			window.clearTimeout(this.timeoutPin);
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
@@ -122,7 +128,7 @@ class Keyboard {
 
 		// Remove isFocusable from focused block
 		if (target.parents(`#block-${focused}`).length <= 0) {
-			$('.focusable.c' + focused).removeClass('isFocused');
+			$(`.focusable.c${focused}`).removeClass('isFocused');
 		};
 	};
 
@@ -157,6 +163,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const route = analytics.route.shortcut;
 		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
@@ -183,15 +190,9 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
-			if (electron.isFullScreen()) {
-				Renderer.send('toggleFullScreen');
-			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (!data.isClosed) {
-				sidebar.rightPanelClose(isPopup, true);
-			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
 
@@ -215,6 +216,12 @@ class Keyboard {
 					};
 				};
 			} else 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
+			if (!data.isClosed) {
+				sidebar.rightPanelClose(isPopup, true);
+			} else
 			if (!this.isFocused) {
 				if (this.isMainSettings) {
 					U.Space.openDashboard({ replace: false });
@@ -239,7 +246,7 @@ class Keyboard {
 			// Print
 			this.shortcut('print', e, () => {
 				e.preventDefault();
-				this.onPrint(analytics.route.shortcut);
+				this.onPrint(route);
 			});
 
 			// Navigation search
@@ -248,13 +255,13 @@ class Keyboard {
 					return;
 				};
 
-				this.onSearchPopup(analytics.route.shortcut);
+				this.onSearchPopup(route);
 			});
 
 			// Text search
 			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', analytics.route.shortcut);
+					this.onSearchMenu('', route);
 				};
 			});
 
@@ -285,7 +292,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut('settings', e, () => {
-				U.Object.openRoute({ id: 'account', layout: I.ObjectLayout.Settings });
+				Action.openSettings('account', route);
 			});
 
 			// Relation panel
@@ -323,20 +330,20 @@ class Keyboard {
 			// Copy page link
 			this.shortcut('copyPageLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'web', route);
 			});
 
 			// Copy deep link
 			this.shortcut('copyDeepLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'deeplink', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'deeplink', route);
 			});
 
 			// Settings
 			this.shortcut('settingsSpace', e, () => {
 				e.preventDefault();
 
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+				Action.openSettings('spaceIndex', route);
 			});
 
 			// Logout
@@ -356,7 +363,7 @@ class Keyboard {
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
 					this.shortcut('createObject', e, () => {
 						e.preventDefault();
-						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
 				};
 
@@ -374,13 +381,13 @@ class Keyboard {
 				this.shortcut('moveToBin', e, () => {
 					e.preventDefault();
 
-					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], route);
 				});
 
 				// Add to favorites
 				this.shortcut('addFavorite', e, () => {
 					e.preventDefault();
-					Action.toggleWidgetsForObject(rootId, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, route);
 				});
 			};
 
@@ -583,21 +590,29 @@ class Keyboard {
 		const { account } = S.Auth;
 		const prev = history.entries[history.index - 1];
 
-		if (account && !prev) {
+		if (!prev) {
 			return false;
 		};
 
-		if (prev) {
-			const route = U.Router.getParam(prev.pathname);
-			if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
-				return true;
-			};
+		const route = U.Router.getParam(prev.pathname);
+
+		if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+			return true;
+		};
+
+		if ([ 'index', 'auth' ].includes(route.page) && account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && !account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && (route.action == 'blank')) {
+			const prev = history.entries[history.index - 2];
+			const route = U.Router.getParam(prev?.pathname);
 
 			if ([ 'index', 'auth' ].includes(route.page) && account) {
-				return false;
-			};
-
-			if ((route.page == 'main') && !account) {
 				return false;
 			};
 		};
@@ -650,7 +665,7 @@ class Keyboard {
 
 			case 'shortcut': {
 				this.onShortcut();
-				analytics.event('MenuHelpShortcut', { route: analytics.route.shortcut });
+				analytics.event('MenuHelpShortcut', { route: route });
 				break;
 			};
 
@@ -814,7 +829,7 @@ class Keyboard {
 						className: 'isWide techInfo isLeft',
 						data: {
 							title: translate('menuHelpNet'),
-							text: U.Common.lbBr(result),
+							text: U.String.lbBr(result),
 							textConfirm: translate('commonCopy'),
 							colorConfirm: 'blank',
 							canCancel: false,
@@ -952,10 +967,9 @@ class Keyboard {
 	 * Handles membership upgrade action.
 	 */
 	onMembershipUpgradeViaEmail () {
-		const { account, membership } = S.Auth;
-		const name = membership.name ? membership.name : account.id;
+		const participant = U.Space.getMyParticipant();
 
-		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, participant?.resolvedName));
 	};
 
 	/**
@@ -1056,7 +1070,7 @@ class Keyboard {
 		const html = $('html');
 
 		html.addClass('printMedia');
-		
+
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
@@ -1069,6 +1083,23 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
+		// Convert table column widths from pixels to percentages to preserve proportions
+		$('.block.blockTable .row').each((_, row) => {
+			const style = row.style.gridTemplateColumns;
+			if (!style) {
+				return;
+			};
+
+			const widths = style.split(' ').map(w => parseFloat(w) || 0);
+			const total = widths.reduce((sum, w) => sum + w, 0);
+
+			if (total > 0) {
+				const percentages = widths.map(w => `${(w / total) * 100}%`).join(' ');
+				row.style.setProperty('--print-columns', percentages);
+				row.setAttribute('data-print-columns', 'true');
+			};
+		});
+
 		focus.clearRange(true);
 	};
 
@@ -1078,6 +1109,13 @@ class Keyboard {
 	printRemove () {
 		$('html').removeClass('withPopup printMedia print save');
 		S.Common.setThemeClass();
+
+		// Clean up table print columns
+		$('.block.blockTable .row[data-print-columns]').each((_, row) => {
+			row.style.removeProperty('--print-columns');
+			row.removeAttribute('data-print-columns');
+		});
+
 		$(window).trigger('resize');
 	};
 
@@ -1133,9 +1171,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid() || this.isMainArchive();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -1234,19 +1272,35 @@ class Keyboard {
 		};
 
 		const match = this.getMatch();
-		const action = match?.params?.action;
+		const rootId = this.getRootId();
+		const { action, id } = match.params;
 		const titles = {
-			index: translate('commonDashboard'),
+			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),
 		};
 
-		if (titles[action]) {
-			U.Data.setWindowTitleText(titles[action]);
+		let title = titles[action];
+
+		if (action == 'settings') {
+			const map = U.Menu.settingsSectionsMap();
+			const mapped = map[id];
+
+			title = [ translate('commonSettings') ];
+			if (mapped) {
+				title.push(mapped);
+			};
+
+			title = title.join(' › ');
+		};
+
+		if (title) {
+			U.Data.setWindowTitleText(title);
+			U.Data.setTabTitleText(title);
 		} else {
-			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
+			U.Data.setTabTitle(rootId, rootId);
 		};
 	};
 
@@ -1350,6 +1404,22 @@ class Keyboard {
 	 */
 	isMainChat () {
 		return this.isMain() && (this.getRouteMatch().params.action == 'chat');
+	};
+
+	/**
+	 * Returns true if the current context is the main void view.
+	 * @returns {boolean}
+	 */
+	isMainVoid () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	};
+
+	/**
+	 * Returns true if the current context is the main archive view.
+	 * @returns {boolean}
+	 */
+	isMainArchive () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'archive');
 	};
 
 	/**
@@ -1489,14 +1559,6 @@ class Keyboard {
 	};
 
 	/**
-	 * Sets the RTL (right-to-left) state.
-	 * @param {boolean} v - The RTL state.
-	 */
-	setRtl (v: boolean) {
-		this.isRtl = v;
-	};
-
-	/**
 	 * Sets the shortcut editing state.
 	 * @param {boolean} v - The shortcut editing state.
 	 */
@@ -1509,6 +1571,7 @@ class Keyboard {
 	 */
 	initPinCheck () {
 		const { account } = S.Auth;
+		const { windowIsFocused } = S.Common;
 
 		const check = () => {
 			const { pin } = S.Common;
@@ -1520,6 +1583,11 @@ class Keyboard {
 		};
 
 		if (!account || !check()) {
+			return;
+		};
+
+		if (!windowIsFocused) {
+			window.clearTimeout(this.timeoutPin);
 			return;
 		};
 
@@ -1759,8 +1827,8 @@ class Keyboard {
 			pressed = pressed.concat(metaKeys);
 		};
 
-		// Cmd + Alt + N hack
-		if (which == J.Key.dead) {
+		// Cmd + Alt + N hack (only apply when both cmd and alt are pressed)
+		if ((which == J.Key.dead) && metaKeys.includes('cmd') && metaKeys.includes('alt')) {
 			pressed.push('n');
 		};
 
@@ -1864,7 +1932,7 @@ class Keyboard {
 			if (key == 'comma') {
 				return ',';
 			};
-			return U.Common.ucFirst(key);
+			return U.String.ucFirst(key);
 		});
 	};
 
@@ -1905,32 +1973,45 @@ class Keyboard {
 		const { page, action, id } = this.getMatch(isPopup).params;
 
 		return [ 
-			U.Common.toCamelCase([ prefix, page ].join('-')),
-			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
-			U.Common.toCamelCase([ prefix, page, action ].join('-')),
+			U.String.toCamelCase([ prefix, page ].join('-')),
+			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
+			U.String.toCamelCase([ prefix, page, action ].join('-')),
 			U.Common.getContainerClassName(isPopup),
 			U.Data.spaceClass(spaceview.uxType),
 		].join(' ');
 	};
 
 	setBodyClass () {
-		const { config } = S.Common;
-		const { showMenuBar } = config;
+		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
+		const { showMenuBar, alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
-		const cn = [ 
-			this.getPageClass('body', false), 
-			U.Common.toCamelCase([ 'platform', platform ].join('-')),
+		const electron = U.Common.getElectron();
+		const theme = electron.getTheme();
+		const cn = [
+			this.getPageClass('body', false),
+			U.String.toCamelCase([ 'platform', platform ].join('-')),
 		];
 
-		if (config.debug.ui) {
+		if (theme) {
+			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
+		if (debug.ui) {
 			cn.push('debug');
 		};
 		if (showMenuBar) {
 			cn.push('withMenuBar');
 		};
+		if (isFullScreen) {
+			cn.push('isFullScreen');
+		};
+		if (singleTab && !alwaysShowTabs) {
+			cn.push('isSingleTab');
+		};
+		if (vaultIsMinimal) {
+			cn.push('vaultIsMinimal');
+		};
 
 		$('html').attr({ class: cn.join(' ') });
-		S.Common.setThemeClass();
 	};
 
 };

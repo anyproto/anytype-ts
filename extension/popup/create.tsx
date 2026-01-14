@@ -195,7 +195,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			e.stopPropagation();
 
 			const range = getRange(entry.get(0));
-			if (range.start || range.end) {
+			if (range?.start || range?.end) {
 				return;
 			};
 

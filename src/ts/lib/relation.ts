@@ -11,7 +11,7 @@ class Relation {
 	 * @returns {string} The type name.
 	 */
 	public typeName (v: I.RelationType): string {
-		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return U.String.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	/**
@@ -352,7 +352,7 @@ class Relation {
 			};
 
 			ret.push({ 
-				id: U.Common.sprintf(`_filter_template_%d_`, i), 
+				id: U.String.sprintf(`_filter_template_%d_`, i), 
 				name: translate(`filterTemplate${i}`),
 				icon: `filterTemplate-${I.FilterValueTemplate[i].toLowerCase()}`,
 				templateType: id as I.FilterValueTemplate,
@@ -530,7 +530,7 @@ class Relation {
 
 			ret.push({ 
 				id: relation.relationKey, 
-				icon: 'relation ' + this.className(relation.format),
+				icon: `relation ${this.className(relation.format)}`,
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -641,7 +641,7 @@ class Relation {
 
 		return U.Common.arrayUniqueObjects(options, 'relationKey').map(it => ({
 			id: it.relationKey, 
-			icon: 'relation ' + this.className(it.format),
+			icon: `relation ${this.className(it.format)}`,
 			name: it.name, 
 		}));
 	};
@@ -802,6 +802,15 @@ class Relation {
 	};
 
 	/**
+	 * Checks if a relation type is a object.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if object.
+	 */
+	public isObject (type: I.RelationType) {
+		return type == I.RelationType.Object;
+	};
+
+	/**
 	 * Gets the URL scheme for a relation type.
 	 * @param {I.RelationType} type - The relation type.
 	 * @param {string} value - The value.
@@ -836,7 +845,7 @@ class Relation {
 			return '';
 		};
 		
-		const scheme = U.Common.getScheme(value);
+		const scheme = U.String.urlScheme(value);
 		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
@@ -882,11 +891,12 @@ class Relation {
 	 * @returns {number} The timestamp.
 	 */
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+		const { day } = J.Constant;
 		const time = U.Date.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
-				value = time - 86400;
+				value = time - day;
 				break;
 			};
 
@@ -898,37 +908,37 @@ class Relation {
 			};
 
 			case I.FilterQuickOption.Tomorrow: {
-				value = time + 86400;
+				value = time + day;
 				break;
 			};
 
 			case I.FilterQuickOption.LastWeek: {
-				value = time - 86400 * 7;
+				value = time - day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.LastMonth: {
-				value = time - 86400 * 30;
+				value = time - day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NextWeek: {
-				value = time + 86400 * 7;
+				value = time + day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.NextMonth: {
-				value = time + 86400 * 30;
+				value = time + day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysAgo: {
-				value = time - 86400 * value;
+				value = time - day * value;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysNow: {
-				value = time + 86400 * value;
+				value = time + day * value;
 				break;
 			};
 		};
@@ -1026,6 +1036,10 @@ class Relation {
 	 */
 	isArrayType (format: I.RelationType): boolean {
 		return this.arrayTypes().includes(format);
+	};
+
+	isObjectType (format: I.RelationType): boolean {
+		return [ I.RelationType.Object, I.RelationType.File ].includes(format);
 	};
 	
 };

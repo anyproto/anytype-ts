@@ -13,6 +13,7 @@ interface Props {
 	onBlur?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
+	onInput?(e: any): void;
 };
 
 interface InputWithLabelRefProps {
@@ -67,9 +68,7 @@ const InputWithLabel = forwardRef<InputWithLabelRefProps, Props>((props, ref) =>
 			setIsFocused(true);
 		};
 
-		if (onFocus) { 
-			onFocus(e);
-		};
+		onFocus?.(e);
 	};
 	
 	const onBlurHandler = (e: any) => {
@@ -77,9 +76,7 @@ const InputWithLabel = forwardRef<InputWithLabelRefProps, Props>((props, ref) =>
 			setIsFocused(false);
 		};
 
-		if (onBlur) {
-			onBlur(e);
-		};
+		onBlur?.(e);
 	};
 
 	useEffect(() => inputRef.current.setValue(value), []);

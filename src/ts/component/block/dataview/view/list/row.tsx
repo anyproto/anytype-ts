@@ -18,6 +18,27 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const [ isEditing, setIsEditing ] = useState(false);
 	const nodeRef = useRef(null);
 	const view = getView();
+
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const first = node.find('.cellContent:not(.isEmpty)').first();
+
+		node.find('.cellContent').removeClass('first');
+		if (first.length) {
+			first.addClass('first');
+		};
+	};
+
+	useEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		setIsEditing,
+	}));
+
+	if (!view) {
+		return null;
+	};
+
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getSubId(rootId, block.id);
 	const record = getRecord(recordId);
@@ -82,16 +103,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		onCellClick(e, relation.relationKey, record.id);
 	};
 
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const first = node.find('.cellContent:not(.isEmpty)').first();
-
-		node.find('.cellContent').removeClass('first');
-		if (first.length) {
-			first.addClass('first');
-		};
-	};
-
 	const mapper = (vr: any, i: number) => {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
@@ -111,7 +122,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		return (
 			<div
 				className={ccn.join(' ')}
-				key={'list-cell-' + relation.relationKey}
+				key={`list-cell-${relation.relationKey}`}
 			>
 				<Cell
 					elementId={id}
@@ -120,7 +131,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 					getRecord={() => record}
 					subId={subId}
 					relationKey={relation.relationKey}
-					viewType={I.ViewType.List}
+					viewType={view.type}
 					idPrefix={idPrefix}
 					onClick={e => onCellClickHandler(e, relation)}
 					isInline={true}
@@ -143,11 +154,13 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
+	const lw = 50 + left.length * 5;
+
 	let content = (
 		<div className="sides">
 			<div
-				style={{ width: `${50 + left.length * 10}%` }}
 				className={[ 'side', 'left', (left.length > 1 ? 's60' : '') ].join(' ')}
+				style={{ width: `${lw}%` }}
 			>
 				{left.map(mapper)}
 			</div>
@@ -176,12 +189,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			</>
 		);
 	};
-
-	useEffect(() => resize());
-
-	useImperativeHandle(ref, () => ({
-		setIsEditing,
-	}));
 
 	return (
 		<AnimatePresence mode="popLayout">

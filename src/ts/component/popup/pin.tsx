@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Pin, Error } from 'Component';
-import { I, S, keyboard, translate, Storage } from 'Lib';
+import { I, S, keyboard, translate } from 'Lib';
 
 const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
@@ -11,20 +11,14 @@ const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const [ error, setError ] = useState('');
 
 	const onSuccessHandler = () => {
-		if (onSuccess) {
-			onSuccess();
-		};
-
+		onSuccess?.();
 		close();
 	};
 
 	const onErrorHandler = () => {
 		pinRef.current.reset();	
 		setError(translate('authPinCheckError'));	
-
-		if (onError) {
-			onError();
-		};
+		onError?.();
 	};
 
 	useEffect(() => {

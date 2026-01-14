@@ -52,7 +52,7 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const onLogout = () => {
 		analytics.event('LogOut');
 
-		U.Router.go('/', {
+		U.Router.go('/auth/select', {
 			replace: true,
 			animate: true,
 			onRouteChange: () => {

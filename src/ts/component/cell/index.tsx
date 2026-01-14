@@ -288,9 +288,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const wh = win.height();
-					const hh = J.Size.header;
-					const height = Math.min(wh - hh - 20, cell.outerHeight());
+					const { wh } = U.Common.getWindowDimensions();
+					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
 					param = Object.assign(param, {
 						noFlipX: true,
@@ -313,12 +312,49 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
+				const options = [
+					{ id: 'go', icon: `go-${I.RelationType[relation.format].toLowerCase()}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', icon: 'copy', name: translate('commonCopy') },
+				];
+				if (relation.relationKey == 'source') {
+					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
+				};
+
+				const onSelect = (event: any, item: any) => {
+					const value = childRef.current.getValue();
+					if (!value) {
+						return;
+					};
+
+					switch (item.id) {
+						case 'go': {
+							Action.openUrl(Relation.checkUrlScheme(relation.format, value));
+							analytics.event('RelationUrlOpen');
+							break;
+						};
+
+						case 'copy': {
+							U.Common.clipboardCopy({ text: value, html: value });
+							analytics.event('RelationUrlCopy');
+							break;
+						};
+
+						case 'reload': {
+							C.ObjectBookmarkFetch(record.id, value.trim(), () => analytics.event('ReloadSourceData'));
+							break;
+						};
+					};
+				};
+
 				if (noInplace) {
 					param = Object.assign(param, { width: J.Size.menu.value });
-					param.data = Object.assign(param.data, { noResize: true });
+					param.data = Object.assign(param.data, {
+						noResize: true,
+						actions: value ? options : [],
+						onSelect,
+					});
 					menuId = 'dataviewText';
 					closeIfOpen = false;
-
 					break;
 				};
 
@@ -338,43 +374,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					break;
 				};
 
-				const options = [
-					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('commonCopyLink') },
-				];
-				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
-				};
-
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
 					noFilter: !noInplace,
 					options,
-					onSelect: (event: any, item: any) => {
-						const value = childRef.current.getValue();
-						if (!value) {
-							return;
-						};
-
-						switch (item.id) {
-							case 'go': {
-								Action.openUrl(Relation.checkUrlScheme(relation.format, value));
-								analytics.event('RelationUrlOpen');
-								break;
-							};
-
-							case 'copy': {
-								U.Common.clipboardCopy({ text: value, html: value });
-								analytics.event('RelationUrlCopy');
-								break;
-							};
-
-							case 'reload': {
-								C.ObjectBookmarkFetch(record.id, value.trim(), () => analytics.event('ReloadSourceData'));
-								break;
-							};
-						};
-					},
+					onSelect,
 				});
 
 				menuId = 'select';
@@ -383,9 +387,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Checkbox: {
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.onClick?.(e);
 				ret = true;
 				break; 
 			};
@@ -508,7 +510,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const placeholder = getPlaceholder(relation, record);
 	const cn = [ 
 		'cellContent', 
-		'c-' + relation.relationKey,
+		`c-${relation.relationKey}`,
 		Relation.className(relation.format), 
 		(canEdit ? 'canEdit' : ''), 
 		(relationKey == 'name' ? 'isName' : ''),

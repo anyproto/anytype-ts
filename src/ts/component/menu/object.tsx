@@ -1,118 +1,62 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate, sidebar } from 'Lib';
 
-class MenuObject extends React.Component<I.Menu> {
+const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-	};
+	const { config, space } = S.Common;
+	const { param, onKeyDown, setActive, close, getId, getSize } = props;
+	const { data, className, classNameWrap } = param;
+	const { blockId, rootId, isFilePreview, onSelect, onArchive, onDelete } = data;
+	const spaceview = U.Space.getSpaceview();
+	const block = S.Block.getLeaf(rootId, blockId);
+	const object = data.object || S.Detail.get(rootId, blockId);
+	const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
+	const isTemplate = U.Object.isTemplateType(object.type);
+	const isDate = U.Object.isDateLayout(object.layout);
+	const isChat = U.Object.isChatLayout(object.layout);
+	const isBookmark = U.Object.isBookmarkLayout(object.layout);
+	const isParticipant = U.Object.isParticipantLayout(object.layout);
+	const isInSet = U.Object.isInSetLayouts(object.layout);
+	const isInFile = U.Object.isInFileLayouts(object.layout);
+	const isInFileOrSystem = U.Object.isInFileOrSystemLayouts(object.layout);
+	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+	const isRelation = U.Object.isRelationLayout(object.layout);
+	const isType = U.Object.isTypeLayout(object.layout);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+	const route = analytics.route.menuObject;
+	const isPopup = keyboard.isPopup();
+	const n = useRef(-1);
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const { config } = S.Common;
-		const sections = this.getSections();
-		const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
+	useEffect(() => {
+		rebind();
 
-		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								icon={action.icon || action.id}
-								onMouseEnter={e => this.onMouseEnter(e, action)} 
-								onClick={e => this.onClick(e, action)} 
-							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-
-		let sectionPage = null;
-		if (block && block.isPage() && config.sudo && config.debug.ui && restrictions.length) {
-			sectionPage = (
-				<>
-					<div className="section">
-						<div className="name">Restrictions</div>
-						<div className="items">
-							{restrictions.map((item: any, i: number) => (
-								<div className="item" key={i}>{item || 'Empty'}</div>
-							))}
-						</div>
-					</div>
-				</>
-			);
+		return () => {
+			unbind();
+			S.Menu.closeAll(J.Menu.object);
 		};
-
-		return (
-			<div>
-				{sectionPage}
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
-			</div>
-		);
+	}, []);
+	
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		S.Menu.closeAll(J.Menu.object);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId, isFilePreview } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const object = this.getObject();
-		const isTemplate = U.Object.isTemplateType(object.type);
-		const isDate = U.Object.isDateLayout(object.layout);
-		const isChat = U.Object.isChatLayout(object.layout);
-		const isBookmark = U.Object.isBookmarkLayout(object.layout);
-		const isParticipant = U.Object.isParticipantLayout(object.layout);
-		const isInSet = U.Object.isInSetLayouts(object.layout);
-		const isInFile = U.Object.isInFileLayouts(object.layout);
-		const isInFileOrSystem = U.Object.isInFileOrSystemLayouts(object.layout);
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
-		const isType = U.Object.isTypeLayout(object.layout);
-		const canWrite = U.Space.canMyParticipantWrite();
-		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-
+	const getSections = () => {
 		let archive = null;
 		let remove = null;
 		let pageLock = null;
 		let template = null;
 		let setDefaultTemplate = null;
 		let advancedOptions = [];
-
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
@@ -130,6 +74,8 @@ class MenuObject extends React.Component<I.Menu> {
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
+		let copyMedia = { id: 'copyMedia', name: translate('commonCopyMedia'), icon: 'copy' };
+		let sections = [];
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -183,6 +129,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
 		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
+		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -206,6 +153,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
 		if (!allowedNotification) 	 notification = null;
+		if (!allowedCopyMedia)		 copyMedia = null;
 
 		if (!canWrite) {
 			template = null;
@@ -215,13 +163,13 @@ class MenuObject extends React.Component<I.Menu> {
 
 		advancedOptions.push(pageDeeplink);
 		advancedOptions = advancedOptions.filter(it => it);
+
 		if (advancedOptions.length) {
 			advanced.children = advancedOptions;
 		} else {
 			advanced = null;
 		};
 
-		let sections = [];
 		if (hasShortMenu) {
 			if (!U.Object.isInSetLayouts(object.layout)) {
 				pageCopy = null;
@@ -233,7 +181,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ linkTo, addCollection, template, pageLink ] },
 				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
-				{ children: [ openFile, downloadFile ] },
+				{ children: [ openFile, downloadFile, copyMedia ] },
 			]);
 		} else {
 			if (isTemplate) {
@@ -260,7 +208,7 @@ class MenuObject extends React.Component<I.Menu> {
 				]);
 			};
 
-			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
+			sections = sections.map((it: any, i: number) => ({ ...it, id: `page${i}` }));
 		};
 
 		sections.push({ children: [ advanced ] });
@@ -274,8 +222,8 @@ class MenuObject extends React.Component<I.Menu> {
 		return sections;
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -285,25 +233,18 @@ class MenuObject extends React.Component<I.Menu> {
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
+			setActive(item, false);
+			onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.object);
 			return;
 		};
-
-		const { param, getId, getSize, close } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId } = data;
-		const { space } = S.Common;
-		const object = this.getObject();
-		const spaceview = U.Space.getSpaceview();
 
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -313,7 +254,7 @@ class MenuObject extends React.Component<I.Menu> {
 			isSub: true,
 			className,
 			classNameWrap,
-			rebind: this.rebind,
+			rebind,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -409,33 +350,12 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 	};
 
-	getObject () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, object } = data;
-
-		return object || S.Detail.get(rootId, blockId);
-	};
-	
-	onClick (e: any, item: any) {
-		const { param } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { blockId, rootId, onSelect, onArchive, onDelete } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const object = this.getObject();
-		const route = analytics.route.menuObject;
-		const space = U.Space.getSpaceview();
-		const isPopup = keyboard.isPopup();
-		
+	const onClick = (e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 		
-		const close = true;
-		
-		if (onSelect) {
-			onSelect(item);
-		};
+		onSelect?.(item);
 
 		const onBack = () => {
 			if (block && !block.isPage()) {
@@ -444,7 +364,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
+				Action.openSettings('spaceIndexEmpty', route);
 			} else {
 				keyboard.onBack(isPopup);
 			};
@@ -485,7 +405,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Object.copyLink(object, space, 'web', '');
+				U.Object.copyLink(object, spaceview, 'web', '');
 				break;
 			};
 
@@ -495,12 +415,8 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageArchive': {
-				Action.archive([ object.id ], route, () => {
-					if (onArchive) {
-						onArchive();
-					} else {
-						onBack();
-					};
+				Action.archiveCheckType(rootId, [ object.id ], route, () => {
+					onArchive ? onArchive () : onBack();
 				});
 				break;
 			};
@@ -512,11 +428,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'pageRemove': {
 				Action.delete([ object.id ], route, () => {
-					if (onDelete) {
-						onDelete();
-					} else {
-						onBack();
-					};
+					onDelete ? onDelete() : onBack();
 				});
 				break;
 			};
@@ -566,6 +478,11 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'copyMedia': {
+				U.Common.clipboardCopyImageFromUrl(S.Common.imageUrl(object.id, I.ImageSize.Large));
+				break;
+			};
+
 			case 'openAsObject': {
 				U.Object.openAuto(object);
 				break;
@@ -591,11 +508,65 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 		
-		if (close) {
-			this.props.close();
-		};
+		close();
 	};
 
-};
+	const sections = getSections();
+
+	const Section = (item: any) => (
+		<div id={`section-${item.id}`} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => {
+					return (
+						<MenuItemVertical 
+							key={i} 
+							{...action} 
+							icon={action.icon || action.id}
+							onMouseEnter={e => onMouseEnter(e, action)} 
+							onClick={e => onClick(e, action)} 
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
+
+	let sectionPage = null;
+	if (block && block.isPage() && config.sudo && config.debug.ui && restrictions.length) {
+		sectionPage = (
+			<>
+				<div className="section">
+					<div className="name">Restrictions</div>
+					<div className="items">
+						{restrictions.map((item: any, i: number) => (
+							<div className="item" key={i}>{item || 'Empty'}</div>
+						))}
+					</div>
+				</div>
+			</>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{sectionPage}
+			{sections.map((item: any, i: number) => (
+				<Section key={i} index={i} {...item} />
+			))}
+		</div>
+	);
+	
+}));
 
 export default MenuObject;

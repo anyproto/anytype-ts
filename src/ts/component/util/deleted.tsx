@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, translate, Action } from 'Lib';
 
 interface Props {
 	className?: string;
@@ -28,7 +28,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			if (last) {
 				U.Object.getById(home.id, {}, object => {
 					if (!object || object.isDeleted) {
-						U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' }, { replace: true });
+						Action.openSettings('storageManager', '', { replace: true });
 					} else {
 						U.Space.openDashboard();
 					};

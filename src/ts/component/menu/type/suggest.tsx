@@ -25,7 +25,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const cache = useRef(new CellMeasurerCache());
 	const canWrite = U.Space.canMyParticipantWrite();
-	const addName = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
+	const addName = filter ? U.String.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 	const buttons = (data.buttons || []).map(it => ({ ...it, isButton: true }));
 
 	const getSections = () => {
@@ -40,7 +40,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (canWrite && filter && !add && canAdd) {
 			sections.push({ 
 				children: [ 
-					{ id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
+					{ id: 'add', name: U.String.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
 				], 
 			});
 		};
@@ -189,9 +189,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				close();
 			};
 
-			if (onClick) {
-				onClick(S.Detail.mapper(item));
-			};
+			onClick?.(S.Detail.mapper(item));
 		};
 
 		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());

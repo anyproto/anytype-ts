@@ -3,6 +3,7 @@
 .blocks {
 	.block.blockDataview { @include text-common; padding: 8px 0px 6px 0px; }
 	.block.blockDataview {
+		.wrap { position: relative; }
 		.wrapContent { z-index: 1; }
 
 		#set-loader { margin: 24px auto; }
@@ -92,7 +93,7 @@
 			> .sides { gap: 0px 16px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; width: 100%; }
 			> .sides {
 				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; display: flex; flex-direction: row; align-items: center; }
-				> .side.left { flex-grow: 1; padding-left: 14px; max-width: 100%; }
+				> .side.left { flex-grow: 1; padding-left: 20px; max-width: 100%; }
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
 				> .side.right {
 					.filter { color: var(--color-text-primary); padding: 0px; }
@@ -170,9 +171,6 @@
 				.viewSelect { display: inline-block; }
 			}
 		}
-		.dataviewControls.isCollection {
-			.side.left { padding-left: 20px; }
-		}
 
 		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
@@ -194,6 +192,7 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; min-height: 300px; }
+			.scroll::-webkit-scrollbar { display: none; }
 		}
 
 		.viewContent {

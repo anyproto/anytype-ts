@@ -21,6 +21,7 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
+import { active, transition } from 'd3';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -127,7 +128,7 @@ const App: FC = () => {
 	const nodeRef = useRef(null);
 
 	const init = () => {
-		const { version, arch, getGlobal } = electron;
+		const { version, arch, getGlobal, tabId } = electron;
 
 		U.Router.init(history);
 		U.Smile.init();
@@ -135,7 +136,7 @@ const App: FC = () => {
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
-		Renderer.send('getInitData').then((data: any) => onInit(data));
+		Renderer.send('getInitData', tabId()).then((data: any) => onInit(data));
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
@@ -156,7 +157,10 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-window', onWillCloseWindow);
+		Renderer.on('will-close-tab', onWillCloseTab);
+		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
+		Renderer.on('notification-callback', onNotificationCallback);
+		Renderer.on('payload-broadcast', onPayloadBroadcast);
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
@@ -194,15 +198,19 @@ const App: FC = () => {
 	};
 
 	const onInit = (data: any) => {
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		data = data || {};
+
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
-		const loader = node.find('#root-loader');
-		const anim = loader.find('.anim');
+		const bubbleLoader = $('#bubble-loader');
+		const rootLoader = node.find('#root-loader');
+		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
+		const tabId = electron.tabId();
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
@@ -210,7 +218,11 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
+		S.Common.tabIdSet(tabId);
 		S.Common.setLeftSidebarState('vault', '');
+		S.Common.singleTabSet(isSingleTab);
+
+		U.Data.updateTabsDimmer();
 
 		Action.checkDefaultSpellingLang();
 		keyboard.setBodyClass();
@@ -229,81 +241,126 @@ const App: FC = () => {
 		body.addClass('over');
 
 		const hide = () => {
-			loader.remove(); 
+			rootLoader.remove();
+			bubbleLoader.remove();
 			body.removeClass('over');
 		};
+		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			raf(() => anim.removeClass('from'));
+			const t = activeIndex > 0 ? 50 : 300;
+
+			bubbleLoader.css({ transitionDuration: `${t}ms` });
+			bubbleLoader.addClass('inflate');
+			anim.css({ transitionDuration: `${t}ms` });
 
 			window.setTimeout(() => {
-				anim.addClass('to');
-
+				raf(() => anim.removeClass('from'));
 				window.setTimeout(() => {
-					loader.css({ opacity: 0 });
-					window.setTimeout(() => hide(), 300);
-				}, 450);
-			}, 1000);
+					anim.addClass('to');
+
+					window.setTimeout(() => {
+						rootLoader.css({ opacity: 0 });
+						window.setTimeout(() => hide(), t);
+					}, activeIndex );
+				}, t * 5);
+			}, t * 3);
 		};
 
-		if (accountId) {
-			if (isChild) {
-				U.Data.createSession('', '', token, () => {
-					C.AccountSelect(accountId, '', 0, '', (message: any) => {
+		const onObtainToken = (token: string) => {
+			if (!token) {
+				return;
+			};
+
+			S.Auth.tokenSet(token);
+			C.AccountSelect(accountId, '', 0, '', (message: any) => {
+				if (message.error.code) {
+					console.error('[App.onInit]:', message.error.description);
+					return;
+				};
+
+				const { account } = message;
+
+				if (!account) {
+					console.error('[App.onInit]: Account not found');
+					return;
+				};
+
+				keyboard.setPinChecked(isPinChecked);
+				S.Auth.accountSet(account);
+				S.Common.redirectSet(route);
+				S.Common.configSet(account.config, false);
+
+				U.Data.onInfo(account.info);
+				S.Common.spaceSet('');
+				U.Data.onAuthOnce();
+
+				const param = route ? U.Router.getParam(route) : {};
+
+				if (param.spaceId) {
+					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+				} else {
+					U.Router.go('/main/void/select', routeParam);
+				};
+			});
+		};
+
+		if (!accountId) {
+			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			return;
+		};
+
+		Renderer.send('getTab', tabId).then((tab: any) => {
+			if (tab && tab.token) {
+				onObtainToken(tab.token);
+			} else {
+				Renderer.send('keytarGet', accountId).then(phrase => {
+					U.Data.createSession(phrase, '', '', (message: any) => {
 						if (message.error.code) {
-							console.error('[App.onInit]:', message.error.description);
+							S.Common.redirectSet(route);
+							U.Router.go('/auth/setup/init', routeParam);
 							return;
 						};
 
-						const { account } = message;
-
-						if (!account) {
-							console.error('[App.onInit]: Account not found');
-							return;
-						};
-
-						keyboard.setPinChecked(isPinChecked);
-						S.Auth.accountSet(account);
-						S.Common.redirectSet(route);
-						S.Common.configSet(account.config, false);
-
-						const spaceId = Storage.get('spaceId');
-						const routeParam = { 
-							onRouteChange: hide,
-						};
-
-						if (spaceId) {
-							U.Router.switchSpace(spaceId, '', false, routeParam, true);
-						} else {
-							U.Data.onAuthWithoutSpace(routeParam);
-						};
-
-						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+						onObtainToken(message.token);
 					});
 				});
-
-				win.off('unload').on('unload', (e: any) => {
-					if (!S.Auth.token) {
-						return;
-					};
-
-					e.preventDefault();
-					U.Data.closeSession(() => window.close());
-					return false;
-				});
-			} else {
-				S.Common.redirectSet(route);
-				U.Router.go('/auth/setup/init', { replace: true });
-				cb();
 			};
-		} else {
-			cb();
+		});
+	};
+
+	const onWillCloseTab = (e: any, tabId: string) => {
+		Storage.deleteLastOpenedByTabId([ tabId ]);
+		U.Data.closeSession();
+	};
+
+	const onNotificationCallback = (e: any, cmd: string, payload: any) => {
+		switch (cmd) {
+			case 'openChat': {
+				U.Object.openRoute(payload);
+				analytics.event('OpenChatFromNotification');
+				break;
+			};
 		};
 	};
 
-	const onWillCloseWindow = (e: any, windowId: string) => {
-		Storage.deleteLastOpenedByWindowId([ windowId ]);
+	const onPayloadBroadcast = (e: any, payload: any) => {
+		switch (payload.type) {
+			case 'openObject': {
+				const { object } = payload;
+
+				U.Object.openAuto(object);
+				analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
+				break;
+			};
+
+			case 'analyticsEvent': {
+				const { code, param } = payload;
+
+				analytics.event(code, param);
+				break;
+			};
+		};
 	};
 
 	const onPopup = (e: any, id: string, param: any, close?: boolean) => {
@@ -337,7 +394,7 @@ const App: FC = () => {
 			data: {
 				icon: 'updated',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
+				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -358,7 +415,7 @@ const App: FC = () => {
 			data: {
 				icon: 'error',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
+				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {
@@ -369,6 +426,8 @@ const App: FC = () => {
 				},
 			},
 		});
+
+		analytics.event('UpgradeVersionError');
 	};
 
 	const onUpdateProgress = (e: any, progress: any) => {
@@ -420,10 +479,7 @@ const App: FC = () => {
 								const block = S.Block.getLeaf(rootId, focused);
 
 								if (block && block.isText()) {
-									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
-									const value = String(obj.get(0).innerText || '');
-
-									S.Block.updateContent(rootId, focused, { text: value });
+									const value = block.content.text;
 
 									// Find the first occurrence of the misspelled word in the value
 									const wordIndex = value.indexOf(misspelledWord);
@@ -495,7 +551,6 @@ const App: FC = () => {
 					) : ''}
 
 					<MenuBar />
-					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
 

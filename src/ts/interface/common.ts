@@ -63,6 +63,7 @@ export enum ToastAction {
 	TemplateCreate	 = 6,
 	Archive 		 = 7,
 	Widget			 = 8,
+	Restore			 = 9,
 };
 
 export interface Option {
@@ -205,6 +206,7 @@ export enum SurveyType {
 	Object			 = 3,
 	Shared			 = 4,
 	Multiplayer		 = 5,
+	Cta				 = 6,
 };
 
 export enum SliceOperation {
@@ -239,6 +241,7 @@ export enum ObjectManagerItemInfo {
 
 export enum ObjectManagerPopup {
 	Favorites		 = 0,
+	TypeArchive 	 = 1,
 };
 
 export enum NetworkMode {
@@ -278,6 +281,7 @@ export interface RouteParam {
 	replace: boolean;
 	animate: boolean;
 	delay: number;
+	updateTabRoute: boolean;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
@@ -310,14 +314,8 @@ export interface SearchIdsParam extends SearchSubscribeParam {
 };
 
 export enum SortId {
-	All			 = 'all',
-	Orphan		 = 'orphan',
-	Updated		 = 'updated',
-	Created		 = 'created',
 	Name		 = 'name',
 	LastUsed	 = 'lastUsed',
-	List		 = 'list',
-	Compact		 = 'compact',
 };
 
 export enum LoaderType {
@@ -394,4 +392,16 @@ export interface ImageParam {
 	width: number;
 	height: number;
 	excavate: boolean;
+};
+
+export interface StickyScrollbarRef {
+	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
+	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	unbind: () => void;
+	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+};
+
+export enum ClipboardMode {
+	Copy		= 0,
+	Cut			= 1,
 };

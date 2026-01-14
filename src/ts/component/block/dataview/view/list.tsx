@@ -32,7 +32,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	});
 
 	if (!length) {
-		return getEmptyView(I.ViewType.List);
+		return getEmptyView(view.type);
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {

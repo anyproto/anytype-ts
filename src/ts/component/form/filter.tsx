@@ -188,7 +188,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const placeholderSet = (v: string) => {
-		$(inputRef.current.getNode()).attr('placeholder', v);
+		$(inputRef.current?.getNode()).attr('placeholder', v);
 	};
 	
 	const init = () => {

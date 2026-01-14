@@ -26,7 +26,7 @@
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
-				.inner { height: auto; }
+				.inner { height: auto; gap: 0px 8px; }
 				.input { 
 					padding: 0px; height: 54px; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
 				}

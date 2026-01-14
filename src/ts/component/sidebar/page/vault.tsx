@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $, { get } from 'jquery';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -12,6 +12,8 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_DIV = 16;
+const VAULT_MINIMAL_OFFSET = 44;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -29,7 +31,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const profile = U.Space.getProfile();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
-	const canCreate = U.Space.canCreateSpace();
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
 	const cnf = [ 'bottom' ];
@@ -37,12 +38,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	if (vaultMessages) {
 		cnh.push('withMessages');
 		cnb.push('withMessages');
-	};
-
-	if (vaultIsMinimal) {
-		cnh.push('isMinimal');
-		cnb.push('isMinimal');
-		cnf.push('isMinimal');
 	};
 
 	const unbind = () => {
@@ -147,13 +142,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-
+		
+		const items = getItems(true);
 		const node = getNode();
 		const element = node.find(`#item-${item.id}`);
 		const iconWrap = element.find('.iconWrap');
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
-		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
+		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
 		Preview.tooltipShow({ 
 			text, 
@@ -197,7 +193,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyboard.setDragging(false);
 	};
 
-	const getItems = () => {
+	const getItems = (skipUi?: boolean) => {
 		let items = U.Menu.getVaultItems().map(it => {
 			if (it.lastMessage) {
 				it.chat = S.Detail.get(J.Constant.subId.chatGlobal, it.lastMessage.chatId, J.Relation.chatGlobal, true);
@@ -206,8 +202,19 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		});
 
 		if (filter) {
-			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
+		};
+
+		if (vaultIsMinimal && !skipUi) {
+			const pinned = items.filter(it => it.isPinned);
+			const notPinned = items.filter(it => !it.isPinned);
+
+			if (pinned.length) {
+				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
+			};
+
+			items.unshift({ id: 'createSpace' });
 		};
 
 		return items;
@@ -225,7 +232,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		}, { 
 			withPin: true,
 			withDelete: true,
-			noBin: true, 
 			noMembers: true, 
 			noManage: true,
 			route: analytics.route.vault,
@@ -241,6 +247,46 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		fixedWidth: true,
 		keyMapper: index => items[index].id,
 	});
+
+	// Subscriptions
+	items.forEach(item => {
+		const { lastMessage } = item;
+		const { isSynced } = lastMessage || {};
+	});
+
+	const tooltipParam = (): I.TooltipParam => {
+		const param: any = {};
+		if (vaultIsMinimal) {
+			param.typeY = I.MenuDirection.Center;
+			param.typeX = I.MenuDirection.Left;
+			param.offsetX = VAULT_MINIMAL_OFFSET;
+			param.delay = 300;
+		} else {
+			param.typeY = I.MenuDirection.Bottom;
+		};
+		return param;
+	};
+
+	const iconCreate = () => {
+		const cn = [ 'plus' ];
+
+		if (!vaultIsMinimal) {
+			cn.push('withBackground');
+		};
+
+		return (
+			<Icon
+				id="button-create-space"
+				className={cn.join(' ')}
+				tooltipParam={{
+					...tooltipParam(),
+					text: translate('commonCreateSpace'),
+					caption: keyboard.getCaption('createSpace'),
+				}}
+				onClick={onCreate}
+			/>
+		);
+	};
 
 	const onClick = (item: any) => {
 		const routeParam = {
@@ -268,6 +314,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
+			Preview.tooltipHide(false);
 		};
 	};
 
@@ -299,7 +346,24 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const ItemObject = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
+		if (item.isDiv) {
+			return (
+				<div className="separator" style={item.style}>
+					<div className="inner" />
+				</div>
+			);
+		};
+
+		if (item.id == 'createSpace') {
+			return (
+				<div className="item add" style={item.style}>
+					{iconCreate()}
+				</div>
+			);
+		};
+
+		const { targetSpaceId, id, lastMessage, isOneToOne, isChat, isPinned } = item;
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: !isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -314,7 +378,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let last = null;
 		let counter = null;
 
-		if (item.targetSpaceId == space) {
+		if (targetSpaceId == space) {
 			cn.push('active');
 		};
 
@@ -335,11 +399,17 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		if (item.lastMessage) {
-			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
+		if (lastMessage) {
+			const { createdAt, creator, isSynced } = lastMessage;
+
+			time = <Label className="time" text={U.Date.timeAgo(createdAt)} />;
+			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(targetSpaceId, lastMessage, !isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
-			counter = <ChatCounter spaceId={item.targetSpaceId} />;
+			counter = <ChatCounter spaceId={targetSpaceId} disableMention={vaultIsMinimal} />;
+
+			if ((creator == S.Auth.account.id) && !isSynced) {
+				cn.push('isSyncing');
+			};
 		} else {
 			cn.push('noMessages');
 		};
@@ -348,7 +418,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (item.isChat || item.isOneToOne) {
+			if (isChat || isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}
@@ -467,6 +537,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			vertical: I.MenuDirection.Top,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
+			onOpen: () => {
+				$(`#${getId()} .bottom`).addClass('hover');
+			},
+			onClose: () => {
+				$(`#${getId()} .bottom`).removeClass('hover');
+			},
 		});
 	};
 
@@ -474,11 +550,20 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
 
-		U.Menu.spaceCreate({
+		let param: I.MenuParam = {
 			element: `#button-create-space`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
-		}, analytics.route.vault);
+		};
+
+		if (vaultIsMinimal) {
+			param = Object.assign(param, {
+				vertical: I.MenuDirection.Center,
+				offsetX: VAULT_MINIMAL_OFFSET,
+			});
+		};
+
+		U.Menu.spaceCreate(param, analytics.route.vault);
 	};
 
 	const onVaultContext = (e: any) => {
@@ -490,6 +575,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getRowHeight = (item: any) => {
+		if (item.isDiv) {
+			return HEIGHT_DIV;
+		};
 		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
@@ -506,16 +594,29 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	return (
 		<>
 			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
-				<div className="side left" />
+				<div className="side left">
+					{!vaultIsMinimal ? (
+						<div className="name">
+							{translate('popupSettingsSpacesListTitle')}
+						</div>
+					) : ''}
+				</div>
 				<div className="side center" />
 				<div className="side right">
-					{canCreate && !vaultIsMinimal ? (
-						<Icon
-							id="button-create-space"
-							className="plus withBackground"
-							tooltipParam={{ text: translate('commonCreateSpace'), caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-							onClick={onCreate}
-						/>
+					{!vaultIsMinimal ? (
+						<>
+							{iconCreate()}
+							<Icon 
+								className="toggle withBackground"
+								tooltipParam={{ 
+									text: translate('popupShortcutMainBasics15'), 
+									caption: keyboard.getCaption('toggleSidebar'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+								onClick={() => sidebar.leftPanelToggle()}
+								onMouseDown={e => e.stopPropagation()}
+							/>
+						</>
 					) : ''}
 				</div>
 			</div>
@@ -582,29 +683,37 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="grad" />
 				<div className="sides">
 					<div className="side left">
-						<div className="appSettings" onClick={onSettings}>
+						<div 
+							className="appSettings" 
+							onClick={onSettings}
+							onMouseEnter={e => Preview.tooltipShow({ 
+								...tooltipParam(),
+								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
+								text: translate('popupSettingsAccountPersonalInformationTitle'), 
+								element: $(e.currentTarget),
+							})}
+							onMouseLeave={() => Preview.tooltipHide(false)}
+						>
 							<IconObject object={settings} size={32} iconSize={32} />
 							{!vaultIsMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
 					</div>
 
-					{!vaultIsMinimal ? (
-						<div className="side right">
-							<Icon
-								className="gallery"
-								tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-								onClick={onGallery}
-							/>
+					<div className="side right">
+						<Icon
+							className="gallery"
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+							onClick={onGallery}
+						/>
 
-							<Button
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={onHelp}
-							/>
-						</div>
-					) : ''}
+						<Button
+							id="button-help"
+							className="help"
+							text="?"
+							tooltipParam={{ text: translate('commonHelp') }}
+							onClick={onHelp}
+						/>
+					</div>
 				</div>
 			</div>
 		</>

@@ -642,7 +642,7 @@ class Dataview {
 
 			if (view.type == I.ViewType.Timeline) {
 				details[view.groupRelationKey] = U.Date.now();
-				details[view.endRelationKey] = U.Date.now() + 86400 * 5;
+				details[view.endRelationKey] = U.Date.now() + J.Constant.day * 5;
 			};
 		};
 
@@ -734,7 +734,7 @@ class Dataview {
 			const type = S.Record.getTypeById(typeId);
 
 			if (type) {
-				return U.Common.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
+				return U.String.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
 		return translate('commonCreateNewObject');

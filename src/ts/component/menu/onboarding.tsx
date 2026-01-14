@@ -1,184 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label, ProgressBar } from 'Component';
-import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Onboarding, analytics, keyboard, translate, Action } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
-interface State {
-	error: { description: string, code: number };
-};
+const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
-const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.Menu, State> {
+	const { param, position, close, getId, getSize } = props;
+	const { data, noClose, highlightElements } = param;
+	const { key, current, onShow, isPopup } = data;
+	const nodeRef = useRef(null);
+	const videoRef = useRef(null);
+	const frame = useRef(0);
 
-	node: any = null;
-	video: any = null;
-	state = {
-		error: null,
-	};
-	frame = 0;
+	useEffect(() => {
+		rebind();
+		event();
+		initDimmer();
+		U.Common.renderLinks($(nodeRef.current));
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onClose = this.onClose.bind(this);
-		this.setError = this.setError.bind(this);
-	};
-
-	render () {
-		const { param, position } = this.props;
-		const { data, noClose } = param;
-		const { key, current } = data;
-		const section = this.getSection();
-		const items = this.getItems();
-		const { showConfetti, withCounter } = section;
-		const item = items[current];
-		if (!item) {
-			return null;
+		return () => {
+			unbind();
+			clearDimmer();
 		};
+	}, []);
 
-		const { name, description, video, img } = item;
+	useEffect(() => {
+		const items = getItems();
 		const l = items.length;
-		const withSteps = l > 1;
-		const segments = [];
-
-		if (withSteps) {
-			segments.push({ name: '', caption: '', percent: (current + 1) / l, isActive: true });
-		};
-
-		let buttons = [];
-		let category = '';
-
-		if (item.category) {
-			category = item.category;
-		} else
-		if (section.category) {
-			category = section.category;
-		};
-
-		if (!item.noButton) {
-			let buttonText = translate('commonNext');
-
-			if (current == l - 1) {
-				buttonText = translate('commonFinish');
-			};
-
-			if (item.buttonText) {
-				buttonText = item.buttonText;
-			};
-
-			buttons.push({ text: buttonText, action: 'next' });
-		};
-
-		if (item.buttons) {
-			buttons = buttons.concat(item.buttons);
-		};
-
-		buttons = buttons.filter(it => it);
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
-
-				<div className="textWrapper">
-					{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
-					{category ? <Label className="category" text={category} /> : ''}
-					{name ? <Label className="name" text={name} /> : ''}
-					{description ? <Label className="descr" text={description} /> : ''}
-				</div>
-
-				{video ? (
-					<video 
-						ref={node => this.video = node} 
-						src={video}
-						onClick={e => this.onVideoClick(e, video)}
-						controls={false} 
-						autoPlay={true} 
-						loop={true} 
-					/>
-				) : ''}
-
-				{img ? (
-					<div className="imgWrapper">
-						<img src={img.src} alt="" onLoad={position} />
-						{img.caption ? (
-							<Label text={img.caption} />
-						) : ''}
-					</div>
-				) : ''}
-
-				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
-					{buttons.length ? (
-						<div className="buttons">
-							{buttons.map((button, i) => (
-								<Button
-									key={i}
-									text={button.text}
-									color={(i == 0) ? 'accent' : 'blank'}
-									className="c36"
-									onClick={e => this.onButton(e, button.action)}
-								/>
-							))}
-						</div>
-					) : ''}
-
-					{withSteps ? (
-						<ProgressBar segments={segments} complete={current == l - 1} />
-					) : ''}
-				</div>
-
-				{showConfetti ? <ReactCanvasConfetti onInit={ins => this.confettiShot(ins)} className="confettiCanvas" /> : ''}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.rebind();
-		this.event();
-		this.initDimmer();
-
-		U.Common.renderLinks($(this.node));
-	};
-
-	componentDidUpdate () {
-		const { param, position } = this.props;
-		const { data } = param;
-		const section = this.getSection();
-		const { items } = section;
-		const l = items.length;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		
-		if (data.onShow) {
-			data.onShow();
+		if (onShow) {
+			onShow();
 			position();
 		};
 
-		this.clearDimmer();
-		this.initDimmer();
-		this.rebind();
-		this.scroll();
-		this.event();
+		clearDimmer();
+		initDimmer();
+		rebind();
+		scroll();
+		event();
 
 		U.Common.renderLinks(node);
+	});
+
+	const getItems = () => {
+		return getSection()?.items || [];
 	};
 
-	componentWillUnmount(): void {
-		this.unbind();
-		this.clearDimmer();
-	};
-
-	getItems () {
-		return this.getSection()?.items || [];
-	};
-
-	initDimmer () {
-		const { param } = this.props;
-		const { data, highlightElements } = param;
-		const section = this.getSection();
+	const initDimmer = () => {
+		const section = getSection();
 		const theme = S.Common.getThemeClass();
 
 		if (!section) {
@@ -186,7 +59,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		};
 
 		const { current } = data;
-		const items = this.getItems();
+		const items = getItems();
 		const item = items[current];
 		const body = $('body');
 
@@ -198,12 +71,12 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			highlightElements.push(param.element);
 		};
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
 		};
 
-		this.frame = raf(() => {
+		frame.current = raf(() => {
 			highlightElements.forEach(selector => {
 				$(selector).each((idx, el) => {
 					const element = $(el);
@@ -230,9 +103,8 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		body.append('<div class="onboardingDimmer"></div>');
 	};
 
-	clearDimmer () {
-		const { param } = this.props;
-		const section = this.getSection();
+	const clearDimmer = () => {
+		const section = getSection();
 
 		if (!section.showDimmer) {
 			return;
@@ -245,50 +117,35 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			$(selector).css({ visibility: 'visible' });
 		});
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
 		};
 	};
 
-	onClose () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { key, current, isPopup } = data;
-		const section = this.getSection();
+	const onClose = () => {
+		const section = getSection();
 		const menuParam = Onboarding.getParam(section, {}, isPopup);
 
 		close();
-
-		if (menuParam.onClose) {
-			menuParam.onClose();
-		};
-
+		menuParam.onClose?.();
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	event () {
-		const { param } = this.props;
-		const { data } = param;
-		const { key, current } = data;
-
+	const event = () => {
 		analytics.event('OnboardingTooltip', { step: (current + 1), id: key });
 	};
 
-	scroll () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-
+	const scroll = () => {
 		if (!param.element) {
 			return;
 		};
@@ -315,24 +172,21 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		};
 	};
 
-	onKeyDown (e: any) {
-		keyboard.shortcut('arrowleft, arrowright', e, pressed => this.onArrow(e, pressed == 'arrowleft' ? -1 : 1));
-
-		keyboard.shortcut('enter', e, () => this.onArrow(e, 1));
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('arrowleft, arrowright', e, pressed => onArrow(e, pressed == 'arrowleft' ? -1 : 1));
+		keyboard.shortcut('enter', e, () => onArrow(e, 1));
 	};
 
-	onButton (e: any, action: string) {
-		const { param, close, getId, getSize } = this.props;
-		const { data } = param;
-		const { key, current } = data;
+	const onButton = (e: any, item: any) => {
+		const { action } = item;
 
 		switch (action) {
 			case 'next': {
-				this.onArrow(e, 1);
+				onArrow(e, 1);
 				break;
 			};
 
-			case 'changeType':
+			case 'changeType': {
 				S.Menu.open('typeSuggest', {
 					element: `#${getId()}`,
 					offsetX: getSize().width,
@@ -353,41 +207,50 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 							});
 
 							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.menuOnboarding });
-							
+
 							close();
 						},
 					}
 				});
 				break;
+			};
+
+			case 'openUrl': {
+				if (item.url) {
+					Action.openUrl(item.url);
+				};
+				close();
+				break;
+			};
 		};
 
 		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });
 	};
 
-	onArrow (e: any, dir: number) {
-		const { param } = this.props;
+	const onArrow = (e: any, dir: number) => {
+		const { param } = props;
 		const { data } = param;
 		const { current } = data;
-		const items = this.getItems();
+		const items = getItems();
 
 		if ((dir < 0) && !current) {
 			return;
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			this.onClose();
+			onClose();
 			return;
 		};
 
-		this.onClick(e, current + dir);
+		onClick(e, current + dir);
 	};
 
-	onClick (e: any, next: number) {
-		const { param } = this.props;
+	const onClick = (e: any, next: number) => {
+		const { param } = props;
 		const { data, onOpen, onClose } = param;
 		const { isPopup, options } = data;
-		const section = this.getSection();
-		const items = this.getItems();
+		const section = getSection();
+		const items = getItems();
 		const item = items[next];
 
 		if (!item) {
@@ -426,15 +289,13 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		});
 	};
 
-	onVideoClick (e: any, src: string) {
+	const onVideoClick = (e: any, src: string) => {
 		U.Common.pauseMedia();
 
 		S.Popup.open('preview', { 
 			preventMenuClose: true,
 			onClose: () => {
-				if (this.video) {
-					this.video.play();
-				};
+				videoRef.current?.play();
 			},
 			data: { 
 				gallery: [ 
@@ -446,7 +307,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		analytics.event('ScreenOnboardingVideo');
 	};
 
-	setError (error: { description: string, code: number}) {
+	const setError = (error: { description: string, code: number}) => {
 		if (!error.code) {
 			return false;
 		};
@@ -463,14 +324,119 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		return true;
 	};
 
-	confettiShot (instance: any) {
+	const confettiShot = (instance: any) => {
 		instance.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
 
-	getSection () {
-		return Onboarding.getSection(this.props.param.data.key) || {};
+	const getSection = () => {
+		return Onboarding.getSection(props.param.data.key) || {};
 	};
 
-});
+	const section = getSection();
+	const items = getItems();
+	const { showConfetti, withCounter } = section;
+	const item = items[current];
+	if (!item) {
+		return null;
+	};
+
+	const { name, description, video, img } = item;
+	const l = items.length;
+	const withSteps = l > 1;
+	const segments = [];
+
+	if (withSteps) {
+		segments.push({ name: '', caption: '', percent: (current + 1) / l, isActive: true });
+	};
+
+	let buttons = [];
+	let category = '';
+
+	if (item.category) {
+		category = item.category;
+	} else
+	if (section.category) {
+		category = section.category;
+	};
+
+	if (!item.noButton) {
+		let buttonText = translate('commonNext');
+
+		if (current == l - 1) {
+			buttonText = translate('commonFinish');
+		};
+
+		if (item.buttonText) {
+			buttonText = item.buttonText;
+		};
+
+		buttons.push({ text: buttonText, action: 'next' });
+	};
+
+	if (item.buttons) {
+		buttons = buttons.concat(item.buttons);
+	};
+
+	buttons = buttons.filter(it => it);
+
+	return (
+		<div 
+			ref={nodeRef}
+			className="wrap"
+		>
+			{!noClose ? <Icon className="close" onClick={onClose} /> : ''}
+
+			<div className="textWrapper">
+				{withCounter ? <Label className="counter" text={U.String.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
+				{category ? <Label className="category" text={category} /> : ''}
+				{name ? <Label className="name" text={name} /> : ''}
+				{description ? <Label className="descr" text={description} /> : ''}
+			</div>
+
+			{video ? (
+				<video 
+					ref={videoRef} 
+					src={video}
+					onClick={e => onVideoClick(e, video)}
+					controls={false} 
+					autoPlay={true} 
+					loop={true} 
+				/>
+			) : ''}
+
+			{img ? (
+				<div className="imgWrapper">
+					<img src={img.src} alt="" onLoad={position} />
+					{img.caption ? (
+						<Label text={img.caption} />
+					) : ''}
+				</div>
+			) : ''}
+
+			<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
+				{buttons.length ? (
+					<div className="buttons">
+						{buttons.map((button, i) => (
+							<Button
+								key={i}
+								text={button.text}
+								color={(i == 0) ? 'accent' : 'blank'}
+								className="c36"
+								onClick={e => onButton(e, button)}
+							/>
+						))}
+					</div>
+				) : ''}
+
+				{withSteps ? (
+					<ProgressBar segments={segments} complete={current == l - 1} />
+				) : ''}
+			</div>
+
+			{showConfetti ? <ReactCanvasConfetti onInit={ins => confettiShot(ins)} className="confettiCanvas" /> : ''}
+		</div>
+	);
+
+}));
 
 export default MenuOnboarding;

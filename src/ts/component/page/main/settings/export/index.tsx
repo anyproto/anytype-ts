@@ -17,7 +17,7 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 	];
 
 	const onClick = (id: string) => {
-		onPage(U.Common.toCamelCase(`export-${id}`));
+		onPage(U.String.toCamelCase(`export-${id}`));
 	};
 
 	const Item = (item: any) => {

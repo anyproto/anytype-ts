@@ -163,7 +163,7 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const sections = getSections();
 
 	const Section = (item: any) => (
-		<div id={'section-' + item.id} className="section">
+		<div id={`section-${item.id}`} className="section">
 			{item.name ? <div className="name">{item.name}</div> : ''}
 			<div className="items">
 				{item.children.map((action: any, i: number) => (

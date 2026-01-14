@@ -151,7 +151,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return (
 			<div 
-				id={'item-' + item.id} 
+				id={`item-${item.id}`} 
 				className={cn.join(' ')} 
 				onMouseEnter={e => onMouseEnter(e, item)}
 				ref={setNodeRef}
@@ -162,7 +162,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{allowedView ? <Icon className="dnd" /> : ''}
 				<span className="clickable">
 					<Cell 
-						id={'menu-group-' + item.id} 
+						id={`menu-group-${item.id}`} 
 						rootId={rootId}
 						subId={subId}
 						block={block}
@@ -237,6 +237,8 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		getListRef: () => listRef.current,
+		onSortEnd,
+		onSwitch,
 	}), []);
 
 	const items = getItems();

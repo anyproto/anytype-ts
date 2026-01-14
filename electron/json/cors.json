@@ -25,7 +25,17 @@
 		"https://*.apple.com",
 		"https://*.mzstatic.com",
 		"https://*.spotifycdn.com",
-		"https://*.ggpht.com"
+		"https://*.ggpht.com",
+		"https://*.openstreetmap.org",
+		"https://*.openstreetmap.fr",
+		"https://*.jawg.io",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
     ],
 
 	"media-src": [ 
@@ -50,7 +60,16 @@
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
 		"https://*.unsplash.com",
-		"https://*.spotifycdn.com"
+		"https://*.spotifycdn.com",
+		"https://*.openstreetmap.org",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org",
+		"https://*.scdn.co",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
 	],
 
 	"style-src": [ 
@@ -85,6 +104,7 @@
 		"https://*.bstarstatic.com",
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
+		"http://*.openstreetmap.fr/",
         "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
 	],
 
@@ -109,7 +129,8 @@
 		"https://telegram.org",
 		"https://static.sketchfab.com",
 		"https://*.bstarstatic.com",
-		"https://unpkg.com/@excalidraw/"
+		"https://unpkg.com/@excalidraw/",
+		"https://*.openstreetmap.fr"
 	],
 
 	"connect-src": [ 
@@ -175,7 +196,8 @@
 		"https://*.bstarstatic.com",
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
-		"https://*.google-analytics.com"
+		"https://*.google-analytics.com",
+		"http://*.openstreetmap.fr/"
 	],
 
 	"script-src-elem": [
@@ -222,7 +244,9 @@
         "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
 		"https://unpkg.com/@excalidraw/",
 		"https://bandcamp.com",
-		"https://*.bcbits.com"
+		"https://*.bcbits.com",
+		"http://*.openstreetmap.fr/",
+		"https://*.sentry-cdn.com/"
 	],
 
 	"frame-src": [
@@ -257,6 +281,7 @@
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
 		"https://www.googletagmanager.com/",
+		"http://*.openstreetmap.fr/",
 		"chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
     ],
 

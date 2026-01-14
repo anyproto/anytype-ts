@@ -33,7 +33,7 @@ import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
 
 const Components = {
-	'index/index':			 PageAuthSelect,
+	'index/index':			 PageMainBlank,
 
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
@@ -67,6 +67,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
+	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Common.getEventNamespace(isPopup);
 	const childRef = useRef(null);
 	const match = keyboard.getMatch(isPopup);
@@ -77,7 +78,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const isIndex = page == 'index';
 
 	const getId = (prefix: string) => {
-		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
+		return U.String.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	const pageId = getId('page');
@@ -106,7 +107,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (isMain && !account) {
-			U.Router.go('/', { replace: true });
+			U.Router.go('/auth/select', { replace: true });
 			return;
 		};
 
@@ -125,7 +126,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		rebind();
-		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(U.String.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 
 		analytics.event('page', { params: match.params });
@@ -198,7 +199,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					/>
 				) : (
 					<Frame>
-						<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+						<Label text={U.String.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
 					</Frame>
 				)}
 			</div>

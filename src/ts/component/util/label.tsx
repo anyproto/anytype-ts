@@ -51,17 +51,12 @@ const Label: FC<Props> = ({
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 
 	const mouseLeaveHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
-
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 
 	useEffect(() => {
@@ -75,7 +70,7 @@ const Label: FC<Props> = ({
 			ref={nodeRef}
 			id={id}
 			className={cn.join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseEnter={mouseEnterHandler}

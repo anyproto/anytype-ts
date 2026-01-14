@@ -33,7 +33,7 @@ const LoadMore = forwardRef<HTMLDivElement, Props>(({
 				})}
 			>
 				<Icon />
-				<div className="name">{U.Common.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
+				<div className="name">{U.String.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
 			</motion.div>
 		</AnimatePresence>
 	);

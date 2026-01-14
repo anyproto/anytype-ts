@@ -16,30 +16,31 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 		setError('');
 	};
 
-	const onSubmit = () => {
+	const onSubmit = (e: any) => {
+		e.preventDefault();
+
 		const route = U.Common.getRouteFromUrl(inputRef.current.getValue());
-		const { cid, key } = U.Common.searchParam(route.split('?')[1]);
-
-		if (cid && key) {
-			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
-			return;
+		if (route) {
+			U.Router.go(route, {});
+		} else {
+			setError(translate('popupSpaceJoinByLinkError'));
 		};
-
-		setError(translate('popupSpaceJoinByLinkError'));
 	};
 
 	return (
 		<>
 			<Label text={translate('popupSpaceJoinByLinkLabel')} />
-			<Icon />
-			<Input 
-				type="text" 
-				ref={inputRef} 
-				onKeyUp={onKeyUp} 
-				placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')} 
-				focusOnMount={true}
-			/>
-			<Button className="disabled" text={translate('popupInviteRequestRequestToJoin')} onClick={onSubmit} />
+			<form onSubmit={onSubmit}>
+				<Icon />
+				<Input 
+					type="text" 
+					ref={inputRef} 
+					onKeyUp={onKeyUp} 
+					placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')} 
+					focusOnMount={true}
+				/>
+				<Button className="disabled" text={translate('popupInviteRequestRequestToJoin')} onClick={onSubmit} />
+			</form>
 			<Error text={error} />
 		</>
 	);

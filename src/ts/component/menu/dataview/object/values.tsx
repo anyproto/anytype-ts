@@ -187,7 +187,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		return (
 			<div 
-				id={'item-' + item.id} 
+				id={`item-${item.id}`} 
 				className={cn.join(' ')} 
 				onMouseEnter={e => onOver(e, item)}
 				ref={setNodeRef}
@@ -285,6 +285,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onSortEnd,
 	}), []);
 
 	return (

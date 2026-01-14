@@ -3,7 +3,7 @@ export default {
 	blockMenu: 48,
 	lastBlock: 80,
 	menuBorder: 10,
-	header: 44,
+	header: 52,
 
 	history: {
 		panel: 348,
@@ -14,7 +14,7 @@ export default {
 		left: { min: 72, max: 480, default: 284 }
 	},
 
-	vaultStripeMaxWidth: 128,
+	vaultStripeMaxWidth: 160,
 
 	table: {
 		min: 50,
@@ -28,10 +28,14 @@ export default {
 
 	dataview: {
 		gallery: {
-			width: 224,
 			height: 72,
 			margin: 16,
 			padding: 16,
+			card: {
+				small: 224,
+				medium: 360,
+				large: 480,
+			}
 		},
 
 		board: {

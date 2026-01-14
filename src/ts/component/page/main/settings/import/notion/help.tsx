@@ -10,7 +10,7 @@ const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSe
 			<Icon className="logo" />
 			<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 			
-			<Label className="step" text={U.Common.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
+			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 
 			<ol className="list">
 				<li>
@@ -39,7 +39,7 @@ const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSe
 				</li>
 			</ol>
 
-			<Label className="step" text={U.Common.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
+			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
 			<Label className="stepDescription" text={translate('popupSettingsImportNotionHelpStep2Descr')} />
 
 			<ol className="list">

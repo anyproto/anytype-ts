@@ -2,15 +2,16 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate, Preview } from 'Lib';
+import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 40;
+const SUB_ID = 'dataviewOptionList';
 
 const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
@@ -21,10 +22,10 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const value = Relation.getArrayValue(data.value);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
+	const [ activeId, setActiveId ] = useState<string | null>(null);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const n = useRef(-1);
-	const filterValueRef = useRef('');
 	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -102,8 +103,8 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			};
 		};
 
-		filterValueRef.current = '';
-		onFilterChange('');
+		filterRef.current?.setValue('');
+		data.filter = '';
 	};
 
 	const onValueAdd = (id: string) => {
@@ -206,12 +207,21 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onSortStart = () => {
+	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
+		setActiveId(e.active.id);
+	};
+
+	const onSortCancel = () => {
+		keyboard.disableSelection(false);
+		setActiveId(null);
 	};
 
 	const onSortEnd = (result: any) => {
 		const { active, over } = result;
+
+		setActiveId(null);
+		keyboard.disableSelection(false);
 
 		if (!active || !over) {
 			return;
@@ -222,11 +232,26 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		U.Data.sortByOrderIdRequest(J.Constant.subId.option, newItems, callBack => {
+		U.Data.sortByOrderIdRequest(SUB_ID, newItems, callBack => {
 			C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), callBack);
 		});
+	};
 
-		keyboard.disableSelection(false);
+	const load = () => {
+		U.Subscription.destroyList([ SUB_ID ], false, () => {
+			U.Subscription.subscribe({
+				subId: SUB_ID,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relation.relationKey },
+				],
+				sorts: [
+					{ relationKey: 'orderId', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+				] as I.Sort[],
+				keys: U.Subscription.optionRelationKeys(false),
+			});
+		});
 	};
 
 	const getItems = (): any[] => {
@@ -234,10 +259,10 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		const skipIds = Relation.getArrayValue(data.skipIds);
 		const ret = [];
 
-		let items = S.Record.getRecords(J.Constant.subId.option, U.Subscription.optionRelationKeys(true)).filter(it => it.relationKey == relation.relationKey);
+		let items = S.Record.getRecords(SUB_ID, U.Subscription.optionRelationKeys(true));
 		let check = [];
 
-		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skipIds.includes(it.id));
+		items = items.filter(it => !it._empty_ && !skipIds.includes(it.id));
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
@@ -246,7 +271,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
 
 		if (data.filter) {
-			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
+			const filter = new RegExp(U.String.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
@@ -254,7 +279,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			if (canEdit && canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
-					name: U.Common.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+					name: U.String.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
 				});
 			};
 		};
@@ -297,6 +322,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			...item.style,
 			transform: CSS.Transform.toString(transform),
 			transition,
+			opacity: isDragging ? 0 : 1,
 		};
 
 		let content = null;
@@ -351,6 +377,37 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		return content;
 	};
 
+	const DragOverlayContent = ({ item }: { item: any }) => {
+		if (!item || item.id == 'add' || item.isSection) {
+			return null;
+		};
+
+		const active = value.includes(item.id);
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
+		const cn = [ 'item', 'isDragging' ];
+
+		if (active) {
+			cn.push('withCheckbox');
+		};
+
+		return (
+			<div
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
+				style={{ height: HEIGHT }}
+			>
+				{canEdit ? <Icon className="dnd" /> : ''}
+				<div className="clickable">
+					<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
+				</div>
+				<div className="buttons">
+					{active ? <Icon className="chk" /> : ''}
+					{isAllowed ? <Icon className="more" /> : ''}
+				</div>
+			</div>
+		);
+	};
+
 	const rowRenderer = ({ key, parent, index, style }) => {
 		const item: any = items[index];
 		
@@ -372,21 +429,24 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		resize();
 		setActive();
 		position();
+		load();
 
 		return () => {
 			unbind();
+			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
 
 	useEffect(() => {
-		if (filterValueRef.current != filter) {
-			n.current = 0;
-		};
-
 		setActive();
 		position();
 		resize();
 	});
+
+	useEffect(() => {
+		n.current = 0;
+		load();
+	}, [ filter ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
@@ -397,6 +457,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
 		onClick,
+		onSortEnd,
 	}), []);
 
 	return (
@@ -420,6 +481,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 						collisionDetection={closestCenter}
 						onDragStart={onSortStart}
 						onDragEnd={onSortEnd}
+						onDragCancel={onSortCancel}
 						modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 					>
 						<SortableContext
@@ -452,6 +514,9 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 								)}
 							</InfiniteLoader>
 						</SortableContext>
+						<DragOverlay>
+							{activeId ? <DragOverlayContent item={items.find(it => it.id === activeId)} /> : null}
+						</DragOverlay>
 					</DndContext>
 				) : (
 					<div className="item empty">{empty}</div>

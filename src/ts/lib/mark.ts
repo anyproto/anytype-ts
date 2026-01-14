@@ -247,7 +247,7 @@ class Mark {
 	 * @param {I.TextRange} range - The range to check.
 	 * @returns {I.Mark|null} The found mark or null.
 	 */
-	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
+	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange, additional?: I.MarkOverlap[]): any {
 		if (!range) {
 			return null;
 		};
@@ -260,7 +260,13 @@ class Mark {
 		};
 		
 		for (const mark of map[type]) {
-			if (overlaps.includes(this.overlap(range, mark.range))) {
+			const overlap = this.overlap(range, mark.range);
+
+			if (overlaps.includes(overlap)) {
+				return mark;
+			};
+
+			if (additional && additional.includes(overlap)) {
 				return mark;
 			};
 		};
@@ -406,6 +412,7 @@ class Mark {
 
 		// Replace tags in text
 		for (let i = 0; i < r.length; ++i) {
+			r[i] = r[i].replace(/&/, '&amp;');
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
 		};
@@ -425,7 +432,7 @@ class Mark {
 		marks.sort((a, b) => b.range.from - a.range.from);
 
 		for (const mark of marks) {
-			text = U.Common.stringInsert(text, mark.param, mark.range.from, mark.range.to);
+			text = U.String.insert(text, mark.param, mark.range.from, mark.range.to);
 		};
 
 		return text;
@@ -482,7 +489,7 @@ class Mark {
 		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => p);
 
 		// Fix browser markup bug
-		text = text.replace(/<\/?(i|b|strike|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|strike|font|markupsearch)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
@@ -494,7 +501,7 @@ class Mark {
 		});
 
 		// Fix html special symbols
-		text = U.Common.fromHtmlSpecialChars(text);
+		text = U.String.fromHtmlSpecialChars(text);
 
 		const newHtml = text;
 		newHtml.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
@@ -605,7 +612,7 @@ class Mark {
 			const length = symbol.length;
 			const from = o + p1l;
 			const to = from + p2l - length * 2;
-			const replace = p2.replace(new RegExp(U.Common.regexEscape(symbol), 'g'), '') + ' ';
+			const replace = p2.replace(new RegExp(U.String.regexEscape(symbol), 'g'), '') + ' ';
 
 			let check = true;
 			for (const mark of checked) {
@@ -624,7 +631,7 @@ class Mark {
 			marks = this.adjust(marks, to, -length + 1);
 			marks.push({ type, range: { from, to }, param: '' });
 
-			text = U.Common.stringInsert(text, replace, o + p1l, o + p1l + p2l);
+			text = U.String.insert(text, replace, o + p1l, o + p1l + p2l);
 			adjustMarks = true;
 
 			return s;
@@ -680,7 +687,7 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromUnicode (html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
-		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
+		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
@@ -736,7 +743,7 @@ class Mark {
 		let attr = '';
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;
+				attr = `href="${U.String.urlFix(param)}" class="markuplink"`;
 				break;
 			};
 
@@ -895,6 +902,47 @@ class Mark {
 	 */
 	canSave (t: I.MarkType): boolean {
 		return ![ I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+	};
+
+	/**
+	 * Checks and handles marks on backspace action.
+	 * @param text - The current text.
+	 * @param range - The current text range.
+	 * @param oM - The original marks.
+	 * @returns The updated text, marks, range, and save flag.
+	 */
+	checkMarkOnBackspace = (text: string, range: I.TextRange, marks: I.Mark[]): { text: string, marks: I.Mark[], range: I.TextRange, save: boolean } | null => {
+		if (!range || !range.to) {
+			return { text, marks, range: null, save: false };
+		};
+
+		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
+		const filteredMarks = U.Common.arrayUnique(marks).filter(it => types.includes(it.type));
+
+		let rM = [];
+		let save = false;
+		let mark = null;
+		let r = null;
+
+		for (const m of filteredMarks) {
+			if ((m.range.from < range.from) && (m.range.to == range.to)) {
+				mark = m;
+				break;
+			};
+		};
+
+		if (mark) {
+			text = U.String.cut(text, mark.range.from, mark.range.to);
+			rM = marks.filter(it => {
+				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
+			});
+
+			rM = this.adjust(rM, mark.range.from, mark.range.from - mark.range.to);
+			r = { from: mark.range.from, to: mark.range.from };
+			save = true;
+		};
+
+		return { text, marks: rM, range: r, save };
 	};
 
 };

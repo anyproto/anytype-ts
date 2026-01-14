@@ -62,8 +62,8 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const filters: I.Filter[] = [];
 		const object = getTarget();
 		const newView = {
-			name: Dataview.defaultViewName(I.ViewType.List),
-			type: I.ViewType.List,
+			name: Dataview.defaultViewName(I.ViewType.Grid),
+			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
 			cardSize: I.CardSize.Medium,
 			filters,
@@ -176,7 +176,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return (
 			<div 
-				id={'item-' + item.id} 
+				id={`item-${item.id}`} 
 				className="item" 
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onOver(e, item)}
@@ -253,6 +253,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onSortEnd,
 	}), []);
 	
 	return (

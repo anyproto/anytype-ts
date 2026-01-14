@@ -61,33 +61,22 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 		
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 	
 	const onMouseLeaveHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
-		
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 	
 	const onMouseDownHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(true);
-		
-		if (onMouseDown) {
-			onMouseDown(e);
-		};
+		onMouseDown?.(e);
 	};
 
 	const onContextMenuHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(true);
-		
-		if (onContextMenu) {
-			onContextMenu(e);
-		};
+		onContextMenu?.(e);
 	};
 
 	useEffect(() => {

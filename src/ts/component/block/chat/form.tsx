@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -36,6 +36,7 @@ interface RefProps {
 	onDrop: (e: DragEvent) => void;
 	getAttachments: () => any[];
 	getMarks: () => I.Mark[];
+	onAttachment: () => void;
 };
 
 const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
@@ -43,7 +44,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage, analyticsChatId,
 	} = props;
@@ -53,6 +54,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
 	const loaderRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -70,6 +72,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const attachmentsSubId = subId + namespace;
 	const spaceview = U.Space.getSpaceview();
+	const electron = U.Common.getElectron();
 	
 	let attachments = S.Chat.getAttachments(attachmentsSubId);
 
@@ -150,6 +153,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		saveState(attachments);
 	};
 
+	const insert = (text: string, value: string) => {
+		text = String(text || '');
+		const length = text.length;
+
+		marks.current = Mark.adjust(marks.current, range.current.from, length);
+		value = U.String.insert(value, text, range.current.from, range.current.from);
+		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
+	};
+
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
@@ -174,10 +186,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value += '\n';
 				};
 
-				marks.current = Mark.adjust(marks.current, range.current.from, 1);
-				value = U.Common.stringInsert(value, '\n', range.current.from, range.current.from);
-
-				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
+				insert('\n', value);
 				scrollToBottom();
 			});
 		};
@@ -197,7 +206,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			const parsed = checkMarkOnBackspace(value, range.current, marks.current);
+			const parsed = Mark.checkMarkOnBackspace(value, range.current, marks.current);
 
 			if (!parsed.save) {
 				return;
@@ -205,20 +214,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			e.preventDefault();
 
-			value = parsed.value;
+			value = parsed.text;
 			setMarks(parsed.marks);
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
 			$(window).trigger('resize');
-		});
-
-		keyboard.shortcut('chatObject', e, () => {
-			if (!S.Menu.isOpen('searchObject')) {
-				e.preventDefault();
-				onAttachment();
-			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -243,8 +245,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onCopy();
 		});
 
-		keyboard.shortcut(`shift+enter`, e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			scrollToBottom();
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			e.preventDefault();
+			insert('\t', value);
 		});
 
 		// Mark-up
@@ -264,7 +271,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
-
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -284,7 +290,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			updateMarkup(parsed.text, { from: to, to });
+			const diff = value.length - parsed.text.length;
+			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
 		};
 
 		if (canOpenMenuMention) {
@@ -319,7 +326,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			scrollToBottom();
 		});
 
-		if (!keyboard.isSpecial(e)) {
+		keyboard.shortcut('space', e, () => {
 			for (let i = 0; i < marks.current.length; ++i) {
 				const mark = marks.current[i];
 
@@ -330,7 +337,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					adjustMarks = true;
 				};
 			};
-		};
+		});
 
 		if (!value && !attachments.length && editingId.current) {
 			onDelete(editingId.current);
@@ -349,14 +356,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateCounter();
 
 		window.clearTimeout(timeoutHistory.current);
-		timeoutHistory.current = window.setTimeout(() => {
-			historySaveState();
-		}, J.Constant.delay.chatHistory);
+		timeoutHistory.current = window.setTimeout(() => historySaveState(), J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
 		const value = getTextValue();
-		const checkRtl = U.Common.checkRtl(value);
+		const checkRtl = U.String.checkRtl(value);
 
 		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
 	};
@@ -387,14 +392,27 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
 		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
 		const html = String(clipboard.getData('text/html') || '');
-		const text = U.Common.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
+		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
+
+		// If pasted content is a pure URL and there's a selection, create a link mark
+		const urls = U.String.getUrlsFromText(text);
+		if (urls.length && (urls[0].value == text) && (from != to)) {
+			const url = urls[0].value;
+			const currentMark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
+
+			if (!currentMark) {
+				marks.current.push({ type: I.MarkType.Link, range: { from, to }, param: url });
+				setMarks(marks.current);
+				updateMarkup(current, range.current);
+				return;
+			};
+		};
 
 		let newText = '';
 		let newMarks: I.Mark[] = [];
@@ -443,7 +461,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				newText = newText.substring(0, limit);
 			};
 
-			const res = U.Common.stringInsert(current, newText, from, to);
+			const res = U.String.insert(current, newText, from, to);
 
 			newMarks = Mark.adjust(newMarks, 0, to);
 
@@ -486,7 +504,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const checkUrls = () => {
 		const text = getTextValue();
-		const urls = U.Common.getUrlsFromText(text);
+		const urls = U.String.getUrlsFromText(text);
 
 		if (!urls.length) {
 			return;
@@ -501,18 +519,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			let value = U.Common.urlFix(url.value || '');
+			let value = U.String.urlFix(url.value || '');
 			let type = I.MarkType.Link;
-			let param = value;
 
 			const route = U.Common.getRouteFromUrl(value);
-
 			if (route) {
 				const routeParam = U.Router.getParam(route);
 
 				if ((routeParam.action == 'object') && (routeParam.spaceId == space)) {
 					value = `${J.Constant.protocol}://${route}`;
-					param = routeParam.id;
 					type = I.MarkType.Object;
 				};
 			};
@@ -521,11 +536,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
 				type, 
 				range: { from, to }, 
-				param,
+				param: value,
 			});
 
 			setMarks(marks.current);
@@ -571,7 +585,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const electron = U.Common.getElectron();
 		const list = Array.from(e.dataTransfer.files).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
@@ -639,6 +652,21 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
+	const onFileInputChange = (e: any) => {
+		const files = Array.from(e.target.files || []) as File[];
+		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => !electron.isDirectory(it.path));
+
+		if (list.length) {
+			addAttachments(list);
+			analytics.event('AttachItemChat', { type: 'Upload', count: list.length, chatId: analyticsChatId });
+		};
+
+		// Reset input so the same file can be selected again
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		};
+	};
+
 	const onAttachment = () => {
 		const options: any[] = [
 			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
@@ -679,12 +707,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							};
 
 							case 'upload': {
-								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
-									addAttachments(paths.map(path => getObjectFromPath(path)));
-
-									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length, chatId: analyticsChatId });
-								});
-
+								fileInputRef.current?.click();
 								analytics.event('ClickChatAttach', { type: 'Upload', chatId: analyticsChatId });
 								break;
 							};
@@ -705,7 +728,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
 				icon: 'notice',
-				text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
+				text: U.String.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
 			});
 			return;
 		};
@@ -768,28 +791,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			addAttachments([ item ]);
 		};
 
-		const scheme = U.Common.getScheme(url);
-		const isInside = scheme == J.Constant.protocol;
+		const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
 
 		if (isInside) {
-			const route = '/' + url.split('://')[1];
-			const search = url.split('?')[1];
-
-			let target = '';
-			let spaceId = '';
-
-			if (search) {
-				const searchParam = U.Common.searchParam(search);
-
-				target = searchParam.objectId;
-				spaceId = searchParam.spaceId;
-			} else {
-				const routeParam = U.Router.getParam(route);
-
-				target = routeParam.id;
-				spaceId = routeParam.spaceId;
-			};
-
 			U.Object.getById(target, { spaceId }, object => {
 				if (object) {
 					addAttachments([ object ]);
@@ -835,7 +839,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const send = $(sendRef.current);
 		const loader = $(loaderRef.current);
-		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
+		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
@@ -1196,7 +1200,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					range: { from: range.current.from, to },
 				});
 
-				value = U.Common.stringInsert(value, ' ', range.current.from, range.current.from);
+				value = U.String.insert(value, ' ', range.current.from, range.current.from);
 
 				updateMarkup(value, { from: to, to });
 				break;
@@ -1243,16 +1247,24 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const getObjectFromFile = (file: File) => {
-		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
-		const mime = electron.fileMime(path);
+		const mime = file.type || electron.fileMime(path);
 		const ext = electron.fileExt(path);
 		const type = S.Record.getFileType();
 
+		let layout = I.ObjectLayout.File;
+
+		if (mime) {
+			const [ t1, t2 ] = mime.split('/');
+			if ((t1 == 'image') && J.Constant.fileExtension.image.includes(t2)) {
+				layout = I.ObjectLayout.Image;
+			};
+		};
+
 		return {
-			id: sha1(path),
+			id: sha1(path + file.lastModified + file.size),
 			name: file.name,
-			layout: I.ObjectLayout.File,
+			layout,
 			type: type?.id,
 			sizeInBytes: file.size,
 			fileExt: ext,
@@ -1260,27 +1272,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			mime,
 			path,
 			file,
-		};
-	};
-
-	const getObjectFromPath = (path: string) => {
-		const electron = U.Common.getElectron();
-		const name = electron.fileName(path);
-		const mime = electron.fileMime(path);
-		const ext = electron.fileExt(path);
-		const size = electron.fileSize(path);
-		const type = S.Record.getFileType();
-
-		return {
-			id: sha1(path),
-			name,
-			path,
-			fileExt: ext,
-			sizeInBytes: size,
-			mime,
-			layout: I.ObjectLayout.File,
-			type: type?.id,
-			isTmp: true,
 		};
 	};
 
@@ -1293,7 +1284,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let from = range.current.from;
 
 		if (fromKeyboard) {
-			value = U.Common.stringCut(value, from - 1, from);
+			value = U.String.cut(value, from - 1, from);
 			from--;
 		};
 
@@ -1323,7 +1314,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						setMarks(newMarks);
-						value = U.Common.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						updateMarkup(value, { from: to, to });
 						analytics.event('Mention', { chatId: analyticsChatId });
@@ -1599,6 +1590,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-attachment`}
 					className="plus"
 					onClick={onAttachment}
+					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}
 				/>
 
 				<div className="form customScrollbar">
@@ -1666,6 +1658,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-emoji`}
 					className="emoji"
 					onClick={onEmoji}
+					tooltipParam={{ text: translate('menuSmileGallery') }}
 				/>
 			</>
 		);
@@ -1710,17 +1703,19 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onDragLeave,
 		onDrop,
 		getAttachments: () => attachments,
+		onAttachment,
 		getMarks: () => marks.current,
 	}));
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id="formWrapper" 
+			id="formWrapper"
 			className="formWrapper"
 			onDragOver={onDragOver}
 			onDragLeave={onDragLeave}
 		>
+			<input ref={fileInputRef} type="file" multiple={true} className="dn" onChange={onFileInputChange} />
 			<div className="grad" />
 			<div className="bg" />
 

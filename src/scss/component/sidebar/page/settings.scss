@@ -1,7 +1,7 @@
 .containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .containerSettings {
     > .head {
-        display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;
+        display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
         gap: 0px 8px; overflow: hidden;
     }
 
@@ -38,7 +38,7 @@
                 .name { @include text-overflow-nw; flex-grow: 1; }
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
-                .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
+                .caption.join { color: var(--color-system-accent-100); }
                 .caption.alert { width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: var(--color-red); color: var(--color-control-bg); border-radius: 50%; }
             }
 

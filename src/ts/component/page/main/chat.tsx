@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -15,14 +15,29 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
+	const unbind = () => {
+		const ns = U.Common.getEventNamespace(isPopup);
+		const events = [ 'keydown' ];
+
+		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+	};
+
+	const rebind = () => {
+		const win = $(window);
+		const ns = U.Common.getEventNamespace(isPopup);
+
+		unbind();
+		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+	};
+
 	const open = () => {
 		idRef.current = rootId;
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, [ 'analyticsChatId' ]);
 			if (object.isDeleted) {
 				return;
 			};
@@ -33,6 +48,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
+			analytics.event('ScreenChat', { chatId: object.analyticsChatId });
 		});
 	};
 
@@ -60,10 +76,24 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.ref?.onDrop(e);
 	};
 
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('chatObject', e, () => {
+			if (!S.Menu.isOpen('searchObject')) {
+				e.preventDefault();
+
+				chatRef.current?.ref?.getFormRef()?.onAttachment();
+			};
+		});
+	};
+
 	useEffect(() => {
 		open();
+		rebind();
 
-		return () => close();
+		return () => {
+			close();
+			unbind();
+		};
 	}, []);
 
 	useEffect(() => {

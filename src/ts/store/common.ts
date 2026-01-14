@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
-import { I, M, S, U, J, Storage, Renderer } from 'Lib';
+import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -29,8 +29,8 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = null;
 	public pinTimeId = null;
-	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
+	public singleTabValue = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -58,6 +58,7 @@ class CommonStore {
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
+	public tabId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
@@ -119,8 +120,6 @@ class CommonStore {
 		spaces: [],
 	};
 
-	public membershipTiersList: I.MembershipTier[] = [];
-
 	constructor () {
 		makeObservable(this, {
 			progressObj: observable,
@@ -134,12 +133,12 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
+			singleTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
-			membershipTiersList: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
@@ -159,7 +158,6 @@ class CommonStore {
 			gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
-			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
 			showRelativeDates: computed,
@@ -171,6 +169,7 @@ class CommonStore {
 			vaultIsMinimal: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
+			singleTab: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -186,9 +185,9 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
-			membershipTiersListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
+			clearRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
@@ -197,6 +196,7 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			singleTabSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -253,6 +253,10 @@ class CommonStore {
 		return this.isFullScreen;
 	};
 
+	get singleTab (): boolean {
+		return this.singleTabValue;
+	};
+
 	get pin (): string {
 		return String(this.pinValue || '');
 	};
@@ -263,10 +267,6 @@ class CommonStore {
 			ret = Storage.get('pinTime');
 		};
 		return (Number(ret) || J.Constant.default.pinTime) * 1000;
-	};
-
-	get emailConfirmationTime (): number {
-		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
 	get recentEditMode (): I.RecentEditMode {
@@ -360,10 +360,6 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
-	};
-
-	get membershipTiers (): I.MembershipTier[] {
-		return this.membershipTiersList || [];
 	};
 
 	get diff (): I.Diff[] {
@@ -606,16 +602,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets the email confirmation time.
-	 * @param {number} t - The time value.
-	 */
-	emailConfirmationTimeSet (t: number) {
-		this.emailConfirmationTimeId = t;
-
-		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
-	};
-
-	/**
 	 * Sets the show relative dates value.
 	 * @param {boolean} v - The show relative dates value.
 	 */
@@ -662,9 +648,25 @@ class CommonStore {
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
 	setRightSidebarState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		v.noPreview = Boolean(v.noPreview);
-
+		v = Object.assign({ noPreview: true }, v);
 		set(this.getRightSidebarState(isPopup), v);
+	};
+
+	/**
+	 * Clears the right sidebar state.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 */
+	clearRightSidebarState (isPopup: boolean) {
+		set(this.rightSidebarStateValue[this.getStateKey(isPopup)], {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		});
 	};
 
 	/**
@@ -673,9 +675,14 @@ class CommonStore {
 	 */
 	fullscreenSet (v: boolean) {
 		this.isFullScreen = v;
+	};
 
-		$('body').toggleClass('isFullScreen', v);
-		$(window).trigger('resize');
+	/**
+	 * Sets the single tab mode.
+	 * @param {boolean} v - The single tab mode value.
+	 */
+	singleTabSet (v: boolean) {
+		this.singleTabValue = v;
 	};
 
 	/**
@@ -890,7 +897,9 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		html.toggleClass('debug', Boolean(this.configObj.debug.ui));
+		this.singleTabSet(this.singleTab);
+		
+		keyboard.setBodyClass();
 	};
 
 	/**
@@ -910,14 +919,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets the membership tiers list.
-	 * @param {I.MembershipTier[]} list - The membership tiers list.
-	 */
-	membershipTiersListSet (list: I.MembershipTier[]) {
-		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
-	};
-
-	/**
 	 * Sets the diff value.
 	 * @param {I.Diff[]} diff - The diff value.
 	 */
@@ -931,6 +932,14 @@ class CommonStore {
 	 */
 	windowIdSet (id: string) {
 		this.windowId = String(id || '');
+	};
+
+	/**
+	 * Sets the tab ID.
+	 * @param {string} id - The tab ID.
+	 */
+	tabIdSet (id: string) {
+		this.tabId = String(id || '');
 	};
 
 	/**

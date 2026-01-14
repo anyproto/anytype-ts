@@ -221,7 +221,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	return (
 		<div 
 			ref={nodeRef} 
-			className={[ 'focusable', 'c' + id ].join(' ')} 
+			className={[ `focusable`, `c${id}` ].join(' ')} 
 			tabIndex={0} 
 			onKeyDown={onKeyDownHandler} 
 			onKeyUp={onKeyUpHandler} 

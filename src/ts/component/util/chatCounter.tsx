@@ -7,11 +7,12 @@ interface Props {
 	spaceId?: string;
 	chatId?: string;
 	className?: string;
+	disableMention?: boolean;
 };
 
 const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
-	const { spaceId = S.Common.space, chatId, className = '' } = props;
+	const { spaceId = S.Common.space, chatId, className = '', disableMention } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
@@ -22,7 +23,36 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		mode = U.Object.getChatNotificationMode(spaceview, chatId);
 	} else {
 		counters = S.Chat.getSpaceCounters(spaceId);
-		mode = spaceview?.notificationMode;
+
+		if (disableMention) {
+			counters.messageCounter = counters.messageCounter + counters.mentionCounter;
+			counters.mentionCounter = 0;
+		};
+
+		if (counters.messageCounter || counters.mentionCounter) {
+			const spaceMap = S.Chat.stateMap.get(spaceId);
+
+			mode = I.NotificationMode.Nothing;
+
+			if (spaceMap) {
+				for (const [ chatId, state ] of spaceMap) {
+					if (!chatId) {
+						continue;
+					};
+
+					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+					if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
+						mode = I.NotificationMode.All;
+						break;
+					} else
+					if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+						mode = I.NotificationMode.Mentions;
+						break;
+					};
+				};
+			};
+		};
 	};
 
 	const { mentionCounter, messageCounter } = counters;

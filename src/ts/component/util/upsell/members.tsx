@@ -4,14 +4,12 @@ import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
 interface Props {
-	tier: any;
 	route: string;
 	isRed: boolean;
 	className?: string;
 };
 
 const UpsellMembers = observer(forwardRef<{}, Props>(({
-	tier = {},
 	route = '',
 	isRed = false,
 	className = '',
@@ -30,16 +28,14 @@ const UpsellMembers = observer(forwardRef<{}, Props>(({
 		className,
 	];
 
-	let usageText = U.Common.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
+	let usageText = U.String.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
 	if (isRed) {
-		usageText = U.Common.sprintf(translate('upsellBannerMembersLimitUsageText'), limit);
+		usageText = U.String.sprintf(translate('upsellBannerMembersLimitUsageText'), limit);
 		cn.push('isRed');
 	};
 
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
-
-		analytics.event('ClickUpgradePlanTooltip', { type: `SpaceWarning`, route });
+		Action.membershipUpgrade({ type: 'SpaceWarning', route });
 	};
 
 	return (

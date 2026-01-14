@@ -84,7 +84,7 @@ class UtilObject {
 			this.openPopup(object, param);
 		} else
 		if ((e.metaKey || e.ctrlKey)) {
-			this.openWindow(object);
+			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
 		};
@@ -119,7 +119,11 @@ class UtilObject {
 	};
 
 	openWindow (object: any) {
-		Renderer.send('openWindow', this.route(object));
+		Renderer.send('openWindow', this.route(object), S.Auth.token);
+	};
+
+	openTab (object: any) {
+		Renderer.send('openTab', this.route(object));
 	};
 
 	openPopup (object: any, param?: any) {
@@ -520,7 +524,7 @@ class UtilObject {
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
 		method = method || 'auto';
 
-		let fn = U.Common.toCamelCase(`open-${method}`);
+		let fn = U.String.toCamelCase(`open-${method}`);
 		if (!this[fn]) {
 			fn = 'openAuto';
 		};
@@ -674,11 +678,7 @@ class UtilObject {
 			};
 
 			S.Detail.update(J.Constant.subId.type, { id: typeId, details: { [key]: value } }, false);
-			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(typeId)), (message: any) => {
-				if (onChange) {
-					onChange(message);
-				};
-			});
+			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(typeId)), onChange);
 		});
 	};
 
@@ -741,6 +741,7 @@ class UtilObject {
 		sidebar.rightPanelToggle(isPopup, { 
 			page: 'type', 
 			rootId: '',
+			noPreview: false,
 			details: {
 				...this.getNewTypeDetails(),
 				...details,
@@ -781,6 +782,31 @@ class UtilObject {
 		};
 
 		return svg;
+	};
+
+	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
+		const theme = S.Common.getThemeClass();
+		const type = S.Detail.get(J.Constant.subId.type, typeId, [ 'name', 'iconName' ], true);
+
+		let src = '';
+		if (type.iconName) {
+			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
+		} else {
+			let id = '';
+			switch (layout) {
+				default: id = 'page'; break;
+				case I.ObjectLayout.ChatOld:
+				case I.ObjectLayout.Chat: id = 'chat'; break;
+				case I.ObjectLayout.Collection: id = 'collection'; break;
+				case I.ObjectLayout.Set: id = 'set'; break;
+				case I.ObjectLayout.Date: id = 'date'; break;
+				case I.ObjectLayout.Type: id = 'type'; break;
+				case I.ObjectLayout.Bookmark: id = 'page'; break;
+			};
+			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
+		};
+
+		return src;
 	};
 
 	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {

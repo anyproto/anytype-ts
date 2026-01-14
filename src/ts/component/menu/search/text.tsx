@@ -96,7 +96,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		findAndReplaceDOMText(container.get(0), {
 			preset: 'prose',
-			find: new RegExp(U.Common.regexEscape(value), 'gi'),
+			find: new RegExp(U.String.regexEscape(value), 'gi'),
 			wrap: tag,
 			portionMode: 'first',
 			filterElements: (el: any) => {

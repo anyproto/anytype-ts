@@ -18,7 +18,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	const { onChange, maxCount } = data;
 	const [ dummy, setDummy ] = useState(0);
 	const n = useRef(-1);
-	const filterRef = useRef('');
 	const listRef = useRef(null);
 	const itemsRef = useRef([]);
 	const filterInputRef = useRef(null);
@@ -27,7 +26,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	const topRef = useRef(0);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
-	let filter = String(data.filter || '');
+	const filter = String(data.filter || '');
 
 	const rebind = () => {
 		unbind();

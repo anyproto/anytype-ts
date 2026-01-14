@@ -9,6 +9,7 @@
 	"commonCreate": "Create",
 	"commonSave": "Save",
 	"commonCancel": "Cancel",
+	"commonRestart": "Restart",
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
 	"commonDefault": "Default",
@@ -45,6 +46,8 @@
 	"commonOlder": "Older",
 	"commonPhrase": "Key",
 	"commonCopy": "Copy",
+	"commonCut": "Cut",
+	"commonPaste": "Paste",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
@@ -191,7 +194,6 @@
 	"commonRelations": "Properties",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
-	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
@@ -225,16 +227,22 @@
 	"commonUpdateAvailable": "Update Available",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
+	"commonVault": "Vault",
 	"commonWidgets": "Widgets",
 	"commonLearnMore": "Learn more",
 	"commonSeeChanges": "See Changes",
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
+	"commonActivate": "Activate",
 	"commonNotifications": "Notifications",
 	"commonPersonalSpace": "Personal Space",
+	"commonUnlimited": "Unlimited",
 	"commonSaveAsFile": "Save as file",
 	"commonDownloadCode": "Download Code",
+	"commonCopyMedia": "Copy Media",
+	"commonImage": "Image",
+	"commonOptions": "Options",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -348,6 +356,8 @@
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
+	"electronMenuNewTab": "New Tab",
+	"electronMenuCloseTab": "Close Tab",
 
 	"month1": "January",
 	"month2": "February",
@@ -541,12 +551,6 @@
 
 	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "We couldn't recover your vault.",
-	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
-	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupTryAgain": "Try again",
-	"pageAuthSetupEntering": "Entering your Vault",
-
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
 	"pageAuthMigrateInitButtonStartUpdate": "Start Update",
@@ -578,8 +582,8 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
-	"pageSettingsSpaceSyncedFiles": "Synced files",
-	"pageSettingsSpaceNotSyncedFiles": "Not synced files",
+	"pageSettingsSpaceSynced": "Synced",
+	"pageSettingsSpaceNotSynced": "Not Synced",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -591,8 +595,7 @@
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
-	"pageSettingsSpaceDeleteSpace": "Delete Space",
-
+	"pageSettingsSpaceDeleteSpace": "Delete Channel",
 	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
 
 	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
@@ -798,6 +801,7 @@
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
 	"blockChatCopyText": "Copy Text",
 	"blockChatMarkAsUnread": "Mark as unread",
+	"blockChatAddAttachment": "Add attachment",
 
 	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
 
@@ -830,6 +834,10 @@
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalVaultStyle": "Vault density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
+	"popupSettingsPersonalAlwaysShowTabbar": "Always show tabbar",
+	"popupSettingsPersonalHardwareAcceleration": "Hardware acceleration",
+	"popupConfirmHardwareAccelerationTitle": "Restart Required",
+	"popupConfirmHardwareAccelerationText": "Changing hardware acceleration requires restarting the app. Do you want to restart now?",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
@@ -838,7 +846,7 @@
 	"popupSettingsPersonalSectionChat": "Chat",
 	"popupSettingsPersonalChatSend": "Send message with",
 	"popupSettingsPersonalSectionApp": "App Appearance",
-	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
 	"popupSettingsVaultCompact": "Compact",
 	"popupSettingsVaultWithMessages": "Message previews",
@@ -950,8 +958,10 @@
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
 	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
+
+	"upsellBannerStorageNonOwnerIncentive": "Storage is full in this Space. ",
+	"upsellBannerStorageNonOwnerUpsell": "New files stay local. You can remove your files to free up space or ask the Space owner to upgrade storage. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
 	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
@@ -1020,18 +1030,14 @@
 	"popupSettingsSpaceShareMakePrivate": "Make Private",
 	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
 
-	"popupSettingsMembershipTitle1": "Membership",
-	"popupSettingsMembershipTitle2": "Let's build together",
-	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+	"popupSettingsMembershipTitle": "Membership",
+	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
+	"popupSettingsMembershipSelectPlan": "Select plan",
+	"popupSettingsMembershipCurrentPlan": "Current plan",
+	"popupSettingsMembershipCurrentPricePeriod": "per seat / %s",
 
-	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
-	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
-	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
-	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in spaces, and a unique identity on the Anytype Network.",
-	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
-	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
-	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
-	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
+	"popupSettingsMembershipSwitchMonthly": "Monthly",
+	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
@@ -1041,13 +1047,28 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
-	"popupSettingsMembershipRedeemCode": "I already have a code",
+	"popupSettingsMembershipActionsActivationTitle": "Activate Code",
+	"popupSettingsMembershipActionsActivationText": "If you bought a membership online or have an invitation, activate your code here",
+	"popupSettingsMembershipActionsContactTitle": "Have questions?",
+	"popupSettingsMembershipActionsContactText": "Use Anytype for education or didn’t find suitable plan? Reach us.",
+	"popupSettingsMembershipActionsContactReachUs": "Reach Us",
 
-	"popupSettingsMembershipLevelsDetails": "Membership plan details",
+	"popupSettingsMembershipFAQ": "FAQ",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
+	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
+	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
+	"popupSettingsMembershipManage": "Manage",
+	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
+	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
+
+	"popupSettingsMembershipLoaderText1": "Please wait, loading...",
+	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
+
+	"popupSettingsMembershipTeamMessage": "Contact your billing manager to change the membership",
+	"popupSettingsMembershipMarketMessage": "To manage your membership, please cancel your active subscription in %s and purchase a new one via Desktop app",
+	"popupSettingsMembershipCryptoMessage": "Contact care@anytype.io to manage your subscription",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -1058,7 +1079,6 @@
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
 	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
-
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
@@ -1152,51 +1172,15 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
-	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
-	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
-	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
-	"popupMembershipFreeEnterCode": "Enter code",
-
-	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
-	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
-
-	"popupMembershipPaidTitle": "Pick your unique name",
-
-	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
-	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
-	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
-
-	"popupMembershipPaidPlaceholder": "Enter your name",
-	"popupMembershipPayByCard": "Pay by Card",
-	"popupMembershipPayByCrypto": "Pay by Crypto",
-	"popupMembershipPaidBy": "Paid by %s",
-	"popupMembershipActivate": "Activate",
-
-	"popupMembershipResend": "Resend",
-	"popupMembershipCountdown": " in %s sec",
+	"popupMembershipFinalizationTitle": "Almost all set with %s!",
+	"popupMembershipFinalizationText1": "Before you take off, pick your .any name.",
+	"popupMembershipFinalizationText2": "It’s your identity on the Anytype network — people will use it to find you and confirm it’s really you. It also becomes your web publishing domain. Choose carefully — it can’t be changed later.",
+	"popupMembershipFinalizationPlaceholder": "Enter your name",
+	"popupMembershipFinalizationClaimName": "Claim Name",
 
 	"popupMembershipStatusWaitASecond": "Wait a second...",
 	"popupMembershipStatusNameAvailable": "This name is available!",
 	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
-	"popupMembershipCurrentStatus": "Current status",
-	"popupMembershipValidUntil": "Valid until",
-	"popupMembershipForever": "Forever",
-	"popupMembershipChangeEmail": "Change e-mail",
-	"popupMembershipManagePayment": "Manage payment",
-	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
-	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
-	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
-
-	"popupMembershipWhatsIncluded": "What's included",
-
-	"popupMembershipSuccessTitle": "Welcome to the network, %s",
-	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
-	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
-	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
-	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
@@ -1204,11 +1188,15 @@
 	"popupMembershipCode4": "Name is too long",
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
+	"popupMembershipCode8": "You are not logged in and not supposed to see this",
+	"popupMembershipCode9": "Payment node error",
+	"popupMembershipCode10": "Cache error",
+	"popupMembershipCode11": "Can not reserve",
+	"popupMembershipCode12": "Can not connect",
+	"popupMembershipCode13": "This name is already reserved by someone else",
 
-	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
-
-	"popupMembershipActivationTitle": "Activate Your Membership",
-	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
+	"popupMembershipActivationTitle": "Activate Your Code",
+	"popupMembershipActivationText": "Enter the code you received after purchase or from invatation. Your membership will be activated instantly.",
 	"popupMembershipActivationPlaceholder": "Paste activation code...",
 
 	"popupMembershipActivationError1": "Unknown error occured",
@@ -1328,6 +1316,18 @@
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
+	"popupConfirmMembershipSurveyTitle": "Welcome to the network,<br/>%s!",
+	"popupConfirmMembershipSurveyTitleNoName": "Welcome to the network!",
+	"popupConfirmMembershipSurveyText": "Your upgrade means a lot to us. Tell us what made you take the step and what do you think about Anytype. A tiny survey from you = a huge boost for us.",
+	"popupConfirmMembershipSurveyTakeSurvey": "Take Survey",
+
+	"popupObjectManagerArchiveTypeTitle": "Move “%s” to Bin?",
+	"popupObjectManagerArchiveTypeText": "Some objects use this type. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeTitlePlural": "Move %s types to Bin?",
+	"popupObjectManagerArchiveTypeTextPlural": "Some objects use these types. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeEmptyText": "There are no objects of this type",
+
+
 	"popupInviteRequestAccessTitle": "Access required",
 	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
 	"popupInviteRequestAccessTextChat": "This chat requires owner approval. Send a request and you'll be notified once it's approved.",
@@ -1438,6 +1438,7 @@
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
 	"popupShortcutMainBasics28": "Toggle Widget panel",
+	"popupShortcutMainBasics29": "New Tab",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1500,6 +1501,7 @@
 	"popupShortcutEditorTurn7": "Turn block into a bulleted list",
 	"popupShortcutEditorTurn8": "Turn block into a numbered list",
 	"popupShortcutEditorTurn9": "Turn block into a toggle",
+	"popupShortcutEditorTableCellOptions": "Table cell options",
 
 	"popupShortcutNavigationMenu": "Menu, Search",
 	"popupShortcutNavigationMenu1": "Go to the next option",
@@ -1583,15 +1585,6 @@
 	"popupShortcutCommandOther1": "Line divider",
 	"popupShortcutCommandOther2": "Dots divider",
 	"popupShortcutCommandOther3": "Code  snippet",
-
-	"popupMigrationOnboardingTitle": "Congratulations!",
-	"popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
-	"popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationOnboardingText3": "We're excited to hear your feedback about the new features.",
-	"popupMigrationImportTitle": "You're all set!",
-	"popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
-	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
 	"popupPhraseTitle1": "How the Key works",
 	"popupPhraseSubTitle1": "It's your login and password",
@@ -1723,9 +1716,9 @@
 	"menuDataviewFilterNewFilter": "New filter",
 	"menuDataviewViewEditView": "Edit view",
 
-	"menuDataviewUrlActionGo7": "Open link",
-	"menuDataviewUrlActionGo8": "Mail to",
-	"menuDataviewUrlActionGo9": "Call to",
+	"menuDataviewUrlActionGo7": "Open in browser",
+	"menuDataviewUrlActionGo8": "Send email",
+	"menuDataviewUrlActionGo9": "Call",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
 	"menuDataviewCreateBookmarkContent": "Include page content",
@@ -1799,6 +1792,7 @@
 	"menuDataviewViewSort": "Sort",
 	"menuDataviewViewApplied": "%s applied",
 	"menuDataviewViewName": "View name",
+	"menuDataviewViewEditWrapContent": "Wrap content",
 
 	"menuDataviewViewListNoViewsFound": "No views found",
 	"menuDataviewViewListAddView": "Add a view",
@@ -1854,6 +1848,8 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
+	"menuObjectOpenInNewTab": "Open in New Tab",
+	"menuObjectOpenInNewWindow": "Open in New Window",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1890,6 +1886,9 @@
 	"syncButtonStaging": "Staging",
 
 	"menuSyncStatusTitle": "Sync status",
+
+	"menuSyncStatusLabelAnyNetwork": "Any Network",
+	"menuSyncStatusLabelCustom": "Custom",
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
@@ -1939,7 +1938,8 @@
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
-	"menuParticipantMessage": "Message",
+	"menuParticipantMessage": "Send Message",
+	"menuParticipantProfile": "Open Profile",
 
 	"previewEdit": "Edit Link",
 
@@ -1975,6 +1975,7 @@
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
 	"toastMovedToBin": "%s moved to Bin",
+	"toastMovedFromBin": "%s restored",
 	"toastMovedFrom": "%s moved from",
 	"toastAddedToCollection": "has been added to Collection",
 	"toastLinkedTo": "has been linked to",
@@ -2104,6 +2105,7 @@
 	"widgetSection1": "Objects",
 	"widgetSection2": "Unread",
 	"widgetSection3": "Recently edited",
+	"widgetSection4": "Bin",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",
@@ -2125,7 +2127,9 @@
 	"widgetRecentModeTitle": "Edited by",
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
-	"widgetManageSections": "Customize Sidebar",
+
+	"widgetManageSections": "Manage Sections",
+	"widgetHideSection": "Hide section",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2357,6 +2361,10 @@
 	"onboardingMainChatTitle3": "Talk, and watch your chat growing",
 	"onboardingCommonText3": "Your messages can become notes, tasks, or links — a living knowledge base, private and yours.",
 
+	"onboardingProductHuntTitle": "Support us on Product Hunt!",
+	"onboardingProductHuntText": "Upvote the launch to help more people discover Anytype early",
+	"onboardingProductHuntUpvote": "Upvote",
+
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
@@ -2411,31 +2419,6 @@
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
-	"errorNameServiceResolveName3": "Please connect to the internet",
-
-	"errorMembershipGetStatus6": "Membership not found",
-	"errorMembershipGetStatus7": "Membership has wrong state",
-	"errorMembershipGetStatus8": "Please connect to the internet",
-
-	"errorMembershipIsNameValid3": "Name is too short",
-	"errorMembershipIsNameValid4": "Name is too long",
-	"errorMembershipIsNameValid5": "Name contains invalid characters",
-	"errorMembershipIsNameValid6": "This tier features no name",
-	"errorMembershipIsNameValid7": "Tier not found",
-	"errorMembershipIsNameValid8": "Not logged in",
-	"errorMembershipIsNameValid9": "Unable to connect to payment node",
-	"errorMembershipIsNameValid10": "Cache error",
-	"errorMembershipIsNameValid11": "Name cannot be taken",
-	"errorMembershipIsNameValid12": "Please connect to the internet",
-
-	"errorMembershipRegisterPaymentRequest4": "Unable to connect to payment node",
-	"errorMembershipRegisterPaymentRequest6": "Tier not found",
-	"errorMembershipRegisterPaymentRequest7": "Tier is invalid",
-	"errorMembershipRegisterPaymentRequest8": "Payment method is invalid",
-	"errorMembershipRegisterPaymentRequest9": "Bad Any name",
-	"errorMembershipRegisterPaymentRequest10": "Membership already exists",
-	"errorMembershipRegisterPaymentRequest11": "Please connect to the internet",
-
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
@@ -2446,16 +2429,6 @@
 	"errorMembershipGetVerificationEmail8": "Email has been already sent",
 	"errorMembershipGetVerificationEmail9": "Failed to send email",
 	"errorMembershipGetVerificationEmail10": "Membership already exists",
-
-	"errorMembershipVerifyEmailCode6": "This email is already verified",
-	"errorMembershipVerifyEmailCode7": "Code has expired",
-	"errorMembershipVerifyEmailCode8": "Wrong code",
-	"errorMembershipVerifyEmailCode9": "Membership not found",
-	"errorMembershipVerifyEmailCode10": "Membership is already active",
-
-	"errorMembershipGetTiers4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
@@ -2539,7 +2512,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %s. Please remove or slim them down and try again.",
 	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
@@ -2721,5 +2694,26 @@
 	"aiOnboardingStatusDraftingTypes": "Drafting your custom types...",
 	"aiOnboardingStatusGenerating": "Generating your types and objects...",
 	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
-	"aiOnboardingStatusFinalTouches": "Final touches..."
+	"aiOnboardingStatusFinalTouches": "Final touches...",
+
+	"membershipFeatureStorageBytes": "%s of remote storage",
+	"membershipFeatureSpaceReaders": "Space readers",
+	"membershipFeatureSpaceWriters": "Space writers",
+	"membershipFeatureSharedSpaces": "%s shared spaces",
+	"membershipFeaturePrivateSpaces": "%s private spaces",
+	"membershipFeatureTeamSeats": "Team seats",
+	"membershipFeatureAnyNameCount": "Name available",
+	"membershipFeatureAnyNameMinLen": ".any name %s+ symbols",
+
+	"membershipPeriod0": "unlimited",
+	"membershipPeriod1": "monthly",
+	"membershipPeriod2": "annual",
+	"membershipPeriod3": "three years",
+
+	"paymentProvider0": "None",
+	"paymentProvider1": "Stripe",
+	"paymentProvider2": "Crypto",
+	"paymentProvider3": "Billing", 
+	"paymentProvider4": "App Store",
+	"paymentProvider5": "Google Play"
 }

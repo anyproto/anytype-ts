@@ -1,5 +1,3 @@
-import space from "Lib/util/space";
-
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
 	amplitude:			 '1ba981d1a9afb8af8c81847ef3383a20',
@@ -13,6 +11,8 @@ export default {
 	popupPinIds:		 [ 'search' ],
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
 	namespace:			 { 0: '.any' },
+
+	day:				 86400,
 
 	allowedSchemes:		 [ 'http', 'https', 'mailto', 'tel' ],
 
@@ -42,7 +42,6 @@ export default {
 		tableOfContents:	 			 50,
 
 		space: {
-			count:						 50,
 			name:						 50,
 			description:				 200,
 			nameThreshold:				 10,
@@ -217,11 +216,15 @@ export default {
 					"command": "npx",
 					"args": ["-y", "@anyproto/anytype-mcp"],
 					"env": {
-						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-05-20\\"}"
+						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-11-08\\"}"
 					}
 				}
 			}
 		}
 	`,
 
+	currencySymbol: {
+		USD: '$',
+		EUR: '€',
+	},
 };

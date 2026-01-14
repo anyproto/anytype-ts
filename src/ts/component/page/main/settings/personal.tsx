@@ -11,9 +11,24 @@ enum ChatKey {
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
-	const { hideTray, showMenuBar } = config;
+	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
+
+	const onHardwareAccelerationChange = (v: boolean) => {
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('popupConfirmHardwareAccelerationTitle'),
+				text: translate('popupConfirmHardwareAccelerationText'),
+				textConfirm: translate('commonRestart'),
+				textCancel: translate('commonCancel'),
+				onConfirm: () => {
+					Renderer.send('setHardwareAcceleration', v);
+					Renderer.send('reload', '');
+				},
+			},
+		});
+	};
 
 	const themes: any[] = [
 		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
@@ -83,6 +98,17 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
+					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
+					<Switch 
+						className="big" 
+						value={alwaysShowTabs} 
+						onChange={(e: any, v: boolean) => {
+							Renderer.send('setAlwaysShowTabs', v);
+						}
+					} />
+				</div>
+
+				<div className="item">
 					<Label text={translate('electronMenuShowTray')} />
 					<Switch
 						className="big"
@@ -97,12 +123,12 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				{canHideMenu ? (
 					<div className="item">
 						<Label text={translate('electronMenuShowMenu')} />
-						<Switch 
-							className="big" 
-							value={showMenuBar} 
+						<Switch
+							className="big"
+							value={showMenuBar}
 							onChange={(e: any, v: boolean) => {
 								Renderer.send('setMenuBarVisibility', v);
-							}} 
+							}}
 						/>
 					</div>
 				) : ''}
@@ -148,6 +174,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						onChange={v => S.Common.linkStyleSet(v)}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionAdvanced')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalHardwareAcceleration')} />
+					<Switch
+						className="big"
+						value={hardwareAcceleration !== false}
+						onChange={(e: any, v: boolean) => onHardwareAccelerationChange(v)}
 					/>
 				</div>
 			</div>

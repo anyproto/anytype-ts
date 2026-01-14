@@ -75,7 +75,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	}));
 
 	return (
-		<div ref={nodeRef}>
+		<div ref={nodeRef} className="mediaPdf">
 			<Document
 				file={src}
 				onLoadSuccess={onDocumentLoad}

@@ -13,7 +13,6 @@ enum Stage {
 const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
-	const { redirect } = S.Common;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const nextRef = useRef(null);
@@ -62,6 +61,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		U.Router.switchSpace(S.Common.space, '', false, {
 			onFadeIn: () => {
 				Onboarding.startCommon(props.isPopup);
+				analytics.event('OpenAccount');
 			},
 		}, false);
 	};
@@ -141,7 +141,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 
 		if (stage == Stage.Phrase) {
-			Animation.from(() => U.Router.go('/', { replace: true }));
+			Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 		} else {
 			setStage(stage - 1);
 		};
@@ -163,7 +163,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
-		const isValid = U.Common.matchEmail(v);
+		const isValid = U.String.matchEmail(v);
 
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};
@@ -184,7 +184,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
 
 		return items.map(it => {
-			const type = U.Common.toUpperCamelCase(it);
+			const type = U.String.toUpperCamelCase(it);
 
 			return { id: it, name: translate(`authOnboardOptions${type}`), type, stage };
 		});
@@ -278,9 +278,14 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			);
 
 			buttons = (
-				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
-				</div>
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+					</div>
+				</>
 			);
 			break;
 		};

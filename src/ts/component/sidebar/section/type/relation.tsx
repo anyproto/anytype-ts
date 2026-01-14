@@ -169,11 +169,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         } else 
 		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
 			toItems.splice(newIndex + offset, 0, active.id);
-			onChange({
-				[from.relationKey]: fromItems.filter(id => id != active.id),
-				[to.relationKey]: toItems,
-			});
 
+			const update = {
+				[to.relationKey]: toItems,
+			};
+			if (from.relationKey) {
+				update[from.relationKey] = fromItems.filter(id => id != active.id);
+			};
+
+			onChange(update);
 			analyticsId = I.SidebarRelationList[to.id];
         };
 

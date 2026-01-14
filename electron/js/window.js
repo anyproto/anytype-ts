@@ -1,8 +1,9 @@
-const { app, BrowserWindow, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
+const { randomUUID } = require('crypto');
 
 const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
@@ -15,6 +16,7 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
+const TAB_BAR_HEIGHT = 52;
 
 class WindowManager {
 
@@ -23,24 +25,15 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { showMenuBar } = ConfigManager.config;
-		const isDark = Util.isDarkTheme();
+		const theme = Util.getTheme();
+		const bgColor = Util.getBgColor(theme);
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor(isDark ? 'dark' : ''),
+			backgroundColor: bgColor,
 			show: false,
 			titleBarStyle: 'hidden-inset',
-			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
-			},
 		}, param);
-
-		param.webPreferences = Object.assign({
-			nativeWindowOpen: true,
-			contextIsolation: true,
-			nodeIntegration: false,
-			spellcheck: true,
-			sandbox: false,
-		}, param.webPreferences);
+		param.webPreferences = Object.assign(this.getPreferencesForNewWindow(), param.webPreferences || {});
 
 		let win = new BrowserWindow(param);
 
@@ -50,10 +43,6 @@ class WindowManager {
 		win.windowId = win.id;
 
 		this.list.add(win);
-
-		win.on('close', () => {
-			Util.send(win, 'will-close-window', win.id);
-		});
 
 		win.on('closed', () => {
 			this.list.delete(win);
@@ -102,7 +91,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 10, y: 18 };
+			param.trafficLightPosition = { x: 18, y: 18 };
 		} else
 		if (is.windows) {
 			param.frame = false;
@@ -115,7 +104,12 @@ class WindowManager {
 
 		if (!isChild) {
 			try {
-				state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+				state = windowStateKeeper({
+					defaultWidth: DEFAULT_WIDTH,
+					defaultHeight: DEFAULT_HEIGHT,
+					maximize: true,
+					fullScreen: true,
+				});
 
 				param = Object.assign(param, {
 					x: state.x,
@@ -123,7 +117,9 @@ class WindowManager {
 					width: state.width,
 					height: state.height,
 				});
-			} catch (e) {};
+			} catch (e) {
+				console.error('[WindowManager] Failed to restore window state:', e);
+			};
 		} else {
 			const { width, height } = this.getScreenSize();
 
@@ -136,20 +132,40 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+		win.loadURL(this.getUrlForNewWindow());
 
-		win.once('ready-to-show', () => win.show());
+		win.once('ready-to-show', () => {
+			if (!isChild && state.isMaximized) {
+				win.maximize();
+			};
+			if (!isChild && state.isFullScreen) {
+				win.setFullScreen(true);
+			};
+			win.show();
+		});
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
+		win.on('resize', () => {
+			const { width, height } = win.getBounds();
 
-		if (is.development) {
-			win.toggleDevTools();
-		};
+			if (win.views && win.views[win.activeIndex]) {
+				const tabBarHeight = this.getTabBarHeight(win);
+				win.views[win.activeIndex].setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+			};
+		});
 
+		this.createTab(win);
 		return win;
 	};
 
 	createChallenge (options) {
+		// Check if challenge window already exists
+		for (const win of this.list) {
+			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
+				return win;
+			};
+		};
+
 		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
@@ -165,7 +181,7 @@ class WindowManager {
 		});
 
 		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', 'index.html'));
+		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'challenge', 'index.html')}`);
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
@@ -230,6 +246,210 @@ class WindowManager {
 		};
 	};
 
+	createTab (win, param) {
+		const id = randomUUID();
+		const view = new WebContentsView({
+			webPreferences: {
+				...this.getPreferencesForNewWindow(),
+				additionalArguments: [ `--tab-id=${id}` ],
+			},
+			...param,
+		});
+
+		win.views = win.views || [];
+		win.activeIndex = win.activeIndex || 0;
+		win.views.push(view);
+
+		view.id = id;
+		view.data = { ...param };
+		view.webContents.loadURL(this.getUrlForNewTab());
+
+		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
+
+		// Send initial single tab state when view finishes loading
+		view.webContents.once('did-finish-load', () => {
+			const isSingleTab = win.views && (win.views.length == 1);
+			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
+
+			// Apply zoom level from config
+			const zoom = Number(ConfigManager.config.zoom) || 0;
+			if (zoom) {
+				view.webContents.setZoomLevel(zoom);
+			};
+
+			// Also update tab bar visibility in case state changed during loading
+			this.updateTabBarVisibility(win);
+		});
+
+		remote.enable(view.webContents);
+
+		Util.send(win, 'create-tab', { id: view.id, data: view.data });
+		this.setActiveTab(win, id);
+		this.updateTabBarVisibility(win);
+	};
+
+	setActiveTab (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		if (win.views[win.activeIndex]) {
+			win.contentView.removeChildView(win.views[win.activeIndex]);
+		};
+
+		const bounds = win.getBounds();
+		const index = win.views.findIndex(it => it.id == id);
+		const tabBarHeight = this.getTabBarHeight(win);
+
+		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
+
+		win.activeIndex = index;
+		win.contentView.addChildView(view);
+
+		Util.send(win, 'set-active-tab', id);
+	};
+
+	updateTab (win, id, data) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		view.data = Object.assign(view.data || {}, data);
+		Util.send(win, 'update-tab', { id: view.id, data: view.data });
+	};
+
+	removeTab (win, id, updateActive) {
+		id = String(id || '');
+
+		if (!id || !win.views || (win.views.length <= 1)) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		const index = win.views.findIndex(it => it.id == id);
+
+		if (win.activeIndex == index) {
+			win.contentView.removeChildView(view);
+		};
+
+		win.views.splice(index, 1);
+		Util.send(win, 'remove-tab', id);
+
+		this.updateTabBarVisibility(win);
+
+		if (updateActive) {
+			const newIndex = index < win.views.length ? index : index - 1;
+			this.setActiveTab(win, win.views[newIndex]?.id);
+		};
+	};
+
+	closeActiveTab (win) {
+		const Api = require('./api.js');
+
+		if (win.views.length > 1) {
+			this.removeTab(win, win.views[win.activeIndex].id, true);
+		} else {
+			Api.close(win);
+		};
+	};
+
+	closeOtherTabs (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const views = win.views.filter(it => it.id != id);
+
+		views.forEach(view => {
+			this.removeTab(win, view.id, false);
+		});
+
+		this.setActiveTab(win, id);
+	};
+
+	reorderTabs (win, tabIds) {
+		if (!win.views || !tabIds || !tabIds.length) {
+			return;
+		};
+
+		// Reorder the views array based on the new tab order
+		const newViews = [];
+		tabIds.forEach(id => {
+			const view = win.views.find(v => v.id == id);
+			if (view) {
+				newViews.push(view);
+			};
+		});
+
+		// Update the views array
+		win.views = newViews;
+
+		// Update active index
+		const activeView = win.views[win.activeIndex];
+		if (activeView) {
+			win.activeIndex = win.views.findIndex(v => v.id == activeView.id);
+		};
+
+		// Send updated tabs list to tabs.html
+		Util.send(win, 'update-tabs',
+			win.views.map(it => ({ id: it.id, data: it.data })),
+			win.views[win.activeIndex]?.id
+		);
+
+		this.updateTabBarVisibility(win);
+	};
+
+	getPreferencesForNewWindow () {
+		return {
+			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
+			nativeWindowOpen: true,
+			contextIsolation: true,
+			nodeIntegration: false,
+			spellcheck: true,
+			sandbox: false,
+			additionalArguments: [],
+		};
+	};
+
+	getUrlForNewWindow () {
+		return is.development ? `http://localhost:${port}/tabs.html` : 'file://' + path.join(Util.appPath, 'dist', 'tabs.html');
+	};
+
+	getUrlForNewTab () {
+		return this.getUrlForNewWindow().replace('tabs.html', 'index.html');
+	};
+
+	getScreenSize () {
+		const ret = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+
+		try {
+			const { screen } = require('electron');
+			const primaryDisplay = screen.getPrimaryDisplay();
+			const { width, height } = primaryDisplay.workAreaSize;
+
+			ret.width = width;
+			ret.height = height;
+		} catch (e) {};
+
+		return ret;
+	};
+
 	getWindowPosition (param, displayWidth, displayHeight) {
 		const currentWindow = BrowserWindow.getFocusedWindow();
 
@@ -254,9 +474,49 @@ class WindowManager {
 		return { x, y };
 	};
 
+	getTabBarHeight (win) {
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const hasMultipleTabs = win.views && win.views.length > 1;
+		const shouldShow = alwaysShow || hasMultipleTabs;
+		return shouldShow ? TAB_BAR_HEIGHT : 0;
+	};
+
+	updateTabBarVisibility (win) {
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const hasMultipleTabs = win.views && (win.views.length > 1);
+		const isSingleTab = win.views && (win.views.length == 1);
+		const isVisible = alwaysShow || hasMultipleTabs;
+
+		// Send to tabs.html window (tab bar UI)
+		Util.send(win, 'update-tab-bar-visibility', isVisible);
+
+		// Send to all renderer views (for body class)
+		Util.sendToAllTabs(win, 'set-single-tab', isSingleTab);
+
+		// Update active view bounds
+		const view = win.views?.[win.activeIndex];
+		if (view && !view.webContents?.isDestroyed()) {
+			const bounds = win.getBounds();
+			const tabBarHeight = this.getTabBarHeight(win);
+
+			view.setBounds({
+				x: 0,
+				y: tabBarHeight,
+				width: bounds.width,
+				height: bounds.height - tabBarHeight,
+			});
+		};
+	};
+
 	sendToAll () {
 		const args = [ ...arguments ];
-		this.list.forEach(it => Util.send.apply(this, [ it ].concat(args)));
+		this.list.forEach(it => Util.send(it, ...args));
 	};
 
 	reloadAll () {

@@ -33,7 +33,7 @@ class UtilFile {
 			};
 		};
 
-		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + (withSpace ? ' ' : '') + unit : '';
+		return ret ? U.Common.formatNumber(Number(U.String.sprintf(`%0.2f`, ret))) + (withSpace ? ' ' : '') + unit : '';
 	};
 
 	/**
@@ -176,14 +176,19 @@ class UtilFile {
 	 */
 	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
 		this.loadPreviewCanvas(file, param, (canvas: any) => {
+			if (!canvas || (canvas.type == 'error')) {
+				error?.('Failed to get preview canvas');
+				return;
+			};
+
 			const image = canvas.toDataURL(param.type, param.quality);
 
-			if (image && success) {
-				success(image, { width: canvas.width, height: canvas.height });
+			if (image) {
+				success?.(image, { width: canvas.width, height: canvas.height });
 			};
 			
-			if (!image && error) {
-				error('Failed to get canvas.toDataURL()');
+			if (!image) {
+				error?.('Failed to get canvas.toDataURL()');
 			};
 		});
 	};
@@ -207,7 +212,7 @@ class UtilFile {
 		const name = String(object.name || '');
 		const fileExt = String(object.fileExt || '');
 
-		if (!fileExt || new RegExp(`\\.${U.Common.regexEscape(fileExt)}$`).test(name)) {
+		if (!fileExt || new RegExp(`\\.${U.String.regexEscape(fileExt)}$`).test(name)) {
 			return name;
 		};
 

@@ -4,7 +4,7 @@ import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
+	'tab', 'document', 'page', 'count', 'suggestCount', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
 	'uxType', 'usage', 'chatId',
 ];
@@ -86,6 +86,8 @@ class Analytics {
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
+		authSetup: 'ScreenAuthSetup',
+
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
 		addWidgetMenu: 'Menu',
@@ -100,6 +102,8 @@ class Analytics {
 		reaction: 'Reaction',
 		icon: 'Icon',
 		editor: 'Editor',
+
+		stripe: 'Stripe',
 	};
 
 	/**
@@ -242,11 +246,10 @@ class Analytics {
 	};
 
 	/**
-	 * Sets the user's tier property for analytics.
-	 * @param {I.TierType} tier - The user's tier.
+	 * Sets the user's purchased membership name property for analytics.
 	 */
-	setTier (tier: I.TierType) {
-		this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
+	setProduct () {
+		this.setProperty({ product: S.Membership.data?.getTopProduct()?.name || 'None' });
 	};
 
 	/**
@@ -545,13 +548,13 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = data.id ? U.Common.toUpperCamelCase(`-${data.id}`) : '';
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.id = data.id ? U.String.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
 			case 'ChangeLibraryType': {
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
@@ -577,13 +580,7 @@ class Analytics {
 
 			case 'ChangePlan':
 			case 'ScreenMembership': {
-				data.name = I.TierType[data.params.tier];
-				break;
-			};
-
-			case 'ClickMembership': {
-				data.name = data.name || I.TierType[data.params.tier];
-				data.type = data.type || I.PaymentMethod[data.params.method];
+				//data.name = I.TierType[data.params.tier];
 				break;
 			};
 
@@ -593,7 +590,7 @@ class Analytics {
 			};
 
 			case 'ChangeSpaceDashboard': {
-				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				data.type = U.String.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
 				break;
 			};
 
@@ -785,6 +782,7 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			widgetSection:		 'ScreenManageSections',
+			widget:				 'ScreenWidgetMenu',
 		};
 
 		return map[id] || '';

@@ -210,7 +210,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const loadVersion = (id: string) => {
 		C.HistoryShowVersion(rootId, id, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 

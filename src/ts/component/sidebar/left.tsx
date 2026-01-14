@@ -42,17 +42,21 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
 
+	if (vaultIsMinimal) {
+		cn.push('isMinimal');
+	};
+
 	const getComponentId = (id: string) => {
 		id = String(id || '');
-		return U.Common.toCamelCase(id.replace(/\//g, '-'));
+		return U.String.toCamelCase(id.replace(/\//g, '-'));
 	};
 
 	const getPageId = (id: string) => {
-		return U.Common.toCamelCase(`sidebarPage-${getComponentId(id)}`);
+		return U.String.toCamelCase(`sidebarPage-${getComponentId(id)}`);
 	};
 
 	const getClassName = (id: string): string => {
-		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`) ];
+		const cn = [ 'sidebarPage', U.String.toCamelCase(`page-${id}`) ];
 
 		if (!U.Common.isPlatformMac()) {
 			cn.push('customScrollbar');
@@ -64,6 +68,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 		if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
 			cn.push('spaceSettingsLibrary');
+		};
+
+		if ((id == 'vault') && vaultIsMinimal) {
+			cn.push('isMinimal');
 		};
 
 		return cn.join(' ');
@@ -182,7 +190,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			if (panel == I.SidebarPanel.Left) {
 				const w = vaultIsMinimal ? J.Size.sidebar.default.min : J.Size.sidebar.left.min;
 
-				sidebar.setWidth(panel, false, w, true);
+				if (sidebar.getData(panel).isClosed) {
+					sidebar.toggle(panel);
+				} else {
+					sidebar.setWidth(panel, false, w, true);
+				};
 			} else {
 				sidebar.toggle(panel, subPage);
 			};
@@ -208,69 +220,55 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	}));
 
 	return (
-		<>
-			<Icon 
-				id="sidebarLeftButton"
-				className="toggle sidebarHeadIcon withBackground"
-				tooltipParam={{ 
-					text: translate('popupShortcutMainBasics15'), 
-					caption: keyboard.getCaption('toggleSidebar'), 
-					typeY: I.MenuDirection.Bottom,
-				}}
-				onClick={() => sidebar.leftPanelToggle()}
-				onMouseDown={e => e.stopPropagation()}
-			/>
-
-			<div 
-				ref={nodeRef}
-				id="sidebarLeft" 
-				className={cn.join(' ')} 
-			>
-				<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
-					{Component ? (
-						<div id={pageId} className={getClassName(componentId)}>
-							<Component 
-								ref={pageRef} 
-								page={componentId}
-								{...props} 
-								getId={() => pageId}
-								sidebarDirection={I.SidebarDirection.Left}
-							/> 
-						</div>
-					) : ''}
-					<div 
-						className="resize-h" 
-						draggable={true} 
-						onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
-						onClick={() => onHandleClick(I.SidebarPanel.Left)}
-					>
-						<div className="resize-handle" />
+		<div 
+			ref={nodeRef}
+			id="sidebarLeft" 
+			className={cn.join(' ')} 
+		>
+			<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
+				{Component ? (
+					<div id={pageId} className={getClassName(componentId)}>
+						<Component 
+							ref={pageRef} 
+							page={componentId}
+							{...props} 
+							getId={() => pageId}
+							sidebarDirection={I.SidebarDirection.Left}
+						/> 
 					</div>
-				</div>
-				
-				<div id="subPageWrapper" ref={subPageWrapperRef} className="subPageWrapper">
-					{SubComponent ? (
-						<div id={subPageId} className={getClassName(subComponentId)}>
-							<SubComponent 
-								ref={subPageRef} 
-								page={subComponentId}
-								{...props} 
-								getId={() => subPageId}
-								sidebarDirection={I.SidebarDirection.Left}
-							/> 
-						</div>
-					) : ''}
-					<div 
-						className="resize-h" 
-						draggable={true} 
-						onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}
-						onClick={() => onHandleClick(I.SidebarPanel.SubLeft)}
-					>
-						<div className="resize-handle" />
-					</div>
+				) : ''}
+				<div 
+					className="resize-h" 
+					draggable={true} 
+					onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
+					onClick={() => onHandleClick(I.SidebarPanel.Left)}
+				>
+					<div className="resize-handle" />
 				</div>
 			</div>
-		</>
+			
+			<div id="subPageWrapper" ref={subPageWrapperRef} className="subPageWrapper">
+				{SubComponent ? (
+					<div id={subPageId} className={getClassName(subComponentId)}>
+						<SubComponent 
+							ref={subPageRef} 
+							page={subComponentId}
+							{...props} 
+							getId={() => subPageId}
+							sidebarDirection={I.SidebarDirection.Left}
+						/> 
+					</div>
+				) : ''}
+				<div 
+					className="resize-h" 
+					draggable={true} 
+					onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}
+					onClick={() => onHandleClick(I.SidebarPanel.SubLeft)}
+				>
+					<div className="resize-handle" />
+				</div>
+			</div>
+		</div>
 	);
 
 }));

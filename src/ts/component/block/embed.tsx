@@ -23,7 +23,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
 	const { width, type } = fields || {};
-	const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 	const text = String(content.text || '');
 	const css: any = {};
@@ -126,6 +126,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		timeoutScrollRef.current = window.setTimeout(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const node = $(nodeRef.current);
+			if (!node.length) {
+				return;
+			};
+
 			const ch = container.height();
 			const st = container.scrollTop();
 			const rect = node.get(0).getBoundingClientRect() as DOMRect;
@@ -237,7 +241,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const data = e.clipboardData || e.originalEvent.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
-		const value = U.Common.stringInsert(getValue(), text, range.from, range.to);
+		const value = U.String.insert(getValue(), text, range.from, range.to);
 
 		const cb = () => {
 			setValue(value);
@@ -308,10 +312,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					let text = item.symbol || item.comment;
 
 					if (isTemplate) {
-						text = ' ' + text;
+						text = ` ${text}`;
 					};
 
-					const value = U.Common.stringInsert(getValue(), text, from, to);
+					const value = U.String.insert(getValue(), text, from, to);
 
 					to += text.length;
 
@@ -538,7 +542,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					});
 				} catch (e) {
 					if (e instanceof katex.ParseError) {
-						html = `<div class="error">Error in LaTeX '${U.Common.htmlSpecialChars(text)}': ${U.Common.htmlSpecialChars(e.message)}</div>`;
+						html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(e.message)}</div>`;
 					} else {
 						console.error(e);
 					};
@@ -770,8 +774,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		);
 	} else {
 		source = <Icon className="source" onMouseDown={onEdit} />;
-		placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-		empty = !text && !allowEmptyContent ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
+		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
 		if (!isShowing && text && !U.Embed.allowAutoRender(processor)) {
 			cn.push('withPreview');

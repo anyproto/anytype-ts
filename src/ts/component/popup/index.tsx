@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
@@ -14,7 +14,6 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupExport from './export';
-import PopupMigration from './migration';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
@@ -24,7 +23,6 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
-import PopupMembership from './membership';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -44,7 +42,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
-		return U.Common.toCamelCase('popup-' + id);
+		return U.String.toCamelCase(`popup-${id}`);
 	};
 
 	const storageGet = () => {
@@ -153,7 +151,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		shortcut:				 PopupShortcut,
 		page:					 PopupPage,
 		export:					 PopupExport,
-		migration:				 PopupMigration,
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,
@@ -163,7 +160,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
-		membership: 		 	 PopupMembership,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
@@ -189,7 +185,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 	
 	if (!Component) {
-		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+		return <div>{U.String.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 	};
 
 	let dimmer = null;

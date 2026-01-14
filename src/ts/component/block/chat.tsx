@@ -2,11 +2,11 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
+import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
 
 interface RefProps {
@@ -15,6 +15,7 @@ interface RefProps {
 	onDragOver: (e: DragEvent) => void;
 	onDragLeave: (e: DragEvent) => void;
 	onDrop: (e: DragEvent) => void;
+	getFormRef: () => any;
 };
 
 const GROUP_TIME = 300;
@@ -24,7 +25,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
 	const scrollWrapperRef = useRef(null);
@@ -41,6 +41,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
 	const namespace = U.Common.getEventNamespace(isPopup);
+	const jumpIds = useRef([]);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -418,7 +419,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 					
 							U.Common.clipboardCopy({ 
-								text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
@@ -586,10 +587,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		scrolledItems.current.clear();
 	};
 
-	const onScrollToBottomClick = () => {
-		loadMessages(1, true, () => scrollToBottom(true));
-	};
-
 	const getMessageScrollOffset = (id: string): number => {
 		const ref = messageRefs.current[id];
 		if (!ref) {
@@ -753,6 +750,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 	};
 
+	const onScrollToBottomClick = () => {
+		if (jumpIds.current.length) {
+			const idx = jumpIds.current.length - 1;
+
+			scrollToMessage(jumpIds.current[idx], true, true);
+			jumpIds.current.splice(idx, 1);
+		} else {
+			loadMessages(1, true, () => scrollToBottom(true));
+		};
+	};
+
 	const onReplyEdit = (e: MouseEvent, message: any) => {
 		formRef.current.onReply(message);
 		scrollToBottomCheck();
@@ -766,6 +774,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (message) {
 			scrollToMessage(message.id, true, true);
+			jumpIds.current.push(item.id);
 			return;
 		};
 
@@ -780,7 +789,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const reply = message.messages[0];
 
 			S.Chat.clear(subId);
-			loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
+			loadMessagesByOrderId(reply.orderId, () => {
+				window.setTimeout(() => {
+					scrollToMessage(reply.id, true, true);
+				}, 30);
+			});
 		});
 	};
 
@@ -788,7 +801,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const subId = getSubId();
 		const { creator, content } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
-		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+		const title = U.String.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 		const length = attachments.length;
@@ -799,7 +812,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		let isMultiple: boolean = false;
 
 		if (content.text) {
-			text = U.Common.sanitize(Mark.toHtml(content.text, content.marks));
+			text = U.String.sanitize(Mark.toHtml(content.text, content.marks));
 			text = text.replace(/\n\r?/g, ' ');
 		};
 
@@ -856,6 +869,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
+
+		if (v) {
+			jumpIds.current = [];
+		};
 	};
 
 	const setAutoLoadDisabled = (v: boolean) => {
@@ -888,8 +905,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const init = () => {
-		const analyticsChatId = getAnalyticsChatId();
-
 		setLoaded(false);
 		loadState(() => {
 			const subId = getSubId();
@@ -930,10 +945,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				cb1(state.messageOrderId);
 			};
 		});
-
-		if (analyticsChatId) {
-			analytics.event('ScreenChat', { chatId: analyticsChatId });
-		};
 	};
 
 	const resize = () => {
@@ -957,35 +968,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	let content = null;
 	if (isEmpty) {
-		content = (
-			<div className="chatEmptyState">
-				<div className="inner">
-					<Title text={translate('blockChatEmptyTitle')} />
-					<div className="item">
-						<Icon className="infinity" />
-						<Label text={translate('blockChatEmptyItem1')} />
-					</div>
-					<div className="item">
-						<Icon className="wifi" />
-						<Label text={translate('blockChatEmptyItem2')} />
-					</div>
-					<div className="item">
-						<Icon className="key" />
-						<Label text={translate('blockChatEmptyItem3')} />
-					</div>
-					{(spaceview.isChat || spaceview.isOneToOne) ? (
-						<div className="buttons">
-							<Button 
-								onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-								text={translate('blockChatEmptyShareInviteLink')} 
-								className="c28" 
-								color="blank" 
-							/>
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
+		content = <Empty />;
 	} else {
 		content = (
 			<div className="scroll">
@@ -1032,6 +1015,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		const match = keyboard.getMatch(isPopup);
+	});
+
+	useEffect(() => {
 		rebind();
 		init();
 	}, [ rootId, space, chatId, analyticsChatId ]);
@@ -1053,6 +1040,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		onDragOver,
 		onDragLeave,
 		onDrop,
+		getFormRef: () => formRef.current,
 	}));
 
 	return (

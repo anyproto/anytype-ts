@@ -6,13 +6,13 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { I, U, S, keyboard, translate, analytics } from 'Lib';
-import { Icon, Switch } from 'Component';
+import { Icon, Button, Label } from 'Component';
 
-const HEIGHT = 28;
+const HEIGHT = 52;
 
 const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setActive, onKeyDown, position } = props;
+	const { param, getId, setActive, onKeyDown, position, close } = props;
 	const { data } = param;
 	const { readonly } = data;
 	const { widgetSections } = S.Common;
@@ -103,14 +103,12 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			return { ...it, ...param };
 		});
 
-		return [
-			{ id: '', name: translate('widgetManageSections'), isSection: true },
-		].concat(U.Menu.prepareForSelect(sections));
+		return U.Menu.prepareForSelect(sections);
 	};
 
 	const resize = () => {
-		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT + 16));
+		const obj = $(`#${getId()} .itemsWrapper`);
+		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT - 8));
 
 		obj.css({ height });
 		position();
@@ -131,6 +129,9 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		};
 		if (isDragging) {
 			cn.push('isDragging');
+		};
+		if (item.isHidden) {
+			cn.push('isHidden');
 		};
 
 		let content = null;
@@ -157,7 +158,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						<div className="name">{item.name}</div>
 					</span>
 					<Icon 
-						className={[ 'eye', (!item.isHidden ? 'on' : 'off') ].join(' ')} 
+						className={[ 'eye', (item.isHidden ? 'on' : 'off') ].join(' ')} 
 						onClick={e => onSwitch(item)} 
 					/>
 				</div>
@@ -190,6 +191,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		onSortEnd,
 	}), []);
 	
 	return (
@@ -197,24 +199,30 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			ref={nodeRef}
 			className="wrap"
 		>
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={onSortStart}
-				onDragEnd={onSortEnd}
-				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-			>
-				<SortableContext
-					items={items.map((item) => item.id)}
-					strategy={verticalListSortingStrategy}
+			<Label className="menuLabel" text={translate('widgetManageSections')} />
+
+			<div className="itemsWrapper">
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragStart={onSortStart}
+					onDragEnd={onSortEnd}
+					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
-					<div className="items">
-						{items.map(item => (
-							<Item key={item.id} {...item} />
-						))}
-					</div>
-				</SortableContext>
-			</DndContext>
+					<SortableContext
+						items={items.map((item) => item.id)}
+						strategy={verticalListSortingStrategy}
+					>
+						<div className="items">
+							{items.map(item => (
+								<Item key={item.id} {...item} />
+							))}
+						</div>
+					</SortableContext>
+				</DndContext>
+			</div>
+
+			<Button onClick={() => close()} color="accent" className="c40" text={translate('commonDone')} />
 		</div>
 	);
 

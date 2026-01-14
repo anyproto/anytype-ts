@@ -148,6 +148,7 @@ export interface ViewRelation {
 	includeTime?: boolean;
 	formulaType?: I.FormulaType;
 	align?: I.BlockHAlign;
+	relation?: any;
 };
 
 export interface ViewRef {
@@ -168,7 +169,6 @@ export interface ViewComponent {
 	isInline?: boolean;
 	isCollection?: boolean;
 	className?: string;
-	refCells?: any;
 	recordId?: string;
 	recordIdx?: number;
 	getRecord?(id: string): any;
@@ -232,6 +232,7 @@ export interface View {
 	coverRelationKey: string;
 	groupRelationKey: string;
 	endRelationKey: string;
+	wrapContent: boolean;
 	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;

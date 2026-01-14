@@ -37,6 +37,12 @@ contextBridge.exposeInMainWorld('Electron', {
 		return ret;
 	},
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
+	getTheme: () => ipcRenderer.sendSync('getTheme'),
+	getBgColor: () => ipcRenderer.sendSync('getBgColor'),
+	tabId: () => {
+		const arg = process.argv.find(arg => arg.startsWith('--tab-id='));
+		return arg ? arg.split('=')[1] : null;
+	},
 
 	currentWindow: () => getCurrentWindow(),
 	isFocused: () => getCurrentWindow().isFocused(),

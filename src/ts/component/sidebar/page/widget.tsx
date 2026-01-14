@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -28,9 +28,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
-		const recent = S.Record.getMeta(U.Subscription.getRecentSubId(), '').total;
-		const ret = [] as I.WidgetSection[];
 		const sections = U.Menu.widgetSections();
+		const { total } = S.Record.getMeta(J.Constant.subId.archived, '');
+		const ret = [] as I.WidgetSection[];
 
 		if (!spaceview.isChat && !spaceview.isOneToOne) {
 			const chats = U.Data.getWidgetChats();
@@ -47,6 +47,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		if (types.length) {
 			ret.push(I.WidgetSection.Type);
+		};
+
+		if (total > 0) {
+			ret.push(I.WidgetSection.Bin);
 		};
 
 		return sections.filter(it => ret.includes(it.id));
@@ -362,6 +366,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 	};
 
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
+
 	const onRecentlyOpen = () => {
 		S.Menu.open('searchObject', {
 			className: 'single fixed widthValue',
@@ -372,8 +387,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				noFilter: true,
 				noInfiniteLoading: true,
 				label: translate('widgetRecentOpen'),
+				withPlural: true,
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)).concat(I.ObjectLayout.Participant) },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 				],
 				sorts: [
@@ -393,7 +409,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		const section = `#${getId()} #section-${sectionId}`
+		const section = `#${getId()} #section-${sectionId}`;
 		const wrap = `${section} .nameWrap`;
 		const element = `${section} .buttons`;
 
@@ -424,12 +440,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		switch (sectionId) {
 			case I.WidgetSection.Unread:
 			case I.WidgetSection.Type:
-			case I.WidgetSection.RecentEdit: {
+			case I.WidgetSection.RecentEdit:
+			case I.WidgetSection.Bin: {
 
 				const idMap = {
 					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
 					[I.WidgetSection.Type]: J.Constant.widgetId.type,
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
+					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
 				};
 
 				blocks.push(new M.Block({ 
@@ -453,11 +471,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 					const target = child.getTargetObjectId();
 
-					if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
-						return false;
-					};
-
-					if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
+					if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat, J.Constant.widgetId.bin ].includes(target)) {
 						return false;
 					};
 
@@ -472,22 +486,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return true;
-				});
-
-				blocks.sort((a: I.Block, b: I.Block) => {
-					const c1 = getChild(a.id);
-					const c2 = getChild(b.id);
-
-					const t1 = c1?.getTargetObjectId();
-					const t2 = c2?.getTargetObjectId();
-
-					const isBin1 = t1 == J.Constant.widgetId.bin;
-					const isBin2 = t2 == J.Constant.widgetId.bin;
-
-					if (isBin1 && !isBin2) return 1;
-					if (!isBin1 && isBin2) return -1;
-
-					return 0;
 				});
 				break;
 			};
@@ -593,6 +591,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		head = (
 			<>
 				<div className="side left">
+					<Icon
+						className="vaultToggle withBackground"
+						onClick={() => sidebar.leftPanelToggle()}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
 					<Icon 
 						className="widgetPanel withBackground" 
 						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
@@ -604,6 +610,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					/>
 				</div>
 				<div className="side right">
+					<Sync id="headerSync" onClick={onSync} />
+
 					<Icon 
 						id="button-recently-open"
 						className="clock withBackground"
@@ -635,6 +643,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const isSectionUnread = section.id == I.WidgetSection.Unread;
+					const isSectionBin = section.id == I.WidgetSection.Bin;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
 					const ws: any = widgetSections.find(it => it.id == section.id) || {};
@@ -663,21 +672,31 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 									transition: { duration: 200, delay: i * 0.05 },
 								})}
 							>
-								<div 
-									className="nameWrap" 
-									onContextMenu={() => onSectionContext(section.id)}
-								>
-									<div className="name" onClick={() => onToggle(section.id)}>
-										<Icon className="arrow" />
-										{section.name}
+								{!isSectionBin ? (
+									<div 
+										className="nameWrap" 
+										onContextMenu={() => onSectionContext(section.id)}
+									>
+										<div className="name" onClick={() => onToggle(section.id)}>
+											<Icon className="arrow" />
+											{section.name}
+										</div>
+										<div className="buttons">
+											{buttons}
+										</div>
 									</div>
-									<div className="buttons">
-										{buttons}
-									</div>
-								</div>
+								) : ''}
 
 								{!ws?.isClosed ? (
-									<div className="items">
+									<div 
+										className="items" 
+										onContextMenu={e => {
+											if (isSectionBin) {
+												e.stopPropagation();
+												onSectionContext(section.id);
+											};
+										}}
+									>
 										{list.map((block, i) => (
 											<Widget
 												{...props}

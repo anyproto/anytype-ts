@@ -11,7 +11,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const [ isDeleted, setIsDeleted ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
-	const nodeRef = useRef(null);
+	const bodyRef = useRef(null);
 	const headerRef = useRef(null);
 	const headRef = useRef(null);
 	const controlsRef = useRef(null);
@@ -61,7 +61,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
@@ -113,7 +113,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			$(nodeRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
+			$(bodyRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
 		});
 
 		keyboard.shortcut('createObject', e, () => {
@@ -173,10 +173,9 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			const cover = node.find('.block.blockCover');
 			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
+			const cover = container.find('.block.blockCover');
 			const hh = isPopup ? header.height() : J.Size.header;
 
 			if (cover.length) {
@@ -261,22 +260,20 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	}));
 
 	return (
-		<div ref={nodeRef}>
+		<>
 			<Header 
 				{...props} 
-				component={U.Common.settingsHeader(isPopup, 'mainObject')} 
+				component="mainObject" 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>
 
-			<div id="bodyWrapper" className="wrapper">
-				<div className={[ 'editorWrapper', check.className ].join(' ')}>
-					{content}
-				</div>
+			<div ref={bodyRef} className={[ 'editorWrapper', check.className ].join(' ')}>
+				{content}
 			</div>
 
 			<Footer component="mainObject" {...props} />
-		</div>
+		</>
 	);
 
 }));

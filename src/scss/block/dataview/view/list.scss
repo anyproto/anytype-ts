@@ -4,9 +4,10 @@
 	.block.blockDataview {
 		.dataviewControls.viewList::after { left: 16px; width: calc(100% - 16px); }
 
-		.viewContent.viewList { padding: 8px 0px 80px 0px; }
+		.viewContent.viewList { padding: 8px 0px 0px 0px; }
 		.viewContent.viewList {
-			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
+			.ReactVirtualized__List { overflow: visible !important; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
 		    .row { 
 				height: 28px !important; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; 

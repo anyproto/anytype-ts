@@ -14,7 +14,8 @@ const HEIGHT_DIV = 12;
 const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
-	const { membership } = S.Auth;
+	const { data } = S.Membership;
+	const product = data?.getTopProduct();
 	const { space, isOnline } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const profile = U.Space.getProfile();
@@ -38,66 +39,78 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	};
 
 	const getSpaceSettings = () => {
-		const { error, notSyncedCounter } = S.Auth.getSyncStatus();
-		
-		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
-		const importExport = [{
-			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
-			subPages: [ 'exportProtobuf', 'exportMarkdown' ]
-		}];
+		const map = U.Menu.settingsSectionsMap();
+		const { notSyncedCounter } = S.Auth.getSyncStatus();
+		const importExport = [
+			{ id: 'exportIndex', icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+		];
 
 		if (canWrite) {
-			importExport.unshift({
-				id: 'importIndex', icon: 'import', name: translate('commonImport'),
-				subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ]
-			});
+			importExport.unshift({ id: 'importIndex', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
 		};
 
 		return [
 			{
-				id: 'common', name: translate('commonPreferences'),
-				children: [
-					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
-					(spaceview.isPersonal || spaceview.isOneToOne) ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
-					{ id: 'spaceNotifications', icon: 'notifications', name: translate('commonNotifications') },
-					{ id: 'spaceStorage', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
-					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
-				].filter(it => it),
+				id: 'common', name: translate('commonPreferences'), children: [
+					{ id: 'spaceIndex', icon: 'space' },
+					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members' },
+					{ id: 'spaceNotifications', icon: 'notifications' },
+					{ id: 'spaceStorage', icon: 'storage', alert: notSyncedCounter },
+					{ id: 'archive', icon: 'bin' },
+				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
-					{ id: 'types', icon: 'type', name: U.Common.plural(10, translate('pluralObjectType')) },
-					{ id: 'relations', icon: 'relation', name: U.Common.plural(10, translate('pluralProperty')) },
+					{ id: 'types', icon: 'type' },
+					{ id: 'relations', icon: 'relation' },
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-		];
+		].map(s => {
+			s.children = s.children.filter(it => it).map((c: any) => {
+				c.name = map[c.id];
+				return c;
+			});
+			return s;
+		});
 	};
 
 	const getAppSettings = () => {
+		const map = U.Menu.settingsSectionsMap();
+
 		return [
-			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
+			{ 
+				id: 'account', children: [ 
+					{ id: 'account' },
+				],
+			},
 			{
 				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
-					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
-					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					{ id: 'personal' },
+					{ id: 'language' },
+					{ id: 'pinIndex', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				],
 			},
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
-					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null,
-				].filter(it => it),
+					{ id: 'phrase', subPages: [ 'delete' ] },
+					withMembership ? { id: 'membership', icon: 'membership' } : null,
+				],
 			},
 			{
 				id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), children: [
-					{ id: 'dataIndex', name: translate('popupSettingsLocalStorageTitle'), icon: 'storage' },
-					{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
-					{ id: 'dataPublish', name: translate('popupSettingsDataManagementDataPublishTitle'), icon: 'sites' },
-					{ id: 'api', name: translate('popupSettingsApiTitle'), icon: 'api' },
+					{ id: 'dataIndex', icon: 'storage' },
+					{ id: 'spaceList', icon: 'spaces' },
+					{ id: 'dataPublish', icon: 'sites' },
+					{ id: 'api', icon: 'api' },
 				],
 			},
-		];
+		].map(s => {
+			s.children = s.children.filter(it => it).map((c: any) => {
+				c.name = map[c.id];
+				return c;
+			});
+			return s;
+		});
 	};
 
 	const getItems = () => {
@@ -151,7 +164,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			U.Space.openDashboard();
 			S.Common.setLeftSidebarState('vault', 'widget');
 		} else {
-			sidebar.leftPanelSubPageClose(true);
+			U.Router.go('/main/void/select', { replace: true });
 		};
 	};
 
@@ -216,15 +229,13 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			};
 
 			if (item.id == 'membership') {
-				if (!membership.isNone) {
-					const tierItem = U.Data.getMembershipTier(membership.tier);
-					caption = tierItem?.name;
-				} else {
+				if (!product || product.isIntro) {
 					caption = translate(`commonJoin`);
 					ccn.push('join');
+				} else {
+					caption = product.name;
 				};
-			};
-
+			} else
 			if (item.alert) {
 				caption = item.alert;
 				ccn.push('alert');

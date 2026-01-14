@@ -44,6 +44,7 @@ class MenuStore {
 			this.menuList.push({ id, param });
 		};
 
+		U.Data.updateTabsDimmer();
 		Preview.previewHide(true);
 	};
 
@@ -172,7 +173,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : J.Constant.delay.menu;
-		const el = $(`#${U.Common.toCamelCase(`menu-${id}`)}`);
+		const el = $(`#${U.String.toCamelCase(`menu-${id}`)}`);
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -183,8 +184,11 @@ class MenuStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 
+		const filtered = this.menuList.filter(it => it.id != id);
+		U.Data.updateTabsDimmer(null, filtered);
+
 		const onTimeout = () => {
-			this.menuList = this.menuList.filter(it => it.id != id);
+			this.menuList = filtered;
 
 			onClose?.();
 			callBack?.();
@@ -331,7 +335,7 @@ class MenuStore {
 	 */
 	resizeAll () {
 		const win = $(window);
-		this.list.forEach(it => win.trigger(`resize.${U.Common.toCamelCase(`menu-${it.id}`)}`));
+		this.list.forEach(it => win.trigger(`resize.${U.String.toCamelCase(`menu-${it.id}`)}`));
 	};
 
 };

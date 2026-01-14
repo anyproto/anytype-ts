@@ -1,326 +1,43 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
-import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, ObjectName } from 'Component';
+import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 
-const TIMEOUT = 1000;
+const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
+	const { param, setHover, close, onKeyDown, setActive, getId, getSize } = props;
+	const { data, className, classNameWrap } = param;
+	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget } = data;
+	const { config } = S.Common;
+	const nodeRef = useRef(null);
+	const selectRef = useRef(null);
+	const inputRef = useRef(null);
+	const range = useRef(null);
+	const n = useRef(-1);
+	const timeout = useRef(0);
+	const [ dummy, setDummy ] = useState(0);
 
-	node: any = null;
-	timeoutChange = 0;
-	refInput = null;
-	refSelect = null;
-	range: any = null;
-	n = -1;
+	useEffect(() => {
+		init();
+		rebind();
 
-	constructor (props: I.Menu) {
-		super(props);
+		return () => {
+			unbind();
+			S.Menu.closeAll(J.Menu.cell);
+			window.clearTimeout(timeout.current);
+		};
+	}, []);
 
-		this.rebind = this.rebind.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onFocusText = this.onFocusText.bind(this);
-		this.onFocusDate = this.onFocusDate.bind(this);
-		this.onSubmitDate = this.onSubmitDate.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onObject = this.onObject.bind(this);
-		this.onTag = this.onTag.bind(this);
-		this.onClear = this.onClear.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onSelectClose = this.onSelectClose.bind(this);
-		this.onValueHover = this.onValueHover.bind(this);
-	};
-
-	render () {
-		const { param, setHover } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, getView, itemId } = data;
-
+	useEffect(() => {
 		const view = getView();
-		if (!view) {
-			return null;
-		};
-
-		const item = view.getFilter(itemId);
-		if (!item) {
-			return null;
-		};
-
-		const isReadonly = this.isReadonly();
-		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
-		const relationOptions = this.getRelationOptions();
-		const conditionOptions = Relation.filterConditionsByType(relation.format);
-		const checkboxOptions: I.Option[] = [
-			{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
-			{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
-		];
-		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
-		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
-		const items = this.getItems();
-		const selectParam = {
-			width: 260,
-			isSub: true,
-			noScroll: true,
-			noVirtualisation: true,
-			onClose: this.onSelectClose,
-			className,
-			classNameWrap,
-		};
-
-		let wrapValue = false;
-		let value = null;
-		let Item = null;
-		let list = [];
-		let onSubmit = e => this.onSubmit(e);
-
-		const ItemAdd = (item: any) => (
-			<div 
-				id="item-add" 
-				className="item add" 
-				onClick={item.onClick} 
-				onMouseEnter={() => { 
-					S.Menu.close('select', () => {
-						window.setTimeout(() => setHover({ id: 'add' }), 35);
-					});
-				}}
-			>
-				<Icon className="plus" />
-				<div className="name">{translate('commonAdd')}</div>
-			</div>
-		);
-
-		switch (relation.format) {
-
-			case I.RelationType.MultiSelect:
-			case I.RelationType.Select: {
-				Item = (element: any) => {
-					return (
-						<div 
-							id={`item-tag-${element.id}`} 
-							className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
-							onMouseEnter={() => {
-								S.Menu.close('select'); 
-								setHover({ id: `tag-${element.id}` }); 
-							}}
-						>
-							<div className="clickable" onClick={this.onTag}>
-								<Tag
-									text={element.name}
-									color={element.color}
-									className={Relation.selectClassName(relation.format)} 
-								/>
-							</div>
-							<div className="buttons">
-								<Icon className="delete" onClick={e => this.onDelete(e, element)} />
-							</div>
-						</div>
-					);
-				};
-
-				list = Relation.getOptions(item.value);
-
-				value = (
-					<>
-						{!isReadonly ? <ItemAdd onClick={this.onTag} /> : ''}
-						{list.map(element => <Item key={element.id} {...element} />)}
-					</>
-				);
-				break;
-			};
-			
-			case I.RelationType.File:
-			case I.RelationType.Object: {
-				Item = (element: any) => {	
-					const type = S.Record.getTypeById(element.type);
-
-					let icon = null;
-					if (element.icon) {
-						icon = <Icon className={element.icon} />;
-					} else {
-						icon = <IconObject object={element} />;
-					};
-
-					return (
-						<div 
-							id={`item-object-${element.id}`} 
-							className={[ 'item', 'withCaption', (isReadonly ? 'isReadonly' : '') ].join(' ')}
-							onMouseEnter={() => setHover({ id: `object-${element.id}` })}
-						>
-							<div className="clickable" onClick={e => this.onObject(e, item)}>
-								{icon}
-								<ObjectName object={element} />
-							</div>
-							<div className="caption">
-								{type?.name}
-							</div>
-							<div className="buttons">
-								<Icon className="delete withBackground" onClick={e => this.onDelete(e, element)} />
-							</div>
-						</div>
-					);
-				};
-
-				list = Relation.getArrayValue(item.value).map(it => Relation.getFilterTemplateOption(it) || S.Detail.get(rootId, it, []));
-				list = list.filter(it => !it._empty_);
-
-				value = (
-					<>
-						{!isReadonly ? <ItemAdd onClick={e => this.onObject(e, item)} /> : ''}
-						{list.map((item: any, i: number) => <Item key={i} {...item} />)}
-					</>
-				);
-				break;
-			};
-
-			case I.RelationType.Checkbox: {
-				value = (
-					<Select 
-						id={[ 'filter', 'checkbox', item.id ].join('-')} 
-						ref={ref => this.refSelect = ref}
-						className="checkboxValue" 
-						arrowClassName="light"
-						options={checkboxOptions} 
-						value={item.value ? '1' : '0'}
-						onChange={v => this.onChange('value', Boolean(Number(v)), true)} 
-						menuParam={selectParam}
-						readonly={isReadonly}
-					/>
-				);
-				wrapValue = true;
-				break;
-			};
-
-			case I.RelationType.Date: {
-				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
-					value = (
-						<>
-							<Input 
-								key="filter-value-date-days-input"
-								ref={ref => this.refInput = ref} 
-								value={item.value} 
-								placeholder={translate('commonValue')} 
-								onFocus={this.onFocusText}
-								onKeyUp={(e: any, v: string) => this.onChange('value', v, true)} 
-								onSelect={this.onSelect}
-								readonly={isReadonly}
-							/>
-							<Icon className="clear" onClick={this.onClear} />
-						</>
-					);
-				} else
-				if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
-					value = (
-						<>
-							<Input 
-								key="filter-value-date-exact-input"
-								ref={ref => this.refInput = ref} 
-								value={item.value !== null ? U.Date.date('d.m.Y H:i:s', item.value) : ''} 
-								placeholder="dd.mm.yyyy hh:mm:ss"
-								maskOptions={{ mask: '99.99.9999 99:99:99' }}
-								onFocus={this.onFocusDate}
-								onSelect={this.onSelect}
-								readonly={isReadonly}
-							/>
-							<Icon className="clear" onClick={this.onClear} />
-						</>
-					);
-					onSubmit = this.onSubmitDate;
-				};
-				wrapValue = true;
-				break;
-			};
-
-			default: {
-				value = (
-					<>
-						<Input 
-							ref={ref => this.refInput = ref} 
-							value={item.value} 
-							placeholder={translate('commonValue')} 
-							onFocus={this.onFocusText}
-							onKeyUp={(e: any, v: string) => this.onChange('value', v, true)} 
-							onSelect={this.onSelect}
-							readonly={isReadonly}
-						/>
-						<Icon className="clear" onClick={this.onClear} />
-					</>
-				);
-				wrapValue = true;
-				break;
-			};
-		};
-
-		if (Relation.isDictionary(item.relationKey)) {
-			value = (
-				<Select 
-					id={[ 'filter', 'dictionary', item.id ].join('-')} 
-					ref={ref => this.refSelect = ref}
-					className="checkboxValue" 
-					arrowClassName="light"
-					options={Relation.getDictionaryOptions(item.relationKey)} 
-					value={item.value}
-					onChange={v => this.onChange('value', Number(v), true)} 
-					menuParam={selectParam}
-					readonly={isReadonly}
-				/>
-			);
-			wrapValue = true;
-		};
-
-		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
-			value = null;
-		};
-
-		if (value && wrapValue) {
-			value = (
-				<div 
-					id="item-value" 
-					className="item" 
-					onMouseEnter={this.onValueHover}
-				>
-					{value}
-				</div>
-			);
-		};
-
-		return (
-			<div ref={ref => this.node = ref}>
-				<div className="section">
-					{items.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} onMouseEnter={e => this.onOver(e, item)} readonly={isReadonly} />
-					))}
-				</div>
-
-				{value ? (
-					<div className="section">
-						<form id="value" onSubmit={onSubmit}>
-							{value}
-						</form>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this.init();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
-		const view = getView();
-
 		if (!view) {
 			return;
 		};
 
-		this.init();
-		this.props.setActive();
+		init();
+		setActive();
 
 		const item = view.getFilter(itemId);
 		if (!item) {
@@ -329,49 +46,40 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
-		if (!relation || !this.refInput) {
+		if (!relation || !inputRef.current) {
 			return;
 		};
 
 		const isDate = Relation.isDate(relation.format);
 
-		if (this.refInput.setValue) {
+		if (inputRef.current.setValue) {
 			if (isDate) {
 				if (item.quickOption == I.FilterQuickOption.ExactDate) {
-					this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
+					inputRef.current.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
 				} else {
-					this.refInput.setValue(item.value);
+					inputRef.current.setValue(item.value);
 				};
 			} else {
-				this.refInput.setValue(item.value);
+				inputRef.current.setValue(item.value);
 			};
 		};
 
-		if (this.range && this.refInput.setRange && !isDate) {
-			this.refInput.setRange(this.range);
+		if (range.current && !isDate) {
+			inputRef.current?.setRange?.(range.current);
 		};
-	};
+	});
 
-	componentWillUnmount () {
-		this.unbind();
-
-		S.Menu.closeAll(J.Menu.cell);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	init () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
+	const init = () => {
 		const view = getView();
 		if (!view) {
 			return;
@@ -379,16 +87,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		const item = view.getFilter(itemId);
 		if (item) {
-			this.checkClear(item.value);
+			checkClear(item.value);
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
+	const getItems = () => {
 		const view = getView();
-
 		if (!view) {
 			return [];
 		};
@@ -399,7 +103,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
-		const relationOptions = this.getRelationOptions();
+		const relationOptions = getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		const filterQuickOptions = Relation.filterQuickOptions(relation.format, item.condition);
 		
@@ -430,13 +134,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		return ret;
 	};
 
-	onOver (e: any, item: any) {
-		const { id, getId, getSize, setActive, param } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, getView, itemId } = data;
+	const onOver = (e: any, item: any) => {
 		const view = getView();
 		const filter = view.getFilter(itemId);
-		const isReadonly = this.isReadonly();
 
 		if (isReadonly || S.Menu.isAnimating('select')) {
 			return;
@@ -462,7 +162,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				blockId,
 				getView,
 				onSelect: (item) => {
-					this.onChange('relationKey', item.relationKey ? item.relationKey : item.id);
+					onChange('relationKey', item.relationKey ? item.relationKey : item.id);
 				}
 			});
 			return;
@@ -488,25 +188,22 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
 				...menuParam,
-				rebind: this.rebind,
-				parentId: id,
+				rebind,
+				parentId: props.id,
 				data: {
 					noFilter: true,
 					noVirtualisation: true,
 					value: item[item.id],
 					options,
 					onSelect: (e: any, el: any) => {
-						this.onChange(item.id, el.id);
+						onChange(item.id, el.id);
 					}
 				}
 			});
 		});
 	};
 
-	onChange (k: string, v: any, timeout?: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId, save, isInline, getTarget } = data;
+	const onChange = (k: string, v: any, withTimeout?: boolean) => {
 		const view = getView();
 		const object = getTarget();
 
@@ -524,10 +221,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		this.checkClear(v);
+		checkClear(v);
 
-		window.clearTimeout(this.timeoutChange);
-		this.timeoutChange = window.setTimeout(() => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
 			item = U.Common.objectCopy(item);
 			item[k] = v;
 
@@ -571,17 +268,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			});
 
 			save();
-			this.forceUpdate();
-		}, timeout ? TIMEOUT : 0);
+			setDummy(dummy + 1);
+		}, withTimeout ? 1000 : 0);
 	};
 
-	onDelete (e: any, element: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
+	const onDelete = (e: any, element: any) => {
 		const view = getView();
-		
 		const item = view.getFilter(itemId);
+
 		if (!item) {
 			return;
 		};
@@ -590,42 +284,34 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		value = value.filter(it => it != element.id);
 		value = U.Common.arrayUnique(value);
 
-		this.onChange('value', value);
+		onChange('value', value);
 	};
 
-	onSubmit (e: any) {
+	const onSubmitHandler = (e: any) => {
 		e.preventDefault();
 
-		const { param, close } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
-
-		getView().setFilter({ id: itemId, value: this.refInput.getValue() });
+		getView().setFilter({ id: itemId, value: inputRef.current.getValue() });
 		close();
 	};
 
-	onSubmitDate (e: any) {
+	const onSubmitDate = (e: any) => {
 		e.preventDefault();
 
-		const value = U.Date.parseDate(this.refInput.getValue());
+		const value = U.Date.parseDate(inputRef.current.getValue());
 		
-		this.onChange('value', value);
-		this.onCalendar(value);
+		onChange('value', value);
+		onCalendar(value);
 	};
 
-	onFocusText () {
+	const onFocusText = () => {
 		S.Menu.close('select');
 	};
 
-	onFocusDate (e: any) {
-		const isReadonly = this.isReadonly();
+	const onFocusDate = (e: any) => {
 		if (isReadonly) {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const value = item.value || U.Date.now();
 
@@ -633,22 +319,19 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (S.Menu.isOpen('calendar')) {
 				S.Menu.updateData('calendar', { value });
 			} else {
-				this.onCalendar(value);
+				onCalendar(value);
 			};
 		});
 	};
 
-	onSelect (e: any) {
-		this.range = {
+	const onSelect = (e: any) => {
+		range.current = {
 			from: e.currentTarget.selectionStart,
 			to: e.currentTarget.selectionEnd,
 		};
 	};
 
-	onCalendar (value: number) {
-		const { id, getId, param } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { getView, itemId } = data;
+	const onCalendar = (value: number) => {
 		const item = getView().getFilter(itemId);
 
 		S.Menu.open('calendar', {
@@ -656,28 +339,24 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			classNameWrap,
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
-			rebind: this.rebind,
-			parentId: id,
+			rebind,
+			parentId: props.id,
 			data: { 
 				value, 
 				canEdit: true,
 				relationKey: item.relationKey,
 				onChange: (value: number) => {
-					this.onChange('value', value);
+					onChange('value', value);
 				},
 			},
 		});
 	};
 
-	onTag () {
-		const isReadonly = this.isReadonly();
+	const onTag = () => {
 		if (isReadonly) {
 			return;
 		};
 
-		const { id, param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
@@ -689,8 +368,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				rebind: this.rebind,
-				parentId: id,
+				rebind,
+				parentId: props.id,
 				data: { 
 					rootId: rootId,
 					blockId: blockId,
@@ -698,22 +377,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					relation: observable.box(relation),
 					canAdd: true,
 					canEdit: true,
-					onChange: value => this.onChange('value', value),
+					onChange: value => onChange('value', value),
 				},
 			});
 		});
 	};
 
-	onObject (e: any, item: any) {
-		const isReadonly = this.isReadonly();
+	const onObject = (e: any, item: any) => {
 		if (isReadonly) {
 			return;
 		};
 
-		const { config } = S.Common;
-		const { id, param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId } = data;
 		const relation = S.Record.getRelationByKey(item.relationKey);
 		const filters = [];
 
@@ -729,8 +403,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				rebind: this.rebind,
-				parentId: id,
+				rebind,
+				parentId: props.id,
 				data: { 
 					rootId,
 					blockId,
@@ -754,7 +428,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						return templates.concat(items);
 					},
 					onChange: (value: any, callBack?: () => void) => {
-						this.onChange('value', value);
+						onChange('value', value);
 						callBack?.();
 					},
 				},
@@ -762,48 +436,314 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		});
 	};
 
-	getRelationOptions () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-
+	const getRelationOptions = () => {
 		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
-	checkClear (v: any) {
-		$(this.node).find('.icon.clear').toggleClass('active', v);
+	const checkClear = (v: any) => {
+		$(nodeRef.current).find('.icon.clear').toggleClass('active', v);
 	};
 
-	onClear (e: any) {
+	const onClear = (e: any) => {
 		e.stopPropagation();
 
-		this.range = null;
-		this.onChange('value', null);
+		range.current = null;
+		onChange('value', null);
 	};
 
-	onValueHover (e: React.MouseEvent) {
+	const onValueHover = (e: React.MouseEvent) => {
 		e.persist();
 
 		S.Menu.closeAll([ 'select' ], () => {
-			this.refSelect?.show(e);
-
-			window.setTimeout(() => this.props.setHover({ id: 'value' }), 35);
+			selectRef.current?.show(e);
+			window.setTimeout(() => setHover({ id: 'value' }), 35);
 		});
 	};
 
-	onSelectClose () {
-		this.props.setHover();
+	const onSelectClose = () => {
+		setHover();
 	};
 
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, readonly } = data;
-		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
-		return readonly || !allowedView;
+	const view = getView();
+	if (!view) {
+		return null;
 	};
 
-});
+	const item = view.getFilter(itemId);
+	if (!item) {
+		return null;
+	};
+
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
+	const relationOptions = getRelationOptions();
+	const conditionOptions = Relation.filterConditionsByType(relation.format);
+	const checkboxOptions: I.Option[] = [
+		{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
+		{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
+	];
+	const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
+	const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
+	const items = getItems();
+	const selectParam = {
+		width: 260,
+		isSub: true,
+		noScroll: true,
+		noVirtualisation: true,
+		onClose: onSelectClose,
+		className,
+		classNameWrap,
+	};
+
+	let wrapValue = false;
+	let value = null;
+	let Item = null;
+	let list = [];
+	let onSubmit = e => onSubmitHandler(e);
+
+	const ItemAdd = (item: any) => (
+		<div 
+			id="item-add" 
+			className="item add" 
+			onClick={item.onClick} 
+			onMouseEnter={() => { 
+				S.Menu.close('select', () => {
+					window.setTimeout(() => setHover({ id: 'add' }), 35);
+				});
+			}}
+		>
+			<Icon className="plus" />
+			<div className="name">{translate('commonAdd')}</div>
+		</div>
+	);
+
+	switch (relation.format) {
+
+		case I.RelationType.MultiSelect:
+		case I.RelationType.Select: {
+			Item = (element: any) => {
+				return (
+					<div 
+						id={`item-tag-${element.id}`} 
+						className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
+						onMouseEnter={() => {
+							S.Menu.close('select'); 
+							setHover({ id: `tag-${element.id}` }); 
+						}}
+					>
+						<div className="clickable" onClick={onTag}>
+							<Tag
+								text={element.name}
+								color={element.color}
+								className={Relation.selectClassName(relation.format)} 
+							/>
+						</div>
+						<div className="buttons">
+							<Icon className="delete" onClick={e => onDelete(e, element)} />
+						</div>
+					</div>
+				);
+			};
+
+			list = Relation.getOptions(item.value);
+
+			value = (
+				<>
+					{!isReadonly ? <ItemAdd onClick={onTag} /> : ''}
+					{list.map(element => <Item key={element.id} {...element} />)}
+				</>
+			);
+			break;
+		};
+		
+		case I.RelationType.File:
+		case I.RelationType.Object: {
+			Item = (element: any) => {	
+				const type = S.Record.getTypeById(element.type);
+
+				let icon = null;
+				if (element.icon) {
+					icon = <Icon className={element.icon} />;
+				} else {
+					icon = <IconObject object={element} />;
+				};
+
+				return (
+					<div 
+						id={`item-object-${element.id}`} 
+						className={[ 'item', 'withCaption', (isReadonly ? 'isReadonly' : '') ].join(' ')}
+						onMouseEnter={() => setHover({ id: `object-${element.id}` })}
+					>
+						<div className="clickable" onClick={e => onObject(e, item)}>
+							{icon}
+							<div className="name">{element.name}</div>
+						</div>
+						<div className="caption">
+							{type?.name}
+						</div>
+						<div className="buttons">
+							<Icon className="delete withBackground" onClick={e => onDelete(e, element)} />
+						</div>
+					</div>
+				);
+			};
+
+			list = Relation.getArrayValue(item.value).map(it => Relation.getFilterTemplateOption(it) || S.Detail.get(rootId, it, []));
+			list = list.filter(it => !it._empty_);
+
+			value = (
+				<>
+					{!isReadonly ? <ItemAdd onClick={e => onObject(e, item)} /> : ''}
+					{list.map((item: any, i: number) => <Item key={i} {...item} />)}
+				</>
+			);
+			break;
+		};
+
+		case I.RelationType.Checkbox: {
+			value = (
+				<Select 
+					id={[ 'filter', 'checkbox', item.id ].join('-')} 
+					ref={ref => selectRef.current = ref}
+					className="checkboxValue" 
+					arrowClassName="light"
+					options={checkboxOptions} 
+					value={item.value ? '1' : '0'}
+					onChange={v => onChange('value', Boolean(Number(v)), true)} 
+					menuParam={selectParam}
+					readonly={isReadonly}
+				/>
+			);
+			wrapValue = true;
+			break;
+		};
+
+		case I.RelationType.Date: {
+			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
+				value = (
+					<>
+						<Input 
+							key="filter-value-date-days-input"
+							ref={ref => inputRef.current = ref} 
+							value={item.value} 
+							placeholder={translate('commonValue')} 
+							onFocus={onFocusText}
+							onKeyUp={(e: any, v: string) => onChange('value', v, true)} 
+							onSelect={onSelect}
+							readonly={isReadonly}
+						/>
+						<Icon className="clear" onClick={onClear} />
+					</>
+				);
+			} else
+			if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
+				value = (
+					<>
+						<Input 
+							key="filter-value-date-exact-input"
+							ref={ref => inputRef.current = ref} 
+							value={item.value !== null ? U.Date.date('d.m.Y H:i:s', item.value) : ''} 
+							placeholder="dd.mm.yyyy hh:mm:ss"
+							maskOptions={{ mask: '99.99.9999 99:99:99' }}
+							onFocus={onFocusDate}
+							onSelect={onSelect}
+							readonly={isReadonly}
+						/>
+						<Icon className="clear" onClick={onClear} />
+					</>
+				);
+				onSubmit = onSubmitDate;
+			};
+			wrapValue = true;
+			break;
+		};
+
+		default: {
+			value = (
+				<>
+					<Input 
+						ref={ref => inputRef.current = ref} 
+						value={item.value} 
+						placeholder={translate('commonValue')} 
+						onFocus={onFocusText}
+						onKeyUp={(e: any, v: string) => onChange('value', v, true)} 
+						onSelect={onSelect}
+						readonly={isReadonly}
+					/>
+					<Icon className="clear" onClick={onClear} />
+				</>
+			);
+			wrapValue = true;
+			break;
+		};
+	};
+
+	if (Relation.isDictionary(item.relationKey)) {
+		value = (
+			<Select 
+				id={[ 'filter', 'dictionary', item.id ].join('-')} 
+				ref={ref => selectRef.current = ref}
+				className="checkboxValue" 
+				arrowClassName="light"
+				options={Relation.getDictionaryOptions(item.relationKey)} 
+				value={item.value}
+				onChange={v => onChange('value', Number(v), true)} 
+				menuParam={selectParam}
+				readonly={isReadonly}
+			/>
+		);
+		wrapValue = true;
+	};
+
+	if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
+		value = null;
+	};
+
+	if (value && wrapValue) {
+		value = (
+			<div 
+				id="item-value" 
+				className="item" 
+				onMouseEnter={onValueHover}
+			>
+				{value}
+			</div>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => inputRef.current,
+		onOver,
+	}), []);
+
+	return (
+		<div ref={nodeRef}>
+			<div className="section">
+				{items.map((item: any, i: number) => (
+					<MenuItemVertical 
+						key={i} 
+						{...item} 
+						onMouseEnter={e => onOver(e, item)} 
+						readonly={isReadonly} 
+					/>
+				))}
+			</div>
+
+			{value ? (
+				<div className="section">
+					<form id="value" onSubmit={onSubmit}>
+						{value}
+					</form>
+				</div>
+			) : ''}
+		</div>
+	);
+	
+}));
 
 export default MenuDataviewFilterValues;

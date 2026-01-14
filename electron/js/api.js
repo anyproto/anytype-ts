@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow } = require('electron');
+const { app, shell, BrowserWindow, Notification } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -19,15 +19,21 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	token = '';
 	isPinChecked = false;
+	lastActivityTime = Date.now();
+	notificationCallbacks = new Map();
 
-	getInitData (win) {
-		const cssPath = path.join(Util.userPath(), 'custom.css');
-		const route = win.route || '';
-		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+	getInitData (win, tabId) {
+		let route = win.route || '';
 
 		win.route = '';
+
+		// Try to get route from active tab data
+		if (!route && tabId && win.views && (win.views.length > 0)) {
+			const tab = win.views.find(it => it.id == tabId);
+
+			route = tab?.data?.route || '';
+		};
 
 		return {
 			id: win.id,
@@ -38,8 +44,9 @@ class Api {
 			route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
-			css: String(css || ''),
-			token: this.token,
+			css: Util.getCss(),
+			activeIndex: win.activeIndex || 0,
+			isSingleTab: win.views && (win.views.length == 1),
 		};
 	};
 
@@ -59,24 +66,49 @@ class Api {
 		WindowManager.sendToAll('pin-remove');
 	};
 
+	paste (win) {
+		if (win && win.webContents && !win.isDestroyed()) {
+			win.webContents.paste();
+		};
+	};
+
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
+
+			// Update tab bar visibility if alwaysShowTabs changed
+			if ('alwaysShowTabs' in config) {
+				WindowManager.updateTabBarVisibility(win);
+			};
+
 			callBack?.();
 		});
 	};
 
-	setToken (win, token) {
-		this.token = token;
-	};
-
 	setPinChecked (win, isPinChecked) {
 		this.isPinChecked = isPinChecked;
+		if (isPinChecked) {
+			this.lastActivityTime = Date.now();
+		};
+	};
+
+	checkPinTimeout (win, pinTimeout) {
+		if (!this.isPinChecked || !pinTimeout) {
+			return;
+		};
+
+		const elapsed = Date.now() - this.lastActivityTime;
+		if (elapsed >= pinTimeout) {
+			this.isPinChecked = false;
+			this.pinCheck(win);
+		};
 	};
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
 		this.setBackground(win, theme);
+		
+		WindowManager.sendToAll('set-theme', Util.getTheme());
 	};
 
 	setBackground (win, theme) {
@@ -89,15 +121,17 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		win.webContents.setZoomLevel(zoom);
-		Util.send(win, 'zoom');
+		const view = win.views?.[win.activeIndex];
+		if (view && view.webContents) {
+			view.webContents.setZoomLevel(zoom);
+			Util.sendToActiveTab(win, 'zoom');
+		};
 		this.setConfig(win, { zoom });
 	};
 
 	setHideTray (win, show) {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
 			this.initMenu(win);
 		});
 	};
@@ -109,6 +143,24 @@ class Api {
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});
+	};
+
+	setAlwaysShowTabs (win, show) {
+		this.setConfig(win, { alwaysShowTabs: show }, () => {
+			WindowManager.updateTabBarVisibility(win);
+		});
+	};
+
+	setHardwareAcceleration (win, enabled) {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.set('disableHardwareAcceleration', !enabled);
+		this.setConfig(win, { hardwareAcceleration: enabled });
+
+		// Notify user that restart is required
+		Util.send(win, 'commandGlobal', 'hardwareAccelerationChanged', enabled);
 	};
 
 	spellcheckAdd (win, s) {
@@ -155,8 +207,12 @@ class Api {
 		WindowManager.command(win, cmd, param);
 	};
 
-	openWindow (win, route) {
-		WindowManager.createMain({ route, isChild: true });
+	openWindow (win, route, token) {
+		WindowManager.createMain({ route, token, isChild: true });
+	};
+
+	openTab (win, route) {
+		WindowManager.createTab(win, { route });
 	};
 
 	openUrl (win, url) {
@@ -355,6 +411,79 @@ class Api {
 
 	toggleFullScreen (win) {
 		win.setFullScreen(!win.isFullScreen());
+	};
+
+	createTab (win) {
+		WindowManager.createTab(win);
+	};
+
+	getTabs (win) {
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const hasMultipleTabs = win.views && win.views.length > 1;
+
+		return {
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
+			id: win.views[win.activeIndex || 0]?.id,
+			isVisible: alwaysShow || hasMultipleTabs,
+		};
+	};
+
+	setActiveTab (win, id) {
+		WindowManager.setActiveTab(win, id);
+	};
+
+	getTab (win, id) {
+		const view = (win.views || []).find(it => it.id == id);
+		return view ? { id: view.id, data: view.data } : null;
+	};
+
+	updateTab (win, id, data) {
+		WindowManager.updateTab(win, id, data);
+	};
+
+	removeTab (win, id, updateActive) {
+		WindowManager.removeTab(win, id, updateActive);
+	};
+
+	closeOtherTabs (win, id) {
+		WindowManager.closeOtherTabs(win, id);
+	};
+
+	reorderTabs (win, tabIds) {
+		WindowManager.reorderTabs(win, tabIds);
+	};
+
+	setTabsDimmer (win, show) {
+		Util.send(win, 'set-tabs-dimmer', show);
+	};
+
+	notification (win, param) {
+		const { title, text, cmd, payload } = param || {};
+
+		if (!text) {
+			return;
+		};
+
+		const notification = new Notification({
+			title: String(title || ''),
+			body: String(text || ''),
+		});
+
+		notification.on('click', () => {
+			this.focusWindow(win);
+
+			if (cmd) {
+				Util.sendToActiveTab(win, 'notification-callback', cmd, payload);
+			};
+		});
+
+		notification.show();
+	};
+
+	payloadBroadcast (win, payload) {
+		this.focusWindow(win);
+		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
 };

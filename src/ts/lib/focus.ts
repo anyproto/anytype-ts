@@ -38,6 +38,14 @@ class Focus {
 		return this;
 	};
 
+	setWithTimeout (id: string, range: I.TextRange, delay: number): Focus {
+		window.setTimeout(() => {
+			this.set(id, range);
+			this.apply();
+		}, delay);
+		return this;
+	};
+
 	/**
 	 * Restores the focus state from backup.
 	 */
@@ -60,7 +68,7 @@ class Focus {
 	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
-		const el = $('.focusable.c' + focused);
+		const el = $(`.focusable.c${focused}`);
 		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
@@ -86,7 +94,7 @@ class Focus {
 
 		$('.focusable.isFocused').removeClass('isFocused');
 
-		const node = $('.focusable.c' + focused);
+		const node = $(`.focusable.c${focused}`);
 		if (!node.length) {
 			return;
 		};
@@ -121,28 +129,25 @@ class Focus {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ch = container.height();
-		const no = node.offset().top;
-		const nh = node.outerHeight();
-		const hh = J.Size.header;
-		const o = J.Size.lastBlock + hh;
-		const st = container.scrollTop();
-		const y = no - container.offset().top + st;
-		
-		const topViewport = st + hh;
-		const bottomViewport = st + ch - o;
-		
-		// If block intersects the visible area - don't scroll
-		if ((y + nh > topViewport) && (y < bottomViewport)) {
-			return;
+		let rect = U.Common.getSelectionRect();
+		if (!rect) {
+			rect = node.get(0).getBoundingClientRect();
 		};
-		
-		if ((y >= st) && (y <= st + ch - o)) {
+		if (!rect) {
 			return;
 		};
 
-		container.scrollTop(Math.max(y, ch - o) - ch + o);
+		const container = U.Common.getScrollContainer(isPopup);
+		const ch = container.height();
+		const st = container.scrollTop();
+		const { header, lastBlock } = J.Size;
+		const y = rect.top + st - container.offset().top;
+		const top = st + header;
+		const bottom = st + ch - lastBlock - header;
+
+		if ((y < top) || (y > bottom)) {
+			container.scrollTop(Math.max(0, y - ch / 2));
+		};
 	};
 
 };

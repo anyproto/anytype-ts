@@ -27,7 +27,7 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	let label = '';
 	if (withLabel) {
-		label = U.Common.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name);
+		label = U.String.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name);
 	} else
 	if (withName) {
 		label = relation.name;

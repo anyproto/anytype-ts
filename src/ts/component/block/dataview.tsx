@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
@@ -25,258 +25,38 @@ interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props> {
+const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
-	node = null;
-	refView = null;
-	refControls = null;
-	refSelect = null;
-	refCells: Map<string, any> = new Map();
-	refRecords: Map<string, any> = new Map();
+	const { rootId, block, isPopup, isInline, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
+	const views = S.Record.getViews(rootId, block.id);
+	const nodeRef = useRef(null);
+	const viewRef = useRef(null);
+	const controlsRef = useRef(null);
+	const selectRef = useRef(null);
+	const isCollection = Dataview.isCollection(rootId, block.id);
+	const isCreating = useRef(false);
+	const frame = useRef(0);
+	const timeoutFilter = useRef(0);
+	const editingRecordId = useRef('');
+	const filterRef = useRef('');
+	const viewIdRef = useRef('');
+	const menuContext = useRef(null);
+	const cellRefs = useRef<Map<string, any>>(new Map());
+	const recordRefs = useRef<Map<string, any>>(new Map());
+	const [ searchIds, setSearchIds ] = useState<string[] | null>(null);
+	const analyticsRoute = isCollection ? analytics.route.collection : analytics.route.set;
 
-	viewId = '';
-	creating = false;
-	frame = 0;
-	isMultiSelecting = false;
-	selected: string[] = [];
-	menuContext = null;
-	timeoutFilter = 0;
-	searchIds = null;
-	filter = '';
-	editingRecordId: string = '';
-
-	constructor (props: Props) {
-		super(props);
-		
-		this.loadData = this.loadData.bind(this);
-		this.getRecords = this.getRecords.bind(this);
-		this.getRecord = this.getRecord.bind(this);
-		this.getView = this.getView.bind(this);
-		this.getSources = this.getSources.bind(this);
-		this.getKeys = this.getKeys.bind(this);
-		this.getIdPrefix = this.getIdPrefix.bind(this);
-		this.getVisibleRelations = this.getVisibleRelations.bind(this);
-		this.getEmpty = this.getEmpty.bind(this);
-		this.getTarget = this.getTarget.bind(this);
-		this.getTypeId = this.getTypeId.bind(this);
-		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
-		this.getSubId = this.getSubId.bind(this);
-		this.getEmptyView = this.getEmptyView.bind(this);
-		this.onCellClick = this.onCellClick.bind(this);
-		this.onCellChange = this.onCellChange.bind(this);
-		this.onContext = this.onContext.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onSourceSelect = this.onSourceSelect.bind(this);
-		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
-		this.onEmpty = this.onEmpty.bind(this);
-		this.onDragRecordStart = this.onDragRecordStart.bind(this);
-		this.onRecordAdd = this.onRecordAdd.bind(this);
-		this.onRecordDrop = this.onRecordDrop.bind(this);
-		this.onViewDrop = this.onViewDrop.bind(this);
-		this.onTemplateMenu = this.onTemplateMenu.bind(this);
-		this.onTemplateAdd = this.onTemplateAdd.bind(this);
-		this.onSelectEnd = this.onSelectEnd.bind(this);
-		this.onSelectToggle = this.onSelectToggle.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onSortAdd = this.onSortAdd.bind(this);
-		this.onFilterAdd = this.onFilterAdd.bind(this);
-
-		this.getSearchIds = this.getSearchIds.bind(this);
-		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
-		this.multiSelectAction = this.multiSelectAction.bind(this);
-		this.applyObjectOrder = this.applyObjectOrder.bind(this);
-
-		this.isAllowedObject = this.isAllowedObject.bind(this);
-		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
-		this.isCollection = this.isCollection.bind(this);
-		this.canCellEdit = this.canCellEdit.bind(this);
-
-		this.onEditModeClick = this.onEditModeClick.bind(this);
-		this.setRecordEditingOn = this.setRecordEditingOn.bind(this);
-		this.setRecordEditingOff = this.setRecordEditingOff.bind(this);
-	};
-
-	render () {
-		const { rootId, block, isPopup, isInline, readonly } = this.props;
-		const views = S.Record.getViews(rootId, block.id);
-
-		if (!views.length) {
-			return null;
-		};
-
-		const view = this.getView();
-		if (!view) {
-			return null;
-		};
-
-		const sources = this.getSources();
-		const targetId = this.getObjectId();
-		const isCollection = this.isCollection();
-		const cn = [ 'focusable', `c${block.id}` ];
-
-		const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
-		const className = [ U.Common.toCamelCase(`view-${I.ViewType[view.type]}`) ];
-
-		let ViewComponent: any = null;
-		let body = null;
-
-		if (isCollection) {
-			className.push('isCollection');
-		};
-
-		switch (view.type) {
-			default:
-			case I.ViewType.Grid:
-				ViewComponent = ViewGrid;
-				break;
-				
-			case I.ViewType.Board:
-				ViewComponent = ViewBoard;
-				break;
-				
-			case I.ViewType.Gallery:
-				ViewComponent = ViewGallery;
-				break;
-			
-			case I.ViewType.List:
-				ViewComponent = ViewList;
-				break;
-
-			case I.ViewType.Calendar:
-				ViewComponent = ViewCalendar;
-				break;
-
-			case I.ViewType.Graph:
-				ViewComponent = ViewGraph;
-				break;
-
-			case I.ViewType.Timeline:
-				ViewComponent = ViewTimeline;
-				break;
-		};
-
-		const dataviewProps = {
-			readonly,
-			isCollection,
-			isInline,
-			className: className.join(' '),
-			getRecord: this.getRecord,
-			loadData: this.loadData,
-			getView: this.getView,
-			getTarget: this.getTarget,
-			getSources: this.getSources,
-			getRecords: this.getRecords,
-			getKeys: this.getKeys,
-			getIdPrefix: this.getIdPrefix,
-			getLimit: () => this.getLimit(view.type),
-			getVisibleRelations: this.getVisibleRelations,
-			getTypeId: this.getTypeId,
-			getTemplateId: this.getDefaultTemplateId,
-			getEmpty: this.getEmpty,
-			getEmptyView: this.getEmptyView,
-			getSubId: this.getSubId,
-			onRecordAdd: this.onRecordAdd,
-			onTemplateMenu: this.onTemplateMenu,
-			onTemplateAdd: this.onTemplateAdd,
-			onSortAdd: this.onSortAdd,
-			onFilterAdd: this.onFilterAdd,
-			isAllowedObject: this.isAllowedObject,
-			isAllowedDefaultType: this.isAllowedDefaultType,
-			onSourceSelect: this.onSourceSelect,
-			onSourceTypeSelect: this.onSourceTypeSelect,
-			onViewSettings: () => {
-				if (this.refControls && this.refControls.onViewSettings) {
-					this.refControls.onViewSettings();
-				};
-			},
-			getSearchIds: this.getSearchIds,
-			canCellEdit: this.canCellEdit,
-			onEditModeClick: this.onEditModeClick,
-			setRecordEditingOn: this.setRecordEditingOn,
-			setRecordEditingOff: this.setRecordEditingOff,
-		};
-
-		if (isInline && !targetId) {
-			body = this.getEmpty('target');
-		} else
-		if (!isCollection && !sources.length) {
-			body = (
-				<LayoutPlug
-					layoutFormat={I.LayoutFormat.List}
-					recommendedLayout={I.ObjectLayout.Set}
-					viewType={view.type}
-					isPopup={isPopup}
-					onClick={this.onEmpty}
-				/>
-			);
-		} else {
-			body = (
-				<div className="content">
-					<ViewComponent 
-						key={'view' + view.id}
-						ref={ref => this.refView = ref} 
-						onRefCell={(ref: any, id: string) => this.refCells.set(id, ref)}
-						onRefRecord={(ref: any, id: string) => this.refRecords.set(id, ref)}
-						{...this.props}
-						{...dataviewProps}
-						pageContainer={this.getPageContainer()}
-						onCellClick={this.onCellClick}
-						onCellChange={this.onCellChange}
-						onContext={this.onContext}
-						objectOrderUpdate={this.objectOrderUpdate}
-						applyObjectOrder={this.applyObjectOrder}
-						onDragRecordStart={this.onDragRecordStart}
-						onSelectEnd={this.onSelectEnd}
-						onSelectToggle={this.onSelectToggle}
-						refCells={this.refCells}
-					/>
-				</div>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				tabIndex={0} 
-				className={cn.join(' ')}
-				onKeyDown={this.onKeyDown} 
-				onKeyUp={this.onKeyUp} 
-				onFocus={this.onFocus}
-			>
-				<div className="hoverArea">
-					<Controls 
-						ref={ref => this.refControls = ref} 
-						{...this.props} 
-						{...dataviewProps} 
-						onFilterChange={this.onFilterChange}
-					/>
-					<Selection 
-						ref={ref => this.refSelect = ref} 
-						{...this.props} 
-						{...dataviewProps} 
-						multiSelectAction={this.multiSelectAction} 
-					/>
-				</div>
-				{body}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { block, isInline, isPopup } = this.props;
+	useEffect(() => {
 		const match = keyboard.getMatch(isPopup);
-		const subId = this.getSubId();
-		const isCollection = this.isCollection();
+		const subId = getSubId();
 		const viewId = match.params.viewId || block.content.viewId;
-		const object = this.getTarget();
+		const object = getTarget();
 
 		if (viewId) {
 			S.Record.metaSet(subId, '', { viewId });
 		};
 
-		this.reloadData(() => {
+		reloadData(() => {
 			if (isInline) {
 				return;
 			};
@@ -290,8 +70,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				} else 
 				if (
 					(isCollection || (isCompletedSets && !isCollection)) && 
-					this.isAllowedObject() && 
-					this.isAllowedDefaultType() && 
+					isAllowedObject() && 
+					isAllowedDefaultType() && 
 					total
 				) {
 					Onboarding.start('setSettings', isPopup);
@@ -299,117 +79,106 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			}, J.Constant.delay.menu);
 		});
 
-		this.init();
-		this.resize();
-		this.rebind();
+		init();
+		resize();
+		rebind();
 
 		if (!U.Object.isTypeLayout(object.layout)) {
-			const view = this.getView();
-			const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+			const view = getView();
+			const eventName = isCollection ? 'ScreenCollection' : 'ScreenSet';
 
 			analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
 		};
-	};
 
-	componentDidUpdate () {
+		return () => {
+			unbind();
+			window.clearTimeout(timeoutFilter.current);
+		};
+	}, []);
+
+	useEffect(() => {
 		const { routeParam } = S.Common;
 	
-		let viewId = S.Record.getMeta(this.getSubId(), '').viewId;
+		let viewId = S.Record.getMeta(getSubId(), '').viewId;
 
 		if ((routeParam.ref == 'widget') && routeParam.viewId) {
 			viewId = routeParam.viewId;
 			S.Common.routeParam = {};
 		};
 
-		if (viewId && (viewId != this.viewId)) {
-			this.loadData(viewId, 0, true);
+		if (viewId && (viewId != viewIdRef.current)) {
+			loadData(viewId, 0, true);
 		};
 
-		this.init();
-		this.resize();
-		this.rebind();
-	};
+		init();
+		resize();
+		rebind();
+	});
 
-	componentWillUnmount () {
-		this.unbind();
-	};
+	useEffect(() => {
+		reloadData();
+	}, [ searchIds ]);
 
-	init () {
-		const { block } = this.props;
-		const node = $(this.node);
+	const init = () => {
+		const node = $(nodeRef.current);
 		const head = node.find(`#block-head-${block.id}`);
-		const object = this.getTarget();
+		const object = getTarget();
 
 		head.toggleClass('isDeleted', object.isDeleted);
 	};
 
-	unbind () {
-		const { isPopup, block } = this.props;
+	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
-	rebind () {
-		const { isPopup, block } = this.props;
+	const rebind = () => {
 		const win = $(window);
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
-		this.unbind();
+		unbind();
 
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
-		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
-		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => this.onSelectEnd());
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+		win.on(`updateDataviewData.${ns}`, () => loadData(getView().id, 0, true));
+		win.on(`setDataviewSource.${ns}`, () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
+		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => onSelectEnd());
 	};
 
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
-
-		if (keyboard.isFocused) {
-			return;
-		};
-
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+	const onKeyDownHandler = (e: any) => {
+		if (!keyboard.isFocused) {
+			onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 		};
 	};
 
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
+	const onKeyUpHandler = (e: any) => {
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
+	};
 
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+	const onFocus = () => {
+		if (isInline) {
+			focus.set(block.id, { from: 0, to: 0 });
 		};
 	};
 
-	onFocus () {
-		if (this.props.isInline) {
-			focus.set(this.props.block.id, { from: 0, to: 0 });
-		};
-	};
-
-	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
+	const loadData = (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) => {
 		if (!viewId) {
 			console.log('[BlockDataview.loadData] No view id');
 			return;
 		};
 
-		const view = this.getView(viewId);
+		const view = getView(viewId);
 		if (!view) {
 			console.log('[BlockDataview.loadData] No view');
 			return;
 		};
 
-		this.viewId = viewId;
+		viewIdRef.current = viewId;
 
-		const { rootId, block, isInline } = this.props;
-		const subId = this.getSubId();
-		const keys = this.getKeys(viewId);
-		const sources = this.getSources();
-		const isCollection = this.isCollection();
-		const node = $(this.node);
+		const subId = getSubId();
+		const keys = getKeys(viewId);
+		const sources = getSources();
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
@@ -418,24 +187,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Record.metaSet(subId, '', { offset, viewId });
 
-		if (view.type == I.ViewType.Board) {
-			if (this.refView && this.refView.loadGroupList) {
-				this.refView.loadGroupList();
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph, I.ViewType.Board ].includes(view.type)) {
+			if (viewRef.current && viewRef.current.load) {
+				viewRef.current.load();
 			} else {
-				this.viewId = '';
-			};
-		} else 
-		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph ].includes(view.type)) {
-			if (this.refView && this.refView.load) {
-				this.refView.load();
-			} else {
-				this.viewId = '';
+				viewIdRef.current = '';
 			};
 		} else {
 			const filters = [];
 
-			if (this.searchIds) {
-				filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+			if (searchIds) {
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 			};
 
 			Dataview.getData({
@@ -446,31 +208,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				newViewId: viewId, 
 				keys, 
 				offset: 0, 
-				limit: offset + this.getLimit(view.type), 
+				limit: offset + getLimit(view), 
 				clear,
 				sources,
 				filters,
-				collectionId: (isCollection ? this.getObjectId() : ''),
+				collectionId: (isCollection ? getObjectId() : ''),
 			}, callBack);
 		};
 	};
 
-	reloadData (cb?: () => void) {
-		const view = this.getView();
+	const reloadData = (cb?: () => void) => {
+		const view = getView();
 
 		if (view) {
-			S.Record.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
-			this.loadData(view.id, 0, true, () => {
-				if (cb) {
-					cb();
-				};
-			});
+			S.Record.metaSet(getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
+			loadData(view.id, 0, true, cb);
 		};
 	};
 
-	getObjectId (): string {
-		const { rootId, block, isInline } = this.props;
-
+	const getObjectId = (): string => {
 		let ret = block.getTargetObjectId();
 		if (!isInline && !ret) {
 			ret = rootId;
@@ -479,8 +235,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return ret;
 	};
 
-	getKeys (id: string): string[] {
-		const view = this.getView(id);
+	const getKeys = (id: string): string[] => {
+		const view = getView(id);
 
 		let keys = J.Relation.default.concat(J.Relation.cover);
 		if (view) {
@@ -502,15 +258,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return U.Common.arrayUnique(keys);
 	};
 
-	getLimit (type: I.ViewType): number {
-		const { isInline } = this.props;
-		const view = this.getView();
+	const getLimit = (view: I.View): number => {
+		if (!view) {
+			return 0;
+		};
+
 		const options = Relation.getPageLimitOptions(view.type, isInline);
 		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;
 
-		switch (type) {
+		switch (view.type) {
 			default: {
 				limit = isInline ? pageLimit : 500;
 				break;
@@ -526,9 +284,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return limit;
 	};
 
-	getSubId (groupId?: string): string {
-		const { rootId, block } = this.props;
-
+	const getSubId = (groupId?: string): string => {
 		let ret = '';
 		if (groupId) {
 			ret = S.Record.getGroupSubId(rootId, block.id, groupId);
@@ -538,22 +294,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return ret;
 	};
 
-	getRecords (groupId?: string): string[] {
-		const subId = this.getSubId(groupId);
+	const getRecords = (groupId?: string): string[] => {
+		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return this.applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', U.Common.objectCopy(records));
 	};
 
-	getRecord (id: string) {
-		const view = this.getView();
+	const getRecord = (id: string) => {
+		const view = getView();
 		if (!view) {
 			return {};
 		};
 
 		const skip = [ 'restrictions' ];
-		const keys = this.getKeys(view.id).filter(it => !skip.includes(it));
-		const subId = this.getSubId();
+		const keys = getKeys(view.id).filter(it => !skip.includes(it));
+		const subId = getSubId();
 		const item = S.Detail.get(subId, id, keys, true);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
@@ -568,50 +324,46 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return item;
 	};
 
-	getView (viewId?: string): I.View {
-		const { rootId, block } = this.props;
+	const getView = (viewId?: string): I.View => {
 		return Dataview.getView(rootId, block.id, viewId);
 	};
 
-	getSources (): string[] {
-		if (this.isCollection()) {
+	const getSources = (): string[] => {
+		if (isCollection) {
 			return [];
 		};
 
-		const { rootId } = this.props;
-		const target = this.getTarget();
+		const target = getTarget();
 		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
 		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
 
-	getTarget () {
-		return S.Detail.get(this.props.rootId, this.getObjectId(), [ 'setOf' ]);
+	const getTarget = () => {
+		return S.Detail.get(rootId, getObjectId(), [ 'setOf' ]);
 	};
 
-	getTypeId (): string {
-		const { rootId, block } = this.props;
-		return Dataview.getTypeId(rootId, block.id, this.getObjectId(), this.getView()?.id);
+	const getTypeId = (): string => {
+		return Dataview.getTypeId(rootId, block.id, getObjectId(), getView()?.id);
 	};
 
-	getDetails (groupId?: string): any {
-		const { rootId, block } = this.props;
-		return Dataview.getDetails(rootId, block.id, this.getObjectId(), this.getView()?.id, groupId);
+	const getDetails = (groupId?: string): any => {
+		return Dataview.getDetails(rootId, block.id, getObjectId(), getView()?.id, groupId);
 	};
 
-	getMenuParam (e: any, dir: number): any {
-		const node = $(this.node);
+	const getMenuParam = (e: any, dir: number): any => {
+		const node = $(nodeRef.current);
 		const hoverArea = node.find('.hoverArea');
 
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
-				this.menuContext = context;
+				menuContext.current = context;
 				hoverArea.addClass('active');
 			},
 			onClose: () => {
-				this.creating = false;
+				isCreating.current = false;
 				hoverArea.removeClass('active');
 			},
 		};
@@ -629,9 +381,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return menuParam;
 	};
 
-	getDefaultTemplateId (typeId?: string): string {
-		const view = this.getView();
-		const type = S.Record.getTypeById(typeId || this.getTypeId());
+	const getDefaultTemplateId = (typeId?: string): string => {
+		const view = getView();
+		const type = S.Record.getTypeById(typeId || getTypeId());
 
 		if (view && view.defaultTemplateId) {
 			return view.defaultTemplateId;
@@ -642,18 +394,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return '';
 	};
 
-	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
-		const { rootId } = this.props;
-		const objectId = this.getObjectId();
-		const subId = this.getSubId(groupId);
-		const isCollection = this.isCollection();
-		const view = this.getView();
+	const recordCreate = (e: any, template: any, dir: number, groupId?: string, idx?: number) => {
+		const objectId = getObjectId();
+		const subId = getSubId(groupId);
+		const view = getView();
 
-		if (!view || this.creating) {
+		if (!view || isCreating.current) {
 			return;
 		};
 
-		const details = this.getDetails(groupId);
+		const details = getDetails(groupId);
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
@@ -671,11 +421,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!typeId) {
-			typeId = this.getTypeId();
+			typeId = getTypeId();
 		};
 
 		if (!templateId) {
-			templateId = this.getDefaultTemplateId(typeId);
+			templateId = getDefaultTemplateId(typeId);
 		};
 
 		const type = S.Record.getTypeById(typeId);
@@ -689,10 +439,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			templateId = '';
 		};
 
-		this.creating = true;
+		isCreating.current = true;
 
 		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
-			this.creating = false;
+			isCreating.current = false;
 
 			if (message.error.code) {
 				return;
@@ -703,7 +453,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
 			if (!isViewBoard && !isViewCalendar) {
-				let records = this.getRecords(groupId);
+				let records = getRecords(groupId);
 
 				const oldIndex = records.indexOf(message.objectId);
 
@@ -727,7 +477,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if (isViewGraph) {
-				const refGraph = this.refView?.refGraph;
+				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
 						$(window).trigger('updateGraphRoot', { id: object.id });
@@ -739,50 +489,48 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id, object);
+					U.Object.openConfig(object);
 				} else {
-					window.setTimeout(() => this.setRecordEditingOn(e, object.id), 15);
+					window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
 				};
 
-				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
+				analytics.createObject(object.type, object.layout, analyticsRoute, message.middleTime);
 			};
 		});
 	};
 
-	onEmpty (e: any) {
-		const { isInline, block, rootId } = this.props;
-
+	const onEmpty = (e: any) => {
 		let element = '';
 		if (isInline) {
 			element = `#block-${block.id} #head-source-select`;
-			this.onSourceSelect(element, { horizontal: I.MenuDirection.Center });
+			onSourceSelect(element, { horizontal: I.MenuDirection.Center });
 		} else {
 			element = `#${Relation.cellId('blockFeatured', 'setOf', rootId)}`;
-			this.onSourceTypeSelect(element);
+			onSourceTypeSelect(element);
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any, idx?: number) {
+	const onRecordAdd = (e: any, dir: number, groupId?: string, menuParam?: any, idx?: number) => {
 		if (e.persist) {
 			e.persist();
 		};
 
-		const typeId = this.getTypeId();
+		const typeId = getTypeId();
 		const type = S.Record.getTypeById(typeId);
-		const view = this.getView();
+		const view = getView();
 
 		if ((view.type == I.ViewType.Board) && !groupId) {
 			groupId = 'empty';
 		};
 
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
-			this.onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
+			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
-			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
+			recordCreate(e, { id: getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 
-	onObjectMenu (e: any, dir: number, layout: I.ObjectLayout, groupId?: string, param?: Partial<I.MenuParam>) {
+	const onObjectMenu = (e: any, dir: number, layout: I.ObjectLayout, groupId?: string, param?: Partial<I.MenuParam>) => {
 		param = param || {};
 		param.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 		param.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
@@ -790,16 +538,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		param.offsetY = 4 * -dir;
 
 		param.data = param.data || {};
-		param.data.details = this.getDetails(groupId);
+		param.data.details = getDetails(groupId);
 
-		const objectId = this.getObjectId();
+		const objectId = getObjectId();
 		const menuParam = {
 			horizontal: I.MenuDirection.Center,
-			...this.getMenuParam(e, dir),
+			...getMenuParam(e, dir),
 			...param,
 		};
 		const cb = object => {
-			if (this.isCollection()) {
+			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 		};
@@ -811,24 +559,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case I.ObjectLayout.Chat: {
-				U.Menu.onChatMenu(menuParam, this.analyticsRoute(), cb);
+				U.Menu.onChatMenu(menuParam, analyticsRoute, cb);
 				break;
 			};
 		};
 	};
 
-	onTemplateMenu (e: any, dir: number) {
+	const onTemplateMenu = (e: any, dir: number) => {
 		if (e.persist) {
 			e.persist();
 		};
 
-		const { rootId, block } = this.props;
-		const menuParam = this.getMenuParam(e, dir);
-		const isCollection = this.isCollection();
-		const route = this.analyticsRoute();
-		const hasSources = isCollection || this.getSources().length;
-		const view = this.getView();
-		const typeId = this.getTypeId();
+		const menuParam = getMenuParam(e, dir);
+		const route = analyticsRoute;
+		const hasSources = isCollection || getSources().length;
+		const view = getView();
+		const typeId = getTypeId();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -844,26 +590,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			onOpen: context => {
 				menuContext = context;
-				this.refControls?.toggleHoverArea(true);
+				controlsRef.current?.toggleHoverArea(true);
 			},
 			onClose: () => {
 				menuContext = null;
-				this.refControls?.toggleHoverArea(false);
+				controlsRef.current?.toggleHoverArea(false);
 			},
 			data: {
 				blockId: block.id,
-				subId: this.getSubId(),
-				targetId: this.getObjectId(),
+				subId: getSubId(),
+				targetId: getObjectId(),
 				hasSources,
-				getView: this.getView,
-				withTypeSelect: this.isAllowedDefaultType(),
+				getView: getView,
+				withTypeSelect: isAllowedDefaultType(),
 				typeId,
-				templateId: this.getDefaultTemplateId(),
+				templateId: getDefaultTemplateId(),
 				route,
-				isAllowedObject: this.isAllowedObject(),
+				isAllowedObject: isAllowedObject(),
 				isCollection,
 				onTypeChange: (id) => {
-					if (id != this.getTypeId()) {
+					if (id != getTypeId()) {
 						const newType = S.Record.getTypeById(id);
 
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: newType?.defaultTemplateId });
@@ -878,17 +624,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						return;
 					};
 
-					const typeId = this.getTypeId();
+					const typeId = getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
-						this.onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${block.id}-add-record` });
+						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${block.id}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
-						this.onTemplateAdd(item.targetObjectType);
+						onTemplateAdd(item.targetObjectType);
 					} else {
-						this.recordCreate(e, item, dir);
+						recordCreate(e, item, dir);
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
 						menuContext?.close();
@@ -899,8 +645,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onTemplateAdd (id?: string) {
-		const typeId = id || this.getTypeId();
+	const onTemplateAdd = (id?: string) => {
+		const typeId = id || getTypeId();
 		const type = S.Record.getTypeById(typeId);
 		const details: any = {
 			targetObjectType: typeId,
@@ -915,43 +661,40 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const object = message.details;
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: typeId, route: this.analyticsRoute() });
+			analytics.event('CreateTemplate', { objectType: typeId, route: analyticsRoute });
 
 			U.Object.openConfig(object);
 		});
 	};
 
-	canCellEdit (relation: any, record: any): boolean {
-		const { readonly } = this.props;
+	const canCellEdit = (relation: any, record: any): boolean => {
 		if (readonly) {
 			return false;
 		};
-
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if (U.Object.isNoteLayout(record.layout) && (relation.relationKey == 'name')) {
 			return false;
 		};
-
 		return true;
 	};
 
-	onCellClick (e: any, relationKey: string, recordId: string, record?: any) {
+	const onCellClick = (e: any, relationKey: string, recordId: string, record?: any) => {
 		if (e.button) {
 			return;
 		};
 
 		if (!record) {
-			record = this.getRecord(recordId);
+			record = getRecord(recordId);
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
 		const relation = S.Record.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
-		const ref = this.refCells.get(id);
-		const view = this.getView();
-		const isRecordEditing = (this.editingRecordId == recordId);
+		const id = Relation.cellId(getIdPrefix(), relationKey, record.id);
+		const ref = cellRefs.current.get(id);
+		const view = getView();
+		const isRecordEditing = (editingRecordId.current == recordId);
 
 		if (!relation || !ref || !record) {
 			return;
@@ -982,10 +725,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const subId = this.getSubId();
+	const onCellChange = (id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
+		const subId = getSubId();
 		const relation = S.Record.getRelationByKey(relationKey);
-		const record = this.getRecord(id);
+		const record = getRecord(id);
 
 		if (!record || !relation) {
 			return;
@@ -1004,7 +747,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onContext (e: any, id: string, subId?: string): void {
+	const onContext = (e: any, id: string, subId?: string): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -1012,12 +755,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		subId = subId || this.getSubId();
+		subId = subId || getSubId();
 
-		const { block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const isCollection = this.isCollection();
-		const view = this.getView();
+		const view = getView();
 
 		if (!view) {
 			return;
@@ -1038,15 +779,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onClose: () => selection.clear(),
 			data: {
 				blockId: block.id,
-				targetId: this.getObjectId(),
+				targetId: getObjectId(),
 				objectIds,
 				subId,
 				isCollection,
-				route: this.analyticsRoute(),
-				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
+				route: analyticsRoute,
+				relationKeys: getVisibleRelations().map(it => it.relationKey),
 				view,
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedRelation: true,
 				allowedCollection: true,
 				allowedExport: true,
@@ -1055,10 +797,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
-		const { rootId, block, isPopup, isInline } = this.props;
+	const onSourceSelect = (element: any, param: Partial<I.MenuParam>) => {
 		const { targetObjectId } = block.content;
-		const isCollection = this.isCollection();
 		const collectionType = S.Record.getCollectionType();
 		const addParam: any = {};
 
@@ -1089,7 +829,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const onSelect = (item: any, isNew: boolean) => {
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-				const button = $(this.node).find('#head-source-select');
+				const button = $(nodeRef.current).find('#head-source-select');
 
 				S.Detail.update(rootId, { id: item.id, details: item }, false);
 
@@ -1098,11 +838,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					this.loadData(message.views[0].id, 0, true);
+					loadData(message.views[0].id, 0, true);
 				};
 
 				if (isNew) {
-					const ref = this.refControls?.getHeadRef();
+					const ref = controlsRef.current?.getHeadRef();
 					const l = String(item.name || '').length;
 
 					if (ref) {
@@ -1144,9 +884,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		}, param || {}));
 	};
 
-	onSourceTypeSelect (obj: any) {
-		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
+	const onSourceTypeSelect = (obj: any) => {
+		const objectId = getObjectId();
 		const element = $(obj);
 
 		S.Menu.closeAll(null, () => {
@@ -1165,16 +904,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onDragRecordStart (e: any, recordId: string) {
+	const onDragRecordStart = (e: any, recordId: string) => {
 		e.stopPropagation();
 
-		const { block, isPopup } = this.props;
 		const dragProvider = S.Common.getRef('dragProvider');
 		const selection = S.Common.getRef('selectionProvider');
-		const record = this.getRecord(recordId);
+		const record = getRecord(recordId);
 		const ids = selection?.get(I.SelectType.Record) || [];
-		const con = $(this.refControls.getNode());
-		const sel = $(this.refSelect.getNode());
+		const con = $(controlsRef.current?.getNode());
+		const sel = $(selectRef.current?.getNode());
 
 		if (!ids.length) {
 			ids.push(record.id);
@@ -1189,22 +927,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		keyboard.setSelectionClearDisabled(false);
 
 		dragProvider?.onDragStart(e, I.DropType.Record, ids, {
-			getNode: () => this.node,
-			onRecordDrop: this.onRecordDrop,
-			onViewDrop: this.onViewDrop,
+			getNode: () => nodeRef.current,
+			onRecordDrop: onRecordDrop,
+			onViewDrop: onViewDrop,
 		});
 
 		con.show();
 		sel.hide();
 	};
 
-	onRecordDrop (targetId: string, ids: string[]) {
+	const onRecordDrop = (targetId: string, ids: string[], position: I.BlockPosition) => {
 		keyboard.disableSelection(false);
 
-		const { rootId, block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const subId = this.getSubId();
-		const view = this.getView();
+		const subId = getSubId();
+		const view = getView();
 
 		if (!ids.length) {
 			return;
@@ -1212,21 +949,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		selection?.clear();
 
-		let records = this.getRecords();
+		let records = getRecords();
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
 			ids = ids.reverse();
 		};
 
 		ids.forEach(id => {
 			const oldIndex = records.indexOf(id);
-			const targetIndex = records.indexOf(targetId);
+			
+			let targetIndex = records.indexOf(targetId);
+
+			if ((position == I.BlockPosition.Top) && (oldIndex < targetIndex)) {
+				targetIndex--;
+			};
 
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
 		const cb = () => {
 			S.Record.recordsSet(subId, '', records);
-			this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
+			objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
 		};
 
 		if (view.sorts.length) {
@@ -1244,13 +986,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onViewDrop (targetId: string, ids: string[]) {
+	const onViewDrop = (targetId: string, ids: string[]) => {
 		if (!targetId || !ids.length) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const details = Dataview.getDetails(rootId, block.id, this.getObjectId(), targetId);
+		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
 
 		for (const k in details) {
@@ -1272,13 +1013,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		C.ObjectListModifyDetailValues(ids, operations);
 
 		S.Common.getRef('selectionProvider')?.clear();
-		this.selectionCheck();
+		selectionCheck();
 	};
 
-	onSortAdd (item: any, callBack?: () => void) {
-		const { rootId, block, isInline } = this.props;
-		const view = this.getView();
-		const object = this.getTarget();
+	const onSortAdd = (item: any, callBack?: () => void) => {
+		const view = getView();
+		const object = getTarget();
 
 		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
 			callBack?.();
@@ -1290,10 +1030,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onFilterAdd (item: any, callBack?: () => void) {
-		const { rootId, block, isInline } = this.props;
-		const view = this.getView();
-		const object = this.getTarget();
+	const onFilterAdd = (item: any, callBack?: () => void) => {
+		const view = getView();
+		const object = getTarget();
 
 		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
 			callBack?.();
@@ -1306,14 +1045,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	getIdPrefix () {
-		return [ 'dataviewCell', this.props.block.id ].join('-');
+	const getIdPrefix = () => {
+		return [ 'dataviewCell', block.id ].join('-');
 	};
 
-	getVisibleRelations () {
-		const { rootId, block } = this.props;
-		const view = this.getView();
-
+	const getVisibleRelations = () => {
+		const view = getView();
 		if (!view) {
 			return [];
 		};
@@ -1322,10 +1059,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 
-	getEmpty (type: string) {
-		const { isInline, block, readonly } = this.props;
-		const isCollection = this.isCollection();
-		const view = this.getView();
+	const getEmpty = (type: string) => {
+		const view = getView();
 		const cn = [];
 
 		if (isInline) {
@@ -1339,9 +1074,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const name = translate(isCollection ? 'blockDataviewEmptyTargetCollections' : 'blockDataviewEmptyTargetSets');
 				emptyProps = {
 					title: translate('blockDataviewEmptyTargetTitle'),
-					description: U.Common.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
+					description: U.String.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
 					button: translate('blockDataviewEmptyTargetButton'),
-					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+					onClick: () => onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
 				};
 				break;
 			};
@@ -1353,10 +1088,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				emptyProps.title = translate('commonNoObjects');
 
-				if (this.isAllowedObject()) {
+				if (isAllowedObject()) {
 					emptyProps.description = translate('blockDataviewEmptyViewDescription');
 					emptyProps.button = translate('commonCreateObject');
-					emptyProps.onClick = e => this.onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
+					emptyProps.onClick = e => onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
 				};
 				break;
 			};
@@ -1364,7 +1099,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		return (
 			<Empty
-				{...this.props}
+				{...props}
 				{...emptyProps}
 				className={cn.join(' ')}
 				withButton={emptyProps.button && !readonly ? true : false}
@@ -1372,17 +1107,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		);
 	};
 
-	getEmptyView (type: I.ViewType) {
-		if (!this.isAllowedObject()) {
-			return this.getEmpty('view');
+	const getEmptyView = (type: I.ViewType) => {
+		if (!isAllowedObject()) {
+			return getEmpty('view');
 		};
 
 		const cn = [ 'viewContent', `view${I.ViewType[type]}` ];
 		const onAdd = (e: any) => {
-			if (!this.isCollection() && !this.getSources().length) {
-				this.onEmpty(e);
+			if (!isCollection && !getSources().length) {
+				onEmpty(e);
 			} else {
-				this.onRecordAdd(e, 1);
+				onRecordAdd(e, 1);
 			};
 		};
 
@@ -1403,7 +1138,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 								transition: { duration: 0.2, delay: 0.1 },
 							})}
 						>
-							<div className="card" onClick={onAdd} />
 							<div className="card add" onClick={onAdd} />
 						</motion.div>
 					</AnimatePresence>
@@ -1423,8 +1157,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		);
 	};
 
-	isAllowedObject () {
-		const { rootId, block, readonly } = this.props;
+	const isAllowedObject = () => {
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (root && root.isLocked()) {
@@ -1436,16 +1169,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return false;
 		};
 
-		if (isAllowed && this.isCollection()) {
+		if (isAllowed && isCollection) {
 			return true;
 		};
 
-		const sources = this.getSources();
+		const sources = getSources();
 		if (!sources.length) {
 			return false;
 		};
 
-		const targetId = this.getObjectId();
+		const targetId = getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
 
@@ -1464,23 +1197,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return isAllowed;
 	};
 
-	isAllowedDefaultType (): boolean {
-		if (this.isCollection()) {
+	const isAllowedDefaultType = (): boolean => {
+		if (isCollection) {
 			return true;
 		};
 
-		const { rootId } = this.props;
-		return !!Relation.getSetOfObjects(rootId, this.getTarget().id, I.ObjectLayout.Relation).map(it => it.id).length;
+		return !!Relation.getSetOfObjects(rootId, getTarget().id, I.ObjectLayout.Relation).map(it => it.id).length;
 	};
 
-	isCollection (): boolean {
-		const { rootId, block } = this.props;
-		return Dataview.isCollection(rootId, block.id);
-	};
-
-	objectOrderUpdate (orders: any[], records: any[], callBack?: (message0: any) => void) {
-		const { rootId, block } = this.props;
-		const view = this.getView();
+	const objectOrderUpdate = (orders: any[], records: any[], callBack?: (message0: any) => void) => {
+		const view = getView();
 
 		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, (message) => {
 			if (message.error.code) {
@@ -1495,20 +1221,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					block.content.objectOrder.push(it);
 				};
 
-				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
+				window.setTimeout(() => applyObjectOrder(it.groupId, records), 30);
 			});
 
 			callBack?.(message);
 		});
 	};
 
-	applyObjectOrder (groupId: string, records: any[]): string[] {
-		const { rootId, block } = this.props;
+	const applyObjectOrder = (groupId: string, records: any[]): string[] => {
 		if (!block) {
 			return [];
 		};
 
-		const view = this.getView();
+		const view = getView();
 		if (!view) {
 			return [];
 		};
@@ -1516,11 +1241,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records);
 	};
 
-	onSelectToggle (e: React.MouseEvent, id: string) {
+	const onSelectToggle = (e: React.MouseEvent, id: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isInline } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		if (!selection || isInline) {
@@ -1531,18 +1255,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		ids = ids.includes(id) ? ids.filter(it => it != id) : ids.concat([ id ]);
 		selection.set(I.SelectType.Record, ids);
 
-		this.setSelected(ids);
-		this.selectionCheck();
+		setSelected(ids);
+		selectionCheck();
 	};
 
-	selectionCheck () {
+	const selectionCheck = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		if (!selection || !this.refControls || !this.refSelect) {
+		if (!selection || !controlsRef.current || !selectRef.current) {
 			return;
 		};
 
-		const con = $(this.refControls.getNode());
-		const sel = $(this.refSelect.getNode());
+		const con = $(controlsRef.current.getNode());
+		const sel = $(selectRef.current.getNode());
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
@@ -1550,26 +1274,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		length ? sel.show() : sel.hide();
 	};
 
-	onSelectEnd () {
-		const { isInline, readonly } = this.props;
+	const onSelectEnd = () => {
 		const selection = S.Common.getRef('selectionProvider');
 
 		if (!selection || isInline || readonly) {
 			return;
 		};
 
-		this.setSelected(selection.get(I.SelectType.Record));
-		this.selectionCheck();
+		setSelected(selection.get(I.SelectType.Record));
+		selectionCheck();
 	};
 
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			if (this.filter == v) {
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeoutFilter.current);
+		timeoutFilter.current = window.setTimeout(() => {
+			if (filterRef.current == v) {
 				return;
 			};
 
-			this.filter = v;
+			filterRef.current = v;
 
 			if (v) {
 				U.Subscription.search({
@@ -1578,74 +1301,70 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					fullText: v,
 					keys: [ 'id' ],
 				}, (message: any) => {
-					this.searchIds = (message.records || []).map(it => it.id);
-					this.reloadData();
+					setSearchIds((message.records || []).map(it => it.id));
 				});
 			} else {
-				this.searchIds = null;
-				this.reloadData();
+				setSearchIds(null);
 			};
 
-			analytics.event('ScreenSearchDataview', { route: this.analyticsRoute() });
+			analytics.event('ScreenSearchDataview', { route: analyticsRoute });
 		}, J.Constant.delay.keyboard);
 	};
 
-	setSelected (ids: string[]) {
-		this.refSelect?.setIds(ids);
+	const setSelected = (ids: string[]) => {
+		selectRef.current?.setIds(ids);
 	};
 
-	onEditModeClick (e: any, id: string) {
+	const onEditModeClick = (e: any, id: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (this.editingRecordId == id) {
-			this.setRecordEditingOff(id);
+		if (editingRecordId.current == id) {
+			setRecordEditingOff(id);
 		} else {
-			this.setRecordEditingOn(e, id);
+			setRecordEditingOn(e, id);
 		};
 	};
 
-	setRecordEditingOn (e: any, id: string) {
-		const ref = this.refRecords.get(id);
-		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
-		const nameRef = this.refCells.get(nameId);
+	const setRecordEditingOn = (e: any, id: string) => {
+		const ref = recordRefs.current.get(id);
+		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
+		const nameRef = cellRefs.current.get(nameId);
 		const win = $(window);
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
-			this.editingRecordId = id;
+			editingRecordId.current = id;
 		};
 
-		if (nameRef) {
-			nameRef.onClick(e);
-		};
+		nameRef?.onClick(e);
 
 		win.on(`mousedown.record-${id}`, (e: any) => {
 			if ($(e.target).parents(`#record-${id}, .menu`).length > 0) {
 				return;
 			};
 
-			this.setRecordEditingOff(id);
+			setRecordEditingOff(id);
 		});
 
 		win.on(`keydown.record-${id}`, (e) => {
-			keyboard.shortcut('escape, enter', e, () => this.setRecordEditingOff(id));
+			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
 		});
 	};
 
-	setRecordEditingOff (id: string) {
-		const ref = this.refRecords.get(id);
+	const setRecordEditingOff = (id: string) => {
+		const ref = recordRefs.current.get(id);
 		const win = $(window);
-		const pageContainer = this.getPageContainer();
+		const pageContainer = getPageContainer();
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
-		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
-		const nameRef = this.refCells.get(nameId);
+		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
+		const nameRef = cellRefs.current.get(nameId);
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(false);
-			this.editingRecordId = '';
+			editingRecordId.current = '';
 		};
 
 		if (nameRef) {
@@ -1655,21 +1374,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		$(pageContainer).trigger('mousedown');
 	};
 
-	multiSelectAction (id: string) {
-		const { isInline } = this.props;
+	const multiSelectAction = (id: string) => {
 		const selection = S.Common.getRef('selectionProvider');
 
 		if (!selection || isInline) {
 			return;
 		};
 
-		const objectId = this.getObjectId();
+		const objectId = getObjectId();
 		const ids = selection.get(I.SelectType.Record);
 		const count = ids.length;
 
 		switch (id) {
 			case 'archive': {
-				Action.archive(ids, this.analyticsRoute());
+				Action.archiveCheckType(getSubId(), ids, analyticsRoute);
 				break;
 			};
 
@@ -1684,41 +1402,186 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		selection.clear();
 	};
 
-	getSearchIds () {
-		return this.searchIds;
-	};
-
-	analyticsRoute () {
-		return this.isCollection() ? analytics.route.collection : analytics.route.set;
-	};
-
-	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
+	const resize = () => {
+		if (frame.current) {
+			raf.cancel(frame.current);
 		};
 
-		this.frame = raf(() => {
-			const { block, getWrapperWidth } = this.props;
-
+		frame.current = raf(() => {
 			if (getWrapperWidth) {
-				const node = $(this.node);
+				const node = $(nodeRef.current);
 				const obj = $(`#block-${block.id}`);
 
 				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};
 
-			this.refControls?.resize();
+			controlsRef.current?.resize();
 
-			if (this.refView && this.refView.resize) {
-				this.refView.resize();
+			if (viewRef.current && viewRef.current.resize) {
+				viewRef.current.resize();
 			};
 		});
 	};
 
-	getPageContainer () {
-		return U.Common.getCellContainer(this.props.isPopup ? 'popup' : 'page');
+	const getPageContainer = () => {
+		return U.Common.getCellContainer(isPopup ? 'popup' : 'page');
 	};
 
-});
+	if (!views.length) {
+		return null;
+	};
+
+	const view = getView();
+	if (!view) {
+		return null;
+	};
+
+	const sources = getSources();
+	const targetId = getTarget();
+	const cn = [ 'focusable', `c${block.id}` ];
+
+	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
+	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
+
+	let ViewComponent: any = null;
+	let body = null;
+
+	if (isCollection) {
+		className.push('isCollection');
+	};
+
+	switch (view.type) {
+		default:
+		case I.ViewType.Grid:
+			ViewComponent = ViewGrid;
+			break;
+			
+		case I.ViewType.Board:
+			ViewComponent = ViewBoard;
+			break;
+			
+		case I.ViewType.Gallery:
+			ViewComponent = ViewGallery;
+			break;
+		
+		case I.ViewType.List:
+			ViewComponent = ViewList;
+			break;
+
+		case I.ViewType.Calendar:
+			ViewComponent = ViewCalendar;
+			break;
+
+		case I.ViewType.Graph:
+			ViewComponent = ViewGraph;
+			break;
+
+		case I.ViewType.Timeline:
+			ViewComponent = ViewTimeline;
+			break;
+	};
+
+	const dataviewProps = {
+		readonly,
+		isCollection,
+		isInline,
+		className: className.join(' '),
+		getRecord,
+		loadData,
+		getView,
+		getTarget,
+		getSources,
+		getRecords,
+		getKeys,
+		getIdPrefix,
+		getLimit: () => getLimit(view),
+		getVisibleRelations,
+		getTypeId,
+		getTemplateId: getDefaultTemplateId,
+		getEmpty,
+		getEmptyView,
+		getSubId,
+		onRecordAdd,
+		onTemplateMenu,
+		onTemplateAdd,
+		onSortAdd,
+		onFilterAdd,
+		isAllowedObject,
+		isAllowedDefaultType,
+		onSourceSelect,
+		onSourceTypeSelect,
+		onViewSettings: () => controlsRef.current?.onViewSettings?.(),
+		getSearchIds: () => searchIds,
+		canCellEdit,
+		onEditModeClick,
+		setRecordEditingOn,
+		setRecordEditingOff,
+	};
+
+	if (isInline && !targetId) {
+		body = getEmpty('target');
+	} else
+	if (!isCollection && !sources.length) {
+		body = (
+			<LayoutPlug
+				layoutFormat={I.LayoutFormat.List}
+				recommendedLayout={I.ObjectLayout.Set}
+				viewType={view.type}
+				isPopup={isPopup}
+				onClick={onEmpty}
+			/>
+		);
+	} else {
+		body = (
+			<div className="content">
+				<ViewComponent 
+					key={`view${view.id}`}
+					ref={viewRef} 
+					onRefCell={(ref: any, id: string) => cellRefs.current.set(id, ref)}
+					onRefRecord={(ref: any, id: string) => recordRefs.current.set(id, ref)}
+					{...props}
+					{...dataviewProps}
+					pageContainer={getPageContainer()}
+					onCellClick={onCellClick}
+					onCellChange={onCellChange}
+					onContext={onContext}
+					objectOrderUpdate={objectOrderUpdate}
+					applyObjectOrder={applyObjectOrder}
+					onDragRecordStart={onDragRecordStart}
+					onSelectEnd={onSelectEnd}
+					onSelectToggle={onSelectToggle}
+				/>
+			</div>
+		);
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			tabIndex={0} 
+			className={cn.join(' ')}
+			onKeyDown={onKeyDownHandler} 
+			onKeyUp={onKeyUpHandler} 
+			onFocus={onFocus}
+		>
+			<div className="hoverArea">
+				<Controls 
+					ref={controlsRef} 
+					{...props} 
+					{...dataviewProps} 
+					onFilterChange={onFilterChange}
+				/>
+				<Selection 
+					ref={selectRef} 
+					{...props} 
+					{...dataviewProps} 
+					multiSelectAction={multiSelectAction} 
+				/>
+			</div>
+			{body}
+		</div>
+	);
+
+}));
 
 export default BlockDataview;

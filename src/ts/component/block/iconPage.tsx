@@ -8,12 +8,16 @@ const BlockIconPage = observer(forwardRef<{}, I.BlockComponent>(({
 	readonly = false,
 }, ref) => {
 		
+	const object = S.Detail.get(rootId, rootId, []);
+	const size = object.iconImage ? 96 : 80;
+
 	return (
 		<IconObject 
 			id={`block-icon-${rootId}`} 
 			canEdit={!readonly} 
-			getObject={() => S.Detail.get(rootId, rootId, [])} 
-			size={96} 
+			object={object} 
+			size={size}
+			iconSize={size} 
 			menuParam={{ classNameWrap: 'fromBlock' }}
 		/>
 	);

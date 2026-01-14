@@ -18,7 +18,7 @@ const EmptySearch = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 	if (!text) {
 		if (filter) {
-			text = U.Common.sprintf(translate(readonly ? 'popupSearchEmptyFilterReadonly' : 'popupSearchEmptyFilter'), filter);
+			text = U.String.sprintf(translate(readonly ? 'popupSearchEmptyFilterReadonly' : 'popupSearchEmptyFilter'), filter);
 		} else {
 			text = translate('popupSearchEmpty');
 		};
@@ -26,7 +26,7 @@ const EmptySearch = forwardRef<HTMLDivElement, Props>(({
 
 	return (
 		<div className={[ 'emptySearch', className ].join(' ')} style={style}>
-			<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+			<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 		</div>
 	);
 });

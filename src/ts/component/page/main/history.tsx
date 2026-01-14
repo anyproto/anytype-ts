@@ -50,7 +50,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 		ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 
-		Action.copyBlocks(rootId, ids, false);
+		Action.copyBlocks(rootId, ids, I.ClipboardMode.Copy);
 	};
 
 	const renderDiff = (previousId: string, diff: any[]) => {

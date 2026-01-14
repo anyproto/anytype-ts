@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Action, keyboard } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -96,7 +96,7 @@ class UtilRouter {
 		const id = String(param.id || '');
 		const additional = param.additional || [];
 
-		let route = [ page, action, id ];
+		let route = [ '', page, action, id ];
 
 		for (const k in param) {
 			if ([ 'page', 'action', 'id', 'additional' ].includes(k)) {
@@ -111,8 +111,7 @@ class UtilRouter {
 		};
 
 		route = route.map(it => encodeURIComponent(it));
-
-		return '/' + route.join('/');
+		return route.join('/');
 	};
 
 	/**
@@ -132,6 +131,11 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
+		let updateTabRoute = param.updateTabRoute;
+		if (updateTabRoute === undefined) {
+			updateTabRoute = true;
+		};
+
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
 			timeout = S.Popup.getTimeout();
@@ -147,7 +151,12 @@ class UtilRouter {
 		};
 
 		const change = () => {
-			this.history.push(newRoute); 
+			this.history.push(newRoute);
+
+			if (updateTabRoute) {
+				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
+			};
+
 			onRouteChange?.();
 		};
 
@@ -226,27 +235,25 @@ class UtilRouter {
 				this.isOpening = false;
 
 				if (!useFallback) {
-					S.Popup.open('confirm', {
-						data: {
-							icon: 'error',
-							title: translate('commonError'),
-							text: message.error.description,
-							canCancel: true,
-						},
-					});
+					U.Space.openDashboard();
+					window.setTimeout(() => {
+						S.Popup.open('confirm', {
+							data: {
+								icon: 'error',
+								title: translate('commonError'),
+								text: message.error.description,
+								canCancel: true,
+							},
+						});
+					}, J.Constant.delay.popup);
 				} else {
-					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
-
-					if (spaces.length) {
-						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
-					} else {
-						U.Router.go('/main/void/error', routeParam);
-					};
+					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk);
 				};
 				return;
 			};
 
 			this.go('/main/blank', { 
+				updateTabRoute: false,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
 
@@ -255,6 +262,7 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 					S.Common.setLeftSidebarState('vault', '');
+					this.rightSidebarCheck(false);
 
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam }, () => {
@@ -281,6 +289,14 @@ class UtilRouter {
 				},
 			});
 		});
+	};
+
+	rightSidebarCheck (isPopup: boolean) {
+		const state = S.Common.getRightSidebarState(isPopup);
+
+		if (state.page == 'type') {
+			sidebar.rightPanelClose(isPopup, false);
+		};
 	};
 
 	/**

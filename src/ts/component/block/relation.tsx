@@ -7,10 +7,10 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 
 	const { rootId, block, readonly, isPopup, passParam, onKeyDown, onKeyUp } = props;
 	const relationKey = block.content.key;
-	const idPrefix = 'blockRelationCell' + block.id;
+	const idPrefix = `blockRelationCell${block.id}`;
 	const cellRef = useRef(null);
 	const id = Relation.cellId(idPrefix, relationKey, rootId);
-	const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const cmd = keyboard.cmdKey();
 	const relation = S.Record.getRelationByKey(relationKey);
 	const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;

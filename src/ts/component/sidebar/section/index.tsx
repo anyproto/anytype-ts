@@ -44,7 +44,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const childRef = useRef(null);
 	const Component = Components[component];
-	const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
+	const cn = [ 'section', U.String.toCamelCase(component.replace(/\//g, '-')) ];
 	const readonly = props.readonly || object?.isArchived;
 	const id = [ 'section' ].concat(component.split('/'));
 	const nodeRef = useRef(null);

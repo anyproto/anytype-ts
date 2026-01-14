@@ -10,15 +10,11 @@ const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const cn = [ 'wrap', 'focusable', `c${id}` ];
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: KeyboardEvent) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {

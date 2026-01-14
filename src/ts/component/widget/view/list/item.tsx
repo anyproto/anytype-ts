@@ -98,7 +98,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				className={[ 'item', 'isSection' ].join(' ')}
 			>
 				<div className="inner">
-					<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
+					<Label text={translate(U.String.toCamelCase([ 'common', id ].join('-')))} />
 				</div>
 			</div>
 		);

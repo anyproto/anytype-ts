@@ -20,14 +20,16 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultViewType: I.ViewType.List,
+		defaultViewType: I.ViewType.Grid,
 		headerRelationsLayout: I.FeaturedRelationLayout.Inline,
 		recommendedFeaturedRelations: [],
 		recommendedFileRelations: [],
 	});
 	const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, layoutWidth, headerRelationsLayout } = object;
-	const viewType = Number(object.defaultViewType) || I.ViewType.List;
-	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
+	const viewType = Number(object.defaultViewType) || I.ViewType.Grid;
+	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).
+		map(key => S.Record.getRelationById(key)).
+		filter(it => it && !it.isArchived);
 	const withDescription = featured.map(it => it.relationKey).includes('description');
 	const filtered = featured.filter(it => it.relationKey != 'description');
 	const isTask = U.Object.isTaskLayout(recommendedLayout);
@@ -88,7 +90,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		`align${layoutAlign}`,
 		`defaultView${I.ViewType[viewType]}`,
 		U.Data.layoutClass('', recommendedLayout),
-		U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
+		U.String.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
 		`featuredRelationLayout${I.FeaturedRelationLayout[headerRelationsLayout]}`,
 	];
 
@@ -130,7 +132,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	});
 
 	useImperativeHandle(ref, () => ({
-		update: setObject,
+		update: object => setObject({ ...object }),
 		show,
 	}));
 

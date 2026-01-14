@@ -25,7 +25,7 @@ const SORT_IDS = [
 	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
 
 class Dispatcher {
 
@@ -110,14 +110,13 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
-		const { config, windowId, windowIsFocused } = S.Common;
+		const { config, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const isMainWindow = windowId == '1';
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
-		
+
 		if (traceId) {
 			ctx.push(traceId);
 		};
@@ -173,10 +172,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallenge': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('showChallenge', {
 						...mapped,
 						theme: S.Common.getThemeClass(),
@@ -186,10 +181,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallengeHide': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('hideChallenge', mapped);
 					break;
 				};
@@ -646,7 +637,7 @@ class Dispatcher {
 
 							if (element.move) {
 								const { afterId, ids } = element.move;
-								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
+								const idx = afterId ? list.findIndex(it => it && (it[key.idField] == afterId)) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
 									const oidx = list.findIndex(it => it[key.idField] == id);
@@ -908,8 +899,11 @@ class Dispatcher {
 
 					S.Notification.add(item);
 
-					if (isMainWindow && !windowIsFocused) {
-						U.Common.notification(item);
+					if (!windowIsFocused) {
+						Renderer.send('notification', {
+							title: item.title,
+							text: item.text,
+						});
 					};
 					break;
 				};
@@ -920,37 +914,10 @@ class Dispatcher {
 				};
 
 				case 'PayloadBroadcast': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					let payload: any = {};
 					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
 
-					switch (payload.type) {
-						case 'openObject': {
-							const { object } = payload;
-
-							U.Object.openAuto(object);
-							Renderer.send('focusWindow');
-
-							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
-							break;
-						};
-
-						case 'analyticsEvent': {
-							const { code, param } = payload;
-
-							analytics.event(code, param);
-							break;
-						};
-					};
-					break;
-				};
-
-				case 'MembershipUpdate': {
-					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
+					Renderer.send('payloadBroadcast', payload);
 					break;
 				};
 
@@ -968,7 +935,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview.isOneToOne);
+					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 
 					let showNotification = false;
 
@@ -994,25 +961,25 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+					if (showNotification && notification && !windowIsFocused && (message.creator != account.id)) {
 						const title = [];
 
 						if (spaceview) {
-							title.push(spaceview.name);
+							title.push(U.String.shorten(spaceview.name, 16));
 						};
+
 						if (!spaceview.isChat && !spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
-								title.push(chat.name);
+								title.push(U.String.shorten(chat.name, 16));
 							};
 						};
 
-						U.Common.notification({ 
-							title: title.join(' - '), 
+						Renderer.send('notification', {
+							title: title.join(' - '),
 							text: notification,
-						}, () => {
-							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
-							analytics.event('OpenChatFromNotification');
+							cmd: 'openChat',
+							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 						});
 					};
 
@@ -1122,6 +1089,28 @@ class Dispatcher {
 					break;
 				};
 
+				case 'MembershipV2Update': {
+					S.Membership.dataUpdate(mapped.data);
+
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					if (!purchased || !product) {
+						break;
+					};
+
+					if (purchased.isFinalization) {
+						Action.finalizeMembership(product, analytics.route.settingsMembership);
+					};
+					break;
+				};
+
+				case 'MembershipV2ProductsUpdate': {
+					S.Membership.productsUpdate(mapped.products);
+					break;
+				};
+
 			};
 
 			if (needLog) {
@@ -1187,6 +1176,8 @@ class Dispatcher {
 			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
 				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
 			};
+
+			keyboard.setWindowTitle();
 		};
 
 		if (undefined !== details.setOf) {
@@ -1194,7 +1185,7 @@ class Dispatcher {
 
 			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
+				$(window).trigger('updateDataviewData');
 			};
 		};
 	};
@@ -1300,7 +1291,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugJson = config.flagsMw.json;
-		const ct = U.Common.toCamelCase(type);
+		const ct = U.String.toCamelCase(type);
 		const t0 = performance.now();
 		const needLog = this.needRequestLog(type);
 
@@ -1353,9 +1344,9 @@ class Dispatcher {
 				message.error = { code, description };
 
 				if (message.error.code) {
-					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
+					if (!SKIP_ERRORS.includes(type)) {
+						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-					if (!SKIP_SENTRY_ERRORS.includes(type)) {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};

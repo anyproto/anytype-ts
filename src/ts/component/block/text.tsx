@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { observer, } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
@@ -14,366 +14,168 @@ for (const lang of U.Prism.components) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
-const BlockText = observer(class BlockText extends React.Component<Props> {
+const TWIN_PAIRS = {
+	'{': '}',
+	'(': ')',
+	'[': ']',
+	'`':'`',
+	'\'':'\'',
+	'\"':'\"',
+	'【': '】',
+	'「': '」',
+	'（': '）',
+	'“': '”',
+	'‘': '’',
+	'$': '$',
+};
 
-	public static defaultProps = {
-		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
-	};
+const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
-	node: any = null;
-	refLang: any = null;
-	refEditable: any = null;
-	timeoutClick = 0;
-	timeoutFilter = 0;
-	marks: I.Mark[] = [];
-	text = '';
-	clicks = 0;
-	preventMenu = false;
-	frame = 0;
+	const { 
+		rootId, block, readonly, isPopup, isInsideTable, 
+		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp, 
+		renderLinks, renderObjects, renderMentions, renderEmoji,
+	} = props;
+	const { id, content } = block;
+	const fields = block.fields || {};
+	const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
+	const { theme } = S.Common;
+	const { focused } = focus.state;
+	const root = S.Block.getLeaf(rootId, rootId);
+	const cn = [ 'flex' ];
+	const cv = [ 'value', 'focusable', `c${id}` ];
+	const checkRtl = U.String.checkRtl(text);
+	const nodeRef = useRef(null);
+	const langRef = useRef(null);
+	const editableRef = useRef(null);
+	const textRef = useRef('');
+	const marksRef = useRef<I.Mark[]>(marks || []);
+	const timeoutFilter = useRef(0);
+	const timeoutClick = useRef(0);
+	const preventMenu = useRef(false);
+	const clickCnt = useRef(0);
 
-	constructor (props: Props) {
-		super(props);
-		
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseUp = this.onMouseUp.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onLang = this.onLang.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onToggleWrap = this.onToggleWrap.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onSelectIcon = this.onSelectIcon.bind(this);
-		this.onUploadIcon = this.onUploadIcon.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
-		this.onBeforeInput = this.onBeforeInput.bind(this);
-	};
+	useEffect(() => {
+		setValue(text);
+		renderLatex();
 
-	render () {
-		const { rootId, block, readonly } = this.props;
-		const { id, fields, content } = block;
-		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
-		const { theme } = S.Common;
-		const root = S.Block.getLeaf(rootId, rootId);
-		const cn = [ 'flex' ];
-		const cv = [ 'value', 'focusable', 'c' + id ];
-		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
+		return () => {
+			S.Common.clearTimeout('blockContext');
+			window.clearTimeout(timeoutFilter.current);
+			window.clearTimeout(timeoutClick.current);
 
-		let marker: any = null;
-		let markerIcon = null;
-		let placeholder = translate('placeholderBlock');
-		let additional = null;
-		let spellcheck = true;
-
-		if (color) {
-			cv.push('textColor textColor-' + color);
-		};
-
-		if (checkRtl) {
-			cn.push('isRtl');
-		};
-
-		// Subscriptions
-		for (const mark of marks) {
-			if ([ I.MarkType.Mention ].includes(mark.type)) {
-				const object = S.Detail.get(rootId, mark.param, []);
+			if (focused == block.id) {
+				focus.clear(true);
 			};
 		};
+	}, []);
 
-		switch (style) {
-			case I.TextStyle.Title: {
-				placeholder = translate('defaultNamePage');
-
-				if (root && U.Object.isTaskLayout(root.layout)) {
-					markerIcon = (
-						<IconObject 
-							object={{ id: rootId, layout: root.layout, done: checked }} 
-							size={30} 
-							iconSize={30}
-							canEdit={!readonly}
-							onCheckbox={this.onCheckbox}
-						/>
-					);
-				};
-				break;
-			};
-
-			case I.TextStyle.Description: {
-				placeholder = translate('placeholderBlockDescription');
-				break;
-			};
-
-			case I.TextStyle.Callout: {
-				additional = (
-					<IconObject 
-						id={`block-${id}-icon`}
-						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
-						canEdit={!readonly}
-						iconSize={20}
-						onSelect={this.onSelectIcon} 
-						onUpload={this.onUploadIcon}
-						noRemove={true}
-					/>
-				);
-				break;
-			};
-				
-			case I.TextStyle.Code: {
-				const options = U.Menu.codeLangOptions();
-
-				spellcheck = false;
-				
-				additional = (
-					<>
-						<Select 
-							id={'lang-' + id} 
-							arrowClassName="light" 
-							value={fields.lang || J.Constant.default.codeLang} 
-							ref={ref => this.refLang = ref} 
-							options={options} 
-							onChange={this.onLang}
-							noFilter={false} 
-							readonly={readonly}
-						/>
-						<div className="buttons">
-							<div className="btn" onClick={this.onToggleWrap}>
-								<Icon className="codeWrap" />
-								<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
-							</div>
-
-							<div className="btn" onClick={this.onCopy}>
-								<Icon className="copy" />
-								<div className="txt">{translate('commonCopy')}</div>
-							</div>
-						</div>
-					</>
-				);
-				break;
-			};
-				
-			case I.TextStyle.Bulleted: {
-				marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
-				break;
-			};
-				
-			case I.TextStyle.Numbered: {
-				marker = { type: I.MarkerType.Numbered, className: 'number' };
-				break;
-			};
-				
-			case I.TextStyle.Toggle: {
-				marker = { type: I.MarkerType.Toggle, className: 'toggle', onClick: this.onToggle };
-				break;
-			};
-				
-			case I.TextStyle.Checkbox: {
-				marker = { type: I.MarkerType.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
-				break;
-			};
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-			>
-				<div className="markers">
-					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
-					{markerIcon}
-				</div>
-
-				{additional ? <div className="additional">{additional}</div> : ''}
-
-				<Editable 
-					ref={ref => this.refEditable = ref}
-					id="value"
-					classNameEditor={cv.join(' ')}
-					classNamePlaceholder={'c' + id}
-					readonly={readonly}
-					spellcheck={spellcheck}
-					placeholder={placeholder}
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onSelect={this.onSelect}
-					onPaste={this.onPaste}
-					onMouseDown={this.onMouseDown}
-					onMouseUp={this.onMouseUp}
-					onInput={this.onInput}
-					onDragStart={e => e.preventDefault()}
-					onCompositionEnd={this.onCompositionEnd}
-					onBeforeInput={this.onBeforeInput}
-				/>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { block } = this.props;
-		const { content } = block;
-		const { marks, text } = content;
-
-		this.marks = U.Common.objectCopy(marks || []);
-		this.setValue(text);
-		this.renderLatex();
-	};
-	
-	componentDidUpdate () {
-		const { block, onUpdate } = this.props;
-		const { content } = block;
-		const { marks, text } = content;
-		const { focused } = focus.state;
-
-		this.marks = U.Common.objectCopy(marks || []);
-		this.setValue(text);
+	useEffect(() => {
+		marksRef.current = marks || [];
+		setValue(text);
 
 		if (text) {
-			this.placeholderHide();
+			placeholderHide();
 		};
 
 		if (focused == block.id) {
 			focus.apply();
 		} else {
-			this.renderLatex();
+			renderLatex();
 		};
 
-		if (onUpdate) {
-			onUpdate();
-		};
-	};
+		onUpdate?.();
+	});
 
-	componentWillUnmount(): void {
-		const { block } = this.props;
-		const { focused } = focus.state;
-
-		S.Common.clearTimeout('blockContext');
-		window.clearTimeout(this.timeoutFilter);
-		window.clearTimeout(this.timeoutClick);
-
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
-		};
-
-		if (focused == block.id) {
-			focus.clear(true);
-		};
-	};
-
-	setValue (v: string, restoreRange?: I.TextRange) {
-		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
-		const fields = block.fields || {};
-
+	const setValue = (v: string, restoreRange?: I.TextRange) => {
 		let text = String(v || '');
 		if (text == '\n') {
 			text = '';
 		};
 
-		this.text = text;
+		textRef.current = text;
 		let html = text;
 
-		// Only apply unicode replacements if not composing IME
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
 			const grammar = Prism.languages[lang] || {};
 
 			html = Prism.highlight(html, grammar, lang);
-			this.refLang?.setValue(lang);
+			langRef.current?.setValue(lang);
 		} else {
 			if (!keyboard.isComposition) {
-				const parsed = Mark.fromUnicode(html, this.marks, false);
+				const parsed = Mark.fromUnicode(html, marksRef.current, false);
 
 				html = parsed.text;
-				this.marks = parsed.marks;
+				marksRef.current = parsed.marks;
 			};
 
-			html = Mark.toHtml(html, this.marks);
+			html = Mark.toHtml(html, marksRef.current);
 		};
 
 		html = html.replace(/\n/g, '<br/>');
+		editableRef.current?.setValue(html);
 
-		if (this.refEditable) {
-			this.refEditable.setValue(html);
-
-			// Restore cursor position if provided
-			if (restoreRange) {
-				this.refEditable.setRange(restoreRange);
-			};
+		// Restore cursor position if provided
+		if (restoreRange) {
+			editableRef.current?.setRange(restoreRange);
 		};
 
-		if (!block.isTextCode() && (html != text) && this.marks.length) {
-			if (this.frame) {
-				raf.cancel(this.frame);
-				this.frame = 0;
-			};
-
-			this.frame = raf(() => {
-				renderMentions(rootId, this.node, this.marks, () => this.getValue());
-				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderEmoji(this.node);
-			});
+		if (!block.isTextCode() && (html != text) && marksRef.current.length) {
+			renderMarkup();
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
-			this.placeholderCheck();
+			placeholderCheck();
 		};
 	};
-	
-	renderLatex () {
-		const { block } = this.props;
 
-		if (block.isTextCode() || block.isTextTitle() || !this.refEditable) {
+	const renderMarkup = () => {
+		renderMentions(rootId, nodeRef.current, marksRef.current, () => text);
+		renderObjects(rootId, nodeRef.current, marksRef.current, () => text, props);
+		renderLinks(rootId, nodeRef.current, marksRef.current, () => text, props);
+		renderEmoji(nodeRef.current);
+	};
+	
+	const renderLatex = () => {
+		if (block.isTextCode() || block.isTextTitle()) {
 			return;
 		};
 
-		const value = this.refEditable.getHtmlValue();
+		const value = getHtmlValue();
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
-			this.refEditable.setValue(html);
+			editableRef.current.setValue(html);
+			renderMarkup();
 		};
 	};
 
-	getValue (): string {
-		return this.refEditable ? this.refEditable.getTextValue() : '';
+	const getTextValue = (): string => {
+		return String(editableRef.current?.getTextValue() || '');
 	};
 
-	getRange (): I.TextRange {
-		return this.refEditable ? this.refEditable.getRange() : null;
+	const getHtmlValue = (): string => {
+		return String(editableRef.current?.getHtmlValue() || '');
+	};
+
+	const getRange = (): I.TextRange => {
+		return editableRef.current?.getRange();
 	};
 	
-	getMarksFromHtml (): { marks: I.Mark[], text: string } {
-		const { block } = this.props;
-		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
-		const restricted: I.MarkType[] = [];
-
-		if (block.isTextHeader()) {
-			restricted.push(I.MarkType.Bold);
-		};
+	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
+		const value = getHtmlValue();
+		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
 		
 		return Mark.fromHtml(value, restricted);
 	};
 
-	onInput () {
-		const { onUpdate } = this.props;
-
-		if (onUpdate) {
-			onUpdate();
-		};
+	const onInput = () => {
+		onUpdate?.();
 	};
 	
-	onKeyDown (e: any) {
+	const onKeyDownHandler = (e: any) => {
 		e.persist();
-
-		const { onKeyDown, rootId, block, isInsideTable, checkMarkOnBackspace } = this.props;
-		const { id } = block;
 
 		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
@@ -381,13 +183,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const key = e.key.toLowerCase();
-		const range = this.getRange();
+		const range = getRange();
 
 		if (!range) {
 			return;
 		};
 
-		let value = this.getValue();
+		let value = getTextValue();
 		let ret = false;
 
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
@@ -433,20 +235,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
 		];
-		const twinPairs = {
-			'{': '}',
-			'(': ')',
-			'[': ']',
-			'`':'`',
-			'\'':'\'',
-			'\"':'\"',
-			'【': '】',
-			'「': '」',
-			'（': '）',
-			'“': '”',
-			'‘': '’',
-			'$': '$',
-		};
 
 		if (isInsideTable) {
 			if (!range.to) {
@@ -473,7 +261,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
 			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
-				this.setValue('');
+				setValue('');
 				
 				focus.set(block.id, { from: 0, to: 0 });
 				focus.apply();
@@ -493,15 +281,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				const insert = '\n';
 				const caret = range.from + insert.length;
-				const newValue = U.Common.stringInsert(value, insert, range.from, range.to);
+				const newValue = U.String.insert(value, insert, range.from, range.to);
 
-				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
+				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
 					const caretRange = { from: caret, to: caret };
 					
 					focus.set(block.id, caretRange);
 					focus.apply();
 
-					onKeyDown(e, newValue, this.marks, caretRange, this.props);
+					onKeyDown(e, newValue, marksRef.current, caretRange, props);
 				});
 
 				ret = true;
@@ -520,8 +308,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				e.preventDefault();
 			};
 			
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onKeyDown(e, value, this.marks, range, this.props);
+			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+				onKeyDown(e, value, marksRef.current, range, props);
 			});
 
 			ret = true;
@@ -537,8 +325,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					e.preventDefault();
 				};
 
-				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => { 
-					onKeyDown(e, value, this.marks, range, this.props);
+				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => { 
+					onKeyDown(e, value, marksRef.current, range, props);
 				});
 				ret = true;
 			});
@@ -548,16 +336,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 
 			if (block.isTextCode()) {
-				value = U.Common.stringInsert(value, '\t', range.from, range.from);
+				value = U.String.insert(value, '\t', range.from, range.from);
 
-				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
 				});
 			} else {
-				this.setText(this.marks, true, () => {
+				setText(marksRef.current, true, () => {
 					focus.apply();
-					onKeyDown(e, value, this.marks, range, this.props);
+					onKeyDown(e, value, marksRef.current, range, props);
 				});
 			};
 
@@ -566,32 +354,32 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range.to) {
-				const parsed = checkMarkOnBackspace(value, range, this.marks);
+				const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
 
 				if (parsed.save) {
 					e.preventDefault();
 
-					value = parsed.value;
-					this.marks = parsed.marks;
+					value = parsed.text;
+					marksRef.current = parsed.marks;
 
-					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 						focus.set(block.id, parsed.range);
 						focus.apply();
 
-						onKeyDown(e, value, this.marks, range, this.props);
+						onKeyDown(e, value, marksRef.current, range, props);
 					});
 					ret = true;
 				};
 			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
 				if (block.canHaveMarks()) {
-					const parsed = this.getMarksFromHtml();
+					const parsed = getMarksFromHtml();
 
-					this.marks = parsed.marks;
+					marksRef.current = parsed.marks;
 				};
 
-				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-					onKeyDown(e, value, this.marks, range, this.props);
+				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+					onKeyDown(e, value, marksRef.current, range, props);
 				});
 				ret = true;
 			};
@@ -607,8 +395,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		keyboard.shortcut('delete', e, () => {
 			if ((range.from == range.to) && (range.to == value.length)) {
-				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-					onKeyDown(e, value, this.marks, range, this.props);
+				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+					onKeyDown(e, value, marksRef.current, range, props);
 				});
 				ret = true;
 			};
@@ -620,7 +408,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			e.preventDefault();
-			this.onSmile();
+			onSmile();
 		});
 
 		if (
@@ -629,7 +417,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				(range.from != range.to) || 
 				block.isTextCode()
 			) && 
-			Object.keys(twinPairs).includes(key)
+			Object.keys(TWIN_PAIRS).includes(key)
 		) {
 			const count = value.split(key).length - 1;
 			const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
@@ -640,18 +428,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				let length = 0;
 
 				if ((key == '`') && !block.isTextCode()) {
-					this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
+					marksRef.current.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
 				} else {
 					length = key.length;
 
 					const cut = value.slice(range.from, range.to);
-					const closing = twinPairs[key] || key;
+					const closing = TWIN_PAIRS[key] || key;
 
-					value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
-					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+					value = U.String.insert(value, `${key}${cut}${closing}`, range.from, range.to);
+					marksRef.current = Mark.adjust(marksRef.current, range.from - length, closing.length);
 				};
 
-				this.setValue(value);
+				setValue(value);
 
 				focus.set(block.id, { from: range.from + length, to: range.to + length });
 				focus.apply();
@@ -667,23 +455,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		focus.set(id, range);
 
 		if (!keyboard.isSpecial(e)) {
-			this.placeholderHide();
+			placeholderHide();
 
 			if (S.Menu.isOpen('selectPasteUrl')) {
 				S.Menu.close('selectPasteUrl');
 			};
 		};
 
-		onKeyDown(e, value, this.marks, range, this.props);
+		onKeyDown(e, value, marksRef.current, range, props);
 	};
 	
-	onKeyUp (e: any) {
+	const onKeyUpHandler = (e: any) => {
 		e.persist();
 
-		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
 		const { filter } = S.Common;
-		const { id, content } = block;
-		const range = this.getRange();
+		const range = getRange();
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
 
@@ -711,21 +497,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		Length[I.TextStyle.Quote] = 1;
 		Length[I.TextStyle.Code] = 3;
 
-		let value = this.getValue();
+		let value = getTextValue();
 		let cmdParsed = false;
-		let isAllowedMenu = !this.preventMenu && !keyboard.isSpecial(e) && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		let isAllowedMenu = !preventMenu.current && !keyboard.isSpecial(e) && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
-		const isRtl = U.Common.checkRtl(value);
-
-		keyboard.setRtl(isRtl);
-
-		if (isRtl) {
-			U.Data.setRtl(rootId, block.id);
-		};
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
@@ -735,20 +514,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 		const canOpenMenuLink = !menuOpenMention && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
 
-		this.preventMenu = false;
+		preventMenu.current = false;
 
 		let parsed: any = {};
 		let adjustMarks = false;
 
 		if (block.canHaveMarks()) {
-			parsed = this.getMarksFromHtml();
+			parsed = getMarksFromHtml();
 			adjustMarks = parsed.adjustMarks;
-			this.marks = parsed.marks;
+			marksRef.current = parsed.marks;
 		};
 
 		if (menuOpenAdd || menuOpenMention) {
-			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
+			window.clearTimeout(timeoutFilter.current);
+			timeoutFilter.current = window.setTimeout(() => {
 				if (!range) {
 					return;
 				};
@@ -756,7 +535,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const d = range.from - filter.from;
 
 				if (d >= 0) {
-					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					// Get text from filter.from to cursor
+					let part = value.substring(filter.from, filter.from + d);
+
+					// Also include the word after cursor (for when @ is typed before existing text)
+					const textAfterCursor = value.substring(filter.from + d);
+					const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+					if (wordMatch) {
+						part += wordMatch[1];
+					};
+
+					part = part.replace(/^\//, '');
 					S.Common.filterSetText(part);
 				};
 			}, 30);
@@ -765,21 +554,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open add menu
 		if (canOpenMenuAdd && (!isInsideTable && !block.isTextCode())) { 
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onMenuAdd(id, U.Common.stringCut(value, range.from - 1, range.from), range, this.marks);
+			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+				onMenuAdd(id, U.String.cut(value, range.from - 1, range.from), range, marksRef.current);
 			});
 			return;
 		};
 
 		// Open mention menu
 		if (canOpenMenuMention) {
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention(1));
+			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => onMention(1));
 			return;
 		};
 
 		// Open link menu
 		if (canOpenMenuLink) {
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention(2));
+			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => onMention(2));
 			return;
 		};
 
@@ -804,17 +593,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 
 				// If emoji markup is first do not count one space character in mark adjustment
-				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: Length[newStyle], to: Length[newStyle] + 1 });
+				const isFirstEmoji = Mark.getInRange(marksRef.current, I.MarkType.Emoji, { from: Length[newStyle], to: Length[newStyle] + 1 });
 				if (isFirstEmoji) {
 					continue;
 				};
 
 				value = value.replace(reg, (s: string, p: string) => s.replace(p, ''));
 
-				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
-				this.setValue(value);
+				marksRef.current = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(marksRef.current, 0, -(Length[newStyle] + 1));
+				setValue(value);
 
-				U.Data.blockSetText(rootId, id, value, this.marks, true, () => {
+				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
 					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
 						focus.set(block.id, { from: 0, to: 0 });
 						focus.apply();
@@ -852,25 +641,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('alt+backspace', e, () => { 
-			diff += this.text.length - value.length;
+			diff += textRef.current.length - value.length;
 		});
 
-		this.placeholderCheck();
+		placeholderCheck();
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
 		// When typing space adjust several markups to break it
 		keyboard.shortcut('space', e, () => {
-			const d = text.length - this.text.length;
+			const d = text.length - textRef.current.length;
 
 			if (d > 0) {
-				for (let i = 0; i < this.marks.length; ++i) {
-					const mark = this.marks[i];
+				for (let i = 0; i < marksRef.current.length; ++i) {
+					const mark = marksRef.current[i];
 
 					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
 						const adjusted = Mark.adjust([ mark ], mark.range.to - d, -d);
 
-						this.marks[i] = adjusted[0];
+						marksRef.current[i] = adjusted[0];
 						adjustMarks = true;
 					};
 				};
@@ -878,7 +667,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		if (!ret && (adjustMarks || (value != text))) {
-			this.setValue(text);
+			setValue(text);
 
 			const { focused, range } = focus.state;
 
@@ -888,25 +677,33 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			focus.apply();
 		};
 
-		this.setText(this.marks, false);
-		onKeyUp(e, value, this.marks, range, this.props);
+		setText(marksRef.current, false);
+		onKeyUp(e, value, marksRef.current, range, props);
+
+		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
+			focus.scroll(isPopup, id);
+		};
 	};
 
-	onMention (d: number) {
-		const range = this.getRange();
-
+	const onMention = (d: number) => {
+		const range = getRange();
 		if (!range) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
 		const win = $(window);
 		const element = $(`#block-${block.id}`);
 
-		let value = this.getValue();
-		value = U.Common.stringCut(value, range.from - d, range.from);
+		let value = getTextValue();
 
-		S.Common.filterSet(range.from - d, '');
+		// Extract the word after the cursor to use as initial filter (for when @ is typed before existing text)
+		const textAfterCursor = value.substring(range.from);
+		const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+		const nextWord = wordMatch ? wordMatch[1] : '';
+
+		value = U.String.cut(value, range.from - d, range.from);
+
+		S.Common.filterSet(range.from - d, nextWord);
 
 		raf(() => {
 			S.Menu.open('blockMention', {
@@ -925,7 +722,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				data: {
 					rootId,
 					blockId: block.id,
-					marks: this.marks,
+					marks: marksRef.current,
 					skipIds: [ rootId ],
 					canAdd: true,
 					withCaption: true,
@@ -934,14 +731,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							return;
 						};
 
-						value = U.Common.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 							// Try to fix async detailsUpdate event
-							window.setTimeout(() => {
-								focus.set(block.id, { from: to, to });
-								focus.apply();
-							}, 50);
+							focus.setWithTimeout(block.id, { from: to, to }, 500);
 						});
 					},
 				},
@@ -949,13 +743,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onSmile () {
-		const { rootId, block } = this.props;
-		const { iconEmoji, iconImage } = block.content;
+	const onSmile = () => {
 		const win = $(window);
-		const range = this.getRange();
+		const range = getRange();
 
-		let value = this.getValue();
+		let value = getTextValue();
 
 		S.Menu.open('smile', {
 			element: `#block-${block.id}`,
@@ -976,18 +768,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				onSelect: (icon: string) => {
 					const to = range.from + 1;
 
-					this.marks = Mark.adjust(this.marks, range.from, 1);
-					this.marks = Mark.toggle(this.marks, { 
+					marksRef.current = Mark.adjust(marksRef.current, range.from, 1);
+					marksRef.current = Mark.toggle(marksRef.current, { 
 						type: I.MarkType.Emoji, 
 						param: icon, 
 						range: { from: range.from, to },
 					});
 
-					value = U.Common.stringInsert(value, ' ', range.from, range.from);
+					value = U.String.insert(value, ' ', range.from, range.from);
 
-					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-						focus.set(block.id, { from: to, to });
-						focus.apply();
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+						focus.setWithTimeout(block.id, { from: to, to }, 30);
 					});
 				},
 				route: analytics.route.editor,
@@ -995,62 +786,53 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	setText (marks: I.Mark[], update: boolean, callBack?: () => void) {
-		const { rootId, block } = this.props;
-		const { content } = block;
-		const value = this.getValue();
+	const setText = (marks: I.Mark[], update: boolean, callBack?: () => void) => {
+		const value = getTextValue();
 
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
 		};
 
-		if ((this.text === value) && !update) {
+		if ((textRef.current === value) && !update) {
 			callBack?.();
 			return;
 		};
 
-		this.text = value;
-		U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+		textRef.current = value;
+
+		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
+			U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			callBack?.();
+		});
 	};
 	
-	onFocus (e: any) {
-		const { onFocus, block } = this.props;
-
+	const onFocusHandler = (e: any) => {
 		e.persist();
 
-		this.placeholderCheck();
+		placeholderCheck();
 		keyboard.setFocus(true);
-
-		if (onFocus) {
-			onFocus(e);
-		};
+		onFocus?.(e);
 
 		// Workaround for focus issue and Latex rendering
 		window.setTimeout(() => {
-			const range = this.getRange();
+			const range = getRange();
 
-			this.setValue(block.getText());
-
+			setValue(block.getText());
 			focus.set(block.id, range);
 			focus.apply();
 		}, 0);
 	};
 	
-	onBlur (e: any) {
-		const { block, onBlur } = this.props;
-
+	const onBlurHandler = (e: any) => {
 		if (block.isTextTitle() || block.isTextDescription()) {
-			this.placeholderCheck();
+			placeholderCheck();
 		} else {
-			this.placeholderHide();
+			placeholderHide();
 		};
 
 		focus.clear(true);
-		this.setText(this.marks, true);
-
-		if (onBlur) {
-			onBlur(e);
-		};
+		setText(marksRef.current, true);
+		onBlur?.(e);
 
 		let key = '';
 		if (block.isTextTitle()) {
@@ -1063,67 +845,49 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			analytics.event(key);
 		};
 
-		this.renderLatex();
+		renderLatex();
 	};
 	
-	onPaste (e: any) {
+	const onPasteHandler = (e: any) => {
 		e.persist();
 		e.preventDefault();
 
-		this.preventMenu = true;
-		this.setText(this.marks, true);
-
-		this.props.onPaste(e, this.props);
+		preventMenu.current = true;
+		setText(marksRef.current, true);
+		onPaste(e, props);
 	};
 	
-	onToggle (e: any) {
-		this.props.onToggle(e);
-	};
-	
-	onCheckbox () {
-		const { rootId, block, readonly } = this.props;
-
+	const onCheckbox = () => {
 		if (readonly) {
 			return;
 		};
 
-		const { id, content } = block;
-		const { checked } = content;
-		
 		focus.clear(true);
 		C.BlockTextSetChecked(rootId, id, !checked);
 	};
 	
-	onLang (v: string) {
-		const { rootId, block, readonly } = this.props;
-		const { id, fields, content } = block;
-		const l = String(content.text || '').length;
-
+	const onLang = (v: string) => {
 		if (readonly) {
 			return;
 		};
-		
+
+		const length = block.getLength();
+
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, lang: v } },
 		], () => {
 			Storage.set('codeLang', v);
-
-			focus.set(id, { from: l, to: l });
-			focus.apply();
+			focus.setWithTimeout(block.id, { from: length, to: length }, 30);
 		});
 	};
 
-	onToggleWrap () {
-		const { rootId, block } = this.props;
-		const { id, fields } = block;
-
+	const onToggleWrap = () => {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, isUnwrapped: !fields.isUnwrapped } },
 		]);
 	};
 
-	onCopy () {
-		const { rootId, block } = this.props;
+	const onCopy = () => {
 		const length = block.getLength();
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
@@ -1140,16 +904,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 	
-	onSelect () {
+	const onSelect = () => {
 		if (keyboard.isContextDisabled || keyboard.isComposition) {
 			return;
 		};
 
-		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);
-		const range = this.getRange();
-		const value = this.getValue();
+		const range = getRange();
+		const value = getTextValue();
 
 		focus.set(block.id, range);
 
@@ -1174,10 +937,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		S.Common.setTimeout('blockContext', 150, () => {
 			const onChange = (marks: I.Mark[]) => {
-				this.setValue(value);
-				this.marks = marks;
+				setValue(value);
+				marksRef.current = marks;
 
-				U.Data.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
+				U.Data.blockSetText(rootId, block.id, getTextValue(), marksRef.current, true, () => {
 					focus.set(block.id, { from: currentFrom, to: currentTo });
 					focus.apply();
 				});
@@ -1186,7 +949,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (S.Menu.isOpen('blockContext')) {
 				S.Menu.updateData('blockContext', { 
 					range: { from: currentFrom, to: currentTo },
-					marks: this.marks,
+					marks: marksRef.current,
 					onChange,
 				});
 				return;
@@ -1196,7 +959,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			this.setText(this.marks, true, () => {
+			setText(marksRef.current, true, () => {
 				S.Menu.open('blockContext', {
 					classNameWrap: 'fromBlock',
 					element: el,
@@ -1205,8 +968,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
-					offsetY: 4,
+					offsetY: -8,
 					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {
@@ -1214,7 +978,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						blockIds: [ block.id ],
 						rootId,
 						range: { from: currentFrom, to: currentTo },
-						marks: this.marks,
+						marks: marksRef.current,
 						isInsideTable,
 						onChange,
 					},
@@ -1232,18 +996,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 	
-	onMouseDown (e: any) {
-		window.clearTimeout(this.timeoutClick);
+	const onMouseDown = (e: any) => {
+		window.clearTimeout(timeoutClick.current);
 
-		this.clicks++;
-		if (this.clicks == 3) {
+		clickCnt.current++;
+		if (clickCnt.current == 3) {
 			e.preventDefault();
 			e.stopPropagation();
 
 			S.Menu.closeAll([ 'blockContext' ], () => {
-				this.clicks = 0;
-
-				const { block } = this.props;
+				clickCnt.current = 0;
 
 				focus.set(block.id, { from: 0, to: block.getLength() });
 				focus.apply();
@@ -1251,62 +1013,48 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 	
-	onMouseUp () {
-		window.clearTimeout(this.timeoutClick);
-		this.timeoutClick = window.setTimeout(() => this.clicks = 0, 300);
+	const onMouseUp = () => {
+		window.clearTimeout(timeoutClick.current);
+		timeoutClick.current = window.setTimeout(() => clickCnt.current = 0, 300);
 	};
 
-	onSelectIcon (icon: string) {
-		const { rootId, block } = this.props;
-		
+	const onSelectIcon = (icon: string) => {
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
 		Storage.set('calloutIcon', icon);
 	};
 
-	onUploadIcon (objectId: string) {
-		const { rootId, block } = this.props;
-
+	const onUploadIcon = (objectId: string) => {
 		C.BlockTextSetIcon(rootId, block.id, '', objectId);
 	};
 	
-	placeholderCheck () {
-		if (this.refEditable && !this.props.readonly) {
-			this.refEditable.placeholderCheck();
-		};			
-	};
-
-	placeholderSet (v: string) {
-		if (this.refEditable) {
-			this.refEditable.placeholderSet(v);
-		};
-	};
-	
-	placeholderHide () {
-		if (this.refEditable) {
-			this.refEditable.placeholderHide();
+	const placeholderCheck = () => {
+		if (!readonly) {
+			editableRef.current?.placeholderCheck();
 		};
 	};
 
-	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {
+	const placeholderHide = () => {
+		editableRef.current?.placeholderHide();
+	};
+
+	const onCompositionEnd = (e: any, value: string, range: I.TextRange) => {
 		// Use provided value and range if available, fallback to current
-		const v = value !== undefined ? value : this.getValue();
-		const r = range !== undefined ? range : this.getRange();
+		const v = value !== undefined ? value : getTextValue();
+		const r = range !== undefined ? range : getRange();
 		
 		// Populate marks before setValue to prevent formatting issue
-		this.marks = this.getMarksFromHtml().marks;
-		this.setValue(v, r);
+		marksRef.current = getMarksFromHtml().marks;
+		setValue(v, r);
 	};
 
-	onBeforeInput = (e: any) => {
-		const { block } = this.props;
-		
+	const onBeforeInput = (e: any) => {
 		if (block.isTextCode()) {
 			return;
 		};
 
-		const range = this.getRange();
+		const range = getRange();
 
-		let html = this.refEditable ? this.refEditable.getHtmlValue() : '';
+		let html = getHtmlValue();
 
 		if (!/<(font|span)/.test(html)) {
 			return;
@@ -1316,11 +1064,159 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			html = html.replace(/<\/?font[^>]*>/g, '');
 			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1');
 
-			this.refEditable.setValue(html);
-			this.refEditable.setRange(range);
+			editableRef.current?.setValue(html);
+			editableRef.current?.setRange(range);
 		});
 	};
-	
-});
+
+	let marker: any = null;
+	let markerIcon = null;
+	let placeholder = translate('placeholderBlock');
+	let additional = null;
+	let spellcheck = true;
+
+	if (color) {
+		cv.push(`textColor textColor-${color}`);
+	};
+
+	if (checkRtl) {
+		cn.push('isRtl');
+	};
+
+	// Subscriptions
+	for (const mark of marks) {
+		if ([ I.MarkType.Mention ].includes(mark.type)) {
+			const object = S.Detail.get(rootId, mark.param, []);
+		};
+	};
+
+	switch (style) {
+		case I.TextStyle.Title: {
+			placeholder = translate('defaultNamePage');
+
+			if (root && U.Object.isTaskLayout(root.layout)) {
+				markerIcon = (
+					<IconObject 
+						object={{ id: rootId, layout: root.layout, done: checked }} 
+						size={30} 
+						iconSize={30}
+						canEdit={!readonly}
+						onCheckbox={onCheckbox}
+					/>
+				);
+			};
+			break;
+		};
+
+		case I.TextStyle.Description: {
+			placeholder = translate('placeholderBlockDescription');
+			break;
+		};
+
+		case I.TextStyle.Callout: {
+			additional = (
+				<IconObject 
+					id={`block-${id}-icon`}
+					object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
+					canEdit={!readonly}
+					iconSize={20}
+					onSelect={onSelectIcon} 
+					onUpload={onUploadIcon}
+					noRemove={true}
+				/>
+			);
+			break;
+		};
+			
+		case I.TextStyle.Code: {
+			spellcheck = false;
+			
+			additional = (
+				<>
+					<Select 
+						id={`lang-${id}`} 
+						arrowClassName="light" 
+						value={fields.lang || J.Constant.default.codeLang} 
+						ref={langRef}
+						options={U.Menu.codeLangOptions()} 
+						onChange={onLang}
+						noFilter={false} 
+						readonly={readonly}
+					/>
+
+					<div className="buttons">
+						<div className="btn" onClick={onToggleWrap}>
+							<Icon className="codeWrap" />
+							<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
+						</div>
+
+						<div className="btn" onClick={onCopy}>
+							<Icon className="copy" />
+							<div className="txt">{translate('commonCopy')}</div>
+						</div>
+					</div>
+				</>
+			);
+			break;
+		};
+			
+		case I.TextStyle.Bulleted: {
+			marker = { type: I.MarkerType.Bulleted };
+			break;
+		};
+			
+		case I.TextStyle.Numbered: {
+			marker = { type: I.MarkerType.Numbered };
+			break;
+		};
+			
+		case I.TextStyle.Toggle: {
+			marker = { type: I.MarkerType.Toggle, onClick: onToggle };
+			break;
+		};
+			
+		case I.TextStyle.Checkbox: {
+			marker = { type: I.MarkerType.Checkbox, active: checked, onClick: onCheckbox };
+			break;
+		};
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+		>
+			<div className="markers">
+				{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
+				{markerIcon}
+			</div>
+
+			{additional ? <div className="additional">{additional}</div> : ''}
+
+			<Editable 
+				ref={editableRef}
+				id="value"
+				classNameEditor={cv.join(' ')}
+				classNamePlaceholder={`c${id}`}
+				readonly={readonly}
+				spellcheck={spellcheck}
+				placeholder={placeholder}
+				onKeyDown={onKeyDownHandler}
+				onKeyUp={onKeyUpHandler}
+				onFocus={onFocusHandler}
+				onBlur={onBlurHandler}
+				onSelect={onSelect}
+				onPaste={onPasteHandler}
+				onMouseDown={onMouseDown}
+				onMouseUp={onMouseUp}
+				onInput={onInput}
+				onDragStart={e => e.preventDefault()}
+				onCompositionEnd={onCompositionEnd}
+				onBeforeInput={onBeforeInput}
+			/>
+		</div>
+	);
+
+}));
 
 export default BlockText;

@@ -1,6 +1,6 @@
 const s = document.createElement('script');
 
-s.src = './js/main.js?' + Math.random();
+s.src = './js/main.js';
 s.type = 'text/javascript';
 s.onerror = function() {
 	console.error('Failed to load main.js');

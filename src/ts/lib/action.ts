@@ -1,4 +1,4 @@
-import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
 const Diff = require('diff');
 
@@ -248,7 +248,7 @@ class Action {
 			return;
 		};
 
-		url = U.Common.urlFix(url);
+		url = U.String.urlFix(url);
 
 		const route = U.Common.getRouteFromUrl(url);
 		if (route) {
@@ -256,7 +256,7 @@ class Action {
 			return;
 		};
 
-		const scheme = U.Common.getScheme(url);
+		const scheme = U.String.urlScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
 		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
 		const isAllowed = allowedSchemes.includes(scheme);
@@ -280,7 +280,7 @@ class Action {
 				data: {
 					icon: 'confirm',
 					title: translate('popupConfirmOpenExternalLinkTitle'),
-					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
+					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
 					storageKey,
 					onConfirm: cb,
@@ -330,7 +330,7 @@ class Action {
 				data: {
 					icon: 'confirm',
 					title: translate('popupConfirmOpenExternalFileTitle'),
-					text: U.Common.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
+					text: U.String.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
 					textConfirm: translate('commonYes'),
 					onConfirm: cb,
 				},
@@ -353,8 +353,10 @@ class Action {
 		
 		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { route });
+		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
+			Renderer.send('download', url, { directory: paths[0] });
+			analytics.event('DownloadMedia', { route });
+		});
 	};
 
 	/**
@@ -435,8 +437,9 @@ class Action {
 		analytics.event('ShowDeletionWarning');
 
 		S.Popup.open('confirm', {
+			preventMenuClose: true,
 			data: {
-				title: U.Common.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
+				title: U.String.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
@@ -463,55 +466,6 @@ class Action {
 	};
 
 	/**
-	 * Restores an account from a backup file, handling import and selection.
-	 * @param {function} onError - Callback for error handling, returns true to abort.
-	 */
-	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { networkConfig } = S.Auth;
-		const { dataPath } = S.Common;
-		const { mode, path } = networkConfig;
-
-		this.openFileDialog({ extensions: [ 'zip' ] }, paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
-				if (onError(message.error)) {
-					return;
-				};
-
-				const { accountId, spaceId } = message;
-
-				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, false, (message: any) => {
-					if (onError(message.error)) {
-						return;
-					};
-
-					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-						const { account } = message;
-
-						if (onError(message.error) || !account) {
-							return;
-						};
-
-						S.Auth.accountSet(account);
-						S.Common.configSet(account.config, false);
-
-						const routeParam = {
-							replace: true,
-							animate: true,
-							onFadeIn: () => {
-								S.Popup.open('migration', { data: { type: 'import' } });
-							},
-						};
-
-						U.Data.onInfo(account.info);
-						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce(true);
-					});
-				});
-			});
-		});
-	};
-
-	/**
 	 * Archives a list of objects by IDs.
 	 * @param {string[]} ids - The object IDs to archive.
 	 * @param {string} route - The route context for analytics.
@@ -525,9 +479,52 @@ class Action {
 
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
-
 			callBack?.();
 		});
+	};
+
+	archiveCheckType (rootId: string, ids: string[], route: string, callBack?: () => void) {
+		const types = [];
+
+		const cb = (ids: string[]) => {
+			this.archive(ids, route, callBack);
+		};
+
+		ids.forEach((id) => {
+			const object = S.Detail.get(rootId, id);
+
+			if (U.Object.isTypeLayout(object.layout)){
+				types.push(object);
+			};
+		});
+
+		if (types.length) {
+			const filters = [
+				{ relationKey: 'type', condition: I.FilterCondition.In, value: types.map(({ id }) => id) }
+			];
+			U.Subscription.search({ filters }, (message: any) => {
+				if (message.records.length) {
+					S.Popup.open('objectManager', {
+						className: 'archiveType',
+						data: {
+							type: I.ObjectManagerPopup.TypeArchive,
+							objects: types,
+							onConfirm: (selectedIds, totalCount) => {
+								cb(ids.concat(selectedIds));
+
+								analytics.event('ClickDeleteType', { suggestCount: totalCount, count: selectedIds.length });
+							},
+						},
+					});
+
+					analytics.event('ScreenDeleteType', { route });
+				} else {
+					cb(ids);
+				};
+			});
+		} else {
+			cb(ids);
+		};
 	};
 
 	/**
@@ -540,10 +537,13 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (!message.error.code) {
-				callBack?.();
-				analytics.event('RestoreFromBin', { route, count: ids.length });
+			if (message.error.code) {
+				return;
 			};
+
+			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			callBack?.();
+			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});
 	};
 
@@ -598,9 +598,7 @@ class Action {
 		const { zip, nested, files, archived, json, route } = param;
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
-			if (onSelectPath) {
-				onSelectPath();
-			};
+			onSelectPath?.();
 
 			C.ObjectListExport(spaceId, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
 				if (message.error.code) {
@@ -619,9 +617,9 @@ class Action {
 	 * Copies or cuts blocks to the clipboard.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string[]} ids - The block IDs to copy or cut.
-	 * @param {boolean} isCut - Whether to cut (true) or copy (false).
+	 * @param {I.ClipboardMode} mode - Whether to copy or cut.
 	 */
-	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
+	copyBlocks (rootId: string, ids: string[], mode: I.ClipboardMode) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
@@ -634,6 +632,7 @@ class Action {
 		};
 
 		const range = U.Common.objectCopy(focus.state.range);
+		const isCut = mode == I.ClipboardMode.Cut;
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.wrapTree(rootId, rootId);
 
@@ -703,10 +702,6 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
-		if (!U.Space.canCreateSpace()) {
-			return;
-		};
-
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { uxType, route } });
 		});
@@ -719,26 +714,26 @@ class Action {
 	 * @param {function} [callBack] - Optional callback after removal.
 	 */
 	removeSpace (id: string, route: string, forceDelete?: boolean, callBack?: (message: any) => void) {
-		const space = U.Space.getSpaceviewBySpaceId(id);
+		const spaceview = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!space) {
+		if (!spaceview) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = isOwner ? space.name : U.Common.shorten(space.name, 32);
+		const name = isOwner ? spaceview.name : U.String.shorten(spaceview.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
-		const confirmMessage = isOwner ? space.name : '';
+		const confirmMessage = isOwner ? spaceview.name : '';
 
-		let title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
-		let text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		let title = U.String.sprintf(translate(`space${suffix}WarningTitle`), name);
+		let text = U.String.sprintf(translate(`space${suffix}WarningText`), name);
 		let confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
-		let toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
+		let toast = U.String.sprintf(translate(`space${suffix}Toast`), name);
 
 		if (forceDelete) {
-			title = U.Common.sprintf(translate('spaceDeleteWarningTitle'), name);
-			text = U.Common.sprintf(translate('spaceLeaveWarningText'), name);
-			toast = U.Common.sprintf(translate('spaceDeleteToast'), name);
+			title = U.String.sprintf(translate('spaceDeleteWarningTitle'), name);
+			text = U.String.sprintf(translate('spaceLeaveWarningText'), name);
+			toast = U.String.sprintf(translate('spaceDeleteToast'), name);
 			confirm = translate('commonDelete');
 		};
 
@@ -760,7 +755,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: spaceview.spaceAccessType, route });
 						};
 					});
 				},
@@ -882,37 +877,29 @@ class Action {
 		};
 	};
 
-	membershipUpgrade (tier?: I.TierType) {
-		if (!U.Common.checkCanMembershipUpgrade()) {
-			this.membershipUpgradeViaEmail();
+	membershipUpgrade (event?: any) {
+		const product = S.Membership.data?.getTopProduct();
+		if (!product) {
 			return;
 		};
 
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{
-				onRouteChange: () => {
-					S.Popup.open('membership', {
-						data: { tier: tier ? tier : I.TierType.Builder }
-					});
+		if (!product.isUpgradeable) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmMembershipUpgradeTitle'),
+					text: translate('popupConfirmMembershipUpgradeText'),
+					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					canCancel: false
 				}
-			},
-		);
-	};
+			});
+		} else {
+			this.openSettings('membership', '');
+		};
 
-	/**
-	 * Opens a membership upgrade confirmation popup.
-	 */
-	membershipUpgradeViaEmail () {
-		S.Popup.open('confirm', {
-			data: {
-				title: translate('popupConfirmMembershipUpgradeTitle'),
-				text: translate('popupConfirmMembershipUpgradeText'),
-				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
-				canCancel: false
-			}
-		});
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
+		};
 	};
 
 	/**
@@ -1025,14 +1012,20 @@ class Action {
 
 	spaceInfo () {
 		const { account } = S.Auth;
+		const { dateFormat } = S.Common;
 		const space = U.Space.getSpaceview();
 		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
 		const data = [
 			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
-			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
 			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
-			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
 		];
+
+		if (!creator._empty_) {
+			data.push([ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.resolvedName ]);
+		};
+		if (space.createdDate) {
+			data.push([ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(dateFormat, space.createdDate) ],);
+		};
 
 		S.Popup.open('confirm', {
 			className: 'isWide spaceInfo',
@@ -1064,16 +1057,18 @@ class Action {
 		});
 	};
 
-	openSettings (id: string, route: string) {
-		U.Object.openRoute({ 
+	openSettings (id: string, route: string, param?: Partial<I.RouteParam>) {
+		const object = { 
 			id, 
 			layout: I.ObjectLayout.Settings,
-			_routeParam_: { 
-				additional: [ 
-					{ key: 'route', value: route },
-				],
-			},
-		});
+			_routeParam_: { additional: [] },
+		};
+
+		if (route) {
+			object._routeParam_.additional.push({ route });
+		};
+
+		U.Object.openRoute(object, param);
 	};
 
 	openSpaceShare (route: string) {
@@ -1083,6 +1078,61 @@ class Action {
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
 		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
+	};
+
+	/**
+	 * Shows an invite request popup and handles navigation on cancel.
+	 */
+	inviteRequest () {
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
+				},
+			},
+		});
+
+		analytics.event('ScreenRequestSent');
+	};
+
+	finalizeMembership (product: any, route: string, callBack?: () => void) {
+		const showSurveyPopup = () => {
+			if (Survey.isComplete(I.SurveyType.Cta)) {
+				S.Popup.close('membershipFinalization');
+				callBack?.();
+				return;
+			};
+
+			const profile = U.Space.getProfile();
+			const participant = U.Space.getParticipant() || profile;
+			const globalName = Relation.getStringValue(participant?.globalName);
+			const title = globalName ? U.String.sprintf(translate('popupConfirmMembershipSurveyTitle'), globalName) : translate('popupConfirmMembershipSurveyTitleNoName');
+
+			S.Popup.replace('membershipFinalization', 'confirm', {
+				onClose: () => callBack?.(),
+				data: {
+					icon: 'emoji',
+					title,
+					text: translate('popupConfirmMembershipSurveyText'),
+					colorConfirm: 'accent',
+					textConfirm: translate('popupConfirmMembershipSurveyTakeSurvey'),
+					onConfirm: () => Survey.onConfirm(I.SurveyType.Cta),
+					onCancel: () => Survey.onSkip(I.SurveyType.Cta),
+				}
+			});
+		};
+
+		S.Popup.open('membershipFinalization', {
+			data: {
+				product,
+				route,
+				onSuccess: showSurveyPopup,
+			},
+		});
 	};
 
 };

@@ -154,7 +154,7 @@
 
 	.block.blockEmbed.isExcalidraw {
 		.icon.source { display: none !important; }
-		.mediaExcalidraw { height: 600px; }
+		.mediaExcalidraw { height: calc(100vh - 52px); }
 		.mediaExcalidraw {
 			.LaserToolOverlay { display: none !important; }
 		}

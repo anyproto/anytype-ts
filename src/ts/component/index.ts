@@ -51,6 +51,7 @@ import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
 import MenuBar from './util/menuBar';
+import StickyScrollbar from './util/stickyScrollbar';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
@@ -162,6 +163,7 @@ export {
 	Phrase,
 	TabSwitch,
 	ChatCounter,
+	StickyScrollbar,
 
 	EmptySearch,
 	EmptyState,

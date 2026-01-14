@@ -10,7 +10,6 @@ const NO_DIMMER_IDS = [
 	'page',
 	'export',
 	'phrase',
-	'objectManager',
 	'relation',
 	'inviteQr',
 ];
@@ -69,6 +68,7 @@ class PopupStore {
 			this.popupList.push({ id, param });
 		};
 
+		window.setTimeout(() => U.Data.updateTabsDimmer(), 50);
 		Preview.previewHide(true);
 	};
 
@@ -178,19 +178,22 @@ class PopupStore {
 		if (force) {
 			this.popupList = filtered;
 		
+			U.Data.updateTabsDimmer();
 			callBack?.();
 		} else {
-			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
+			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
 
-			if (el.length) {
-				raf(() => { el.removeClass('show'); });
-			};
+			raf(() => {
+				if (el.length) {
+					el.removeClass('show');
+				};
+				U.Data.updateTabsDimmer(filtered);
+			});
 
 			window.setTimeout(() => {
 				this.popupList = filtered;
 
 				callBack?.();
-
 				$(window).trigger('resize');
 			}, J.Constant.delay.popup);
 		};

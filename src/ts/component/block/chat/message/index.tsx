@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence, animate } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
@@ -26,7 +27,25 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
 	const attachmentRefs = useRef({});
+	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
 
 	useEffect(() => {
 		init();
@@ -196,7 +215,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const bubble = node.find('.bubbleInner .bubble');
+		const bubble = $(bubbleRef.current);
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
@@ -220,7 +239,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
-	const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
 
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);
@@ -243,7 +262,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
-			controls.push({ className: 'more', onClick: onMore });
+			controls.push({ className: 'more', onClick: onMore, tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -270,7 +289,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	if (text) {
 		cn.push('withText');
 	};
-	if (U.Common.checkRtl(text)) {
+	if (U.String.checkRtl(text)) {
 		ct.push('isRtl');
 	};
 	if (!isReadMessage || !isReadMention) {
@@ -316,7 +335,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
-				onDoubleClick={onReplyEdit}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({ 
@@ -344,7 +362,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 						<div className="bubbleOuter">
 							<div className="bubbleInner">
-								<div className={cnBubble.join(' ')}>
+								<div ref={bubbleRef} className={cnBubble.join(' ')}>
 									<div className={ct.join(' ')}>
 										<div
 											ref={textRef}
