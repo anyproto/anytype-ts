@@ -7,14 +7,16 @@ html.printMedia {
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
 
-	#menuBar, 
-	#previewLink, 
-	.menu, 
-	.controlButtons, 
-	.header, 
+	#menuBar,
+	#previewLink,
+	.menu,
+	.controlButtons,
+	.header,
 	.footer,
 	.notifications,
 	.sidebar,
+	#sidebarLeft,
+	#sidebarRight,
 	.sidebarDummy,
 	.progress,
 	.toast,

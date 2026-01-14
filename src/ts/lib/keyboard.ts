@@ -1140,7 +1140,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
-		Renderer.send('winCommand', 'printHtml', { name: object.name });
+
+		// Wait for styles to be applied before capturing HTML
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printHtml', { name: object.name });
+		});
 	};
 
 	/**
@@ -1157,7 +1161,11 @@ class Keyboard {
 		};
 
 		this.printApply('print', false);
-		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+
+		// Wait for styles to be applied before capturing PDF
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+		});
 	};
 
 	/**

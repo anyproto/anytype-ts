@@ -156,11 +156,10 @@ class Api {
 		const suffix = app.isPackaged ? '' : 'dev';
 		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
-		store.set('disableHardwareAcceleration', !enabled);
-		this.setConfig(win, { hardwareAcceleration: enabled });
-
-		// Notify user that restart is required
-		Util.send(win, 'commandGlobal', 'hardwareAccelerationChanged', enabled);
+		store.set('hardwareAcceleration', enabled);
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => {
+			this.shutdown(win, true);
+		});
 	};
 
 	spellcheckAdd (win, s) {
