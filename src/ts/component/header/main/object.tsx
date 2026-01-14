@@ -144,21 +144,12 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 			</div>
 
 			<div className="side right">
-				{/*{showShare ? (*/}
-				{/*	<Icon */}
-				{/*		id="button-header-share" */}
-				{/*		tooltipParam={{ text: translate('commonPublish'), typeY: I.MenuDirection.Bottom }}*/}
-				{/*		className={[ 'share', 'withBackground' ].join(' ')}*/}
-				{/*		onClick={onShare} */}
-				{/*		onDoubleClick={e => e.stopPropagation()}*/}
-				{/*	/> */}
-				{/*) : ''}*/}
 
 				{showShare ? (
 					<Label
 						id="button-header-share"
 						text={translate('commonShare')}
-						className={[ 'share', 'withBackground' ].join(' ')}
+						className="share"
 						onClick={onShare}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
