@@ -1,8 +1,9 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import { I, S, U, J, translate, keyboard } from 'Lib';
 
 interface Props {
 	isPopup?: boolean;
@@ -34,6 +35,7 @@ interface ObjectManagerRefProps {
 	setSelection(ids: string[]): void;
 	setSelectedRange(start: number, end: number): void;
 	selectionClear(): void;
+	onFilterShow(): void;
 };
 
 const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
@@ -114,8 +116,42 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const scrollContainer = scrollElement || U.Common.getScrollContainer(isPopup).get(0);
 
 	const onFilterShow = () => {
+		if (!filterRef.current) {
+			return;
+		};
+
+		const container = U.Common.getPageFlexContainer(isPopup);
+		const win = $(window);
+
 		$(filterWrapperRef.current).addClass('active');
 		filterRef.current?.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
+			const value = filterRef.current?.getValue();
+
+			if (!value && !$(e.target).parents(`.filterWrapper`).length) {
+				onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			keyboard.shortcut('escape', e, () => {
+				onFilterHide();
+				win.off('keydown.filter');
+			});
+		});
+	};
+
+	const onFilterHide = () => {
+		if (!filterRef.current) {
+			return;
+		};
+
+		$(filterWrapperRef.current).removeClass('active');
+		filterRef.current.setValue('');
+		filterRef.current.blur();
+		load();
 	};
 
 	const onFilterChange = (v: string) => {
@@ -442,6 +478,8 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 		return () => {
 			window.clearTimeout(timeout.current);
+			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
+			$(window).off('keydown.filter');
 		};
 	}, []);
 
@@ -481,6 +519,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		setSelection,
 		setSelectedRange,
 		selectionClear,
+		onFilterShow,
 	}));
 
 	return (
