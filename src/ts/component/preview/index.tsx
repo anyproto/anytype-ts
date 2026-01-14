@@ -68,6 +68,28 @@ const PreviewIndex = observer(forwardRef(() => {
 		Preview.previewHide(true);
 	};
 
+	const onMouseDown = (e: MouseEvent) => {
+		if (e.button === 2) {
+			$('#preview').hide();
+			Preview.previewHide(true);
+		};
+	};
+
+	useEffect(() => {
+		const handler = (e: any) => {
+			if (e.button === 2) {
+				const preview = document.getElementById('preview');
+				if (preview && preview.contains(e.target)) {
+					$('#preview').hide();
+					Preview.previewHide(true);
+				};
+			};
+		};
+
+		document.addEventListener('mousedown', handler, true);
+		return () => document.removeEventListener('mousedown', handler, true);
+	}, []);
+
 	const position = () => {
 		const node = $(nodeRef.current);
 		const poly = $(polygonRef.current);
@@ -191,13 +213,14 @@ const PreviewIndex = observer(forwardRef(() => {
 	}, [ type ]);
 
 	return content ? (
-		<div 
-			ref={nodeRef} 
-			id="preview" 
-			className={cn.join(' ')} 
+		<div
+			ref={nodeRef}
+			id="preview"
+			className={cn.join(' ')}
 			onMouseLeave={() => Preview.previewHide(true)}
+			onMouseDown={onMouseDown}
 		>
-			<div ref={polygonRef} className="polygon" onClick={onClick} />
+			<div ref={polygonRef} className="polygon" onClick={onClick} onMouseDown={onMouseDown} />
 			<div className="content">
 				{head}
 

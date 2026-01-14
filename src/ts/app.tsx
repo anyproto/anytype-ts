@@ -481,8 +481,56 @@ const App: FC = () => {
 								if (block && block.isText()) {
 									const value = block.content.text;
 
-									// Find the first occurrence of the misspelled word in the value
-									const wordIndex = value.indexOf(misspelledWord);
+									// Find the word at the click position using caret position
+									let wordIndex = -1;
+									const range = document.caretRangeFromPoint(x, y);
+
+									if (range) {
+										const container = range.startContainer;
+										const offset = range.startOffset;
+
+										// Get the text content and find word boundaries
+										if (container.nodeType === Node.TEXT_NODE) {
+											const editable = $(container).closest('.editable');
+											if (editable.length) {
+												// Calculate the absolute offset in the block text
+												let absoluteOffset = 0;
+												const walker = document.createTreeWalker(
+													editable.get(0),
+													NodeFilter.SHOW_TEXT,
+													null
+												);
+
+												let node;
+												while ((node = walker.nextNode())) {
+													if (node === container) {
+														absoluteOffset += offset;
+														break;
+													};
+													absoluteOffset += node.textContent?.length || 0;
+												};
+
+												// Find the occurrence of misspelledWord that contains this offset
+												let searchIndex = 0;
+												while (searchIndex < value.length) {
+													const idx = value.indexOf(misspelledWord, searchIndex);
+													if (idx === -1) break;
+
+													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
+														wordIndex = idx;
+														break;
+													};
+													searchIndex = idx + 1;
+												};
+											};
+										};
+									};
+
+									// Fallback to first occurrence if position detection failed
+									if (wordIndex === -1) {
+										wordIndex = value.indexOf(misspelledWord);
+									};
+
 									if (wordIndex >= 0) {
 										U.Data.blockInsertText(
 											rootId,

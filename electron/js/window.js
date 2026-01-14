@@ -266,6 +266,10 @@ class WindowManager {
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
+		view.webContents.on('context-menu', (e, param) => {
+			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
+		});
+
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
 			const isSingleTab = win.views && (win.views.length == 1);
