@@ -10,17 +10,17 @@ interface Props extends I.ViewComponent {
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, block, className, isInline, isCollection, getView, onFilterAdd, loadData } = props;
+	const { rootId, block, className, isInline, isCollection, getView, onFilterAdd, loadData, readonly, getTarget } = props;
 	const blockId = block.id;
 	const view = getView();
 	const filters = view?.filters;
 	const nodeRef = useRef(null);
 
-
 	if (!view || !filters.length) {
 		return null;
 	};
 
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
@@ -37,9 +37,28 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isInline');
 	};
 
-	const buttons: any[] = [
-		{ id: 'clear', text: translate('commonClear') },
-	];
+	const onClick = (e: any, item: any) => {
+		S.Menu.open('dataviewFilterValues', {
+			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				rootId,
+				blockId,
+				isInline,
+				getView,
+				getTarget,
+				readonly: isReadonly,
+				save: () => {
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
+						loadData(view.id, 0, false);
+					});
+				},
+				itemId: item.id,
+			}
+		});
+	};
 
 	const onClear = () => {
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => loadData(view.id, 0, false));
@@ -87,6 +106,8 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 							{...item}
 							subId={rootId}
 							onRemove={e => onRemove(e, item)}
+							onClick={e => onClick(e, item)}
+							readonly={isReadonly}
 						/>
 					))}
 					<Icon id="item-add" className="plus" onClick={onAdd} />

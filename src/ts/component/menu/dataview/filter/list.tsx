@@ -106,6 +106,8 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
+		console.log('DATA: ', data)
+
 		S.Menu.open('dataviewFilterValues', {
 			className,
 			classNameWrap,

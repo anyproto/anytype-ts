@@ -34,10 +34,12 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
 	const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
+	let name = relation.name;
 	let value = props.value;
 	let v: any = null;
 	let list = [];
 	let Item: any = null;
+	let noCondition = false;
 
 	switch (relation.format) {
 
@@ -79,6 +81,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.RelationType.MultiSelect:
 		case I.RelationType.Select: {
+			noCondition = true;
 			list = Relation.getOptions(value);
 
 			if (list.length) {
@@ -140,7 +143,8 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		v = null;
 	};
 
-	if (v) {
+	if (v !== null) {
+		name = `${relation.name}:`;
 		cn.push('withValue');
 	};
 
@@ -153,7 +157,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			<IconObject size={20} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
 			<div className="content" onClick={onClick}>
-				<Label className="name" text={relation.name} />
+				<Label className="name" text={name} />
+
+				{(v !== null) && !noCondition ? (
+					<Label className="condition" text={conditionOption.name} />
+				) : ''}
 
 				{v !== null ? (
 					<div className="value">{v}</div>
