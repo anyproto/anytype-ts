@@ -49,6 +49,18 @@ app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1')
 app.commandLine.appendSwitch('gtk-version', '3');
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
+// GPU/Hardware acceleration settings
+// Check for --disable-gpu CLI argument or stored setting
+const disableGpu = process.argv.includes('--disable-gpu') || store.get('disableHardwareAcceleration');
+
+if (disableGpu) {
+	app.disableHardwareAcceleration();
+	app.commandLine.appendSwitch('disable-gpu');
+	app.commandLine.appendSwitch('disable-gpu-compositing');
+	
+	console.log('[GPU] Hardware acceleration disabled');
+};
+
 app.removeAsDefaultProtocolClient(protocol);
 
 if (!process.defaultApp) {

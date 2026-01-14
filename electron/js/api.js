@@ -151,6 +151,18 @@ class Api {
 		});
 	};
 
+	setHardwareAcceleration (win, enabled) {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.set('disableHardwareAcceleration', !enabled);
+		this.setConfig(win, { hardwareAcceleration: enabled });
+
+		// Notify user that restart is required
+		Util.send(win, 'commandGlobal', 'hardwareAccelerationChanged', enabled);
+	};
+
 	spellcheckAdd (win, s) {
 		win.webContents.session.addWordToSpellCheckerDictionary(s);
 	};
