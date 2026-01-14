@@ -107,7 +107,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false) },
 				]
 			},
 			{
@@ -411,7 +411,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: 'Relaunch', click: () => Api.exit(this.win, true) },
+				{ label: 'Relaunch', click: () => Api.exit(this.win, '', true) },
 			]
 		};
 

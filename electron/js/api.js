@@ -157,9 +157,7 @@ class Api {
 		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 		store.set('hardwareAcceleration', enabled);
-		this.setConfig(win, { hardwareAcceleration: enabled }, () => {
-			this.shutdown(win, true);
-		});
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true));
 	};
 
 	spellcheckAdd (win, s) {

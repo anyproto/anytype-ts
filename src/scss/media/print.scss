@@ -157,7 +157,9 @@ html.printMedia {
 }
 
 html.printMedia.themeDark {
-	--color-bg-primary: #000;
+	--color-bg-primary: #171717;
+
+	&, body { background: var(--color-bg-primary) !important; }
 }
 
 html.printMedia.print {
