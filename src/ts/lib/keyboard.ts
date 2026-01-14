@@ -1171,9 +1171,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid() || this.isMainArchive();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -1412,6 +1412,14 @@ class Keyboard {
 	 */
 	isMainVoid () {
 		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	};
+
+	/**
+	 * Returns true if the current context is the main archive view.
+	 * @returns {boolean}
+	 */
+	isMainArchive () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'archive');
 	};
 
 	/**
