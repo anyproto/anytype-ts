@@ -132,15 +132,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
-
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalHardwareAcceleration')} />
-					<Switch
-						className="big"
-						value={hardwareAcceleration !== false}
-						onChange={(e: any, v: boolean) => onHardwareAccelerationChange(v)}
-					/>
-				</div>
 			</div>
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
@@ -183,6 +174,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						onChange={v => S.Common.linkStyleSet(v)}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionAdvanced')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalHardwareAcceleration')} />
+					<Switch
+						className="big"
+						value={hardwareAcceleration !== false}
+						onChange={(e: any, v: boolean) => onHardwareAccelerationChange(v)}
 					/>
 				</div>
 			</div>
