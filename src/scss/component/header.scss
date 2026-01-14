@@ -75,6 +75,14 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
 
+	.label.share {
+		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;
+		color: var(--color-text-secondary); transition: $transitionAllCommon;
+	}
+	.label.share {
+		&:hover, &.hover, &.active { background-color: var(--color-shape-highlight-medium) !important; }
+	}
+
 	&.withSidebarTotalLeft {
 		.icon.vaultToggle { display: none; }
 	}
