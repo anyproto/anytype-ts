@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Button, Frame } from 'Component';
+import { Icon, Title, Label, Button, Frame, IconObject, ObjectName } from 'Component';
 import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
 
 const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -12,7 +12,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const { id } = match.params || {};
 	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
 
-	const onClick = () => {
+	const onCreateSpace = () => {
 		U.Menu.spaceCreate({
 			element: '#void-button-create-space',
 			className: 'spaceCreate',
@@ -21,20 +21,39 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		}, analytics.route.void);
 	};
 
+	const onSpaceClick = (item: any) => {
+		U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+	};
+
 	let title = '';
 	let text = '';
 	let button = null;
+	let spaceList = null;
 
 	switch (id) {
 		case 'select': {
 			text = translate('pageMainVoidSelectText');
+			spaceList = (
+				<div className="spaceList">
+					{spaces.map(item => (
+						<div
+							key={item.id}
+							className="spaceItem"
+							onClick={() => onSpaceClick(item)}
+						>
+							<IconObject object={item} size={64} iconSize={64} canEdit={false} />
+							<ObjectName object={item} />
+						</div>
+					))}
+				</div>
+			);
 			break;
 		};
 
 		case 'error': {
 			title = translate('pageMainVoidErrorTitle');
 			text = translate('pageMainVoidErrorText');
-			button = <Button id="void-button-create-space" onClick={onClick} className="c36" text={translate('commonCreateSpace')} />;
+			button = <Button id="void-button-create-space" onClick={onCreateSpace} className="c36" text={translate('commonCreateSpace')} />;
 			break;
 		};
 	};
@@ -43,6 +62,10 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		if (id == 'select') {
 			S.Common.setLeftSidebarState('vault', '');
 			sidebar.leftPanelSubPageClose(false, false);
+		};
+
+		if (id == 'dashboard') {
+			U.Space.openDashboard();
 		};
 	}, []);
 
@@ -71,18 +94,25 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					/>
 				) : null}
 
-				<Frame>
-					<div className="iconWrapper">
-						<Icon />
-					</div>
+				{spaceList ? (
+					<>
+						<Label className="selectLabel" text={text} />
+						{spaceList}
+					</>
+				) : (
+					<Frame>
+						<div className="iconWrapper">
+							<Icon />
+						</div>
 
-					<Title text={title} />
-					<Label text={text} />
+						<Title text={title} />
+						<Label text={text} />
 
-					<div className="buttons">
-						{button}
-					</div>
-				</Frame>
+						<div className="buttons">
+							{button}
+						</div>
+					</Frame>
+				)}
 			</motion.div>
 		</AnimatePresence>
 	);

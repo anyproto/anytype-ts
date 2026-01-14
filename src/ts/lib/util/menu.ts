@@ -1,16 +1,17 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U } from 'Lib';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, Renderer, S, sidebar, translate, U } from 'Lib';
 import React from 'react';
 import { SidebarPanel } from 'Interface';
 
 interface SpaceContextParam {
-	isSharePage?: boolean; 
-	noManage?: boolean; 
-	noMembers?: boolean; 
+	isSharePage?: boolean;
+	noManage?: boolean;
+	noMembers?: boolean;
 	withPin?: boolean;
 	withDelete?: boolean;
-	noShare?: boolean; 
+	noShare?: boolean;
+	withOpenNewTab?: boolean;
 	route: string;
 };
 
@@ -858,7 +859,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, withOpenNewTab, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -977,6 +978,13 @@ class UtilMenu {
 					break;
 				};
 
+				case 'openNewTab': {
+					const spaceRoute = U.Router.build({ page: 'main', action: 'void', id: 'dashboard', spaceId: targetSpaceId });
+					Renderer.send('openTab', spaceRoute);
+					analytics.event('OpenSpaceNewTab', { route });
+					break;
+				};
+
 			};
 		};
 
@@ -1029,6 +1037,10 @@ class UtilMenu {
 					} else {
 						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 					};
+				};
+
+				if (withOpenNewTab) {
+					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
 				};
 
 				if (!noManage) {

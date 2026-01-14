@@ -229,10 +229,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		}, { 
+		}, {
 			withPin: true,
 			withDelete: true,
-			noMembers: true, 
+			withOpenNewTab: true,
+			noMembers: true,
 			noManage: true,
 			route: analytics.route.vault,
 		});

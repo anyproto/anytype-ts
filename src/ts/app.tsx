@@ -232,8 +232,9 @@ const App: FC = () => {
 		sidebar.init(false);
 
 		// Close vault on non-home tabs (after sidebar.init to override stored state)
+		// Pass save=false to not persist this state, so home tab keeps its saved state
 		if (!isHomeTab) {
-			sidebar.leftPanelClose(false);
+			sidebar.leftPanelClose(false, false);
 		};
 		analytics.init();
 

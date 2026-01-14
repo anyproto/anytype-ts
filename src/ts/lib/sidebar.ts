@@ -115,8 +115,10 @@ class Sidebar {
 
 	/**
 	 * Closes the sidebar with animation and updates state.
+	 * @param {boolean} animate - Whether to animate the close.
+	 * @param {boolean} save - Whether to save the state to storage (default: true).
 	 */
-	leftPanelClose (animate: boolean): void {
+	leftPanelClose (animate: boolean, save: boolean = true): void {
 		const { isClosed } = this.getData(I.SidebarPanel.Left);
 		if (this.isAnimating || isClosed) {
 			return;
@@ -138,7 +140,7 @@ class Sidebar {
 		};
 
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
-		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, true);
+		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
 		this.resizePage(false, newWidth, null, animate);
 
 		window.clearTimeout(this.timeoutAnim);
@@ -146,7 +148,9 @@ class Sidebar {
 			pageWrapperLeft.removeClass('anim').addClass('isClosed');
 		}, animate ? J.Constant.delay.sidebar : 0);
 
-		analytics.event('CollapseVault');
+		if (save) {
+			analytics.event('CollapseVault');
+		};
 	};
 
 	/**
@@ -174,6 +178,9 @@ class Sidebar {
 		};
 
 		pageWrapperLeft.removeClass('isClosed');
+
+		// Update minimal state when opening
+		S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
 
 		this.setStyle(I.SidebarPanel.Left, false, { width });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, true);

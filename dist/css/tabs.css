@@ -76,7 +76,8 @@ body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
 }
 .tab .icon { flex-shrink: 0; }
 .tab .name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
-.tab .icon.close { background-image: url('../img/icon/close.svg'); }
+.tab .icon.close { background-image: url('../img/icon/close.svg'); opacity: 0; transition: opacity 0.15s ease-in-out; }
+.tab:hover .icon.close { opacity: 1; }
 
 .tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tab .icon.object { width: 18px; height: 18px; background-size: cover; }

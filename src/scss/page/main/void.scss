@@ -31,11 +31,27 @@
 		}
 
 		&.voidSelect {
+			flex-direction: column;
+
 			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
 			.iconWrapper {
 				.icon { background-image: url('~img/icon/void/select.svg'); }
 			}
-			.label { width: 242px; color: var(--color-text-secondary); }
+			.label { width: 242px; color: var(--color-text-secondary); text-align: center; }
+			.label.selectLabel { width: auto; margin-bottom: 24px; }
+
+			.spaceList {
+				display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; max-width: 480px;
+			}
+			.spaceItem {
+				display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
+				padding: 12px; border-radius: 8px; width: 96px; transition: background-color 0.2s;
+			}
+			.spaceItem:hover { background-color: var(--color-shape-highlight-medium); }
+			.spaceItem {
+				.iconObject { flex-shrink: 0; }
+				.name { @include text-small; color: var(--color-text-primary); text-align: center; @include text-overflow-nw; width: 100%; }
+			}
 		}
 	}
 

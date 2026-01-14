@@ -158,3 +158,72 @@ The application uses a multi-tab architecture where each tab is a separate `WebC
 3. Add IPC handler in `app.tsx` registerIpcEvents()
 4. Add state to `store/common.ts` (observable, getter, action)
 5. Update UI components to use the new state
+
+## Sidebar System
+
+### Overview
+The sidebar system manages left (vault), sub-left (widgets), and right panels with animation and state persistence.
+
+### Key Files
+- `src/ts/lib/sidebar.ts` - Sidebar controller (open, close, toggle, resize)
+- `src/ts/component/sidebar/left.tsx` - Left sidebar component with resize handles
+- `src/ts/component/sidebar/page/vault.tsx` - Vault (space list) page
+- `src/ts/component/sidebar/page/widget.tsx` - Widgets panel page
+- `src/ts/store/common.ts` - Sidebar state (vaultIsMinimal, leftSidebarState)
+
+### Sidebar Panels
+- **Left Panel (Vault)**: Space list with optional minimal mode (icon-only)
+- **SubLeft Panel (Widgets)**: Widgets panel, opens alongside vault
+- **Right Panel**: Context-dependent content (object details, etc.)
+
+### State Management
+- Panel state (width, isClosed) stored in `Storage` under `sidebarData` key
+- `sidebar.setData(panel, isPopup, data, save)` - set state, optionally persist
+- `sidebar.getData(panel, isPopup)` - get current panel state
+- Minimal mode: `S.Common.vaultIsMinimalSet(boolean)` when width <= `J.Size.vaultStripeMaxWidth`
+
+### Important Methods
+- `leftPanelOpen(width, animate)` - Opens vault panel
+- `leftPanelClose(animate, save)` - Closes vault, `save=false` prevents persistence
+- `leftPanelToggle()` - Toggle vault open/closed
+- `leftPanelSubPageOpen(id, animate)` - Opens widgets panel
+- `leftPanelSubPageClose(animate, save)` - Closes widgets panel
+
+## Space Context Menu
+
+### Overview
+Space context menus are created via `U.Menu.spaceContext()` in `src/ts/lib/util/menu.ts`.
+
+### Parameters
+```typescript
+interface SpaceContextParam {
+  isSharePage?: boolean;      // Show share-page-specific options
+  noManage?: boolean;         // Hide "Manage sections" option
+  noMembers?: boolean;        // Hide "Members" option
+  withPin?: boolean;          // Show pin/unpin options
+  withDelete?: boolean;       // Show delete/leave option
+  noShare?: boolean;          // Hide share link options
+  withOpenNewTab?: boolean;   // Show "Open in New Tab" option (vault only)
+  route: string;              // Analytics route
+}
+```
+
+### Adding Context Menu Options
+1. Add parameter to `SpaceContextParam` interface
+2. Add handler in `onClick()` switch statement
+3. Add option to `getOptions()` sections object
+4. Add translation key in `src/json/text.json`
+
+## Void Pages
+
+### Overview
+Void pages (`src/ts/component/page/main/void.tsx`) handle empty/error states.
+
+### Routes
+- `/main/void/select` - Space selection (non-home tabs without space)
+- `/main/void/error` - Error state when no spaces available
+- `/main/void/dashboard` - Redirect to space dashboard
+
+### Styling
+- Styles in `src/scss/page/main/void.scss`
+- Class names generated from route: `.voidSelect`, `.voidError`, etc.
