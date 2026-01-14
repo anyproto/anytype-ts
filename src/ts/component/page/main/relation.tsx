@@ -150,19 +150,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		switch (relationFormat) {
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				/*
-				if (!canWrite) {
-					break;
-				};
-
-				S.Menu.open('dataviewOptionEdit', {
-					element: `#page #item-${option.id}`,
-					offsetY: 4,
-					data: {
-						option,
-					}
-				});
-				*/
 				onOptionMore();
 				break;
 			};
@@ -244,7 +231,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		const { output, canAdd } = getOptionsData();
 		const skipIds = output.map(it => it.id);
 		const param = {
-			element: `#page .relationData .options .more`,
+			element: `#page .relationData .options dd`,
 			className: 'single',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 8,
