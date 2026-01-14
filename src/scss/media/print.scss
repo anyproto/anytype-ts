@@ -159,7 +159,10 @@ html.printMedia {
 html.printMedia.themeDark {
 	--color-bg-primary: #171717;
 
-	&, body { background: var(--color-bg-primary) !important; }
+	@page { margin: 0 !important; }
+
+	&, body { background: var(--color-bg-primary) !important; print-color-adjust: exact !important; }
+	#page { padding-left: 1.5cm; padding-right: 1.5cm; }
 }
 
 html.printMedia.print {
