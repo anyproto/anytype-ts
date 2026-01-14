@@ -10,6 +10,7 @@ import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, foc
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
+import Filters from './dataview/filters';
 import Empty from './dataview/empty';
 import AddRow from './dataview/view/grid/body/add';
 
@@ -33,6 +34,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const viewRef = useRef(null);
 	const controlsRef = useRef(null);
 	const selectRef = useRef(null);
+	const filtersRef = useRef(null);
 	const isCollection = Dataview.isCollection(rootId, block.id);
 	const isCreating = useRef(false);
 	const frame = useRef(0);
@@ -1578,6 +1580,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					multiSelectAction={multiSelectAction} 
 				/>
 			</div>
+
+			<Filters
+				ref={filtersRef}
+				{...props}
+				{...dataviewProps}
+			/>
+
 			{body}
 		</div>
 	);

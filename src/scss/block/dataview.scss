@@ -190,6 +190,45 @@
 			}
 		}
 
+		.dataviewFilters { padding: 12px 0px; }
+		.dataviewFilters {
+			> .sides { display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between; width: 100%; }
+			> .sides {
+				> .side.left { flex-grow: 1; padding-left: 16px; max-width: 100%; display: flex; flex-direction: row; gap: 4px; flex-wrap: wrap; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; padding-right: 2px; align-items: flex-start; }
+
+				.filterItem {
+					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 32px; align-items: center; padding: 0px 10px 0px 8px;
+					border-radius: 16px; border: 1px solid var(--color-shape-highlight-medium); color: var(--color-text-secondary);
+				}
+				.filterItem {
+					&.withValue { color: var(--color-text-primary); }
+					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
+
+ 					.name { font-weight: 500; }
+
+					.icon.delete {
+						display: none; position: absolute; right: -4px; top: -4px; width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+						background: var(--color-bg-primary) url('~img/icon/menu/delete.svg') 50% 50% / 12px 12px no-repeat; border: 1px solid var(--color-shape-secondary);
+					}
+					.icon.delete:hover { background-color: var(--color-shape-secondary); }
+					&:hover {
+						.icon.delete { display: block; }
+					}
+				}
+
+				.icon.plus { width: 32px; height: 32px; border-radius: 16px; background-size: 20px; background-position: 50% 50%; background-repeat: no-repeat;  }
+				.icon.plus {
+					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); }
+				}
+
+				.buttons {
+					.label { font-weight: 500; color: var(--color-text-secondary); padding: 5px 8px; }
+					.labe:hover { color: var(--color-text-primary); }
+				}
+			}
+		}
+
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; min-height: 300px; }
 			.scroll::-webkit-scrollbar { display: none; }
