@@ -151,6 +151,7 @@ nativeTheme.on('updated', () => {
 	Api.setBackground(isDark ? 'dark' : '');
 
 	WindowManager.sendToAll('native-theme', isDark);
+	WindowManager.sendToAllTabs('native-theme', isDark);
 });
 
 function createWindow () {

@@ -360,6 +360,12 @@ class WindowManager {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
 		};
+
+		// Send will-close-tab to allow renderer cleanup, then destroy the webContents
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			Util.sendToTab(win, view.id, 'will-close-tab');
+			view.webContents.close();
+		};
 	};
 
 	closeActiveTab (win) {
@@ -516,6 +522,11 @@ class WindowManager {
 	sendToAll () {
 		const args = [ ...arguments ];
 		this.list.forEach(it => Util.send(it, ...args));
+	};
+
+	sendToAllTabs () {
+		const args = [ ...arguments ];
+		this.list.forEach(it => Util.sendToAllTabs(it, ...args));
 	};
 
 	reloadAll () {
