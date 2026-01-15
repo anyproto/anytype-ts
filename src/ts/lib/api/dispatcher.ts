@@ -942,6 +942,7 @@ class Dispatcher {
 
 					if (!windowIsFocused) {
 						Renderer.send('notification', {
+							id: item.id,
 							title: item.title,
 							text: item.text,
 						});
@@ -1017,6 +1018,7 @@ class Dispatcher {
 						};
 
 						Renderer.send('notification', {
+							id: message.id,
 							title: title.join(' - '),
 							text: notification,
 							cmd: 'openChat',
@@ -1225,13 +1227,15 @@ class Dispatcher {
 
 		const root = S.Block.getLeaf(rootId, id);
 
-		if ((id == rootId) && root) {
-			if ((undefined !== details.layout) && (root.layout != details.layout)) {
-				S.Block.update(rootId, rootId, { layout: details.layout });
-			};
+		if (id == rootId) {
+			if (root) {
+				if ((undefined !== details.layout) && (root.layout != details.layout)) {
+					S.Block.update(rootId, rootId, { layout: details.layout });
+				};
 
-			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
-				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+				if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
+					S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+				};
 			};
 
 			keyboard.setWindowTitle();

@@ -200,7 +200,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeTabId, isSingleTab } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -248,7 +248,7 @@ const App: FC = () => {
 		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			const t = activeIndex > 0 ? 50 : 300;
+			const t = !isSingleTab ? 50 : 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
@@ -262,7 +262,7 @@ const App: FC = () => {
 					window.setTimeout(() => {
 						rootLoader.css({ opacity: 0 });
 						window.setTimeout(() => hide(), t);
-					}, activeIndex );
+					}, 0);
 				}, t * 5);
 			}, t * 3);
 		};

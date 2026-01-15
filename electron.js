@@ -109,7 +109,7 @@ ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme(
 ipcMain.on('getConfig', (e) => { e.returnValue = ConfigManager.config || {}; });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
-	Api.exit(mainWindow, '' ,false);
+	Api.exit(mainWindow, '', false, false);
 	return;
 };
 
@@ -152,6 +152,7 @@ nativeTheme.on('updated', () => {
 	Api.setBackground(isDark ? 'dark' : '');
 
 	WindowManager.sendToAll('native-theme', isDark);
+	WindowManager.sendToAllTabs('native-theme', isDark);
 });
 
 function createWindow () {
@@ -170,7 +171,7 @@ function createWindow () {
 			const { config } = ConfigManager;
 
 			if (config.hideTray && (WindowManager.list.size <= 1)) {
-				Api.exit(mainWindow, '', false);
+				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
 			};
@@ -305,7 +306,7 @@ app.on('before-quit', e => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		Api.exit(mainWindow, '', false);
+		Api.exit(mainWindow, '', false, false);
 	};
 });
 

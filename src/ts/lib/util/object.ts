@@ -94,6 +94,22 @@ class UtilObject {
 		return param;
 	};
 
+	getTabData (object: any) {
+		if (!object) {
+			return;
+		};
+
+		const spaceview = U.Space.getSpaceview();
+
+		return { 
+			title: U.Object.name(object, true),
+			icon: U.Graph.imageSrc(object),
+			layout: object.layout,
+			isImage: object.iconImage,
+			uxType: spaceview?.uxType,
+		};
+	};
+
 	/**
 	 * Open an object based on keyboard modifiers in the event.
 	 * - Shift or popup context: Opens in popup
@@ -167,7 +183,7 @@ class UtilObject {
 	};
 
 	openTab (object: any) {
-		Renderer.send('openTab', this.route(object));
+		Renderer.send('openTab', this.route(object), this.getTabData(object));
 	};
 
 	openPopup (object: any, param?: any) {

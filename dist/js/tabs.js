@@ -14,7 +14,7 @@ $(() => {
 	let sortable = null;
 	let isDragging = false;
 	let draggedActiveId = '';
-	let activeId = ''
+	let activeId = '';
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
@@ -172,9 +172,7 @@ $(() => {
 				};
 			},
 			onChange: (evt) => {
-				if (draggedActiveId) {
-					setTimeout(() => updateMarkerPosition(draggedActiveId), 40);
-				};
+				updateMarkerPosition(draggedActiveId || activeId);
 			},
 			onEnd: (evt) => {
 				isDragging = false;
@@ -182,12 +180,9 @@ $(() => {
 				const item = $(evt.item);
 				item.css('visibility', '');
 
-				const wasActive = draggedActiveId !== null;
 				draggedActiveId = null;
-
-				if (wasActive) {
-					marker.addClass('anim').css('pointer-events', '');
-				};
+				marker.addClass('anim').css('pointer-events', '');
+				updateMarkerPosition(activeId);
 
 				const tabIds = [];
 				container.find('.tab:not(.isAdd)').each((i, el) => {

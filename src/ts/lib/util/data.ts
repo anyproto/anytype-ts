@@ -841,19 +841,9 @@ class UtilData {
 	 */
 	setTabTitle (rootId: string, objectId: string) {
 		const object = this.getObjectForTitle(rootId, objectId);
-		if (!object) {
-			return;
+		if (object) {
+			Renderer.send('updateTab', S.Common.tabId, U.Object.getTabData(object));
 		};
-
-		const spaceview = U.Space.getSpaceview();
-
-		Renderer.send('updateTab', S.Common.tabId, { 
-			title: U.Object.name(object, true),
-			icon: U.Graph.imageSrc(object),
-			layout: object.layout,
-			isImage: object.iconImage,
-			uxType: spaceview?.uxType,
-		});
 	};
 
 	/**

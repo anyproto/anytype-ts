@@ -203,7 +203,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
-		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
+		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding', 'searchText' ]);
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const menuOpenSmile = S.Menu.isOpen('smile');

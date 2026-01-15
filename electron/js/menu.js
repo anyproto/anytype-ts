@@ -71,7 +71,7 @@ class MenuManager {
 	};
 
 	getView () {
-		return this.win.views[this.win.activeIndex];
+		return Util.getActiveView(this.win);
 	};
 
 	initMenu () {
@@ -107,7 +107,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
 				]
 			},
 			{
@@ -306,9 +306,10 @@ class MenuManager {
 				click: () => {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
-					
+
 					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
+						this.getView().webContents.reload();
 					};
 				}
 			});
@@ -392,9 +393,10 @@ class MenuManager {
 
 				{
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
-					click: () => { 
+					click: () => {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
+						this.getView().webContents.reload();
 					}
 				},
 
@@ -454,7 +456,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
