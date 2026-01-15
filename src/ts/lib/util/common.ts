@@ -1474,13 +1474,8 @@ class UtilCommon {
 		return el.scrollHeight - el.clientHeight;
 	};
 
-	getMenuBarHeight () {
-		// Menu bar is now in tabs BrowserView, not in React DOM
-		return 0;
-	};
-
 	getAppContainerHeight () {
-		return $('#appContainer').height() - this.getMenuBarHeight();
+		return $('#appContainer').height();
 	};
 
 	getMembershipPriceString (price?: I.MembershipAmount): string {

@@ -177,6 +177,7 @@ a { color: var(--color-text-primary); }
 @import "./popup/common.scss";
 @import "./menu/common.scss";
 @import "./notification/common.scss";
+@import "./component/dragPanel.scss";
 
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
@@ -193,8 +194,6 @@ html {
 	}
 
 	&.platformMac.isSingleTab {
-		@import "./component/dragPanel";
-
 		&:not(.isFullScreen) {
 			.sidebar.isMinimal {
 				.pageWrapper { padding-top: 52px; }
