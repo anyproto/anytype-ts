@@ -162,10 +162,12 @@ class Util {
 		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
+		const view = win?.views?.[win.activeIndex];
+		const webContents = view?.webContents || win.webContents;
 
 		try { fs.mkdirSync(filesPath); } catch (e) {};
 
-		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
+		webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
 
 			// Replace files loaded by url and copy them in page folder
@@ -238,7 +240,10 @@ class Util {
 	};
 
 	printPdf (win, exportPath, name, options) {
-		win.webContents.printToPDF(options).then(data => {
+		const view = win?.views?.[win.activeIndex];
+		const webContents = view?.webContents || win.webContents;
+
+		webContents.printToPDF(options).then(data => {
 			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
 				if (!error) {
 					shell.openPath(exportPath).catch(err => this.log('info', err));

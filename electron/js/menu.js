@@ -107,7 +107,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false) },
 				]
 			},
 			{
@@ -306,9 +306,10 @@ class MenuManager {
 				click: () => {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
-					
+
 					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
+						this.getView().webContents.reload();
 					};
 				}
 			});
@@ -392,9 +393,10 @@ class MenuManager {
 
 				{
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
-					click: () => { 
+					click: () => {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
+						this.getView().webContents.reload();
 					}
 				},
 
@@ -411,7 +413,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: 'Relaunch', click: () => Api.exit(this.win, true) },
+				{ label: 'Relaunch', click: () => Api.exit(this.win, '', true) },
 			]
 		};
 

@@ -2,19 +2,21 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; overflow: visible; }
+	body { margin: 0px; print-color-adjust: exact; caret-color: transparent; overflow: visible; }
 
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
 
-	#menuBar, 
-	#previewLink, 
-	.menu, 
-	.controlButtons, 
-	.header, 
+	#menuBar,
+	#previewLink,
+	.menu,
+	.controlButtons,
+	.header,
 	.footer,
 	.notifications,
 	.sidebar,
+	#sidebarLeft,
+	#sidebarRight,
 	.sidebarDummy,
 	.progress,
 	.toast,
@@ -80,7 +82,7 @@ html.printMedia {
 		.block.blockBookmark { break-inside: avoid; }
 
 		.block.blockLink {
-			.cover { -webkit-print-color-adjust: exact; }
+			.cover { print-color-adjust: exact; }
 		}
 
 		.block.blockEmbed {
@@ -155,7 +157,12 @@ html.printMedia {
 }
 
 html.printMedia.themeDark {
-	--color-bg-primary: #000;
+	--color-bg-primary: #171717;
+
+	@page { margin: 0 !important; }
+
+	&, body { background: var(--color-bg-primary) !important; print-color-adjust: exact !important; }
+	#page { padding-left: 1.5cm; padding-right: 1.5cm; }
 }
 
 html.printMedia.print {

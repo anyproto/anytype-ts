@@ -1068,6 +1068,8 @@ class Keyboard {
 	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
+		const body = $('body');
+		const theme = S.Common.getThemeClass();
 
 		html.addClass('printMedia');
 
@@ -1081,6 +1083,15 @@ class Keyboard {
 
 		if (clearTheme) {
 			U.Common.addBodyClass('theme', '');
+		};
+
+		// Set background color for dark mode to ensure it's captured in PDF
+		if (theme && !clearTheme) {
+			const bgColor = getComputedStyle(document.body).getPropertyValue('--color-bg-primary').trim();
+			if (bgColor) {
+				html.css('background-color', bgColor);
+				body.css('background-color', bgColor);
+			};
 		};
 
 		// Convert table column widths from pixels to percentages to preserve proportions
@@ -1107,7 +1118,13 @@ class Keyboard {
 	 * Removes print styles from the document.
 	 */
 	printRemove () {
-		$('html').removeClass('withPopup printMedia print save');
+		const html = $('html');
+		const body = $('body');
+
+		html.removeClass('withPopup printMedia print save');
+		html.css('background-color', '');
+		body.css('background-color', '');
+
 		S.Common.setThemeClass();
 
 		// Clean up table print columns
@@ -1140,7 +1157,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
-		Renderer.send('winCommand', 'printHtml', { name: object.name });
+
+		// Wait for styles to be applied before capturing HTML
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printHtml', { name: object.name });
+		});
 	};
 
 	/**
@@ -1154,10 +1175,15 @@ class Keyboard {
 
 		if (theme) {
 			options.printBackground = true;
+			options.margins = { top: 0, bottom: 0, left: 0, right: 0 };
 		};
 
 		this.printApply('print', false);
-		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+
+		// Wait for styles to be applied before capturing PDF
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+		});
 	};
 
 	/**

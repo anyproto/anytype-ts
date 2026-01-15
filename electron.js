@@ -51,7 +51,7 @@ app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
 // GPU/Hardware acceleration settings
 // Check for --disable-gpu CLI argument or stored setting
-const disableGpu = process.argv.includes('--disable-gpu') || store.get('disableHardwareAcceleration');
+const disableGpu = process.argv.includes('--disable-gpu') || (store.get('hardwareAcceleration') === false);
 
 if (disableGpu) {
 	app.disableHardwareAcceleration();

@@ -3,8 +3,28 @@ import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 
+/**
+ * Mapper provides bidirectional conversion between protobuf messages
+ * and TypeScript interfaces.
+ *
+ * Structure:
+ * - Type mapping functions (BlockType, BoardGroupType, etc.) - Convert protobuf enums to app types
+ * - From: Converts protobuf messages TO TypeScript objects (used when receiving data)
+ * - To: Converts TypeScript objects TO protobuf messages (used when sending data)
+ * - Event: Specialized mappers for real-time event processing
+ *
+ * Usage:
+ * - Mapper.From.Block(protoBlock) - Convert received block to TS interface
+ * - Mapper.To.Block(tsBlock) - Convert TS block to protobuf for sending
+ * - Mapper.Event.Type(valueCase) - Get event type string from protobuf enum
+ */
 export const Mapper = {
 
+	/**
+	 * Convert protobuf Block.ContentCase enum to application BlockType.
+	 * @param v - The protobuf content case value
+	 * @returns The corresponding I.BlockType enum value
+	 */
 	BlockType: (v: Model.Block.ContentCase): I.BlockType => {
 		const V = Model.Block.ContentCase;
 
@@ -70,8 +90,14 @@ export const Mapper = {
 		return t;
 	},
 
+	/**
+	 * From: Converters for transforming protobuf messages TO TypeScript objects.
+	 * Used when receiving data from the middleware.
+	 * Each method takes a protobuf message and returns a plain JS/TS object.
+	 */
 	From: {
 
+		/** Convert Account protobuf to I.Account interface */
 		Account: (obj: Model.Account): I.Account => {
 			return {
 				id: obj.getId(),
@@ -782,8 +808,14 @@ export const Mapper = {
 
 	//------------------------------------------------------------
 
+	/**
+	 * To: Converters for transforming TypeScript objects TO protobuf messages.
+	 * Used when sending data to the middleware.
+	 * Each method takes a plain JS/TS object and returns a protobuf message instance.
+	 */
 	To: {
 
+		/** Convert text range to protobuf Range */
 		Range: (obj: any) => {
 			const item = new Model.Range();
 
@@ -1180,8 +1212,21 @@ export const Mapper = {
 
 	},
 
+	/**
+	 * Event: Specialized mappers for processing real-time events from middleware.
+	 * These handle the conversion of streaming event messages.
+	 *
+	 * - Type(): Maps event value case to string type name
+	 * - Data(): Extracts spaceId and event data
+	 * - [EventName](): Individual event type processors
+	 */
 	Event: {
 
+		/**
+		 * Convert event ValueCase enum to human-readable event type string.
+		 * @param v - The protobuf event value case number
+		 * @returns Event type name (e.g., 'BlockAdd', 'ObjectDetailsSet')
+		 */
 		Type (v: number): string {
 			const V = Events.Event.Message.ValueCase;
 
