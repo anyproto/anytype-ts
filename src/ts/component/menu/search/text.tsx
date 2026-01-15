@@ -18,7 +18,6 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const itemsRef = useRef<any>(null);
 	const lastRef = useRef<string>('');
 	const timeoutRef = useRef<number>(0);
-	const restorePositionRef = useRef<{ blockId: string; range: I.TextRange; toggleId: string } | null>(null);
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
@@ -180,17 +179,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClear = () => {
-		// Save position of active match before clearing
-		restorePositionRef.current = getActiveMatchPosition();
-
 		inputRef.current?.setValue('');
-		clear(restorePositionRef.current?.toggleId);
-
 		close();
 		storageSet({ search: '' });
 	};
 
-	const clear = (keepToggleId?: string) => {
+	const clear = (keepTogglesOpen?: boolean) => {
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher');
 		const items = getItems();
@@ -201,9 +195,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			item.replaceWith(item.html());
 		};
 
-		for (const id of toggledRef.current) {
-			// Keep the toggle expanded if it contains the active search result
-			if (id !== keepToggleId) {
+		// Only close toggles if not keeping them open (i.e., during normal search updates)
+		if (!keepTogglesOpen) {
+			for (const id of toggledRef.current) {
 				$(`#block-${id}`).removeClass('isToggled');
 			};
 		};
@@ -262,9 +256,11 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}, 100);
 
 		return () => {
-			const position = restorePositionRef.current;
+			// Capture position of active match before clearing
+			const position = getActiveMatchPosition();
 
-			clear(position?.toggleId);
+			// Keep all toggles that were opened by search expanded
+			clear(true);
 			window.clearTimeout(timeoutRef.current);
 
 			// Restore focus to the active search result position
