@@ -360,6 +360,8 @@
 	"electronMenuFlagMwTime": "Time",
 	"electronMenuNewTab": "New Tab",
 	"electronMenuCloseTab": "Close Tab",
+	"electronMenuNextTab": "Next Tab",
+	"electronMenuPrevTab": "Previous Tab",
 
 	"month1": "January",
 	"month2": "February",
