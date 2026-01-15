@@ -114,6 +114,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		html = html.replace(/\n/g, '<br/>');
+
+		// Add extra <br/> at end for code blocks to ensure trailing newlines are visible
+		// (contenteditable collapses a single trailing <br/>)
+		// Only add when focused to avoid extra line when blurred
+		if (block.isTextCode() && text.endsWith('\n') && (focused == block.id)) {
+			html += '<br/>';
+		};
+
 		editableRef.current?.setValue(html);
 
 		// Restore cursor position if provided
@@ -282,13 +290,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const insert = '\n';
 				const caret = range.from + insert.length;
 				const newValue = U.String.insert(value, insert, range.from, range.to);
+				const caretRange = { from: caret, to: caret };
+
+				// Set focus range before blockSetText to avoid race condition with useEffect
+				focus.set(block.id, caretRange);
 
 				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
-					const caretRange = { from: caret, to: caret };
-					
-					focus.set(block.id, caretRange);
 					focus.apply();
-
 					onKeyDown(e, newValue, marksRef.current, caretRange, props);
 				});
 
