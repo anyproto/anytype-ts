@@ -137,7 +137,7 @@ class UtilObject {
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
-		if ((e.metaKey || e.ctrlKey) || (e.button === 1)) {
+		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
 			this.openTab(object);
 		} else {
 			this.openRoute(object, param);

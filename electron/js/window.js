@@ -425,7 +425,7 @@ class WindowManager {
 	};
 
 	nextTab (win) {
-		if (!win.views || win.views.length <= 1) {
+		if (!win.views || (win.views.length <= 1)) {
 			return;
 		};
 
@@ -436,7 +436,7 @@ class WindowManager {
 	};
 
 	prevTab (win) {
-		if (!win.views || win.views.length <= 1) {
+		if (!win.views || (win.views.length <= 1)) {
 			return;
 		};
 

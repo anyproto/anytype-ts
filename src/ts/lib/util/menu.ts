@@ -1044,10 +1044,6 @@ class UtilMenu {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
-				if (withOpenNewTab) {
-					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
-				};
-
 				if (withPin) {
 					if (space.orderId) {
 						sections.manage.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
