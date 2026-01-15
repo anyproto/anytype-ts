@@ -13,7 +13,8 @@ contextBridge.exposeInMainWorld('Electron', {
 		system: process.getSystemVersion(),
 		device: os.hostname(),
 	},
-	platform: os.platform(),
+	//platform: os.platform(),
+	platform: 'win32',
 	arch: process.arch,
 
 	storeGet: key => ipcRenderer.sendSync('storeGet', key),

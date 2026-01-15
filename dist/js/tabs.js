@@ -7,6 +7,7 @@ $(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const menuBar = $('#menuBar');
 	const theme = Electron.getTheme();
 
 	let sortable = null;
@@ -22,10 +23,10 @@ $(() => {
 	};
 
 	// Menu bar button handlers (Windows only)
-	$('#menuBar .icon.window-menu').off('click').on('click', () => electron.send('menu'));
-	$('#menuBar .icon.window-min').off('click').on('click', () => electron.send('minimize'));
-	$('#menuBar .icon.window-max').off('click').on('click', () => electron.send('maximize'));
-	$('#menuBar .icon.window-close').off('click').on('click', () => electron.send('close'));
+	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
+	menuBar.find('#window-min').off('click').on('click', () => electron.Api(winId, 'minimize'));
+	menuBar.find('#window-max').off('click').on('click', () => electron.Api(winId, 'maximize'));
+	menuBar.find('#window-close').off('click').on('click', () => electron.Api(winId, 'close'));
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');

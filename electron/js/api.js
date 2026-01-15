@@ -139,9 +139,6 @@ class Api {
 	setMenuBarVisibility (win, show) {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
-			win.setMenuBarVisibility(show);
-			win.setAutoHideMenuBar(!show);
 		});
 	};
 

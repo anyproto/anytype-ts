@@ -240,25 +240,6 @@ html {
 		::-webkit-scrollbar-button { display: none; }
 	}
 
-	&.platformWindows.withMenuBar {
-		.sidebar { margin-top: 28px; height: calc(100% - 28px); }
-		.sidebar {
-			.subPageWrapper:not(.withSidebarLeft) {
-				.sidebarPage {
-					> .head {
-						.side.left	{ padding-left: 36px; }
-					}
-				}
-			}
-		}
-
-		.popups {
-			.popup.popupShortcut {
-				.innerWrap { top: 28px; height: calc(100% - 28px); }
-			}
-		}
-	}
-
 	&.platformLinux {
 		.sidebar {
 			.subPageWrapper:not(.withSidebarLeft) {
