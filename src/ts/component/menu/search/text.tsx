@@ -18,6 +18,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const itemsRef = useRef<any>(null);
 	const lastRef = useRef<string>('');
 	const timeoutRef = useRef<number>(0);
+	const activeToggleRef = useRef<string>('');
+	const activePositionRef = useRef<{ blockId: string; range: I.TextRange } | null>(null);
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
@@ -32,7 +34,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			window.clearTimeout(timeoutRef.current);
 		});
 	};
-	
+
 	const onKeyUp = (e: any) => {
 		e.preventDefault();
 		window.clearTimeout(timeoutRef.current);
@@ -85,7 +87,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		clear();
 		lastRef.current = value;
-		
+
 		storageSet({ search: value });
 
 		if (!value) {
@@ -128,63 +130,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		focusMatch();
 	};
 
-	const getActiveMatchPosition = (): { blockId: string; range: I.TextRange; toggleId: string } | null => {
-		const tag = Mark.getTag(I.MarkType.Search);
-		const container = U.Common.getScrollContainer(isPopup);
-		const activeMatch = container.find(`${tag}.active`);
-
-		if (!activeMatch.length) {
-			return null;
-		};
-
-		// Find the focusable parent to get block ID
-		const focusable = activeMatch.closest('.focusable');
-		if (!focusable.length) {
-			return null;
-		};
-
-		// Extract block ID from class like "c{blockId}"
-		const classList = (focusable.attr('class') || '').split(' ');
-		const blockClass = classList.find(c => c.length > 1 && c.startsWith('c') && !c.includes('c-') && c !== 'contentEditable');
-		if (!blockClass) {
-			return null;
-		};
-
-		const blockId = blockClass.substring(1);
-
-		// Find if this match is inside a toggle
-		const toggle = activeMatch.closest('.block.textToggle');
-		const toggleId = toggle.length ? toggle.attr('data-id') : '';
-
-		// Calculate text position by creating a range from container start to match start
-		const matchEl = activeMatch.get(0);
-		const containerEl = focusable.find('.editable').get(0);
-
-		if (!containerEl) {
-			return null;
-		};
-
-		try {
-			const range = document.createRange();
-			range.setStart(containerEl, 0);
-			range.setEndBefore(matchEl);
-
-			const from = range.toString().length;
-			const to = from + (matchEl.textContent?.length || 0);
-
-			return { blockId, range: { from, to }, toggleId };
-		} catch (e) {
-			return null;
-		};
-	};
-
 	const onClear = () => {
 		inputRef.current?.setValue('');
 		close();
 		storageSet({ search: '' });
 	};
 
-	const clear = (keepTogglesOpen?: boolean) => {
+	const clear = (keepToggleId?: string) => {
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher');
 		const items = getItems();
@@ -195,9 +147,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			item.replaceWith(item.html());
 		};
 
-		// Only close toggles if not keeping them open (i.e., during normal search updates)
-		if (!keepTogglesOpen) {
-			for (const id of toggledRef.current) {
+		for (const id of toggledRef.current) {
+			// Keep the toggle expanded if it contains the focused search result
+			if (id !== keepToggleId) {
 				$(`#block-${id}`).removeClass('isToggled');
 			};
 		};
@@ -229,7 +181,34 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		next.addClass('active');
-		
+
+		// Track which toggle contains the active match
+		const toggle = next.closest('.block.textToggle');
+		activeToggleRef.current = toggle.length ? toggle.attr('data-id') || '' : '';
+
+		// Track the position for focus restoration
+		const focusable = next.closest('.focusable');
+		if (focusable.length) {
+			const classList = (focusable.attr('class') || '').split(' ');
+			const blockClass = classList.find(c => c.length > 1 && c.startsWith('c') && !c.includes('c-') && c !== 'contentEditable');
+			if (blockClass) {
+				const blockId = blockClass.substring(1);
+				const containerEl = focusable.find('.editable').get(0);
+				if (containerEl) {
+					try {
+						const range = document.createRange();
+						range.setStart(containerEl, 0);
+						range.setEndBefore(next.get(0));
+						const from = range.toString().length;
+						const to = from + (next.get(0).textContent?.length || 0);
+						activePositionRef.current = { blockId, range: { from, to } };
+					} catch (e) {
+						activePositionRef.current = null;
+					};
+				};
+			};
+		};
+
 		const st = container.scrollTop();
 		const no = next.offset().top;
 		const wh = container.height();
@@ -247,7 +226,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	useEffect(() => {
-		window.setTimeout(() => { 
+		window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 
 			inputRef.current?.setValue(value);
@@ -256,13 +235,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}, 100);
 
 		return () => {
-			const position = getActiveMatchPosition();
+			const keepToggleId = activeToggleRef.current;
+			const position = activePositionRef.current;
 
-			// Keep all toggles that were opened by search expanded
-			clear(true);
+			clear(keepToggleId);
 			window.clearTimeout(timeoutRef.current);
 
-			// Restore focus to the active search result position
+			// Restore focus to the position of the focused search result
 			if (position) {
 				window.setTimeout(() => {
 					focus.set(position.blockId, position.range);
@@ -273,19 +252,19 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 	}, []);
-	
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className="flex"
 		>
 			<Icon className="search" />
 
-			<Input 
-				ref={inputRef} 
+			<Input
+				ref={inputRef}
 				placeholder={translate('commonSearchPlaceholder')}
-				onKeyDown={onKeyDown} 
-				onKeyUp={onKeyUp} 
+				onKeyDown={onKeyDown}
+				onKeyUp={onKeyUp}
 			/>
 
 			<div className="buttons">
@@ -301,7 +280,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			</div>
 		</div>
 	);
-	
+
 });
 
 export default MenuSearchText;

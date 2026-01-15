@@ -5,8 +5,7 @@ import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { U } from 'Lib';
 
-//pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
-pdfjs.GlobalWorkerOptions.workerSrc = './workers/pdf.worker.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
 
 interface Props {
 	src: string;

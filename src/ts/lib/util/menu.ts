@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U } from 'Lib';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U, Renderer } from 'Lib';
 import React from 'react';
-import { SidebarPanel } from 'Interface';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -10,6 +9,7 @@ interface SpaceContextParam {
 	noMembers?: boolean;
 	withPin?: boolean;
 	withDelete?: boolean;
+	withOpenNewTab?: boolean;
 	noShare?: boolean;
 	route: string;
 };
@@ -873,7 +873,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -992,6 +992,16 @@ class UtilMenu {
 					break;
 				};
 
+				case 'openNewTab': {
+					Renderer.send('openTab', U.Router.build({ 
+						page: 'main', 
+						action: 'void', 
+						id: 'dashboard', 
+						spaceId: targetSpaceId,
+					}));
+					break;
+				};
+
 			};
 		};
 
@@ -1000,8 +1010,8 @@ class UtilMenu {
 				general: [],
 				share: [],
 				archive: [],
-				delete: [],
 				manage: [],
+				delete: [],
 			};
 
 			if (!noShare && inviteLink) {
@@ -1026,23 +1036,27 @@ class UtilMenu {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
+				if (withOpenNewTab) {
+					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
+				};
+
 				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
 				if (withPin) {
 					if (space.orderId) {
-						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.manage.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 					} else {
-						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.manage.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 					};
 				};
 
 				if (!space.isPersonal) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.manage.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 					} else {
-						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.manage.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 					};
 				};
 
@@ -1646,40 +1660,23 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
-	vaultStyleOptions (noClose?: boolean, noCheckbox?: boolean) {
-		const panel = I.SidebarPanel.Left;
-		const { isClosed } = sidebar.getData(panel);
+	vaultStyle (param: I.MenuParam) {
+		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
 		const { vaultMessages } = S.Common;
-		const options: any[] = [
+		const options =[
 			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
 			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
 		];
 
-		if (!noClose && !isClosed) {
-			options.push({ isDiv: true });
-			options.push({ id: 'close', name: translate('menuVaultStyleCloseSidebar') });
-		};
-
-		return options;
-	};
-
-	vaultStyle (param: I.MenuParam, noClose?: boolean, route?: string) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
-
 		S.Menu.open('select', {
 			...param,
 			data: {
-				options: this.vaultStyleOptions(noClose),
+				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					if (item.id == 'close') {
-						sidebar.close(I.SidebarPanel.Left);
-						return;
-					};
-
 					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
 					if (isClosed) {
-						sidebar.open(SidebarPanel.Left, '', );
+						sidebar.open(I.SidebarPanel.Left, '', );
 					};
 				},
 			},
