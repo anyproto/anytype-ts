@@ -214,8 +214,8 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openTab (win, route) {
-		WindowManager.createTab(win, { route });
+	openTab (win, route, data) {
+		WindowManager.createTab(win, { ...data, route });
 	};
 
 	openUrl (win, url) {
