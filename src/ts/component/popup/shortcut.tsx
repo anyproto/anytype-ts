@@ -46,12 +46,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 						case 'reset': {
 							Storage.resetShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
 
 						case 'remove': {
 							Storage.removeShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
