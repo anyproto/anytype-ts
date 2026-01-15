@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, U, J, keyboard, translate, analytics, Mark } from 'Lib';
+import { I, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
 
 const SKIP = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
@@ -18,6 +18,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const itemsRef = useRef<any>(null);
 	const lastRef = useRef<string>('');
 	const timeoutRef = useRef<number>(0);
+	const restorePositionRef = useRef<{ blockId: string; range: I.TextRange; toggleId: string } | null>(null);
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
@@ -68,7 +69,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			n.current = 0;
 		};
 
-		focus();
+		focusMatch();
 	};
 
 	const search = () => {
@@ -125,18 +126,71 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		switcher.toggleClass('active', !!itemsRef.current.length);
 
 		setCnt();
-		focus();
+		focusMatch();
+	};
+
+	const getActiveMatchPosition = (): { blockId: string; range: I.TextRange; toggleId: string } | null => {
+		const tag = Mark.getTag(I.MarkType.Search);
+		const container = U.Common.getScrollContainer(isPopup);
+		const activeMatch = container.find(`${tag}.active`);
+
+		if (!activeMatch.length) {
+			return null;
+		};
+
+		// Find the focusable parent to get block ID
+		const focusable = activeMatch.closest('.focusable');
+		if (!focusable.length) {
+			return null;
+		};
+
+		// Extract block ID from class like "c{blockId}"
+		const classList = (focusable.attr('class') || '').split(' ');
+		const blockClass = classList.find(c => c.length > 1 && c.startsWith('c') && !c.includes('c-') && c !== 'contentEditable');
+		if (!blockClass) {
+			return null;
+		};
+
+		const blockId = blockClass.substring(1);
+
+		// Find if this match is inside a toggle
+		const toggle = activeMatch.closest('.block.textToggle');
+		const toggleId = toggle.length ? toggle.attr('data-id') : '';
+
+		// Calculate text position by creating a range from container start to match start
+		const matchEl = activeMatch.get(0);
+		const containerEl = focusable.find('.editable').get(0);
+
+		if (!containerEl) {
+			return null;
+		};
+
+		try {
+			const range = document.createRange();
+			range.setStart(containerEl, 0);
+			range.setEndBefore(matchEl);
+
+			const from = range.toString().length;
+			const to = from + (matchEl.textContent?.length || 0);
+
+			return { blockId, range: { from, to }, toggleId };
+		} catch (e) {
+			return null;
+		};
 	};
 
 	const onClear = () => {
+		// Save position of active match before clearing
+		restorePositionRef.current = getActiveMatchPosition();
+
 		inputRef.current?.setValue('');
-		clear();
+		clear(restorePositionRef.current?.toggleId);
 
 		close();
 		storageSet({ search: '' });
 	};
 
-	const clear = () => {
+	const clear = (keepToggleId?: string) => {
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher');
 		const items = getItems();
@@ -148,7 +202,10 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		for (const id of toggledRef.current) {
-			$(`#block-${id}`).removeClass('isToggled');
+			// Keep the toggle expanded if it contains the active search result
+			if (id !== keepToggleId) {
+				$(`#block-${id}`).removeClass('isToggled');
+			};
 		};
 
 		toggledRef.current = [];
@@ -160,7 +217,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return container.length ? container.get(0).querySelectorAll(Mark.getTag(I.MarkType.Search)) : [];
 	};
 
-	const focus = () => {
+	const focusMatch = () => {
 		if (!itemsRef.current || !itemsRef.current.length) {
 			return;
 		};
@@ -205,9 +262,20 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}, 100);
 
 		return () => {
-			clear();
-			keyboard.setFocus(false);
+			const position = restorePositionRef.current;
+
+			clear(position?.toggleId);
 			window.clearTimeout(timeoutRef.current);
+
+			// Restore focus to the active search result position
+			if (position) {
+				window.setTimeout(() => {
+					focus.set(position.blockId, position.range);
+					focus.apply();
+				}, 0);
+			} else {
+				keyboard.setFocus(false);
+			};
 		};
 	}, []);
 	
