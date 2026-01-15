@@ -320,6 +320,9 @@ class WindowManager {
 		win.activeTabId = id;
 		win.contentView.addChildView(view);
 
+		// Focus the new tab's webContents to receive keyboard events
+		view.webContents.focus();
+
 		Util.send(win, 'set-active-tab', id);
 	};
 
