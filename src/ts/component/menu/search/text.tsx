@@ -34,7 +34,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			window.clearTimeout(timeoutRef.current);
 		});
 	};
-	
+
 	const onKeyUp = (e: any) => {
 		e.preventDefault();
 		window.clearTimeout(timeoutRef.current);
@@ -87,7 +87,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		clear();
 		lastRef.current = value;
-		
+
 		storageSet({ search: value });
 
 		if (!value) {
@@ -226,7 +226,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	useEffect(() => {
-		window.setTimeout(() => { 
+		window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 
 			inputRef.current?.setValue(value);
@@ -252,19 +252,19 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 	}, []);
-	
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className="flex"
 		>
 			<Icon className="search" />
 
-			<Input 
-				ref={inputRef} 
+			<Input
+				ref={inputRef}
 				placeholder={translate('commonSearchPlaceholder')}
-				onKeyDown={onKeyDown} 
-				onKeyUp={onKeyUp} 
+				onKeyDown={onKeyDown}
+				onKeyUp={onKeyUp}
 			/>
 
 			<div className="buttons">
@@ -280,7 +280,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			</div>
 		</div>
 	);
-	
+
 });
 
 export default MenuSearchText;
