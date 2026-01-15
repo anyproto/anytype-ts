@@ -37,18 +37,22 @@ body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
 	overflow-y: hidden; -webkit-app-region: no-drag;
 }
 #tabs::-webkit-scrollbar { display: none; }
+
 #marker {
 	width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute;
 	border-radius: 16px; z-index: 1; pointer-events: none; -webkit-app-region: no-drag;
 }
 #marker.anim { transition: width, left 0.1s ease-in-out; }
 
-.icon { width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; -webkit-app-region: no-drag; }
+.icon { 
+	width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; -webkit-app-region: no-drag; 
+	transition: all 0.1s ease-in-out;
+}
 .icon.withBackground { border-radius: 10px; }
 .icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
 
 .tab {
-	padding: 8px 6px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+	padding: 8px 8px 8px 12px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
 	color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 	transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 }
@@ -65,12 +69,12 @@ body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
 .tab.isAdd .icon { background-image: url('../img/icon/plus.svg'); }
 
 .tab .clickable {
-	display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; padding-left: 6px;
-	-webkit-app-region: no-drag;
+	display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; -webkit-app-region: no-drag;
 }
 .tab .icon { flex-shrink: 0; }
 .tab .name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
-.tab .icon.close { background-image: url('../img/icon/close.svg'); }
+.tab .icon.close { background-image: url('../img/icon/close.svg'); opacity: 0; }
+.tab:hover .icon.close { opacity: 1; }
 
 .tab .iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tab .icon.object { width: 18px; height: 18px; background-size: cover; }
