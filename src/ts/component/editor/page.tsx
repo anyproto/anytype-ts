@@ -129,6 +129,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onOpen?.();
 			focusInit();
 			controlsRef.current?.forceUpdate();
+			tocRef.current?.forceUpdate();
 			setDummy(dummy + 1);
 		});
 	};
@@ -1743,7 +1744,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onScroll = () => {
 		const { rootId, isPopup } = props;
-		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
