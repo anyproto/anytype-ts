@@ -13,8 +13,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		system: process.getSystemVersion(),
 		device: os.hostname(),
 	},
-	//platform: os.platform(),
-	platform: 'win32',
+	platform: os.platform(),
 	arch: process.arch,
 
 	storeGet: key => ipcRenderer.sendSync('storeGet', key),
@@ -40,6 +39,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 	getTheme: () => ipcRenderer.sendSync('getTheme'),
 	getBgColor: () => ipcRenderer.sendSync('getBgColor'),
+	getConfig: () => ipcRenderer.sendSync('getConfig'),
 	tabId: () => {
 		const arg = process.argv.find(arg => arg.startsWith('--tab-id='));
 		return arg ? arg.split('=')[1] : null;

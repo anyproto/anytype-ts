@@ -17,6 +17,7 @@ const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
 const TAB_BAR_HEIGHT = 52;
+const MENU_BAR_HEIGHT = 28;
 
 class WindowManager {
 
@@ -477,9 +478,19 @@ class WindowManager {
 	getTabBarHeight (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const showMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
-		const shouldShow = alwaysShow || hasMultipleTabs;
-		return shouldShow ? TAB_BAR_HEIGHT : 0;
+		const shouldShowTabs = alwaysShow || hasMultipleTabs;
+
+		let height = 0;
+		if (is.windows && showMenuBar) {
+			height += MENU_BAR_HEIGHT;
+		};
+		if (shouldShowTabs) {
+			height += TAB_BAR_HEIGHT;
+		};
+
+		return height;
 	};
 
 	updateTabBarVisibility (win) {
