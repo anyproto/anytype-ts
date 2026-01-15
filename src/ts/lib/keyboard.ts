@@ -2009,7 +2009,7 @@ class Keyboard {
 
 	setBodyClass () {
 		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
-		const { showMenuBar, alwaysShowTabs, debug } = config;
+		const { alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
@@ -2023,9 +2023,6 @@ class Keyboard {
 		};
 		if (debug.ui) {
 			cn.push('debug');
-		};
-		if (showMenuBar) {
-			cn.push('withMenuBar');
 		};
 		if (isFullScreen) {
 			cn.push('isFullScreen');

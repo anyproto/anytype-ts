@@ -146,6 +146,12 @@ class Api {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
+			// Notify tabs.html about menu bar visibility change
+			Util.send(win, 'set-menu-bar-visibility', show);
+
+			// Update tab bar height when menu bar visibility changes
+			WindowManager.updateTabBarVisibility(win);
+
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});

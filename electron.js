@@ -106,6 +106,7 @@ ipcMain.on('storeSet', (e, key, value) => { e.returnValue = store.set(key, value
 ipcMain.on('storeDelete', (e, key) => { e.returnValue = store.delete(key); });
 ipcMain.on('getTheme', (e) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
+ipcMain.on('getConfig', (e) => { e.returnValue = ConfigManager.config || {}; });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '', false, false);

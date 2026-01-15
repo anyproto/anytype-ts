@@ -7,6 +7,8 @@ $(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const menuBar = $('#menuBar');
+	const tabsWrapper = $('#tabsWrapper');
 	const theme = Electron.getTheme();
 
 	let sortable = null;
@@ -16,10 +18,21 @@ $(() => {
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
-	
+
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
 	};
+
+	const config = electron.getConfig();
+	const showMenuBar = config.showMenuBar !== false; // Default to true
+
+	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Menu bar button handlers (Windows and Linux)
+	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
+	menuBar.find('#window-min').off('click').on('click', () => electron.Api(winId, 'minimize'));
+	menuBar.find('#window-max').off('click').on('click', () => electron.Api(winId, 'maximize'));
+	menuBar.find('#window-close').off('click').on('click', () => electron.Api(winId, 'close'));
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');
@@ -204,7 +217,7 @@ $(() => {
 
 		// Set visibility if provided
 		if (typeof isVisible === 'boolean') {
-			$('.container').toggleClass('isHidden', !isVisible);
+			tabsWrapper.toggleClass('isHidden', !isVisible);
 		};
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
@@ -254,7 +267,7 @@ $(() => {
 	});
 
 	electron.on('update-tab-bar-visibility', (e, isVisible) => {
-		$('.container').toggleClass('isHidden', !isVisible);
+		tabsWrapper.toggleClass('isHidden', !isVisible);
 	});
 
 	electron.on('set-theme', (e, theme) => {
@@ -263,6 +276,10 @@ $(() => {
 
 	electron.on('set-tabs-dimmer', (e, show) => {
 		body.toggleClass('showDimmer', show);
+	});
+
+	electron.on('set-menu-bar-visibility', (e, show) => {
+		body.toggleClass('showMenuBar', show);
 	});
 
 	electron.on('enter-full-screen', () => {
