@@ -163,7 +163,7 @@ class Api {
 		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 		store.set('hardwareAcceleration', enabled);
-		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true));
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true, false));
 	};
 
 	spellcheckAdd (win, s) {
@@ -195,7 +195,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, '', true);
+		this.exit(win, '', true, true);
 	};
 
 	updateCancel (win) {
@@ -253,17 +253,22 @@ class Api {
 		};
 	};
 
-	shutdown (win, relaunch) {
-		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch);
+	shutdown (win, relaunch, isUpdate) {
+		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
 		if (relaunch) {
-			UpdateManager.relaunch();
+			if (isUpdate) {
+				UpdateManager.relaunch();
+			} else {
+				app.relaunch();
+				app.exit(0);
+			};
 		} else {
 			app.exit(0);
 		};
 	};
 
-	exit (win, signal, relaunch) {
+	exit (win, signal, relaunch, isUpdate) {
 		if (app.isQuiting) {
 			return;
 		};
@@ -272,10 +277,10 @@ class Api {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
+		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 		Util.send(win, 'shutdownStart');
 
-		Server.stop(signal).then(() => this.shutdown(win, relaunch));
+		Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
 	};
 
 	setChannel (win, id) {

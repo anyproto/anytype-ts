@@ -107,7 +107,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
 				]
 			},
 			{
@@ -456,7 +456,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
