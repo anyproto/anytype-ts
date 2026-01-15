@@ -24,8 +24,8 @@ const DEFAULT_SHORTCUTS = {
 	createSpace: [],
 	newTab: [ 'CmdOrCtrl', 'T' ],
 	closeTab: [ 'CmdOrCtrl', 'W' ],
-	nextTab: [ 'CmdOrCtrl', 'Shift', ']' ],
-	prevTab: [ 'CmdOrCtrl', 'Shift', '[' ],
+	nextTab: [ 'CmdOrCtrl', 'Alt', 'Right' ],
+	prevTab: [ 'CmdOrCtrl', 'Alt', 'Left' ],
 };
 
 class MenuManager {
@@ -235,8 +235,8 @@ class MenuManager {
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => WindowManager.createTab(this.win) },
-					{ label: Util.translate('electronMenuNextTab'), accelerator: this.getAccelerator('nextTab'), click: () => WindowManager.nextTab(this.win) },
-					{ label: Util.translate('electronMenuPrevTab'), accelerator: this.getAccelerator('prevTab'), click: () => WindowManager.prevTab(this.win) },
+					{ label: Util.translate('electronMenuNextTab'), accelerator: this.getAccelerator('nextTab'), click: (item, win) => WindowManager.nextTab(win) },
+					{ label: Util.translate('electronMenuPrevTab'), accelerator: this.getAccelerator('prevTab'), click: (item, win) => WindowManager.prevTab(win) },
 
 					Separator,
 
