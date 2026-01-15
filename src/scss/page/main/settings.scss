@@ -1155,7 +1155,7 @@
 					.title { font-weight: 600; }
 
 					&.withName {
-						.title { font-weight: 400; @include text-overflow-nw; }
+						.title { font-weight: 400; @include clamp2; }
 					}
                 }
             }
