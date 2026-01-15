@@ -24,6 +24,7 @@ class WindowManager {
 
 	create (options, param) {
 		const Api = require('./api.js');
+		const { showMenuBar } = ConfigManager.config;
 		const theme = Util.getTheme();
 		const bgColor = Util.getBgColor(theme);
 
@@ -62,9 +63,8 @@ class WindowManager {
 			return { action: 'deny' };
 		});
 
-		win.webContents.on('context-menu', (e, param) => {
-			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
-		});
+		win.setMenuBarVisibility(showMenuBar);
+		win.setAutoHideMenuBar(!showMenuBar);
 
 		return win;
 	};
