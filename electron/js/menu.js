@@ -306,9 +306,10 @@ class MenuManager {
 				click: () => {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
-					
+
 					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
+						this.getView().webContents.reload();
 					};
 				}
 			});
@@ -392,9 +393,10 @@ class MenuManager {
 
 				{
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
-					click: () => { 
+					click: () => {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
+						this.getView().webContents.reload();
 					}
 				},
 

@@ -67,8 +67,13 @@ class Api {
 	};
 
 	paste (win) {
-		if (win && win.webContents && !win.isDestroyed()) {
-			win.webContents.paste();
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
+		const view = win.views?.[win.activeIndex];
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.webContents.paste();
 		};
 	};
 
@@ -321,8 +326,11 @@ class Api {
 	};
 
 	reload (win, route) {
-		win.route = route;
-		win.webContents.reload();
+		const view = win.views?.[win.activeIndex];
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.data = { ...view.data, route };
+			view.webContents.reload();
+		};
 	};
 
 	systemInfo (win) {

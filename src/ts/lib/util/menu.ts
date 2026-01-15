@@ -9,6 +9,7 @@ interface SpaceContextParam {
 	noMembers?: boolean;
 	withPin?: boolean;
 	withDelete?: boolean;
+	withOpenNewTab?: boolean;
 	noShare?: boolean;
 	route: string;
 };
@@ -872,7 +873,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -1035,13 +1036,10 @@ class UtilMenu {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
-<<<<<<< Updated upstream
-=======
 				if (withOpenNewTab) {
 					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
 				};
 
->>>>>>> Stashed changes
 				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
