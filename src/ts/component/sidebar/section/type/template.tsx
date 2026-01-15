@@ -37,10 +37,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	const onClick = (e: any, item: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		U.Object.openConfig(item, {
+		U.Object.openEvent(e, item, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});
 	};

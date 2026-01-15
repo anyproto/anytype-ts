@@ -360,6 +360,8 @@
 	"electronMenuFlagMwTime": "Time",
 	"electronMenuNewTab": "New Tab",
 	"electronMenuCloseTab": "Close Tab",
+	"electronMenuNextTab": "Next Tab",
+	"electronMenuPrevTab": "Previous Tab",
 
 	"month1": "January",
 	"month2": "February",
@@ -1442,6 +1444,8 @@
 	"popupShortcutMainBasics27": "Space %d",
 	"popupShortcutMainBasics28": "Toggle Widget panel",
 	"popupShortcutMainBasics29": "New Tab",
+	"popupShortcutMainBasics30": "Next Tab",
+	"popupShortcutMainBasics31": "Previous Tab",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
