@@ -411,6 +411,10 @@ class Keyboard {
 			};
 
 			this.shortcut('createSpace', e, this.createSpace);
+
+			// Switch tab
+			this.shortcut('nextTab', e, () => Renderer.send('nextTab'));
+			this.shortcut('prevTab', e, () => Renderer.send('prevTab'));
 		};
 
 		this.initPinCheck();

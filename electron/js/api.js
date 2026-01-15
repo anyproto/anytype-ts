@@ -471,6 +471,14 @@ class Api {
 		WindowManager.reorderTabs(win, tabIds);
 	};
 
+	nextTab (win) {
+		WindowManager.nextTab(win);
+	};
+
+	prevTab (win) {
+		WindowManager.prevTab(win);
+	};
+
 	setTabsDimmer (win, show) {
 		Util.send(win, 'set-tabs-dimmer', show);
 	};

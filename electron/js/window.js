@@ -421,6 +421,28 @@ class WindowManager {
 		this.updateTabBarVisibility(win);
 	};
 
+	nextTab (win) {
+		if (!win.views || win.views.length <= 1) {
+			return;
+		};
+
+		const index = win.views.findIndex(it => it.id == win.activeTabId);
+		const nextIndex = (index + 1) % win.views.length;
+
+		this.setActiveTab(win, win.views[nextIndex].id);
+	};
+
+	prevTab (win) {
+		if (!win.views || win.views.length <= 1) {
+			return;
+		};
+
+		const index = win.views.findIndex(it => it.id == win.activeTabId);
+		const prevIndex = (index - 1 + win.views.length) % win.views.length;
+
+		this.setActiveTab(win, win.views[prevIndex].id);
+	};
+
 	getPreferencesForNewWindow () {
 		return {
 			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),

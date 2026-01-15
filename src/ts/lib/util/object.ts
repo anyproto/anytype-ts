@@ -113,7 +113,7 @@ class UtilObject {
 	/**
 	 * Open an object based on keyboard modifiers in the event.
 	 * - Shift or popup context: Opens in popup
-	 * - Cmd/Ctrl: Opens in new tab
+	 * - Cmd/Ctrl or middle mouse button: Opens in new tab
 	 * - Default: Opens via route navigation
 	 * @param e - The DOM event (for modifier key detection)
 	 * @param object - The object to open
@@ -137,7 +137,7 @@ class UtilObject {
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
-		if ((e.metaKey || e.ctrlKey)) {
+		if ((e.metaKey || e.ctrlKey) || (e.button === 1)) {
 			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
