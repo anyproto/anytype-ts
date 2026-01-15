@@ -244,6 +244,7 @@
 	"commonImage": "Image",
 	"commonOptions": "Options",
 	"commonShare": "Share",
+	"commonOpenInNewTab": "Open in New Tab",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
