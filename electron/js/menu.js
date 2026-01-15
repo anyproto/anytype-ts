@@ -71,7 +71,7 @@ class MenuManager {
 	};
 
 	getView () {
-		return this.win.views[this.win.activeIndex];
+		return Util.getActiveView(this.win);
 	};
 
 	initMenu () {

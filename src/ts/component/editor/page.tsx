@@ -1929,7 +1929,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		].filter(it => it);
 
 		if (processor !== null) {
-			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
+			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
 		S.Common.clearTimeout('blockContext');

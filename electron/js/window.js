@@ -144,9 +144,10 @@ class WindowManager {
 		win.on('resize', () => {
 			const { width, height } = win.getBounds();
 
-			if (win.views && win.views[win.activeIndex]) {
+			const activeView = Util.getActiveView(win);
+			if (activeView) {
 				const tabBarHeight = this.getTabBarHeight(win);
-				win.views[win.activeIndex].setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+				activeView.setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
 			};
 		});
 
@@ -254,10 +255,9 @@ class WindowManager {
 		});
 
 		win.views = win.views || [];
-		win.activeIndex = win.activeIndex || 0;
-		win.views.push(view);
-
 		view.id = id;
+		win.views.push(view);
+		win.activeTabId = win.activeTabId || id;
 		view.data = { ...param };
 		view.webContents.loadURL(this.getUrlForNewTab());
 
@@ -306,17 +306,17 @@ class WindowManager {
 			return;
 		};
 
-		if (win.views[win.activeIndex]) {
-			win.contentView.removeChildView(win.views[win.activeIndex]);
+		const currentActive = Util.getActiveView(win);
+		if (currentActive) {
+			win.contentView.removeChildView(currentActive);
 		};
 
 		const bounds = win.getBounds();
-		const index = win.views.findIndex(it => it.id == id);
 		const tabBarHeight = this.getTabBarHeight(win);
 
 		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
 
-		win.activeIndex = index;
+		win.activeTabId = id;
 		win.contentView.addChildView(view);
 
 		Util.send(win, 'set-active-tab', id);
@@ -348,13 +348,12 @@ class WindowManager {
 		const view = win.views.find(it => it.id == id);
 		const index = win.views.findIndex(it => it.id == id);
 
-		if (win.activeIndex == index) {
+		if (win.activeTabId == id) {
 			win.contentView.removeChildView(view);
 		};
 
 		win.views.splice(index, 1);
 		Util.send(win, 'remove-tab', id);
-
 		this.updateTabBarVisibility(win);
 
 		if (updateActive) {
@@ -367,7 +366,7 @@ class WindowManager {
 		const Api = require('./api.js');
 
 		if (win.views.length > 1) {
-			this.removeTab(win, win.views[win.activeIndex].id, true);
+			this.removeTab(win, win.activeTabId, true);
 		} else {
 			Api.close(win);
 		};
@@ -406,16 +405,10 @@ class WindowManager {
 		// Update the views array
 		win.views = newViews;
 
-		// Update active index
-		const activeView = win.views[win.activeIndex];
-		if (activeView) {
-			win.activeIndex = win.views.findIndex(v => v.id == activeView.id);
-		};
-
 		// Send updated tabs list to tabs.html
 		Util.send(win, 'update-tabs',
 			win.views.map(it => ({ id: it.id, data: it.data })),
-			win.views[win.activeIndex]?.id
+			win.activeTabId
 		);
 
 		this.updateTabBarVisibility(win);
@@ -506,7 +499,7 @@ class WindowManager {
 		Util.sendToAllTabs(win, 'set-single-tab', isSingleTab);
 
 		// Update active view bounds
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && !view.webContents?.isDestroyed()) {
 			const bounds = win.getBounds();
 			const tabBarHeight = this.getTabBarHeight(win);

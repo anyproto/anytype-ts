@@ -46,7 +46,7 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
-			activeIndex: win.activeIndex || 0,
+			activeTabId: win.activeTabId,
 			isSingleTab: win.views && (win.views.length == 1),
 		};
 	};
@@ -72,7 +72,7 @@ class Api {
 			return;
 		};
 
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			view.webContents.paste();
 		};
@@ -127,7 +127,7 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.setZoomLevel(zoom);
 			Util.sendToActiveTab(win, 'zoom');
@@ -332,7 +332,7 @@ class Api {
 	};
 
 	reload (win, route) {
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			view.data = { ...view.data, route };
 			view.webContents.reload();
@@ -435,7 +435,7 @@ class Api {
 
 		return {
 			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
-			id: win.views[win.activeIndex || 0]?.id,
+			id: win.activeTabId || win.views?.[0]?.id,
 			isVisible: alwaysShow || hasMultipleTabs,
 		};
 	};
