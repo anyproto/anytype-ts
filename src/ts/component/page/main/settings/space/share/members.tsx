@@ -190,7 +190,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 
 		return (
 			<div id={`item-${id}`} className={[ 'row', isJoining ? 'isNew' : '' ].join(' ')} style={style} >
-				<div className="side left" onClick={() => U.Object.openConfig(item)}>
+				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
 					<IconObject size={48} object={item} />
 					<div className="text">
 						<ObjectName object={item} withPronoun={item.id == participant.id} withBadge={true} />

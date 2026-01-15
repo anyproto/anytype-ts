@@ -180,7 +180,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 	const onOpen = (e: any) => {
 		close();
-		U.Object.openConfig(getRelation());
+		U.Object.openEvent(e, getRelation());
 	};
 
 	const onCopy = () => {
