@@ -18,7 +18,6 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const itemsRef = useRef<any>(null);
 	const lastRef = useRef<string>('');
 	const timeoutRef = useRef<number>(0);
-	const restorePositionRef = useRef<{ blockId: string; range: I.TextRange; toggleId: string } | null>(null);
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
@@ -180,12 +179,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClear = () => {
-		// Save position of active match before clearing
-		restorePositionRef.current = getActiveMatchPosition();
-
 		inputRef.current?.setValue('');
-		clear(restorePositionRef.current?.toggleId);
-
 		close();
 		storageSet({ search: '' });
 	};
@@ -262,7 +256,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}, 100);
 
 		return () => {
-			const position = restorePositionRef.current;
+			// Capture position of active match before clearing (works regardless of how menu was closed)
+			const position = getActiveMatchPosition();
 
 			clear(position?.toggleId);
 			window.clearTimeout(timeoutRef.current);
