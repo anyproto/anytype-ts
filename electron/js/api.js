@@ -22,6 +22,7 @@ class Api {
 	isPinChecked = false;
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
+	shownNotificationIds = new Set();
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -464,10 +465,22 @@ class Api {
 	};
 
 	notification (win, param) {
-		const { title, text, cmd, payload } = param || {};
+		const { id, title, text, cmd, payload } = param || {};
 
 		if (!text) {
 			return;
+		};
+
+		// Prevent duplicate notifications across tabs
+		if (id && this.shownNotificationIds.has(id)) {
+			return;
+		};
+
+		if (id) {
+			this.shownNotificationIds.add(id);
+
+			// Clean up old notification IDs after 30 seconds
+			setTimeout(() => this.shownNotificationIds.delete(id), 30000);
 		};
 
 		const notification = new Notification({

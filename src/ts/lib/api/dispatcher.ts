@@ -942,6 +942,7 @@ class Dispatcher {
 
 					if (!windowIsFocused) {
 						Renderer.send('notification', {
+							id: item.id,
 							title: item.title,
 							text: item.text,
 						});
@@ -1017,6 +1018,7 @@ class Dispatcher {
 						};
 
 						Renderer.send('notification', {
+							id: message.id,
 							title: title.join(' - '),
 							text: notification,
 							cmd: 'openChat',
