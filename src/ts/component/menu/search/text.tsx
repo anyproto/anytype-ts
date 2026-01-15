@@ -256,7 +256,6 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}, 100);
 
 		return () => {
-			// Capture position of active match before clearing
 			const position = getActiveMatchPosition();
 
 			// Keep all toggles that were opened by search expanded
