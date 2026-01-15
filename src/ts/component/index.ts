@@ -50,7 +50,7 @@ import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
-import MenuBar from './util/menuBar';
+import DragPanel from './util/dragPanel';
 import StickyScrollbar from './util/stickyScrollbar';
 
 import Input from './form/input';
@@ -178,7 +178,7 @@ export {
 	UpdateBanner,
 	UpsellBanner,
 	QR,
-	MenuBar,
+	DragPanel,
 
 	Icon,
 	IconObject,

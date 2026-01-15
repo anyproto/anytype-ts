@@ -16,10 +16,16 @@ $(() => {
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
-	
+
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
 	};
+
+	// Menu bar button handlers (Windows only)
+	$('#menuBar .icon.window-menu').off('click').on('click', () => electron.send('menu'));
+	$('#menuBar .icon.window-min').off('click').on('click', () => electron.send('minimize'));
+	$('#menuBar .icon.window-max').off('click').on('click', () => electron.send('maximize'));
+	$('#menuBar .icon.window-close').off('click').on('click', () => electron.send('close'));
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');

@@ -468,13 +468,6 @@ html.themeDark {
 		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
 	}
 
-	#menuBar {
-		.icon.window-menu { background-image: url('#{$themePath}/icon/window/menu.svg') !important; }
-		.icon.window-min { background-image: url('#{$themePath}/icon/window/min.svg') !important; }
-		.icon.window-max { background-image: url('#{$themePath}/icon/window/max.svg') !important; }
-		.icon.window-close { background-image: url('#{$themePath}/icon/window/close.svg') !important; }
-	}
-
 	/* Key Phrase */
 	.phraseWrapper {
 		.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/hide1.svg'); }

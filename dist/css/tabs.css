@@ -28,6 +28,35 @@ body {
 	overflow: hidden;
 }
 body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
+body.platform-windows { padding: 0px; }
+
+/* Menu Bar - Windows only */
+#menuBar {
+	display: none; height: 28px; background: var(--color-bg-primary); position: relative; flex-shrink: 0; z-index: 100000;
+	align-items: center; flex-direction: row; -webkit-app-region: drag;
+}
+body.platform-windows #menuBar { display: flex; }
+
+#menuBar .side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; font-size: 12px; font-weight: 500; }
+#menuBar .side.left { justify-content: flex-start; gap: 0px 2px; }
+#menuBar .side.right { justify-content: flex-end; }
+#menuBar .name { line-height: 28px; }
+
+#menuBar .icon {
+	width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important;
+	-webkit-app-region: no-drag; transition: background-color 0.1s ease-in-out; background-position: center; background-repeat: no-repeat;
+}
+#menuBar .icon:hover { background-color: var(--color-shape-highlight-medium); }
+#menuBar .icon.window-menu { background-image: url('../img/icon/window/menu.svg'); }
+#menuBar .icon.window-min { background-image: url('../img/icon/window/min.svg'); }
+#menuBar .icon.window-max { background-image: url('../img/icon/window/max.svg'); }
+#menuBar .icon.window-close { background-image: url('../img/icon/window/close.svg'); }
+#menuBar .icon.window-close:hover { background-color: #e81123; }
+
+html.themeDark #menuBar .icon.window-menu { background-image: url('../img/theme/dark/icon/window/menu.svg'); }
+html.themeDark #menuBar .icon.window-min { background-image: url('../img/theme/dark/icon/window/min.svg'); }
+html.themeDark #menuBar .icon.window-max { background-image: url('../img/theme/dark/icon/window/max.svg'); }
+html.themeDark #menuBar .icon.window-close { background-image: url('../img/theme/dark/icon/window/close.svg'); }
 
 .container { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; width: 100%; }
 .container.isHidden { opacity: 0; pointer-events: none; }

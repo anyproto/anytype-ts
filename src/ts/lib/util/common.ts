@@ -1475,7 +1475,8 @@ class UtilCommon {
 	};
 
 	getMenuBarHeight () {
-		return Number($('#menuBar.withButtons').outerHeight()) || 0;
+		// Menu bar is now in tabs BrowserView, not in React DOM
+		return 0;
 	};
 
 	getAppContainerHeight () {
