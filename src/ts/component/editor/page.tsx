@@ -526,6 +526,31 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			ret = true;
 		});
 
+		// Select previous/next block (Alt+Arrow on Mac, Ctrl+Arrow on Windows)
+		keyboard.shortcut('prevBlock, nextBlock', e, (pressed: string) => {
+			e.preventDefault();
+
+			const dir = pressed == 'prevBlock' ? -1 : 1;
+			const currentIds = selection.get(I.SelectType.Block, true) || [];
+			const currentId = currentIds.length ? currentIds[dir < 0 ? 0 : currentIds.length - 1] : '';
+
+			let next = null;
+			if (currentId) {
+				next = S.Block.getNextBlock(rootId, currentId, dir, it => !it.isSystem());
+			} else {
+				// No selection - get first/last focusable block
+				const children = S.Block.getChildren(rootId, rootId, it => !it.isSystem());
+				next = children.length ? children[dir < 0 ? 0 : children.length - 1] : null;
+			};
+
+			if (next) {
+				selection.set(I.SelectType.Block, [ next.id ]);
+				selection.scrollToElement(next.id, dir);
+			};
+
+			ret = true;
+		});
+
 		if (idsWithChildren.length) {
 			// Mark-up
 
@@ -764,6 +789,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				onArrowVertical(e, Key.down, range, length, props);
 			});
 		};
+
+		// Jump to previous/next block (Alt+Arrow on Mac, Ctrl+Arrow on Windows)
+		keyboard.shortcut('prevBlock, nextBlock', e, (pressed: string) => {
+			e.preventDefault();
+			const dir = pressed == 'prevBlock' ? -1 : 1;
+			const next = S.Block.getNextBlock(rootId, block.id, dir, it => it.isFocusable());
+
+			if (next) {
+				focusNextBlock(next, dir);
+			};
+		});
 
 		if (block.isText()) {
 
