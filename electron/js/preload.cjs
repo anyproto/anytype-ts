@@ -72,6 +72,7 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
+	send: (event, ...args) => ipcRenderer.send(event, ...args),
 
 	Api: (id, cmd, args) => {
 		id = Number(id) || 0;

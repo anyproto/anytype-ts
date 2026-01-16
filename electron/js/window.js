@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog, ipcMain } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
@@ -10,6 +10,8 @@ const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
 const port = Util.getPort();
+
+const TABS_STORAGE_KEY = 'savedTabs';
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -152,7 +154,27 @@ class WindowManager {
 			};
 		});
 
-		this.createTab(win);
+		// Try to restore saved tabs, or create a single tab if none saved
+		const savedState = this.loadTabs();
+		if (savedState && savedState.tabs && savedState.tabs.length > 0) {
+			// Create all tabs from saved state
+			for (let i = 0; i < savedState.tabs.length; i++) {
+				const tabData = savedState.tabs[i];
+				this.createTab(win, tabData.data || {});
+			};
+
+			// Set the active tab to the one that was active before (by index)
+			const activeIndex = savedState.activeIndex || 0;
+			if (win.views && win.views[activeIndex]) {
+				this.setActiveTab(win, win.views[activeIndex].id);
+			};
+
+			// Clear saved tabs after restoration
+			this.clearSavedTabs();
+		} else {
+			this.createTab(win);
+		};
+
 		return win;
 	};
 
@@ -262,8 +284,6 @@ class WindowManager {
 		view.data = { ...param };
 		view.webContents.loadURL(this.getUrlForNewTab());
 
-		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
-
 		view.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);
 			return { action: 'deny' };
@@ -365,10 +385,37 @@ class WindowManager {
 			this.setActiveTab(win, win.views[newIndex]?.id);
 		};
 
-		// Send will-close-tab to allow renderer cleanup, then destroy the webContents
+		// Send close-session to allow renderer to close its session, then destroy the webContents
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
-			Util.sendToTab(win, view.id, 'will-close-tab');
-			view.webContents.close();
+			const timeout = 5000; // 5 second timeout
+			let handler = null;
+
+			const cleanup = () => {
+				if (handler) {
+					ipcMain.removeListener('tab-session-closed', handler);
+				};
+				if (view.webContents && !view.webContents.isDestroyed()) {
+					view.webContents.close();
+				};
+			};
+
+			const timeoutId = setTimeout(() => {
+				Util.log('warn', `[WindowManager].removeTab: Timeout waiting for tab ${id} to close session`);
+				cleanup();
+			}, timeout);
+
+			// Listen for the tab to signal it's ready to close
+			handler = (event, readyTabId) => {
+				if (readyTabId === id) {
+					clearTimeout(timeoutId);
+					cleanup();
+				};
+			};
+
+			ipcMain.on('tab-session-closed', handler);
+
+			// Tell the tab to close its session
+			Util.sendToTab(win, view.id, 'close-session');
 		};
 	};
 
@@ -572,7 +619,66 @@ class WindowManager {
 	getFirstWindow () {
 		return this.list.values().next().value;
 	};
-	
+
+	/**
+	 * Saves the current tabs state to storage for restoration on next app start
+	 * @param {BrowserWindow} win - The window to save tabs from
+	 */
+	saveTabs (win) {
+		if (!win || !win.views || win.isDestroyed()) {
+			return;
+		};
+
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		const tabsData = win.views.map(view => ({
+			data: view.data || {},
+		}));
+
+		// Find the active tab index
+		const activeIndex = win.views.findIndex(view => view.id === win.activeTabId);
+
+		const state = {
+			tabs: tabsData,
+			activeIndex: activeIndex >= 0 ? activeIndex : 0,
+		};
+
+		store.set(TABS_STORAGE_KEY, state);
+		Util.log('info', `[WindowManager].saveTabs: Saved ${tabsData.length} tabs, active index: ${state.activeIndex}`);
+	};
+
+	/**
+	 * Loads saved tabs state from storage
+	 * @returns {Object|null} The saved tabs state or null if not found
+	 */
+	loadTabs () {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		const state = store.get(TABS_STORAGE_KEY);
+		if (state && state.tabs && state.tabs.length > 0) {
+			Util.log('info', `[WindowManager].loadTabs: Found ${state.tabs.length} saved tabs`);
+			return state;
+		};
+
+		return null;
+	};
+
+	/**
+	 * Clears saved tabs from storage
+	 */
+	clearSavedTabs () {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.delete(TABS_STORAGE_KEY);
+		Util.log('info', '[WindowManager].clearSavedTabs: Cleared saved tabs');
+	};
+
 };
 
 module.exports = new WindowManager();

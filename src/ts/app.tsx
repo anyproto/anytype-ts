@@ -157,7 +157,7 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-tab', onWillCloseTab);
+		Renderer.on('close-session', onCloseSession);
 		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
@@ -329,9 +329,13 @@ const App: FC = () => {
 		});
 	};
 
-	const onWillCloseTab = (e: any, tabId: string) => {
-		Storage.deleteLastOpenedByTabId([ tabId ]);
-		U.Data.closeSession();
+	const onCloseSession = (e: any, tabId: string) => {
+		const currentTabId = electron.tabId();
+		Storage.deleteLastOpenedByTabId([ tabId || currentTabId ]);
+		U.Data.closeSession(() => {
+			// Signal to main process that session is closed and tab can be destroyed
+			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
+		});
 	};
 
 	const onNotificationCallback = (e: any, cmd: string, payload: any) => {

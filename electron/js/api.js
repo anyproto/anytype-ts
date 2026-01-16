@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, Notification } = require('electron');
+const { app, shell, BrowserWindow, Notification, ipcMain } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -279,14 +279,72 @@ class Api {
 			return;
 		};
 
+		app.isQuiting = true;
+
+		// Save tabs before closing
+		WindowManager.saveTabs(win);
+
 		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
-		Util.send(win, 'shutdownStart');
 
-		Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+		// Send shutdown start to all tabs and wait for them to close their sessions
+		this.closeAllTabSessions(win).then(() => {
+			Util.send(win, 'shutdownStart');
+			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+		});
+	};
+
+	/**
+	 * Closes sessions for all tabs in the window
+	 * @param {BrowserWindow} win - The window
+	 * @returns {Promise} Resolves when all sessions are closed
+	 */
+	closeAllTabSessions (win) {
+		if (!win || win.isDestroyed() || !win.views || win.views.length === 0) {
+			return Promise.resolve();
+		};
+
+		const timeout = 5000; // 5 second timeout per tab
+		const promises = win.views.map(view => {
+			return new Promise(resolve => {
+				if (!view.webContents || view.webContents.isDestroyed()) {
+					resolve();
+					return;
+				};
+
+				let handler = null;
+
+				const cleanup = () => {
+					if (handler) {
+						ipcMain.removeListener('tab-session-closed', handler);
+					};
+					resolve();
+				};
+
+				const timeoutId = setTimeout(() => {
+					Util.log('warn', `[Api].closeAllTabSessions: Timeout waiting for tab ${view.id} to close session`);
+					cleanup();
+				}, timeout);
+
+				// Listen for the tab to signal it's ready to close
+				handler = (event, readyTabId) => {
+					if (readyTabId === view.id) {
+						clearTimeout(timeoutId);
+						cleanup();
+					};
+				};
+
+				ipcMain.on('tab-session-closed', handler);
+
+				// Tell the tab to close its session
+				Util.sendToTab(win, view.id, 'close-session');
+			});
+		});
+
+		return Promise.all(promises);
 	};
 
 	setChannel (win, id) {
