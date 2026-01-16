@@ -147,6 +147,23 @@ class Util {
 		return this.getView(win, win?.activeTabId);
 	};
 
+	setNativeThemeSource () {
+		const { theme } = ConfigManager.config;
+		
+		switch (theme) {
+			case 'system':
+			case 'dark': {
+				nativeTheme.themeSource = theme;
+				break;
+			};
+
+			default: {
+				nativeTheme.themeSource = 'light';
+				break;
+			};
+		};
+	};
+
 	sendToActiveTab (win, ...args) {
 		const view = this.getActiveView(win);
 		if (view && view.webContents) {

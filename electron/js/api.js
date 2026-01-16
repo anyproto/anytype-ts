@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, Notification, ipcMain } = require('electron');
+const { app, shell, BrowserWindow, Notification, ipcMain, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -113,6 +113,8 @@ class Api {
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
 		this.setBackground(win, theme);
+
+		Util.setNativeThemeSource();
 
 		const resolvedTheme = Util.getTheme();
 		WindowManager.sendToAll('set-theme', resolvedTheme);

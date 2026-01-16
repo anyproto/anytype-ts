@@ -119,6 +119,8 @@ Util.setAppPath(path.join(__dirname));
 function waitForLibraryAndCreateWindows () {
 	const { userDataPath } = ConfigManager.config;
 
+	Util.setNativeThemeSource();
+
 	let currentPath = app.getPath('userData');
 	if (userDataPath && (userDataPath != currentPath)) {
 		currentPath = userDataPath;
