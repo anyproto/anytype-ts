@@ -54,6 +54,7 @@ export interface InputRef {
 	getRange: () => I.TextRange;
 	getSelectionRect: () => DOMRect | null;
 	getNode: () => HTMLInputElement | null;
+	isFocused: () => boolean;
 };
 
 const Input = forwardRef<InputRef, Props>(({
@@ -319,6 +320,7 @@ const Input = forwardRef<InputRef, Props>(({
 		},
 		getRange: (): I.TextRange | null => rangeRef.current,
 		getNode: () => inputRef.current,
+		isFocused: () => isFocused.current,
 	}));
 
 	return (
