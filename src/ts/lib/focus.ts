@@ -118,7 +118,15 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => (el as HTMLInputElement).setSelectionRange(range.from, range.to));
+			window.setTimeout(() => {
+				const input = el as HTMLInputElement;
+				input.setSelectionRange(range.from, range.to);
+
+				const style = window.getComputedStyle(input);
+				if (style.direction === 'rtl') {
+					input.scrollLeft = 0;
+				};
+			});
 		} else
 		if (node.hasClass('editable')) {
 			keyboard.setFocus(true);
