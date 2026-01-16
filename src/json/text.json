@@ -550,6 +550,7 @@
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
+	"pageAuthLoginInProgress": "Authentication is already in progress in another window",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 

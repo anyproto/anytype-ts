@@ -7,7 +7,7 @@ interface NetworkConfig {
 };
 
 class AuthStore {
-	
+
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
 	public token = '';
@@ -15,18 +15,29 @@ class AuthStore {
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
-	
+	public authInProgress = false;
+
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
+			authInProgress: observable,
 			accounts: computed,
 			account: computed,
 			accountAdd: action,
 			accountSet: action,
 			clearAll: action,
 			logout: action,
+			setAuthInProgress: action,
 		});
+	};
+
+	/**
+	 * Sets the auth in progress state.
+	 * @param {boolean} v - The auth in progress value.
+	 */
+	setAuthInProgress (v: boolean) {
+		this.authInProgress = v;
 	};
 
 	get accounts (): I.Account[] {

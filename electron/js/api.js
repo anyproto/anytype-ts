@@ -20,6 +20,7 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	isPinChecked = false;
+	isAuthInProgress = false;
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
@@ -53,6 +54,24 @@ class Api {
 
 	logout (win) {
 		WindowManager.sendToAll('logout');
+	};
+
+	authStart (win) {
+		if (this.isAuthInProgress) {
+			return false;
+		};
+		this.isAuthInProgress = true;
+		WindowManager.sendToAllTabs('auth-in-progress', true);
+		return true;
+	};
+
+	authEnd (win) {
+		this.isAuthInProgress = false;
+		WindowManager.sendToAllTabs('auth-in-progress', false);
+	};
+
+	getAuthStatus (win) {
+		return this.isAuthInProgress;
 	};
 
 	pinCheck (win) {

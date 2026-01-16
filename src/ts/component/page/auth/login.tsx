@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
@@ -12,8 +12,16 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const isSelecting = useRef(false);
-	const { accounts } = S.Auth;
+	const { accounts, authInProgress } = S.Auth;
 	const length = accounts.length;
+
+	const onAuthInProgress = useCallback((e: any, inProgress: boolean) => {
+		S.Auth.setAuthInProgress(inProgress);
+		if (inProgress) {
+			setError(translate('pageAuthLoginInProgress'));
+			submitRef.current?.setLoading(false);
+		};
+	}, []);
 
 	const focus = () => {
 		phraseRef.current?.focus();
@@ -38,18 +46,31 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			return;
 		};
 
+		if (authInProgress) {
+			setError(translate('pageAuthLoginInProgress'));
+			return;
+		};
+
+		if (!Renderer.send('authStart')) {
+			setError(translate('pageAuthLoginInProgress'));
+			return;
+		};
+
 		submitRef.current?.setLoading(true);
 
 		U.Data.closeSession(() => {
 			C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
 				if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
+					Renderer.send('authEnd');
 					return;
 				};
 
 				S.Auth.accountListClear();
 				U.Data.createSession(phrase, '', '', () => {
 					C.AccountRecover(message => {
-						setErrorHandler(message.error.code, message.error.description);
+						if (setErrorHandler(message.error.code, message.error.description)) {
+							Renderer.send('authEnd');
+						};
 					});
 				});
 			});
@@ -73,15 +94,18 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
 			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
 				isSelecting.current = false;
+				Renderer.send('authEnd');
 				return;
 			};
 
 			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
+			Renderer.send('authEnd');
+
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { 
-				replace: true, 
+			const routeParam = {
+				replace: true,
 				onFadeIn: () => Action.checkDiskSpace(),
 			};
 
@@ -151,6 +175,15 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	useEffect(() => {
 		$(frameRef.current.getNode()).removeClass('invisible');
 		focus();
+
+		const inProgress = Renderer.send('getAuthStatus');
+		S.Auth.setAuthInProgress(inProgress);
+		if (inProgress) {
+			setError(translate('pageAuthLoginInProgress'));
+		};
+
+		Renderer.on('auth-in-progress', onAuthInProgress);
+		return () => Renderer.remove('auth-in-progress');
 	}, []);
 
 	useEffect(() => {
