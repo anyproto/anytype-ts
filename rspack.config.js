@@ -36,6 +36,8 @@ module.exports = (env, argv) => {
 				Model: path.resolve(__dirname, 'src/ts/model'),
 				Docs: path.resolve(__dirname, 'src/ts/docs'),
 				Hook: path.resolve(__dirname, 'src/ts/hook'),
+				// Use full mermaid ESM build to avoid lazy-loading issues with architecture-beta diagrams
+				'mermaid': path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs'),
 			},
 			modules: [
 				path.resolve('./src/'),
