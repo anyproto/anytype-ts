@@ -36,6 +36,8 @@ module.exports = (env, argv) => {
 				Model: path.resolve(__dirname, 'src/ts/model'),
 				Docs: path.resolve(__dirname, 'src/ts/docs'),
 				Hook: path.resolve(__dirname, 'src/ts/hook'),
+				// Use full mermaid ESM build to avoid lazy-loading issues with architecture-beta diagrams
+				'mermaid': path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs'),
 			},
 			modules: [
 				path.resolve('./src/'),
@@ -216,5 +218,145 @@ module.exports = (env, argv) => {
 		],
 	};
 
-	return [ appConfig,extensionConfig ];
+	// Web config: browser-only mode without Electron
+	const webPort = process.env.WEB_PORT || 9090;
+	const webConfig = {
+		name: 'web',
+		...base,
+
+		entry: {
+			web: {
+				import: './src/ts/entry.web.tsx',
+				filename: 'js/main.js',
+			},
+		},
+
+		output: {
+			path: path.resolve(__dirname, 'dist-web'),
+			publicPath: '/',
+		},
+
+		devServer: {
+			hot: true,
+			static: [
+				{ directory: path.resolve(__dirname, 'dist'), publicPath: '/' },
+				{ directory: path.resolve(__dirname, 'dist-web'), publicPath: '/' },
+			],
+			watchFiles: {
+				paths: ['src'],
+				options: {
+					usePolling: false,
+				},
+			},
+			historyApiFallback: true,
+			host: '0.0.0.0',
+			port: webPort,
+			allowedHosts: 'all',
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+				'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+			},
+			client: {
+				progress: false,
+				overlay: {
+					runtimeErrors: (error) => {
+						const allowed = [
+							'ResizeObserver loop completed with undelivered notifications.',
+							'Worker was terminated',
+						];
+						return !allowed.includes(error.message);
+					},
+				},
+			},
+			// File upload proxy for web mode - writes files to temp so backend can access them
+			setupMiddlewares: (middlewares, devServer) => {
+				const fs = require('fs').promises;
+				const fsSync = require('fs');
+				const os = require('os');
+				const uploadDir = path.join(os.tmpdir(), 'anytype-web-uploads');
+				const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
+
+				// Ensure upload directory exists (sync on startup is acceptable)
+				if (!fsSync.existsSync(uploadDir)) {
+					fsSync.mkdirSync(uploadDir, { recursive: true });
+				}
+
+				// Sanitize filename to prevent path traversal
+				const sanitizeFilename = (filename) => {
+					return String(filename || 'file')
+						.replace(/[/\\:\x00]/g, '_')
+						.replace(/^\.+/, '_');
+				};
+
+				devServer.app.post('/api/web-upload', (req, res) => {
+					const chunks = [];
+					let totalSize = 0;
+
+					req.on('data', chunk => {
+						totalSize += chunk.length;
+						if (totalSize > MAX_FILE_SIZE * 1.4) {
+							req.destroy();
+							return;
+						}
+						chunks.push(chunk);
+					});
+
+					req.on('end', async () => {
+						try {
+							const body = JSON.parse(Buffer.concat(chunks).toString());
+							const { filename, content } = body; // content is base64
+
+							if (!filename || !content) {
+								return res.status(400).json({ error: 'Missing filename or content' });
+							}
+
+							// Decode base64 content
+							const buffer = Buffer.from(content, 'base64');
+
+							if (buffer.length > MAX_FILE_SIZE) {
+								return res.status(413).json({ error: 'File too large' });
+							}
+
+							// Generate unique filename with sanitization
+							const safeName = sanitizeFilename(filename);
+							const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}-${safeName}`;
+							const filePath = path.join(uploadDir, uniqueName);
+
+							await fs.writeFile(filePath, buffer);
+							console.log('[Web Upload] File saved:', filePath);
+
+							res.json({ path: filePath });
+						} catch (e) {
+							console.error('[Web Upload] Error:', e);
+							res.status(500).json({ error: e.message });
+						}
+					});
+				});
+
+				return middlewares;
+			},
+		},
+
+		plugins: [
+			...base.plugins,
+			new rspack.DefinePlugin({
+				__IS_WEB__: 'true',
+			}),
+			new rspack.HtmlRspackPlugin({
+				template: path.resolve(__dirname, 'dist/index.web.html'),
+				filename: 'index.html',
+				inject: 'body',
+				scriptLoading: 'blocking',
+			}),
+		],
+	};
+
+	// Return configs based on build target
+	const buildTarget = env?.target || process.env.BUILD_TARGET;
+	if (buildTarget === 'web') {
+		return [ webConfig ];
+	}
+
+	return [ appConfig, extensionConfig ];
 };

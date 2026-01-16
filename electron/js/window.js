@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog, ipcMain } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
@@ -11,12 +11,15 @@ const MenuManager = require('./menu.js');
 const Util = require('./util.js');
 const port = Util.getPort();
 
+const TABS_STORAGE_KEY = 'savedTabs';
+
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
 const TAB_BAR_HEIGHT = 52;
+const MENU_BAR_HEIGHT = 28;
 
 class WindowManager {
 
@@ -61,10 +64,6 @@ class WindowManager {
 		win.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);
 			return { action: 'deny' };
-		});
-
-		win.webContents.on('context-menu', (e, param) => {
-			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
 		win.setMenuBarVisibility(showMenuBar);
@@ -148,13 +147,41 @@ class WindowManager {
 		win.on('resize', () => {
 			const { width, height } = win.getBounds();
 
-			if (win.views && win.views[win.activeIndex]) {
+			const activeView = Util.getActiveView(win);
+			if (activeView) {
 				const tabBarHeight = this.getTabBarHeight(win);
-				win.views[win.activeIndex].setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+				activeView.setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
 			};
 		});
 
-		this.createTab(win);
+		// Try to restore saved tabs, or create a single tab if none saved
+		const savedState = this.loadTabs();
+		if (savedState && savedState.tabs && savedState.tabs.length > 0) {
+			const activeIndex = savedState.activeIndex || 0;
+
+			// Create all tabs from saved state with lazy loading for non-active tabs
+			for (let i = 0; i < savedState.tabs.length; i++) {
+				const tabData = savedState.tabs[i];
+				const isActiveTab = i === activeIndex;
+
+				// Defer loading for non-active tabs, don't auto-activate
+				this.createTab(win, tabData.data || {}, {
+					deferLoad: !isActiveTab,
+					setActive: false,
+				});
+			};
+
+			// Set the active tab (this will trigger loading for the active tab)
+			if (win.views && win.views[activeIndex]) {
+				this.setActiveTab(win, win.views[activeIndex].id);
+			};
+
+			// Clear saved tabs after restoration
+			this.clearSavedTabs();
+		} else {
+			this.createTab(win);
+		};
+
 		return win;
 	};
 
@@ -246,32 +273,40 @@ class WindowManager {
 		};
 	};
 
-	createTab (win, param) {
+	createTab (win, param, options) {
+		const Api = require('./api.js');
 		const id = randomUUID();
+		const { deferLoad, setActive } = options || {};
 		const view = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}` ],
 			},
-			...param,
 		});
 
 		win.views = win.views || [];
-		win.activeIndex = win.activeIndex || 0;
 
 		// First tab is the home tab
 		const isHomeTab = win.views.length === 0;
 
-		win.views.push(view);
-
 		view.id = id;
+		win.views.push(view);
+		win.activeTabId = win.activeTabId || id;
 		view.data = { ...param, isHomeTab };
-		view.webContents.loadURL(this.getUrlForNewTab());
+		view.isLoaded = false;
 
-		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
+		view.webContents.setWindowOpenHandler(({ url }) => {
+			Api.openUrl(win, url);
+			return { action: 'deny' };
+		});
+
+		view.webContents.on('context-menu', (e, param) => {
+			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
+		});
 
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
+			view.isLoaded = true;
 			const isSingleTab = win.views && (win.views.length == 1);
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
 
@@ -287,9 +322,21 @@ class WindowManager {
 
 		remote.enable(view.webContents);
 
+		// Only load the tab content if not deferred
+		if (!deferLoad) {
+			view.webContents.loadURL(this.getUrlForNewTab());
+		};
+
 		Util.send(win, 'create-tab', { id: view.id, data: view.data });
-		this.setActiveTab(win, id);
+
+		// Only set active if not explicitly disabled
+		if (setActive !== false) {
+			this.setActiveTab(win, id);
+		};
+
 		this.updateTabBarVisibility(win);
+
+		return view;
 	};
 
 	setActiveTab (win, id) {
@@ -304,18 +351,26 @@ class WindowManager {
 			return;
 		};
 
-		if (win.views[win.activeIndex]) {
-			win.contentView.removeChildView(win.views[win.activeIndex]);
+		const currentActive = Util.getActiveView(win);
+		if (currentActive) {
+			win.contentView.removeChildView(currentActive);
 		};
 
 		const bounds = win.getBounds();
-		const index = win.views.findIndex(it => it.id == id);
 		const tabBarHeight = this.getTabBarHeight(win);
 
 		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
 
-		win.activeIndex = index;
+		win.activeTabId = id;
 		win.contentView.addChildView(view);
+
+		// Lazy load: if the tab hasn't been loaded yet, load it now
+		if (!view.isLoaded && view.webContents && !view.webContents.isDestroyed()) {
+			view.webContents.loadURL(this.getUrlForNewTab());
+		};
+
+		// Focus the new tab's webContents to receive keyboard events
+		view.webContents.focus();
 
 		Util.send(win, 'set-active-tab', id);
 
@@ -355,18 +410,50 @@ class WindowManager {
 
 		const index = win.views.findIndex(it => it.id == id);
 
-		if (win.activeIndex == index) {
+		if (win.activeTabId == id) {
 			win.contentView.removeChildView(view);
 		};
 
 		win.views.splice(index, 1);
 		Util.send(win, 'remove-tab', id);
-
 		this.updateTabBarVisibility(win);
 
 		if (updateActive) {
 			const newIndex = index < win.views.length ? index : index - 1;
 			this.setActiveTab(win, win.views[newIndex]?.id);
+		};
+
+		// Send close-session to allow renderer to close its session, then destroy the webContents
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			const timeout = 5000; // 5 second timeout
+			let handler = null;
+
+			const cleanup = () => {
+				if (handler) {
+					ipcMain.removeListener('tab-session-closed', handler);
+				};
+				if (view.webContents && !view.webContents.isDestroyed()) {
+					view.webContents.close();
+				};
+			};
+
+			const timeoutId = setTimeout(() => {
+				Util.log('warn', `[WindowManager].removeTab: Timeout waiting for tab ${id} to close session`);
+				cleanup();
+			}, timeout);
+
+			// Listen for the tab to signal it's ready to close
+			handler = (event, readyTabId) => {
+				if (readyTabId === id) {
+					clearTimeout(timeoutId);
+					cleanup();
+				};
+			};
+
+			ipcMain.on('tab-session-closed', handler);
+
+			// Tell the tab to close its session
+			Util.sendToTab(win, view.id, 'close-session');
 		};
 	};
 
@@ -374,7 +461,7 @@ class WindowManager {
 		const Api = require('./api.js');
 
 		if (win.views.length > 1) {
-			this.removeTab(win, win.views[win.activeIndex].id, true);
+			this.removeTab(win, win.activeTabId, true);
 		} else {
 			Api.close(win);
 		};
@@ -419,19 +506,35 @@ class WindowManager {
 		// Update the views array
 		win.views = newViews;
 
-		// Update active index
-		const activeView = win.views[win.activeIndex];
-		if (activeView) {
-			win.activeIndex = win.views.findIndex(v => v.id == activeView.id);
-		};
-
 		// Send updated tabs list to tabs.html
 		Util.send(win, 'update-tabs',
 			win.views.map(it => ({ id: it.id, data: it.data })),
-			win.views[win.activeIndex]?.id
+			win.activeTabId
 		);
 
 		this.updateTabBarVisibility(win);
+	};
+
+	nextTab (win) {
+		if (!win.views || (win.views.length <= 1)) {
+			return;
+		};
+
+		const index = win.views.findIndex(it => it.id == win.activeTabId);
+		const nextIndex = (index + 1) % win.views.length;
+
+		this.setActiveTab(win, win.views[nextIndex].id);
+	};
+
+	prevTab (win) {
+		if (!win.views || (win.views.length <= 1)) {
+			return;
+		};
+
+		const index = win.views.findIndex(it => it.id == win.activeTabId);
+		const prevIndex = (index - 1 + win.views.length) % win.views.length;
+
+		this.setActiveTab(win, win.views[prevIndex].id);
 	};
 
 	getPreferencesForNewWindow () {
@@ -496,9 +599,19 @@ class WindowManager {
 	getTabBarHeight (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const showMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
-		const shouldShow = alwaysShow || hasMultipleTabs;
-		return shouldShow ? TAB_BAR_HEIGHT : 0;
+		const shouldShowTabs = alwaysShow || hasMultipleTabs;
+
+		let height = 0;
+		if (is.windows && showMenuBar) {
+			height += MENU_BAR_HEIGHT;
+		};
+		if (shouldShowTabs) {
+			height += TAB_BAR_HEIGHT;
+		};
+
+		return height;
 	};
 
 	updateTabBarVisibility (win) {
@@ -519,7 +632,7 @@ class WindowManager {
 		Util.sendToAllTabs(win, 'set-single-tab', isSingleTab);
 
 		// Update active view bounds
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && !view.webContents?.isDestroyed()) {
 			const bounds = win.getBounds();
 			const tabBarHeight = this.getTabBarHeight(win);
@@ -538,6 +651,11 @@ class WindowManager {
 		this.list.forEach(it => Util.send(it, ...args));
 	};
 
+	sendToAllTabs () {
+		const args = [ ...arguments ];
+		this.list.forEach(it => Util.sendToAllTabs(it, ...args));
+	};
+
 	reloadAll () {
 		this.sendToAll('reload');
 	};
@@ -545,7 +663,66 @@ class WindowManager {
 	getFirstWindow () {
 		return this.list.values().next().value;
 	};
-	
+
+	/**
+	 * Saves the current tabs state to storage for restoration on next app start
+	 * @param {BrowserWindow} win - The window to save tabs from
+	 */
+	saveTabs (win) {
+		if (!win || !win.views || win.isDestroyed()) {
+			return;
+		};
+
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		const tabsData = win.views.map(view => ({
+			data: view.data || {},
+		}));
+
+		// Find the active tab index
+		const activeIndex = win.views.findIndex(view => view.id === win.activeTabId);
+
+		const state = {
+			tabs: tabsData,
+			activeIndex: activeIndex >= 0 ? activeIndex : 0,
+		};
+
+		store.set(TABS_STORAGE_KEY, state);
+		Util.log('info', `[WindowManager].saveTabs: Saved ${tabsData.length} tabs, active index: ${state.activeIndex}`);
+	};
+
+	/**
+	 * Loads saved tabs state from storage
+	 * @returns {Object|null} The saved tabs state or null if not found
+	 */
+	loadTabs () {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		const state = store.get(TABS_STORAGE_KEY);
+		if (state && state.tabs && state.tabs.length > 0) {
+			Util.log('info', `[WindowManager].loadTabs: Found ${state.tabs.length} saved tabs`);
+			return state;
+		};
+
+		return null;
+	};
+
+	/**
+	 * Clears saved tabs from storage
+	 */
+	clearSavedTabs () {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.delete(TABS_STORAGE_KEY);
+		Util.log('info', '[WindowManager].clearSavedTabs: Cleared saved tabs');
+	};
+
 };
 
 module.exports = new WindowManager();

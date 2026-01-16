@@ -403,7 +403,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		switch (item.id) {
 			case 'open':
-				U.Object.openConfig(type);
+				U.Object.openConfig(e, type);
 				break;
 
 			case 'turnCollection':

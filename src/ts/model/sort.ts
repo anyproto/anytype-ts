@@ -1,6 +1,20 @@
 import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
+/**
+ * Sort represents a sorting rule for ordering objects in Sets/Collections.
+ *
+ * Sorts are used in Dataview blocks to determine the order in which
+ * objects are displayed. Multiple sorts can be applied in sequence.
+ *
+ * Properties:
+ * - relationKey: The property to sort by (e.g., 'name', 'createdDate')
+ * - type: Sort direction (Ascending, Descending, Custom)
+ * - customOrder: Explicit ordering for Custom sort type
+ * - empty: How to handle empty values (Start, End, None)
+ *
+ * MobX observable for reactive UI updates.
+ */
 class Sort implements I.Sort {
 
 	id = '';

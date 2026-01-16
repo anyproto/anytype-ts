@@ -2,8 +2,27 @@ import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, 
 
 const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
 
+/**
+ * UtilObject provides utilities for working with Anytype objects.
+ *
+ * Key responsibilities:
+ * - Object navigation and routing (opening objects in different contexts)
+ * - Object property management (icons, covers, names, descriptions)
+ * - Layout type checking and categorization
+ * - Object type and relation management
+ * - Link copying and sharing
+ *
+ * This is one of the most heavily used utility classes, as objects are
+ * the fundamental data unit in Anytype.
+ */
 class UtilObject {
 
+	/**
+	 * Get the router action string for a given object layout.
+	 * Maps layout types to their corresponding page action identifiers.
+	 * @param v - The object layout type
+	 * @returns Action string used in routing (e.g., 'edit', 'media', 'chat')
+	 */
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
@@ -33,6 +52,11 @@ class UtilObject {
 		return r;
 	};
 
+	/**
+	 * Build the route URL for an object.
+	 * @param object - The object to generate a route for
+	 * @returns Route string suitable for navigation
+	 */
 	route (object: any): string {
 		if (!object) {
 			return '';
@@ -54,6 +78,11 @@ class UtilObject {
 		return U.Router.build(param);
 	};
 
+	/**
+	 * Generate a universal deep link route for an object.
+	 * @param object - The object to link to
+	 * @returns Universal route string with objectId and spaceId params
+	 */
 	universalRoute (object: any): string {
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
@@ -65,6 +94,31 @@ class UtilObject {
 		return param;
 	};
 
+	getTabData (object: any) {
+		if (!object) {
+			return;
+		};
+
+		const spaceview = U.Space.getSpaceview();
+
+		return { 
+			title: U.Object.name(object, true),
+			icon: U.Graph.imageSrc(object),
+			layout: object.layout,
+			isImage: object.iconImage,
+			uxType: spaceview?.uxType,
+		};
+	};
+
+	/**
+	 * Open an object based on keyboard modifiers in the event.
+	 * - Shift or popup context: Opens in popup
+	 * - Cmd/Ctrl or middle mouse button: Opens in new tab
+	 * - Default: Opens via route navigation
+	 * @param e - The DOM event (for modifier key detection)
+	 * @param object - The object to open
+	 * @param param - Optional parameters for route/menu customization
+	 */
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
@@ -83,13 +137,19 @@ class UtilObject {
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
-		if ((e.metaKey || e.ctrlKey)) {
+		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
 			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
 		};
 	};
 
+	/**
+	 * Open an object automatically choosing popup or route based on context.
+	 * Uses popup if already in popup context, otherwise navigates via route.
+	 * @param object - The object to open
+	 * @param param - Optional parameters for route/menu customization
+	 */
 	openAuto (object: any, param?: any) {
 		if (!object) {
 			return;
@@ -123,7 +183,7 @@ class UtilObject {
 	};
 
 	openTab (object: any) {
-		Renderer.send('openTab', this.route(object));
+		Renderer.send('openTab', this.route(object), this.getTabData(object));
 	};
 
 	openPopup (object: any, param?: any) {
@@ -167,10 +227,26 @@ class UtilObject {
 	/**
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
-	openConfig (object: any, param?: any) {
+	openConfig (e: any, object: any, param?: any) {
+		if (e && (e.button == 1)) {
+			this.openTab(object);
+			return;
+		};
+
 		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 
+	/**
+	 * Create a new object as a linked block within another object.
+	 * @param rootId - Parent object ID where the link block will be created
+	 * @param targetId - Block ID for positioning the new link
+	 * @param details - Object details/properties to set on creation
+	 * @param position - Block position relative to target
+	 * @param templateId - Template to use for the new object
+	 * @param flags - Creation flags (e.g., SelectTemplate, DeleteEmpty)
+	 * @param route - Analytics route for tracking
+	 * @param callBack - Optional callback with creation result
+	 */
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
@@ -324,27 +400,36 @@ class UtilObject {
 	};
 
 	// --------------------------------------------------------- //
+	// Layout Type Checking Methods
+	// These methods check if a layout belongs to specific categories
+	// --------------------------------------------------------- //
 
+	/** Check if layout is a Set-like layout (Set, Collection, Type) */
 	isInSetLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSetLayouts().includes(layout);
 	};
 
+	/** Check if layout is a file-based layout (File, Image, Audio, Video, PDF) */
 	isInFileLayouts (layout: I.ObjectLayout): boolean {
 		return this.getFileLayouts().includes(layout);
 	};
 
+	/** Check if layout is a system layout (Type, Relation, Option, etc.) */
 	isInSystemLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSystemLayouts().includes(layout);
 	};
 
+	/** Check if layout is either file or system layout */
 	isInFileOrSystemLayouts (layout: I.ObjectLayout): boolean {
 		return this.getFileAndSystemLayouts().includes(layout);
 	};
 
+	/** Check if layout is a page-like layout (Page, Human, Task, Note, Bookmark) */
 	isInPageLayouts (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	/** Check if layout is a human-like layout (Human, Participant) */
 	isInHumanLayouts (layout: I.ObjectLayout): boolean {
 		return this.getHumanLayouts().includes(layout);
 	};

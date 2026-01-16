@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.53.3-alpha",
+	"version": "0.53.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -38,7 +38,10 @@
 		"prepare": "husky install",
 		"update:locale": "node ./electron/hook/locale.js",
 		"ext:manifest:firefox": "node electron/hook/switch-manifest.js firefox",
-		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium"
+		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium",
+		"start:web": "node scripts/start-web.js",
+		"start:dev-web": "cross-env WEB_OPEN_BROWSER=1 node scripts/start-web.js",
+		"build:web": "cross-env BUILD_TARGET=web rspack --mode=production --node-env=production --env target=web"
 	},
 	"repository": {
 		"type": "git",
@@ -147,9 +150,9 @@
 		"mermaid": "^11.12.2",
 		"mime-types": "^3.0.1",
 		"ml-matrix": "^6.12.1",
-		"mobx": "^6.6.1",
+		"mobx": "^6.15.0",
 		"mobx-logger": "^0.7.1",
-		"mobx-react": "^7.5.2",
+		"mobx-react": "^9.2.1",
 		"motion": "^12.23.24",
 		"node-gyp": "^12.1.0",
 		"os": "^0.1.1",

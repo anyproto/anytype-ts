@@ -27,6 +27,23 @@ const ContentModel = {
 	widget:		 BlockContentWidget,
 };
 
+/**
+ * Block is the fundamental content unit in Anytype documents.
+ *
+ * Every piece of content - text, images, links, embeds, tables, etc. -
+ * is represented as a block. Blocks form a tree structure where some
+ * blocks can contain children (e.g., toggle lists, columns).
+ *
+ * Key characteristics:
+ * - Each block has a type (Text, File, Link, Layout, etc.)
+ * - Blocks have type-specific content (handled by ContentModel classes)
+ * - Blocks can have alignment, background color, and other properties
+ * - Many helper methods for type checking (isText(), isLayout(), etc.)
+ * - MobX observable for reactive UI updates
+ *
+ * The Block class provides extensive type-checking methods (isTextHeader(),
+ * isFileImage(), etc.) and capability methods (canHaveChildren(), canTurn()).
+ */
 class Block implements I.Block {
 	
 	id = '';

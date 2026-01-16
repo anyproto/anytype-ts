@@ -627,7 +627,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			};
 
 			const initVars = () => {
-				const hd = hoverData.current;
+				if (!hd) {
+					return;
+				};
 
 				x = hd.x;
 				y = hd.y;

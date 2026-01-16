@@ -375,7 +375,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		switch (item.id) {
 
 			case 'open': {
-				U.Object.openConfig(first);
+				U.Object.openConfig(null, first);
 				break;
 			};
 
@@ -386,7 +386,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					};
 
 					if (first) {
-						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
+						U.Object.openConfig(null, { id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count: length, route });

@@ -135,10 +135,15 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Allow native context menu (spellcheck) when clicking on links
+		if ($(e.target).closest('.markupLink').length) {
+			return;
+		};
+
 		if (
-			isContextMenuDisabled || 
-			readonly || 
-			(block.isText() && (focused == block.id)) || 
+			isContextMenuDisabled ||
+			readonly ||
+			(block.isText() && (focused == block.id)) ||
 			!block.canContextMenu()
 		) {
 			return;
@@ -412,6 +417,10 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			});
 
 			item.off('mousedown.link').on('mousedown.link', e => {
+				if (e.button) {
+					return;
+				};
+
 				e.preventDefault();
 
 				const item = $(e.currentTarget);

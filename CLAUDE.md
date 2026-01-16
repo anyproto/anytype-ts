@@ -227,3 +227,7 @@ Void pages (`src/ts/component/page/main/void.tsx`) handle empty/error states.
 ### Styling
 - Styles in `src/scss/page/main/void.scss`
 - Class names generated from route: `.voidSelect`, `.voidError`, etc.
+
+## Web Mode Development
+
+Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.

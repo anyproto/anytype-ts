@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, MenuBar } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -157,7 +157,7 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-tab', onWillCloseTab);
+		Renderer.on('close-session', onCloseSession);
 		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
 		Renderer.on('set-home-tab', (e: any, v: boolean) => S.Common.isHomeTabSet(v));
 		Renderer.on('notification-callback', onNotificationCallback);
@@ -184,6 +184,10 @@ const App: FC = () => {
 			S.Common.themeSet(S.Common.theme);
 		});
 
+		Renderer.on('set-theme', (e: any, theme: string) => {
+			S.Common.themeSet(theme);
+		});
+
 		Renderer.on('pin-check', () => {
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
@@ -201,8 +205,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab, isHomeTab } = data;
-		const win = $(window);
+		const { id, dataPath, config, isDark, languages, isPinChecked, css, isSingleTab, isHomeTab } = data;
 		const body = $('body');
 		const node = $(nodeRef.current);
 		const bubbleLoader = $('#bubble-loader');
@@ -256,7 +259,7 @@ const App: FC = () => {
 		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			const t = activeIndex > 0 ? 50 : 300;
+			const t = 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
@@ -270,7 +273,7 @@ const App: FC = () => {
 					window.setTimeout(() => {
 						rootLoader.css({ opacity: 0 });
 						window.setTimeout(() => hide(), t);
-					}, activeIndex );
+					}, 0);
 				}, t * 5);
 			}, t * 3);
 		};
@@ -337,9 +340,14 @@ const App: FC = () => {
 		});
 	};
 
-	const onWillCloseTab = (e: any, tabId: string) => {
-		Storage.deleteLastOpenedByTabId([ tabId ]);
-		U.Data.closeSession();
+	const onCloseSession = (e: any, tabId: string) => {
+		const currentTabId = electron.tabId();
+
+		Storage.deleteLastOpenedByTabId([ tabId || currentTabId ]);
+		U.Data.closeSession(() => {
+			// Signal to main process that session is closed and tab can be destroyed
+			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
+		});
 	};
 
 	const onNotificationCallback = (e: any, cmd: string, payload: any) => {
@@ -489,8 +497,56 @@ const App: FC = () => {
 								if (block && block.isText()) {
 									const value = block.content.text;
 
-									// Find the first occurrence of the misspelled word in the value
-									const wordIndex = value.indexOf(misspelledWord);
+									// Find the word at the click position using caret position
+									let wordIndex = -1;
+									const range = document.caretRangeFromPoint(x, y);
+
+									if (range) {
+										const container = range.startContainer;
+										const offset = range.startOffset;
+
+										// Get the text content and find word boundaries
+										if (container.nodeType === Node.TEXT_NODE) {
+											const editable = $(container).closest('.editable');
+											if (editable.length) {
+												// Calculate the absolute offset in the block text
+												let absoluteOffset = 0;
+												const walker = document.createTreeWalker(
+													editable.get(0),
+													NodeFilter.SHOW_TEXT,
+													null
+												);
+
+												let node;
+												while ((node = walker.nextNode())) {
+													if (node === container) {
+														absoluteOffset += offset;
+														break;
+													};
+													absoluteOffset += node.textContent?.length || 0;
+												};
+
+												// Find the occurrence of misspelledWord that contains this offset
+												let searchIndex = 0;
+												while (searchIndex < value.length) {
+													const idx = value.indexOf(misspelledWord, searchIndex);
+													if (idx === -1) break;
+
+													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
+														wordIndex = idx;
+														break;
+													};
+													searchIndex = idx + 1;
+												};
+											};
+										};
+									};
+
+									// Fallback to first occurrence if position detection failed
+									if (wordIndex === -1) {
+										wordIndex = value.indexOf(misspelledWord);
+									};
+
 									if (wordIndex >= 0) {
 										U.Data.blockInsertText(
 											rootId,
@@ -558,7 +614,7 @@ const App: FC = () => {
 						</div>
 					) : ''}
 
-					<MenuBar />
+					<div id="dragPanel" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
 

@@ -1,6 +1,28 @@
 import { I, M, S, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
+/**
+ * View represents a saved configuration for displaying objects in a Set/Collection.
+ *
+ * Views define how objects are displayed, filtered, sorted, and grouped.
+ * Each Set/Collection can have multiple views, and users can switch between them.
+ *
+ * View types:
+ * - Grid: Spreadsheet-like table view
+ * - List: Simple list view
+ * - Gallery: Card-based gallery view
+ * - Board: Kanban-style board view
+ *
+ * Configuration:
+ * - filters: Which objects to show
+ * - sorts: How to order objects
+ * - relations: Which columns/properties to display
+ * - groupRelationKey: Property to group by (Board view)
+ * - coverRelationKey: Property to use as card cover (Gallery view)
+ * - defaultTemplateId/defaultTypeId: Defaults for new objects
+ *
+ * MobX observable for reactive UI updates.
+ */
 class View implements I.View {
 	
 	id = '';

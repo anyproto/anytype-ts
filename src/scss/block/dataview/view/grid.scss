@@ -212,7 +212,7 @@
 
 			.cellContent { overflow: visible; height: auto; }
 			.cellContent {
-				.name, .empty { overflow: visible; height: auto; white-space: normal; @include clamp15; }
+				.name { overflow: visible; height: auto; white-space: normal; @include clamp15; }
 			}
 
 			.cellContent.c-select,

@@ -80,7 +80,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 	const onOpenObject = (e: any) => {
 		if (!keyboard.withCommand(e)) {
-			U.Object.openConfig({ id: block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
+			U.Object.openConfig(e, { id: block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 

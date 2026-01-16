@@ -1474,12 +1474,8 @@ class UtilCommon {
 		return el.scrollHeight - el.clientHeight;
 	};
 
-	getMenuBarHeight () {
-		return Number($('#menuBar.withButtons').outerHeight()) || 0;
-	};
-
 	getAppContainerHeight () {
-		return $('#appContainer').height() - this.getMenuBarHeight();
+		return $('#appContainer').height();
 	};
 
 	getMembershipPriceString (price?: I.MembershipAmount): string {

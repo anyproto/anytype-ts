@@ -134,7 +134,7 @@ const Toast: FC = observer(() => {
 	const onClickHandler = (e: MouseEvent, item: any) => {
 		switch (item.action) {
 			case 'open': {
-				U.Object.openEvent(e, S.Common.toast.target);
+				U.Object.openConfig(e, S.Common.toast.target);
 				break;
 			};
 

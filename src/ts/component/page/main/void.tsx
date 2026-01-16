@@ -59,6 +59,10 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	useEffect(() => {
+		if (id == 'dashboard') {
+			U.Space.openDashboard();
+		};
+
 		if (id == 'select') {
 			S.Common.setLeftSidebarState('vault', '');
 			sidebar.leftPanelSubPageClose(false, false);

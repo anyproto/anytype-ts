@@ -6,6 +6,24 @@ enum KeyMapType {
 	Type = 'type',
 };
 
+/**
+ * RecordStore manages dataview records, views, relations, and groups.
+ *
+ * Key responsibilities:
+ * - Record management: Lists of object IDs per subscription/dataview
+ * - View management: Dataview configurations (filters, sorts, columns)
+ * - Relation management: Available relations and their mappings
+ * - Group management: Kanban board groupings
+ * - Type/Relation lookups: Fast ID retrieval by unique key
+ *
+ * This store is heavily used by Set/Collection views and widgets
+ * that display lists of objects with filtering and sorting.
+ *
+ * Key maps for fast lookups:
+ * - relationKeyMap: spaceId -> relationKey -> relationId
+ * - typeKeyMap: spaceId -> uniqueKey -> typeId
+ * - spaceMap: targetSpaceId -> spaceViewId
+ */
 class RecordStore {
 
 	public relationMap: Map<string, any[]> = observable(new Map());

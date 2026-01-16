@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, Notification } = require('electron');
+const { app, shell, BrowserWindow, Notification, ipcMain, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -22,6 +22,7 @@ class Api {
 	isPinChecked = false;
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
+	shownNotificationIds = new Set();
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -45,7 +46,7 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
-			activeIndex: win.activeIndex || 0,
+			activeTabId: win.activeTabId,
 			isSingleTab: win.views && (win.views.length == 1),
 			isHomeTab: tab?.data?.isHomeTab || false,
 		};
@@ -68,8 +69,13 @@ class Api {
 	};
 
 	paste (win) {
-		if (win && win.webContents && !win.isDestroyed()) {
-			win.webContents.paste();
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
+		const view = Util.getActiveView(win);
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.webContents.paste();
 		};
 	};
 
@@ -107,9 +113,13 @@ class Api {
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
-		this.setBackground(win, theme);
-		
-		WindowManager.sendToAll('set-theme', Util.getTheme());
+
+		Util.setNativeThemeSource();
+
+		const resolvedTheme = Util.getTheme();
+		this.setBackground(win, resolvedTheme);
+		WindowManager.sendToAll('set-theme', theme);
+		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
 	setBackground (win, theme) {
@@ -122,7 +132,7 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.setZoomLevel(zoom);
 			Util.sendToActiveTab(win, 'zoom');
@@ -141,6 +151,12 @@ class Api {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
+			// Notify tabs.html about menu bar visibility change
+			Util.send(win, 'set-menu-bar-visibility', show);
+
+			// Update tab bar height when menu bar visibility changes
+			WindowManager.updateTabBarVisibility(win);
+
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});
@@ -150,6 +166,15 @@ class Api {
 		this.setConfig(win, { alwaysShowTabs: show }, () => {
 			WindowManager.updateTabBarVisibility(win);
 		});
+	};
+
+	setHardwareAcceleration (win, enabled) {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.set('hardwareAcceleration', enabled);
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true, false));
 	};
 
 	spellcheckAdd (win, s) {
@@ -181,7 +206,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, '', true);
+		this.exit(win, '', true, true);
 	};
 
 	updateCancel (win) {
@@ -200,8 +225,8 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openTab (win, route) {
-		WindowManager.createTab(win, { route });
+	openTab (win, route, data) {
+		WindowManager.createTab(win, { ...data, route });
 	};
 
 	openUrl (win, url) {
@@ -239,29 +264,92 @@ class Api {
 		};
 	};
 
-	shutdown (win, relaunch) {
-		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch);
+	shutdown (win, relaunch, isUpdate) {
+		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
 		if (relaunch) {
-			UpdateManager.relaunch();
+			if (isUpdate) {
+				UpdateManager.relaunch();
+			} else {
+				app.relaunch();
+				app.exit(0);
+			};
 		} else {
 			app.exit(0);
 		};
 	};
 
-	exit (win, signal, relaunch) {
+	exit (win, signal, relaunch, isUpdate) {
 		if (app.isQuiting) {
 			return;
 		};
+
+		app.isQuiting = true;
+
+		// Save tabs before closing
+		WindowManager.saveTabs(win);
 
 		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
-		Util.send(win, 'shutdownStart');
+		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
-		Server.stop(signal).then(() => this.shutdown(win, relaunch));
+		// Send shutdown start to all tabs and wait for them to close their sessions
+		this.closeAllTabSessions(win).then(() => {
+			Util.send(win, 'shutdownStart');
+			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+		});
+	};
+
+	/**
+	 * Closes sessions for all tabs in the window
+	 * @param {BrowserWindow} win - The window
+	 * @returns {Promise} Resolves when all sessions are closed
+	 */
+	closeAllTabSessions (win) {
+		if (!win || win.isDestroyed() || !win.views || win.views.length === 0) {
+			return Promise.resolve();
+		};
+
+		const timeout = 5000; // 5 second timeout per tab
+		const promises = win.views.map(view => {
+			return new Promise(resolve => {
+				if (!view.webContents || view.webContents.isDestroyed()) {
+					resolve();
+					return;
+				};
+
+				let handler = null;
+
+				const cleanup = () => {
+					if (handler) {
+						ipcMain.removeListener('tab-session-closed', handler);
+					};
+					resolve();
+				};
+
+				const timeoutId = setTimeout(() => {
+					Util.log('warn', `[Api].closeAllTabSessions: Timeout waiting for tab ${view.id} to close session`);
+					cleanup();
+				}, timeout);
+
+				// Listen for the tab to signal it's ready to close
+				handler = (event, readyTabId) => {
+					if (readyTabId === view.id) {
+						clearTimeout(timeoutId);
+						cleanup();
+					};
+				};
+
+				ipcMain.on('tab-session-closed', handler);
+
+				// Tell the tab to close its session
+				Util.sendToTab(win, view.id, 'close-session');
+			});
+		});
+
+		return Promise.all(promises);
 	};
 
 	setChannel (win, id) {
@@ -313,8 +401,11 @@ class Api {
 	};
 
 	reload (win, route) {
-		win.route = route;
-		win.webContents.reload();
+		const view = Util.getActiveView(win);
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.data = { ...view.data, route };
+			view.webContents.reload();
+		};
 	};
 
 	systemInfo (win) {
@@ -413,7 +504,7 @@ class Api {
 
 		return {
 			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
-			id: win.views[win.activeIndex || 0]?.id,
+			id: win.activeTabId || win.views?.[0]?.id,
 			isVisible: alwaysShow || hasMultipleTabs,
 		};
 	};
@@ -448,10 +539,22 @@ class Api {
 	};
 
 	notification (win, param) {
-		const { title, text, cmd, payload } = param || {};
+		const { id, title, text, cmd, payload } = param || {};
 
 		if (!text) {
 			return;
+		};
+
+		// Prevent duplicate notifications across tabs
+		if (id && this.shownNotificationIds.has(id)) {
+			return;
+		};
+
+		if (id) {
+			this.shownNotificationIds.add(id);
+
+			// Clean up old notification IDs after 30 seconds
+			setTimeout(() => this.shownNotificationIds.delete(id), 30000);
 		};
 
 		const notification = new Notification({

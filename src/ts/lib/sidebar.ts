@@ -9,6 +9,24 @@ interface SidebarData {
 
 const STORAGE_KEY = 'sidebarData';
 
+/**
+ * Sidebar manages the left and right sidebar panels in the application.
+ *
+ * Key responsibilities:
+ * - Opening/closing sidebar panels with animations
+ * - Managing panel widths and persisting state to storage
+ * - Handling auto-show/hide on mouse hover
+ * - Resizing the main page content when sidebars change
+ * - Managing sub-pages within the left sidebar
+ *
+ * Sidebar panels:
+ * - Left: Main navigation sidebar (vault/space navigation)
+ * - SubLeft: Secondary left panel for widgets/sub-navigation
+ * - Right: Context-sensitive sidebar (object details, etc.)
+ *
+ * Each panel has its own width and open/closed state that is
+ * persisted to local storage.
+ */
 class Sidebar {
 	
 	panelData = {

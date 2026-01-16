@@ -113,7 +113,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 					switch (el.id) {
 						case 'open': {
-							U.Object.openConfig(item);
+							U.Object.openConfig(event, item);
 							break;
 						};
 
@@ -212,9 +212,9 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				style={style}
 			>
 				{canEdit ? <Icon className="dnd" /> : ''}
-				<div 
-					className="clickable" 
-					onClick={() => U.Object.openConfig(item)} 
+				<div
+					className="clickable"
+					onClick={e => U.Object.openEvent(e, item)}
 					onContextMenu={e => onMore(e, item)}
 				>
 					{content}

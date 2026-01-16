@@ -2,17 +2,29 @@ import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
 
 interface RouteParam {
-	page: string; 
-	action: string; 
-	id: string; 
-	spaceId?: string; 
-	viewId?: string; 
+	page: string;
+	action: string;
+	id: string;
+	spaceId?: string;
+	viewId?: string;
 	relationKey?: string;
 	messageId?: string;
 	objectId?: string;
 	additional?: { key: string, value: string }[];
 };
 
+/**
+ * UtilRouter handles application navigation and routing.
+ *
+ * Key responsibilities:
+ * - Building and parsing route URLs
+ * - Navigating between pages with optional animations
+ * - Managing browser history
+ * - Switching between spaces with proper state management
+ *
+ * Routes follow the pattern: /page/action/id/[key/value pairs]
+ * Example: /main/edit/abc123/spaceId/xyz
+ */
 class UtilRouter {
 
 	history: any = null;
@@ -24,6 +36,7 @@ class UtilRouter {
 	 */
 	init (history: any) {
 		this.history = history;
+		this.isOpening = false; // Reset flag on init to prevent stuck state
 	};
 
 	/**
@@ -268,6 +281,7 @@ class UtilRouter {
 						U.Data.onAuth({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
+							sidebar.leftPanelSubPageOpen('widget', false);
 						});
 					};
 

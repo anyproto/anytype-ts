@@ -31,6 +31,8 @@ const getSections = () => {
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
 						{ id: 'newTab', name: translate('popupShortcutMainBasics29'), keys: [ cmdKey, 't' ] },
+						{ id: 'prevTab', name: translate('popupShortcutMainBasics31'), keys: [ cmdKey, 'alt', 'arrowleft' ] },
+						{ id: 'nextTab', name: translate('popupShortcutMainBasics30'), keys: [ cmdKey, 'alt', 'arrowright' ] },
 						isWin ? { id: 'systemMenu', name: translate('electronMenuShowMenu'), keys: [] } : null,
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
