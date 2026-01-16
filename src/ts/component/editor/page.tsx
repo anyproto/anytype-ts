@@ -1174,15 +1174,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		window.setTimeout(() => {
 			const containerOffset = container.offset()?.top || 0;
-			const targetY = dir < 0 ? containerOffset + 100 : containerOffset + containerHeight - 100;
-
+			const targetY = dir < 0 ? (containerOffset + 100) : (containerOffset + containerHeight - 100);
 			const blocks = S.Block.getBlocks(rootId, it => it.isFocusable());
+
 			let closestBlock = null;
 			let closestDistance = Infinity;
 
 			for (const block of blocks) {
 				const node = $(`.focusable.c${block.id}`);
-				if (!node.length) continue;
+				if (!node.length) {
+					continue;
+				};
 
 				const rect = node.get(0).getBoundingClientRect();
 				const blockY = rect.top + rect.height / 2;
