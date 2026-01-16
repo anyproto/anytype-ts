@@ -157,14 +157,21 @@ class WindowManager {
 		// Try to restore saved tabs, or create a single tab if none saved
 		const savedState = this.loadTabs();
 		if (savedState && savedState.tabs && savedState.tabs.length > 0) {
-			// Create all tabs from saved state
+			const activeIndex = savedState.activeIndex || 0;
+
+			// Create all tabs from saved state with lazy loading for non-active tabs
 			for (let i = 0; i < savedState.tabs.length; i++) {
 				const tabData = savedState.tabs[i];
-				this.createTab(win, tabData.data || {});
+				const isActiveTab = i === activeIndex;
+
+				// Defer loading for non-active tabs, don't auto-activate
+				this.createTab(win, tabData.data || {}, {
+					deferLoad: !isActiveTab,
+					setActive: false,
+				});
 			};
 
-			// Set the active tab to the one that was active before (by index)
-			const activeIndex = savedState.activeIndex || 0;
+			// Set the active tab (this will trigger loading for the active tab)
 			if (win.views && win.views[activeIndex]) {
 				this.setActiveTab(win, win.views[activeIndex].id);
 			};
@@ -266,15 +273,15 @@ class WindowManager {
 		};
 	};
 
-	createTab (win, param) {
+	createTab (win, param, options) {
 		const Api = require('./api.js');
 		const id = randomUUID();
+		const { deferLoad, setActive } = options || {};
 		const view = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}` ],
 			},
-			...param,
 		});
 
 		win.views = win.views || [];
@@ -282,7 +289,7 @@ class WindowManager {
 		win.views.push(view);
 		win.activeTabId = win.activeTabId || id;
 		view.data = { ...param };
-		view.webContents.loadURL(this.getUrlForNewTab());
+		view.isLoaded = false;
 
 		view.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);
@@ -295,6 +302,7 @@ class WindowManager {
 
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
+			view.isLoaded = true;
 			const isSingleTab = win.views && (win.views.length == 1);
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
 
@@ -310,9 +318,21 @@ class WindowManager {
 
 		remote.enable(view.webContents);
 
+		// Only load the tab content if not deferred
+		if (!deferLoad) {
+			view.webContents.loadURL(this.getUrlForNewTab());
+		};
+
 		Util.send(win, 'create-tab', { id: view.id, data: view.data });
-		this.setActiveTab(win, id);
+
+		// Only set active if not explicitly disabled
+		if (setActive !== false) {
+			this.setActiveTab(win, id);
+		};
+
 		this.updateTabBarVisibility(win);
+
+		return view;
 	};
 
 	setActiveTab (win, id) {
@@ -339,6 +359,11 @@ class WindowManager {
 
 		win.activeTabId = id;
 		win.contentView.addChildView(view);
+
+		// Lazy load: if the tab hasn't been loaded yet, load it now
+		if (!view.isLoaded && view.webContents && !view.webContents.isDestroyed()) {
+			view.webContents.loadURL(this.getUrlForNewTab());
+		};
 
 		// Focus the new tab's webContents to receive keyboard events
 		view.webContents.focus();
