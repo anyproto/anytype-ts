@@ -308,6 +308,13 @@ const Input = forwardRef<InputRef, Props>(({
 			callWithTimeout(() => {
 				focus(preventScroll);
 				inputRef.current?.setSelectionRange(range.from, range.to);
+
+				if (inputRef.current) {
+					const style = window.getComputedStyle(inputRef.current);
+					if (style.direction === 'rtl') {
+						inputRef.current.scrollLeft = 0;
+					};
+				};
 			});
 		},
 		getRange: (): I.TextRange | null => rangeRef.current,
