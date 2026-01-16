@@ -112,13 +112,13 @@ class Api {
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
-		this.setBackground(win, theme);
 
 		Util.setNativeThemeSource();
 
 		const resolvedTheme = Util.getTheme();
-		WindowManager.sendToAll('set-theme', resolvedTheme);
-		WindowManager.sendToAllTabs('set-theme', resolvedTheme);
+		this.setBackground(win, resolvedTheme);
+		WindowManager.sendToAll('set-theme', theme);
+		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
 	setBackground (win, theme) {
