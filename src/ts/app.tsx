@@ -183,6 +183,10 @@ const App: FC = () => {
 			S.Common.themeSet(S.Common.theme);
 		});
 
+		Renderer.on('set-theme', (e: any, theme: string) => {
+			S.Common.themeSet(theme);
+		});
+
 		Renderer.on('pin-check', () => {
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
