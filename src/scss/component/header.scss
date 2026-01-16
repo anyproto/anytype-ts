@@ -22,12 +22,13 @@
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; @include text-overflow-nw; padding: 0px 6px; 
-		-webkit-app-region: no-drag;
+		-webkit-app-region: no-drag; font-weight: 500;
 	}
 	.path {
 		.label { 
 			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
 			background: var(--color-shape-tertiary) url('~img/icon/lock.svg') 6px 6px no-repeat; @include text-overflow-nw;
+			font-weight: 400;
 		}
 	}
 
