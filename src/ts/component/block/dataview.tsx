@@ -485,17 +485,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 			};
 
-			if (isViewGraph || isViewCalendar) {
-				U.Object.openConfig(object);
+			if (isViewGraph || isViewCalendar || (U.Object.isNoteLayout(object.layout))) {
+				U.Object.openConfig(e, object);
 			} else {
-				if (U.Object.isNoteLayout(object.layout)) {
-					U.Object.openConfig(object);
-				} else {
-					window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
-				};
-
-				analytics.createObject(object.type, object.layout, analyticsRoute, message.middleTime);
+				window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
 			};
+
+			analytics.createObject(object.type, object.layout, analyticsRoute, message.middleTime);
 		});
 	};
 
@@ -663,7 +659,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: analyticsRoute });
 
-			U.Object.openConfig(object);
+			U.Object.openConfig(null, object);
 		});
 	};
 
@@ -701,7 +697,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (relationKey == 'name' && (relation.isReadonlyValue || record.isReadonly)) {
-			U.Object.openConfig(record);
+			U.Object.openConfig(e, record);
 			return;
 		};
 
@@ -718,7 +714,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					U.Object.openPopup(record);
 				};
 			} else {
-				U.Object.openConfig(record);
+				U.Object.openConfig(e, record);
 			};
 		} else {
 			ref.onClick(e);
@@ -788,6 +784,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				view,
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedRelation: true,
 				allowedCollection: true,
 				allowedExport: true,

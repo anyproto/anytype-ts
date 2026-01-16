@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation, sidebar } from 'Lib';
+import object from './object';
 
 const TYPE_KEYS = {
 	default: [
@@ -780,18 +781,27 @@ class UtilData {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
+	getObjectForTitle (rootId: string, objectId: string) {
+		const spaceview = U.Space.getSpaceview();
+
+		let ret = null;
+		if ((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace)) {
+			ret = spaceview;
+		} else {
+			ret = S.Detail.get(rootId, objectId);
+		};
+
+		return ret && !ret._empty_ ? ret : null;
+	};
+
 	/**
 	 * Sets the window title based on the object name.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} objectId - The object ID.
 	 */
 	setWindowTitle (rootId: string, objectId: string) {
-		const spaceview = U.Space.getSpaceview();
-
-		let name = '';
-		if (!((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace))) {
-			name = U.Object.name(S.Detail.get(rootId, objectId, []), true);
-		};
+		const object = this.getObjectForTitle(rootId, objectId);
+		const name = U.Object.name(object, true)
 
 		this.setWindowTitleText(name);
 	};
@@ -813,7 +823,6 @@ class UtilData {
 		};
 
 		title.push(J.Constant.appName);
-
 		document.title = title.map(it => U.String.shorten(it, 60)).join(' - ');
 	};
 
@@ -831,18 +840,10 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setTabTitle (rootId: string, objectId: string) {
-		const object = S.Detail.get(rootId, objectId);
-		if (object._empty_) {
-			return;
+		const object = this.getObjectForTitle(rootId, objectId);
+		if (object) {
+			Renderer.send('updateTab', S.Common.tabId, U.Object.getTabData(object));
 		};
-
-		Renderer.send('updateTab', S.Common.tabId, { 
-			title: U.Object.name(object, true),
-			icon: U.Graph.imageSrc(object),
-			layout: object.layout,
-			uxType: object.spaceUxType,
-			isImage: object.iconImage,
-		});
 	};
 
 	/**

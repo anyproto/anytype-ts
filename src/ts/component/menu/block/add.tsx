@@ -566,7 +566,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					};
 
 					U.Object.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], analytics.route.powertool, (message: any) => {
-						U.Object.openConfig(message.details);
+						U.Object.openConfig(null, message.details);
 						analytics.event('CreateLink');
 					});
 				} else {

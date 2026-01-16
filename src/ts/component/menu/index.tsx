@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage, Renderer } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -257,11 +257,11 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		const node = $(nodeRef.current); 
 		const menu = node.find('.menu');
 
-		setClass();
-
 		if (noAnimation) {
 			menu.addClass('noAnimation');
 		};
+
+		setClass();
 
 		menu.addClass('show').css({ transform: 'none' });
 		position();
@@ -274,9 +274,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const rebindPrevious = () => {
 		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
 
-		if (childRef.current && childRef.current.unbind) {
-			childRef.current.unbind();
-		};
+		childRef.current?.unbind?.();
 
 		if (!canRebind) {
 			return;

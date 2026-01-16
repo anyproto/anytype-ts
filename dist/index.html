@@ -47,7 +47,7 @@
 				document.body.style.backgroundColor = bgColor;
 			};
 
-			if (currentWindow && (currentWindow.activeIndex > 0)) {
+			if (currentWindow && currentWindow.views && (currentWindow.views.length > 1)) {
 				document.getElementById('bubble-loader').classList.add('small');
 			};
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
@@ -41,7 +41,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		cn.push('withoutName');
 	};
 
-	const onClick = (e: React.MouseEvent) => {
+	const onClick = (e: MouseEvent) => {
 		if (e.button) {
 			return;
 		};
@@ -49,11 +49,11 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openEvent(e, object);
+		U.Object.openConfig(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
-	const onContext = (e: React.MouseEvent) => {
+	const onContext = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 

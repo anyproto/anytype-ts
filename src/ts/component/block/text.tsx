@@ -45,7 +45,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = U.String.checkRtl(text);
+	const checkRtl = U.String.checkRtl(text) || fields.isRtlDetected;
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
@@ -115,6 +115,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		html = html.replace(/\n/g, '<br/>');
+
+		// Add extra <br/> at end for code blocks to ensure trailing newlines are visible
+		// (contenteditable collapses a single trailing <br/>)
+		// Only add when focused to avoid extra line when blurred
+		if (block.isTextCode() && text.endsWith('\n') && (focused == block.id)) {
+			html += '<br/>';
+		};
+
 		editableRef.current?.setValue(html);
 
 		// Restore cursor position if provided
@@ -196,7 +204,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
-		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
+		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding', 'searchText' ]);
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const menuOpenSmile = S.Menu.isOpen('smile');
@@ -283,13 +291,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const insert = '\n';
 				const caret = range.from + insert.length;
 				const newValue = U.String.insert(value, insert, range.from, range.to);
+				const caretRange = { from: caret, to: caret };
+
+				// Set focus range before blockSetText to avoid race condition with useEffect
+				focus.set(block.id, caretRange);
 
 				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
-					const caretRange = { from: caret, to: caret };
-					
-					focus.set(block.id, caretRange);
 					focus.apply();
-
 					onKeyDown(e, newValue, marksRef.current, caretRange, props);
 				});
 
@@ -536,7 +544,17 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const d = range.from - filter.from;
 
 				if (d >= 0) {
-					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					// Get text from filter.from to cursor
+					let part = value.substring(filter.from, filter.from + d);
+
+					// Also include the word after cursor (for when @ is typed before existing text)
+					const textAfterCursor = value.substring(filter.from + d);
+					const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+					if (wordMatch) {
+						part += wordMatch[1];
+					};
+
+					part = part.replace(/^\//, '');
 					S.Common.filterSetText(part);
 				};
 			}, 30);
@@ -686,9 +704,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const element = $(`#block-${block.id}`);
 
 		let value = getTextValue();
+
+		// Extract the word after the cursor to use as initial filter (for when @ is typed before existing text)
+		const textAfterCursor = value.substring(range.from);
+		const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
+		const nextWord = wordMatch ? wordMatch[1] : '';
+
 		value = U.String.cut(value, range.from - d, range.from);
 
-		S.Common.filterSet(range.from - d, '');
+		S.Common.filterSet(range.from - d, nextWord);
 
 		raf(() => {
 			S.Menu.open('blockMention', {
@@ -786,7 +810,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			if (value.length > 1) {
+				U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			};
 			callBack?.();
 		});
 	};

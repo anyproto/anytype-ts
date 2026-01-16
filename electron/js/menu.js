@@ -22,6 +22,9 @@ const DEFAULT_SHORTCUTS = {
 	close: [ 'CmdOrCtrl', 'Q' ],
 	createSpace: [],
 	newTab: [ 'CmdOrCtrl', 'T' ],
+	closeTab: [ 'CmdOrCtrl', 'W' ],
+	nextTab: [ 'CmdOrCtrl', 'Alt', 'Right' ],
+	prevTab: [ 'CmdOrCtrl', 'Alt', 'Left' ],
 };
 
 class MenuManager {
@@ -48,19 +51,24 @@ class MenuManager {
 
 		keys = keys || [];
 
+		const arrowKeys = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
 		const ret = [];
 		for (const key of keys) {
-			if ((key == 'ctrl') || (key == 'cmd')) {
+			const keyLower = key.toLowerCase();
+			if ((keyLower == 'ctrl') || (keyLower == 'cmd')) {
 				ret.push('CmdOrCtrl');
 			} else
-			if (key == 'shift') {
+			if (keyLower == 'shift') {
 				ret.push('Shift');
 			} else
-			if (key == 'alt') {
+			if (keyLower == 'alt') {
 				ret.push('Alt');
-			} else 
+			} else
 			if (key == '+') {
 				ret.push('Plus');
+			} else
+			if (arrowKeys[keyLower]) {
+				ret.push(arrowKeys[keyLower]);
 			} else {
 				ret.push(key.toUpperCase());
 			};
@@ -69,7 +77,7 @@ class MenuManager {
 	};
 
 	getView () {
-		return this.win.views[this.win.activeIndex];
+		return Util.getActiveView(this.win);
 	};
 
 	initMenu () {
@@ -105,7 +113,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
 				]
 			},
 			{
@@ -157,7 +165,19 @@ class MenuManager {
 
 					Separator,
 
-					{ role: 'close', label: Util.translate('electronMenuClose') },
+					{
+						label: Util.translate('electronMenuCloseTab'),
+						accelerator: this.getAccelerator('closeTab'),
+						click: () => {
+							WindowManager.closeActiveTab(this.win);
+						},
+					},
+					{
+						label: Util.translate('electronMenuClose'),
+						click: () => {
+							Api.close(this.win);
+						},
+					},
 				]
 			},
 			{
@@ -219,6 +239,8 @@ class MenuManager {
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => WindowManager.createTab(this.win) },
+					{ label: Util.translate('electronMenuPrevTab'), accelerator: this.getAccelerator('prevTab'), click: () => WindowManager.prevTab(this.win) },
+					{ label: Util.translate('electronMenuNextTab'), accelerator: this.getAccelerator('nextTab'), click: () => WindowManager.nextTab(this.win) },
 
 					Separator,
 
@@ -292,9 +314,10 @@ class MenuManager {
 				click: () => {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
-					
+
 					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
+						this.getView().webContents.reload();
 					};
 				}
 			});
@@ -378,9 +401,10 @@ class MenuManager {
 
 				{
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
-					click: () => { 
+					click: () => {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
+						this.getView().webContents.reload();
 					}
 				},
 
@@ -397,7 +421,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: 'Relaunch', click: () => Api.exit(this.win, true) },
+				{ label: 'Relaunch', click: () => Api.exit(this.win, '', true) },
 			]
 		};
 
@@ -440,7 +464,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()

@@ -164,7 +164,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			U.Space.openDashboard();
 			S.Common.setLeftSidebarState('vault', 'widget');
 		} else {
-			sidebar.leftPanelSubPageClose(true);
+			U.Router.go('/main/void/select', { replace: true });
 		};
 	};
 
@@ -280,15 +280,11 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				<div className="side left">
 					<Icon className="back withBackground" onClick={onBack} />
 				</div>
-				<div className="side center" />
-			</div>
-			
-			<div className="subHead">
 				<div className="side center">
 					<div className="name">{translate('commonSettings')}</div>
 				</div>
 			</div>
-
+			
 			<div id="body" className="body">
 				<div className="list">
 					<div className="inner">

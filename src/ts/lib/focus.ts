@@ -2,6 +2,19 @@ import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';
 
+/**
+ * Focus manages the focus state and text selection within the application.
+ *
+ * Key responsibilities:
+ * - Tracking which block/element is currently focused
+ * - Managing text selection ranges within focusable elements
+ * - Applying focus state to the DOM
+ * - Scrolling focused elements into view
+ * - Backup/restore functionality for temporary focus changes
+ *
+ * The focus state includes both the focused element ID and the
+ * text selection range within that element.
+ */
 class Focus {
 	
 	state: I.FocusState = { 
@@ -105,7 +118,15 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => (el as HTMLInputElement).setSelectionRange(range.from, range.to));
+			window.setTimeout(() => {
+				const input = el as HTMLInputElement;
+				input.setSelectionRange(range.from, range.to);
+
+				const style = window.getComputedStyle(input);
+				if (style.direction === 'rtl') {
+					input.scrollLeft = 0;
+				};
+			});
 		} else
 		if (node.hasClass('editable')) {
 			keyboard.setFocus(true);

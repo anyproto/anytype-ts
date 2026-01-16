@@ -53,7 +53,6 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		S.Common.setRightSidebarState(isPopup, { 
 			page: 'type', 
 			rootId: object.targetObjectType || object.type, 
-			noPreview: true, 
 			back: 'object/relation',
 			details: {},
 		});

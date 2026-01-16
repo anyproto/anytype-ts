@@ -1,6 +1,18 @@
 import * as Docs from 'Docs';
 import { I, S, U, Storage, sidebar, keyboard } from 'Lib';
 
+/**
+ * Onboarding manages the user onboarding and tutorial flows.
+ *
+ * Key responsibilities:
+ * - Starting onboarding sequences for different features/sections
+ * - Tracking which onboarding flows have been completed
+ * - Managing the onboarding menu display and positioning
+ * - Initializing widget sections during onboarding
+ *
+ * Onboarding data is defined in the Docs module and includes
+ * sequences of items with positioning and content.
+ */
 class Onboarding {
 
 	/**

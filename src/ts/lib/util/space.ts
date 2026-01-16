@@ -1,5 +1,19 @@
 import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
 
+/**
+ * UtilSpace provides utilities for working with Anytype spaces.
+ *
+ * Key responsibilities:
+ * - Dashboard and home page management
+ * - Space list and space view retrieval
+ * - Participant management (permissions, ownership, listing)
+ * - Space sharing (invites, links, permissions)
+ * - Publishing functionality
+ *
+ * A "space" in Anytype is a collaborative workspace that can contain
+ * objects, types, and relations. Users can have different permissions
+ * (owner, writer, reader) in different spaces.
+ */
 class UtilSpace {
 
 	/**

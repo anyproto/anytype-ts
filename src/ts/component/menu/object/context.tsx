@@ -14,6 +14,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const objectIds = data.objectIds || [];
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
+	const participantId = U.Space.getCurrentParticipantId();
 	const n = useRef(0);
 
 	useEffect(() => {
@@ -50,6 +51,8 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		let notification = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
+		let newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
+		let newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -68,6 +71,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		let allowedNotification = true;
 		let allowedEditChat = true;
 		let allowedExport = data.allowedExport;
+		let allowedNewTab = data.allowedNewTab;
 
 		objectIds.forEach((it: string) => {
 			const object = getObjectHandler(subId, getObject, it);
@@ -86,6 +90,10 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
+			if (spaceview.isOneToOne && (object.creator != participantId)) {
+				allowedArchive = false;
+			};
+
 			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
@@ -176,11 +184,16 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		if (!allowedNotification) notification = null;
 		if (!allowedEditChat)	 editChat = null;
 		if (!allowedExport)		 exportObject = null;
+		if (!allowedNewTab) {
+			newTab = null;
+			newWindow = null;
+		};
 
 		let sections = [
 			{ children: [ open, changeType, relation, pageLink ] },
 			{ children: [ pin, notification, editChat, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
+			{ children: [ newTab, newWindow ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -362,7 +375,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		switch (item.id) {
 
 			case 'open': {
-				U.Object.openConfig(first);
+				U.Object.openConfig(null, first);
 				break;
 			};
 
@@ -373,7 +386,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					};
 
 					if (first) {
-						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
+						U.Object.openConfig(null, { id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count: length, route });
@@ -447,6 +460,16 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 				}, route);
 
 				needClose = false;
+				break;
+			};
+
+			case 'newTab': {
+				U.Object.openTab(first);
+				break;
+			};
+
+			case 'newWindow': {
+				U.Object.openWindow(first);
 				break;
 			};
 

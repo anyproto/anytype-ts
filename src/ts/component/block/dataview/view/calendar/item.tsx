@@ -94,7 +94,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onOpen = (record: any) => {
-		U.Object.openConfig(record);
+		U.Object.openConfig(null, record);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {

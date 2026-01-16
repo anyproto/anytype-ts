@@ -17,7 +17,7 @@
 			dl { display: flex; align-items: center; }
 			dl {
 				dt { flex-shrink: 0; width: 136px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
-				dd { width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; }
+				dd { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; }
 				dd {
 					.item { position: relative; display: flex; align-items: center; height: 30px; gap: 0px 4px; }
 					.item {

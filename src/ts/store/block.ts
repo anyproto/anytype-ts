@@ -2,6 +2,26 @@ import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
 
+/**
+ * BlockStore manages the block data structure for all open objects.
+ *
+ * Key responsibilities:
+ * - Block storage: Maps storing blocks by root ID and block ID
+ * - Tree structure: Parent-child relationships between blocks
+ * - Restrictions: Block-level permissions and capabilities
+ * - Participants: Tracking who created/modified blocks
+ * - Block traversal: Navigation through block hierarchies
+ * - Widget management: Updating widget views and data
+ *
+ * Blocks are the fundamental content units in Anytype - text, images,
+ * links, tables, etc. are all represented as blocks with specific types.
+ *
+ * The store maintains several Maps:
+ * - blockMap: rootId -> blockId -> Block
+ * - treeMap: rootId -> blockId -> BlockStructure (parent/children)
+ * - restrictionMap: rootId -> blockId -> restrictions
+ * - participantMap: rootId -> blockId -> participantId
+ */
 class BlockStore {
 
 	public profileId = '';

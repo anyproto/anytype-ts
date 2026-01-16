@@ -288,9 +288,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const wh = win.height();
-					const hh = J.Size.header;
-					const height = Math.min(wh - hh - 20, cell.outerHeight());
+					const { wh } = U.Common.getWindowDimensions();
+					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
 					param = Object.assign(param, {
 						noFlipX: true,
@@ -388,9 +387,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Checkbox: {
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.onClick?.(e);
 				ret = true;
 				break; 
 			};

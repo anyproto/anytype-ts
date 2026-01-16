@@ -1261,8 +1261,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 		};
 
-		console.log('getObjectFromFile', file, path);
-
 		return {
 			id: sha1(path + file.lastModified + file.size),
 			name: file.name,

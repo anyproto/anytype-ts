@@ -544,6 +544,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				getObject: id => getNode(id),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
 				allowedCollection: true,
 				allowedExport: true,
 				allowedType: true,
@@ -586,7 +587,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					switch (item.id) {
 						case 'newObject': {
 							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.graph, (message: any) => {
-								U.Object.openConfig(message.details, { onClose: () => addNewNode(message.targetId, '', data) });
+								U.Object.openConfig(null, message.details, { onClose: () => addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
@@ -624,7 +625,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onClickObject = (id: string) => {
 		setSelected([]);
 		onPreviewHide();
-		U.Object.openConfig(getNode(id));
+		U.Object.openConfig(null, getNode(id));
 	};
 
 	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {

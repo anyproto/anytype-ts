@@ -133,7 +133,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					typeId,
 					templateId,
 					route,
-					onDuplicate: object => U.Object.openConfig(object, {}),
+					onDuplicate: object => U.Object.openConfig(null, object, {}),
 					onSetDefault,
 				}
 			});

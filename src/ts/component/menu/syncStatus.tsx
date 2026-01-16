@@ -11,7 +11,7 @@ const SUB_ID = 'syncStatusObjectsList';
 
 const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, getId, onKeyDown, position } = props;
+	const { param, setActive, getId, onKeyDown, position, close } = props;
 	const { classNameWrap } = param;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ itemId, setItemId ] = useState('');
@@ -76,13 +76,14 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							U.Object.openAuto(item);
 							break;
 						};
+
 						case 'delete': {
 							Action.delete([ item.id ], analytics.route.syncStatus);
 							break;
 						};
 					};
-				}
-			}
+				},
+			},
 		});
 	};
 

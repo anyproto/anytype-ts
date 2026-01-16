@@ -222,7 +222,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		};
 
 		if (!canEdit) {
-			U.Object.openConfig(item);
+			U.Object.openConfig(e, item);
 			return;
 		};
 

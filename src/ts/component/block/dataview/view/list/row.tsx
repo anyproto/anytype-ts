@@ -18,6 +18,27 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const [ isEditing, setIsEditing ] = useState(false);
 	const nodeRef = useRef(null);
 	const view = getView();
+
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const first = node.find('.cellContent:not(.isEmpty)').first();
+
+		node.find('.cellContent').removeClass('first');
+		if (first.length) {
+			first.addClass('first');
+		};
+	};
+
+	useEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		setIsEditing,
+	}));
+
+	if (!view) {
+		return null;
+	};
+
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getSubId(rootId, block.id);
 	const record = getRecord(recordId);
@@ -53,9 +74,8 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		e.preventDefault();
 
 		const cb = {
-			0: () => {
-				keyboard.withCommand(e) ? U.Object.openEvent(e, record) : U.Object.openConfig(record); 
-			},
+			0: () => U.Object.openConfig(e, record),
+			1: () => U.Object.openConfig(e, record),
 			2: () => onContext(e, record.id)
 		};
 
@@ -80,16 +100,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id);
-	};
-
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const first = node.find('.cellContent:not(.isEmpty)').first();
-
-		node.find('.cellContent').removeClass('first');
-		if (first.length) {
-			first.addClass('first');
-		};
 	};
 
 	const mapper = (vr: any, i: number) => {
@@ -178,12 +188,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			</>
 		);
 	};
-
-	useEffect(() => resize());
-
-	useImperativeHandle(ref, () => ({
-		setIsEditing,
-	}));
 
 	return (
 		<AnimatePresence mode="popLayout">

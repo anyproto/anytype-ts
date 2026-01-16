@@ -114,7 +114,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let settings: any[] = [];
 
-		if (isGrid && config.experimental) {
+		if (isGrid) {
 			settings.push({ 
 				id: 'wrapContent', name: translate('menuDataviewViewEditWrapContent'), withSwitch: true, switchValue: wrapContent,
 				onSwitch: (e: any, v: boolean) => onSwitch(e, 'wrapContent', v),

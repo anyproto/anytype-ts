@@ -63,8 +63,8 @@
 		.items {
 			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {
-				.side.left { display: flex; align-items: center; flex-grow: 1; overflow: hidden; @include text-overflow-nw; }
-				.side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; flex-shrink: 0; }
+				.side.left { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; overflow: hidden; }
+				.side.right { flex-shrink: 0; display: flex; align-items: center;}
 				.side.right {
 					.icon { width: 20px; height: 20px; margin: 0px; }
 					.icon.queued { background-image: url('~img/icon/menu/syncStatus/queued.svg'); }
@@ -77,11 +77,12 @@
 			}
 
 			.item {
-				.info { display: flex; align-items: baseline; width: calc(100% - 24px); }
+				.iconObject { margin: 0px; }
+
+				.info { display: flex; align-items: baseline; gap: 0px 6px; flex-grow: 1; overflow: hidden; }
 				.info {
-					.iconObject { margin-right: 8px; }
-					.name { margin: 0px 6px 0px 0px; @include text-overflow-nw; }
-					.size { color: var(--color-text-secondary); }
+					.name { @include text-overflow-nw; flex-grow: 1; }
+					.size { color: var(--color-text-secondary); @include text-overflow-nw; flex-shrink: 0; }
 				}
 
 				&.hover {

@@ -232,6 +232,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		}, { 
 			withPin: true,
 			withDelete: true,
+			withOpenNewTab: true,
 			noMembers: true, 
 			noManage: true,
 			route: analytics.route.vault,

@@ -154,6 +154,7 @@ class Keyboard {
 	 */
 	onKeyDown (e: any) {
 		const { config, theme, pin } = S.Common;
+		const zoom = Number(config.zoom) || 0;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -413,6 +414,11 @@ class Keyboard {
 			this.shortcut('createSpace', e, this.createSpace);
 		};
 
+		this.shortcut(`${cmd}+numpadAdd, ${cmd}+numpadSubtract`, e, pressed => {
+			e.preventDefault();
+			Renderer.send('setZoom', zoom + (pressed.endsWith('numpadAdd') ? 1 : -1));
+		});
+
 		this.initPinCheck();
 	};
 
@@ -472,7 +478,7 @@ class Keyboard {
 		};
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
-			U.Object.openConfig(message.details);
+			U.Object.openConfig(null, message.details);
 			callBack?.(message);
 		});
 	};
@@ -1068,9 +1074,11 @@ class Keyboard {
 	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
+		const body = $('body');
+		const theme = S.Common.getThemeClass();
 
 		html.addClass('printMedia');
-		
+
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
@@ -1083,6 +1091,32 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
+		// Set background color for dark mode to ensure it's captured in PDF
+		if (theme && !clearTheme) {
+			const bgColor = getComputedStyle(document.body).getPropertyValue('--color-bg-primary').trim();
+			if (bgColor) {
+				html.css('background-color', bgColor);
+				body.css('background-color', bgColor);
+			};
+		};
+
+		// Convert table column widths from pixels to percentages to preserve proportions
+		$('.block.blockTable .row').each((_, row) => {
+			const style = row.style.gridTemplateColumns;
+			if (!style) {
+				return;
+			};
+
+			const widths = style.split(' ').map(w => parseFloat(w) || 0);
+			const total = widths.reduce((sum, w) => sum + w, 0);
+
+			if (total > 0) {
+				const percentages = widths.map(w => `${(w / total) * 100}%`).join(' ');
+				row.style.setProperty('--print-columns', percentages);
+				row.setAttribute('data-print-columns', 'true');
+			};
+		});
+
 		focus.clearRange(true);
 	};
 
@@ -1090,8 +1124,21 @@ class Keyboard {
 	 * Removes print styles from the document.
 	 */
 	printRemove () {
-		$('html').removeClass('withPopup printMedia print save');
+		const html = $('html');
+		const body = $('body');
+
+		html.removeClass('withPopup printMedia print save');
+		html.css('background-color', '');
+		body.css('background-color', '');
+
 		S.Common.setThemeClass();
+
+		// Clean up table print columns
+		$('.block.blockTable .row[data-print-columns]').each((_, row) => {
+			row.style.removeProperty('--print-columns');
+			row.removeAttribute('data-print-columns');
+		});
+
 		$(window).trigger('resize');
 	};
 
@@ -1116,7 +1163,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
-		Renderer.send('winCommand', 'printHtml', { name: object.name });
+
+		// Wait for styles to be applied before capturing HTML
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printHtml', { name: object.name });
+		});
 	};
 
 	/**
@@ -1130,10 +1181,15 @@ class Keyboard {
 
 		if (theme) {
 			options.printBackground = true;
+			options.margins = { top: 0, bottom: 0, left: 0, right: 0 };
 		};
 
 		this.printApply('print', false);
-		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+
+		// Wait for styles to be applied before capturing PDF
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+		});
 	};
 
 	/**
@@ -1147,9 +1203,9 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid() || this.isMainArchive();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
@@ -1388,6 +1444,14 @@ class Keyboard {
 	 */
 	isMainVoid () {
 		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	};
+
+	/**
+	 * Returns true if the current context is the main archive view.
+	 * @returns {boolean}
+	 */
+	isMainArchive () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'archive');
 	};
 
 	/**
@@ -1951,7 +2015,7 @@ class Keyboard {
 
 	setBodyClass () {
 		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
-		const { showMenuBar, alwaysShowTabs, debug } = config;
+		const { alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
@@ -1965,9 +2029,6 @@ class Keyboard {
 		};
 		if (debug.ui) {
 			cn.push('debug');
-		};
-		if (showMenuBar) {
-			cn.push('withMenuBar');
 		};
 		if (isFullScreen) {
 			cn.push('isFullScreen');

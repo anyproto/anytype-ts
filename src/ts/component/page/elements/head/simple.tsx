@@ -189,7 +189,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 			};
 
 			analytics.event('CreateTemplate', { objectType: newObject.type, route: analytics.route.screenType });
-			U.Object.openConfig(newObject);
+			U.Object.openConfig(null, newObject);
 		});
 	};
 
@@ -340,7 +340,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank" 
 						className="c28" 
 						text={translate('commonEditType')} 
-						onClick={() => sidebar.rightPanelToggle(isPopup, { page: 'type', rootId, details: {} })}
+						onClick={() => sidebar.rightPanelToggle(isPopup, { page: 'type', rootId, noPreview: false, details: {} })}
 					/>
 				);
 			};

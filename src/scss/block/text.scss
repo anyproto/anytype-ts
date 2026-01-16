@@ -17,7 +17,7 @@
 
 				&.markerBulleted { display: flex; align-items: center; justify-content: center; }
 				&.markerBulleted {
-					.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
+					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
 					.markerInner {
 						&.textColor-default { background-color: var(--color-text-primary) !important; }
 						&.textColor-black { background-color: var(--color-text-primary) !important; }

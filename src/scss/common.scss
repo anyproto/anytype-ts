@@ -193,18 +193,26 @@ html {
 	}
 
 	&.platformMac.isSingleTab {
-		#menuBar { 
-			position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; 
-			-webkit-app-region: drag;
-		}
 		&:not(.isFullScreen) {
+			#dragPanel {
+				display: block; position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1;
+				user-select: none; pointer-events: all; background: var(--color-shape-primary); -webkit-app-region: drag;
+			}
+
 			.sidebar.isMinimal {
 				.pageWrapper { padding-top: 52px; }
 			}
+
 			.sidebar:not(.isMinimal) {
-				.pageWrapper {
-					.sidebarPage.pageVault {
-						> .head { height: 36px; margin-bottom: 8px; }
+				.sidebarPage.pageVault {
+					> .head { height: 36px; margin-bottom: 8px; }
+				}
+
+				.sidebarPage.pageVault {
+					> .head {
+						.side.left {
+							.name { display: none; }
+						}
 					}
 				}
 			}
@@ -212,24 +220,9 @@ html {
 			#header:not(.withSidebarTotalLeft) {
 				> .side.left { padding-left: 80px; }
 			}
-
-			.sidebar:not(.isMinimal) {
-				.sidebarPage.pageVault {
-					> .head { height: 36px; }
-					> .head {
-						.side.left {
-							.name { display: none; }
-						}
-					}
-					.filterWrapper { padding-top: 8px; }
-				}
-			}
 		}
 	}
 
-	&.isFullScreen {
-		#menuBar { display: none; }
-	}
 
 	&.platformWindows {
 		body { overflow-y: overlay; }
@@ -244,27 +237,6 @@ html {
 		::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
 		::-webkit-scrollbar-corner { background-color: transparent; }
 		::-webkit-scrollbar-button { display: none; }
-	}
-
-	&.platformWindows.withMenuBar {
-		@import "./component/menuBar";
-
-		.sidebar { margin-top: 28px; height: calc(100% - 28px); }
-		.sidebar {
-			.subPageWrapper:not(.withSidebarLeft) {
-				.sidebarPage {
-					> .head {
-						.side.left	{ padding-left: 36px; }
-					}
-				}
-			}
-		}
-
-		.popups {
-			.popup.popupShortcut {
-				.innerWrap { top: 28px; height: calc(100% - 28px); }
-			}
-		}
 	}
 
 	&.platformLinux {

@@ -52,6 +52,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const canRemove = U.Space.canMyParticipantWrite();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
+		const isSystem = U.Menu.isSystemWidget(target?.id);
 
 		if (!block) {
 			return [];
@@ -98,6 +99,16 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (children.length) {
 				sections.push({ children });
 			};
+		};
+
+		if (!isSystem) {
+			sections.push({
+				children: [
+					{ isDiv: true },
+					{ id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') },
+					{ id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') },
+				]
+			});
 		};
 
 		return sections;
@@ -227,6 +238,16 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				} else {
 					Action.removeWidget(blockId, target);
 				};
+				break;
+			};
+
+			case 'newTab': {
+				U.Object.openTab(target);
+				break;
+			};
+
+			case 'newWindow': {
+				U.Object.openWindow(target);
 				break;
 			};
 		};

@@ -1,4 +1,5 @@
 $(() => {
+	const win = $(window);
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
@@ -6,18 +7,32 @@ $(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const menuBar = $('#menuBar');
+	const tabsWrapper = $('#tabsWrapper');
 	const theme = Electron.getTheme();
 
 	let sortable = null;
 	let isDragging = false;
-	let draggedActiveId = null;
+	let draggedActiveId = '';
+	let activeId = '';
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
-	
+
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
 	};
+
+	const config = electron.getConfig();
+	const showMenuBar = config.showMenuBar !== false; // Default to true
+
+	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Menu bar button handlers (Windows and Linux)
+	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
+	menuBar.find('#window-min').off('click').on('click', () => electron.Api(winId, 'minimize'));
+	menuBar.find('#window-max').off('click').on('click', () => electron.Api(winId, 'maximize'));
+	menuBar.find('#window-close').off('click').on('click', () => electron.Api(winId, 'close'));
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');
@@ -28,8 +43,6 @@ $(() => {
 			return;
 		};
 
-		const offset = active.position();
-
 		active.addClass('active');
 
 		// Hide divider on the previous tab
@@ -39,19 +52,17 @@ $(() => {
 			tabs.eq(activeIndex - 1).addClass('hideDiv');
 		};
 
+		activeId = id;
 		marker.toggleClass('anim', animate);
-		marker.css({
-			width: active.outerWidth() - 4,
-			left: offset.left + 2,
-		});
+		updateMarkerPosition(id);
 	};
 
-	const updateMarkerPosition = () => {
-		if (!isDragging || !draggedActiveId) {
+	const updateMarkerPosition = (id) => {
+		if (!id) {
 			return;
 		};
 
-		const active = container.find(`#tab-${draggedActiveId}`);
+		const active = container.find(`#tab-${id}`);
 		if (!active.length) {
 			return;
 		};
@@ -145,7 +156,8 @@ $(() => {
 		};
 
 		sortable = new Sortable(container[0], {
-			animation: 0,
+			animation: 150,
+			easing: 'ease-in-out',
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
@@ -153,24 +165,25 @@ $(() => {
 				isDragging = true;
 
 				const item = $(evt.item);
+				item.css('visibility', 'hidden');
+
 				if (item.hasClass('active')) {
 					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
 				};
 			},
 			onChange: (evt) => {
-				if (draggedActiveId) {
-					setTimeout(() => updateMarkerPosition(), 40);
-				};
+				updateMarkerPosition(draggedActiveId || activeId);
 			},
 			onEnd: (evt) => {
 				isDragging = false;
-				const wasActive = draggedActiveId !== null;
-				draggedActiveId = null;
 
-				if (wasActive) {
-					marker.addClass('anim').css('pointer-events', '');
-				};
+				const item = $(evt.item);
+				item.css('visibility', '');
+
+				draggedActiveId = null;
+				marker.addClass('anim').css('pointer-events', '');
+				updateMarkerPosition(activeId);
 
 				const tabIds = [];
 				container.find('.tab:not(.isAdd)').each((i, el) => {
@@ -183,19 +196,11 @@ $(() => {
 				if (tabIds.length > 0) {
 					electron.Api(winId, 'reorderTabs', [ tabIds ]);
 				};
-
-				// Update marker position after a short delay
-				setTimeout(() => {
-					const activeId = container.find('.tab.active').attr('data-id');
-					if (activeId) {
-						//setActive(activeId, true);
-					};
-				}, 50);
 			}
 		});
 	};
 
-	const setTabs = (tabs, id) => {
+	const setTabs = (tabs, id, isVisible) => {
 		if (isDragging) {
 			return; // Don't update during drag
 		};
@@ -211,14 +216,16 @@ $(() => {
 		updateNoClose();
 		setActive(id, false);
 
-		// Update visibility based on tab count
-		$('.container').toggleClass('isHidden', tabs.length <= 1);
+		// Set visibility if provided
+		if (typeof isVisible === 'boolean') {
+			tabsWrapper.toggleClass('isHidden', !isVisible);
+		};
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
 		setTimeout(() => initSortable(), 10);
 	};
 
-	electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
+	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible));
 
 	electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
 
@@ -261,7 +268,7 @@ $(() => {
 	});
 
 	electron.on('update-tab-bar-visibility', (e, isVisible) => {
-		$('.container').toggleClass('isHidden', !isVisible);
+		tabsWrapper.toggleClass('isHidden', !isVisible);
 	});
 
 	electron.on('set-theme', (e, theme) => {
@@ -272,6 +279,10 @@ $(() => {
 		body.toggleClass('showDimmer', show);
 	});
 
+	electron.on('set-menu-bar-visibility', (e, show) => {
+		body.toggleClass('showMenuBar', show);
+	});
+
 	electron.on('enter-full-screen', () => {
 		body.addClass('isFullScreen');
 	});
@@ -280,7 +291,12 @@ $(() => {
 		body.removeClass('isFullScreen');
 	});
 
+	win.off('resize.tabs').on('resize.tabs', () => {
+		updateMarkerPosition(activeId);
+	});
+
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
+
 });

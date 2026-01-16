@@ -330,7 +330,7 @@ class UtilString {
 		s = String(s || '');
 
 		// Windows path with backslashes (optionally "file://")
-		const rw = /^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi;
+		const rw = /^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{M}\p{N}\s._%\-(),]+\\)*[\p{L}\p{M}\p{N}\s._%\-(),]+(?:\.[\p{L}\p{M}\p{N}\s_%\-(),]+)?$/ugi;
 
 		// Windows file URI with drive letter + forward slashes, allowing % encodes
 		const rwu = /^(file:\/\/\/)(?:[a-zA-Z]:)(?:\/[\p{L}\p{M}\p{N}\s._%\-(),]+)+\/?$/u;

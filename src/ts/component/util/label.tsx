@@ -13,6 +13,7 @@ interface Props {
 	onMouseLeave?: (e: any) => void;
 	onMouseDown?: (e: any) => void;
 	onClick?: (e: any) => void;
+	onDoubleClick?: (e: any) => void;
 };
 
 const Label: FC<Props> = ({
@@ -26,6 +27,7 @@ const Label: FC<Props> = ({
 	onMouseDown,
 	onMouseEnter,
 	onMouseLeave,
+	onDoubleClick,
 }) => {
 	const nodeRef = useRef<HTMLDivElement | null>(null);
 	const cn = [ 'label' ];
@@ -75,6 +77,7 @@ const Label: FC<Props> = ({
 			onMouseDown={onMouseDown}
 			onMouseEnter={mouseEnterHandler}
 			onMouseLeave={mouseLeaveHandler}
+			onDoubleClick={onDoubleClick}
 			{...U.Common.dataProps(dataProps)}
 		/>
 	);
