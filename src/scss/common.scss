@@ -204,20 +204,16 @@ html {
 			}
 
 			.sidebar:not(.isMinimal) {
-				.pageWrapper {
-					.sidebarPage.pageVault {
-						> .head { height: 36px; margin-bottom: 8px; }
-					}
+				.sidebarPage.pageVault {
+					> .head { height: 36px; margin-bottom: 8px; }
 				}
 
 				.sidebarPage.pageVault {
-					> .head { height: 36px; }
 					> .head {
 						.side.left {
 							.name { display: none; }
 						}
 					}
-					.filterWrapper { padding-top: 8px; }
 				}
 			}
 
