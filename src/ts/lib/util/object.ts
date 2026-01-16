@@ -140,7 +140,7 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
 			this.openTab(object);
 		} else {
-			this.openRoute(object, param);
+			this.openConfig(object, param);
 		};
 	};
 
