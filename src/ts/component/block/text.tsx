@@ -809,7 +809,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			if (value.length > 1) {
+				U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			};
 			callBack?.();
 		});
 	};
