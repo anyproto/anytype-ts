@@ -899,13 +899,12 @@ class Mark {
 	 * @returns {boolean} True if needs break.
 	 */
 	needsBreak (t: I.MarkType): boolean {
-		return [ 
-			I.MarkType.Link, 
-			I.MarkType.Object, 
-			I.MarkType.Search, 
-			I.MarkType.Change, 
-			I.MarkType.Highlight, 
-			I.MarkType.Code,
+		return [
+			I.MarkType.Link,
+			I.MarkType.Object,
+			I.MarkType.Search,
+			I.MarkType.Change,
+			I.MarkType.Highlight,
 		].includes(t);
 	};
 
