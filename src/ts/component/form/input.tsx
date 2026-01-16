@@ -208,9 +208,10 @@ const Input = forwardRef<InputRef, Props>(({
 		onCompositionEnd?.();
 
 		if (isComposing.current) {
-			isComposing.current = false;
 			const currentValue = e.target.value;
 			const prevValue = compositionValue.current;
+
+			isComposing.current = false;
 			compositionValue.current = '';
 
 			if (currentValue !== prevValue) {
