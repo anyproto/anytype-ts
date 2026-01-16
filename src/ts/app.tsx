@@ -200,8 +200,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeTabId, isSingleTab } = data;
-		const win = $(window);
+		const { id, dataPath, config, isDark, languages, isPinChecked, css, isSingleTab } = data;
 		const body = $('body');
 		const node = $(nodeRef.current);
 		const bubbleLoader = $('#bubble-loader');
@@ -248,7 +247,7 @@ const App: FC = () => {
 		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			const t = !isSingleTab ? 50 : 300;
+			const t = 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
