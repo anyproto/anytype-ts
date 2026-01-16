@@ -98,6 +98,8 @@ const Input = forwardRef<InputRef, Props>(({
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const isFocused = useRef(false);
 	const rangeRef = useRef<I.TextRange | null>(null);
+	const isComposing = useRef(false);
+	const compositionValue = useRef('');
 	const cn = [ 'input', `input-${inputType}`, className ];
 
 	if (readonly) {
@@ -163,6 +165,13 @@ const Input = forwardRef<InputRef, Props>(({
 		removeClass('isFocused');
 		keyboard.setFocus(false);
 		keyboard.disableSelection(false);
+
+		if (isComposing.current) {
+			isComposing.current = false;
+			compositionValue.current = '';
+			keyboard.setComposition(false);
+		};
+
 		handleEvent(onBlur, e);
 	};
 
@@ -188,6 +197,8 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleCompositionStart = () => {
+		isComposing.current = true;
+		compositionValue.current = inputRef.current?.value || '';
 		keyboard.setComposition(true);
 		onCompositionStart?.();
 	};
@@ -195,7 +206,18 @@ const Input = forwardRef<InputRef, Props>(({
 	const handleCompositionEnd = (e) => {
 		keyboard.setComposition(false);
 		onCompositionEnd?.();
-		handleChange(e);
+
+		if (isComposing.current) {
+			const currentValue = e.target.value;
+			const prevValue = compositionValue.current;
+
+			isComposing.current = false;
+			compositionValue.current = '';
+
+			if (currentValue !== prevValue) {
+				handleChange(e);
+			};
+		};
 	};
 
 	const addClass = (className: string) => {
