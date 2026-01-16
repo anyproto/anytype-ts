@@ -154,6 +154,7 @@ class Keyboard {
 	 */
 	onKeyDown (e: any) {
 		const { config, theme, pin } = S.Common;
+		const zoom = Number(config.zoom) || 0;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -412,6 +413,11 @@ class Keyboard {
 
 			this.shortcut('createSpace', e, this.createSpace);
 		};
+
+		this.shortcut(`${cmd}+numpadAdd, ${cmd}+numpadSubtract`, e, pressed => {
+			e.preventDefault();
+			Renderer.send('setZoom', zoom + (pressed.endsWith('numpadAdd') ? 1 : -1));
+		});
 
 		this.initPinCheck();
 	};
