@@ -29,15 +29,13 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 				return;
 			};
 
-			const object = message.details;
-
+			U.Object.openConfig(null, message.details);
 			analytics.event('CreateTemplate', { objectType: rootId });
-			U.Object.openConfig(object);
 		});
 	};
 
 	const onClick = (e: any, item: any) => {
-		U.Object.openEvent(e, item, {
+		U.Object.openConfig(e, item, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});
 	};
@@ -75,7 +73,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 					templateId,
 					noToast: true,
 					route: '',
-					onDuplicate: object => U.Object.openConfig(object, {}),
+					onDuplicate: object => U.Object.openConfig(null, object, {}),
 					onSetDefault: id => onChange({ defaultTemplateId: id }),
 				},
 			});

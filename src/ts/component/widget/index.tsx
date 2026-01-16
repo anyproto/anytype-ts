@@ -193,7 +193,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				};
 			};
 
-			U.Object.openConfig(newObject);
+			U.Object.openConfig(null, newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
@@ -609,7 +609,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 
 			S.Common.routeParam = { ref: 'widget', viewId: view?.id };
-			U.Object.openEvent(e, object);
+			U.Object.openConfig(e, object);
 		};
 	};
 

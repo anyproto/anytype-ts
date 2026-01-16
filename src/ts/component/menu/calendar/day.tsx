@@ -46,7 +46,7 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.id == 'add') {
 			onCreate?.();
 		} else {
-			U.Object.openConfig(item);
+			U.Object.openConfig(e, item);
 		};
 	};
 

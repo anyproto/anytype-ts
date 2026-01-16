@@ -30,7 +30,7 @@ const PreviewIndex = observer(forwardRef(() => {
 
 			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
-				U.Object.openEvent(e, object);
+				U.Object.openConfig(e, object);
 				break;
 			};
 		};

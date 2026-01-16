@@ -113,7 +113,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 					switch (el.id) {
 						case 'open': {
-							U.Object.openConfig(item);
+							U.Object.openConfig(event, item);
 							break;
 						};
 

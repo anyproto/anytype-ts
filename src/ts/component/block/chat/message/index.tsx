@@ -308,12 +308,12 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 			<IconObject
 				object={{ ...author, layout: I.ObjectLayout.Participant }}
 				size={32}
-				onClick={e => U.Object.openEvent(e, author)}
+				onClick={e => U.Object.openConfig(e, author)}
 			/>
 		);
 
 		authorNode = (
-			<div className="author" onClick={e => U.Object.openEvent(e, author)}>
+			<div className="author" onClick={e => U.Object.openConfig(e, author)}>
 				<ObjectName object={author} />
 			</div>
 		);

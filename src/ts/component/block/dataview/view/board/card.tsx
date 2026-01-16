@@ -46,8 +46,8 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const cb = {
-			0: () => U.Object.openEvent(e, record),
-			1: () => U.Object.openEvent(e, record),
+			0: () => U.Object.openConfig(e, record),
+			1: () => U.Object.openConfig(e, record),
 			2: () => onContext(e, record.id)
 		};
 

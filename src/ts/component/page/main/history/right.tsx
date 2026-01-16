@@ -56,9 +56,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const onClose = () => {
 		const object = S.Detail.get(rootId, rootId, []);
-
-		// Use stored original layout to prevent routing to wrong page when
-		// historical version had a different layout than current object
+		
 		U.Object.openAuto({ ...object, layout: originalLayoutRef.current ?? object.layout });
 	};
 

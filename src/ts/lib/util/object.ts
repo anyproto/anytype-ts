@@ -140,7 +140,7 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
 			this.openTab(object);
 		} else {
-			this.openConfig(object, param);
+			this.openRoute(object, param);
 		};
 	};
 
@@ -227,7 +227,12 @@ class UtilObject {
 	/**
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
-	openConfig (object: any, param?: any) {
+	openConfig (e: any, object: any, param?: any) {
+		if (e && (e.button == 1)) {
+			this.openTab(object);
+			return;
+		};
+
 		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 

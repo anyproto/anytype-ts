@@ -478,7 +478,7 @@ class Keyboard {
 		};
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
-			U.Object.openConfig(message.details);
+			U.Object.openConfig(null, message.details);
 			callBack?.(message);
 		});
 	};

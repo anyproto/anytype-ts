@@ -524,7 +524,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'openAsObject': {
-				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
+				U.Object.openConfig(null, S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {

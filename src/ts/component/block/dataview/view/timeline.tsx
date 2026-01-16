@@ -418,8 +418,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
-			0: () => U.Object.openEvent(e, item),
-			1: () => U.Object.openEvent(e, item),
+			0: () => U.Object.openConfig(e, item),
+			1: () => U.Object.openConfig(e, item),
 			2: () => onContext(e, item.id)
 		};
 

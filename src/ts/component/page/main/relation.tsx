@@ -115,7 +115,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	const onSetAdd = () => {
 		C.ObjectCreateSet([ object.id ], { name: `${object.name} set` }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				U.Object.openConfig(message.details);
+				U.Object.openConfig(null, message.details);
 			};
 		});
 	};

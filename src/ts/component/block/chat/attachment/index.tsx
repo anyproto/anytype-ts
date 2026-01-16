@@ -218,7 +218,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openConfig(object, { onClose: updateAttachments });
+					U.Object.openConfig(null, object, { onClose: updateAttachments });
 				};
 				break;
 			};

@@ -394,7 +394,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						U.Object.openConfig({ id: message.ids[0], layout: object.layout }, {
+						U.Object.openConfig(null, { id: message.ids[0], layout: object.layout }, {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
@@ -453,7 +453,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'templateCreate': {
 				C.TemplateCreateFromObject(rootId, (message: any) => {
-					U.Object.openConfig({ id: message.id, layout: object.layout });
+					U.Object.openConfig(null, { id: message.id, layout: object.layout });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
 					analytics.event('CreateTemplate', { objectType: object.type, route });

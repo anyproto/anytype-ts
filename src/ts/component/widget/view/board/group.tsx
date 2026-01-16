@@ -134,7 +134,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onAll = (e: any) => {
-		U.Object.openEvent(e, { ...object, _routeParam_: { viewId } });
+		U.Object.openConfig(e, { ...object, _routeParam_: { viewId } });
 	};
 
 	useEffect(() => {

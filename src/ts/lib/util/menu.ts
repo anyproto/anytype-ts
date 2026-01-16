@@ -1787,7 +1787,7 @@ class UtilMenu {
 						};
 
 						case 'openBin': {
-							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							U.Object.openRoute({ layout: I.ObjectLayout.Archive });
 							break;
 						};
 
