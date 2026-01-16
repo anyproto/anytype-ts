@@ -867,7 +867,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			keyboard.shortcut('search', e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
-		if (!isInsideTable && block.isText()) {
+		if (!isInsideTable && block.isText() && !block.isTextCode()) {
 			for (const item of styleParam) {
 				let style = null;
 
