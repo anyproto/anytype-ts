@@ -109,6 +109,7 @@ body.platform-win32.showMenuBar {
 		.icon.object.layout10.uxType3.isImage,
 		.icon.object.layout10.uxType4.isImage,
 		.icon.object.layout18.uxType3.isImage,
+		.icon.object.layout18.uxType4.isImage,
 		.icon.object.layout22.isImage { border-radius: 50% };
 
 		.iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -117,12 +118,12 @@ body.platform-win32.showMenuBar {
 			position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
 			z-index: 0; right: 0px;
 		}
-
-		.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }
 	}
 	.tab:hover {
 		.icon.close { opacity: 1; }
 	}
+
+	.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }
 }
 
 #marker {

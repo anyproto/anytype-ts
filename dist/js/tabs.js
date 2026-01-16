@@ -156,7 +156,8 @@ $(() => {
 		};
 
 		sortable = new Sortable(container[0], {
-			animation: 0,
+			animation: 150,
+			easing: 'ease-in-out',
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
