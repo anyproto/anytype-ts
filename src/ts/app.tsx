@@ -331,6 +331,7 @@ const App: FC = () => {
 
 	const onCloseSession = (e: any, tabId: string) => {
 		const currentTabId = electron.tabId();
+
 		Storage.deleteLastOpenedByTabId([ tabId || currentTabId ]);
 		U.Data.closeSession(() => {
 			// Signal to main process that session is closed and tab can be destroyed
