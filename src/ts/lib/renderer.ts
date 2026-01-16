@@ -44,6 +44,18 @@ class Renderer {
 		U.Common.getElectron().removeAllListeners(event);
 	};
 
+	/**
+	 * Sends an IPC message directly to the main process.
+	 * @param {string} event - The event name.
+	 * @param {...any[]} args - The arguments to send.
+	 */
+	sendIpc (event: string, ...args: any[]) {
+		const electron = U.Common.getElectron();
+		if (electron.send) {
+			electron.send(event, ...args);
+		};
+	};
+
 };
 
 export default new Renderer();
