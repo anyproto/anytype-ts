@@ -310,10 +310,15 @@ app.on('before-quit', e => {
 	};
 });
 
-app.on('activate', () => { 
+app.on('activate', () => {
 	if (WindowManager.list.size && mainWindow) {
 		mainWindow.show();
-	} else 
+		mainWindow.focus();
+
+		if (is.macos) {
+			app.focus({ steal: true });
+		};
+	} else
 	if (isReady) {
 		createWindow();
 	};
