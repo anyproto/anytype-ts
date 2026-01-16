@@ -1037,7 +1037,7 @@ class UtilMenu {
 				};
 
 				if (withOpenNewTab) {
-					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
+					sections.general.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
