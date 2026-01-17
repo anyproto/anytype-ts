@@ -179,6 +179,25 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onInput = () => {
+		const currentText = getTextValue();
+		const storedText = String(textRef.current || '');
+
+		// Detect text service insertions (macOS Shortcuts, Automator, etc.)
+		// These insert multiple characters at once without triggering keyup,
+		// which means setText() is never called and the text isn't saved.
+		// Normal typing changes one character at a time.
+		const lengthDiff = Math.abs(currentText.length - storedText.length);
+		const isTextServiceInsertion = (lengthDiff > 1) && !keyboard.isComposition;
+
+		if (isTextServiceInsertion) {
+			if (block.canHaveMarks()) {
+				const parsed = getMarksFromHtml();
+				marksRef.current = parsed.marks;
+			};
+
+			setText(marksRef.current, true);
+		};
+
 		onUpdate?.();
 	};
 	
