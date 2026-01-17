@@ -187,7 +187,35 @@ class Api {
 	};
 
 	async keytarGet (win, key) {
-		return await keytar.getPassword(KEYTAR_SERVICE, key);
+		const maxRetries = is.windows ? 3 : 1;
+		const retryDelay = 500; // ms
+
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			let value = null;
+			let shouldRetry = false;
+
+			try {
+				value = await keytar.getPassword(KEYTAR_SERVICE, key);
+				shouldRetry = (value === null);
+
+				if (shouldRetry) {
+					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
+				};
+			} catch (err) {
+				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
+				shouldRetry = true;
+			};
+
+			if (!shouldRetry || (attempt >= maxRetries)) {
+				return value;
+			};
+
+			// On Windows, retry with delay as Credential Manager can be temporarily
+			// unavailable after sleep/reboot
+			await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+		};
+
+		return null;
 	};
 
 	keytarDelete (win, key) {

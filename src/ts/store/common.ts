@@ -597,6 +597,11 @@ class CommonStore {
 				this.pinValue = String(value || '');
 
 				callBack?.();
+			}).catch((err: any) => {
+				console.error('[Common] Error retrieving pin from keychain:', err);
+				this.pinValue = '';
+
+				callBack?.();
 			});
 		};
 	};

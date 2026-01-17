@@ -87,11 +87,18 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		setHighlight();
 
 		Renderer.send('keytarGet', account.id).then((value: string) => {
+			if (!value) {
+				console.warn('[Logout] Failed to retrieve phrase from keychain');
+				return;
+			};
+
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
 					phraseRef.current.setValue(value);
 				};
 			});
+		}).catch((err: any) => {
+			console.error('[Logout] Error retrieving phrase from keychain:', err);
 		});
 
 

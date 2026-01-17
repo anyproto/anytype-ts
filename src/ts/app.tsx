@@ -317,7 +317,16 @@ const App: FC = () => {
 			if (tab && tab.token) {
 				onObtainToken(tab.token);
 			} else {
-				Renderer.send('keytarGet', accountId).then(phrase => {
+				Renderer.send('keytarGet', accountId).then((phrase: string) => {
+					// If phrase is null/empty (can happen on Windows after sleep/reboot when
+					// Credential Manager fails), redirect to login
+					if (!phrase) {
+						console.warn('[App] Failed to retrieve phrase from keychain, redirecting to login');
+						S.Common.redirectSet(route);
+						U.Router.go('/auth/setup/init', routeParam);
+						return;
+					};
+
 					U.Data.createSession(phrase, '', '', (message: any) => {
 						if (message.error.code) {
 							S.Common.redirectSet(route);
@@ -327,6 +336,10 @@ const App: FC = () => {
 
 						onObtainToken(message.token);
 					});
+				}).catch((err: any) => {
+					console.error('[App] Error retrieving phrase from keychain:', err);
+					S.Common.redirectSet(route);
+					U.Router.go('/auth/setup/init', routeParam);
 				});
 			};
 		});
