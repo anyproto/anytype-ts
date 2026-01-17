@@ -34,10 +34,10 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 
 			<div className="inputWrapper flex">
 				<div className="errorWrapper">
-					<Input 
+					<Input
 						focusOnMount
 						ref={inputRef}
-						type="password"
+						className="isMasked"
 						placeholder={translate('popupSettingsImportNotionTokenPlaceholder')}
 					/>
 					{error ? <Error text={error} /> : ''}
