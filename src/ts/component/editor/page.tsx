@@ -765,6 +765,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			});
 		};
 
+		// Jump to previous/next block (Alt+Arrow on Mac, Ctrl+Arrow on Windows)
+		keyboard.shortcut('prevBlock, nextBlock', e, (pressed: string) => {
+			e.preventDefault();
+			const dir = pressed == 'prevBlock' ? -1 : 1;
+			const next = S.Block.getNextBlock(rootId, block.id, dir, it => it.isFocusable());
+
+			if (next) {
+				focusNextBlock(next, dir);
+			};
+		});
+
 		if (block.isText()) {
 
 			// Select all

@@ -1527,6 +1527,8 @@
 	"popupShortcutNavigationPage8": "Move selected block(s) up",
 	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	"popupShortcutNavigationPage11": "Move selected block(s) down",
+	"popupShortcutNavigationPrevBlock": "Jump to previous block",
+	"popupShortcutNavigationNextBlock": "Jump to next block",
 
 	"popupShortcutMarkdown": "Markdown",
 

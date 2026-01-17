@@ -141,6 +141,8 @@ const getSections = () => {
 						{ id: 'moveSelectionUp', name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', 'arrowup' ] },
 						{ id: 'moveSelectionDown', name: translate('popupShortcutNavigationPage11'), keys: [ cmdKey, 'shift', 'arrowdown' ] },
 						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
+						{ id: 'prevBlock', name: translate('popupShortcutNavigationPrevBlock'), keys: isMac ? [ 'alt', 'arrowup' ] : [ 'ctrl', 'arrowup' ] },
+						{ id: 'nextBlock', name: translate('popupShortcutNavigationNextBlock'), keys: isMac ? [ 'alt', 'arrowdown' ] : [ 'ctrl', 'arrowdown' ] },
 
 						{ id: 'turnBlock0', name: translate('popupShortcutEditorTurn0'), keys: [ cmdKey, 'alt', '0' ] },
 						{ id: 'turnBlock1', name: translate('popupShortcutEditorTurn1'), keys: [ cmdKey, 'alt', '1' ] },
