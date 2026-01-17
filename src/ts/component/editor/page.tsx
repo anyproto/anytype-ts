@@ -1501,8 +1501,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 			};
 		} else
-		if (!block.isText()) {  
+		if (!block.isText()) {
 			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		} else
+		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id) && S.Block.getChildrenIds(rootId, block.id).length && !range.to) {
+			blockCreate(block.id, I.BlockPosition.Top, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
