@@ -601,7 +601,10 @@ class Api {
 	};
 
 	payloadBroadcast (win, payload) {
-		this.focusWindow(win);
+		if (payload.type == 'openObject') {
+			this.focusWindow(win);
+		};
+		
 		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
