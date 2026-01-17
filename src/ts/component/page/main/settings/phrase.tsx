@@ -38,12 +38,19 @@ const PageMainSettingsPhrase = observer(forwardRef<I.PageRef, I.PageSettingsComp
 		};
 
 		Renderer.send('keytarGet', account.id).then((value: string) => {
+			if (!value) {
+				console.warn('[Phrase] Failed to retrieve phrase from keychain');
+				return;
+			};
+
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
 					phraseRef.current?.setValue(value);
 					setEntropy(message.entropy);
 				};
 			});
+		}).catch((err: any) => {
+			console.error('[Phrase] Error retrieving phrase from keychain:', err);
 		});
 
 		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });

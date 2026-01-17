@@ -354,7 +354,13 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		init();
 
 		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
+			Renderer.send('keytarGet', account.id).then((value: string) => {
+				if (value) {
+					phraseRef.current?.setValue(value);
+				};
+			}).catch((err: any) => {
+				console.error('[Onboard] Error retrieving phrase from keychain:', err);
+			});
 		};
 
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
