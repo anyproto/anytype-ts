@@ -331,7 +331,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	const { output, more, label, canAdd } = getOptionsData();
 
-	let options = [];
+	let options = null;
 	let optionsLabel = label;
 	let withMore = false;
 
