@@ -161,10 +161,10 @@ class Focus {
 		const container = U.Common.getScrollContainer(isPopup);
 		const ch = container.height();
 		const st = container.scrollTop();
-		const { header, lastBlock } = J.Size;
+		const { header } = J.Size;
 		const y = rect.top + st - container.offset().top;
 		const top = st + header;
-		const bottom = st + ch - lastBlock - header;
+		const bottom = st + ch;
 
 		if ((y < top) || (y > bottom)) {
 			container.scrollTop(Math.max(0, y - ch / 2));

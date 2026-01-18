@@ -331,7 +331,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	const { output, more, label, canAdd } = getOptionsData();
 
-	let options = null;
+	let options = [];
 	let optionsLabel = label;
 	let withMore = false;
 
@@ -350,12 +350,14 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 		case I.RelationType.Date: {
 			optionsLabel = translate('commonIncludeTime');
-			options = (
-				<Switch
-					value={object.includeTime}
-					onChange={(e: any, v: boolean) => onSwitch(e, 'relationFormatIncludeTime', v)}
-				/>
-			);
+			options = [
+				(
+					<Switch
+						value={object.includeTime}
+						onChange={(e: any, v: boolean) => onSwitch(e, 'relationFormatIncludeTime', v)}
+					/>
+				)
+			];
 			break;
 		};
 
@@ -377,7 +379,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	if (options && canAdd && !isReadonlyRelation) {
 		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
-
 		withMore ? options.unshift(add) : options.push(add);
 	};
 
