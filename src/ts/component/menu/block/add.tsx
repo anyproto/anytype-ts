@@ -312,7 +312,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		if (item.arrow && !item.skipOver || !block) {
+		if (item.arrow && !item.skipOver) {
+			return;
+		};
+
+		if (!block) {
 			return;
 		};
 		
