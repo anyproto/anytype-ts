@@ -275,6 +275,10 @@ $(() => {
 		$('html').toggleClass('themeDark', theme == 'dark');
 	});
 
+	electron.on('native-theme', (e, isDark) => {
+		$('html').toggleClass('themeDark', isDark);
+	});
+
 	electron.on('set-tabs-dimmer', (e, show) => {
 		body.toggleClass('showDimmer', show);
 	});
