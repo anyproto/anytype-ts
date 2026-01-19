@@ -24,35 +24,34 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 			mode = U.Object.getChatNotificationMode(spaceview, chatId);
 		};
 	} else {
-		counters = S.Chat.getSpaceCounters(spaceId);
+		const spaceMap = S.Chat.stateMap.get(spaceId);
+
+		if (spaceMap && spaceview) {
+			for (const [ chatId, state ] of spaceMap) {
+				if (!chatId) {
+					continue;
+				};
+
+				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+				if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
+					mode = I.NotificationMode.All;
+					counters.messageCounter += Number(state.messageCounter) || 0;
+				};
+
+				if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					if (mode == I.NotificationMode.Nothing) {
+						mode = I.NotificationMode.Mentions;
+					};
+					
+					counters.mentionCounter += Number(state.mentionCounter) || 0;
+				};
+			};
+		};
 
 		if (disableMention) {
 			counters.messageCounter = counters.messageCounter + counters.mentionCounter;
 			counters.mentionCounter = 0;
-		};
-
-		if ((counters.messageCounter || counters.mentionCounter) && spaceview) {
-			const spaceMap = S.Chat.stateMap.get(spaceId);
-
-			if (spaceMap) {
-				for (const [ chatId, state ] of spaceMap) {
-					if (!chatId) {
-						continue;
-					};
-
-					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
-
-					if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
-						mode = I.NotificationMode.All;
-						break;
-					} else
-					if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-						if (mode == I.NotificationMode.Nothing) {
-							mode = I.NotificationMode.Mentions;
-						};
-					};
-				};
-			};
 		};
 	};
 
