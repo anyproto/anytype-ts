@@ -202,6 +202,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 			if (k == 'quickOption') {
 				item.value = Relation.formatValue(relation, null, false);
+				item[k] = Number(v);
 			};
 
 			if (k == 'value') {
@@ -423,9 +424,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 	const relationOptions = getRelationOptions();
-	const conditionOptions = Relation.isDictionary(item.relationKey)
-		? Relation.filterConditionsDictionary()
-		: Relation.filterConditionsByType(relation.format);
+	const conditionOptions = Relation.filterConditionsByType(relation.format);
 	const checkboxOptions: I.Option[] = [
 		{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
 		{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
