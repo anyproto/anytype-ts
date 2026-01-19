@@ -94,9 +94,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			placeholderSet(placeholderFocus);
 		};
 
-		if (onFocus) { 
-			onFocus(e);
-		};
+		onFocus?.(e);
 	};
 	
 	const onBlurHandler = (e: any) => {
@@ -106,15 +104,11 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			placeholderSet(placeholder);
 		};
 
-		if (onBlur) {
-			onBlur(e);
-		};
+		onBlur?.(e);
 	};
 
 	const onSelectHandler = (e: any) => {
-		if (onSelect) {
-			onSelect(e);
-		};
+		onSelect?.(e);
 	};
 
 	const onClearHandler = (e: any) => {
@@ -125,9 +119,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		inputRef.current?.focus();
 		
 		onChangeHandler(e, '');
-		if (onClear) {
-			onClear();
-		};
+		onClear?.();
 	};
 
 	const onChangeHandler = (e: any, v: string) => {
@@ -136,9 +128,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			return;
 		};
 
-		if (onChange) {
-			onChange(v);
-		};
+		onChange?.(v);
 	};
 
 	const onKeyDownHandler = (e: any, v: string): void => {
@@ -149,12 +139,22 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 
 		buttonCheck();
 
+		let ret = false;
+
 		keyboard.shortcut('arrowup, arrowdown', e, () => {
 			e.preventDefault();
 		});
+		
+		keyboard.shortcut('escape', e, () => {
+			e.preventDefault();
+			e.stopPropagation();
 
-		if (onKeyDown) {
-			onKeyDown(e, v);
+			onClearHandler(e);
+			ret = true;
+		});
+
+		if (!ret) {
+			onKeyDown?.(e, v);
 		};
 	};
 
@@ -184,7 +184,6 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const setRange = (range: I.TextRange) => {
-		console.log('setRange', range);
 		inputRef.current.setRange(range);
 	};
 
@@ -237,7 +236,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 						onChange={onChangeHandler} 
 						onKeyDown={onKeyDownHandler}
 						onKeyUp={onKeyUpHandler}
-						onSelect={onSelectHandler}
+						onSelect={onSelect}
 						placeholder={placeholder}
 					/>
 				</div>
