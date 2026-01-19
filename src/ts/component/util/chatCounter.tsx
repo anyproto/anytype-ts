@@ -29,7 +29,7 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 		if (spaceMap && spaceview) {
 			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
+				if (!chatId || U.Data.checkIsArchived(chatId)) {
 					continue;
 				};
 
@@ -39,6 +39,8 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 					if (chatMode == I.NotificationMode.All) {
 						mode = I.NotificationMode.All;
 						counters.messageCounter += Number(state.messageCounter) || 0;
+					} else if (chatMode == I.NotificationMode.Mentions) {
+						mutedCounters.messageCounter += Number(state.messageCounter) || 0;
 					} else if (chatMode == I.NotificationMode.Nothing) {
 						mutedCounters.messageCounter += Number(state.messageCounter) || 0;
 					};

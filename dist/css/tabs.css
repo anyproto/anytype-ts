@@ -81,9 +81,7 @@ body.platform-win32.showMenuBar {
 		color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 		transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 	}
-
-	.tab:not(.isAdd):active { cursor: grabbing; }
-
+	
 	.tab.noClose {
 		.icon.close { display: none !important; }
 	}
