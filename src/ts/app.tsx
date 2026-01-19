@@ -190,6 +190,10 @@ const App: FC = () => {
 		});
 
 		Renderer.on('pin-check', () => {
+			if (!S.Common.pin) {
+				return;
+			};
+
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
 		});
