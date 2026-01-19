@@ -171,7 +171,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		val = String(val || '');
 	};
 
-	if (isLongText && !isEditing && isInline) {
+	if (isLongText && !view?.wrapContent) {
 		val = val.replace(/\n/g, ' ');
 	};
 
