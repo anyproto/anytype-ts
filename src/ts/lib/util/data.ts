@@ -282,9 +282,14 @@ class UtilData {
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				S.Common.pinInit(() => {
-					keyboard.initPinCheck();
-
 					const { pin } = S.Common;
+
+					// If no PIN, user is considered checked
+					if (!pin) {
+						keyboard.setPinChecked(true);
+					};
+
+					keyboard.initPinCheck();
 
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {

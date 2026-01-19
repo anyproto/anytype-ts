@@ -249,8 +249,8 @@ class Keyboard {
 			});
 
 			// Navigation search
-			this.shortcut('search', e, (pressed: string) => {
-				if (S.Popup.isOpen('search') || !this.isPinChecked) {
+			this.shortcut('search', e, () => {
+				if (S.Popup.isOpen('search') || (pin && !this.isPinChecked)) {
 					return;
 				};
 

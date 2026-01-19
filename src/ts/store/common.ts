@@ -572,6 +572,7 @@ class CommonStore {
 	 */
 	pinSet (v: string) {
 		this.pinValue = String(v || '');
+		keyboard.setPinChecked(true);
 		Renderer.send('keytarSet', this.pinId(), this.pinValue);
 		Renderer.send('pinSet');
 	};
@@ -581,6 +582,7 @@ class CommonStore {
 	 */
 	pinRemove () {
 		this.pinValue = null;
+		keyboard.setPinChecked(true);
 		Renderer.send('keytarDelete', this.pinId());
 		Renderer.send('stopPinTimer');
 		Renderer.send('pinRemove');
