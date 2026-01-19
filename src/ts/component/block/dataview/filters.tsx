@@ -69,6 +69,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	const onAdd = () => {
 		const menuParam = {
 			element: `#block-${blockId} #dataviewFilters #item-add`,
+			classNameWrap: 'fromBlock',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 		};

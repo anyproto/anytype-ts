@@ -240,6 +240,7 @@ export interface View {
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
+	getFilter?: (id: string) => I.Filter;
 	isGrid?(): boolean;
 	isList?(): boolean;
 	isGallery?(): boolean;
