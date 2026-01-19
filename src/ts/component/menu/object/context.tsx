@@ -472,24 +472,12 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			case 'newTab':
 			case 'newWindow': {
 				const slice = objectIds.slice(0, LIMIT_OPEN);
+				const objects = slice.map(id => getObjectHandler(subId, getObject, id)).filter(it => it);
 
-				for (const id of slice) {
-					const object = getObjectHandler(subId, getObject, id);
-					if (!object) {
-						continue;
-					};
-
-					switch (item.id) {
-						case 'newTab': {
-							U.Object.openTab(object);
-							break;
-						};
-
-						case 'newWindow': {
-							U.Object.openWindow(object);
-							break;
-						};
-					};
+				if (item.id == 'newTab') {
+					U.Object.openTabs(objects);
+				} else {
+					U.Object.openWindows(objects, S.Auth.token);
 				};
 				break;
 			};

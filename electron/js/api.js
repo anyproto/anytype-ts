@@ -317,8 +317,28 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
+	openWindows (win, routes, token) {
+		if (!routes || !routes.length) {
+			return;
+		};
+
+		for (const route of routes) {
+			WindowManager.createMain({ route, token, isChild: true });
+		};
+	};
+
 	openTab (win, route, data, options) {
 		WindowManager.createTab(win, { ...data, route }, options);
+	};
+
+	openTabs (win, tabs) {
+		if (!tabs || !tabs.length) {
+			return;
+		};
+
+		for (const tab of tabs) {
+			WindowManager.createTab(win, { ...tab.data, route: tab.route }, { setActive: false });
+		};
 	};
 
 	openUrl (win, url) {

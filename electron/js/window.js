@@ -280,7 +280,7 @@ class WindowManager {
 		const view = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
-				additionalArguments: [ `--tab-id=${id}` ],
+				additionalArguments: [ `--tab-id=${id}`, `--win-id=${win.id}` ],
 			},
 		});
 
