@@ -16,12 +16,16 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
-	let mode = I.NotificationMode.Nothing;
+	let modeMessage = I.NotificationMode.Nothing;
+	let modeMention = I.NotificationMode.Nothing;
 
 	if (chatId) {
 		counters = S.Chat.getChatCounters(spaceId, chatId);
 		if (spaceview) {
-			mode = U.Object.getChatNotificationMode(spaceview, chatId);
+			const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+			modeMessage = chatMode;
+			modeMention = chatMode;
 		};
 	} else {
 		const spaceMap = S.Chat.stateMap.get(spaceId);
@@ -34,12 +38,16 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
+				if (chatMode == I.NotificationMode.Nothing) {
+					continue;
+				};
+
 				if (state.messageCounter && [ I.NotificationMode.All ].includes(chatMode)) {
-					mode = I.NotificationMode.All;
+					modeMessage = chatMode;
 				};
 
 				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					mode = I.NotificationMode.All;
+					modeMention = chatMode;
 				};
 
 				counters.messageCounter += Number(state.messageCounter) || 0;
@@ -52,17 +60,18 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const cn = [ 'chatCounter', className ];
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
+	const showMention = mentionCounter && !spaceview?.isOneToOne && !disableMention;
 
-	if (mode == I.NotificationMode.Nothing) {
+	if (modeMention == I.NotificationMode.Nothing) {
 		cnMention.push('isMuted');
 	};
-	if ([ I.NotificationMode.Mentions, I.NotificationMode.Nothing ].includes(mode)) {
+	if ([ I.NotificationMode.Mentions, I.NotificationMode.Nothing ].includes(modeMessage)) {
 		cnMessage.push('isMuted');
 	};
 
 	return (
 		<div className={cn.join(' ')}>
-			{mentionCounter && !spaceview?.isOneToOne ? <Icon className={cnMention.join(' ')} /> : ''}
+			{showMention ? <Icon className={cnMention.join(' ')} /> : ''}
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);

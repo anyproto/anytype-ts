@@ -133,6 +133,8 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		console.log('[App] Init', getGlobal('serverAddress'));
+
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();

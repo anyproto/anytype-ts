@@ -246,6 +246,8 @@ class AuthStore {
 	 * @param {boolean} removeData - Whether to remove data.
 	 */
 	logout (mainWindow: boolean, removeData: boolean) {
+		Storage.clearOldKeys();
+
 		U.Subscription.destroyAll(() => {
 			if (mainWindow) {
 				if (S.Auth.token) {

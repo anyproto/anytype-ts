@@ -217,6 +217,8 @@ class Storage {
 
 		delete(obj[spaceId][key]);
 
+		console.log('deleteSpaceKey', key, spaceId, obj);
+
 		this.setSpace(obj, isLocal);
 	};
 
@@ -698,6 +700,14 @@ class Storage {
 		obj.zoom.y = Number(obj.zoom.y) || 0;
 
 		return obj;
+	};
+
+	clearOldKeys () {
+		const spaces = U.Space.getList();
+
+		spaces.forEach(space => {
+			this.deleteSpaceKey('lastOpenedObject', false, space.targetSpaceId);
+		});
 	};
 	
 };
