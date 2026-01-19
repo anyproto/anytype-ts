@@ -70,45 +70,58 @@
 
 	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
-		.select { border: 0px; padding: 0px; display: block; width: 100%; }
-		.select:hover, .select.isFocused { background: none; }
-		.select {
-			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
-		}
-		.select.checkboxValue {
-			.item { @include text-common; }
-			.icon.arrow { right: -8px !important; }
-		}
-
-		.item { display: flex; gap: 0px 6px; }
-		.item.withCaption { align-items: center; justify-content: space-between; }
-		.item {
-			.clickable { width: 100%; height: 20px; display: flex; }
-			.buttons { margin: 0px; position: static; display: none; }
-
-			.icon.delete { transition: none; width: 20px !important; height: 20px !important; }
-			.icon.plus { margin: 0px; }
-
-			.name { @include text-overflow-nw; width: calc(100% - 40px); }
-
-			.input { width: calc(100% - 20px); }
-
-			.icon.clear { 
-				width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 10px; top: 4px;
-				opacity: 0; margin: 0px; transition: opacity $transitionCommon;
+		.head { display: flex; align-items: center; gap: 0px 4px; padding: 0px 16px; }
+		.head {
+			.label { @include text-common; color: var(--color-text-primary); font-weight: 500; padding: 0px; margin: 0px; }
+			.select {
+				display: flex; border: 0px; padding: 0px; flex-shrink: 0;
+				background-color: var(--color-bg-primary); color: var(--color-text-secondary);
 			}
-			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
-			.icon.clear.active { opacity: 1; }
+			.select {
+				.icon.arrow { position: static !important; margin: 0px !important; }
+			}
 		}
-		.item.empty { padding: 13px 16px; }
+		.section {
+			.select { border: 0px; padding: 0px; display: block; width: 100%; }
+			.select:hover, .select.isFocused { background: none; }
+			.select {
+				.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+			}
+			.select.checkboxValue {
+				.item { @include text-common; }
+				.icon.arrow { right: -8px !important; }
+			}
 
-		.item:not(.isReadonly):hover, .item:not(.isReadonly).hover {
-			.caption { display: none; }
-			.buttons { display: block; }
+			.item { display: flex; gap: 0px 6px; }
+			.item.withCaption { align-items: center; justify-content: space-between; }
+			.item {
+				.clickable { width: 100%; height: 20px; display: flex; }
+				.buttons { margin: 0px; position: static; display: none; }
+
+				.icon.delete { transition: none; width: 20px !important; height: 20px !important; }
+				.icon.plus { margin: 0px; }
+
+				.name { @include text-overflow-nw; width: calc(100% - 40px); }
+
+				.input { width: calc(100% - 20px); }
+
+				.icon.clear {
+					width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 10px; top: 4px;
+					opacity: 0; margin: 0px; transition: opacity $transitionCommon;
+				}
+				.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+				.icon.clear.active { opacity: 1; }
+			}
+			.item.empty { padding: 13px 16px; }
+
+			.item:not(.isReadonly):hover, .item:not(.isReadonly).hover {
+				.caption { display: none; }
+				.buttons { display: block; }
+			}
+
+			.tagItem { vertical-align: top; margin-top: 1px; }
+
+			.input { border: 0px; padding: 0px; height: 20px; }
 		}
-
-		.tagItem { vertical-align: top; margin-top: 1px; }
-
-		.input { border: 0px; padding: 0px; height: 20px; }
 	}
 }

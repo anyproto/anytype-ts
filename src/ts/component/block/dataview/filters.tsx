@@ -38,6 +38,8 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClick = (e: any, item: any) => {
+		const filter: I.Filter = view.getFilter(item.id);
+
 		S.Menu.open('dataviewFilterValues', {
 			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
 			classNameWrap: 'fromBlock',
@@ -51,7 +53,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 				getTarget,
 				readonly: isReadonly,
 				save: () => {
-					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
 						loadData(view.id, 0, false);
 					});
 				},
