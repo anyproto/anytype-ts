@@ -21,21 +21,28 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		};
 
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+			// If phrase is null/empty (can happen on Windows after sleep/reboot when
+			// Credential Manager fails), redirect to login
+			if (!phrase) {
+				console.warn('[Setup] Failed to retrieve phrase from keychain, redirecting to login');
+				U.Router.go('/auth/select', { replace: true });
+				return;
+			};
+
 			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (setErrorHandler(message.error)) {
 					return;
 				};
 
-				if (phrase) {
-					U.Data.createSession(phrase, '', '', (message: any) => {
-						if (!setErrorHandler(message.error)) {
-							select(accountId, false);
-						};
-					});
-				} else {
-					U.Router.go('/auth/select', { replace: true });
-				};
+				U.Data.createSession(phrase, '', '', (message: any) => {
+					if (!setErrorHandler(message.error)) {
+						select(accountId, false);
+					};
+				});
 			});
+		}).catch((err: any) => {
+			console.error('[Setup] Error retrieving phrase from keychain:', err);
+			U.Router.go('/auth/select', { replace: true });
 		});
 	};
 

@@ -27,8 +27,14 @@ const mermaidStub = {
    * Optional helpers (Mermaid 10+)
    */
   registerExternalDiagrams: () => {},
+  registerLayoutLoaders: () => {},
   detectType: () => 'stubbed',
   getDiagramFromText: async () => null,
+
+  /**
+   * run() is used in Mermaid 10+ to render diagrams
+   */
+  run: async () => {},
 };
 
 export default mermaidStub;

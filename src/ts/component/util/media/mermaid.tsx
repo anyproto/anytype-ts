@@ -5,6 +5,8 @@ import elkLayouts from '@mermaid-js/layout-elk';
 import { observer } from 'mobx-react';
 import { J, S, U } from 'Lib';
 
+mermaid.registerLayoutLoaders(elkLayouts);
+
 interface Props {
 	id?: string;
 	chart: string;
@@ -34,7 +36,6 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 		$(errorRef.current).text('');
 
 		try {
-			mermaid.registerLayoutLoaders(elkLayouts);
 			mermaid.initialize({ theme: 'base', themeVariables });
 			
 			await mermaid.run({ 

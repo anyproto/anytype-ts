@@ -12,8 +12,8 @@ class Renderer {
 
 		const cmd = args[0];
 		const electron = U.Common.getElectron();
-		const currentWindow = electron.currentWindow();
-		const winId = Number(currentWindow?.windowId) || 0;
+		const currentWindow = electron.currentWindow?.();
+		const winId = Number(currentWindow?.windowId) || Number(electron.winId?.()) || 0;
 
 		args.shift();
 		args = args.map((it: any) => {
@@ -42,6 +42,18 @@ class Renderer {
 	 */
 	remove (event: string) {
 		U.Common.getElectron().removeAllListeners(event);
+	};
+
+	/**
+	 * Sends an IPC message directly to the main process.
+	 * @param {string} event - The event name.
+	 * @param {...any[]} args - The arguments to send.
+	 */
+	sendIpc (event: string, ...args: any[]) {
+		const electron = U.Common.getElectron();
+		if (electron.send) {
+			electron.send(event, ...args);
+		};
 	};
 
 };

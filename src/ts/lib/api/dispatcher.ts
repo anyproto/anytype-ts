@@ -1227,13 +1227,15 @@ class Dispatcher {
 
 		const root = S.Block.getLeaf(rootId, id);
 
-		if ((id == rootId) && root) {
-			if ((undefined !== details.layout) && (root.layout != details.layout)) {
-				S.Block.update(rootId, rootId, { layout: details.layout });
-			};
+		if (id == rootId) {
+			if (root) {
+				if ((undefined !== details.layout) && (root.layout != details.layout)) {
+					S.Block.update(rootId, rootId, { layout: details.layout });
+				};
 
-			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
-				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+				if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
+					S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+				};
 			};
 
 			keyboard.setWindowTitle();

@@ -510,7 +510,11 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'clipboardPaste': {
 				close();
-				window.setTimeout(() => Renderer.send('paste'), J.Constant.delay.menu);
+				window.setTimeout(() => {
+					focus.set(blockId, range);
+					focus.apply();
+					window.setTimeout(() => Renderer.send('paste'), 50);
+				}, J.Constant.delay.menu);
 				return;
 			};
 
@@ -520,7 +524,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'openAsObject': {
-				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
+				U.Object.openConfig(null, S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {

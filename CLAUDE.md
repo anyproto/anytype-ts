@@ -120,3 +120,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
+
+## Web Mode Development
+
+Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.

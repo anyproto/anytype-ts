@@ -70,7 +70,7 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
-			U.Object.openConfig(object);
+			U.Object.openConfig(null, object);
 			analytics.createObject(object.type, object.layout, analytics.route.calendar, message.middleTime);
 		});
 	};

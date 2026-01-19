@@ -282,9 +282,14 @@ class UtilData {
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				S.Common.pinInit(() => {
-					keyboard.initPinCheck();
-
 					const { pin } = S.Common;
+
+					// If no PIN, user is considered checked
+					if (!pin) {
+						keyboard.setPinChecked(true);
+					};
+
+					keyboard.initPinCheck();
 
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
@@ -841,19 +846,9 @@ class UtilData {
 	 */
 	setTabTitle (rootId: string, objectId: string) {
 		const object = this.getObjectForTitle(rootId, objectId);
-		if (!object) {
-			return;
+		if (object) {
+			Renderer.send('updateTab', S.Common.tabId, U.Object.getTabData(object));
 		};
-
-		const spaceview = U.Space.getSpaceview();
-
-		Renderer.send('updateTab', S.Common.tabId, { 
-			title: U.Object.name(object, true),
-			icon: U.Graph.imageSrc(object),
-			layout: object.layout,
-			isImage: object.iconImage,
-			uxType: spaceview?.uxType,
-		});
 	};
 
 	/**

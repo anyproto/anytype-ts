@@ -129,6 +129,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onOpen?.();
 			focusInit();
 			controlsRef.current?.forceUpdate();
+			tocRef.current?.forceUpdate();
 			setDummy(dummy + 1);
 		});
 	};
@@ -736,7 +737,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const block = S.Block.getLeaf(rootId, focused);
 
-		if (!block) {
+		if (!block || !keyboard.isFocused) {
 			return;
 		};
 
@@ -763,6 +764,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				onArrowVertical(e, Key.down, range, length, props);
 			});
 		};
+
+		// Jump to previous/next block (Alt+Arrow on Mac, Ctrl+Arrow on Windows)
+		keyboard.shortcut('prevBlock, nextBlock', e, (pressed: string) => {
+			e.preventDefault();
+			const dir = pressed == 'prevBlock' ? -1 : 1;
+			const next = S.Block.getNextBlock(rootId, block.id, dir, it => it.isFocusable());
+
+			if (next) {
+				focusNextBlock(next, dir);
+			};
+		});
 
 		if (block.isText()) {
 
@@ -931,6 +943,16 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			// Last/first block
 			keyboard.shortcut(`${cmd}+arrowup, ${cmd}+arrowdown`, e, (pressed: string) => {
 				onCtrlArrowBlock(e, pressed);
+			});
+
+			// Page navigation
+			keyboard.shortcut('pageup, pagedown', e, (pressed: string) => {
+				onPageUpDown(e, pressed);
+			});
+
+			// Document start/end
+			keyboard.shortcut(`${cmd}+home, ${cmd}+end, ctrl+home, ctrl+end`, e, (pressed: string) => {
+				onCtrlHomeEnd(e, pressed);
 			});
 
 			// Move blocks with arrows
@@ -1143,6 +1165,59 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		e.preventDefault();
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
+
+		focusNextBlock(next, dir);
+	};
+
+	// Page up/down navigation
+	const onPageUpDown = (e: any, pressed: string) => {
+		e.preventDefault();
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const containerHeight = container.height();
+		const scrollTop = container.scrollTop();
+		const dir = pressed.match(/up/i) ? -1 : 1;
+		const scrollAmount = containerHeight * 0.9;
+		const newScrollTop = Math.max(0, scrollTop + (dir * scrollAmount));
+
+		container.scrollTop(newScrollTop);
+
+		window.setTimeout(() => {
+			const containerOffset = container.offset()?.top || 0;
+			const targetY = dir < 0 ? (containerOffset + 100) : (containerOffset + containerHeight - 100);
+			const blocks = S.Block.getBlocks(rootId, it => it.isFocusable());
+
+			let closestBlock = null;
+			let closestDistance = Infinity;
+
+			for (const block of blocks) {
+				const node = $(`.focusable.c${block.id}`);
+				if (!node.length) {
+					continue;
+				};
+
+				const rect = node.get(0).getBoundingClientRect();
+				const blockY = rect.top + rect.height / 2;
+				const distance = Math.abs(blockY - targetY);
+
+				if (distance < closestDistance) {
+					closestDistance = distance;
+					closestBlock = block;
+				};
+			};
+
+			if (closestBlock) {
+				focusNextBlock(closestBlock, dir);
+			};
+		}, 50);
+	};
+
+	// Ctrl+Home/End navigation to document start/end
+	const onCtrlHomeEnd = (e: any, pressed: string) => {
+		e.preventDefault();
+
+		const dir = pressed.match(/home/i) ? -1 : 1;
 		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
 
 		focusNextBlock(next, dir);
@@ -1437,8 +1512,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 			};
 		} else
-		if (!block.isText()) {  
+		if (!block.isText()) {
 			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		} else
+		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id) && S.Block.getChildrenIds(rootId, block.id).length && !range.to) {
+			blockCreate(block.id, I.BlockPosition.Top, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
@@ -1743,7 +1824,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onScroll = () => {
 		const { rootId, isPopup } = props;
-		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
@@ -1929,7 +2009,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		].filter(it => it);
 
 		if (processor !== null) {
-			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
+			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
 		S.Common.clearTimeout('blockContext');

@@ -44,7 +44,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = U.String.checkRtl(text);
+	const checkRtl = U.String.checkRtl(text) || fields.isRtlDetected;
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
@@ -203,7 +203,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
-		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
+		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding', 'searchText' ]);
 		const menuOpenAdd = S.Menu.isOpen('blockAdd');
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const menuOpenSmile = S.Menu.isOpen('smile');
@@ -228,8 +228,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'turnBlock7' },
 			{ key: 'turnBlock8' },
 			{ key: 'turnBlock9' },
-			{ key: 'undo', preventDefault: true },
-			{ key: 'redo', preventDefault: true },
 			{ key: 'menuAction' },
 			{ key: 'indent', preventDefault: true },
 			{ key: 'outdent', preventDefault: true },
@@ -809,7 +807,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			if (value.length > 1) {
+				U.Data.setRtl(rootId, block, U.String.checkRtl(value));
+			};
 			callBack?.();
 		});
 	};

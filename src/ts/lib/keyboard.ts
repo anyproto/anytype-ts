@@ -3,12 +3,11 @@ import raf from 'raf';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
-	
-	mouse: any = { 
+
+	mouse: any = {
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
 	};
-	timeoutPin = 0;
 	timeoutSidebarHide = 0;
 	source: any = null;
 	selection: any = null;
@@ -76,7 +75,6 @@ class Keyboard {
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
 
-			window.clearTimeout(this.timeoutPin);
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
@@ -154,6 +152,7 @@ class Keyboard {
 	 */
 	onKeyDown (e: any) {
 		const { config, theme, pin } = S.Common;
+		const zoom = Number(config.zoom) || 0;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -250,8 +249,8 @@ class Keyboard {
 			});
 
 			// Navigation search
-			this.shortcut('search', e, (pressed: string) => {
-				if (S.Popup.isOpen('search') || !this.isPinChecked) {
+			this.shortcut('search', e, () => {
+				if (S.Popup.isOpen('search') || (pin && !this.isPinChecked)) {
 					return;
 				};
 
@@ -413,6 +412,11 @@ class Keyboard {
 			this.shortcut('createSpace', e, this.createSpace);
 		};
 
+		this.shortcut(`${cmd}+numpadAdd, ${cmd}+numpadSubtract`, e, pressed => {
+			e.preventDefault();
+			Renderer.send('setZoom', zoom + (pressed.endsWith('numpadAdd') ? 1 : -1));
+		});
+
 		this.initPinCheck();
 	};
 
@@ -472,7 +476,7 @@ class Keyboard {
 		};
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
-			U.Object.openConfig(message.details);
+			U.Object.openConfig(null, message.details);
 			callBack?.(message);
 		});
 	};
@@ -1032,6 +1036,7 @@ class Keyboard {
 
 			callBack?.(message);
 		});
+
 		analytics.event('Undo', { route });
 	};
 
@@ -1557,7 +1562,8 @@ class Keyboard {
 		};
 
 		this.isPinChecked = v;
-		Renderer.send('setPinChecked', v);
+		// Pass pin timeout to main process so it can start the centralized timer
+		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0);
 	};
 
 	/**
@@ -1593,42 +1599,23 @@ class Keyboard {
 	};
 
 	/**
-	 * Initializes pin check logic.
+	 * Reports user activity to the main process for centralized pin timeout tracking.
+	 * The main process manages a single timer for all tabs/windows.
 	 */
 	initPinCheck () {
 		const { account } = S.Auth;
-		const { windowIsFocused } = S.Common;
+		const { pin, windowIsFocused } = S.Common;
 
-		const check = () => {
-			const { pin } = S.Common;
-			if (!pin) {
-				this.setPinChecked(true);
-				return false;
-			};
-			return true;
-		};
-
-		if (!account || !check()) {
+		if (!account || !pin) {
 			return;
 		};
 
 		if (!windowIsFocused) {
-			window.clearTimeout(this.timeoutPin);
 			return;
 		};
 
-		window.clearTimeout(this.timeoutPin);
-		this.timeoutPin = window.setTimeout(() => {
-			if (!check() || this.isAuthPinCheck()) {
-				return;
-			};
-
-			if (this.isMain()) {
-				S.Common.redirectSet(U.Router.getRoute());
-			};
-
-			Renderer.send('pinCheck');
-		}, S.Common.pinTime);
+		// Report activity to main process to reset the centralized timer
+		Renderer.send('resetPinTimer');
 	};
 
 	/**
@@ -2009,7 +1996,7 @@ class Keyboard {
 
 	setBodyClass () {
 		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
-		const { showMenuBar, alwaysShowTabs, debug } = config;
+		const { alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
 		const theme = electron.getTheme();
@@ -2023,9 +2010,6 @@ class Keyboard {
 		};
 		if (debug.ui) {
 			cn.push('debug');
-		};
-		if (showMenuBar) {
-			cn.push('withMenuBar');
 		};
 		if (isFullScreen) {
 			cn.push('isFullScreen');

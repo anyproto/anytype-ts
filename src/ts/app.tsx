@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, MenuBar } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -133,6 +133,8 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		console.log('[App] Init', getGlobal('serverAddress'));
+
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
@@ -157,7 +159,7 @@ const App: FC = () => {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-tab', onWillCloseTab);
+		Renderer.on('close-session', onCloseSession);
 		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
@@ -183,7 +185,15 @@ const App: FC = () => {
 			S.Common.themeSet(S.Common.theme);
 		});
 
+		Renderer.on('set-theme', (e: any, theme: string) => {
+			S.Common.themeSet(theme);
+		});
+
 		Renderer.on('pin-check', () => {
+			if (!S.Common.pin) {
+				return;
+			};
+
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
 		});
@@ -200,8 +210,7 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, activeIndex, isSingleTab } = data;
-		const win = $(window);
+		const { id, dataPath, config, isDark, languages, isPinChecked, css, isSingleTab } = data;
 		const body = $('body');
 		const node = $(nodeRef.current);
 		const bubbleLoader = $('#bubble-loader');
@@ -212,9 +221,12 @@ const App: FC = () => {
 		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
 
-		S.Common.configSet(config, true);
+		if (config) {
+			S.Common.configSet(config, true);
+			S.Common.themeSet(config.theme);
+		};
+
 		S.Common.nativeThemeSet(isDark);
-		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
@@ -248,7 +260,7 @@ const App: FC = () => {
 		const routeParam = { replace: true, onFadeIn: hide };
 
 		const cb = () => {
-			const t = activeIndex > 0 ? 50 : 300;
+			const t = 300;
 
 			bubbleLoader.css({ transitionDuration: `${t}ms` });
 			bubbleLoader.addClass('inflate');
@@ -262,7 +274,7 @@ const App: FC = () => {
 					window.setTimeout(() => {
 						rootLoader.css({ opacity: 0 });
 						window.setTimeout(() => hide(), t);
-					}, activeIndex );
+					}, 0);
 				}, t * 5);
 			}, t * 3);
 		};
@@ -314,7 +326,16 @@ const App: FC = () => {
 			if (tab && tab.token) {
 				onObtainToken(tab.token);
 			} else {
-				Renderer.send('keytarGet', accountId).then(phrase => {
+				Renderer.send('keytarGet', accountId).then((phrase: string) => {
+					// If phrase is null/empty (can happen on Windows after sleep/reboot when
+					// Credential Manager fails), redirect to login
+					if (!phrase) {
+						console.warn('[App] Failed to retrieve phrase from keychain, redirecting to login');
+						S.Common.redirectSet(route);
+						U.Router.go('/auth/setup/init', routeParam);
+						return;
+					};
+
 					U.Data.createSession(phrase, '', '', (message: any) => {
 						if (message.error.code) {
 							S.Common.redirectSet(route);
@@ -324,14 +345,21 @@ const App: FC = () => {
 
 						onObtainToken(message.token);
 					});
+				}).catch((err: any) => {
+					console.error('[App] Error retrieving phrase from keychain:', err);
+					S.Common.redirectSet(route);
+					U.Router.go('/auth/setup/init', routeParam);
 				});
 			};
 		});
 	};
 
-	const onWillCloseTab = (e: any, tabId: string) => {
-		Storage.deleteLastOpenedByTabId([ tabId ]);
-		U.Data.closeSession();
+	const onCloseSession = (e: any, tabId: string) => {
+		const currentTabId = electron.tabId();
+
+		U.Data.closeSession(() => {
+			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
+		});
 	};
 
 	const onNotificationCallback = (e: any, cmd: string, payload: any) => {
@@ -598,7 +626,7 @@ const App: FC = () => {
 						</div>
 					) : ''}
 
-					<MenuBar />
+					<div id="dragPanel" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
 

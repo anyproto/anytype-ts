@@ -41,7 +41,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
-	const isBin = targetId == J.Constant.widgetId.bin;
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
@@ -193,7 +192,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				};
 			};
 
-			U.Object.openConfig(newObject);
+			U.Object.openEvent(null, newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {

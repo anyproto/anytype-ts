@@ -636,6 +636,16 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
+		const cmd = keyboard.cmdKey();
+		
+		let isClipboard = false;
+
+		keyboard.shortcut(`${cmd}+c, ${cmd}+v, ${cmd}+x, ${cmd}+a`, e, () => isClipboard = true);
+
+		if (isClipboard) {
+			return;
+		};
+
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 

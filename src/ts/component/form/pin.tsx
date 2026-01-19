@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import sha1 from 'sha1';
+import $ from 'jquery';
 import { Input } from 'Component';
 import { keyboard } from 'Lib';
 
@@ -81,7 +82,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		focus();
 
 		for (const i in inputRefs.current) {
-			inputRefs.current[i].setType('text');
+			$(inputRefs.current[i].getNode()).removeClass('isMasked');
 		};
 	};
 
@@ -98,7 +99,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				current.setValue('');
-				prev.setType('text');
+				$(prev.getNode()).removeClass('isMasked');
 				prev.focus();
 			});
 		};
@@ -119,6 +120,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const onInputChange = (index: number, value: string) => {
 		const input = inputRefs.current[index];
 		const next = inputRefs.current[index + 1];
+		const node = $(input.getNode());
 
 		let newValue = value;
 		if (isNumeric) {
@@ -133,7 +135,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!newValue) {
-			input.setType('text');
+			node.removeClass('isMasked');
 			return;
 		};
 
@@ -142,7 +144,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!isVisible) {
-			window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+			window.setTimeout(() => node.addClass('isMasked'), TIMEOUT_DURATION);
 		};
 	};
 
@@ -157,7 +159,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 			const char = value[i - index] || '';
 
 			input.setValue(char);
-			input.setType('text');
+			$(input.getNode()).removeClass('isMasked');
 		};
 
 		inputRefs.current[pinLength - 1].focus();

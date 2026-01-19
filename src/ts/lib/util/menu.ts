@@ -998,7 +998,7 @@ class UtilMenu {
 						action: 'void', 
 						id: 'dashboard', 
 						spaceId: targetSpaceId,
-					}));
+					}), {}, { setActive: false });
 					break;
 				};
 
@@ -1037,7 +1037,7 @@ class UtilMenu {
 				};
 
 				if (withOpenNewTab) {
-					sections.general.push({ id: 'openNewTab', icon: 'expand', name: translate('commonOpenInNewTab') });
+					sections.general.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
@@ -1787,7 +1787,7 @@ class UtilMenu {
 						};
 
 						case 'openBin': {
-							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							U.Object.openRoute({ layout: I.ObjectLayout.Archive });
 							break;
 						};
 

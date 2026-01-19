@@ -39,9 +39,14 @@ contextBridge.exposeInMainWorld('Electron', {
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 	getTheme: () => ipcRenderer.sendSync('getTheme'),
 	getBgColor: () => ipcRenderer.sendSync('getBgColor'),
+	getConfig: () => ipcRenderer.sendSync('getConfig'),
 	tabId: () => {
 		const arg = process.argv.find(arg => arg.startsWith('--tab-id='));
 		return arg ? arg.split('=')[1] : null;
+	},
+	winId: () => {
+		const arg = process.argv.find(arg => arg.startsWith('--win-id='));
+		return arg ? Number(arg.split('=')[1]) : null;
 	},
 
 	currentWindow: () => getCurrentWindow(),
@@ -71,6 +76,7 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
+	send: (event, ...args) => ipcRenderer.send(event, ...args),
 
 	Api: (id, cmd, args) => {
 		id = Number(id) || 0;

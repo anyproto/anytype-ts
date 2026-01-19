@@ -293,7 +293,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		switch (item.id) {
 			case 'open': {
-				U.Object.openConfig(relation);
+				U.Object.openConfig(null, relation);
 				break;
 			};
 

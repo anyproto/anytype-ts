@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, Notification } = require('electron');
+const { app, shell, BrowserWindow, Notification, ipcMain, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +23,8 @@ class Api {
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
+	pinTimer = null;
+	pinTimeValue = 0;
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -46,7 +48,7 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
-			activeIndex: win.activeIndex || 0,
+			activeTabId: win.activeTabId,
 			isSingleTab: win.views && (win.views.length == 1),
 		};
 	};
@@ -72,7 +74,7 @@ class Api {
 			return;
 		};
 
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			view.webContents.paste();
 		};
@@ -91,10 +93,15 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked) {
+	setPinChecked (win, isPinChecked, pinTimeout) {
 		this.isPinChecked = isPinChecked;
 		if (isPinChecked) {
 			this.lastActivityTime = Date.now();
+			if (pinTimeout) {
+				this.startPinTimer(win, pinTimeout);
+			};
+		} else {
+			this.stopPinTimer();
 		};
 	};
 
@@ -110,11 +117,74 @@ class Api {
 		};
 	};
 
+	/**
+	 * Starts or restarts the centralized pin timeout timer.
+	 * Called when pin is enabled or user activity is detected.
+	 * @param {BrowserWindow} win - The window (not used, for API consistency)
+	 * @param {number} pinTimeout - Timeout in milliseconds
+	 */
+	startPinTimer (win, pinTimeout) {
+		if (!pinTimeout || !this.isPinChecked) {
+			return;
+		};
+
+		this.pinTimeValue = pinTimeout;
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, pinTimeout);
+	};
+
+	/**
+	 * Resets the pin timer due to user activity.
+	 * Called from any renderer when user activity is detected.
+	 */
+	resetPinTimer (win) {
+		if (!this.isPinChecked || !this.pinTimeValue) {
+			return;
+		};
+
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, this.pinTimeValue);
+	};
+
+	/**
+	 * Stops the pin timer.
+	 * Called when pin is disabled or user logs out.
+	 */
+	stopPinTimer (win) {
+		if (this.pinTimer) {
+			clearTimeout(this.pinTimer);
+			this.pinTimer = null;
+		};
+	};
+
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
-		this.setBackground(win, theme);
+
+		Util.setNativeThemeSource();
+
+		const resolvedTheme = Util.getTheme();
+		this.setBackground(win, resolvedTheme);
 		
-		WindowManager.sendToAll('set-theme', Util.getTheme());
+		WindowManager.sendToAll('set-theme', theme);
+		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
 	setBackground (win, theme) {
@@ -127,7 +197,7 @@ class Api {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.setZoomLevel(zoom);
 			Util.sendToActiveTab(win, 'zoom');
@@ -146,6 +216,12 @@ class Api {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
+			// Notify tabs.html about menu bar visibility change
+			Util.send(win, 'set-menu-bar-visibility', show);
+
+			// Update tab bar height when menu bar visibility changes
+			WindowManager.updateTabBarVisibility(win);
+
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});
@@ -163,7 +239,7 @@ class Api {
 		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
 		store.set('hardwareAcceleration', enabled);
-		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true));
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true, false));
 	};
 
 	spellcheckAdd (win, s) {
@@ -177,7 +253,35 @@ class Api {
 	};
 
 	async keytarGet (win, key) {
-		return await keytar.getPassword(KEYTAR_SERVICE, key);
+		const maxRetries = is.windows ? 3 : 1;
+		const retryDelay = 500; // ms
+
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			let value = null;
+			let shouldRetry = false;
+
+			try {
+				value = await keytar.getPassword(KEYTAR_SERVICE, key);
+				shouldRetry = (value === null);
+
+				if (shouldRetry) {
+					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
+				};
+			} catch (err) {
+				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
+				shouldRetry = true;
+			};
+
+			if (!shouldRetry || (attempt >= maxRetries)) {
+				return value;
+			};
+
+			// On Windows, retry with delay as Credential Manager can be temporarily
+			// unavailable after sleep/reboot
+			await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+		};
+
+		return null;
 	};
 
 	keytarDelete (win, key) {
@@ -195,7 +299,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, '', true);
+		this.exit(win, '', true, true);
 	};
 
 	updateCancel (win) {
@@ -214,8 +318,28 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openTab (win, route) {
-		WindowManager.createTab(win, { route });
+	openWindows (win, routes, token) {
+		if (!routes || !routes.length) {
+			return;
+		};
+
+		for (const route of routes) {
+			WindowManager.createMain({ route, token, isChild: true });
+		};
+	};
+
+	openTab (win, route, data, options) {
+		WindowManager.createTab(win, { ...data, route }, options);
+	};
+
+	openTabs (win, tabs) {
+		if (!tabs || !tabs.length) {
+			return;
+		};
+
+		for (const tab of tabs) {
+			WindowManager.createTab(win, { ...tab.data, route: tab.route }, { setActive: false });
+		};
 	};
 
 	openUrl (win, url) {
@@ -253,29 +377,92 @@ class Api {
 		};
 	};
 
-	shutdown (win, relaunch) {
-		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch);
+	shutdown (win, relaunch, isUpdate) {
+		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
 		if (relaunch) {
-			UpdateManager.relaunch();
+			if (isUpdate) {
+				UpdateManager.relaunch();
+			} else {
+				app.relaunch();
+				app.exit(0);
+			};
 		} else {
 			app.exit(0);
 		};
 	};
 
-	exit (win, signal, relaunch) {
+	exit (win, signal, relaunch, isUpdate) {
 		if (app.isQuiting) {
 			return;
 		};
+
+		app.isQuiting = true;
+
+		// Save tabs before closing
+		WindowManager.saveTabs(win);
 
 		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
-		Util.send(win, 'shutdownStart');
+		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
-		Server.stop(signal).then(() => this.shutdown(win, relaunch));
+		// Send shutdown start to all tabs and wait for them to close their sessions
+		this.closeAllTabSessions(win).then(() => {
+			Util.send(win, 'shutdownStart');
+			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+		});
+	};
+
+	/**
+	 * Closes sessions for all tabs in the window
+	 * @param {BrowserWindow} win - The window
+	 * @returns {Promise} Resolves when all sessions are closed
+	 */
+	closeAllTabSessions (win) {
+		if (!win || win.isDestroyed() || !win.views || win.views.length === 0) {
+			return Promise.resolve();
+		};
+
+		const timeout = 5000; // 5 second timeout per tab
+		const promises = win.views.map(view => {
+			return new Promise(resolve => {
+				if (!view.webContents || view.webContents.isDestroyed()) {
+					resolve();
+					return;
+				};
+
+				let handler = null;
+
+				const cleanup = () => {
+					if (handler) {
+						ipcMain.removeListener('tab-session-closed', handler);
+					};
+					resolve();
+				};
+
+				const timeoutId = setTimeout(() => {
+					Util.log('warn', `[Api].closeAllTabSessions: Timeout waiting for tab ${view.id} to close session`);
+					cleanup();
+				}, timeout);
+
+				// Listen for the tab to signal it's ready to close
+				handler = (event, readyTabId) => {
+					if (readyTabId === view.id) {
+						clearTimeout(timeoutId);
+						cleanup();
+					};
+				};
+
+				ipcMain.on('tab-session-closed', handler);
+
+				// Tell the tab to close its session
+				Util.sendToTab(win, view.id, 'close-session');
+			});
+		});
+
+		return Promise.all(promises);
 	};
 
 	setChannel (win, id) {
@@ -327,7 +514,7 @@ class Api {
 	};
 
 	reload (win, route) {
-		const view = win.views?.[win.activeIndex];
+		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			view.data = { ...view.data, route };
 			view.webContents.reload();
@@ -419,10 +606,6 @@ class Api {
 		win.setFullScreen(!win.isFullScreen());
 	};
 
-	createTab (win) {
-		WindowManager.createTab(win);
-	};
-
 	getTabs (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
@@ -430,7 +613,7 @@ class Api {
 
 		return {
 			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
-			id: win.views[win.activeIndex || 0]?.id,
+			id: win.activeTabId || win.views?.[0]?.id,
 			isVisible: alwaysShow || hasMultipleTabs,
 		};
 	};
@@ -500,7 +683,10 @@ class Api {
 	};
 
 	payloadBroadcast (win, payload) {
-		this.focusWindow(win);
+		if (payload.type == 'openObject') {
+			this.focusWindow(win);
+		};
+		
 		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 

@@ -228,7 +228,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
 
 		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
-		U.Object.openEvent(e, object);
+		U.Object.openConfig(e, object);
 	};
 
 	const onMore = (e: any) => {
@@ -396,7 +396,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 				],
 				onSelect: (el: any) => {
-					U.Object.openConfig(el);
+					U.Object.openConfig(null, el);
 				},
 			}
 		});

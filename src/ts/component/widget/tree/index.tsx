@@ -231,7 +231,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openEvent(e, item);
+		U.Object.openConfig(e, item);
 		analytics.event('OpenSidebarObject');
 	};
 

@@ -18,8 +18,8 @@
 	.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
 
 	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
-		transition: background-image $transitionCommon; margin: -10px 0px 0px 0px !important;
+		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 14px;
+		transition: background-image $transitionCommon;
 	}
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
