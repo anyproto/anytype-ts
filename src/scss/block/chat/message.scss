@@ -62,7 +62,7 @@
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
 		.bubble { 
-			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; margin-left: 8px; 
+			display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; padding: 8px 12px; border-radius: 16px; margin-left: 8px; 
 			position: relative;
 		}
 		.bubble::before {
@@ -80,7 +80,7 @@
 		.text { @include clamp3; }
 	}
 	.reply.withAttachment {
-		.text { @include clamp1; }
+		.text { @include text-overflow-nw; }
 	}
 
 	.attachments {
