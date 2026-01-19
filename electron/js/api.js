@@ -23,6 +23,8 @@ class Api {
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
+	pinTimer = null;
+	pinTimeValue = 0;
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -91,10 +93,15 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked) {
+	setPinChecked (win, isPinChecked, pinTimeout) {
 		this.isPinChecked = isPinChecked;
 		if (isPinChecked) {
 			this.lastActivityTime = Date.now();
+			if (pinTimeout) {
+				this.startPinTimer(win, pinTimeout);
+			};
+		} else {
+			this.stopPinTimer();
 		};
 	};
 
@@ -107,6 +114,64 @@ class Api {
 		if (elapsed >= pinTimeout) {
 			this.isPinChecked = false;
 			this.pinCheck(win);
+		};
+	};
+
+	/**
+	 * Starts or restarts the centralized pin timeout timer.
+	 * Called when pin is enabled or user activity is detected.
+	 * @param {BrowserWindow} win - The window (not used, for API consistency)
+	 * @param {number} pinTimeout - Timeout in milliseconds
+	 */
+	startPinTimer (win, pinTimeout) {
+		if (!pinTimeout || !this.isPinChecked) {
+			return;
+		};
+
+		this.pinTimeValue = pinTimeout;
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, pinTimeout);
+	};
+
+	/**
+	 * Resets the pin timer due to user activity.
+	 * Called from any renderer when user activity is detected.
+	 */
+	resetPinTimer (win) {
+		if (!this.isPinChecked || !this.pinTimeValue) {
+			return;
+		};
+
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, this.pinTimeValue);
+	};
+
+	/**
+	 * Stops the pin timer.
+	 * Called when pin is disabled or user logs out.
+	 */
+	stopPinTimer (win) {
+		if (this.pinTimer) {
+			clearTimeout(this.pinTimer);
+			this.pinTimer = null;
 		};
 	};
 

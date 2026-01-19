@@ -547,6 +547,11 @@ class CommonStore {
 		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+
+		// Update the centralized timer in main process with new timeout
+		if (keyboard.isPinChecked && this.pin) {
+			Renderer.send('startPinTimer', this.pinTime);
+		};
 	};
 
 	/**
@@ -577,6 +582,7 @@ class CommonStore {
 	pinRemove () {
 		this.pinValue = null;
 		Renderer.send('keytarDelete', this.pinId());
+		Renderer.send('stopPinTimer');
 		Renderer.send('pinRemove');
 	};
 
