@@ -215,9 +215,12 @@ const App: FC = () => {
 		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
 
-		S.Common.configSet(config, true);
+		if (config) {
+			S.Common.configSet(config, true);
+			S.Common.themeSet(config.theme);
+		};
+
 		S.Common.nativeThemeSet(isDark);
-		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);

@@ -886,8 +886,6 @@ class CommonStore {
 	 * @param {boolean} force - Whether to force all values.
 	 */
 	configSet (config: any, force: boolean) {
-		const html = $('html');
-		
 		let newConfig: any = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);

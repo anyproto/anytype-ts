@@ -145,7 +145,7 @@ class WindowManager {
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 		win.on('resize', () => {
-			const { width, height } = win.getBounds();
+			const { width, height } = is.linux ? win.getContentBounds() : win.getBounds();
 
 			const activeView = Util.getActiveView(win);
 			if (activeView) {
@@ -179,7 +179,7 @@ class WindowManager {
 			// Clear saved tabs after restoration
 			this.clearSavedTabs();
 		} else {
-			this.createTab(win);
+			this.createTab(win, {}, { setActive: false });
 		};
 
 		return win;
@@ -352,7 +352,7 @@ class WindowManager {
 			win.contentView.removeChildView(currentActive);
 		};
 
-		const bounds = win.getBounds();
+		const bounds = is.linux ? win.getContentBounds() : win.getBounds();
 		const tabBarHeight = this.getTabBarHeight(win);
 
 		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
@@ -615,7 +615,7 @@ class WindowManager {
 		// Update active view bounds
 		const view = Util.getActiveView(win);
 		if (view && !view.webContents?.isDestroyed()) {
-			const bounds = win.getBounds();
+			const bounds = is.linux ? win.getContentBounds() : win.getBounds();
 			const tabBarHeight = this.getTabBarHeight(win);
 
 			view.setBounds({

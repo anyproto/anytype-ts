@@ -252,8 +252,10 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openTab (win, route, data) {
-		WindowManager.createTab(win, { ...data, route });
+	openTab (win, route, data, options) {
+		console.log('API.openTab', route, data, options);
+
+		WindowManager.createTab(win, { ...data, route }, options);
 	};
 
 	openUrl (win, url) {
@@ -518,10 +520,6 @@ class Api {
 
 	toggleFullScreen (win) {
 		win.setFullScreen(!win.isFullScreen());
-	};
-
-	createTab (win) {
-		WindowManager.createTab(win);
 	};
 
 	getTabs (win) {

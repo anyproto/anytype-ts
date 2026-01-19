@@ -25,6 +25,7 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		};
 	} else {
 		const spaceMap = S.Chat.stateMap.get(spaceId);
+		const mutedCounters = { mentionCounter: 0, messageCounter: 0 };
 
 		if (spaceMap && spaceview) {
 			for (const [ chatId, state ] of spaceMap) {
@@ -34,19 +35,32 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
-				if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
-					mode = I.NotificationMode.All;
-					counters.messageCounter += Number(state.messageCounter) || 0;
+				if (state.messageCounter) {
+					if (chatMode == I.NotificationMode.All) {
+						mode = I.NotificationMode.All;
+						counters.messageCounter += Number(state.messageCounter) || 0;
+					} else if (chatMode == I.NotificationMode.Nothing) {
+						mutedCounters.messageCounter += Number(state.messageCounter) || 0;
+					};
 				};
 
-				if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-					if (mode == I.NotificationMode.Nothing) {
-						mode = I.NotificationMode.Mentions;
+				if (state.mentionCounter) {
+					if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+						if (mode == I.NotificationMode.Nothing) {
+							mode = I.NotificationMode.Mentions;
+						};
+						counters.mentionCounter += Number(state.mentionCounter) || 0;
+					} else if (chatMode == I.NotificationMode.Nothing) {
+						mutedCounters.mentionCounter += Number(state.mentionCounter) || 0;
 					};
-					
-					counters.mentionCounter += Number(state.mentionCounter) || 0;
 				};
 			};
+		};
+
+		// If no non-muted notifications, show muted counters in grey
+		if (mode == I.NotificationMode.Nothing) {
+			counters.messageCounter = mutedCounters.messageCounter;
+			counters.mentionCounter = mutedCounters.mentionCounter;
 		};
 
 		if (disableMention) {

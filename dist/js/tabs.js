@@ -133,7 +133,7 @@ $(() => {
 		`);
 
 		tab.off('click').on('click', () => {
-			electron.Api(winId, 'createTab');
+			electron.Api(winId, 'openTab', '', {}, { setActive: true });
 		});
 
 		return tab;

@@ -302,7 +302,7 @@ class ElectronMock {
 			});
 		});
 
-		['createTab', 'openTab', 'openWindow', 'setActiveTab', 'removeTab', 'closeOtherTabs',
+		['openTab', 'openWindow', 'setActiveTab', 'removeTab', 'closeOtherTabs',
 			'reorderTabs', 'setTabsDimmer', 'winCommand', 'setAlwaysShowTabs'].forEach(cmd => {
 			handlers.set(cmd, () => {
 				console.log('[Web] Tab command not supported:', cmd);

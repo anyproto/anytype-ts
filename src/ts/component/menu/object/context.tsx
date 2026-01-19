@@ -4,6 +4,8 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
 
+const LIMIT_OPEN = 10;
+
 const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, getId, getSize, close } = props;
@@ -142,6 +144,10 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			allowedLink = false;
 			allowedPin = false;	
 			allowedEditChat = false;
+		};
+
+		if (length > LIMIT_OPEN) {
+			allowedNewTab = false;
 		};
 
 		if (!canWrite) {
@@ -463,13 +469,28 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 				break;
 			};
 
-			case 'newTab': {
-				U.Object.openTab(first);
-				break;
-			};
-
+			case 'newTab':
 			case 'newWindow': {
-				U.Object.openWindow(first);
+				const slice = objectIds.slice(0, LIMIT_OPEN);
+
+				for (const id of slice) {
+					const object = getObjectHandler(subId, getObject, id);
+					if (!object) {
+						continue;
+					};
+
+					switch (item.id) {
+						case 'newTab': {
+							U.Object.openTab(object);
+							break;
+						};
+
+						case 'newWindow': {
+							U.Object.openWindow(object);
+							break;
+						};
+					};
+				};
 				break;
 			};
 

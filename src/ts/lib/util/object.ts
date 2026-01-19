@@ -183,7 +183,7 @@ class UtilObject {
 	};
 
 	openTab (object: any) {
-		Renderer.send('openTab', this.route(object), this.getTabData(object));
+		Renderer.send('openTab', this.route(object), this.getTabData(object), { setActive: false });
 	};
 
 	openPopup (object: any, param?: any) {

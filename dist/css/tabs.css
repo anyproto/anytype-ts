@@ -25,7 +25,7 @@ html.themeDark {
 * { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
 
 body {
-	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent;
+	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: var(--color-bg-primary);
 	font-weight: 500; line-height: 22px; letter-spacing: -0.12px; -webkit-app-region: drag;
 	overflow: hidden;
 }
