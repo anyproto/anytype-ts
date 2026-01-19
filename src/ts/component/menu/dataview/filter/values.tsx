@@ -18,10 +18,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const selectRef = useRef(null);
 	const conditionRef = useRef(null);
 	const inputRef = useRef(null);
-	const optionListRef = useRef(null);
-	const optionFilterRef = useRef(null);
+	const listRef = useRef(null);
 	const optionCache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: OPTION_HEIGHT }));
-	const optionN = useRef(0);
 	const range = useRef(null);
 	const n = useRef(-1);
 	const timeout = useRef(0);
@@ -59,7 +57,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 
 		init();
-		setActive();
 
 		const item = view.getFilter(itemId);
 		if (!item) {
@@ -73,8 +70,9 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 
 		const isDate = Relation.isDate(relation.format);
+		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format);
 
-		if (inputRef.current.setValue) {
+		if (inputRef.current.setValue && !withFilter) {
 			if (isDate) {
 				if (item.quickOption == I.FilterQuickOption.ExactDate) {
 					inputRef.current.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
@@ -86,7 +84,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			};
 		};
 
-		if (range.current && !isDate) {
+		if (range.current && !isDate && !withFilter) {
 			inputRef.current?.setRange?.(range.current);
 		};
 	});
@@ -96,7 +94,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
@@ -113,7 +111,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 	};
 
-	const getItems = () => {
+	const getQuickOptions = () => {
 		const view = getView();
 		if (!view) {
 			return [];
@@ -145,10 +143,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const onOver = (e: any, item: any) => {
 		if (isReadonly || S.Menu.isAnimating('select')) {
 			return;
-		};
-
-		if (!keyboard.isMouseDisabled) {
-			setActive(item, false);
 		};
 
 		const menuParam = {
@@ -422,7 +416,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		});
 	};
 
-	const getOptionItems = (): any[] => {
+	const getItems = (): any[] => {
 		const view = getView();
 		if (!view) {
 			return [];
@@ -477,34 +471,16 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	const onOptionFilterChange = (v: string) => {
 		setOptionFilter(v);
-		optionN.current = 0;
 	};
 
-	const onFilterKeyDown = (e: React.KeyboardEvent) => {
-		const options = getOptionItems();
-		if (!options.length) {
-			return;
+	const onMouseEnter = (e: any, option: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(option, false);
 		};
+	};
 
-		keyboard.shortcut('arrowdown', e, () => {
-			e.preventDefault();
-			optionN.current = Math.min(optionN.current + 1, options.length - 1);
-			setDummy(dummy + 1);
-		});
-
-		keyboard.shortcut('arrowup', e, () => {
-			e.preventDefault();
-			optionN.current = Math.max(optionN.current - 1, 0);
-			setDummy(dummy + 1);
-		});
-
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-			const option = options[optionN.current];
-			if (option) {
-				onOptionClick(e as any, option);
-			};
-		});
+	const onOptionOver = (e: any, option: any) => {
+		setActive(option, false);
 	};
 
 	const checkClear = (v: any) => {
@@ -561,7 +537,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	];
 	const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 	const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
-	const items = getItems();
+	const items = getQuickOptions();
 	const selectParam = {
 		width: 260,
 		isSub: true,
@@ -598,12 +574,16 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.MultiSelect:
 		case I.RelationType.Select: {
-			const optionItems = getOptionItems();
+			const optionItems = getItems();
 			const selectedIds = Relation.getArrayValue(item.value);
+
+			// Focus filter and reset index on mount
+			window.setTimeout(() => {
+				inputRef.current?.focus();
+			}, 15);
 
 			const OptionItem = (element: any & { index: number }) => {
 				const isSelected = selectedIds.includes(element.id);
-				const isActive = optionN.current === element.index;
 				const cn = [ 'item' ];
 
 				if (isSelected) {
@@ -612,21 +592,14 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				if (isReadonly) {
 					cn.push('isReadonly');
 				};
-				if (isActive) {
-					cn.push('hover');
-				};
 
 				return (
 					<div
-						id={`item-option-${element.id}`}
+						id={`item-${element.id}`}
 						className={cn.join(' ')}
 						style={element.style}
 						onClick={e => onOptionClick(e, element)}
-						onMouseEnter={() => {
-							optionN.current = element.index;
-							S.Menu.close('select');
-							setHover({ id: `option-${element.id}` });
-						}}
+						onMouseEnter={e => onMouseEnter(e, element)}
 					>
 						<Icon className={isSelected ? 'chk' : 'chk empty'} />
 						<Tag
@@ -661,11 +634,11 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					<Filter
 						className="outlined"
 						icon="search"
-						ref={optionFilterRef}
+						ref={ref => inputRef.current = ref}
 						placeholderFocus={translate('menuDataviewOptionListFilterOptions')}
 						value={optionFilter}
 						onChange={onOptionFilterChange}
-						onKeyDown={onFilterKeyDown}
+						focusOnMount={true}
 					/>
 
 					<div className="optionsList" style={{ height: listHeight }}>
@@ -680,7 +653,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
 											<List
-												ref={optionListRef}
+												ref={listRef}
 												width={width}
 												height={height}
 												deferredMeasurmentCache={optionCache.current}
@@ -859,7 +832,9 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		getFilterRef: () => inputRef.current,
-		onOver,
+		getListRef: () => listRef?.current,
+		onOver: (e: any, item: any) => onOptionOver(e, item),
+		onClick: (e: any, item: any) => onOptionClick(e, item),
 	}), []);
 
 	return (
@@ -883,8 +858,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				{items.map((item: any, i: number) => (
 					<MenuItemVertical 
 						key={i} 
-						{...item} 
-						onMouseEnter={e => onOver(e, item)} 
+						{...item}
+						onMouseEnter={e => onOver(e, item)}
 						readonly={isReadonly} 
 					/>
 				))}
