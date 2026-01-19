@@ -179,7 +179,7 @@ class WindowManager {
 			// Clear saved tabs after restoration
 			this.clearSavedTabs();
 		} else {
-			this.createTab(win, {}, { setActive: false });
+			this.createTab(win, {}, { setActive: true });
 		};
 
 		return win;
@@ -335,6 +335,14 @@ class WindowManager {
 		return view;
 	};
 
+	getBounds (win) {
+		if (!win || win.isDestroyed()) {
+			return null;
+		};
+
+		return is.linux ? win.getContentBounds() : win.getBounds();
+	};
+
 	setActiveTab (win, id) {
 		id = String(id || '');
 
@@ -352,7 +360,7 @@ class WindowManager {
 			win.contentView.removeChildView(currentActive);
 		};
 
-		const bounds = is.linux ? win.getContentBounds() : win.getBounds();
+		const bounds = this.getBounds(win);
 		const tabBarHeight = this.getTabBarHeight(win);
 
 		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
@@ -615,7 +623,7 @@ class WindowManager {
 		// Update active view bounds
 		const view = Util.getActiveView(win);
 		if (view && !view.webContents?.isDestroyed()) {
-			const bounds = is.linux ? win.getContentBounds() : win.getBounds();
+			const bounds = this.getBounds(win);
 			const tabBarHeight = this.getTabBarHeight(win);
 
 			view.setBounds({

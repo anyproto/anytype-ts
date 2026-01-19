@@ -253,8 +253,6 @@ class Api {
 	};
 
 	openTab (win, route, data, options) {
-		console.log('API.openTab', route, data, options);
-
 		WindowManager.createTab(win, { ...data, route }, options);
 	};
 
