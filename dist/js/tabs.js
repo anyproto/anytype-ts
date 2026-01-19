@@ -15,6 +15,7 @@ $(() => {
 	let isDragging = false;
 	let draggedActiveId = '';
 	let activeId = '';
+	let timeoutResize = 0;
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
@@ -139,9 +140,14 @@ $(() => {
 		return tab;
 	};
 
-	const updateNoClose = () => {
-		const tabs = container.find('.tab:not(.isAdd)');
-		tabs.toggleClass('noClose', tabs.length == 1);
+	const resize = () => {
+		window.clearTimeout(timeoutResize);
+		timeoutResize = window.setTimeout(() => {
+			const tabs = container.find('.tab:not(.isAdd)');
+
+			tabs.toggleClass('noClose', tabs.length == 1);
+			updateMarkerPosition(activeId);
+		}, 40);
 	};
 
 	const initSortable = () => {
@@ -213,7 +219,7 @@ $(() => {
 		});
 
 		container.append(renderAdd());
-		updateNoClose();
+		resize();
 		setActive(id, false);
 
 		// Set visibility if provided
@@ -240,7 +246,7 @@ $(() => {
 		};
 
 		container.find('.tab.isAdd').before(renderTab(tab));
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
@@ -263,41 +269,18 @@ $(() => {
 		if (isDragging) return;
 
 		container.find(`#tab-${id}`).remove();
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
-	electron.on('update-tab-bar-visibility', (e, isVisible) => {
-		tabsWrapper.toggleClass('isHidden', !isVisible);
-	});
-
-	electron.on('set-theme', (e, theme) => {
-		$('html').toggleClass('themeDark', theme == 'dark');
-	});
-
-	electron.on('native-theme', (e, isDark) => {
-		$('html').toggleClass('themeDark', isDark);
-	});
-
-	electron.on('set-tabs-dimmer', (e, show) => {
-		body.toggleClass('showDimmer', show);
-	});
-
-	electron.on('set-menu-bar-visibility', (e, show) => {
-		body.toggleClass('showMenuBar', show);
-	});
-
-	electron.on('enter-full-screen', () => {
-		body.addClass('isFullScreen');
-	});
-
-	electron.on('leave-full-screen', () => {
-		body.removeClass('isFullScreen');
-	});
-
-	win.off('resize.tabs').on('resize.tabs', () => {
-		updateMarkerPosition(activeId);
-	});
+	electron.on('update-tab-bar-visibility', (e, isVisible) => tabsWrapper.toggleClass('isHidden', !isVisible));
+	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
+	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
+	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
+	electron.on('set-menu-bar-visibility', (e, show) => body.toggleClass('showMenuBar', show));
+	electron.on('enter-full-screen', () => body.addClass('isFullScreen'));
+	electron.on('leave-full-screen', () => body.removeClass('isFullScreen'));
+	win.off('resize.tabs').on('resize.tabs', resize);
 
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
