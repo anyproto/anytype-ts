@@ -39,9 +39,11 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 					if (chatMode == I.NotificationMode.All) {
 						mode = I.NotificationMode.All;
 						counters.messageCounter += Number(state.messageCounter) || 0;
-					} else if (chatMode == I.NotificationMode.Mentions) {
+					} else 
+					if (chatMode == I.NotificationMode.Mentions) {
 						mutedCounters.messageCounter += Number(state.messageCounter) || 0;
-					} else if (chatMode == I.NotificationMode.Nothing) {
+					} else 
+					if (chatMode == I.NotificationMode.Nothing) {
 						mutedCounters.messageCounter += Number(state.messageCounter) || 0;
 					};
 				};
@@ -52,7 +54,8 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 							mode = I.NotificationMode.Mentions;
 						};
 						counters.mentionCounter += Number(state.mentionCounter) || 0;
-					} else if (chatMode == I.NotificationMode.Nothing) {
+					} else 
+					if (chatMode == I.NotificationMode.Nothing) {
 						mutedCounters.mentionCounter += Number(state.mentionCounter) || 0;
 					};
 				};

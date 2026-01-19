@@ -312,7 +312,8 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (newRow < 0) {
 			newRow = totalRows - 1;
-		} else if (newRow >= totalRows) {
+		} else 
+		if (newRow >= totalRows) {
 			newRow = 0;
 		};
 
@@ -352,7 +353,8 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				newRow = Math.ceil(items.length / itemsPerRow) - 1;
 			};
 			newCol = itemsPerRow - 1;
-		} else if (newCol >= itemsPerRow) {
+		} else 
+		if (newCol >= itemsPerRow) {
 			newRow += 1;
 			if (newRow >= Math.ceil(items.length / itemsPerRow)) {
 				newRow = 0;

@@ -563,11 +563,17 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		if (waitingForResponse) {
 			return;
 		};
-		
-		if (sparkOnboarding.step === I.OnboardingStep.Goal) {
-			handleGoalSubmit();
-		} else if (sparkOnboarding.step === I.OnboardingStep.Questions) {
-			handleQuestionAnswer();
+
+		switch (sparkOnboarding.step) {
+			case I.OnboardingStep.Goal: {
+				handleGoalSubmit();
+				break;
+			};
+			
+			case I.OnboardingStep.Questions: {
+				handleQuestionAnswer();
+				break;
+			};
 		};
 	};
 

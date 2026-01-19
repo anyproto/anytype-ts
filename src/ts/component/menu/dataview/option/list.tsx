@@ -95,12 +95,9 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 		if (item.id == 'add') {
 			onOptionAdd();
-		} else if (!noSelect) {
-			if (value.includes(item.id)) {
-				onValueRemove(item.id);
-			} else {
-				onValueAdd(item.id);
-			};
+		} else 
+		if (!noSelect) {
+			value.includes(item.id) ? onValueRemove(item.id) : onValueAdd(item.id);
 		};
 
 		filterRef.current?.setValue('');

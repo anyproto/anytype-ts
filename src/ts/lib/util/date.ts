@@ -205,7 +205,8 @@ class UtilDate {
 			let ret = null;
 			if (t != s) {
 				ret = s;
-			} else if (f[s]) {
+			} else 
+			if (f[s]) {
 				ret = f[s]();
 			} else {
 				ret = s;
