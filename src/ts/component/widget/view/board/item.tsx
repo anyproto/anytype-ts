@@ -33,7 +33,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openConfig(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
