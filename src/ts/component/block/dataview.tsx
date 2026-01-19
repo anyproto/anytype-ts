@@ -1029,24 +1029,32 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onFilterAddClick = (menuParam: I.MenuParam) => {
-		U.Menu.sortOrFilterRelationSelect(menuParam, {
-			rootId,
-			blockId: block.id,
-			getView,
-			onSelect: item => {
-				const conditions = Relation.filterConditionsByType(item.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				const quickOptions = Relation.filterQuickOptions(item.format, condition);
-				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+		const { showFilters, filters } = view;
+		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 
-				onFilterAdd({
-					relationKey: item.relationKey ? item.relationKey : item.id,
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(item, null, false),
-					quickOption,
-				});
-			},
-		});
+		if (items.length) {
+			Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: !showFilters });
+		} else {
+			U.Menu.sortOrFilterRelationSelect(menuParam, {
+				rootId,
+				blockId: block.id,
+				getView,
+				onSelect: item => {
+					const conditions = Relation.filterConditionsByType(item.format);
+					const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+					const quickOptions = Relation.filterQuickOptions(item.format, condition);
+					const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+
+					Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: true });
+					onFilterAdd({
+						relationKey: item.relationKey ? item.relationKey : item.id,
+						condition: condition as I.FilterCondition,
+						value: Relation.formatValue(item, null, false),
+						quickOption,
+					});
+				},
+			});
+		};
 	};
 
 	const onFilterAdd = (item: any, callBack?: () => void) => {
@@ -1459,7 +1467,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const targetId = getTarget();
 	const cn = [ 'focusable', `c${block.id}` ];
 
-	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
+	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId, showFilters } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 	let ViewComponent: any = null;
@@ -1599,11 +1607,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				/>
 			</div>
 
-			<Filters
-				ref={filtersRef}
-				{...props}
-				{...dataviewProps}
-			/>
+			{showFilters ? (
+				<Filters
+					ref={filtersRef}
+					{...props}
+					{...dataviewProps}
+				/>
+			) : ''}
 
 			{body}
 		</div>
