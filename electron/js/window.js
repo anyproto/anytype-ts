@@ -52,9 +52,15 @@ class WindowManager {
 			win = null;
 		});
 
-		win.on('focus', () => { 
+		win.on('focus', () => {
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win);
+
+			// Restore focus to active tab's webContents when window regains focus
+			const activeView = Util.getActiveView(win);
+			if (activeView && activeView.webContents && !activeView.webContents.isDestroyed()) {
+				activeView.webContents.focus();
+			};
 		});
 
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
