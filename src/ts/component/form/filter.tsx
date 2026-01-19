@@ -107,19 +107,19 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		onBlur?.(e);
 	};
 
-	const onSelectHandler = (e: any) => {
-		onSelect?.(e);
+	const clear = () => {
+		inputRef.current?.setValue('');
+		inputRef.current?.focus();
+		
+		onChangeHandler(null, '');
+		onClear?.();
 	};
 
 	const onClearHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		inputRef.current?.setValue('');
-		inputRef.current?.focus();
-		
-		onChangeHandler(e, '');
-		onClear?.();
+		clear();
 	};
 
 	const onChangeHandler = (e: any, v: string) => {
@@ -139,23 +139,15 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 
 		buttonCheck();
 
-		let ret = false;
-
 		keyboard.shortcut('arrowup, arrowdown', e, () => {
 			e.preventDefault();
 		});
 		
 		keyboard.shortcut('escape', e, () => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			onClearHandler(e);
-			ret = true;
+			clear();
 		});
 
-		if (!ret) {
-			onKeyDown?.(e, v);
-		};
+		onKeyDown?.(e, v);
 	};
 
 	const onKeyUpHandler = (e: any, v: string): void => {

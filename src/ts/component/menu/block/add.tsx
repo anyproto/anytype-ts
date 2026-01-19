@@ -456,7 +456,9 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				close(() => {
 					window.setTimeout(() => S.Menu.open(menuId, menuParam), S.Menu.getTimeout());
 				});
-			} else
+				return;
+			};
+
 			if (item.isBlock) {
 				let param: any = {
 					type: item.type,
