@@ -228,8 +228,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'turnBlock7' },
 			{ key: 'turnBlock8' },
 			{ key: 'turnBlock9' },
-			{ key: 'undo', preventDefault: true },
-			{ key: 'redo', preventDefault: true },
 			{ key: 'menuAction' },
 			{ key: 'indent', preventDefault: true },
 			{ key: 'outdent', preventDefault: true },

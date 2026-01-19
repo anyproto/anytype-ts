@@ -737,7 +737,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const block = S.Block.getLeaf(rootId, focused);
 
-		if (!block) {
+		if (!block || !keyboard.isFocused) {
 			return;
 		};
 
@@ -878,7 +878,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			keyboard.shortcut('search', e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
-		if (!isInsideTable && block.isText() && !block.isTextCode()) {
+		if (!isInsideTable && block.isText()) {
 			for (const item of styleParam) {
 				let style = null;
 

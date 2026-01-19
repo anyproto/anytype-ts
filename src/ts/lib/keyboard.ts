@@ -1038,6 +1038,7 @@ class Keyboard {
 
 			callBack?.(message);
 		});
+
 		analytics.event('Undo', { route });
 	};
 
