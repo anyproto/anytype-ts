@@ -184,6 +184,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const setRange = (range: I.TextRange) => {
+		console.log('setRange', range);
 		inputRef.current.setRange(range);
 	};
 
