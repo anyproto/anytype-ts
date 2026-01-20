@@ -21,6 +21,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
+	const canWrite = U.Space.canMyParticipantWrite();
 
 	const getId = (id: string) => {
 		return [ space, id ].join('-');
@@ -193,7 +194,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
-		const canAdd = (realId == J.Constant.widgetId.type) && isAllowedObject(item);
+		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 
 		let icon = null;
 		if (item.icon) {
