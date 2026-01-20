@@ -1,5 +1,6 @@
 $(() => {
 	const win = $(window);
+	const doc = $(document);
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
@@ -40,8 +41,32 @@ $(() => {
 
 	const config = electron.getConfig();
 	const showMenuBar = config.showMenuBar !== false; // Default to true
+	let menuBarHiddenByConfig = !showMenuBar;
 
 	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Alt key toggle for hidden menu bar (Windows/Linux behavior)
+	if ((electron.platform === 'win32') || (electron.platform === 'linux')) {
+		doc.on('keydown', (e) => {
+			if ((e.key === 'Alt') && menuBarHiddenByConfig && !body.hasClass('showMenuBar')) {
+				e.preventDefault();
+				body.addClass('showMenuBar altVisible');
+			};
+		});
+
+		doc.on('keyup', (e) => {
+			if ((e.key === 'Alt') && body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+			};
+		});
+
+		// Hide menu bar when it loses focus (e.g., clicking elsewhere)
+		win.on('blur', () => {
+			if (body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+			};
+		});
+	}
 
 	// Menu bar button handlers (Windows and Linux)
 	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
@@ -353,7 +378,11 @@ $(() => {
 	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
 	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
 	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
-	electron.on('set-menu-bar-visibility', (e, show) => body.toggleClass('showMenuBar', show));
+	electron.on('set-menu-bar-visibility', (e, show) => {
+		menuBarHiddenByConfig = !show;
+		body.removeClass('altVisible');
+		body.toggleClass('showMenuBar', show);
+	});
 	electron.on('enter-full-screen', () => body.addClass('isFullScreen'));
 	electron.on('leave-full-screen', () => body.removeClass('isFullScreen'));
 	win.off('resize.tabs').on('resize.tabs', resize);
