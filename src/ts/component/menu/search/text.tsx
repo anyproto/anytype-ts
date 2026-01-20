@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
 
 const SKIP = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
@@ -15,10 +15,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const inputRef = useRef(null);
 	const n = useRef(0);
 	const toggledRef = useRef<Array<string>>([]);
+	const expandedHeadersRef = useRef<Array<string>>([]);
 	const itemsRef = useRef<any>(null);
 	const lastRef = useRef<string>('');
 	const timeoutRef = useRef<number>(0);
 	const activeToggleRef = useRef<string>('');
+	const activeHeaderRef = useRef<string>('');
 	const activePositionRef = useRef<{ blockId: string; range: I.TextRange } | null>(null);
 
 	const onKeyDown = (e: any) => {
@@ -106,13 +108,28 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					return false;
 				};
 
-				const parents = $(el).parents('.block.textToggle:not(.isToggled)');
-				if (parents.length) {
-					const parent = $(parents[0]);
-					const id = parents.attr('data-id');
+				// Handle toggle blocks
+				const toggleParents = $(el).parents('.block.textToggle:not(.isToggled)');
+				if (toggleParents.length) {
+					const parent = $(toggleParents[0]);
+					const id = toggleParents.attr('data-id');
 
 					toggledRef.current.push(id);
 					parent.addClass('isToggled');
+				};
+
+				// Handle collapsed header blocks
+				const hiddenParent = $(el).closest('.block.isHeaderChildHidden');
+				if (hiddenParent.length) {
+					const rootId = keyboard.getRootId(isPopup);
+					const blockId = hiddenParent.attr('data-id');
+					const header = S.Block.getHidingHeader(rootId, blockId);
+
+					if (header && !expandedHeadersRef.current.includes(header.id)) {
+						expandedHeadersRef.current.push(header.id);
+						$(`#block-${header.id}`).removeClass('isToggled');
+						S.Block.updateHeadersToggle(rootId);
+					};
 				};
 
 				const style = window.getComputedStyle(el);
@@ -136,7 +153,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		storageSet({ search: '' });
 	};
 
-	const clear = (keepToggleId?: string) => {
+	const clear = (keepToggleId?: string, keepHeaderId?: string) => {
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher');
 		const items = getItems();
@@ -154,7 +171,22 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
+		// Collapse expanded headers (except the one containing the active match)
+		let needsHeaderUpdate = false;
+		for (const id of expandedHeadersRef.current) {
+			if (id !== keepHeaderId) {
+				$(`#block-${id}`).addClass('isToggled');
+				needsHeaderUpdate = true;
+			};
+		};
+
+		if (needsHeaderUpdate) {
+			const rootId = keyboard.getRootId(isPopup);
+			S.Block.updateHeadersToggle(rootId);
+		};
+
 		toggledRef.current = [];
+		expandedHeadersRef.current = [];
 		switcher.removeClass('active');
 	};
 
@@ -185,6 +217,20 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		// Track which toggle contains the active match
 		const toggle = next.closest('.block.textToggle');
 		activeToggleRef.current = toggle.length ? toggle.attr('data-id') || '' : '';
+
+		// Track which expanded header contains the active match
+		// Use store method to reliably find the hiding header (checks Storage state, not CSS)
+		const block = next.closest('.block');
+		activeHeaderRef.current = '';
+		if (block.length && expandedHeadersRef.current.length) {
+			const blockId = block.attr('data-id');
+			const rootId = keyboard.getRootId(isPopup);
+			const hidingHeader = S.Block.getHidingHeader(rootId, blockId);
+
+			if (hidingHeader && expandedHeadersRef.current.includes(hidingHeader.id)) {
+				activeHeaderRef.current = hidingHeader.id;
+			};
+		};
 
 		// Track the position for focus restoration
 		const focusable = next.closest('.focusable');
@@ -236,9 +282,10 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return () => {
 			const keepToggleId = activeToggleRef.current;
+			const keepHeaderId = activeHeaderRef.current;
 			const position = activePositionRef.current;
 
-			clear(keepToggleId);
+			clear(keepToggleId, keepHeaderId);
 			window.clearTimeout(timeoutRef.current);
 
 			// Restore focus to the position of the focused search result

@@ -2377,7 +2377,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				last = null;
 			};
 		};
-		
+
 		if (!last) {
 			create = true;
 		} else {
@@ -2388,6 +2388,18 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (length) {
 					create = true;
 				};
+			};
+		};
+
+		// Check if the new block would be hidden under a collapsed header
+		// and expand that header if so
+		if (last) {
+			const hidingHeader = S.Block.getHidingHeader(rootId, last.id);
+			if (hidingHeader) {
+				S.Block.headerToggle(rootId, hidingHeader.id, true);
+			} else if (last.isTextHeader() && Storage.checkToggle(rootId, last.id)) {
+				// If the last block is a collapsed header, expand it so the new block is visible
+				S.Block.headerToggle(rootId, last.id, true);
 			};
 		};
 
