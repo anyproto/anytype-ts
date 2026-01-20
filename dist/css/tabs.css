@@ -67,12 +67,12 @@ body.platform-win32.showMenuBar {
 
 .container { padding: 8px; }
 
-#tabsWrapper { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; width: 100%; }
+#tabsWrapper { position: relative; transition: opacity 0.15s ease-in-out; width: 100%; }
 #tabsWrapper.isHidden { opacity: 0; pointer-events: none; }
 
 #tabs {
 	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
-	overflow-y: hidden; -webkit-app-region: no-drag;
+	overflow-y: hidden;
 }
 #tabs::-webkit-scrollbar { display: none; }
 #tabs {
