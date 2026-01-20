@@ -296,7 +296,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				menuId = 'blockRelationEdit';
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId: item.id,
-					filter: filter.current,
+					filter: item.name,
 					relationId: item.id,
 					route: analytics.route.settingsSpace,
 					noUnlink: true,

@@ -10,6 +10,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const { param, setHover, close, onKeyDown, setActive, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget } = data;
+	const { config } = S.Common;
 	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const inputRef = useRef(null);
@@ -413,6 +414,19 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					relation: observable.box(relation),
 					canAdd: true,
 					canEdit: true,
+					dataChange: (context: any, items: any) => {
+						if (!config.experimental) {
+							return items;
+						};
+
+						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+
+						if (items.length) {
+							templates.push({ isDiv: true });
+						};
+
+						return templates.concat(items);
+					},
 					onChange: (value: any, callBack?: () => void) => {
 						onChange('value', value);
 						callBack?.();
@@ -547,6 +561,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			Item = (element: any) => {	
 				const type = S.Record.getTypeById(element.type);
 
+				let icon = null;
+				if (element.icon) {
+					icon = <Icon className={element.icon} />;
+				} else {
+					icon = <IconObject object={element} />;
+				};
+
 				return (
 					<div 
 						id={`item-object-${element.id}`} 
@@ -554,7 +575,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						onMouseEnter={() => setHover({ id: `object-${element.id}` })}
 					>
 						<div className="clickable" onClick={e => onObject(e, item)}>
-							<IconObject object={element} />
+							{icon}
 							<div className="name">{element.name}</div>
 						</div>
 						<div className="caption">
@@ -567,7 +588,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				);
 			};
 
-			list = Relation.getArrayValue(item.value).map(it => S.Detail.get(rootId, it, []));
+			list = Relation.getArrayValue(item.value).map(it => Relation.getFilterTemplateOption(it) || S.Detail.get(rootId, it, []));
 			list = list.filter(it => !it._empty_);
 
 			value = (
