@@ -421,9 +421,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			if (!range.current) {
 				focusedId.current = selected.attr('data-id');
 				range.current = rc;
-			} else if (rc) {
-				// Update the range extent while preserving the anchor point
-				// This handles backward selection when mouse moves out and back
+			} else 
+			if (rc) {
 				const anchor = range.current.anchor !== undefined ? range.current.anchor : range.current.start;
 				range.current = { ...rc, anchor };
 			};
@@ -440,7 +439,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					let extent = anchor;
 					if ((range.current.start !== undefined) && (range.current.start !== anchor)) {
 						extent = range.current.start;
-					} else if ((range.current.end !== undefined) && (range.current.end !== anchor)) {
+					} else 
+					if ((range.current.end !== undefined) && (range.current.end !== anchor)) {
 						extent = range.current.end;
 					};
 
@@ -509,6 +509,18 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if (type != I.SelectType.Block) {
 			return list;
 		};
+
+		// Sort blocks by their document tree order
+		const rootId = keyboard.getRootId();
+		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const treeOrder = S.Block.unwrapTree(tree).map(it => it.id);
+		const orderMap = new Map(treeOrder.map((id, idx) => [ id, idx ]));
+
+		list.sort((a, b) => {
+			const idxA = orderMap.get(a) ?? -1;
+			const idxB = orderMap.get(b) ?? -1;
+			return idxA - idxB;
+		});
 
 		let ret = [];
 

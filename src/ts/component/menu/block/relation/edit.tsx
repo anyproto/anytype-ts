@@ -299,13 +299,12 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		let isAllowed = !root?.isLocked();
-		if (relation) {
+		if (relation && relation.id) {
 			isAllowed = isAllowed && S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]);
 		};
-		if (isAllowed) {
+		if (isAllowed && root) {
 			isAllowed = isAllowed && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		};
-
 		return readonly || !isAllowed || relation?.isReadonlyRelation;
 	};
 

@@ -5,7 +5,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
-import { I, J, U, S, C, translate, keyboard } from 'Lib';
+import { I, J, U, S, C, translate, keyboard, analytics } from 'Lib';
 
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -47,6 +47,21 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		};
 
 		return subId;
+	};
+
+	const isAllowedObject = (type: any): boolean => {
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+
+		let ret = true;
+		if (skipLayouts.includes(type.recommendedLayout)) {
+			ret = false;
+		};
+
+		if (type.uniqueKey == J.Constant.typeKey.template) {
+			ret = false;
+		};
+
+		return ret;
 	};
 
 	const subId = getSubId();
@@ -110,12 +125,52 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		return items;
 	};
 
+	const onCreate = (e: any, type: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const route = analytics.route.widget;
+		const element = `#widget-${$.escapeSelector(parent.id)} #item-${$.escapeSelector(type.id)}`;
+		const cb = (object: any) => {
+			U.Object.openConfig(e, object);
+		};
+
+		let details: any = {};
+		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectTemplate ];
+
+		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
+			const menuParam = {
+				element: `${element} .icon.plus`,
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				offsetY: 4,
+				data: { details },
+			};
+
+			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+			} else 
+			if (U.Object.isChatLayout(type.recommendedLayout)) {
+				U.Menu.onChatMenu(menuParam, route, cb);
+			}; 
+			return;
+		};
+
+		C.ObjectCreate(details, flags, type.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
+			if (!message.error.code) {
+				cb(message.details);
+			};
+		});
+	};
+
 	const onContextHandler = (e: any, item: any, withElement: boolean): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const node = $(nodeRef.current);
-		const element = node.find(`#item-${item.id}`);
+		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
 		const more = element.find('.icon.more');
 
 		if (isBin) {
@@ -138,6 +193,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
+		const canAdd = (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 
 		let icon = null;
 		if (item.icon) {
@@ -160,7 +216,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...attributes}
 				{...listeners}
 				style={style}
-				onClick={e => U.Object.openConfig(e, item)}
+				onClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left">
@@ -170,6 +226,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				<div className="side right">
 					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
+						{canAdd ? (
+							<Icon
+								className="plus"
+								tooltipParam={{ text: translate('commonCreateNewObject') }}
+								onClick={e => onCreate(e, item)}
+							/>
+						) : ''}
 						<Icon
 							className="more"
 							tooltipParam={{ text: translate('widgetOptions') }}

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U } from 'Lib';
+import { I, S, U, J } from 'Lib';
 
 interface Props {
 	spaceId?: string;
@@ -16,42 +16,38 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
-	let mode = I.NotificationMode.Nothing;
+	let modeMessage = I.NotificationMode.Nothing;
+	let modeMention = I.NotificationMode.Nothing;
 
 	if (chatId) {
 		counters = S.Chat.getChatCounters(spaceId, chatId);
 		if (spaceview) {
-			mode = U.Object.getChatNotificationMode(spaceview, chatId);
+			const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+			modeMessage = chatMode;
+			modeMention = chatMode;
 		};
 	} else {
-		counters = S.Chat.getSpaceCounters(spaceId);
+		const spaceMap = S.Chat.stateMap.get(spaceId);
 
-		if (disableMention) {
-			counters.messageCounter = counters.messageCounter + counters.mentionCounter;
-			counters.mentionCounter = 0;
-		};
-
-		if ((counters.messageCounter || counters.mentionCounter) && spaceview) {
-			const spaceMap = S.Chat.stateMap.get(spaceId);
-
-			if (spaceMap) {
-				for (const [ chatId, state ] of spaceMap) {
-					if (!chatId) {
-						continue;
-					};
-
-					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
-
-					if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
-						mode = I.NotificationMode.All;
-						break;
-					} else
-					if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-						if (mode == I.NotificationMode.Nothing) {
-							mode = I.NotificationMode.Mentions;
-						};
-					};
+		if (spaceMap && spaceview) {
+			for (const [ chatId, state ] of spaceMap) {
+				if (!chatId || U.Data.checkIsArchived(chatId)) {
+					continue;
 				};
+
+				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+				if (state.messageCounter && [ I.NotificationMode.All ].includes(chatMode)) {
+					modeMessage = chatMode;
+				};
+
+				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+					modeMention = chatMode;
+				};
+
+				counters.messageCounter += Number(state.messageCounter) || 0;
+				counters.mentionCounter += Number(state.mentionCounter) || 0;
 			};
 		};
 	};
@@ -60,19 +56,18 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const cn = [ 'chatCounter', className ];
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
+	const showMention = mentionCounter && !spaceview?.isOneToOne && !disableMention;
 
-	if (mode == I.NotificationMode.Nothing) {
+	if (modeMention == I.NotificationMode.Nothing) {
 		cnMention.push('isMuted');
 	};
-	if ([ I.NotificationMode.Mentions, I.NotificationMode.Nothing ].includes(mode)) {
+	if ([ I.NotificationMode.Mentions, I.NotificationMode.Nothing ].includes(modeMessage)) {
 		cnMessage.push('isMuted');
 	};
 
-	const isOneToOne = spaceview?.isOneToOne;
-
 	return (
 		<div className={cn.join(' ')}>
-			{mentionCounter && !isOneToOne ? <Icon className={cnMention.join(' ')} /> : ''}
+			{showMention ? <Icon className={cnMention.join(' ')} /> : ''}
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);

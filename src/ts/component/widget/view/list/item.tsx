@@ -58,7 +58,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openConfig(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -128,7 +128,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (!isCompact) {
 		if (isBookmark) {
-			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
+			descr = <Label className="descr" text={U.String.shortUrl(source)} />;
 		} else 
 		if (isChat) {
 			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id)).slice(0).

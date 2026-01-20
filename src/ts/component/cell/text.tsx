@@ -171,7 +171,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		val = String(val || '');
 	};
 
-	if (isLongText && !isEditing && isInline) {
+	if (isLongText && !view?.wrapContent) {
 		val = val.replace(/\n/g, ' ');
 	};
 
@@ -285,7 +285,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		if (isUrl && shortUrl) {
-			val = val !== null ? U.Common.shortUrl(val) : '';
+			val = val !== null ? U.String.shortUrl(val, true) : '';
 		};
 
 		if (isNumber) {

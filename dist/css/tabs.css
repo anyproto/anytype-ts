@@ -25,7 +25,7 @@ html.themeDark {
 * { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
 
 body {
-	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: transparent;
+	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: var(--color-bg-primary);
 	font-weight: 500; line-height: 22px; letter-spacing: -0.12px; -webkit-app-region: drag;
 	overflow: hidden;
 }
@@ -67,12 +67,12 @@ body.platform-win32.showMenuBar {
 
 .container { padding: 8px; }
 
-#tabsWrapper { position: relative; transition: opacity 0.15s ease-in-out; -webkit-app-region: no-drag; width: 100%; }
+#tabsWrapper { position: relative; transition: opacity 0.15s ease-in-out; width: 100%; }
 #tabsWrapper.isHidden { opacity: 0; pointer-events: none; }
 
 #tabs {
 	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
-	overflow-y: hidden; -webkit-app-region: no-drag;
+	overflow-y: hidden;
 }
 #tabs::-webkit-scrollbar { display: none; }
 #tabs {
@@ -81,9 +81,7 @@ body.platform-win32.showMenuBar {
 		color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 		transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 	}
-
-	.tab:not(.isAdd):active { cursor: grabbing; }
-
+	
 	.tab.noClose {
 		.icon.close { display: none !important; }
 	}
@@ -147,3 +145,12 @@ html.themeDark {
 		.icon.window-close { background-image: url('../img/theme/dark/icon/window/close.svg'); }
 	}
 }
+
+/* Tab drag outside window visual feedback */
+body.draggingOutside {
+	#tabs { opacity: 0.6; }
+	#marker { opacity: 0.6; }
+}
+
+/* Drop target highlight for receiving window */
+#tabs.dropTarget { outline: 2px dashed var(--color-shape-primary); outline-offset: -2px; }

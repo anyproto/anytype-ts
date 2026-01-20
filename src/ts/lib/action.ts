@@ -443,7 +443,6 @@ class Action {
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
-					Storage.deleteLastOpenedByObjectId(ids);
 					C.ObjectListDelete(ids); 
 
 					const isPopup = keyboard.isPopup();

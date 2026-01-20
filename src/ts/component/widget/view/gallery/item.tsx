@@ -49,7 +49,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openConfig(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 

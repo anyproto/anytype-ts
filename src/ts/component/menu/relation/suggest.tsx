@@ -101,7 +101,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	};
 
 	const getSections = () => {
-		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(data.filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
@@ -114,7 +114,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 			return it.name.match(reg);
 		}).map(it => ({ ...it, isType: true }));
-		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
 			canWrite && !skipCreate ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: typesList } : null,
@@ -122,8 +121,12 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
-		if (canWrite && filter) {
-			sections.unshift({ children: [ { id: 'add', name: U.String.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
+		if (canWrite && data.filter) {
+			sections.unshift({ 
+				children: [ 
+					{ id: 'add', name: U.String.sprintf(translate('menuRelationSuggestCreateRelation'), data.filter) },
+				],
+			});
 		};
 
 		sections = sections.filter((section: any) => {
@@ -168,7 +171,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	const onMouseEnter = (e: any, item: any) => {
 		e.persist();
 
-		if (!keyboard.isMouseDisabled && !S.Menu.isAnimating(props.id)) {
+		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
 		};
 	};
@@ -209,6 +212,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 				parentId: props.id,
 				data: {
 					...data,
+					canEdit: true,
 					addParam: { 
 						name: filter,
 						format: item.isType ? item.id : I.RelationType.LongText,

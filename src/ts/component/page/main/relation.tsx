@@ -329,11 +329,13 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		{ relationKey: object.relationKey, name: translate('commonValue'), isCell: true },
 	];
 
-	const { output, more, label, canAdd } = getOptionsData();
+	const data = getOptionsData();
+	const { output, more, label } = data;
 
 	let options = null;
 	let optionsLabel = label;
 	let withMore = false;
+	let canAdd = data.canAdd;
 
 	switch (relationFormat) {
 		case I.RelationType.Object: {
@@ -350,12 +352,15 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 		case I.RelationType.Date: {
 			optionsLabel = translate('commonIncludeTime');
-			options = (
-				<Switch
-					value={object.includeTime}
-					onChange={(e: any, v: boolean) => onSwitch(e, 'relationFormatIncludeTime', v)}
-				/>
-			);
+			options = [
+				(
+					<Switch
+						value={object.includeTime}
+						onChange={(e: any, v: boolean) => onSwitch(e, 'relationFormatIncludeTime', v)}
+					/>
+				)
+			];
+			canAdd = false;
 			break;
 		};
 
@@ -377,11 +382,10 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	if (options && canAdd && !isReadonlyRelation) {
 		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
-
 		withMore ? options.unshift(add) : options.push(add);
 	};
 
-	if (!output.length && (!canAdd || isReadonlyRelation)) {
+	if (!output.length && isReadonlyRelation) {
 		options = null;
 	};
 

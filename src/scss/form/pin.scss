@@ -2,11 +2,12 @@
 
 .pin { display: flex; flex-direction:row; align-items: center; gap: 0px 8px; }
 .pin {
-    .input { 
+    .input {
         width: 40px; height: 40px; padding: 0px; text-align: center; vertical-align: top; font-size: var(--font-size-header3);
         border: 1px solid var(--color-shape-primary); border-radius: 2px;
     }
     .input.isFocused { box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset; border-color: var(--color-system-accent-100); }
-    .input-password { font-size: var(--font-size-common); line-height: 1; }
+    /* Use CSS text-security instead of type="password" to avoid macOS SecureEventInput blocking third-party input methods */
+    .input.isMasked { -webkit-text-security: disc; font-size: var(--font-size-common); line-height: 1; }
     .input:last-child { margin: 0px; }
 }

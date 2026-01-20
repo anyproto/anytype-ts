@@ -737,7 +737,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const block = S.Block.getLeaf(rootId, focused);
 
-		if (!block) {
+		if (!block || !keyboard.isFocused) {
 			return;
 		};
 
@@ -764,6 +764,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				onArrowVertical(e, Key.down, range, length, props);
 			});
 		};
+
+		// Jump to previous/next block (Alt+Arrow on Mac, Ctrl+Arrow on Windows)
+		keyboard.shortcut('prevBlock, nextBlock', e, (pressed: string) => {
+			e.preventDefault();
+			const dir = pressed == 'prevBlock' ? -1 : 1;
+			const next = S.Block.getNextBlock(rootId, block.id, dir, it => it.isFocusable());
+
+			if (next) {
+				focusNextBlock(next, dir);
+			};
+		});
 
 		if (block.isText()) {
 
@@ -873,7 +884,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			keyboard.shortcut('search', e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
-		if (!isInsideTable && block.isText() && !block.isTextCode()) {
+		if (!isInsideTable && block.isText()) {
 			for (const item of styleParam) {
 				let style = null;
 
@@ -1511,8 +1522,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 			};
 		} else
-		if (!block.isText()) {  
+		if (!block.isText()) {
 			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		} else
+		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id) && S.Block.getChildrenIds(rootId, block.id).length && !range.to) {
+			blockCreate(block.id, I.BlockPosition.Top, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});

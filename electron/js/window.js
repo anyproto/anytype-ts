@@ -52,9 +52,21 @@ class WindowManager {
 			win = null;
 		});
 
-		win.on('focus', () => { 
+		win.on('focus', () => {
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win);
+
+			// Restore focus to active tab's webContents when window regains focus
+			// Use setImmediate to avoid focus race conditions when multiple windows exist
+			setImmediate(() => {
+				if (win.isDestroyed() || !win.isFocused()) {
+					return;
+				};
+				const activeView = Util.getActiveView(win);
+				if (activeView && activeView.webContents && !activeView.webContents.isDestroyed()) {
+					activeView.webContents.focus();
+				};
+			});
 		});
 
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
@@ -73,7 +85,7 @@ class WindowManager {
 	};
 
 	createMain (options) {
-		const { isChild } = options;
+		const { isChild, initialBounds, initialTabData } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
 		let state = {};
@@ -119,6 +131,14 @@ class WindowManager {
 			} catch (e) {
 				console.error('[WindowManager] Failed to restore window state:', e);
 			};
+		} else if (initialBounds) {
+			// Use provided bounds for detached tab windows
+			param = Object.assign(param, {
+				x: initialBounds.x,
+				y: initialBounds.y,
+				width: initialBounds.width || DEFAULT_WIDTH,
+				height: initialBounds.height || DEFAULT_HEIGHT,
+			});
 		} else {
 			const { width, height } = this.getScreenSize();
 
@@ -145,7 +165,7 @@ class WindowManager {
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 		win.on('resize', () => {
-			const { width, height } = win.getBounds();
+			const { width, height } = is.linux ? win.getContentBounds() : win.getBounds();
 
 			const activeView = Util.getActiveView(win);
 			if (activeView) {
@@ -154,32 +174,38 @@ class WindowManager {
 			};
 		});
 
-		// Try to restore saved tabs, or create a single tab if none saved
-		const savedState = this.loadTabs();
-		if (savedState && savedState.tabs && savedState.tabs.length > 0) {
-			const activeIndex = savedState.activeIndex || 0;
-
-			// Create all tabs from saved state with lazy loading for non-active tabs
-			for (let i = 0; i < savedState.tabs.length; i++) {
-				const tabData = savedState.tabs[i];
-				const isActiveTab = i === activeIndex;
-
-				// Defer loading for non-active tabs, don't auto-activate
-				this.createTab(win, tabData.data || {}, {
-					deferLoad: !isActiveTab,
-					setActive: false,
-				});
-			};
-
-			// Set the active tab (this will trigger loading for the active tab)
-			if (win.views && win.views[activeIndex]) {
-				this.setActiveTab(win, win.views[activeIndex].id);
-			};
-
-			// Clear saved tabs after restoration
-			this.clearSavedTabs();
+		// Handle tab creation
+		if (initialTabData) {
+			// Create window from detached tab with provided data
+			this.createTab(win, initialTabData, { setActive: true });
 		} else {
-			this.createTab(win);
+			// Try to restore saved tabs, or create a single tab if none saved
+			const savedState = this.loadTabs();
+			if (savedState && savedState.tabs && savedState.tabs.length > 0) {
+				const activeIndex = savedState.activeIndex || 0;
+
+				// Create all tabs from saved state with lazy loading for non-active tabs
+				for (let i = 0; i < savedState.tabs.length; i++) {
+					const tabData = savedState.tabs[i];
+					const isActiveTab = i === activeIndex;
+
+					// Defer loading for non-active tabs, don't auto-activate
+					this.createTab(win, tabData.data || {}, {
+						deferLoad: !isActiveTab,
+						setActive: false,
+					});
+				};
+
+				// Set the active tab (this will trigger loading for the active tab)
+				if (win.views && win.views[activeIndex]) {
+					this.setActiveTab(win, win.views[activeIndex].id);
+				};
+
+				// Clear saved tabs after restoration
+				this.clearSavedTabs();
+			} else {
+				this.createTab(win, {}, { setActive: true });
+			};
 		};
 
 		return win;
@@ -280,7 +306,7 @@ class WindowManager {
 		const view = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
-				additionalArguments: [ `--tab-id=${id}` ],
+				additionalArguments: [ `--tab-id=${id}`, `--win-id=${win.id}` ],
 			},
 		});
 
@@ -335,6 +361,14 @@ class WindowManager {
 		return view;
 	};
 
+	getBounds (win) {
+		if (!win || win.isDestroyed()) {
+			return null;
+		};
+
+		return is.linux ? win.getContentBounds() : win.getBounds();
+	};
+
 	setActiveTab (win, id) {
 		id = String(id || '');
 
@@ -352,7 +386,7 @@ class WindowManager {
 			win.contentView.removeChildView(currentActive);
 		};
 
-		const bounds = win.getBounds();
+		const bounds = this.getBounds(win);
 		const tabBarHeight = this.getTabBarHeight(win);
 
 		view.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
@@ -615,7 +649,7 @@ class WindowManager {
 		// Update active view bounds
 		const view = Util.getActiveView(win);
 		if (view && !view.webContents?.isDestroyed()) {
-			const bounds = win.getBounds();
+			const bounds = this.getBounds(win);
 			const tabBarHeight = this.getTabBarHeight(win);
 
 			view.setBounds({

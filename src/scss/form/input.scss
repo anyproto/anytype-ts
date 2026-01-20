@@ -7,4 +7,7 @@
 .input.isReadonly { cursor: default; }
 .input::placeholder { color: var(--color-text-tertiary); }
 
+/* Use CSS text-security instead of type="password" to avoid macOS SecureEventInput blocking third-party input methods */
+.input.isMasked { -webkit-text-security: disc; }
+
 .input.withError { border-color: var(--color-red) !important; }

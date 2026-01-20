@@ -353,6 +353,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						actions: value ? options : [],
 						onSelect,
 					});
+
 					menuId = 'dataviewText';
 					closeIfOpen = false;
 					break;
@@ -484,7 +485,15 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const canEdit = canCellEdit(relation, record);
-		return !canEdit ? translate(`placeholderCellCommon`) : (props.placeholder || translate(`placeholderCell${relation.format}`));
+		if (!canEdit) {
+			return translate(`placeholderCellCommon`);
+		};
+
+		if (props.placeholder) {
+			return props.placeholder;
+		};
+
+		return translate(`placeholderCell${relation.format}`);
 	};
 
 	const canCellEdit = (relation: any, record: any): boolean => {

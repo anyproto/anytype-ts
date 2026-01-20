@@ -23,6 +23,8 @@ class Api {
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
+	pinTimer = null;
+	pinTimeValue = 0;
 
 	getInitData (win, tabId) {
 		let route = win.route || '';
@@ -91,10 +93,15 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked) {
+	setPinChecked (win, isPinChecked, pinTimeout) {
 		this.isPinChecked = isPinChecked;
 		if (isPinChecked) {
 			this.lastActivityTime = Date.now();
+			if (pinTimeout) {
+				this.startPinTimer(win, pinTimeout);
+			};
+		} else {
+			this.stopPinTimer();
 		};
 	};
 
@@ -110,6 +117,64 @@ class Api {
 		};
 	};
 
+	/**
+	 * Starts or restarts the centralized pin timeout timer.
+	 * Called when pin is enabled or user activity is detected.
+	 * @param {BrowserWindow} win - The window (not used, for API consistency)
+	 * @param {number} pinTimeout - Timeout in milliseconds
+	 */
+	startPinTimer (win, pinTimeout) {
+		if (!pinTimeout || !this.isPinChecked) {
+			return;
+		};
+
+		this.pinTimeValue = pinTimeout;
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, pinTimeout);
+	};
+
+	/**
+	 * Resets the pin timer due to user activity.
+	 * Called from any renderer when user activity is detected.
+	 */
+	resetPinTimer (win) {
+		if (!this.isPinChecked || !this.pinTimeValue) {
+			return;
+		};
+
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, this.pinTimeValue);
+	};
+
+	/**
+	 * Stops the pin timer.
+	 * Called when pin is disabled or user logs out.
+	 */
+	stopPinTimer (win) {
+		if (this.pinTimer) {
+			clearTimeout(this.pinTimer);
+			this.pinTimer = null;
+		};
+	};
+
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
 
@@ -117,6 +182,7 @@ class Api {
 
 		const resolvedTheme = Util.getTheme();
 		this.setBackground(win, resolvedTheme);
+		
 		WindowManager.sendToAll('set-theme', theme);
 		WindowManager.sendToAllTabs('set-theme', theme);
 	};
@@ -187,7 +253,35 @@ class Api {
 	};
 
 	async keytarGet (win, key) {
-		return await keytar.getPassword(KEYTAR_SERVICE, key);
+		const maxRetries = is.windows ? 3 : 1;
+		const retryDelay = 500; // ms
+
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			let value = null;
+			let shouldRetry = false;
+
+			try {
+				value = await keytar.getPassword(KEYTAR_SERVICE, key);
+				shouldRetry = (value === null);
+
+				if (shouldRetry) {
+					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
+				};
+			} catch (err) {
+				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
+				shouldRetry = true;
+			};
+
+			if (!shouldRetry || (attempt >= maxRetries)) {
+				return value;
+			};
+
+			// On Windows, retry with delay as Credential Manager can be temporarily
+			// unavailable after sleep/reboot
+			await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+		};
+
+		return null;
 	};
 
 	keytarDelete (win, key) {
@@ -224,8 +318,28 @@ class Api {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openTab (win, route, data) {
-		WindowManager.createTab(win, { ...data, route });
+	openWindows (win, routes, token) {
+		if (!routes || !routes.length) {
+			return;
+		};
+
+		for (const route of routes) {
+			WindowManager.createMain({ route, token, isChild: true });
+		};
+	};
+
+	openTab (win, route, data, options) {
+		WindowManager.createTab(win, { ...data, route }, options);
+	};
+
+	openTabs (win, tabs) {
+		if (!tabs || !tabs.length) {
+			return;
+		};
+
+		for (const tab of tabs) {
+			WindowManager.createTab(win, { ...tab.data, route: tab.route }, { setActive: false });
+		};
 	};
 
 	openUrl (win, url) {
@@ -492,10 +606,6 @@ class Api {
 		win.setFullScreen(!win.isFullScreen());
 	};
 
-	createTab (win) {
-		WindowManager.createTab(win);
-	};
-
 	getTabs (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
@@ -537,6 +647,132 @@ class Api {
 		Util.send(win, 'set-tabs-dimmer', show);
 	};
 
+	getWindowBounds (win) {
+		return WindowManager.getBounds(win);
+	};
+
+	getCursorScreenPoint (win) {
+		const { screen } = require('electron');
+		return screen.getCursorScreenPoint();
+	};
+
+	/**
+	 * Detaches a tab from its window, either creating a new window or moving to an existing one
+	 * @param {BrowserWindow} win - Source window
+	 * @param {Object} param - Parameters { tabId, mouseX, mouseY }
+	 */
+	detachTab (win, param) {
+		const { tabId, mouseX, mouseY } = param || {};
+
+		if (!tabId || !win || !win.views) {
+			return;
+		};
+
+		// Don't detach if this is the only tab
+		if (win.views.length <= 1) {
+			return;
+		};
+
+		// Find the tab to detach
+		const tab = win.views.find(it => it.id == tabId);
+		if (!tab) {
+			return;
+		};
+
+		// Get tab data before removing
+		const tabData = { ...tab.data };
+
+		// Check if there's another window at the mouse position
+		const targetWin = this.getWindowAtPoint(mouseX, mouseY, win);
+
+		if (targetWin) {
+			// Transfer tab to existing window
+			this.transferTabToWindow(win, targetWin, tabId, tabData);
+		} else {
+			// Create new window with this tab
+			this.createWindowFromTab(win, tabId, tabData, mouseX, mouseY);
+		};
+	};
+
+	/**
+	 * Finds a window at the given screen coordinates, excluding a specific window
+	 * @param {number} x - Screen X coordinate
+	 * @param {number} y - Screen Y coordinate
+	 * @param {BrowserWindow} excludeWin - Window to exclude from search
+	 * @returns {BrowserWindow|null}
+	 */
+	getWindowAtPoint (x, y, excludeWin) {
+		for (const win of WindowManager.list) {
+			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+				continue;
+			};
+
+			const bounds = WindowManager.getBounds(win);
+			if (!bounds) {
+				continue;
+			};
+
+			if (x >= bounds.x && x <= bounds.x + bounds.width &&
+				y >= bounds.y && y <= bounds.y + bounds.height) {
+				return win;
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Transfers a tab from source window to target window
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {BrowserWindow} targetWin - Target window
+	 * @param {string} tabId - Tab ID to transfer
+	 * @param {Object} tabData - Tab data
+	 */
+	transferTabToWindow (sourceWin, targetWin, tabId, tabData) {
+		// Create tab in target window first
+		WindowManager.createTab(targetWin, tabData, { setActive: true });
+
+		// Remove tab from source window after target is ready
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus target window once after removal is done
+			if (targetWin && !targetWin.isDestroyed()) {
+				targetWin.focus();
+			};
+		}, 100);
+	};
+
+	/**
+	 * Creates a new window from a detached tab
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {string} tabId - Tab ID to detach
+	 * @param {Object} tabData - Tab data
+	 * @param {number} mouseX - Mouse X screen coordinate
+	 * @param {number} mouseY - Mouse Y screen coordinate
+	 */
+	createWindowFromTab (sourceWin, tabId, tabData, mouseX, mouseY) {
+		// Get source window size
+		const sourceBounds = WindowManager.getBounds(sourceWin);
+		const width = sourceBounds?.width;
+		const height = sourceBounds?.height;
+
+		// Create new window first, then remove tab from source (to avoid race conditions)
+		const newWin = WindowManager.createMain({
+			isChild: true,
+			initialBounds: { x: mouseX - 50, y: mouseY - 20, width, height },
+			initialTabData: tabData,
+		});
+
+		// Remove tab from source window after new window is created
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus new window once after removal is done
+			if (newWin && !newWin.isDestroyed()) {
+				newWin.focus();
+			};
+		}, 100);
+	};
+
 	notification (win, param) {
 		const { id, title, text, cmd, payload } = param || {};
 
@@ -573,7 +809,10 @@ class Api {
 	};
 
 	payloadBroadcast (win, payload) {
-		this.focusWindow(win);
+		if (payload.type == 'openObject') {
+			this.focusWindow(win);
+		};
+		
 		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 

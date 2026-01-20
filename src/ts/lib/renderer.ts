@@ -12,8 +12,8 @@ class Renderer {
 
 		const cmd = args[0];
 		const electron = U.Common.getElectron();
-		const currentWindow = electron.currentWindow();
-		const winId = Number(currentWindow?.windowId) || 0;
+		const currentWindow = electron.currentWindow?.();
+		const winId = Number(currentWindow?.windowId) || Number(electron.winId?.()) || 0;
 
 		args.shift();
 		args = args.map((it: any) => {

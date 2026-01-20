@@ -133,6 +133,8 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		console.log('[App] Init', getGlobal('serverAddress'));
+
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
@@ -188,6 +190,10 @@ const App: FC = () => {
 		});
 
 		Renderer.on('pin-check', () => {
+			if (!S.Common.pin) {
+				return;
+			};
+
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
 		});
@@ -215,9 +221,12 @@ const App: FC = () => {
 		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
 
-		S.Common.configSet(config, true);
+		if (config) {
+			S.Common.configSet(config, true);
+			S.Common.themeSet(config.theme);
+		};
+
 		S.Common.nativeThemeSet(isDark);
-		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
@@ -317,7 +326,16 @@ const App: FC = () => {
 			if (tab && tab.token) {
 				onObtainToken(tab.token);
 			} else {
-				Renderer.send('keytarGet', accountId).then(phrase => {
+				Renderer.send('keytarGet', accountId).then((phrase: string) => {
+					// If phrase is null/empty (can happen on Windows after sleep/reboot when
+					// Credential Manager fails), redirect to login
+					if (!phrase) {
+						console.warn('[App] Failed to retrieve phrase from keychain, redirecting to login');
+						S.Common.redirectSet(route);
+						U.Router.go('/auth/setup/init', routeParam);
+						return;
+					};
+
 					U.Data.createSession(phrase, '', '', (message: any) => {
 						if (message.error.code) {
 							S.Common.redirectSet(route);
@@ -327,6 +345,10 @@ const App: FC = () => {
 
 						onObtainToken(message.token);
 					});
+				}).catch((err: any) => {
+					console.error('[App] Error retrieving phrase from keychain:', err);
+					S.Common.redirectSet(route);
+					U.Router.go('/auth/setup/init', routeParam);
 				});
 			};
 		});
@@ -335,9 +357,7 @@ const App: FC = () => {
 	const onCloseSession = (e: any, tabId: string) => {
 		const currentTabId = electron.tabId();
 
-		Storage.deleteLastOpenedByTabId([ tabId || currentTabId ]);
 		U.Data.closeSession(() => {
-			// Signal to main process that session is closed and tab can be destroyed
 			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
 		});
 	};

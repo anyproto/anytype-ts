@@ -172,6 +172,10 @@ class UtilObject {
 	};
 	
 	openRoute (object: any, param?: Partial<I.RouteParam>) {
+		if (!object) {
+			return;
+		};
+
 		param = this.checkParam(param);
 
 		keyboard.setSource(null);
@@ -183,7 +187,38 @@ class UtilObject {
 	};
 
 	openTab (object: any) {
-		Renderer.send('openTab', this.route(object), this.getTabData(object));
+		if (!object) {
+			return;
+		};
+
+		Renderer.send('openTab', this.route(object), this.getTabData(object), { setActive: false });
+	};
+
+	openTabs (objects: any[]) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const tabs = objects.filter(it => it).map(object => ({
+			route: this.route(object),
+			data: this.getTabData(object),
+		}));
+
+		if (tabs.length) {
+			Renderer.send('openTabs', tabs);
+		};
+	};
+
+	openWindows (objects: any[], token: string) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const routes = objects.filter(it => it).map(object => this.route(object));
+
+		if (routes.length) {
+			Renderer.send('openWindows', routes, token);
+		};
 	};
 
 	openPopup (object: any, param?: any) {

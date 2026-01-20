@@ -547,6 +547,11 @@ class CommonStore {
 		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+
+		// Update the centralized timer in main process with new timeout
+		if (keyboard.isPinChecked && this.pin) {
+			Renderer.send('startPinTimer', this.pinTime);
+		};
 	};
 
 	/**
@@ -567,6 +572,7 @@ class CommonStore {
 	 */
 	pinSet (v: string) {
 		this.pinValue = String(v || '');
+		keyboard.setPinChecked(true);
 		Renderer.send('keytarSet', this.pinId(), this.pinValue);
 		Renderer.send('pinSet');
 	};
@@ -576,7 +582,9 @@ class CommonStore {
 	 */
 	pinRemove () {
 		this.pinValue = null;
+		keyboard.setPinChecked(true);
 		Renderer.send('keytarDelete', this.pinId());
+		Renderer.send('stopPinTimer');
 		Renderer.send('pinRemove');
 	};
 
@@ -595,6 +603,11 @@ class CommonStore {
 		} else {
 			Renderer.send('keytarGet', this.pinId()).then((value: string) => {
 				this.pinValue = String(value || '');
+
+				callBack?.();
+			}).catch((err: any) => {
+				console.error('[Common] Error retrieving pin from keychain:', err);
+				this.pinValue = '';
 
 				callBack?.();
 			});
@@ -881,8 +894,6 @@ class CommonStore {
 	 * @param {boolean} force - Whether to force all values.
 	 */
 	configSet (config: any, force: boolean) {
-		const html = $('html');
-		
 		let newConfig: any = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);

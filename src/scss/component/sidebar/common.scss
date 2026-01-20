@@ -19,13 +19,13 @@
 		}
 	}
 
-	.pageWrapper { padding: 0px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); }
+	.pageWrapper { padding: 0px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); height: 100%; }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
 		&.isClosed { padding-left: 0px; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; padding: 0px 0px 8px 0px; }
+	.subPageWrapper { width: 336px; display: flex; padding: 0px 0px 8px 0px; height: 100%; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
 		.sidebarPage {
@@ -103,7 +103,7 @@
 
 html.platformWindows {
 	.sidebar {
-		> .containerWidget > .body { overflow-y: overlay; }
+		.sidebarPage > .body { overflow-y: overlay; }
 	}
 }	
 

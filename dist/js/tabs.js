@@ -1,5 +1,6 @@
 $(() => {
 	const win = $(window);
+	const doc = $(document);
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
@@ -15,6 +16,21 @@ $(() => {
 	let isDragging = false;
 	let draggedActiveId = '';
 	let activeId = '';
+	let timeoutResize = 0;
+
+	// Tab detach state
+	let windowBounds = null;
+	let draggedTabId = null;
+	let lastCursorPos = null;
+	let cursorPollInterval = null;
+
+	// Clean up polling
+	const stopCursorPolling = () => {
+		if (cursorPollInterval) {
+			clearInterval(cursorPollInterval);
+			cursorPollInterval = null;
+		};
+	};
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
@@ -25,8 +41,32 @@ $(() => {
 
 	const config = electron.getConfig();
 	const showMenuBar = config.showMenuBar !== false; // Default to true
+	let menuBarHiddenByConfig = !showMenuBar;
 
 	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Alt key toggle for hidden menu bar (Windows/Linux behavior)
+	if ((electron.platform === 'win32') || (electron.platform === 'linux')) {
+		doc.on('keydown', (e) => {
+			if ((e.key.toLowerCase() === 'alt') && menuBarHiddenByConfig && !body.hasClass('showMenuBar')) {
+				e.preventDefault();
+				body.addClass('showMenuBar altVisible');
+			};
+		});
+
+		doc.on('keyup', (e) => {
+			if ((e.key.toLowerCase() === 'alt') && body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+			};
+		});
+
+		// Hide menu bar when it loses focus (e.g., clicking elsewhere)
+		win.on('blur', () => {
+			if (body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+			};
+		});
+	}
 
 	// Menu bar button handlers (Windows and Linux)
 	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
@@ -133,15 +173,35 @@ $(() => {
 		`);
 
 		tab.off('click').on('click', () => {
-			electron.Api(winId, 'createTab');
+			electron.Api(winId, 'openTab', '', {}, { setActive: true });
 		});
 
 		return tab;
 	};
 
-	const updateNoClose = () => {
-		const tabs = container.find('.tab:not(.isAdd)');
-		tabs.toggleClass('noClose', tabs.length == 1);
+	const resize = () => {
+		window.clearTimeout(timeoutResize);
+		timeoutResize = window.setTimeout(() => {
+			const tabs = container.find('.tab:not(.isAdd)');
+
+			tabs.toggleClass('noClose', tabs.length == 1);
+			updateMarkerPosition(activeId);
+		}, 40);
+	};
+
+	// Check if screen coordinates are outside window bounds
+	const isOutsideWindow = (screenX, screenY) => {
+		if (!windowBounds) {
+			return false;
+		};
+
+		const padding = 10;
+		return (
+			screenX < windowBounds.x - padding ||
+			screenX > windowBounds.x + windowBounds.width + padding ||
+			screenY < windowBounds.y - padding ||
+			screenY > windowBounds.y + windowBounds.height + padding
+		);
 	};
 
 	const initSortable = () => {
@@ -161,8 +221,9 @@ $(() => {
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
-			onStart: (evt) => {
+			onStart: async (evt) => {
 				isDragging = true;
+				draggedTabId = $(evt.item).attr('data-id');
 
 				const item = $(evt.item);
 				item.css('visibility', 'hidden');
@@ -171,15 +232,61 @@ $(() => {
 					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
 				};
+
+				// Get window bounds for detecting drag outside (await to ensure it's ready)
+				try {
+					windowBounds = await electron.Api(winId, 'getWindowBounds');
+				} catch (e) {};
+
+				// Poll cursor position during drag (needed because mouse events don't fire outside window)
+				stopCursorPolling(); // Clear any existing interval first
+				cursorPollInterval = setInterval(async () => {
+					if (!isDragging) {
+						stopCursorPolling();
+						return;
+					};
+					try {
+						lastCursorPos = await electron.Api(winId, 'getCursorScreenPoint');
+					} catch (e) {};
+				}, 100);
 			},
 			onChange: (evt) => {
 				updateMarkerPosition(draggedActiveId || activeId);
 			},
-			onEnd: (evt) => {
+			onEnd: async (evt) => {
+				const tabId = draggedTabId;
+				const bounds = windowBounds;
+				const cursorPos = lastCursorPos;
+
+				// Stop polling
+				stopCursorPolling();
+
 				isDragging = false;
+				body.removeClass('draggingOutside');
 
 				const item = $(evt.item);
 				item.css('visibility', '');
+
+				// Check if cursor was outside window (using last polled position)
+				if (tabId && bounds && cursorPos) {
+					const isOutside = isOutsideWindow(cursorPos.x, cursorPos.y);
+					if (isOutside) {
+						const tabs = container.find('.tab:not(.isAdd)');
+						// Only allow detach if there's more than one tab
+						if (tabs.length > 1) {
+							electron.Api(winId, 'detachTab', {
+								tabId: tabId,
+								mouseX: cursorPos.x,
+								mouseY: cursorPos.y,
+							});
+						};
+					};
+				};
+
+				// Reset detach state
+				draggedTabId = null;
+				windowBounds = null;
+				lastCursorPos = null;
 
 				draggedActiveId = null;
 				marker.addClass('anim').css('pointer-events', '');
@@ -213,7 +320,7 @@ $(() => {
 		});
 
 		container.append(renderAdd());
-		updateNoClose();
+		resize();
 		setActive(id, false);
 
 		// Set visibility if provided
@@ -240,7 +347,7 @@ $(() => {
 		};
 
 		container.find('.tab.isAdd').before(renderTab(tab));
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
@@ -263,37 +370,22 @@ $(() => {
 		if (isDragging) return;
 
 		container.find(`#tab-${id}`).remove();
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
-	electron.on('update-tab-bar-visibility', (e, isVisible) => {
-		tabsWrapper.toggleClass('isHidden', !isVisible);
-	});
-
-	electron.on('set-theme', (e, theme) => {
-		$('html').toggleClass('themeDark', theme == 'dark');
-	});
-
-	electron.on('set-tabs-dimmer', (e, show) => {
-		body.toggleClass('showDimmer', show);
-	});
-
+	electron.on('update-tab-bar-visibility', (e, isVisible) => tabsWrapper.toggleClass('isHidden', !isVisible));
+	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
+	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
+	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
 	electron.on('set-menu-bar-visibility', (e, show) => {
+		menuBarHiddenByConfig = !show;
+		body.removeClass('altVisible');
 		body.toggleClass('showMenuBar', show);
 	});
-
-	electron.on('enter-full-screen', () => {
-		body.addClass('isFullScreen');
-	});
-
-	electron.on('leave-full-screen', () => {
-		body.removeClass('isFullScreen');
-	});
-
-	win.off('resize.tabs').on('resize.tabs', () => {
-		updateMarkerPosition(activeId);
-	});
+	electron.on('enter-full-screen', () => body.addClass('isFullScreen'));
+	electron.on('leave-full-screen', () => body.removeClass('isFullScreen'));
+	win.off('resize.tabs').on('resize.tabs', resize);
 
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();

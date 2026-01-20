@@ -1527,6 +1527,8 @@
 	"popupShortcutNavigationPage8": "Move selected block(s) up",
 	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	"popupShortcutNavigationPage11": "Move selected block(s) down",
+	"popupShortcutNavigationPrevBlock": "Jump to previous block",
+	"popupShortcutNavigationNextBlock": "Jump to next block",
 
 	"popupShortcutMarkdown": "Markdown",
 
@@ -2059,14 +2061,14 @@
 	"placeholderCell0": "Enter text",
 	"placeholderCell1": "Enter name",
 	"placeholderCell2": "Enter number",
-	"placeholderCell3": "Select status",
+	"placeholderCell3": "Select option",
 	"placeholderCell4": "Select date",
 	"placeholderCell5": "Select files",
 	"placeholderCell7": "Add link",
 	"placeholderCell8": "Add email",
 	"placeholderCell9": "Add phone",
 	"placeholderCell10": "Add emoji",
-	"placeholderCell11": "Select tags",
+	"placeholderCell11": "Select options",
 	"placeholderCell100": "Select objects",
 
 	"edgeType0": "Link",

@@ -44,6 +44,10 @@ contextBridge.exposeInMainWorld('Electron', {
 		const arg = process.argv.find(arg => arg.startsWith('--tab-id='));
 		return arg ? arg.split('=')[1] : null;
 	},
+	winId: () => {
+		const arg = process.argv.find(arg => arg.startsWith('--win-id='));
+		return arg ? Number(arg.split('=')[1]) : null;
+	},
 
 	currentWindow: () => getCurrentWindow(),
 	isFocused: () => getCurrentWindow().isFocused(),

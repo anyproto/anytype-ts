@@ -41,7 +41,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
-	const isBin = targetId == J.Constant.widgetId.bin;
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
@@ -193,7 +192,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				};
 			};
 
-			U.Object.openConfig(null, newObject);
+			U.Object.openEvent(null, newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
@@ -220,7 +219,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Menu.onBookmarkMenu(menuParam, cb);
 			} else 
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, analytics.route.widget, cb);
+				U.Menu.onChatMenu(menuParam, route, cb);
 			}; 
 			return;
 		};
@@ -609,7 +608,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 
 			S.Common.routeParam = { ref: 'widget', viewId: view?.id };
-			U.Object.openConfig(e, object);
+			U.Object.openEvent(e, object);
 		};
 	};
 

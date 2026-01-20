@@ -249,7 +249,22 @@ class Analytics {
 	 * Sets the user's purchased membership name property for analytics.
 	 */
 	setProduct () {
-		this.setProperty({ product: S.Membership.data?.getTopProduct()?.name || 'None' });
+		const { data } = S.Membership;
+		if (!data) {
+			return;
+		};
+
+		const products = (data.products || []).map(it => S.Membership.getProduct(it.product.id));
+		const extraPurchase = products.filter(it => !it.isTopLevel);
+		const extraStorage = products.reduce((sum, it) => sum + (it.features.storageBytes || 0), 0) / 1024 / 1024;
+		const extraSeat = products.reduce((sum, it) => sum + (it.features.teamSeats || 0), 0);
+
+		this.setProperty({ 
+			product: data.getTopProduct()?.name || 'None',
+			extraPurchase: Boolean(extraPurchase.length),
+			extraStorageSize: Number(extraStorage) || 0,
+			extraSeat: Number(extraSeat) || 0,
+		});
 	};
 
 	/**
@@ -616,7 +631,13 @@ class Analytics {
 
 			case 'ScreenInviteRequest' : {
 				data.type = Number(data.type) || 0;
-				data.type = I.InviteType[data.type];
+
+				let res = '';
+				switch (data.type) {
+					case I.InviteType.WithApprove:		res = 'Approval'; break;
+					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
+					default:							res = I.InviteType[data.type]; break;
+				};
 				break;
 			};
 

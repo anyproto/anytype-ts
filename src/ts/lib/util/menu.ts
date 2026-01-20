@@ -998,7 +998,7 @@ class UtilMenu {
 						action: 'void', 
 						id: 'dashboard', 
 						spaceId: targetSpaceId,
-					}));
+					}), {}, { setActive: false });
 					break;
 				};
 
