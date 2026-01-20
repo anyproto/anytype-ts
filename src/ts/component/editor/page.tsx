@@ -1752,10 +1752,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 			if (block.isTextHeader()) {
 				if ((dir < 0) && (range.to == 0)) {
-					S.Block.headerToggle(rootId, block.id, false);
+					S.Block.headerToggle(rootId, block.id, true);
 				};
 				if ((dir > 0) && (range.to == length)) {
-					S.Block.headerToggle(rootId, block.id, true);
+					S.Block.headerToggle(rootId, block.id, false);
 				};
 			};
 
