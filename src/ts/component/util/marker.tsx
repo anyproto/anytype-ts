@@ -9,8 +9,8 @@ interface Props {
 	color: string;
 	className?: string;
 	readonly?: boolean;
-	active: boolean;
-	onClick?(): void;
+	active?: boolean;
+	onClick?(e: any): void;
 };
 
 const Icons: any = {};
@@ -28,11 +28,12 @@ Theme.dark[I.MarkerType.Checkbox] = {
 	2:		 require('img/icon/marker/checkbox2.svg'),
 };
 
-const Marker = observer(forwardRef<HTMLDivElement, Props>(({ 
-	id = '', 
+const Marker = observer(forwardRef<HTMLDivElement, Props>(({
+	id = '',
 	type = I.MarkerType.Bulleted,
-	color = 'default', 
-	active = false, 
+	color = 'default',
+	className = '',
+	active = false,
 	readonly = false,
 	onClick,
 }, ref) => {
@@ -40,6 +41,10 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	const colorValue = color || 'default';
 	const refNode = useRef<HTMLDivElement>(null);
 	const cn = [ 'marker', `marker${I.MarkerType[type]}` ];
+
+	if (className) {
+		cn.push(className);
+	};
 	const ci = [ 'markerInner', `marker${I.MarkerType[type]}`, `textColor textColor-${colorValue}` ];
 	const themeClass = S.Common.getThemeClass();
 	const key = `marker-${id}-${type}`;

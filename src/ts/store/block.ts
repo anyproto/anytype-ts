@@ -897,9 +897,286 @@ class BlockStore {
 
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
-		
+
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
+	};
+
+	/**
+	 * Toggles a header block's collapsed state.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The header block ID.
+	 * @param {boolean} v - The toggled value.
+	 */
+	headerToggle (rootId: string, blockId: string, v: boolean) {
+		const element = $(`#block-${blockId}`);
+		if (!element.length) {
+			return;
+		};
+
+		element.toggleClass('isToggled', v);
+		Storage.setToggle(rootId, blockId, v);
+
+		this.updateHeadersToggle(rootId);
+		U.Common.triggerResizeEditor(keyboard.isPopup());
+	};
+
+	/**
+	 * Gets the header level (1, 2, or 3) for a block.
+	 * @param {I.Block} block - The block to check.
+	 * @returns {number} The header level (1, 2, 3) or 0 if not a header.
+	 */
+	getHeaderLevel (block: I.Block): number {
+		if (!block || !block.isTextHeader()) {
+			return 0;
+		};
+		if (block.isTextHeader1()) return 1;
+		if (block.isTextHeader2()) return 2;
+		if (block.isTextHeader3()) return 3;
+		return 0;
+	};
+
+	/**
+	 * Checks if a block is inside a table or column layout (nested structure).
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {boolean} True if inside a table or column.
+	 */
+	isInsideTableOrColumn (rootId: string, blockId: string): boolean {
+		let current = this.getParentLeaf(rootId, blockId);
+
+		while (current && !current.isPage()) {
+			if (current.isTable() || current.isLayoutColumn() || current.isLayoutRow()) {
+				return true;
+			};
+			current = this.getParentLeaf(rootId, current.id);
+		};
+
+		return false;
+	};
+
+	/**
+	 * Checks if a block is hidden under a collapsed header.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {boolean} True if the block is hidden under a collapsed header.
+	 */
+	isBlockHiddenByHeader (rootId: string, blockId: string): boolean {
+		const toggles = Storage.getToggle(rootId);
+		if (!toggles.length) {
+			return false;
+		};
+
+		// Get all blocks in document order
+		const flatList: { block: I.Block; isNested: boolean }[] = [];
+
+		const collectBlocks = (id: string, isNested: boolean) => {
+			const block = this.getLeaf(rootId, id);
+			if (!block) {
+				return;
+			};
+
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+
+			if (!block.isPage()) {
+				flatList.push({ block, isNested });
+			};
+
+			const childrenIds = this.getChildrenIds(rootId, id);
+			for (const childId of childrenIds) {
+				collectBlocks(childId, childrenNested);
+			};
+		};
+
+		collectBlocks(rootId, false);
+
+		// Find the block index
+		const blockIndex = flatList.findIndex(item => item.block.id === blockId);
+		if (blockIndex < 0) {
+			return false;
+		};
+
+		// Check if any header before this block hides it
+		for (let i = 0; i < blockIndex; i++) {
+			const { block, isNested } = flatList[i];
+
+			if (isNested) continue;
+
+			const headerLevel = this.getHeaderLevel(block);
+			if (headerLevel === 0) continue;
+
+			const isToggled = toggles.includes(block.id);
+			if (!isToggled) continue;
+
+			// Check if this header hides the target block
+			for (let j = i + 1; j < flatList.length; j++) {
+				const { block: nextBlock, isNested: nextIsNested } = flatList[j];
+
+				const nextHeaderLevel = this.getHeaderLevel(nextBlock);
+				if (nextHeaderLevel > 0 && !nextIsNested && nextHeaderLevel <= headerLevel) {
+					break;
+				};
+
+				if (nextBlock.id === blockId) {
+					return true;
+				};
+			};
+		};
+
+		return false;
+	};
+
+	/**
+	 * Gets the header that hides a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {I.Block|null} The header block that hides this block, or null.
+	 */
+	getHidingHeader (rootId: string, blockId: string): I.Block {
+		const toggles = Storage.getToggle(rootId);
+		if (!toggles.length) {
+			return null;
+		};
+
+		const flatList: { block: I.Block; isNested: boolean }[] = [];
+
+		const collectBlocks = (id: string, isNested: boolean) => {
+			const block = this.getLeaf(rootId, id);
+			if (!block) {
+				return;
+			};
+
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+
+			if (!block.isPage()) {
+				flatList.push({ block, isNested });
+			};
+
+			const childrenIds = this.getChildrenIds(rootId, id);
+			for (const childId of childrenIds) {
+				collectBlocks(childId, childrenNested);
+			};
+		};
+
+		collectBlocks(rootId, false);
+
+		const blockIndex = flatList.findIndex(item => item.block.id === blockId);
+		if (blockIndex < 0) {
+			return null;
+		};
+
+		// Find the header that hides this block (closest one)
+		let hidingHeader: I.Block = null;
+
+		for (let i = 0; i < blockIndex; i++) {
+			const { block, isNested } = flatList[i];
+
+			if (isNested) continue;
+
+			const headerLevel = this.getHeaderLevel(block);
+			if (headerLevel === 0) continue;
+
+			const isToggled = toggles.includes(block.id);
+			if (!isToggled) continue;
+
+			for (let j = i + 1; j < flatList.length; j++) {
+				const { block: nextBlock, isNested: nextIsNested } = flatList[j];
+
+				const nextHeaderLevel = this.getHeaderLevel(nextBlock);
+				if (nextHeaderLevel > 0 && !nextIsNested && nextHeaderLevel <= headerLevel) {
+					break;
+				};
+
+				if (nextBlock.id === blockId) {
+					hidingHeader = block;
+					break;
+				};
+			};
+		};
+
+		return hidingHeader;
+	};
+
+	/**
+	 * Updates header toggle visibility for all blocks.
+	 * Hides blocks that are under collapsed headers.
+	 * @param {string} rootId - The root ID.
+	 */
+	updateHeadersToggle (rootId: string) {
+		const toggles = Storage.getToggle(rootId);
+		const flatList: { block: I.Block; isNested: boolean }[] = [];
+
+		const collectBlocks = (blockId: string, isNested: boolean) => {
+			const block = this.getLeaf(rootId, blockId);
+			if (!block) {
+				return;
+			};
+
+			// Determine if children will be nested
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+
+			// Add this block to the list (skip the root page block)
+			if (!block.isPage()) {
+				flatList.push({ block, isNested });
+			};
+
+			// Recursively collect children
+			const childrenIds = this.getChildrenIds(rootId, blockId);
+			for (const childId of childrenIds) {
+				collectBlocks(childId, childrenNested);
+			};
+		};
+
+		collectBlocks(rootId, false);
+
+		// Process headers and their sections
+		const hiddenBlockIds = new Set<string>();
+
+		for (let i = 0; i < flatList.length; i++) {
+			const { block, isNested } = flatList[i];
+
+			// Skip if this header is nested (inside table/column)
+			if (isNested) {
+				continue;
+			};
+
+			const headerLevel = this.getHeaderLevel(block);
+			if (!headerLevel) {
+				continue;
+			};
+
+			// Check if this header is toggled closed
+			const isToggled = toggles.includes(block.id);
+			if (!isToggled) {
+				continue;
+			};
+
+			// Find all blocks to hide until the next header of same or higher level
+			for (let j = i + 1; j < flatList.length; j++) {
+				const { block: nextBlock, isNested: nextIsNested } = flatList[j];
+
+				// Check if this is a header that ends our section
+				const nextHeaderLevel = this.getHeaderLevel(nextBlock);
+				if (nextHeaderLevel > 0 && !nextIsNested && nextHeaderLevel <= headerLevel) {
+					// Found a header of same or higher level (not nested), stop hiding
+					break;
+				};
+
+				// Hide this block
+				hiddenBlockIds.add(nextBlock.id);
+			};
+		};
+
+		// Apply hidden state to DOM
+		for (const { block } of flatList) {
+			const element = $(`#block-${block.id}`);
+			if (!element.length) {
+				continue;
+			};
+
+			const shouldBeHidden = hiddenBlockIds.has(block.id);
+			element.toggleClass('isHeaderChildHidden', shouldBeHidden);
+		};
 	};
 
 	/**
@@ -911,7 +1188,6 @@ class BlockStore {
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
-
 			if (!marks.length) {
 				continue;
 			};
@@ -1012,24 +1288,6 @@ class BlockStore {
 	 */
 	updateWidgetData (rootId: string) {
 		this.triggerWidgetEvent('updateWidgetData', rootId);
-	};
-
-	/**
-	 * Updates the content of a block in all widgets for a root.
-	 * @param {string} rootId - The root ID.
-	 * @param {string} blockId - The block ID.
-	 * @param {any} content - The new content.
-	 */
-	updateWidgetBlockContent (rootId: string, blockId: string, content: any) {
-		const widgets = this.getWidgetsForTarget(rootId);
-		const children = widgets.reduce((a: string[], c: any) => {
-			return a.concat(c.childBlocks.map(c => c.id));
-		}, []);
-		const rootIds = children.map(it => `${rootId}-widget-${it}`);
-
-		rootIds.forEach(rid => {
-			this.updateContent(rid, blockId, content);
-		});
 	};
 
 	/**

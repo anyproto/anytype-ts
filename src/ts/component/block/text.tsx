@@ -9,6 +9,7 @@ import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, anal
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
+	onHeaderToggle?(e: any): void;
 };
 
 for (const lang of U.Prism.components) {
@@ -32,9 +33,9 @@ const TWIN_PAIRS = {
 
 const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
-	const { 
-		rootId, block, readonly, isPopup, isInsideTable, 
-		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp, 
+	const {
+		rootId, block, readonly, isPopup, isInsideTable,
+		onUpdate, onMenuAdd, onToggle, onHeaderToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp,
 		renderLinks, renderObjects, renderMentions, renderEmoji,
 	} = props;
 	const { id, content } = block;
@@ -1186,9 +1187,16 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			marker = { type: I.MarkerType.Toggle, onClick: onToggle };
 			break;
 		};
-			
+
 		case I.TextStyle.Checkbox: {
 			marker = { type: I.MarkerType.Checkbox, active: checked, onClick: onCheckbox };
+			break;
+		};
+
+		case I.TextStyle.Header1:
+		case I.TextStyle.Header2:
+		case I.TextStyle.Header3: {
+			marker = { type: I.MarkerType.Toggle, className: 'markerHeader', onClick: onHeaderToggle };
 			break;
 		};
 	};
