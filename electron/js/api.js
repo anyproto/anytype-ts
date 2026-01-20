@@ -647,6 +647,132 @@ class Api {
 		Util.send(win, 'set-tabs-dimmer', show);
 	};
 
+	getWindowBounds (win) {
+		return WindowManager.getBounds(win);
+	};
+
+	getCursorScreenPoint (win) {
+		const { screen } = require('electron');
+		return screen.getCursorScreenPoint();
+	};
+
+	/**
+	 * Detaches a tab from its window, either creating a new window or moving to an existing one
+	 * @param {BrowserWindow} win - Source window
+	 * @param {Object} param - Parameters { tabId, mouseX, mouseY }
+	 */
+	detachTab (win, param) {
+		const { tabId, mouseX, mouseY } = param || {};
+
+		if (!tabId || !win || !win.views) {
+			return;
+		};
+
+		// Don't detach if this is the only tab
+		if (win.views.length <= 1) {
+			return;
+		};
+
+		// Find the tab to detach
+		const tab = win.views.find(it => it.id == tabId);
+		if (!tab) {
+			return;
+		};
+
+		// Get tab data before removing
+		const tabData = { ...tab.data };
+
+		// Check if there's another window at the mouse position
+		const targetWin = this.getWindowAtPoint(mouseX, mouseY, win);
+
+		if (targetWin) {
+			// Transfer tab to existing window
+			this.transferTabToWindow(win, targetWin, tabId, tabData);
+		} else {
+			// Create new window with this tab
+			this.createWindowFromTab(win, tabId, tabData, mouseX, mouseY);
+		};
+	};
+
+	/**
+	 * Finds a window at the given screen coordinates, excluding a specific window
+	 * @param {number} x - Screen X coordinate
+	 * @param {number} y - Screen Y coordinate
+	 * @param {BrowserWindow} excludeWin - Window to exclude from search
+	 * @returns {BrowserWindow|null}
+	 */
+	getWindowAtPoint (x, y, excludeWin) {
+		for (const win of WindowManager.list) {
+			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+				continue;
+			};
+
+			const bounds = WindowManager.getBounds(win);
+			if (!bounds) {
+				continue;
+			};
+
+			if (x >= bounds.x && x <= bounds.x + bounds.width &&
+				y >= bounds.y && y <= bounds.y + bounds.height) {
+				return win;
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Transfers a tab from source window to target window
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {BrowserWindow} targetWin - Target window
+	 * @param {string} tabId - Tab ID to transfer
+	 * @param {Object} tabData - Tab data
+	 */
+	transferTabToWindow (sourceWin, targetWin, tabId, tabData) {
+		// Create tab in target window first
+		WindowManager.createTab(targetWin, tabData, { setActive: true });
+
+		// Remove tab from source window after target is ready
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus target window once after removal is done
+			if (targetWin && !targetWin.isDestroyed()) {
+				targetWin.focus();
+			};
+		}, 100);
+	};
+
+	/**
+	 * Creates a new window from a detached tab
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {string} tabId - Tab ID to detach
+	 * @param {Object} tabData - Tab data
+	 * @param {number} mouseX - Mouse X screen coordinate
+	 * @param {number} mouseY - Mouse Y screen coordinate
+	 */
+	createWindowFromTab (sourceWin, tabId, tabData, mouseX, mouseY) {
+		// Get source window size
+		const sourceBounds = WindowManager.getBounds(sourceWin);
+		const width = sourceBounds?.width;
+		const height = sourceBounds?.height;
+
+		// Create new window first, then remove tab from source (to avoid race conditions)
+		const newWin = WindowManager.createMain({
+			isChild: true,
+			initialBounds: { x: mouseX - 50, y: mouseY - 20, width, height },
+			initialTabData: tabData,
+		});
+
+		// Remove tab from source window after new window is created
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus new window once after removal is done
+			if (newWin && !newWin.isDestroyed()) {
+				newWin.focus();
+			};
+		}, 100);
+	};
+
 	notification (win, param) {
 		const { id, title, text, cmd, payload } = param || {};
 

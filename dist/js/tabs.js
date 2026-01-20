@@ -17,6 +17,20 @@ $(() => {
 	let activeId = '';
 	let timeoutResize = 0;
 
+	// Tab detach state
+	let windowBounds = null;
+	let draggedTabId = null;
+	let lastCursorPos = null;
+	let cursorPollInterval = null;
+
+	// Clean up polling
+	const stopCursorPolling = () => {
+		if (cursorPollInterval) {
+			clearInterval(cursorPollInterval);
+			cursorPollInterval = null;
+		};
+	};
+
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
 
@@ -150,6 +164,21 @@ $(() => {
 		}, 40);
 	};
 
+	// Check if screen coordinates are outside window bounds
+	const isOutsideWindow = (screenX, screenY) => {
+		if (!windowBounds) {
+			return false;
+		};
+
+		const padding = 10;
+		return (
+			screenX < windowBounds.x - padding ||
+			screenX > windowBounds.x + windowBounds.width + padding ||
+			screenY < windowBounds.y - padding ||
+			screenY > windowBounds.y + windowBounds.height + padding
+		);
+	};
+
 	const initSortable = () => {
 		if (sortable) {
 			sortable.destroy();
@@ -167,8 +196,9 @@ $(() => {
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
-			onStart: (evt) => {
+			onStart: async (evt) => {
 				isDragging = true;
+				draggedTabId = $(evt.item).attr('data-id');
 
 				const item = $(evt.item);
 				item.css('visibility', 'hidden');
@@ -177,15 +207,61 @@ $(() => {
 					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
 				};
+
+				// Get window bounds for detecting drag outside (await to ensure it's ready)
+				try {
+					windowBounds = await electron.Api(winId, 'getWindowBounds');
+				} catch (e) {};
+
+				// Poll cursor position during drag (needed because mouse events don't fire outside window)
+				stopCursorPolling(); // Clear any existing interval first
+				cursorPollInterval = setInterval(async () => {
+					if (!isDragging) {
+						stopCursorPolling();
+						return;
+					};
+					try {
+						lastCursorPos = await electron.Api(winId, 'getCursorScreenPoint');
+					} catch (e) {};
+				}, 100);
 			},
 			onChange: (evt) => {
 				updateMarkerPosition(draggedActiveId || activeId);
 			},
-			onEnd: (evt) => {
+			onEnd: async (evt) => {
+				const tabId = draggedTabId;
+				const bounds = windowBounds;
+				const cursorPos = lastCursorPos;
+
+				// Stop polling
+				stopCursorPolling();
+
 				isDragging = false;
+				body.removeClass('draggingOutside');
 
 				const item = $(evt.item);
 				item.css('visibility', '');
+
+				// Check if cursor was outside window (using last polled position)
+				if (tabId && bounds && cursorPos) {
+					const isOutside = isOutsideWindow(cursorPos.x, cursorPos.y);
+					if (isOutside) {
+						const tabs = container.find('.tab:not(.isAdd)');
+						// Only allow detach if there's more than one tab
+						if (tabs.length > 1) {
+							electron.Api(winId, 'detachTab', {
+								tabId: tabId,
+								mouseX: cursorPos.x,
+								mouseY: cursorPos.y,
+							});
+						};
+					};
+				};
+
+				// Reset detach state
+				draggedTabId = null;
+				windowBounds = null;
+				lastCursorPos = null;
 
 				draggedActiveId = null;
 				marker.addClass('anim').css('pointer-events', '');
