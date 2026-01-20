@@ -2290,9 +2290,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				S.Block.toggle(rootId, message.blockId, true);
 			};
 
-			// Expand header when creating a new block after it
-			if (isHeader && !isOpen) {
-				S.Block.headerToggle(rootId, focused.id, true);
+			// Expand collapsed header when creating a new block after it
+			if (isHeader && isOpen && (range.to == length)) {
+				S.Block.headerToggle(rootId, focused.id, false);
 			};
 
 			const text = focused.getText();
