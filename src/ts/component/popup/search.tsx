@@ -487,7 +487,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						window.setTimeout(() => {
 							focus.scroll(keyboard.isPopup(), meta.blockId);
 						}, J.Constant.delay.route);
-					}
+					},
 				});
 			} else
 

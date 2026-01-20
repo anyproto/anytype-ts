@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
+import menu from 'json/menu';
 
 const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -40,12 +41,15 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			return;
 		};
 
+		let menuContext = null;
+
 		const menuParam = {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
+			onOpen: context => menuContext = context,
 			data: {},
 		};
 
@@ -61,6 +65,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 						analytics.event('SetSelectQuery', { type: 'type' });
 						close();
+						menuContext?.close();
 					},
 				};
 				break;
@@ -79,6 +84,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 						};
 
 						close();
+						menuContext?.close();
 					},
 				};
 				break;

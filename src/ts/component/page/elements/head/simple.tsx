@@ -189,7 +189,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 			};
 
 			analytics.event('CreateTemplate', { objectType: newObject.type, route: analytics.route.screenType });
-			U.Object.openConfig(newObject);
+			U.Object.openConfig(null, newObject);
 		});
 	};
 

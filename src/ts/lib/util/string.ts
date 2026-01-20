@@ -89,9 +89,11 @@ class UtilString {
 		
 			if (!precision) {
 				precision = 'fFeE'.indexOf(type) > -1 ? 6 : (type == 'd') ? 0 : void(0);
-			} else if (precision == '*') {
+			} else 
+			if (precision == '*') {
 				precision = +a[i++];
-			} else if (precision.charAt(0) == '*') {
+			} else 
+			if (precision.charAt(0) == '*') {
 				precision = +a[precision.slice(1, -1)];
 			} else {
 				precision = +precision;

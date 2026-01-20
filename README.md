@@ -89,6 +89,8 @@ anytypeHelper &       # or ./bin/anytypeHelper
 npm run start:dev     # Windows: npm run start:dev-win
 ```
 
+For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
+
 Optional env vars:
 
 | Name         | Purpose                                  |

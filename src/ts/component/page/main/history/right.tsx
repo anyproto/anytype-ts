@@ -32,6 +32,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 	const togglesRef = useRef<string[]>([]);
 	const lastIdRef = useRef('');
 	const topRef = useRef(0);
+	const originalLayoutRef = useRef<I.ObjectLayout>(null);
 	const year = U.Date.date('Y', U.Date.now());
 	const canWrite = U.Space.canMyParticipantWrite();
 	const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
@@ -54,7 +55,9 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onClose = () => {
-		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
+		const object = S.Detail.get(rootId, rootId, []);
+		
+		U.Object.openAuto({ ...object, layout: originalLayoutRef.current ?? object.layout });
 	};
 
 	const onRestore = (e: any) => {
@@ -178,9 +181,14 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		};
 	};
 
-	const loadList = (id: string) => { 
+	const loadList = (id: string) => {
 		const object = S.Detail.get(rootId, rootId);
-		
+
+		// Store original layout on initial load before any version overwrites it
+		if (!id && (originalLayoutRef.current === null)) {
+			originalLayoutRef.current = object.layout;
+		};
+
 		if (isLoading || (lastIdRef.current && (id == lastIdRef.current))) {
 			return;
 		};

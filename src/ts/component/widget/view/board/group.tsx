@@ -48,8 +48,8 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(Dataview.filterMapper),
-				sorts: sorts.map(Dataview.filterMapper),
+				filters: filters.map(it => Dataview.filterMapper(it)),
+				sorts: sorts.map(it => Dataview.sortMapper(it)),
 				keys: J.Relation.sidebar,
 				sources: object.setOf || [],
 				limit,
@@ -134,7 +134,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onAll = (e: any) => {
-		U.Object.openEvent(e, { ...object, _routeParam_: { viewId } });
+		U.Object.openConfig(e, { ...object, _routeParam_: { viewId } });
 	};
 
 	useEffect(() => {

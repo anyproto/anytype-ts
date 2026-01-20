@@ -139,8 +139,33 @@ class Util {
 		};
 	};
 
+	getView (win, id) {
+		return win?.views?.find(v => v.id == id);
+	};
+
+	getActiveView (win) {
+		return this.getView(win, win?.activeTabId);
+	};
+
+	setNativeThemeSource () {
+		const { theme } = ConfigManager.config;
+		
+		switch (theme) {
+			case 'system':
+			case 'dark': {
+				nativeTheme.themeSource = theme;
+				break;
+			};
+
+			default: {
+				nativeTheme.themeSource = 'light';
+				break;
+			};
+		};
+	};
+
 	sendToActiveTab (win, ...args) {
-		const view = win?.views?.[win.activeIndex];
+		const view = this.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.send(...args);
 		};
@@ -162,7 +187,7 @@ class Util {
 		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
-		const view = win?.views?.[win.activeIndex];
+		const view = this.getActiveView(win);
 		const webContents = view?.webContents || win.webContents;
 
 		try { fs.mkdirSync(filesPath); } catch (e) {};
@@ -240,7 +265,7 @@ class Util {
 	};
 
 	printPdf (win, exportPath, name, options) {
-		const view = win?.views?.[win.activeIndex];
+		const view = this.getActiveView(win);
 		const webContents = view?.webContents || win.webContents;
 
 		webContents.printToPDF(options).then(data => {

@@ -61,9 +61,8 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		e.preventDefault();
 
 		const cb = {
-			0: () => { 
-				keyboard.withCommand(e) ? U.Object.openEvent(e, record) : U.Object.openConfig(record); 
-			},
+			0: () => U.Object.openConfig(e, record),
+			1: () => U.Object.openConfig(e, record),
 			2: () => onContext(e, record.id)
 		};
 

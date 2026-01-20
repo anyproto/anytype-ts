@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -7,11 +7,13 @@ import { I, S, U, J, sidebar, keyboard } from 'Lib';
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
 	onScroll?: () => void;
+	forceUpdate?: () => void;
 };
 
 const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComponent>((props, ref) => {
 
 	const { rootId, isPopup } = props;
+	const [ dummy, setDummy] = useState(0);
 	const nodeRef = useRef(null);
 	const tree = S.Block.getTableOfContents(rootId, true).slice(0, J.Constant.limit.tableOfContents);
 	const blockRef = useRef('');
@@ -161,6 +163,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	useImperativeHandle(ref, () => ({
 		setBlock,
 		onScroll,
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	if ((tree.length < 2) || isOpen) {

@@ -8,7 +8,7 @@ const ACCOUNT_KEYS = [
 
 const SPACE_KEYS = [
 	'toggle',
-	'lastOpenedObject',
+	'lastOpenedSimple',
 	'scroll',
 	'defaultType',
 	'chat',
@@ -27,6 +27,7 @@ const LOCAL_KEYS = [
 	'graphData',
 	'progress',
 	'updateBanner',
+	'lastOpenedSimple',
 ];
 
 const Api = {
@@ -216,6 +217,8 @@ class Storage {
 
 		delete(obj[spaceId][key]);
 
+		console.log('deleteSpaceKey', key, spaceId, obj);
+
 		this.setSpace(obj, isLocal);
 	};
 
@@ -366,63 +369,15 @@ class Storage {
 	 * @returns {any} The last opened objects.
 	 */
 	getLastOpened () {
-		return this.get('lastOpenedObject', this.isLocal('lastOpenedObject')) || {};
+		return this.get('lastOpenedSimple', this.isLocal('lastOpenedSimple')) || {};
 	};
 
 	/**
 	 * Sets the last opened object for a window.
-	 * @param {string} tabId - The window ID.
 	 * @param {any} param - The parameters to set.
 	 */
-	setLastOpened (tabId: string, param: any) {
-		const obj = this.getLastOpened();
-
-		obj[tabId] = Object.assign(obj[tabId] || {}, param);
-		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
-	};
-
-	/**
-	 * Deletes last opened objects by object IDs.
-	 * @param {string[]} ids - The object IDs to delete.
-	 */
-	deleteLastOpenedByObjectId (ids: string[]) {
-		ids = ids || [];
-
-		const obj = this.getLastOpened();
-		const tabIds = [];
-
-		for (const tabId in obj) {
-			if (!obj[tabId] || ids.includes(obj[tabId].id)) {
-				tabIds.push(tabId);
-			};
-		};
-
-		this.deleteLastOpenedByTabId(tabIds);
-	};
-
-	/**
-	 * Deletes last opened objects by window IDs.
-	 * @param {string[]} ids - The tab IDs to delete.
-	 */
-	deleteLastOpenedByTabId (ids: string[]) {
-		if (!ids.length) {
-			return;
-		};
-
-		const obj = this.getLastOpened();
-
-		ids.forEach(ids => delete(obj[ids]));
-		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
-	};
-
-	/**
-	 * Gets the last opened object by window ID.
-	 * @param {string} id - The window ID.
-	 * @returns {any} The last opened object.
-	 */
-	getLastOpenedByTabId (id: string) {
-		const obj = this.getLastOpened();
-		return obj[id] || obj[1] || null;
+	setLastOpened (param: any) {
+		this.set('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'));
 	};
 
 	/**
@@ -745,6 +700,14 @@ class Storage {
 		obj.zoom.y = Number(obj.zoom.y) || 0;
 
 		return obj;
+	};
+
+	clearOldKeys () {
+		const spaces = U.Space.getList();
+
+		spaces.forEach(space => {
+			this.deleteSpaceKey('lastOpenedObject', false, space.targetSpaceId);
+		});
 	};
 	
 };

@@ -219,7 +219,7 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 			e.persist();
 		};
 
-		U.Object.openEvent(e, item);
+		U.Object.openConfig(e, item);
 	};
 
 	const getRootId = () => {

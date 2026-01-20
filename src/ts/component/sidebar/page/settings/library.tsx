@@ -296,7 +296,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				menuId = 'blockRelationEdit';
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId: item.id,
-					filter: filter.current,
+					filter: item.name,
 					relationId: item.id,
 					route: analytics.route.settingsSpace,
 					noUnlink: true,
@@ -460,12 +460,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				<div className="side left">
 					<Icon className="back withBackground" onClick={onBack} />
 				</div>
-				<div className="side center" />
-				<div className="side right" />
-			</div>
-
-			<div className="subHead">
-				<div className="side left" />
 				<div className="side center">
 					<div className="name">{title}</div>
 				</div>

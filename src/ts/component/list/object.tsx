@@ -192,7 +192,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 						};
 
 						if (!object._empty_) {
-							onClick = () => U.Object.openConfig(object);
+							onClick = e => U.Object.openEvent(e, object);
 							content = (
 								<div className="flex">
 									<IconObject object={object} />

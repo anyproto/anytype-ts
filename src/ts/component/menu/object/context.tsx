@@ -4,6 +4,8 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
 
+const LIMIT_OPEN = 10;
+
 const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, getId, getSize, close } = props;
@@ -142,6 +144,10 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			allowedLink = false;
 			allowedPin = false;	
 			allowedEditChat = false;
+		};
+
+		if (length > LIMIT_OPEN) {
+			allowedNewTab = false;
 		};
 
 		if (!canWrite) {
@@ -375,7 +381,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		switch (item.id) {
 
 			case 'open': {
-				U.Object.openConfig(first);
+				U.Object.openConfig(null, first);
 				break;
 			};
 
@@ -386,7 +392,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					};
 
 					if (first) {
-						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
+						U.Object.openConfig(null, { id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count: length, route });
@@ -463,13 +469,16 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 				break;
 			};
 
-			case 'newTab': {
-				U.Object.openTab(first);
-				break;
-			};
-
+			case 'newTab':
 			case 'newWindow': {
-				U.Object.openWindow(first);
+				const slice = objectIds.slice(0, LIMIT_OPEN);
+				const objects = slice.map(id => getObjectHandler(subId, getObject, id)).filter(it => it);
+
+				if (item.id == 'newTab') {
+					U.Object.openTabs(objects);
+				} else {
+					U.Object.openWindows(objects, S.Auth.token);
+				};
 				break;
 			};
 

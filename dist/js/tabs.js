@@ -7,19 +7,33 @@ $(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const menuBar = $('#menuBar');
+	const tabsWrapper = $('#tabsWrapper');
 	const theme = Electron.getTheme();
 
 	let sortable = null;
 	let isDragging = false;
 	let draggedActiveId = '';
-	let activeId = ''
+	let activeId = '';
+	let timeoutResize = 0;
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
-	
+
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
 	};
+
+	const config = electron.getConfig();
+	const showMenuBar = config.showMenuBar !== false; // Default to true
+
+	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Menu bar button handlers (Windows and Linux)
+	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
+	menuBar.find('#window-min').off('click').on('click', () => electron.Api(winId, 'minimize'));
+	menuBar.find('#window-max').off('click').on('click', () => electron.Api(winId, 'maximize'));
+	menuBar.find('#window-close').off('click').on('click', () => electron.Api(winId, 'close'));
 
 	const setActive = (id, animate) => {
 		container.find('.tab.active').removeClass('active');
@@ -120,15 +134,20 @@ $(() => {
 		`);
 
 		tab.off('click').on('click', () => {
-			electron.Api(winId, 'createTab');
+			electron.Api(winId, 'openTab', '', {}, { setActive: true });
 		});
 
 		return tab;
 	};
 
-	const updateNoClose = () => {
-		const tabs = container.find('.tab:not(.isAdd)');
-		tabs.toggleClass('noClose', tabs.length == 1);
+	const resize = () => {
+		window.clearTimeout(timeoutResize);
+		timeoutResize = window.setTimeout(() => {
+			const tabs = container.find('.tab:not(.isAdd)');
+
+			tabs.toggleClass('noClose', tabs.length == 1);
+			updateMarkerPosition(activeId);
+		}, 40);
 	};
 
 	const initSortable = () => {
@@ -143,7 +162,8 @@ $(() => {
 		};
 
 		sortable = new Sortable(container[0], {
-			animation: 0,
+			animation: 150,
+			easing: 'ease-in-out',
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
@@ -159,9 +179,7 @@ $(() => {
 				};
 			},
 			onChange: (evt) => {
-				if (draggedActiveId) {
-					setTimeout(() => updateMarkerPosition(draggedActiveId), 40);
-				};
+				updateMarkerPosition(draggedActiveId || activeId);
 			},
 			onEnd: (evt) => {
 				isDragging = false;
@@ -169,12 +187,9 @@ $(() => {
 				const item = $(evt.item);
 				item.css('visibility', '');
 
-				const wasActive = draggedActiveId !== null;
 				draggedActiveId = null;
-
-				if (wasActive) {
-					marker.addClass('anim').css('pointer-events', '');
-				};
+				marker.addClass('anim').css('pointer-events', '');
+				updateMarkerPosition(activeId);
 
 				const tabIds = [];
 				container.find('.tab:not(.isAdd)').each((i, el) => {
@@ -204,12 +219,12 @@ $(() => {
 		});
 
 		container.append(renderAdd());
-		updateNoClose();
+		resize();
 		setActive(id, false);
 
 		// Set visibility if provided
 		if (typeof isVisible === 'boolean') {
-			$('.container').toggleClass('isHidden', !isVisible);
+			tabsWrapper.toggleClass('isHidden', !isVisible);
 		};
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
@@ -231,7 +246,7 @@ $(() => {
 		};
 
 		container.find('.tab.isAdd').before(renderTab(tab));
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
@@ -254,33 +269,18 @@ $(() => {
 		if (isDragging) return;
 
 		container.find(`#tab-${id}`).remove();
-		updateNoClose();
+		resize();
 		setTimeout(() => initSortable(), 10);
 	});
 
-	electron.on('update-tab-bar-visibility', (e, isVisible) => {
-		$('.container').toggleClass('isHidden', !isVisible);
-	});
-
-	electron.on('set-theme', (e, theme) => {
-		$('html').toggleClass('themeDark', theme == 'dark');
-	});
-
-	electron.on('set-tabs-dimmer', (e, show) => {
-		body.toggleClass('showDimmer', show);
-	});
-
-	electron.on('enter-full-screen', () => {
-		body.addClass('isFullScreen');
-	});
-
-	electron.on('leave-full-screen', () => {
-		body.removeClass('isFullScreen');
-	});
-
-	win.off('resize.tabs').on('resize.tabs', () => {
-		updateMarkerPosition(activeId);
-	});
+	electron.on('update-tab-bar-visibility', (e, isVisible) => tabsWrapper.toggleClass('isHidden', !isVisible));
+	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
+	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
+	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
+	electron.on('set-menu-bar-visibility', (e, show) => body.toggleClass('showMenuBar', show));
+	electron.on('enter-full-screen', () => body.addClass('isFullScreen'));
+	electron.on('leave-full-screen', () => body.removeClass('isFullScreen'));
+	win.off('resize.tabs').on('resize.tabs', resize);
 
 	function ucFirst (str) {
 		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();

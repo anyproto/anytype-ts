@@ -312,7 +312,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		if (item.arrow && !item.skipOver || !block) {
+		if (item.arrow && !item.skipOver) {
+			return;
+		};
+
+		if (!block) {
 			return;
 		};
 		
@@ -452,7 +456,9 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				close(() => {
 					window.setTimeout(() => S.Menu.open(menuId, menuParam), S.Menu.getTimeout());
 				});
-			} else
+				return;
+			};
+
 			if (item.isBlock) {
 				let param: any = {
 					type: item.type,
@@ -566,7 +572,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					};
 
 					U.Object.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], analytics.route.powertool, (message: any) => {
-						U.Object.openConfig(message.details);
+						U.Object.openConfig(null, message.details);
 						analytics.event('CreateLink');
 					});
 				} else {

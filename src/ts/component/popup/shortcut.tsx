@@ -12,6 +12,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ editingId, setEditingId ] = useState('');
 	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
+	const filterRef = useRef(null);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
@@ -46,12 +47,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 						case 'reset': {
 							Storage.resetShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
 
 						case 'remove': {
 							Storage.removeShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
@@ -277,6 +280,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
+		window.setTimeout(() => {
+			filterRef.current?.setRange({ from: 0, to: 0 });
+		}, 50);
+
 		return () => {
 			clear();
 			$(window).off('keyup.shortcut keydown.shortcut');
@@ -480,7 +487,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					</div>
 				</div>
 				<div className="filterWrap">
-					<Filter className="outlined" onChange={onFilterChange} />
+					<Filter 
+						ref={filterRef}
+						className="outlined" 
+						onChange={onFilterChange} 
+						focusOnMount={true}
+					/>
 				</div>
 			</div>
 

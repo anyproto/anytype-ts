@@ -443,7 +443,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: view.showFilters },
 		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
 		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
@@ -456,10 +456,16 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			cn.push('on');
 		};
 
+		let inner = null;
+		if ((item.id == 'filter') && filterCnt) {
+			inner = <div className="bullet" />;
+		};
+
 		return (
 			<Icon
 				id={elementId} 
 				className={cn.join(' ')}
+				inner={inner}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>

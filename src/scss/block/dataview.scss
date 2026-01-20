@@ -131,10 +131,17 @@
 
 			.icon { position: relative; transition: $transitionAllCommon; }
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); background-color: var(--color-shape-highlight-medium); }
 			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
 			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
 			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+
+			.icon.btn-filter {
+				.bullet {
+					position: absolute; right: -2px; top: -2px; width: 10px; height: 10px; border-radius: 50%;
+					border: 2px solid var(--color-bg-primary); background: var(--color-system-accent-100);
+				}
+			}
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {

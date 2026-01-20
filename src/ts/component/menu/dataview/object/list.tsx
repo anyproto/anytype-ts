@@ -20,7 +20,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = param;
 	const { 
-		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, 
+		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, dataChange,
 		placeholderFocus = translate('commonFilterObjects'),
 	} = data;
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
@@ -151,6 +151,11 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		const typeNames = getTypeNames();
 
 		let ret = U.Common.objectCopy(itemsRef.current);
+
+		if (dataChange) {
+			ret = dataChange(this, ret);
+		};
+
 		if (canEdit) {
 			ret = ret.filter(it => !value.includes(it.id));
 		};
@@ -222,7 +227,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		};
 
 		if (!canEdit) {
-			U.Object.openConfig(item);
+			U.Object.openConfig(e, item);
 			return;
 		};
 
@@ -295,7 +300,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			return null;
 		};
 
-		const type = S.Record.getTypeById(item.type);
+		const type = item.type ? S.Record.getTypeById(item.type) : null;
 
 		let content = null;
 		if (item.isDiv) {
@@ -307,23 +312,16 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		} else
 		if (item.isSection) {
 			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-		} else
-		if (item.id == 'add') {
-			content = (
-				<div id="item-add" className="item add" onMouseEnter={e => onOver(e, item)} onClick={e => onClick(e, item)} style={param.style}>
-					<Icon className="plus" />
-					<div className="name">{item.name}</div>
-				</div>
-			);
 		} else {
 			content = (
 				<MenuItemVertical 
 					id={item.id}
-					object={item}
+					object={item.isSystem ? null : item}
+					icon={item.icon}
 					name={<ObjectName object={item} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}
-					caption={type ? <ObjectType object={type} /> : null}
+					caption={type ? <ObjectType object={type} /> : ''}
 					style={param.style}
 				/>
 			);

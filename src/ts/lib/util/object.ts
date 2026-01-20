@@ -94,10 +94,26 @@ class UtilObject {
 		return param;
 	};
 
+	getTabData (object: any) {
+		if (!object) {
+			return;
+		};
+
+		const spaceview = U.Space.getSpaceview();
+
+		return { 
+			title: U.Object.name(object, true),
+			icon: U.Graph.imageSrc(object),
+			layout: object.layout,
+			isImage: object.iconImage,
+			uxType: spaceview?.uxType,
+		};
+	};
+
 	/**
 	 * Open an object based on keyboard modifiers in the event.
 	 * - Shift or popup context: Opens in popup
-	 * - Cmd/Ctrl: Opens in new tab
+	 * - Cmd/Ctrl or middle mouse button: Opens in new tab
 	 * - Default: Opens via route navigation
 	 * @param e - The DOM event (for modifier key detection)
 	 * @param object - The object to open
@@ -121,7 +137,7 @@ class UtilObject {
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
-		if ((e.metaKey || e.ctrlKey)) {
+		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
 			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
@@ -156,6 +172,10 @@ class UtilObject {
 	};
 	
 	openRoute (object: any, param?: Partial<I.RouteParam>) {
+		if (!object) {
+			return;
+		};
+
 		param = this.checkParam(param);
 
 		keyboard.setSource(null);
@@ -167,7 +187,38 @@ class UtilObject {
 	};
 
 	openTab (object: any) {
-		Renderer.send('openTab', this.route(object));
+		if (!object) {
+			return;
+		};
+
+		Renderer.send('openTab', this.route(object), this.getTabData(object), { setActive: false });
+	};
+
+	openTabs (objects: any[]) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const tabs = objects.filter(it => it).map(object => ({
+			route: this.route(object),
+			data: this.getTabData(object),
+		}));
+
+		if (tabs.length) {
+			Renderer.send('openTabs', tabs);
+		};
+	};
+
+	openWindows (objects: any[], token: string) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const routes = objects.filter(it => it).map(object => this.route(object));
+
+		if (routes.length) {
+			Renderer.send('openWindows', routes, token);
+		};
 	};
 
 	openPopup (object: any, param?: any) {
@@ -211,7 +262,12 @@ class UtilObject {
 	/**
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
-	openConfig (object: any, param?: any) {
+	openConfig (e: any, object: any, param?: any) {
+		if (e && (e.button == 1)) {
+			this.openTab(object);
+			return;
+		};
+
 		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 

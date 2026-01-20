@@ -487,17 +487,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 			};
 
-			if (isViewGraph || isViewCalendar) {
-				U.Object.openConfig(object);
+			if (isViewGraph || isViewCalendar || (U.Object.isNoteLayout(object.layout))) {
+				U.Object.openConfig(e, object);
 			} else {
-				if (U.Object.isNoteLayout(object.layout)) {
-					U.Object.openConfig(object);
-				} else {
-					window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
-				};
-
-				analytics.createObject(object.type, object.layout, analyticsRoute, message.middleTime);
+				window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
 			};
+
+			analytics.createObject(object.type, object.layout, analyticsRoute, message.middleTime);
 		});
 	};
 
@@ -665,7 +661,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: analyticsRoute });
 
-			U.Object.openConfig(object);
+			U.Object.openConfig(null, object);
 		});
 	};
 
@@ -703,7 +699,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (relationKey == 'name' && (relation.isReadonlyValue || record.isReadonly)) {
-			U.Object.openConfig(record);
+			U.Object.openConfig(e, record);
 			return;
 		};
 
@@ -720,7 +716,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					U.Object.openPopup(record);
 				};
 			} else {
-				U.Object.openConfig(record);
+				U.Object.openConfig(e, record);
 			};
 		} else {
 			ref.onClick(e);
@@ -1032,25 +1028,33 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
-	const onFilterAddClick = (menuParam: I.MenuParam) => {
-		U.Menu.sortOrFilterRelationSelect(menuParam, {
-			rootId,
-			blockId: block.id,
-			getView,
-			onSelect: item => {
-				const conditions = Relation.filterConditionsByType(item.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				const quickOptions = Relation.filterQuickOptions(item.format, condition);
-				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
+		const { showFilters, filters } = view;
+		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 
-				onFilterAdd({
-					relationKey: item.relationKey ? item.relationKey : item.id,
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(item, null, false),
-					quickOption,
-				});
-			},
-		});
+		if (items.length && !noToggle) {
+			Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: !showFilters });
+		} else {
+			U.Menu.sortOrFilterRelationSelect(menuParam, {
+				rootId,
+				blockId: block.id,
+				getView,
+				onSelect: item => {
+					const conditions = Relation.filterConditionsByType(item.format);
+					const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+					const quickOptions = Relation.filterQuickOptions(item.format, condition);
+					const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+
+					Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: true });
+					onFilterAdd({
+						relationKey: item.relationKey ? item.relationKey : item.id,
+						condition: condition as I.FilterCondition,
+						value: Relation.formatValue(item, null, false),
+						quickOption,
+					});
+				},
+			});
+		};
 	};
 
 	const onFilterAdd = (item: any, callBack?: () => void) => {
@@ -1463,7 +1467,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const targetId = getTarget();
 	const cn = [ 'focusable', `c${block.id}` ];
 
-	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
+	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId, showFilters } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 	let ViewComponent: any = null;
@@ -1603,11 +1607,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				/>
 			</div>
 
-			<Filters
-				ref={filtersRef}
-				{...props}
-				{...dataviewProps}
-			/>
+			{showFilters ? (
+				<Filters
+					ref={filtersRef}
+					{...props}
+					{...dataviewProps}
+				/>
+			) : ''}
 
 			{body}
 		</div>

@@ -31,6 +31,8 @@ const getSections = () => {
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
 						{ id: 'newTab', name: translate('popupShortcutMainBasics29'), keys: [ cmdKey, 't' ] },
+						{ id: 'prevTab', name: translate('popupShortcutMainBasics31'), keys: [ cmdKey, 'alt', 'arrowleft' ] },
+						{ id: 'nextTab', name: translate('popupShortcutMainBasics30'), keys: [ cmdKey, 'alt', 'arrowright' ] },
 						isWin ? { id: 'systemMenu', name: translate('electronMenuShowMenu'), keys: [] } : null,
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
@@ -139,6 +141,8 @@ const getSections = () => {
 						{ id: 'moveSelectionUp', name: translate('popupShortcutNavigationPage8'), keys: [ cmdKey, 'shift', 'arrowup' ] },
 						{ id: 'moveSelectionDown', name: translate('popupShortcutNavigationPage11'), keys: [ cmdKey, 'shift', 'arrowdown' ] },
 						{ name: translate('popupShortcutNavigationPage10'), keys: [ cmdKey, 'enter' ] },
+						{ id: 'prevBlock', name: translate('popupShortcutNavigationPrevBlock'), keys: isMac ? [ 'alt', 'arrowup' ] : [ 'ctrl', 'arrowup' ] },
+						{ id: 'nextBlock', name: translate('popupShortcutNavigationNextBlock'), keys: isMac ? [ 'alt', 'arrowdown' ] : [ 'ctrl', 'arrowdown' ] },
 
 						{ id: 'turnBlock0', name: translate('popupShortcutEditorTurn0'), keys: [ cmdKey, 'alt', '0' ] },
 						{ id: 'turnBlock1', name: translate('popupShortcutEditorTurn1'), keys: [ cmdKey, 'alt', '1' ] },

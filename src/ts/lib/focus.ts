@@ -118,7 +118,15 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => (el as HTMLInputElement).setSelectionRange(range.from, range.to));
+			window.setTimeout(() => {
+				const input = el as HTMLInputElement;
+				input.setSelectionRange(range.from, range.to);
+
+				const style = window.getComputedStyle(input);
+				if (style.direction === 'rtl') {
+					input.scrollLeft = 0;
+				};
+			});
 		} else
 		if (node.hasClass('editable')) {
 			keyboard.setFocus(true);
@@ -153,10 +161,10 @@ class Focus {
 		const container = U.Common.getScrollContainer(isPopup);
 		const ch = container.height();
 		const st = container.scrollTop();
-		const { header, lastBlock } = J.Size;
+		const { header } = J.Size;
 		const y = rect.top + st - container.offset().top;
 		const top = st + header;
-		const bottom = st + ch - lastBlock - header;
+		const bottom = st + ch;
 
 		if ((y < top) || (y > bottom)) {
 			container.scrollTop(Math.max(0, y - ch / 2));

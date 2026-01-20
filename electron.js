@@ -106,9 +106,10 @@ ipcMain.on('storeSet', (e, key, value) => { e.returnValue = store.set(key, value
 ipcMain.on('storeDelete', (e, key) => { e.returnValue = store.delete(key); });
 ipcMain.on('getTheme', (e) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
+ipcMain.on('getConfig', (e) => { e.returnValue = ConfigManager.config || {}; });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
-	Api.exit(mainWindow, '' ,false);
+	Api.exit(mainWindow, '', false, false);
 	return;
 };
 
@@ -117,6 +118,8 @@ Util.setAppPath(path.join(__dirname));
 
 function waitForLibraryAndCreateWindows () {
 	const { userDataPath } = ConfigManager.config;
+
+	Util.setNativeThemeSource();
 
 	let currentPath = app.getPath('userData');
 	if (userDataPath && (userDataPath != currentPath)) {
@@ -148,9 +151,10 @@ nativeTheme.on('updated', () => {
 	const isDark = Util.isDarkTheme();
 
 	MenuManager.updateTrayIcon();
-	Api.setBackground(isDark ? 'dark' : '');
+	Api.setBackground(Util.getTheme());
 
 	WindowManager.sendToAll('native-theme', isDark);
+	WindowManager.sendToAllTabs('native-theme', isDark);
 });
 
 function createWindow () {
@@ -169,7 +173,7 @@ function createWindow () {
 			const { config } = ConfigManager;
 
 			if (config.hideTray && (WindowManager.list.size <= 1)) {
-				Api.exit(mainWindow, '', false);
+				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
 			};
@@ -304,14 +308,19 @@ app.on('before-quit', e => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		Api.exit(mainWindow, '', false);
+		Api.exit(mainWindow, '', false, false);
 	};
 });
 
-app.on('activate', () => { 
+app.on('activate', () => {
 	if (WindowManager.list.size && mainWindow) {
 		mainWindow.show();
-	} else 
+		mainWindow.focus();
+
+		if (is.macos) {
+			app.focus({ steal: true });
+		};
+	} else
 	if (isReady) {
 		createWindow();
 	};

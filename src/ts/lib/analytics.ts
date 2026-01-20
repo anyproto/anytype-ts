@@ -616,7 +616,13 @@ class Analytics {
 
 			case 'ScreenInviteRequest' : {
 				data.type = Number(data.type) || 0;
-				data.type = I.InviteType[data.type];
+
+				let res = '';
+				switch (data.type) {
+					case I.InviteType.WithApprove:		res = 'Approval'; break;
+					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
+					default:							res = I.InviteType[data.type]; break;
+				};
 				break;
 			};
 

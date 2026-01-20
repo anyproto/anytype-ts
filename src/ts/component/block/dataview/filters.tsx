@@ -15,17 +15,17 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	const view = getView();
 	const filters = view?.filters;
 	const nodeRef = useRef(null);
+
+	if (!view) {
+		return null;
+	};
+
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
 	}).filter(it => it.relation);
-
-	if (!view || !items.length) {
-		return null;
-	};
-
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 	const cn = [ 'dataviewFilters' ];
@@ -74,7 +74,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 		};
 
-		onFilterAddClick(menuParam);
+		onFilterAddClick(menuParam, true);
 	};
 
 	const onRemove = (e: any, item: any) => {

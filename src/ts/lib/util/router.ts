@@ -36,6 +36,7 @@ class UtilRouter {
 	 */
 	init (history: any) {
 		this.history = history;
+		this.isOpening = false; // Reset flag on init to prevent stuck state
 	};
 
 	/**
@@ -280,6 +281,7 @@ class UtilRouter {
 						U.Data.onAuth({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
+							sidebar.leftPanelSubPageOpen('widget', false);
 						});
 					};
 

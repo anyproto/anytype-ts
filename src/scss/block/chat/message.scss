@@ -80,7 +80,7 @@
 		.text { @include clamp3; }
 	}
 	.reply.withAttachment {
-		.text { @include clamp1; }
+		.text { @include text-overflow-nw; display: block; height: var(--line-height-small); }
 	}
 
 	.attachments {

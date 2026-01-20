@@ -369,8 +369,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		U.Subscription.subscribe({
 			subId,
-			filters: filters.map(Dataview.filterMapper),
-			sorts: sorts.map(Dataview.filterMapper),
+			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
+			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),
@@ -418,9 +418,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
-			0: () => {
-				keyboard.withCommand(e) ? U.Object.openEvent(e, item) : U.Object.openConfig(item); 
-			},
+			0: () => U.Object.openConfig(e, item),
+			1: () => U.Object.openConfig(e, item),
 			2: () => onContext(e, item.id)
 		};
 
