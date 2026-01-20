@@ -56,8 +56,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 
-	trace();
-
 	useEffect(() => {
 		setValue(text);
 		renderLatex();
