@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
+import { flushSync } from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
@@ -538,11 +539,13 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 
-			const container = smile.get(0);
+			const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
 			const root = container._reactRoot || createRoot(container);
 
 			container._reactRoot = root;
-			root.render(icon);
+			flushSync(() => {
+				root.render(icon);
+			});
 
 			item.addClass(`withImage c${size}`);
 
@@ -682,11 +685,13 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				const container = smile.get(0);
+				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
+				flushSync(() => {
+					root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
+				});
 			};
 		});
 	};
