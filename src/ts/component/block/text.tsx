@@ -240,6 +240,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: `shift+arrowleft` },
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
+			{ key: 'theme' },
 		];
 
 		if (isInsideTable) {
