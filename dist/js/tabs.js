@@ -48,14 +48,14 @@ $(() => {
 	// Alt key toggle for hidden menu bar (Windows/Linux behavior)
 	if ((electron.platform === 'win32') || (electron.platform === 'linux')) {
 		doc.on('keydown', (e) => {
-			if ((e.key === 'Alt') && menuBarHiddenByConfig && !body.hasClass('showMenuBar')) {
+			if ((e.key.toLowerCase() === 'alt') && menuBarHiddenByConfig && !body.hasClass('showMenuBar')) {
 				e.preventDefault();
 				body.addClass('showMenuBar altVisible');
 			};
 		});
 
 		doc.on('keyup', (e) => {
-			if ((e.key === 'Alt') && body.hasClass('altVisible')) {
+			if ((e.key.toLowerCase() === 'alt') && body.hasClass('altVisible')) {
 				body.removeClass('showMenuBar altVisible');
 			};
 		});
