@@ -154,7 +154,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!focusable.length) {
 			activeMatchRef.current.position = null;
 			return;
-		}
+		};
 
 		const classList = (focusable.attr('class') || '').split(' ');
 		const blockClass = classList.find(c => (
@@ -167,7 +167,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!blockClass) {
 			activeMatchRef.current.position = null;
 			return;
-		}
+		};
 
 		const blockId = blockClass.substring(1);
 		const containerEl = focusable.find('.editable').get(0);
@@ -175,7 +175,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!containerEl) {
 			activeMatchRef.current.position = null;
 			return;
-		}
+		};
 
 		try {
 			const range = document.createRange();
@@ -188,7 +188,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			activeMatchRef.current.position = { blockId, range: { from, to } };
 		} catch {
 			activeMatchRef.current.position = null;
-		}
+		};
 	};
 
 	const scrollToMatch = (matchEl: JQuery<Element>) => {
@@ -198,8 +198,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const containerTop = container.offset()?.top || 0;
 		const containerHeight = container.height() || 0;
 		const offset = J.Size.lastBlock + J.Size.header;
-
 		const targetY = matchTop - containerTop + scrollTop;
+
 		container.scrollTop(targetY - containerHeight + offset);
 	};
 
@@ -213,7 +213,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const elements = matchElementsRef.current;
 		if (!elements?.length) {
 			return;
-		}
+		};
 
 		const container = getContainer();
 		const tag = getSearchTag();
@@ -222,7 +222,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const currentEl = $(elements[n.current]);
 		if (!currentEl.length) {
 			return;
-		}
+		};
 
 		currentEl.addClass('active');
 		updateActiveMatch(currentEl);
@@ -234,7 +234,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const total = matchElementsRef.current?.length || 0;
 		if (!total) {
 			return;
-		}
+		};
 
 		n.current += direction;
 
@@ -242,7 +242,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			n.current = total - 1;
 		} else if (n.current >= total) {
 			n.current = 0;
-		}
+		};
 
 		focusCurrentMatch();
 	};
@@ -252,7 +252,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (value && lastSearchRef.current === value) {
 			return;
-		}
+		};
 
 		const container = getContainer();
 		const node = $(nodeRef.current);
@@ -316,7 +316,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!handled) {
 			searchTimeoutRef.current = window.setTimeout(search, J.Constant.delay.keyboard);
-		}
+		};
 	};
 
 	const onClear = () => {
@@ -335,7 +335,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			}, 0);
 		} else {
 			keyboard.setFocus(false);
-		}
+		};
 	};
 
 	useEffect(() => {

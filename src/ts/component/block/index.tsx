@@ -65,8 +65,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const initHeaderToggle = () => {
 		if (block && block.id && block.isTextHeader()) {
-			const node = $(nodeRef.current);
-			node.toggleClass('isToggled', Storage.checkToggle(rootId, block.id));
+			$(nodeRef.current).toggleClass('isToggled', Storage.checkToggle(rootId, block.id));
 		};
 	};
 

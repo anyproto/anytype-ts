@@ -918,7 +918,6 @@ class BlockStore {
 		Storage.setToggle(rootId, blockId, v);
 
 		this.updateHeadersToggle(rootId);
-
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 	};
 
@@ -973,7 +972,9 @@ class BlockStore {
 
 		const collectBlocks = (id: string, isNested: boolean) => {
 			const block = this.getLeaf(rootId, id);
-			if (!block) return;
+			if (!block) {
+				return;
+			};
 
 			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
 
@@ -1041,7 +1042,9 @@ class BlockStore {
 
 		const collectBlocks = (id: string, isNested: boolean) => {
 			const block = this.getLeaf(rootId, id);
-			if (!block) return;
+			if (!block) {
+				return;
+			};
 
 			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
 
@@ -1101,13 +1104,13 @@ class BlockStore {
 	 */
 	updateHeadersToggle (rootId: string) {
 		const toggles = Storage.getToggle(rootId);
-
-		// Get all blocks in document order (excluding blocks inside tables/columns for header checking)
 		const flatList: { block: I.Block; isNested: boolean }[] = [];
 
 		const collectBlocks = (blockId: string, isNested: boolean) => {
 			const block = this.getLeaf(rootId, blockId);
-			if (!block) return;
+			if (!block) {
+				return;
+			};
 
 			// Determine if children will be nested
 			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
@@ -1133,14 +1136,20 @@ class BlockStore {
 			const { block, isNested } = flatList[i];
 
 			// Skip if this header is nested (inside table/column)
-			if (isNested) continue;
+			if (isNested) {
+				continue;
+			};
 
 			const headerLevel = this.getHeaderLevel(block);
-			if (headerLevel === 0) continue;
+			if (!headerLevel) {
+				continue;
+			};
 
 			// Check if this header is toggled closed
 			const isToggled = toggles.includes(block.id);
-			if (!isToggled) continue;
+			if (!isToggled) {
+				continue;
+			};
 
 			// Find all blocks to hide until the next header of same or higher level
 			for (let j = i + 1; j < flatList.length; j++) {
@@ -1161,7 +1170,9 @@ class BlockStore {
 		// Apply hidden state to DOM
 		for (const { block } of flatList) {
 			const element = $(`#block-${block.id}`);
-			if (!element.length) continue;
+			if (!element.length) {
+				continue;
+			};
 
 			const shouldBeHidden = hiddenBlockIds.has(block.id);
 			element.toggleClass('isHeaderChildHidden', shouldBeHidden);
@@ -1177,7 +1188,6 @@ class BlockStore {
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
-
 			if (!marks.length) {
 				continue;
 			};
@@ -1278,24 +1288,6 @@ class BlockStore {
 	 */
 	updateWidgetData (rootId: string) {
 		this.triggerWidgetEvent('updateWidgetData', rootId);
-	};
-
-	/**
-	 * Updates the content of a block in all widgets for a root.
-	 * @param {string} rootId - The root ID.
-	 * @param {string} blockId - The block ID.
-	 * @param {any} content - The new content.
-	 */
-	updateWidgetBlockContent (rootId: string, blockId: string, content: any) {
-		const widgets = this.getWidgetsForTarget(rootId);
-		const children = widgets.reduce((a: string[], c: any) => {
-			return a.concat(c.childBlocks.map(c => c.id));
-		}, []);
-		const rootIds = children.map(it => `${rootId}-widget-${it}`);
-
-		rootIds.forEach(rid => {
-			this.updateContent(rid, blockId, content);
-		});
 	};
 
 	/**
