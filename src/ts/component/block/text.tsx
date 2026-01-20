@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
+import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
@@ -54,6 +55,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutClick = useRef(0);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
+
+	trace();
 
 	useEffect(() => {
 		setValue(text);
