@@ -902,8 +902,9 @@ class UtilData {
 		C.MembershipV2GetStatus(true, (message: any) => {
 			if (!message.error.code) {
 				S.Membership.dataSet(message.data);
+				analytics.setProduct();
 			};
-
+			
 			callBack?.();
 		});
 	};
