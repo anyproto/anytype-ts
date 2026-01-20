@@ -875,17 +875,6 @@ class UtilCommon {
 	};
 
 	/**
-	 * Returns the hostname from a URL or the URL itself if invalid.
-	 * @param {string} url - The URL string.
-	 * @returns {string} The hostname or original URL.
-	 */
-	shortUrl (url: string) {
-		let a: any = {};
-		try { a = new URL(url); } catch (e) {};
-		return a.hostname || url;
-	};
-
-	/**
 	 * Pauses all audio and video elements on the page.
 	 */
 	pauseMedia () {

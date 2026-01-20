@@ -353,6 +353,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						actions: value ? options : [],
 						onSelect,
 					});
+
 					menuId = 'dataviewText';
 					closeIfOpen = false;
 					break;

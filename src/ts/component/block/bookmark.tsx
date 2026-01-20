@@ -173,7 +173,7 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 						<div className={cnl.join(' ')}>
 							<div className="link">
 								{iconImage ? <img src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} className="fav" /> : ''}
-								{U.Common.shortUrl(url)}
+								{U.String.shortUrl(url)}
 							</div>
 							<ObjectName object={object} />
 							<ObjectDescription object={object} />
