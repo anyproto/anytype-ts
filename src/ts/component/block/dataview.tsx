@@ -1028,11 +1028,11 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
-	const onFilterAddClick = (menuParam: I.MenuParam) => {
+	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
 		const { showFilters, filters } = view;
 		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 
-		if (items.length) {
+		if (items.length && !noToggle) {
 			Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: !showFilters });
 		} else {
 			U.Menu.sortOrFilterRelationSelect(menuParam, {

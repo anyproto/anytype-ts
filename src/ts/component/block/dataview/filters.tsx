@@ -71,7 +71,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 		};
 
-		onFilterAddClick(menuParam);
+		onFilterAddClick(menuParam, true);
 	};
 
 	const onRemove = (e: any, item: any) => {
