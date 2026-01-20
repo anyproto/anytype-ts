@@ -2149,6 +2149,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const blockCreate = (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) => {
+		// Expand collapsed header if new block would be hidden under it
+		if (blockId) {
+			const refBlock = S.Block.getLeaf(rootId, blockId);
+			if (refBlock) {
+				const hidingHeader = S.Block.getHidingHeader(rootId, blockId);
+				if (hidingHeader) {
+					S.Block.headerToggle(rootId, hidingHeader.id, false);
+				} else if (refBlock.isTextHeader() && Storage.checkToggle(rootId, blockId) && position === I.BlockPosition.Bottom) {
+					S.Block.headerToggle(rootId, blockId, false);
+				};
+			};
+		};
+
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			if (param.type == I.BlockType.Text) {
 				focusSet(message.blockId, 0, 0, true);
@@ -2396,10 +2409,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (last) {
 			const hidingHeader = S.Block.getHidingHeader(rootId, last.id);
 			if (hidingHeader) {
-				S.Block.headerToggle(rootId, hidingHeader.id, true);
+				S.Block.headerToggle(rootId, hidingHeader.id, false);
 			} else if (last.isTextHeader() && Storage.checkToggle(rootId, last.id)) {
 				// If the last block is a collapsed header, expand it so the new block is visible
-				S.Block.headerToggle(rootId, last.id, true);
+				S.Block.headerToggle(rootId, last.id, false);
 			};
 		};
 
