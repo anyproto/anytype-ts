@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, Mark, focus, Storage } from 'Lib';
 
 const SKIP_TAGS = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
@@ -61,19 +61,66 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const expandHeader = (el: JQuery<Element>) => {
-		const hiddenBlock = el.closest('.block.isHeaderChildHidden');
-		if (!hiddenBlock.length) {
+		const block = el.closest('.block');
+		if (!block.length) {
 			return;
 		}
 
-		const blockId = hiddenBlock.attr('data-id');
-		const header = S.Block.getHidingHeader(getRootId(), blockId);
+		const blockId = block.attr('data-id');
+		const rootId = getRootId();
+		const header = S.Block.getHidingHeader(rootId, blockId);
 
 		if (header && !expandedRef.current.headers.includes(header.id)) {
 			expandedRef.current.headers.push(header.id);
-			$(`#block-${header.id}`).removeClass('isToggled');
-			S.Block.updateHeadersToggle(getRootId());
 		}
+	};
+
+	const expandAllCollapsedHeaders = () => {
+		const rootId = getRootId();
+		const container = getContainer();
+		const collapsedHeaders = Storage.getToggle(rootId);
+
+		if (!collapsedHeaders.length) {
+			return;
+		}
+
+		// Temporarily show all hidden content by removing the hidden class
+		container.find('.block.isHeaderChildHidden').removeClass('isHeaderChildHidden');
+
+		// Track which headers we expanded
+		expandedRef.current.headers = [ ...collapsedHeaders ];
+	};
+
+	const collapseHeadersWithoutMatches = () => {
+		const rootId = getRootId();
+		const matches = matchElementsRef.current;
+
+		if (!matches?.length) {
+			// No matches - restore all headers to collapsed state
+			S.Block.updateHeadersToggle(rootId);
+			expandedRef.current.headers = [];
+			return;
+		}
+
+		// Find which headers contain matches
+		const headersWithMatches = new Set<string>();
+
+		Array.from(matches).forEach(match => {
+			const block = $(match).closest('.block');
+			if (block.length) {
+				const blockId = block.attr('data-id');
+				const header = S.Block.getHidingHeader(rootId, blockId);
+				if (header) {
+					headersWithMatches.add(header.id);
+				}
+			}
+		});
+
+		// Keep only headers that contain matches in our expanded list
+		expandedRef.current.headers = expandedRef.current.headers.filter(id => headersWithMatches.has(id));
+
+		// Update visibility - this will hide blocks under headers not in our expanded list
+		S.Block.updateHeadersToggle(rootId);
 	};
 
 	const collapseExpanded = (keepToggleId?: string, keepHeaderId?: string) => {
@@ -269,6 +316,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		analytics.event('SearchWords', { length: value.length, route });
 
+		// Expand all collapsed headers before searching so content is visible
+		expandAllCollapsedHeaders();
+
 		findAndReplaceDOMText(container.get(0), {
 			preset: 'prose',
 			find: new RegExp(U.String.regexEscape(value), 'gi'),
@@ -280,6 +330,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		matchElementsRef.current = getMatchElements();
 		const hasMatches = !!matchElementsRef.current?.length;
 		switcher.toggleClass('active', hasMatches);
+
+		// Collapse headers that don't contain any matches
+		collapseHeadersWithoutMatches();
 
 		updateMatchCounter();
 		focusCurrentMatch();
