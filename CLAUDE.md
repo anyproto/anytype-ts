@@ -115,6 +115,17 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 
+### Code Style
+- Write `else if` with a linebreak before `if`:
+  ```typescript
+  if (condition) {
+      // ...
+  } else
+  if (anotherCondition) {
+      // ...
+  }
+  ```
+
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
 - Block operations should go through the command system
