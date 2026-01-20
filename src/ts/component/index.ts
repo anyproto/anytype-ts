@@ -109,6 +109,8 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
+import { OptionSelect } from './util/menu';
+
 export {
 	Page,
 	EditorPage,
@@ -218,4 +220,6 @@ export {
 
 	EmptyNodes,
 	LayoutPlug,
+
+	OptionSelect,
 };

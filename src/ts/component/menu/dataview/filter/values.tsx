@@ -2,11 +2,10 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, C, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
-import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, Label, Filter } from 'Component';
+import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, Label, Filter, OptionSelect } from 'Component';
+import { OptionSelectRefProps } from 'Component/util/menu/optionSelect';
 
-const OPTION_HEIGHT = 28;
 const SUB_ID_PREFIX = 'filterOptionList';
 
 const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -19,35 +18,20 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const selectRef = useRef(null);
 	const conditionRef = useRef(null);
 	const inputRef = useRef(null);
-	const listRef = useRef(null);
-	const optionCache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: OPTION_HEIGHT }));
+	const optionSelectRef = useRef<OptionSelectRefProps>(null);
 	const range = useRef(null);
 	const n = useRef(-1);
 	const timeout = useRef(0);
 	const [ dummy, setDummy ] = useState(0);
-	const [ optionFilter, setOptionFilter ] = useState('');
 
 	useEffect(() => {
 		init();
 		rebind();
 
-		// Load options for Select/MultiSelect relations
-		const view = getView();
-		if (view) {
-			const item = view.getFilter(itemId);
-			if (item) {
-				const relation = S.Record.getRelationByKey(item.relationKey);
-				if (relation && [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
-					loadOptions(item.relationKey);
-				};
-			};
-		};
-
 		return () => {
 			unbind();
 			S.Menu.closeAll(J.Menu.cell);
 			window.clearTimeout(timeout.current);
-			U.Subscription.destroyList([ getSubId() ]);
 		};
 	}, []);
 
@@ -411,92 +395,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		return `${SUB_ID_PREFIX}-${itemId}`;
 	};
 
-	const loadOptions = (relationKey: string) => {
-		const subId = getSubId();
-
-		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				subId,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relationKey },
-				],
-				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
-				] as I.Sort[],
-				keys: U.Subscription.optionRelationKeys(false),
-			});
-		});
-	};
-
-	const getItems = (): any[] => {
-		const view = getView();
-		if (!view) {
-			return [];
-		};
-
-		const item = view.getFilter(itemId);
-		if (!item) {
-			return [];
-		};
-
-		const subId = getSubId();
-		let items = S.Record.getRecords(subId, U.Subscription.optionRelationKeys(true));
-
-		items = items.filter(it => !it._empty_);
-		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
-
-		if (optionFilter) {
-			const filter = new RegExp(U.String.regexEscape(optionFilter), 'gi');
-			items = items.filter(it => it.name.match(filter));
-		};
-
-		return items;
-	};
-
-	const onOptionClick = (e: any, option: any) => {
-		e.stopPropagation();
-
-		if (isReadonly) {
-			return;
-		};
-
-		const view = getView();
-		if (!view) {
-			return;
-		};
-
-		const item = view.getFilter(itemId);
-		if (!item) {
-			return;
-		};
-
-		let value = Relation.getArrayValue(item.value);
-
-		if (value.includes(option.id)) {
-			value = value.filter(id => id !== option.id);
-		} else {
-			value = [ ...value, option.id ];
-		};
-
-		onChange('value', value);
-	};
-
-	const onOptionFilterChange = (v: string) => {
-		setOptionFilter(v);
-	};
-
-	const onMouseEnter = (e: any, option: any) => {
-		if (!keyboard.isMouseDisabled) {
-			setActive(option, false);
-		};
-	};
-
-	const onOptionOver = (e: any, option: any) => {
-		setActive(option, false);
-	};
-
 	const checkClear = (v: any) => {
 		$(nodeRef.current).find('.icon.clear').toggleClass('active', v);
 	};
@@ -588,105 +486,18 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.MultiSelect:
 		case I.RelationType.Select: {
-			const optionItems = getItems();
 			const selectedIds = Relation.getArrayValue(item.value);
 
-			// Focus filter and reset index on mount
-			window.setTimeout(() => {
-				inputRef.current?.focus();
-			}, 15);
-
-			const OptionItem = (element: any & { index: number }) => {
-				const isSelected = selectedIds.includes(element.id);
-				const cn = [ 'item' ];
-
-				if (isSelected) {
-					cn.push('isSelected');
-				};
-				if (isReadonly) {
-					cn.push('isReadonly');
-				};
-
-				return (
-					<div
-						id={`item-${element.id}`}
-						className={cn.join(' ')}
-						style={element.style}
-						onClick={e => onOptionClick(e, element)}
-						onMouseEnter={e => onMouseEnter(e, element)}
-					>
-						<Icon className={isSelected ? 'chk' : 'chk empty'} />
-						<Tag
-							text={element.name}
-							color={element.color}
-							className={Relation.selectClassName(relation.format)}
-						/>
-					</div>
-				);
-			};
-
-			const rowRenderer = ({ key, parent, index, style }) => {
-				const option = optionItems[index];
-
-				return (
-					<CellMeasurer
-						key={key}
-						parent={parent}
-						cache={optionCache.current}
-						columnIndex={0}
-						rowIndex={index}
-					>
-						<OptionItem {...option} index={index} style={style} />
-					</CellMeasurer>
-				);
-			};
-
-			const listHeight = Math.min(200, optionItems.length * OPTION_HEIGHT);
-
 			value = (
-				<div className="inlineSelect">
-					<Filter
-						className="outlined"
-						icon="search"
-						ref={ref => inputRef.current = ref}
-						placeholderFocus={translate('menuDataviewOptionListFilterOptions')}
-						value={optionFilter}
-						onChange={onOptionFilterChange}
-						focusOnMount={true}
-					/>
-
-					<div className="optionsList" style={{ height: listHeight }}>
-						{optionItems.length ? (
-							<InfiniteLoader
-								rowCount={optionItems.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								threshold={40}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={optionCache.current}
-												rowCount={optionItems.length}
-												rowHeight={OPTION_HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						) : (
-							<div className="item empty">{translate('menuDataviewOptionListTypeToSearch')}</div>
-						)}
-					</div>
-				</div>
+				<OptionSelect
+					ref={optionSelectRef}
+					subId={getSubId()}
+					relationKey={item.relationKey}
+					value={selectedIds}
+					readonly={isReadonly}
+					onChange={v => onChange('value', v)}
+					setActive={setActive}
+				/>
 			);
 			break;
 		};
@@ -846,17 +657,19 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		);
 	};
 
+	const isOptionRelation = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format);
+
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems,
-		getIndex: () => n.current,
-		setIndex: (i: number) => n.current = i,
-		getFilterRef: () => inputRef.current,
-		getListRef: () => listRef?.current,
-		onOver: (e: any, item: any) => onOptionOver(e, item),
-		onClick: (e: any, item: any) => onOptionClick(e, item),
-	}), []);
+		getItems: () => isOptionRelation ? optionSelectRef.current?.getItems() || [] : [],
+		getIndex: () => isOptionRelation ? optionSelectRef.current?.getIndex() ?? -1 : n.current,
+		setIndex: (i: number) => isOptionRelation ? optionSelectRef.current?.setIndex(i) : n.current = i,
+		getFilterRef: () => isOptionRelation ? optionSelectRef.current?.getFilterRef() : inputRef.current,
+		getListRef: () => optionSelectRef.current?.getListRef(),
+		onOver: (e: any, item: any) => optionSelectRef.current?.onOver(e, item),
+		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
+	}), [ isOptionRelation ]);
 
 	return (
 		<div ref={nodeRef}>
