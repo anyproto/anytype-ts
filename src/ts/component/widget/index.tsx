@@ -219,7 +219,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Menu.onBookmarkMenu(menuParam, cb);
 			} else 
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, analytics.route.widget, cb);
+				U.Menu.onChatMenu(menuParam, route, cb);
 			}; 
 			return;
 		};
