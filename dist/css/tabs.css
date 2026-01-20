@@ -145,3 +145,12 @@ html.themeDark {
 		.icon.window-close { background-image: url('../img/theme/dark/icon/window/close.svg'); }
 	}
 }
+
+/* Tab drag outside window visual feedback */
+body.draggingOutside {
+	#tabs { opacity: 0.6; }
+	#marker { opacity: 0.6; }
+}
+
+/* Drop target highlight for receiving window */
+#tabs.dropTarget { outline: 2px dashed var(--color-shape-primary); outline-offset: -2px; }

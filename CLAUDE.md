@@ -113,6 +113,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Custom block-based editor system
 - gRPC for backend communication
 - Electron for desktop app packaging
+- CSS supports native nesting - use nested selectors instead of flat/inline selectors
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
