@@ -71,17 +71,16 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onToggle = (e: any) => {
-		const node = $(nodeRef.current);
+		e.stopPropagation();
 
-		S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		S.Block.toggle(rootId, block.id, !$(nodeRef.current).hasClass('isToggled'));
 		focus.apply();
 	};
 
 	const onHeaderToggle = (e: any) => {
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
-		S.Block.headerToggle(rootId, block.id, !node.hasClass('isToggled'));
+		S.Block.headerToggle(rootId, block.id, !$(nodeRef.current).hasClass('isToggled'));
 	};
 	
 	const onDragStart = (e: any) => {
