@@ -303,37 +303,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		});
 	};
 
-	const onTag = () => {
-		if (isReadonly) {
-			return;
-		};
-
-		const item = getView().getFilter(itemId);
-		const relation = S.Record.getRelationByKey(item.relationKey);
-
-		S.Menu.closeAll([ 'dataviewOptionList', 'select' ], () => {
-			S.Menu.open('dataviewOptionList', { 
-				element: `#${getId()} #value`,
-				className: [ 'fromFilter', className ].join(' '),
-				classNameWrap,
-				width: getSize().width,
-				horizontal: I.MenuDirection.Center,
-				noFlipY: true,
-				rebind,
-				parentId: props.id,
-				data: { 
-					rootId: rootId,
-					blockId: blockId,
-					value: item.value || [], 
-					relation: observable.box(relation),
-					canAdd: true,
-					canEdit: true,
-					onChange: value => onChange('value', value),
-				},
-			});
-		});
-	};
-
 	const onObject = (e: any, item: any) => {
 		if (isReadonly) {
 			return;
@@ -448,7 +417,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 	];
 	const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
-	const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 	const items = getQuickOptions();
 	const selectParam = {
 		width: 260,
@@ -497,6 +465,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					readonly={isReadonly}
 					onChange={v => onChange('value', v)}
 					setActive={setActive}
+					canAdd={true}
 				/>
 			);
 			break;

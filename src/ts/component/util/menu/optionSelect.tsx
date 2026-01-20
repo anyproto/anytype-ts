@@ -37,7 +37,7 @@ interface Props {
 	canEdit?: boolean;
 
 	// Callbacks
-	setActive?: (item: any, scroll?: boolean) => void;
+	setActive?: (item?: any, scroll?: boolean) => void;
 	onClose?: () => void;
 
 	// Menu context (for edit menu)
@@ -94,6 +94,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	useEffect(() => {
 		n.current = -1;
 	}, [ filter ]);
+
+	useEffect(() => {
+		setActive();
+	});
 
 	const loadOptions = () => {
 		if (!relationKey) {
@@ -187,7 +191,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		onChange(U.Common.arrayUnique(newValue));
 
-		// Clear filter after selection
 		filterRef.current?.setValue('');
 		setFilter('');
 	};
@@ -224,11 +227,13 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				return;
 			};
 
+			const newOptionId = message.objectId;
+
 			filterRef.current?.setValue('');
 			setFilter('');
 
 			// Add newly created option to value
-			let newValue = [ ...value, message.objectId ];
+			let newValue = [ ...value, newOptionId ];
 			newValue = U.Common.arrayUnique(newValue);
 
 			if (maxCount) {
@@ -240,6 +245,17 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			};
 
 			onChange(newValue);
+
+			// Restore hover state on newly created option
+			window.setTimeout(() => {
+				const items = getItems();
+				const index = items.findIndex(it => it.id == newOptionId);
+
+				if (index >= 0) {
+					n.current = index;
+					setActive?.(items[index], false);
+				};
+			}, 50);
 		});
 	};
 
