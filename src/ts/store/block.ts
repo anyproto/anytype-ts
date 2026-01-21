@@ -1187,7 +1187,9 @@ class BlockStore {
 			};
 
 			// Determine if children will be nested
-			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow();
+			// Children of tables, columns, rows, or blocks that can have children (like text paragraphs, lists, etc.)
+			// should be treated as nested so their headers don't affect blocks outside their parent
+			const childrenNested = isNested || block.isTable() || block.isLayoutColumn() || block.isLayoutRow() || block.canHaveChildren();
 
 			// Add this block to the list (skip the root page block)
 			if (!block.isPage()) {

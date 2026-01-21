@@ -143,6 +143,12 @@
 						.space { width: 6px; }
 					}
 					a.markuplink, markupobject { font-weight: inherit; }
+
+					.marker.markerHeader { display: none; }
+
+					&:hover {
+						.marker.markerHeader { display: block; animation: markerFadeIn 0.15s ease-in-out; }
+					}
 				}
 			}
 		}
@@ -309,13 +315,14 @@
 	.block.blockText.textHeader3 {
 		> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
 			.marker.markerHeader {
-				img { transform: rotateZ(90deg); }
+				img { transform: rotateZ(90deg); transition: transform 0.15s ease-in-out; }
 			}
 		}
 
 		&.isToggled {
 			> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
 				.marker.markerHeader {
+					display: block;
 					img { transform: rotateZ(-90deg); }
 				}
 			}
@@ -323,6 +330,11 @@
 	}
 
 	.block.isHeaderChildHidden { display: none !important; }
+
+	@keyframes markerFadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
 }
 
 .editorWrapper.isTask {

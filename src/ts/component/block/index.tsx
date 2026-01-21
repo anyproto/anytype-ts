@@ -871,11 +871,13 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				break;
 			};
 
+			let hasContent = false;
 			if (!object.isDeleted && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
+				hasContent = true;
 			};
 
-			if (style == I.FileStyle.Link) {
+			if ((style == I.FileStyle.Link) && hasContent) {
 				blockComponent = <BlockFile key={key} ref={childRef} {...props} />;
 				break;
 			};
