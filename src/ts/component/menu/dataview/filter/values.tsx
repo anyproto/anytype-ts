@@ -2,15 +2,14 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
-import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, Label, Filter, OptionSelect } from 'Component';
-import { OptionSelectRefProps } from 'Component/util/menu/optionSelect';
+import { I, S, U, J, translate, analytics, Relation } from 'Lib';
+import { Select, Icon, IconObject, Input, MenuItemVertical, Label, OptionSelect } from 'Component';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
 const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setHover, close, onKeyDown, setActive, getId, getSize } = props;
+	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget } = data;
 	const { config } = S.Common;
@@ -18,7 +17,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const selectRef = useRef(null);
 	const conditionRef = useRef(null);
 	const inputRef = useRef(null);
-	const optionSelectRef = useRef<OptionSelectRefProps>(null);
+	const optionSelectRef = useRef(null);
 	const range = useRef(null);
 	const n = useRef(-1);
 	const timeout = useRef(0);
@@ -462,10 +461,14 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					subId={getSubId()}
 					relationKey={item.relationKey}
 					value={selectedIds}
-					readonly={isReadonly}
+					isReadonly={isReadonly}
 					onChange={v => onChange('value', v)}
 					setActive={setActive}
 					canAdd={true}
+					canEdit={true}
+					position={position}
+					menuId={getId()}
+					menuClassNameWrap="fromBlock"
 				/>
 			);
 			break;
@@ -657,16 +660,18 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				</div>
 			</div>
 
-			<div className="section">
-				{items.map((item: any, i: number) => (
-					<MenuItemVertical 
-						key={i} 
-						{...item}
-						onMouseEnter={e => onOver(e, item)}
-						readonly={isReadonly} 
-					/>
-				))}
-			</div>
+			{items.length ? (
+				<div className="section">
+					{items.map((item: any, i: number) => (
+						<MenuItemVertical
+							key={i}
+							{...item}
+							onMouseEnter={e => onOver(e, item)}
+							readonly={isReadonly}
+						/>
+					))}
+				</div>
+			) : ''}
 
 			{value ? (
 				<div className="section">

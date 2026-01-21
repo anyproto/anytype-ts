@@ -109,7 +109,7 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
-import { OptionSelect } from './util/menu';
+import OptionSelect from './util/menu/optionSelect';
 
 export {
 	Page,

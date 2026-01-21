@@ -7,8 +7,10 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
+import $ from 'jquery';
 
-const OPTION_HEIGHT = 28;
+const HEIGHT = 28;
+const LIMIT = 40;
 
 interface Props {
 	subId: string;
@@ -17,7 +19,7 @@ interface Props {
 	onChange: (value: string[]) => void;
 
 	// Display options
-	readonly?: boolean;
+	isReadonly?: boolean;
 	noFilter?: boolean;
 	noSelect?: boolean;
 	maxHeight?: number;
@@ -44,7 +46,8 @@ interface Props {
 	menuId?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
-	getMenuSize?: () => { width: number; height: number };
+	getSize?: () => { width: number; height: number };
+	position?: () => void;
 };
 
 export interface OptionSelectRefProps {
@@ -61,12 +64,12 @@ export interface OptionSelectRefProps {
 const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 
 	const {
-		subId, relationKey, value, onChange, readonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
-		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getMenuSize,
+		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
+		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
-	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: OPTION_HEIGHT }));
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const nodeRef = useRef(null);
@@ -81,6 +84,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	useEffect(() => {
 		loadOptions();
+		resize();
 
 		return () => {
 			U.Subscription.destroyList([ subId ]);
@@ -97,6 +101,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	useEffect(() => {
 		setActive();
+		resize();
 	});
 
 	const loadOptions = () => {
@@ -142,7 +147,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			check = items.filter(it => it.name.toLowerCase() == filter.toLowerCase());
 			items = items.filter(it => it.name.match(reg));
 
-			if (canAdd && !readonly && !check.length) {
+			if (canAdd && !isReadonly && !check.length) {
 				ret.unshift({
 					id: 'add',
 					name: U.String.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), filter),
@@ -160,7 +165,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		if (readonly) {
+		if (isReadonly) {
 			return;
 		};
 
@@ -190,9 +195,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		onChange(U.Common.arrayUnique(newValue));
-
-		filterRef.current?.setValue('');
-		setFilter('');
 	};
 
 	const onOptionAdd = () => {
@@ -267,14 +269,15 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
-
 		if (!isAllowed) {
 			return;
 		};
 
+		const element = `#utilOptionSelect #item-${item.id}`;
+
 		S.Menu.open('dataviewOptionEdit', {
-			element: `#${menuId} #item-${item.id}`,
-			offsetX: getMenuSize?.().width || 0,
+			element,
+			offsetX: getSize?.().width || $(element).outerWidth(),
 			vertical: I.MenuDirection.Center,
 			passThrough: true,
 			noFlipY: true,
@@ -346,8 +349,17 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
+	const resize = () => {
+		const items = getItems();
+		const obj = $(nodeRef.current);
+		const offset = !isReadonly ? 44 : 8;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+
+		obj.css({ height });
+		position?.();
+	};
+
 	const items = getItems();
-	const listHeight = Math.min(maxHeight || 200, Math.max(OPTION_HEIGHT, items.length * OPTION_HEIGHT));
 
 	// Placeholder and empty text
 	let placeholder = '';
@@ -361,7 +373,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		empty = translate('menuDataviewOptionListTypeToSearch');
 	};
 
-	if (readonly) {
+	if (isReadonly) {
 		empty = translate('placeholderCellCommon');
 	};
 
@@ -408,7 +420,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		if (isSelected) {
 			cn.push('isSelected');
 		};
-		if (readonly) {
+		if (isReadonly) {
 			cn.push('isReadonly');
 		};
 		if (isDragging) {
@@ -427,10 +439,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{...(canSort ? listeners : {})}
 			>
 
-				{canSort && !readonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon className={isSelected ? 'chk' : 'chk empty'} /> : ''}
+					{!noSelect && isSelected ? <Icon className="chk" /> : ''}
 					<Tag
 						text={item.name}
 						color={item.color}
@@ -464,9 +476,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			<div
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
-				style={{ height: OPTION_HEIGHT }}
+				style={{ height: HEIGHT }}
 			>
-				{canSort && !readonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 				<div className="clickable">
 					{!noSelect ? <Icon className={isSelected ? 'chk' : 'chk empty'} /> : ''}
 					<Tag
@@ -510,7 +522,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				rowCount={items.length}
 				loadMoreRows={() => {}}
 				isRowLoaded={() => true}
-				threshold={40}
+				threshold={LIMIT}
 			>
 				{({ onRowsRendered }) => (
 					<AutoSizer className="scrollArea">
@@ -521,7 +533,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 								height={height}
 								deferredMeasurmentCache={cache.current}
 								rowCount={items.length}
-								rowHeight={OPTION_HEIGHT}
+								rowHeight={HEIGHT}
 								rowRenderer={rowRenderer}
 								onRowsRendered={onRowsRendered}
 								overscanRowCount={10}
@@ -559,6 +571,21 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		return list;
 	};
 
+	const cn = [ 'utilOptionSelect' ];
+
+	if (!noSelect) {
+		cn.push('canSelect');
+	};
+	if (canEdit) {
+		cn.push('canEdit');
+	};
+	if (canSort) {
+		cn.push('canSort');
+	};
+	if (noFilter) {
+		cn.push('noFilter');
+	};
+
 	useImperativeHandle(ref, () => ({
 		getItems,
 		getIndex: () => n.current,
@@ -571,7 +598,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	}));
 
 	return (
-		<div ref={nodeRef} className="inlineSelect">
+		<div id="utilOptionSelect" ref={nodeRef} className={cn.join(' ')}>
 			{!noFilter ? (
 				<Filter
 					className="outlined"
@@ -584,7 +611,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				/>
 			) : ''}
 
-			<div className="optionsList" style={{ height: listHeight }}>
+			<div className="items">
 				{renderList()}
 			</div>
 		</div>

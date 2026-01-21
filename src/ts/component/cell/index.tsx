@@ -401,7 +401,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const bindContainerClick = () => {
 			const pc = $(pageContainer);
 
-			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
@@ -428,7 +428,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				bindContainerClick();
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
+					// win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
 				};
 			} else 
 			if (closeIfOpen) {

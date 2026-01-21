@@ -43,7 +43,8 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('dataviewFilterValues', {
 			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
 			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			noFlipY: true,
 			data: {
 				rootId,
@@ -72,6 +73,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			classNameWrap: 'fromBlock',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 		};
 
 		onFilterAddClick(menuParam, true);
