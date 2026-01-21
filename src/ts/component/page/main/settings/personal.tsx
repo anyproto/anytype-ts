@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -45,6 +45,10 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 	const linkStyles: I.Option[] = [
 		{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 		{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+	];
+	const fileStyles: I.Option[] = [
+		{ id: I.FileStyle.Embed, name: translate('blockNameEmbed') },
+		{ id: I.FileStyle.Link, name: translate('blockNameLink') },
 	];
 
 	const chatKeys: I.Option[] = [
@@ -172,6 +176,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						value={String(linkStyle)}
 						options={linkStyles}
 						onChange={v => S.Common.linkStyleSet(v)}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalFileStyle')} />
+
+					<Select
+						id="fileStyle"
+						value={String(fileStyle)}
+						options={fileStyles}
+						onChange={v => S.Common.fileStyleSet(v)}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>

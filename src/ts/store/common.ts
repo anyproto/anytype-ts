@@ -38,6 +38,7 @@ class CommonStore {
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public linkStyleValue = null;
+	public fileStyleValue = null;
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
@@ -136,6 +137,7 @@ class CommonStore {
 			singleTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
+			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
@@ -182,6 +184,7 @@ class CommonStore {
 			spaceSet: action,
 			spaceStorageSet: action,
 			linkStyleSet: action,
+			fileStyleSet: action,
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
@@ -330,6 +333,17 @@ class CommonStore {
 			ret = I.LinkCardStyle.Card;
 		};
 		return Number(ret) || I.LinkCardStyle.Text;
+	};
+
+	get fileStyle (): I.FileStyle {
+		let ret = this.fileStyleValue;
+		if (ret === null) {
+			ret = Storage.get('fileStyle');
+		};
+		if (undefined === ret) {
+			ret = I.FileStyle.Embed;
+		};
+		return Number(ret) || I.FileStyle.Embed;
 	};
 
 	get dateFormat (): I.DateFormat {
@@ -832,6 +846,16 @@ class CommonStore {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
+	};
+
+	/**
+	 * Sets the file style value.
+	 * @param {I.FileStyle} v - The file style value.
+	 */
+	fileStyleSet (v: I.FileStyle) {
+		v = Number(v);
+		this.fileStyleValue = v;
+		Storage.set('fileStyle', v);
 	};
 
 	/**
