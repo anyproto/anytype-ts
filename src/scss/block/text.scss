@@ -144,15 +144,27 @@
 					}
 					a.markuplink, markupobject { font-weight: inherit; }
 
-					.marker.markerHeader { display: none; }
+					.marker.markerToggle { display: none; transform: rotateZ(90deg); }
 
 					&:hover {
-						.marker.markerHeader { display: block; animation: markerFadeIn 0.15s ease-in-out; }
+						.marker.markerToggle { display: block; animation: markerFadeIn 0.15s ease-in-out; }
+					}
+				}
+			}
+		}
+
+		&.isToggled {
+			> .wrapContent {
+				> .selectionTarget {
+					> .dropTarget {
+						.marker.markerToggle { display: block; animation: unset; transform: rotateZ(0deg); }
 					}
 				}
 			}
 		}
 	}
+
+	.block.isHeaderChildHidden { display: none !important; }
 
 	/* Header1 */
 
@@ -307,29 +319,6 @@
 	.block.blockText.textHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
 	.block.blockText.textHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
-
-	/* Header Toggle */
-
-	.block.blockText.textHeader1,
-	.block.blockText.textHeader2,
-	.block.blockText.textHeader3 {
-		> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
-			.marker.markerHeader {
-				img { transform: rotateZ(90deg); transition: transform 0.15s ease-in-out; }
-			}
-		}
-
-		&.isToggled {
-			> .wrapContent > .selectionTarget > .dropTarget > .flex > .markers {
-				.marker.markerHeader {
-					display: block;
-					img { transform: rotateZ(-90deg); }
-				}
-			}
-		}
-	}
-
-	.block.isHeaderChildHidden { display: none !important; }
 
 	@keyframes markerFadeIn {
 		from { opacity: 0; }

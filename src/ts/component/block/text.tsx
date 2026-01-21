@@ -1196,7 +1196,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		case I.TextStyle.Header1:
 		case I.TextStyle.Header2:
 		case I.TextStyle.Header3: {
-			marker = { type: I.MarkerType.Toggle, className: 'markerHeader', onClick: onHeaderToggle };
+			marker = { type: I.MarkerType.Toggle, onClick: onHeaderToggle };
 			break;
 		};
 	};
