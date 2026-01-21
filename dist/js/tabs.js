@@ -379,7 +379,7 @@ $(() => {
 
 	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible));
 
-	electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
+	electron.on('update-tabs', (e, tabs, id, isVisible) => setTabs(tabs, id, isVisible));
 
 	electron.on('set-active-tab', (e, id) => setActive(id, false));
 

@@ -522,9 +522,14 @@ class WindowManager {
 		win.views = newViews;
 
 		// Send updated tabs list to tabs.html
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const isVisible = alwaysShow || (win.views && win.views.length > 1);
+
 		Util.send(win, 'update-tabs',
 			win.views.map(it => ({ id: it.id, data: it.data })),
-			win.activeTabId
+			win.activeTabId,
+			isVisible
 		);
 
 		this.updateTabBarVisibility(win);

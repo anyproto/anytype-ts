@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { flushSync } from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
@@ -42,6 +41,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
 		isContextMenuDisabled, blockRemove, getWrapperWidth,
 	} = props;
+	const { config } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const idsRef = useRef<string[]>([]);
@@ -64,6 +64,10 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const initHeaderToggle = () => {
+		if (!config.experimental) {
+			return;
+		};
+
 		if (block && block.id && block.isTextHeader()) {
 			const isToggled = Storage.checkToggle(rootId, block.id);
 			$(nodeRef.current).toggleClass('isToggled', isToggled);
@@ -560,9 +564,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const root = container._reactRoot || createRoot(container);
 
 			container._reactRoot = root;
-			flushSync(() => {
-				root.render(icon);
-			});
+			root.render(icon);
 
 			item.addClass(`withImage c${size}`);
 
@@ -706,9 +708,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				flushSync(() => {
-					root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
-				});
+				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
 			};
 		});
 	};
