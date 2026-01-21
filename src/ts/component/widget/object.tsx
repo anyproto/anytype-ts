@@ -234,11 +234,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 								onClick={e => onCreate(e, item)}
 							/>
 						) : ''}
-						<Icon
-							className="more"
-							tooltipParam={{ text: translate('widgetOptions') }}
-							onClick={e => onContextHandler(e, item, true)}
-						/>
 					</div>
 				</div>
 			</div>

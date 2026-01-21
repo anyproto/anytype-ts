@@ -34,6 +34,7 @@ $(() => {
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
+	body.addClass('tabsHidden'); // Start hidden, will be shown when tabs load
 
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
@@ -368,16 +369,16 @@ $(() => {
 		resize();
 		setActive(id, false);
 
-		// Set visibility if provided
-		if (typeof isVisible === 'boolean') {
-			tabsWrapper.toggleClass('isHidden', !isVisible);
-		};
+		// Set visibility - default to showing tabs if not specified
+		const visible = typeof isVisible === 'boolean' ? isVisible : (tabs.length > 1);
+		tabsWrapper.toggleClass('isHidden', !visible);
+		body.toggleClass('tabsHidden', !visible);
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
 		setTimeout(() => initSortable(), 10);
 	};
 
-	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible));
+	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible)).catch(() => {});
 
 	electron.on('update-tabs', (e, tabs, id, isVisible) => setTabs(tabs, id, isVisible));
 

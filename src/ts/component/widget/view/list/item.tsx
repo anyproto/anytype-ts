@@ -29,7 +29,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const canDrag = false;
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
-	const hasMore = U.Space.canMyParticipantWrite();
+	const hasMore = false;//U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
