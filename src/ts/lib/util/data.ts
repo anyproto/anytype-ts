@@ -1143,7 +1143,7 @@ class UtilData {
 	 * @param {string} rootId - The root object ID.
 	 * @param {I.Block} block - The block.
 	 */
-	setRtl (rootId: string, block: I.Block, value: boolean) {
+	setRtl (rootId: string, block: I.Block, value: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
 		};
@@ -1158,7 +1158,7 @@ class UtilData {
 		C.BlockListSetFields(rootId, [
 			{ blockId: block.id, fields: { ...fields, isRtlDetected: value } }
 		], () => {
-			C.BlockListSetAlign(rootId, [ block.id ], value ? I.BlockHAlign.Right : I.BlockHAlign.Left);
+			C.BlockListSetAlign(rootId, [ block.id ], value ? I.BlockHAlign.Right : I.BlockHAlign.Left, callBack);
 		});
 	};
 

@@ -52,12 +52,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const textRef = useRef('');
 	const marksRef = useRef<I.Mark[]>(marks || []);
+	const prevTextRef = useRef(text);
+	const prevMarksRef = useRef(marks?.length || 0);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
-
-	trace();
 
 	useEffect(() => {
 		setValue(text);
@@ -75,8 +75,16 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		marksRef.current = marks || [];
-		setValue(text);
+		const textChanged = prevTextRef.current !== text;
+		const marksChanged = U.Common.compareJSON(prevMarksRef.current, marks);
+
+		if (textChanged || marksChanged) {
+			marksRef.current = marks || [];
+			setValue(text);
+
+			prevTextRef.current = text;
+			prevMarksRef.current = marks;
+		};
 
 		if (text) {
 			placeholderHide();
@@ -811,12 +819,16 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		textRef.current = value;
 
-		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			if (value.length > 1) {
-				U.Data.setRtl(rootId, block, U.String.checkRtl(value));
-			};
-			callBack?.();
-		});
+		const isRtl = U.String.checkRtl(value);
+		const cb = () => {
+			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+		};
+
+		if (isRtl != checkRtl) {
+			U.Data.setRtl(rootId, block, isRtl, cb);
+		} else {
+			cb();
+		};
 	};
 	
 	const onFocusHandler = (e: any) => {
