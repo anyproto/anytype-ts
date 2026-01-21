@@ -826,9 +826,21 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		keyboard.setFocus(true);
 		onFocus?.(e);
 
-		// Workaround for focus issue and Latex rendering
+		// Calculate correct caret position accounting for rendered LaTeX elements
 		window.setTimeout(() => {
-			const range = getRange();
+			const selection = window.getSelection();
+			let range = getRange();
+
+			if (selection && selection.rangeCount > 0) {
+				const selRange = selection.getRangeAt(0);
+				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
+
+				if (editable && editable.contains(selRange.startContainer)) {
+					const from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
+					const to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+					range = { from, to };
+				};
+			};
 
 			setValue(block.getText());
 			focus.set(block.id, range);
