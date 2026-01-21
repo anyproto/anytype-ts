@@ -419,7 +419,10 @@ $(() => {
 		setTimeout(() => initSortable(), 10);
 	});
 
-	electron.on('update-tab-bar-visibility', (e, isVisible) => tabsWrapper.toggleClass('isHidden', !isVisible));
+	electron.on('update-tab-bar-visibility', (e, isVisible) => {
+		tabsWrapper.toggleClass('isHidden', !isVisible);
+		body.toggleClass('tabsHidden', !isVisible);
+	});
 	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
 	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
 	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
