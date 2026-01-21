@@ -199,8 +199,8 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						id="input"
 						placeholder={placeholder}
 						readonly={!canEdit}
-						onInput={onInput}
-						onPaste={onInput}
+						onInput={(e) => onInput(e, '')}
+						onPaste={(e) => onInput(e, '')}
 						onFocus={onFocus}
 						onBlur={onBlur}
 					/>
