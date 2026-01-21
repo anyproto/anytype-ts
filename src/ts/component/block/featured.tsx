@@ -362,11 +362,21 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							keyboard.disableClose(false);
 						};
 
+						// Preserve the object's name before type change to restore after template application
+						const currentName = object.name;
+
 						S.Detail.update(rootId, { id: item.id, details: item }, false);
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
-								C.ObjectApplyTemplate(rootId, item.defaultTemplateId, open);
+								C.ObjectApplyTemplate(rootId, item.defaultTemplateId, () => {
+									// Restore the original name if it was set and differs from the default
+									if (currentName && (currentName != translate('defaultNamePage'))) {
+										U.Object.setName(rootId, currentName, open);
+									} else {
+										open();
+									};
+								});
 							} else {
 								open();
 							};
