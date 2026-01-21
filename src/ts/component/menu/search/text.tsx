@@ -102,34 +102,28 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		}
 
-		// Find which headers contain matches
+		// Find which headers contain matches (including entire hierarchy)
 		const headersWithMatches = new Set<string>();
 
 		Array.from(matches).forEach(match => {
 			const block = $(match).closest('.block');
 			if (block.length) {
 				const blockId = block.attr('data-id');
-				const header = S.Block.getHidingHeader(rootId, blockId);
-				if (header) {
-					headersWithMatches.add(header.id);
-				}
+				// Get ALL headers that hide this block, not just the closest one
+				const headers = S.Block.getAllHidingHeaders(rootId, blockId);
+				headers.forEach(header => headersWithMatches.add(header.id));
 			}
 		});
 
 		// Keep only headers that contain matches in our expanded list
 		expandedRef.current.headers = expandedRef.current.headers.filter(id => headersWithMatches.has(id));
 
-		// Update visibility - this will hide all blocks under collapsed headers
-		S.Block.updateHeadersToggle(rootId);
-
-		// Now re-show blocks that contain matches (including the block itself and all parents)
-		Array.from(matches).forEach(match => {
-			$(match).closest('.block').removeClass('isHeaderChildHidden');
-			$(match).parents('.block.isHeaderChildHidden').removeClass('isHeaderChildHidden');
-		});
+		// Update visibility - exclude headers with matches so their entire section stays visible
+		const headersToKeepExpanded = Array.from(headersWithMatches);
+		S.Block.updateHeadersToggle(rootId, headersToKeepExpanded);
 
 		// Update header toggle arrows to show expanded state
-		expandedRef.current.headers.forEach(id => {
+		headersToKeepExpanded.forEach(id => {
 			$(`#block-${id}`).removeClass('isToggled');
 		});
 	};
