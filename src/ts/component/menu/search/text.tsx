@@ -119,8 +119,19 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		// Keep only headers that contain matches in our expanded list
 		expandedRef.current.headers = expandedRef.current.headers.filter(id => headersWithMatches.has(id));
 
-		// Update visibility - this will hide blocks under headers not in our expanded list
+		// Update visibility - this will hide all blocks under collapsed headers
 		S.Block.updateHeadersToggle(rootId);
+
+		// Now re-show blocks that contain matches (including the block itself and all parents)
+		Array.from(matches).forEach(match => {
+			$(match).closest('.block').removeClass('isHeaderChildHidden');
+			$(match).parents('.block.isHeaderChildHidden').removeClass('isHeaderChildHidden');
+		});
+
+		// Update header toggle arrows to show expanded state
+		expandedRef.current.headers.forEach(id => {
+			$(`#block-${id}`).removeClass('isToggled');
+		});
 	};
 
 	const collapseExpanded = (keepToggleId?: string, keepHeaderId?: string) => {
