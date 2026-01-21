@@ -804,7 +804,16 @@ class Dataview {
 			return map.length ? Math.max(...map.map(it => Number(it || 0))) : null;
 		};
 		const float = (v: any): string => {
-			return (v === null) ? null : U.Common.formatNumber(U.Common.round(v, 3));
+			if (v === null) {
+				return null;
+			};
+
+			const mapped = Relation.mapValue(relation, v);
+			if (mapped !== null) {
+				return mapped;
+			};
+
+			return U.Common.formatNumber(U.Common.round(v, 3));
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {
