@@ -102,16 +102,17 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		}
 
-		// Find which headers contain matches (including entire hierarchy)
+		// Find which headers contain matches
 		const headersWithMatches = new Set<string>();
 
 		Array.from(matches).forEach(match => {
 			const block = $(match).closest('.block');
 			if (block.length) {
 				const blockId = block.attr('data-id');
-				// Get ALL headers that hide this block, not just the closest one
-				const headers = S.Block.getAllHidingHeaders(rootId, blockId);
-				headers.forEach(header => headersWithMatches.add(header.id));
+				const header = S.Block.getHidingHeader(rootId, blockId);
+				if (header) {
+					headersWithMatches.add(header.id);
+				}
 			}
 		});
 
