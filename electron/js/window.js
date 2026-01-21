@@ -614,9 +614,12 @@ class WindowManager {
 	getTabBarHeight (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const showMenuBar = ConfigManager.config.showMenuBar;
+		const configShowMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
 		const shouldShowTabs = alwaysShow || hasMultipleTabs;
+
+		// Check for temporary menu bar visibility (Alt key toggle)
+		const showMenuBar = win.tempMenuBarVisible !== undefined ? win.tempMenuBarVisible : configShowMenuBar;
 
 		let height = 0;
 		if (is.windows && showMenuBar) {

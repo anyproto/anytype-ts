@@ -219,12 +219,34 @@ class Api {
 			// Notify tabs.html about menu bar visibility change
 			Util.send(win, 'set-menu-bar-visibility', show);
 
+			// Clear any temporary visibility override
+			delete win.tempMenuBarVisible;
+
 			// Update tab bar height when menu bar visibility changes
 			WindowManager.updateTabBarVisibility(win);
 
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});
+	};
+
+	// Temporary menu bar visibility for Alt key toggle (doesn't persist to config)
+	setMenuBarTemporaryVisibility (win, show) {
+		const { config } = ConfigManager;
+
+		// Only allow temporary show when menu bar is hidden by config
+		if (config.showMenuBar) {
+			return;
+		};
+
+		if (show) {
+			win.tempMenuBarVisible = true;
+		} else {
+			delete win.tempMenuBarVisible;
+		};
+
+		// Update view bounds
+		WindowManager.updateTabBarVisibility(win);
 	};
 
 	setAlwaysShowTabs (win, show) {

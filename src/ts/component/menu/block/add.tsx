@@ -486,6 +486,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				if (item.type == I.BlockType.File) {
 					param.content.type = item.itemId;
+					param.content.style = I.FileStyle.Link;
 				};
 
 				if (item.type == I.BlockType.Div) {

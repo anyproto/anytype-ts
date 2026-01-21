@@ -46,24 +46,69 @@ $(() => {
 	body.toggleClass('showMenuBar', showMenuBar);
 
 	// Alt key toggle for hidden menu bar (Windows/Linux behavior)
+	// Single press of Alt toggles the menu bar visibility
 	if ((electron.platform === 'win32') || (electron.platform === 'linux')) {
+		let altKeyPressed = false;
+		let altKeyUsedWithOther = false;
+
 		doc.on('keydown', (e) => {
-			if ((e.key.toLowerCase() === 'alt') && menuBarHiddenByConfig && !body.hasClass('showMenuBar')) {
-				e.preventDefault();
-				body.addClass('showMenuBar altVisible');
+			if (e.key === 'Alt') {
+				altKeyPressed = true;
+			} else
+			if (altKeyPressed) {
+				// Alt was used as modifier with another key (e.g., Alt+Tab)
+				altKeyUsedWithOther = true;
 			};
 		});
 
 		doc.on('keyup', (e) => {
-			if ((e.key.toLowerCase() === 'alt') && body.hasClass('altVisible')) {
+			if (e.key !== 'Alt') {
+				return;
+			};
+
+			// Only toggle if Alt was pressed alone (not as modifier)
+			if (altKeyPressed && !altKeyUsedWithOther && menuBarHiddenByConfig) {
+				const isCurrentlyVisible = body.hasClass('altVisible');
+
+				if (isCurrentlyVisible) {
+					body.removeClass('showMenuBar altVisible');
+					electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+				} else {
+					body.addClass('showMenuBar altVisible');
+					electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
+				};
+			};
+
+			altKeyPressed = false;
+			altKeyUsedWithOther = false;
+		});
+
+		// Hide menu bar when clicking outside the menu bar
+		doc.on('mousedown', (e) => {
+			if (!body.hasClass('altVisible')) {
+				return;
+			};
+
+			const target = $(e.target);
+			if (!target.closest('#menuBar').length) {
 				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
 			};
 		});
 
-		// Hide menu bar when it loses focus (e.g., clicking elsewhere)
+		// Hide menu bar on window blur
 		win.on('blur', () => {
 			if (body.hasClass('altVisible')) {
 				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			};
+		});
+
+		// Hide menu bar on Escape key
+		doc.on('keydown', (e) => {
+			if ((e.key === 'Escape') && body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
 			};
 		});
 	}
