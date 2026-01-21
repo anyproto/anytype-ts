@@ -196,7 +196,7 @@ class UtilEmbed {
 		let p = null;
 		for (const i in DOMAINS) {
 			const domains = DOMAINS[i].map(U.String.regexEscape);
-			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
+			const reg = new RegExp(`:\/\/([^.]*\\.)?(${domains.join('|')})([\/\\?#:]|$)`, 'gi');
 
 			if (!url.match(reg)) {
 				continue;
@@ -214,8 +214,19 @@ class UtilEmbed {
 					};
 				} catch (e) { p = null; };
 			};
+
+			// Restrict bilibili to video URLs only
+			if (p == I.EmbedProcessor.Bilibili) {
+				try {
+					const info = new URL(url);
+
+					if (!info.pathname.match(/^\/(video|bangumi\/play)\//)) {
+						p = null;
+					};
+				} catch (e) { p = null; };
+			};
 			break;
-		
+
 		};
 		return p;
 	};
