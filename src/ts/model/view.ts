@@ -20,7 +20,6 @@ import { observable, intercept, makeObservable } from 'mobx';
  * - groupRelationKey: Property to group by (Board view)
  * - coverRelationKey: Property to use as card cover (Gallery view)
  * - defaultTemplateId/defaultTypeId: Defaults for new objects
- * - showFilters: show/hide filters section
  *
  * MobX observable for reactive UI updates.
  */
@@ -40,7 +39,6 @@ class View implements I.View {
 	pageLimit = 0;
 	defaultTemplateId = '';
 	defaultTypeId = '';
-	showFilters = false;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -60,7 +58,6 @@ class View implements I.View {
 		this.pageLimit = Number(props.pageLimit) || 0;
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		this.defaultTypeId = String(props.defaultTypeId || '');
-		this.showFilters = Boolean(props.showFilters || false);
 		
 		this.relations = Array.isArray(props.relations) ? props.relations.filter(it => it) : [];
 		this.relations = this.relations.map(it => new M.ViewRelation(it));
@@ -86,7 +83,6 @@ class View implements I.View {
 			pageLimit: observable,
 			defaultTemplateId: observable,
 			defaultTypeId: observable,
-			showFilters: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,

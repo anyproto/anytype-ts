@@ -6,7 +6,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action } from 'Lib';
+import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -46,6 +46,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const cellRefs = useRef<Map<string, any>>(new Map());
 	const recordRefs = useRef<Map<string, any>>(new Map());
 	const [ searchIds, setSearchIds ] = useState<string[] | null>(null);
+	const [ dummy, setDummy ] = useState<number>(0);
 	const analyticsRoute = isCollection ? analytics.route.collection : analytics.route.set;
 
 	useEffect(() => {
@@ -1029,11 +1030,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
-		const { showFilters, filters } = view;
+		const { filters } = view;
 		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
+		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
 
 		if (items.length && !noToggle) {
-			Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: !showFilters });
+			const showFilters = Storage.checkToggle(rootId, filtersId);
+
+			Storage.setToggle(rootId, filtersId, !showFilters);
+			setDummy(dummy + 1);
 		} else {
 			U.Menu.sortOrFilterRelationSelect(menuParam, {
 				rootId,
@@ -1045,7 +1050,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const quickOptions = Relation.filterQuickOptions(item.format, condition);
 					const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
 
-					Dataview.viewUpdate(rootId, block.id, view.id, { showFilters: true });
+					Storage.setToggle(rootId, filtersId, true);
+
 					onFilterAdd({
 						relationKey: item.relationKey ? item.relationKey : item.id,
 						condition: condition as I.FilterCondition,
@@ -1055,6 +1061,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				},
 			});
 		};
+	};
+
+	const onFiltersClear = () => {
+		Storage.setToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`), false);
 	};
 
 	const onFilterAdd = (item: any, callBack?: () => void) => {
@@ -1467,8 +1477,9 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const targetId = getTarget();
 	const cn = [ 'focusable', `c${block.id}` ];
 
-	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId, showFilters } = view;
+	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
+	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 
 	let ViewComponent: any = null;
 	let body = null;
@@ -1612,6 +1623,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					ref={filtersRef}
 					{...props}
 					{...dataviewProps}
+					onClear={onFiltersClear}
 				/>
 			) : ''}
 

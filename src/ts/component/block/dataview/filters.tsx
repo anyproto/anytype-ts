@@ -5,7 +5,7 @@ import { I, U, keyboard, translate, S, Relation, C } from 'Lib';
 import Item from './filters/item';
 
 interface Props extends I.ViewComponent {
-
+	onClear?: () => void;
 };
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
@@ -63,10 +63,6 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	const onClear = () => {
-		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => loadData(view.id, 0, false));
-	};
-
 	const onAdd = () => {
 		const menuParam = {
 			element: `#block-${blockId} #dataviewFilters #item-add`,
@@ -80,7 +76,18 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onRemove = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (items.length == 1) {
+			props.onClear?.();
+		};
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => loadData(view.id, 0, false));
+	};
+
+	const onClear = () => {
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => loadData(view.id, 0, false));
+		props.onClear?.();
 	};
 
 	return (

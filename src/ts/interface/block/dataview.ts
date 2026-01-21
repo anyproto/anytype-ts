@@ -244,7 +244,6 @@ export interface View {
 	relations: any[];
 	defaultTemplateId: string;
 	defaultTypeId: string;
-	showFilters: boolean;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;

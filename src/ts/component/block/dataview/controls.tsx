@@ -7,7 +7,7 @@ import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordin
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter, DropTarget } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
+import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -442,8 +442,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
+	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: view.showFilters },
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: showFilters },
 		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
 		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
