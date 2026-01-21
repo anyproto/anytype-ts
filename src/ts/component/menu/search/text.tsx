@@ -36,6 +36,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const matchElementsRef = useRef<NodeListOf<Element> | null>(null);
 
 	const expandedRef = useRef<ExpandedState>({ toggles: [], headers: [] });
+	const originalCollapsedHeadersRef = useRef<string[]>([]);
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', headerId: '', position: null });
 
 	const getRootId = () => keyboard.getRootId(isPopup);
@@ -84,6 +85,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		}
 
+		// Save original collapsed state for restoration when search closes
+		originalCollapsedHeadersRef.current = [ ...collapsedHeaders ];
+
 		// Temporarily show all hidden content by removing the hidden class
 		container.find('.block.isHeaderChildHidden').removeClass('isHeaderChildHidden');
 
@@ -129,19 +133,22 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const collapseExpanded = (keepToggleId?: string, keepHeaderId?: string) => {
-		const { toggles, headers } = expandedRef.current;
+		const { toggles } = expandedRef.current;
+		const originalHeaders = originalCollapsedHeadersRef.current;
 
 		toggles
 			.filter(id => id !== keepToggleId)
 			.forEach(id => $(`#block-${id}`).removeClass('isToggled'));
 
-		const headersToCollapse = headers.filter(id => id !== keepHeaderId);
+		// Use original collapsed headers to properly restore state
+		const headersToCollapse = originalHeaders.filter(id => id !== keepHeaderId);
 		if (headersToCollapse.length) {
 			headersToCollapse.forEach(id => $(`#block-${id}`).addClass('isToggled'));
 			S.Block.updateHeadersToggle(getRootId());
 		}
 
 		expandedRef.current = { toggles: [], headers: [] };
+		originalCollapsedHeadersRef.current = [];
 	};
 
 	const removeHighlights = () => {
