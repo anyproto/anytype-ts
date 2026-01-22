@@ -84,6 +84,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			prevTextRef.current = text;
 			prevMarksRef.current = marks || [];
+		} else
+		if (marksRef.current.length) {
+			// Render markup even when text/marks haven't changed, to pick up
+			// newly loaded details for mentions/objects
+			renderMarkup();
 		};
 
 		if (text) {
