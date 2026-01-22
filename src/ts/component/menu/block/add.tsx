@@ -810,6 +810,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getListRef: () => listRef.current,
 		onClick,
 		onOver,
+		scrollToRow,
 	}), []);
 
 	return (

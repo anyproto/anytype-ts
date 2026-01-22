@@ -321,13 +321,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const resize = () => {
 		const items = getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
-
-		let height = 44;
-		if (!items.length) {
-			height = 160;
-		} else {
-			height = items.reduce((res: number, current: any) => res + HEIGHT, height);
-		};
+		const height = items.length ? items.length * HEIGHT + 64 : 160;
 
 		obj.css({ height });
 		position();
@@ -440,12 +434,13 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	useImperativeHandle(ref, () => ({
-			rebind,
-			unbind,
-			getItems,
-			getIndex: () => n.current,
-			setIndex: (i: number) => n.current = i,
-			getListRef: () => listRef.current,
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		scrollToRow,
 	}), []);
 
 	return (
