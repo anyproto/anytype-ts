@@ -246,6 +246,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'pageLock' },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
+			{ key: `${cmd}+v` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `shift+space` },
