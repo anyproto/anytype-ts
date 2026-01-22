@@ -17,7 +17,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const { name, colorStr } = product;
 	const currentCn = [ 'item', 'current', colorStr ? colorStr : 'default' ];
 	const participant = U.Space.getParticipant();
-	const globalName = 'asdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdjasdasdlasdasdhjasldjaskldjaslkdjalksdjalksdj';//participant?.globalName;
+	const globalName = participant?.globalName;
 	const nameCn = [ 'item', 'anyName' ];
 
 	if (globalName) {
