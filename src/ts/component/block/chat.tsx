@@ -679,8 +679,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			readMessage(id, message.orderId, lastStateId, I.ChatReadType.Mention);
 		};
 
-		console.log('SCROLL TO MESSAGE', hasScroll());
-
 		if (!hasScroll()) {
 			readScrolledMessages();
 			return;
@@ -690,8 +688,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const container = U.Common.getScrollContainer(isPopup);
 			const top = getMessageScrollPosition(id);
 			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
-
-			console.log('TOP', top);
 
 			setIsBottom(false);
 			setAutoLoadDisabled(true);
@@ -794,7 +790,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			S.Chat.clear(subId);
 			loadMessagesByOrderId(reply.orderId, () => {
-				console.log('SCROLL TO REPLY', JSON.stringify(reply));
 				raf(() => scrollToMessage(reply.id, true, true));
 			});
 		});
