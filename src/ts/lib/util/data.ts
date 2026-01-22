@@ -1145,6 +1145,7 @@ class UtilData {
 	 */
 	setRtl (rootId: string, block: I.Block, value: boolean, callBack?: (message: any) => void) {
 		if (!block) {
+			callBack?.({});
 			return;
 		};
 
@@ -1152,6 +1153,7 @@ class UtilData {
 		const current = Boolean(fields.isRtlDetected);
 		
 		if (current == value) {
+			callBack?.({});
 			return;
 		};
 

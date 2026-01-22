@@ -75,21 +75,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const textChanged = prevTextRef.current !== text;
-		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
-
-		if (textChanged || marksChanged) {
-			marksRef.current = marks || [];
-			setValue(text);
-
-			prevTextRef.current = text;
-			prevMarksRef.current = marks || [];
-		} else
-		if (marksRef.current.length) {
-			// Render markup even when text/marks haven't changed, to pick up
-			// newly loaded details for mentions/objects
-			renderMarkup();
-		};
+		setValue(text);
 
 		if (text) {
 			placeholderHide();
