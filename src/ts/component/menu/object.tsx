@@ -489,7 +489,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId, details: {} });
+				U.Object.editType(rootId, isPopup);
 				break;
 			};
 

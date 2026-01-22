@@ -240,23 +240,30 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const onClick = (item: any) => {
-		const param = {
-			layout: I.ObjectLayout.Settings,
-			id: U.Object.actionByLayout(item.layout),
-			_routeParam_: {
-				additional: [
-					{ key: 'objectId', value: item.id }
-				],
-			},
-		};
-
-		U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
-
 		let e = '';
 
 		switch (item.layout) {
-			case I.ObjectLayout.Type: e = 'ClickSettingsSpaceType'; break;
-			case I.ObjectLayout.Relation: e = 'ClickSettingsSpaceRelation'; break;
+			case I.ObjectLayout.Type: {
+				U.Object.editType(item.id, isPopup);
+				e = 'ClickSettingsSpaceType'; 
+				break;
+			};
+
+			case I.ObjectLayout.Relation: {
+				const param = {
+					layout: I.ObjectLayout.Settings,
+					id: U.Object.actionByLayout(item.layout),
+					_routeParam_: {
+						additional: [
+							{ key: 'objectId', value: item.id }
+						],
+					},
+				};
+
+				U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
+				e = 'ClickSettingsSpaceRelation'; 
+				break;
+			};
 		};
 
 		analytics.event(e, { route: analytics.route.library });

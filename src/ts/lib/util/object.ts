@@ -855,6 +855,22 @@ class UtilObject {
 		};
 	};
 
+	editType (id: string, isPopup: boolean) {
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = { 
+			page: 'type', 
+			rootId: id,
+			noPreview: false,
+			details: {},
+		};
+
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
+	};
+
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
