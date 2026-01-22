@@ -113,7 +113,7 @@
 			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.icon.expand { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
+			.icon.expand { position: absolute; right: 8px; top: 8px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -257,7 +257,6 @@
 				.itemWrap { margin-bottom: 0px; }
 			}
 
-			.icon.edit { height: 40px; }
 			.loadMore { padding-top: 11px; margin-top: 0px; }
 		}
 	}

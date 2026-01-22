@@ -137,7 +137,7 @@
 				}
 			}
 
-			.icon.edit { position: absolute; z-index: 3; width: 28px; height: 28px; right: 8px; top: 8px; border-radius: 4px; background-color: var(--color-bg-primary); background-size: 20px; }
+			.icon.edit { position: absolute; z-index: 3; right: 8px; top: 8px; }
 			.icon.edit:hover { background-color: var(--color-bg-primary); }
 
 			.card:hover {
