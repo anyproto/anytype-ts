@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus, Storage } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
@@ -179,7 +179,6 @@ class Dispatcher {
 		let updateParents = false;
 		let updateNumbers = false;
 		let updateMarkup = false;
-		let updateHeadersToggle = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
@@ -275,7 +274,6 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
-					updateHeadersToggle = true;
 					break;
 				};
 
@@ -297,7 +295,6 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
-					updateHeadersToggle = true;
 					break;
 				};
 
@@ -308,7 +305,6 @@ class Dispatcher {
 
 					updateParents = true;
 					updateNumbers = true;
-					updateHeadersToggle = true;
 					break;
 				};
 
@@ -375,9 +371,6 @@ class Dispatcher {
 						Sentry.captureMessage('[Dispatcher] BlockSetText: focus');
 					};
 
-					// Check if style is changing from/to header - need to update header toggles
-					const wasHeader = block.isTextHeader();
-
 					const content: Partial<I.ContentText> = {};
 
 					if (text !== null) {
@@ -409,22 +402,6 @@ class Dispatcher {
 					};
 
 					S.Block.updateContent(rootId, id, content);
-
-					// Handle header style transitions
-					if (style !== null) {
-						const isNowHeader = [ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(style);
-
-						// If was header and no longer is, clear toggle state
-						if (wasHeader && !isNowHeader) {
-							Storage.setToggle(rootId, id, false);
-							$(`#block-${id}`).removeClass('isToggled');
-						};
-
-						// Update header visibility if header status changed
-						if (wasHeader || isNowHeader) {
-							updateHeadersToggle = true;
-						};
-					};
 
 					updateNumbers = true;
 					break;
@@ -1196,10 +1173,6 @@ class Dispatcher {
 			if (updateMarkup) {
 				S.Block.updateMarkup(rootId);
 			};
-
-			if (updateHeadersToggle) {
-				S.Block.updateHeadersToggle(rootId);
-			};
 		});
 	};
 
@@ -1394,7 +1367,6 @@ class Dispatcher {
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId);
 		S.Block.updateMarkup(contextId);
-		S.Block.updateHeadersToggle(contextId);
 
 		keyboard.setWindowTitle();
 

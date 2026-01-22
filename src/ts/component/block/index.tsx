@@ -41,7 +41,6 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
 		isContextMenuDisabled, blockRemove, getWrapperWidth,
 	} = props;
-	const { config } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const idsRef = useRef<string[]>([]);
@@ -54,26 +53,11 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		initToggle();
-		initHeaderToggle();
 	});
 
 	const initToggle = () => {
 		if (block && block.id && block.isTextToggle()) {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
-		};
-	};
-
-	const initHeaderToggle = () => {
-		if (!config.experimental) {
-			return;
-		};
-
-		if (block && block.id && block.isTextHeader()) {
-			const isToggled = Storage.checkToggle(rootId, block.id);
-			$(nodeRef.current).toggleClass('isToggled', isToggled);
-			if (isToggled) {
-				S.Block.updateHeadersToggle(rootId);
-			};
 		};
 	};
 
@@ -84,12 +68,6 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		focus.apply();
 	};
 
-	const onHeaderToggle = (e: any) => {
-		e.stopPropagation();
-
-		S.Block.headerToggle(rootId, block.id, !$(nodeRef.current).hasClass('isToggled'));
-	};
-	
 	const onDragStart = (e: any) => {
 		e.stopPropagation();
 
@@ -827,7 +805,6 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					ref={childRef}
 					{...props}
 					onToggle={onToggle}
-					onHeaderToggle={onHeaderToggle}
 					renderLinks={renderLinks}
 					renderMentions={renderMentions}
 					renderObjects={renderObjects}

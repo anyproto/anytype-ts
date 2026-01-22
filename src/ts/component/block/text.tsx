@@ -9,7 +9,6 @@ import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, anal
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-	onHeaderToggle?(e: any): void;
 };
 
 for (const lang of U.Prism.components) {
@@ -35,13 +34,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, readonly, isPopup, isInsideTable,
-		onUpdate, onMenuAdd, onToggle, onHeaderToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp,
+		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp,
 		renderLinks, renderObjects, renderMentions, renderEmoji,
 	} = props;
 	const { id, content } = block;
 	const fields = block.fields || {};
 	const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
-	const { theme, config } = S.Common;
+	const { theme } = S.Common;
 	const { focused } = focus.state;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
@@ -1241,14 +1240,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			break;
 		};
 
-		case I.TextStyle.Header1:
-		case I.TextStyle.Header2:
-		case I.TextStyle.Header3: {
-			if (config.experimental) {
-				marker = { type: I.MarkerType.Toggle, onClick: onHeaderToggle };
-			};
-			break;
-		};
 	};
 
 	return (
