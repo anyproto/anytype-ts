@@ -172,8 +172,11 @@ html.bodyAuthSelect {
 }
 
 .header.mainSettings {
-	.identity { -webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; }
+	.identity { 
+		-webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; width: 100%; 
+		overflow: hidden;
+	}
 	.identity {
-		.label { color: var(--color-text-primary); }
+		.label { color: var(--color-text-primary); @include text-overflow-nw; }
 	}
 }
