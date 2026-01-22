@@ -53,7 +53,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const textRef = useRef('');
 	const marksRef = useRef<I.Mark[]>(marks || []);
 	const prevTextRef = useRef(text);
-	const prevMarksRef = useRef(marks?.length || 0);
+	const prevMarksRef = useRef<I.Mark[]>(marks || []);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const preventMenu = useRef(false);
@@ -76,14 +76,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		const textChanged = prevTextRef.current !== text;
-		const marksChanged = U.Common.compareJSON(prevMarksRef.current, marks);
+		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
 			setValue(text);
 
 			prevTextRef.current = text;
-			prevMarksRef.current = marks;
+			prevMarksRef.current = marks || [];
 		};
 
 		if (text) {
@@ -163,6 +163,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const value = getHtmlValue();
+
+		// Skip if already contains rendered LaTeX to prevent double-processing
+		if (value.includes('<markuplatex')) {
+			return;
+		};
+
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
@@ -842,6 +848,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Calculate correct caret position accounting for rendered LaTeX elements
 		window.setTimeout(() => {
 			const selection = window.getSelection();
+
 			let range = getRange();
 
 			if (selection && selection.rangeCount > 0) {
@@ -851,11 +858,20 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (editable && editable.contains(selRange.startContainer)) {
 					const from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
 					const to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+
 					range = { from, to };
 				};
 			};
 
-			setValue(block.getText());
+			// Only restore source text if there's rendered LaTeX that needs converting back for editing
+			const html = getHtmlValue();
+			if (html.includes('<markuplatex')) {
+				const currentBlock = S.Block.getLeaf(rootId, id);
+				if (currentBlock) {
+					setValue(currentBlock.getText());
+				};
+			};
+
 			focus.set(block.id, range);
 			focus.apply();
 		}, 0);
@@ -868,8 +884,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			placeholderHide();
 		};
 
-		focus.clear(true);
 		setText(marksRef.current, true);
+		focus.clear(true);
 		onBlur?.(e);
 
 		let key = '';
