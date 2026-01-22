@@ -136,10 +136,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			id={`item-${id}`}
 			className={cn.join(' ')}
 			onMouseEnter={onOver}
+			onClick={onClick}
 		>
 			<IconObject size={20} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
-			<div className="content" onClick={onClick}>
+			<div className="content">
 				<Label className="name" text={name} />
 
 				{(v !== null) && !noCondition ? (

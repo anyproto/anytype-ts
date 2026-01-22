@@ -5,7 +5,7 @@ import { I, U, keyboard, translate, S, Relation, C } from 'Lib';
 import Item from './filters/item';
 
 interface Props extends I.ViewComponent {
-
+	onClear?: () => void;
 };
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
@@ -38,10 +38,13 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClick = (e: any, item: any) => {
+		const filter: I.Filter = view.getFilter(item.id);
+
 		S.Menu.open('dataviewFilterValues', {
 			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
 			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			noFlipY: true,
 			data: {
 				rootId,
@@ -51,7 +54,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 				getTarget,
 				readonly: isReadonly,
 				save: () => {
-					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
 						loadData(view.id, 0, false);
 					});
 				},
@@ -60,22 +63,31 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	const onClear = () => {
-		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => loadData(view.id, 0, false));
-	};
-
 	const onAdd = () => {
 		const menuParam = {
 			element: `#block-${blockId} #dataviewFilters #item-add`,
+			classNameWrap: 'fromBlock',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 		};
 
 		onFilterAddClick(menuParam, true);
 	};
 
 	const onRemove = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (items.length == 1) {
+			props.onClear?.();
+		};
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => loadData(view.id, 0, false));
+	};
+
+	const onClear = () => {
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => loadData(view.id, 0, false));
+		props.onClear?.();
 	};
 
 	return (

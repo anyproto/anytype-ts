@@ -373,7 +373,6 @@ export const Mapper = {
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
 				defaultTypeId: obj.getDefaultobjecttypeid(),
-				showFilters: obj.getShowfilters(),
 			};
 		},
 
@@ -1089,7 +1088,6 @@ export const Mapper = {
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
 			item.setDefaulttemplateid(obj.defaultTemplateId);
 			item.setDefaultobjecttypeid(obj.defaultTypeId);
-			item.setShowfilters(obj.showFilters);
 
 			return item;
 		},
