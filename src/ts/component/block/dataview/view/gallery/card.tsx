@@ -94,7 +94,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 			{canEdit && config.experimental ? (
 				<Icon
-					className={[ 'editMode', (isEditing ? 'enabled' : '') ].join(' ')}
+					className={[ 'edit', (isEditing ? 'enabled' : '') ].join(' ')}
 					onClick={e => onEditModeClick(e, recordId)}
 				/>
 			) : ''}

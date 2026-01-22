@@ -691,12 +691,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ref = cellRefs.current.get(id);
 		const view = getView();
 		const isRecordEditing = (editingRecordId.current == recordId);
+		const isName = relationKey == 'name';
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if (relationKey == 'name' && (relation.isReadonlyValue || record.isReadonly)) {
+		if (isName && (relation.isReadonlyValue || record.isReadonly)) {
 			U.Object.openConfig(e, record);
 			return;
 		};
@@ -706,7 +707,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing() && !isRecordEditing) {
+		if (isName && ref.isEditing && !ref.isEditing() && !isRecordEditing) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {

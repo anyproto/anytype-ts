@@ -63,8 +63,11 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	};
 
 	let iconEdit = null;
+	let onClick = e => onCellClick(e, relationKey, record.id);
+
 	if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
-		iconEdit = <Icon className="edit" onClick={e => onEdit(e)} />;
+		onClick = onEdit;
+		iconEdit = <Icon className="expand" onClick={e => onCellClick(e, relationKey, record.id)} />;
 	};
 
 	return (
@@ -72,7 +75,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 			key={id}
 			id={id}
 			className={cn.join(' ')}
-			onClick={e => onCellClick(e, relationKey, record.id)}
+			onClick={onClick}
 		>
 			<Cell
 				ref={ref => {

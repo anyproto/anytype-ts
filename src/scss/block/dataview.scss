@@ -9,11 +9,14 @@
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		
-		.icon.edit { 
-			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); 
-			background-size: 20px;
-		}
+		.icon.edit,
+		.icon.expand { display: none; flex-shrink: 0; width: 20px; height: 20px; background-size: 20px; }
+
+		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
+
+		.icon.expand { background-image: url('~img/icon/dataview/button/expand0.svg'); }
+		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: var(--color-text-secondary);

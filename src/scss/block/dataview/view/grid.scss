@@ -113,7 +113,7 @@
 			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
+			.icon.expand { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -140,13 +140,13 @@
 			.cellContent.isName { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; }
 
 			.cell.isName.canEdit:hover {
-				.icon.edit { display: block; }
+				.icon.expand { display: block; }
 				.chatCounter { display: none;}
 			}
 
 			.row.isNote {
 				.cell.isName.canEdit:hover {
-					.icon.edit { display: none; }
+					.icon.expand { display: none; }
 					.chatCounter { display: block; }
 				}
 			};

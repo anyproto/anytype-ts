@@ -21,9 +21,7 @@
 		.viewContent.viewGallery,
 		.viewContent.viewBoard,
 		.viewContent.viewList {
-			.icon.editMode { display: none; background-image: url('~img/icon/dataview/button/edit0.svg'); background-position: 50% 50%; background-repeat: no-repeat; }
-			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
-			.icon.editMode.enabled { display: none !important; }
+			.icon.edit.enabled { display: none !important; }
 		}
 
 		.viewContent.viewGallery,
@@ -139,11 +137,11 @@
 				}
 			}
 
-			.icon.editMode { position: absolute; z-index: 3; width: 28px; height: 28px; right: 8px; top: 8px; border-radius: 4px; background-color: var(--color-bg-primary); background-size: 20px; }
-			.icon.editMode:hover { background-color: var(--color-bg-primary); }
+			.icon.edit { position: absolute; z-index: 3; width: 28px; height: 28px; right: 8px; top: 8px; border-radius: 4px; background-color: var(--color-bg-primary); background-size: 20px; }
+			.icon.edit:hover { background-color: var(--color-bg-primary); }
 
 			.card:hover {
-				.icon.editMode { display: block; }
+				.icon.edit { display: block; }
 			}
 		}
 	}

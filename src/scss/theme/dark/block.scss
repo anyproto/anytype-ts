@@ -49,8 +49,9 @@
 			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
 		}
 
-		.icon.edit { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
+		.icon.expand:hover { background-image: url('#{$themePath}/icon/dataview/button/expand1.svg'); }
+
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
@@ -93,20 +94,6 @@
 
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
-
-		/*
-        .viewContent.viewGallery,
-		.viewContent.viewBoard {
-			.card::after { background: rgba(255,255,255,0.03); }
-        }
-		*/
-
-		.viewContent.viewGallery,
-		.viewContent.viewBoard,
-		.viewContent.viewList {
-			.icon.editMode { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
-			.icon.editMode:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
-		}
 
         .viewContent.viewBoard {
             .cardContent { background: var(--color-bg-secondary); }
