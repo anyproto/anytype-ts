@@ -112,6 +112,23 @@ $(() => {
 				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
 			};
 		});
+
+		// Handle Alt key toggle from main process (when focus is on tab content)
+		electron.on('alt-key-toggle', () => {
+			if (!menuBarHiddenByConfig) {
+				return;
+			};
+
+			const isCurrentlyVisible = body.hasClass('altVisible');
+
+			if (isCurrentlyVisible) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			} else {
+				body.addClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
+			};
+		});
 	}
 
 	// Menu bar button handlers (Windows and Linux)

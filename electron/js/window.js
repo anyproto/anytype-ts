@@ -326,6 +326,41 @@ class WindowManager {
 			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
+		// Alt key handling for menu bar toggle (Windows/Linux)
+		// This allows Alt to work even when focus is on the tab content, not the tabs.html
+		if (is.windows || is.linux) {
+			let altKeyPressed = false;
+			let altKeyUsedWithOther = false;
+
+			view.webContents.on('before-input-event', (e, input) => {
+				const { showMenuBar } = ConfigManager.config;
+
+				// Only handle Alt toggle if menu bar is hidden by config
+				if (showMenuBar) {
+					return;
+				};
+
+				if (input.type === 'keyDown') {
+					if (input.key === 'Alt') {
+						altKeyPressed = true;
+						altKeyUsedWithOther = false;
+					} else
+					if (altKeyPressed) {
+						// Alt was used as modifier with another key
+						altKeyUsedWithOther = true;
+					};
+				} else
+				if ((input.type === 'keyUp') && (input.key === 'Alt')) {
+					// Alt was released - toggle menu bar if it wasn't used as modifier
+					if (altKeyPressed && !altKeyUsedWithOther) {
+						Util.send(win, 'alt-key-toggle');
+					};
+					altKeyPressed = false;
+					altKeyUsedWithOther = false;
+				};
+			});
+		};
+
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
 			view.isLoaded = true;
