@@ -48,6 +48,12 @@ interface Props {
 	menuClassNameWrap?: string;
 	getSize?: () => { width: number; height: number };
 	position?: () => void;
+
+	// Cell reference (for clearing cell on click)
+	cellRef?: { clear: () => void };
+
+	// Rebind callback (for edit menu keyboard handling)
+	rebind?: () => void;
 };
 
 export interface OptionSelectRefProps {
@@ -65,7 +71,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
-		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position,
+		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
@@ -164,6 +170,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
+
+		if (cellRef) {
+			cellRef.clear();
+		};
 
 		if (isReadonly) {
 			return;
@@ -284,6 +294,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			noAnimation: true,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
+			rebind,
 			parentId: menuId,
 			data: {
 				option: item,

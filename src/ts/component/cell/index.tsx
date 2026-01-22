@@ -428,7 +428,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				bindContainerClick();
 
 				if (!config.debug.ui) {
-					// win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
+					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
 				};
 			} else 
 			if (closeIfOpen) {

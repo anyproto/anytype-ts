@@ -1,40 +1,24 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { CSS } from '@dnd-kit/utilities';
-import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
+import { I, S, keyboard, Relation } from 'Lib';
+import OptionSelect, { OptionSelectRefProps } from 'Component/util/menu/optionSelect';
 
-const HEIGHT = 28;
-const LIMIT = 40;
 const SUB_ID = 'dataviewOptionList';
 
 const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const { id, param, close, position, setActive, getId, onKeyDown, getSize } = props;
 	const { data, className, classNameWrap } = param;
-	const { filter, canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, maxHeight } = data;
+	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds } = data;
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
-	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
-	const [ dummy, setDummy ] = useState(0);
-	const [ activeId, setActiveId ] = useState<string | null>(null);
-	const listRef = useRef(null);
-	const filterRef = useRef(null);
+	const optionSelectRef = useRef<OptionSelectRefProps>(null);
 	const n = useRef(-1);
-	const nodeRef = useRef(null);
-	const sensors = useSensors(
-		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
-		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-	);
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHander(e));
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
 		$(`#${getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
 		window.setTimeout(() => setActive(), 15);
 	};
@@ -44,18 +28,21 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		$(`#${getId()}`).off('click');
 	};
 
-	const onKeyDownHander = (e: any) => {
-		// Chinese IME is open
+	const onKeyDownHandler = (e: any) => {
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		const items = getItems();
-		
+		const items = optionSelectRef.current?.getItems() || [];
+		const currentIndex = optionSelectRef.current?.getIndex() ?? -1;
+
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, () => {
-			onEdit(e, items[n.current]);
+			const item = items[currentIndex];
+			if (item && item.id != 'add') {
+				optionSelectRef.current?.onOver(e, item);
+			};
 			ret = true;
 		});
 
@@ -64,462 +51,67 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		};
 	};
 
-	const onFilterChange = (v: string) => {
-		data.filter = v;
-		setDummy(dummy + 1);
-	};
+	const onValueChange = (newValue: string[]) => {
+		S.Menu.updateData(id, { value: newValue });
 
-	const onOver = (e: any, item: any) => {
-		if (!keyboard.isMouseDisabled) {
-			setActive(item, false);
-		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: $(nodeRef.current).find(`#item-${item.id}`)
-		});
-	};
-
-	const onClick = (e: any, item: any) => {
-		e.stopPropagation();
-
-		if (!canEdit) {
-			return;
-		};
-
-		const value = Relation.getArrayValue(data.value);
-
-		if (cellRef) {
-			cellRef.clear();
-		};
-
-		if (item.id == 'add') {
-			onOptionAdd();
-		} else 
-		if (!noSelect) {
-			value.includes(item.id) ? onValueRemove(item.id) : onValueAdd(item.id);
-		};
-
-		filterRef.current?.setValue('');
-		data.filter = '';
-	};
-
-	const onValueAdd = (id: string) => {
-		let value = Relation.getArrayValue(data.value);
-
-		value.push(id);
-		value = U.Common.arrayUnique(value);
-
-		if (maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
-
-			if (maxCount == 1) {
-				close();
-			};
-		};
-
-		S.Menu.updateData(props.id, { value });
-		
 		if (onChange) {
-			onChange(value);
+			onChange(newValue);
 		};
 	};
 
-	const onValueRemove = (id: string) => {
-		const value = Relation.getArrayValue(data.value);
-		const idx = value.indexOf(id);
-
-		value.splice(idx, 1);
-		S.Menu.updateData(props.id, { value });
-		
-		if (onChange) {
-			onChange(value);
-		};
-	};
-
-	const onOptionAdd = () => {
-		const colors = U.Menu.getBgColors();
-		const option = { 
-			name: String(data.filter || '').trim(),
-			color: colors[U.Common.rand(1, colors.length - 1)].value,
-		};
-
-		if (!option.name) {
-			return;
-		};
-
-		const items = getItems();
-		const match = items.find(it => it.name == option.name);
-
-		if (match) {
-			onValueAdd(match.id);
-			return;
-		};
-
-		C.ObjectCreateRelationOption({
-			relationKey: relation.relationKey,
-			name: option.name,
-			relationOptionColor: option.color,
-		}, S.Common.space, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			filterRef.current?.setValue('');
-			onFilterChange('');
-			onValueAdd(message.objectId);
-
-			window.setTimeout(() => resize(), 50);
-		});
-	};
-
-	const onEdit = (e: any, item: any) => {
-		e.stopPropagation();
-
-		if (!item || (item.id == 'add')) {
-			return;
-		};
-
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
-
-		if (!isAllowed) {
-			return;
-		};
-
-		S.Menu.open('dataviewOptionEdit', { 
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			noAnimation: true,
-			className,
-			classNameWrap,
-			rebind,
-			parentId: id,
-			data: {
-				...data,
-				option: item,
-			}
-		});
-	};
-
-	const onSortStart = (e: any) => {
-		keyboard.disableSelection(true);
-		setActiveId(e.active.id);
-	};
-
-	const onSortCancel = () => {
-		keyboard.disableSelection(false);
-		setActiveId(null);
-	};
-
-	const onSortEnd = (result: any) => {
-		const { active, over } = result;
-
-		setActiveId(null);
-		keyboard.disableSelection(false);
-
-		if (!active || !over) {
-			return;
-		};
-
-		const items = getItems();
-		const oldIndex = items.findIndex(it => it.id == active.id);
-		const newIndex = items.findIndex(it => it.id == over.id);
-		const newItems = arrayMove(items, oldIndex, newIndex);
-
-		U.Data.sortByOrderIdRequest(SUB_ID, newItems, callBack => {
-			C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), callBack);
-		});
-	};
-
-	const load = () => {
-		U.Subscription.destroyList([ SUB_ID ], false, () => {
-			U.Subscription.subscribe({
-				subId: SUB_ID,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relation.relationKey },
-				],
-				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
-				] as I.Sort[],
-				keys: U.Subscription.optionRelationKeys(false),
-			});
-		});
-	};
-
-	const getItems = (): any[] => {
-		const isSelect = relation.format == I.RelationType.Select;
-		const skipIds = Relation.getArrayValue(data.skipIds);
-		const ret = [];
-
-		let items = S.Record.getRecords(SUB_ID, U.Subscription.optionRelationKeys(true));
-		let check = [];
-
-		items = items.filter(it => !it._empty_ && !skipIds.includes(it.id));
-
-		if (filterMapper) {
-			items = items.filter(filterMapper);
-		};
-
-		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
-
-		if (data.filter) {
-			const filter = new RegExp(U.String.regexEscape(data.filter), 'gi');
-			
-			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
-			items = items.filter(it => it.name.match(filter));
-
-			if (canEdit && canAdd && !check.length) {
-				ret.unshift({ 
-					id: 'add', 
-					name: U.String.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
-				});
-			};
-		};
-
-		return items.concat(ret);
-	};
-
-	const resize = () => {
-		const items = getItems();
-		const obj = $(`#${getId()} .content`);
-		const offset = 16 + (noFilter ? 0 : 38);
-		const height = Math.max(HEIGHT + offset, Math.min(maxHeight || 360, items.length * HEIGHT + offset));
-
-		obj.css({ height });
-		position();
-	};
-
-	const items = getItems();
-
-	let placeholder = '';
-	let empty = '';
-
-	if (canAdd) {
-		placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
-		empty = translate('menuDataviewOptionListTypeToCreate');
-	} else {
-		placeholder = translate('menuDataviewOptionListFilterOptions');
-		empty = translate('menuDataviewOptionListTypeToSearch');
-	};
-
-	if (!canEdit) {
-		empty = translate('placeholderCellCommon');
-	};
-
-	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-		const active = value.includes(item.id);
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
-		const style = {
-			...item.style,
-			transform: CSS.Transform.toString(transform),
-			transition,
-			opacity: isDragging ? 0 : 1,
-		};
-
-		let content = null;
-		if (item.id == 'add') {
-			content = (
-				<div 
-					id="item-add" 
-					className="item add" 
-					style={item.style}
-					onClick={e => onClick(e, item)} 
-					onMouseEnter={e => onOver(e, item)}
-				>
-					<Icon className="plus" />
-					<div className="name">{item.name}</div>
-				</div>
-			);
-		} else 
-		if (item.isSection) {
-			content = <div className="sectionName" style={item.style}>{item.name}</div>;
-		} else {
-			const cn = [ 'item' ];
-			if (active) {
-				cn.push('withCheckbox');
-			};
-			if (isDragging) {
-				cn.push('isDragging');
-			};
-
-			content = (
-				<div 
-					id={`item-${item.id}`} 
-					className={cn.join(' ')} 
-					onMouseEnter={e => onOver(e, item)}
-					onMouseLeave={() => Preview.tooltipHide(false)}
-					ref={setNodeRef}
-					{...attributes}
-					{...listeners}
-					style={style}
-				>
-					{canEdit ? <Icon className="dnd" /> : ''}
-					<div className="clickable" onClick={e => onClick(e, item)}>
-						<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
-					</div>
-					<div className="buttons">
-						{active ? <Icon className="chk" /> : ''}
-						{isAllowed ? <Icon className="more" onClick={e => onEdit(e, item)} /> : ''}
-					</div>
-				</div>
-			);
-		};
-
-		return content;
-	};
-
-	const DragOverlayContent = ({ item }: { item: any }) => {
-		if (!item || item.id == 'add' || item.isSection) {
-			return null;
-		};
-
-		const active = value.includes(item.id);
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
-		const cn = [ 'item', 'isDragging' ];
-
-		if (active) {
-			cn.push('withCheckbox');
-		};
-
-		return (
-			<div
-				id={`item-${item.id}`}
-				className={cn.join(' ')}
-				style={{ height: HEIGHT }}
-			>
-				{canEdit ? <Icon className="dnd" /> : ''}
-				<div className="clickable">
-					<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
-				</div>
-				<div className="buttons">
-					{active ? <Icon className="chk" /> : ''}
-					{isAllowed ? <Icon className="more" /> : ''}
-				</div>
-			</div>
-		);
-	};
-
-	const rowRenderer = ({ key, parent, index, style }) => {
-		const item: any = items[index];
-		
-		return (
-			<CellMeasurer
-				key={key}
-				parent={parent}
-				cache={cache.current}
-				columnIndex={0}
-				rowIndex={index}
-			>
-				<Item {...item} style={style} />
-			</CellMeasurer>
-		);
+	const onMenuClose = () => {
+		close();
 	};
 
 	useEffect(() => {
 		rebind();
-		resize();
-		setActive();
-		position();
-		load();
 
 		return () => {
 			unbind();
-			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
-
-	useEffect(() => {
-		setActive();
-		position();
-		resize();
-	});
-
-	useEffect(() => {
-		n.current = 0;
-		load();
-	}, [ filter ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems,
-		getIndex: () => n.current,
-		setIndex: (i: number) => n.current = i,
-		getFilterRef: () => filterRef.current,
-		getListRef: () => listRef.current,
-		onClick,
-		onSortEnd,
+		getItems: () => optionSelectRef.current?.getItems() || [],
+		getIndex: () => optionSelectRef.current?.getIndex() ?? n.current,
+		setIndex: (i: number) => {
+			n.current = i;
+			optionSelectRef.current?.setIndex(i);
+		},
+		getFilterRef: () => optionSelectRef.current?.getFilterRef(),
+		getListRef: () => optionSelectRef.current?.getListRef(),
+		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
+		onSortEnd: (result: any) => optionSelectRef.current?.onSortEnd?.(result),
 	}), []);
 
 	return (
-		<div ref={nodeRef} className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
-			{!noFilter ? (
-				<Filter
-					className="outlined"
-					icon="search"
-					ref={filterRef} 
-					placeholderFocus={placeholder} 
-					value={filter}
-					onChange={onFilterChange} 
-					focusOnMount={true}
-				/>
-			) : ''}
-
-			<div className="items">
-				{items.length ? (
-					<DndContext
-						sensors={sensors}
-						collisionDetection={closestCenter}
-						onDragStart={onSortStart}
-						onDragEnd={onSortEnd}
-						onDragCancel={onSortCancel}
-						modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-					>
-						<SortableContext
-							items={items.map((item) => item.id)}
-							strategy={verticalListSortingStrategy}
-						>
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</SortableContext>
-						<DragOverlay>
-							{activeId ? <DragOverlayContent item={items.find(it => it.id === activeId)} /> : null}
-						</DragOverlay>
-					</DndContext>
-				) : (
-					<div className="item empty">{empty}</div>
-				)}
-			</div>
-		</div>
+		<OptionSelect
+			ref={optionSelectRef}
+			subId={SUB_ID}
+			relationKey={relation.relationKey}
+			value={value}
+			onChange={onValueChange}
+			isReadonly={!canEdit}
+			noFilter={noFilter}
+			noSelect={noSelect}
+			maxCount={maxCount}
+			skipIds={skipIds}
+			filterMapper={filterMapper}
+			canAdd={canAdd}
+			canSort={canEdit}
+			canEdit={canEdit}
+			setActive={setActive}
+			onClose={onMenuClose}
+			menuId={getId()}
+			menuClassName={className}
+			menuClassNameWrap={classNameWrap}
+			getSize={getSize}
+			position={position}
+			cellRef={cellRef}
+			rebind={rebind}
+		/>
 	);
 
 }));
