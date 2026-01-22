@@ -817,12 +817,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 			};
 
-			if (block.isTextHeader()) {
-				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
-					S.Block.headerToggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
-				});
-			};
-
 			if (block.isTextCheckbox()) {
 				keyboard.shortcut(`${cmd}+enter`, e, () => {
 					U.Data.blockSetText(rootId, block.id, text, marks, true, () => {
@@ -910,10 +904,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (block.isTextToggle()) {
 					e.preventDefault();
 					S.Block.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
-				};
-				if (block.isTextHeader()) {
-					e.preventDefault();
-					S.Block.headerToggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
 				};
 			});
 
@@ -1576,8 +1566,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
 					next = S.Block.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
 				} else {
-					// Skip blocks hidden by collapsed headers
-					next = S.Block.getNextBlock(rootId, focused, dir, it => it.isFocusable() && !S.Block.isBlockHiddenByHeader(rootId, it.id));
+					next = S.Block.getNextBlock(rootId, focused, dir, it => it.isFocusable());
 				};
 			};
 
@@ -1592,12 +1581,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			// If highest parent is closed toggle, next is parent
 			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
 				next = parent;
-			};
-
-			// If next block is hidden by a collapsed header, focus the header instead
-			const hidingHeader = S.Block.getHidingHeader(rootId, next.id);
-			if (hidingHeader) {
-				next = hidingHeader;
 			};
 
 			focusNextBlock(next, dir);
@@ -1748,14 +1731,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 				if ((dir > 0) && (range.to == length)) {
 					S.Block.toggle(rootId, block.id, true);
-				};
-			};
-			if (block.isTextHeader()) {
-				if ((dir < 0) && (range.to == 0)) {
-					S.Block.headerToggle(rootId, block.id, true);
-				};
-				if ((dir > 0) && (range.to == length)) {
-					S.Block.headerToggle(rootId, block.id, false);
 				};
 			};
 
@@ -2149,19 +2124,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const blockCreate = (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) => {
-		// Expand collapsed header if new block would be hidden under it
-		if (blockId) {
-			const refBlock = S.Block.getLeaf(rootId, blockId);
-			if (refBlock) {
-				const hidingHeader = S.Block.getHidingHeader(rootId, blockId);
-				if (hidingHeader) {
-					S.Block.headerToggle(rootId, hidingHeader.id, false);
-				} else if (refBlock.isTextHeader() && Storage.checkToggle(rootId, blockId) && position === I.BlockPosition.Bottom) {
-					S.Block.headerToggle(rootId, blockId, false);
-				};
-			};
-		};
-
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			if (param.type == I.BlockType.Text) {
 				focusSet(message.blockId, 0, 0, true);
@@ -2252,7 +2214,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { content } = focused;
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
-		const isHeader = focused.isTextHeader();
 		const isCallout = focused.isTextCallout();
 		const isQuote = focused.isTextQuote();
 		const isList = focused.isTextList();
@@ -2303,11 +2264,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				S.Block.toggle(rootId, message.blockId, true);
 			};
 
-			// Expand collapsed header when creating a new block after it
-			if (isHeader && isOpen && (range.to == length)) {
-				S.Block.headerToggle(rootId, focused.id, false);
-			};
-
 			const text = focused.getText();
 			const isRtl = U.String.checkRtl(text);
 
@@ -2345,7 +2301,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		focus.clear(true);
 
-		let next = S.Block.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable() && !S.Block.isBlockHiddenByHeader(rootId, it.id));
+		let next = S.Block.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
 
 		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code || !next) {
@@ -2357,12 +2313,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			// If highest parent is closed toggle, next is parent
 			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
 				next = parent;
-			};
-
-			// If next block is hidden by a collapsed header, focus the header instead
-			const hidingHeader = S.Block.getHidingHeader(rootId, next.id);
-			if (hidingHeader) {
-				next = hidingHeader;
 			};
 
 			const length = next.getLength();
@@ -2401,18 +2351,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (length) {
 					create = true;
 				};
-			};
-		};
-
-		// Check if the new block would be hidden under a collapsed header
-		// and expand that header if so
-		if (last) {
-			const hidingHeader = S.Block.getHidingHeader(rootId, last.id);
-			if (hidingHeader) {
-				S.Block.headerToggle(rootId, hidingHeader.id, false);
-			} else if (last.isTextHeader() && Storage.checkToggle(rootId, last.id)) {
-				// If the last block is a collapsed header, expand it so the new block is visible
-				S.Block.headerToggle(rootId, last.id, false);
 			};
 		};
 
