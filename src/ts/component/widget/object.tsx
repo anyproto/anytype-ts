@@ -172,11 +172,12 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
-		const more = element.find('.icon.more');
+		const more = element.find('.buttons');
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
 				element: more,
+				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				onOpen: () => $(element).addClass('active'),

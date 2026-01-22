@@ -1759,6 +1759,8 @@ class UtilMenu {
 			]);
 		};
 
+		console.trace();
+
 		options.push(toggle);
 
 		S.Menu.open('select', {
