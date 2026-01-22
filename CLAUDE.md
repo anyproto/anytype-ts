@@ -136,3 +136,17 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 ## Web Mode Development
 
 Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
+
+## Linear API Integration
+
+Use the `LINEAR_API_KEY` environment variable to fetch issue details from Linear.
+
+**Fetch issue by ID:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{issue(id:\"JS-1234\"){title description state{name}priority labels{nodes{name}}comments{nodes{body createdAt}}}}"}' | jq .
+```
+
+**Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.

@@ -1169,10 +1169,67 @@ class UtilCommon {
 				continue;
 			};
 
-			res = res.replace(m, `<${tag}>${render(body)}</${tag}>`);
+			const escaped = U.String.htmlSpecialChars(m).replace(/\$/g, '&#36;');
+			res = res.replace(m, `<${tag} data-latex="${escaped}" data-latex-length="${m.length}">${render(body)}</${tag}>`);
 		};
 
 		return res;
+	};
+
+	/**
+	 * Calculates text offset from DOM selection, accounting for rendered LaTeX elements.
+	 * LaTeX elements store their original text length in data-latex-length attribute.
+	 * @param {HTMLElement} root - The root editable element.
+	 * @param {Node} container - The selection container node.
+	 * @param {number} offset - The selection offset within the container.
+	 * @returns {number} The calculated text offset.
+	 */
+	getSelectionOffsetWithLatex (root: HTMLElement, container: Node, offset: number): number {
+		let result = 0;
+
+		const walk = (node: Node): boolean => {
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				const el = node as HTMLElement;
+
+				if (el.tagName?.toLowerCase() === 'markuplatex') {
+					const latexLength = parseInt(el.dataset.latexLength || '0', 10);
+
+					if (el.contains(container)) {
+						// Selection is inside LaTeX - position at end of LaTeX
+						result += latexLength;
+						return true;
+					};
+
+					// Skip children and add original length
+					result += latexLength;
+					return false;
+				};
+
+				// Process children for non-latex elements
+				for (let i = 0; i < node.childNodes.length; i++) {
+					if (walk(node.childNodes[i])) {
+						return true;
+					};
+				};
+
+				return false;
+			};
+
+			if (node.nodeType === Node.TEXT_NODE) {
+				if (node === container) {
+					result += offset;
+					return true;
+				};
+
+				result += node.textContent?.length || 0;
+				return false;
+			};
+
+			return false;
+		};
+
+		walk(root);
+		return result;
 	};
 
 	/**
