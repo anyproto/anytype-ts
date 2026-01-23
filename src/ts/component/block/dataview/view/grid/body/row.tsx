@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
@@ -15,8 +15,8 @@ interface Props extends I.ViewComponent {
 
 const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { 
-		rootId, block, style, recordId, readonly, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths, 
+	const {
+		rootId, block, style, recordId, readonly, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths,
 		getVisibleRelations, onSelectToggle, onUpdate,
 	} = props;
 	const relations = getVisibleRelations();
@@ -25,6 +25,7 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 	const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 	const cn = [ 'row', U.Data.layoutClass('', record.layout), ];
 	const keys = J.Relation.default.concat(relations.map((relation: any) => relation.relationKey));
+	const rowRef = useRef<HTMLDivElement>(null);
 
 	if (U.Object.isTaskLayout(record.layout) && record.done) {
 		cn.push('isDone');
@@ -41,6 +42,42 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(() => {
 		onUpdate?.();
 	}, watchedValues);
+
+	// Watch for cells exiting edit mode and trigger re-measurement
+	// This is needed because when a cell exits edit mode, the CSS layout changes
+	// but the record values don't change, so the watchedValues effect doesn't fire
+	useEffect(() => {
+		if (!onUpdate || !rowRef.current) {
+			return;
+		};
+
+		const observer = new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+					const target = mutation.target as HTMLElement;
+					const oldValue = mutation.oldValue || '';
+					const hadEditing = oldValue.includes('isEditing');
+					const hasEditing = target.classList.contains('isEditing');
+
+					// Check if a cell just exited edit mode (had isEditing, now doesn't)
+					if (target.classList.contains('cell') && hadEditing && !hasEditing) {
+						// Use requestAnimationFrame to ensure DOM has fully updated
+						requestAnimationFrame(() => onUpdate());
+						break;
+					};
+				};
+			};
+		});
+
+		observer.observe(rowRef.current, {
+			attributes: true,
+			attributeFilter: ['class'],
+			attributeOldValue: true,
+			subtree: true,
+		});
+
+		return () => observer.disconnect();
+	}, [ onUpdate ]);
 
 	let content = (
 		<>
@@ -97,7 +134,10 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		<AnimatePresence mode="popLayout">
 			<motion.div
 				id={`record-${record.id}`}
-				ref={ref => onRefRecord(ref, record.id)}
+				ref={el => {
+				rowRef.current = el;
+				onRefRecord(el, record.id);
+			}}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}
