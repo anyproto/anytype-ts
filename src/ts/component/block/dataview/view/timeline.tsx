@@ -570,6 +570,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		load,
+		resize,
 	}));
 
 	return (
