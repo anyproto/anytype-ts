@@ -126,7 +126,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		const view = getView();
 		const isOpen = Storage.checkToggle(getToggleKey(), id);
 
-		onCreate({ details: { [view.groupRelationKey]: value } });
+		onCreate(e, { details: { [view.groupRelationKey]: value } });
 
 		if (!isOpen) {
 			onToggle();

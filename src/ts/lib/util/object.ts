@@ -126,6 +126,10 @@ class UtilObject {
 
 		param = this.checkParam(param);
 
+		if (!e) {
+			this.openRoute(object, param);
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
