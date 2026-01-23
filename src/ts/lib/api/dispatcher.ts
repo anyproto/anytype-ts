@@ -1007,13 +1007,13 @@ class Dispatcher {
 						const title = [];
 
 						if (spaceview) {
-							title.push(U.String.shorten(spaceview.name, 16));
+							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
 						if (!spaceview.isChat && !spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
-								title.push(U.String.shorten(chat.name, 16));
+								title.push(U.String.shorten(chat.name, 32));
 							};
 						};
 

@@ -109,6 +109,11 @@
 			.row:hover { background-color: var(--color-shape-highlight-light); }
 			.row:hover {
 				.icon.drag { opacity: 1; }
+				
+				.cell.isName.canEdit {
+					.icon.expand { display: block; }
+					.chatCounter { display: none;}
+				}
 			}
 			.row.add { margin-top: 2px; }
 
@@ -138,11 +143,6 @@
 
 			.cell.isName, .cellContent.isName { cursor: default; }
 			.cellContent.isName { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; }
-
-			.cell.isName.canEdit:hover {
-				.icon.expand { display: block; }
-				.chatCounter { display: none;}
-			}
 
 			.row.isNote {
 				.cell.isName.canEdit:hover {
