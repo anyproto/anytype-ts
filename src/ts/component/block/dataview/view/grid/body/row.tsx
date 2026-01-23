@@ -53,7 +53,7 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const observer = new MutationObserver((mutations) => {
 			for (const mutation of mutations) {
-				if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+				if ((mutation.type == 'attributes') && (mutation.attributeName === 'class')) {
 					const target = mutation.target as HTMLElement;
 					const oldValue = mutation.oldValue || '';
 					const hadEditing = oldValue.includes('isEditing');
