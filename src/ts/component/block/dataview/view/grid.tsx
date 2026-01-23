@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
@@ -486,6 +486,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			</InfiniteLoader>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<div
