@@ -872,17 +872,22 @@ class UtilObject {
 	};
 
 	createType (details: any, isPopup: boolean) {
-		details = details || {};
-
-		sidebar.rightPanelToggle(isPopup, { 
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = {
 			page: 'type', 
 			rootId: '',
 			noPreview: false,
 			details: {
 				...this.getNewTypeDetails(),
-				...details,
+				...(details || {}),
 			},
-		});
+		};
+
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
 	};
 
 	getNewTypeDetails (): any {

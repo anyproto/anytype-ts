@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
+import { analytics, I, J, keyboard, S, Storage, translate, U, sidebar } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -385,6 +385,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	const onBack = () => {
 		S.Common.setLeftSidebarState('vault', 'settingsSpace');
+		sidebar.rightPanelClose(isPopup);
 		U.Router.go(U.Router.build(savedRoute.current.params), {});
 	};
 
