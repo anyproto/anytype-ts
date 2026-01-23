@@ -1086,11 +1086,17 @@ class CommonStore {
 	widgetSectionsInit () {
 		const saved = Storage.get('widgetSections') || [];
 		const full = [ ...saved ];
+		const order = [ 
+			I.WidgetSection.Unread, 
+			I.WidgetSection.Pin, 
+			I.WidgetSection.RecentEdit, 
+			I.WidgetSection.Type, 
+			I.WidgetSection.Bin,
+		];
 
-		for (const id in I.WidgetSection) {
-			const n = Number(id);
-			if (!isNaN(n) && !full.find(it => it.id === n)) {
-				full.push({ id: n, isClosed: false, isHidden: false });
+		for (const id of order) {
+			if (!full.find(it => it.id == id)) {
+				full.push({ id, isClosed: false, isHidden: false });
 			};
 		};
 
