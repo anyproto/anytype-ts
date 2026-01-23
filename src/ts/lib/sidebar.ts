@@ -421,7 +421,7 @@ class Sidebar {
 	 * Handles mouse move events for sidebar hover and auto-show/hide.
 	 */
 	onMouseMove (): void {
-		const { hideSidebar } = S.Common;
+		const { hideSidebar, windowIsFocused } = S.Common;
 
 		if (keyboard.isDragging || keyboard.isResizing) {
 			return;
@@ -430,12 +430,20 @@ class Sidebar {
 		if (
 			this.isAnimating ||
 			!hideSidebar ||
-			!keyboard.isMain()
+			!keyboard.isMain() ||
+			!windowIsFocused
 		) {
 			return;
 		};
 
-		const { x } = keyboard.mouse.page;
+		const { x, y } = keyboard.mouse.page;
+
+		// Skip if mouse position is at origin - indicates uninitialized state
+		// This can happen when switching tabs before any mouse movement
+		if (!x && !y) {
+			return;
+		};
+
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 		const leftState = S.Common.getLeftSidebarState();

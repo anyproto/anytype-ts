@@ -91,7 +91,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			case I.ObjectContainerType.Type: {
 				filters = filters.concat([
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] }
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] },
+					{ relationKey: 'restrictions', condition: I.FilterCondition.NotIn, value: [ I.RestrictionObject.Details ] },
 				]);
 				break;
 			};
