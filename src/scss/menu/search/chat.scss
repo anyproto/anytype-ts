@@ -6,10 +6,7 @@
 	.menu.menuSearchChat {
 		.content { transition: none; padding: 0px; overflow: visible; }
 		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
-
-		.filterWrapper { 
-			padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px;
-		}
+		.filterWrapper { padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px; }
 
 		.arrowWrapper {
 			display: flex; flex-direction: row; padding: 6px 8px; flex-shrink: 0; gap: 0px 8px;

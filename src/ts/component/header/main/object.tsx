@@ -27,6 +27,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const isRelationOpen = (rightSidebar.page == 'object/relation');
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 
 	let center = null;
 	let label = '';
@@ -49,7 +50,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		label = translate('commonSystem');
 	};
 
-	if (!isDeleted) {
+	if (!isDeleted && !isSearchMenuOpen) {
 		if (bannerProps.type == I.BannerType.None) {
 			center = (
 				<div

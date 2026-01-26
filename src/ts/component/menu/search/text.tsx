@@ -169,7 +169,11 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const updateMatchCounter = () => {
 		const node = $(nodeRef.current);
 		const total = matchElementsRef.current?.length || 0;
-		node.find('#cnt').text(`${n.current + 1}/${total}`);
+		const text = total > 0 ? `${n.current + 1} of ${total}` : '';
+
+		node.find('#switcher').text(text).toggleClass('active', total > 0);
+		node.find('.arrow.up').toggleClass('disabled', n.current <= 0);
+		node.find('.arrow.down').toggleClass('disabled', n.current >= total - 1 || total === 0);
 	};
 
 	const focusCurrentMatch = () => {
@@ -228,7 +232,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!value) {
 			return;
-		}
+		};
 
 		analytics.event('SearchWords', { length: value.length, route });
 
@@ -241,14 +245,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		matchElementsRef.current = getMatchElements();
-		const hasMatches = !!matchElementsRef.current?.length;
-		switcher.toggleClass('active', hasMatches);
+		switcher.toggleClass('active', !!matchElementsRef.current?.length);
 
 		updateMatchCounter();
 		focusCurrentMatch();
 	};
 
-	const onKeyDown = (e: React.KeyboardEvent) => {
+	const onKeyDown = (e: any, v: string) => {
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
 			e.preventDefault();
 		});
@@ -261,7 +264,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onKeyUp = (e: React.KeyboardEvent) => {
+	const onKeyUp = (e: any, v: string) => {
 		e.preventDefault();
 		window.clearTimeout(searchTimeoutRef.current);
 
@@ -284,8 +287,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onClear = () => {
 		inputRef.current?.setValue('');
-		close();
 		storageSet({ search: '' });
+		close();
 	};
 
 	const restoreFocus = () => {
@@ -306,6 +309,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const value = String(data.value || storageGet().search || '');
 			inputRef.current?.setValue(value);
 			inputRef.current?.setRange({ from: 0, to: value.length });
+			inputRef.current?.focus();
 			search();
 		}, 100);
 
@@ -320,26 +324,24 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	return (
-		<div ref={nodeRef} className="flex">
-			<Icon className="search" />
-
-			<Input
-				ref={inputRef}
-				placeholder={translate('commonSearchPlaceholder')}
-				onKeyDown={onKeyDown}
-				onKeyUp={onKeyUp}
-			/>
-
-			<div className="buttons">
-				<div id="switcher" className="switcher">
-					<Icon className="arrow left" onClick={() => navigateMatch(-1)} />
-					<div id="cnt" className="cnt" />
-					<Icon className="arrow right" onClick={() => navigateMatch(1)} />
+		<div ref={nodeRef} className="wrap">
+			<div className="filterWrapper">
+				<div className="filterContainer">
+					<Icon className="search" />
+					<Input
+						ref={inputRef}
+						placeholder={translate('commonSearch')}
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
+					/>
+					<div id="switcher" className="cnt" />
+					<Icon className="clear" onClick={onClear} />
 				</div>
 
-				<div className="line" />
-
-				<Icon className="clear" onClick={onClear} />
+				<div className="arrowWrapper">
+					<Icon className="arrow up" onClick={() => navigateMatch(-1)} />
+					<Icon className="arrow down" onClick={() => navigateMatch(1)} />
+				</div>
 			</div>
 		</div>
 	);

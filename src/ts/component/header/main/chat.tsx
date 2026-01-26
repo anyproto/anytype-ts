@@ -12,6 +12,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const showInvite = !spaceview.isOneToOne;
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 
 	let object = null;
 	if (spaceview.isChat || spaceview.isOneToOne) {
@@ -79,19 +80,21 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		};
 	};
 
-	if (bannerProps.type != I.BannerType.None) {
-		center = <HeaderBanner {...bannerProps} />;
-	};
+	if (!isDeleted && !isSearchMenuOpen) {
+		if (bannerProps.type != I.BannerType.None) {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 
-	if (bannerProps.type == I.BannerType.None) {
-		center = (
-			<div className="path" onClick={onSearch}>
-				<IconObject object={object} size={18} />
-				<ObjectName object={object} withPlural={true} />
-			</div>
-		);
-	} else {
-		center = <HeaderBanner {...bannerProps} />;
+		if (bannerProps.type == I.BannerType.None) {
+			center = (
+				<div className="path" onClick={onSearch}>
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} withPlural={true} />
+				</div>
+			);
+		} else {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 	};
 
 	useImperativeHandle(ref, () => ({

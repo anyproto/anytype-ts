@@ -1007,6 +1007,7 @@ class UtilMenu {
 					S.Menu.closeAll(null, () => {
 						$(window).trigger('openSearchChat');
 					});
+					
 					break;
 				};
 

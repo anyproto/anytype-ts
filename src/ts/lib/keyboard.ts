@@ -260,7 +260,7 @@ class Keyboard {
 			// Text search
 			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', route);
+					this.onSearchText('', route);
 				};
 			});
 
@@ -663,7 +663,7 @@ class Keyboard {
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('', route);
+				this.onSearchText('', route);
 				break;
 			};
 
@@ -1196,13 +1196,13 @@ class Keyboard {
 	 * @param {string} value - The search value.
 	 * @param {string} [route] - The route context.
 	 */
-	onSearchMenu (value: string, route?: string) {
+	onSearchText (value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid() || this.isMainArchive();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainVoid() || this.isMainArchive();
 		} else {
 			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
@@ -1211,20 +1211,42 @@ class Keyboard {
 			return;
 		};
 
-		S.Menu.closeAll(null, () => {
-			S.Menu.open('searchText', {
-				element: '#header',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 10,
-				classNameWrap: 'fromHeader',
-				passThrough: true,
-				data: {
-					isPopup,
-					value,
-					route,
+		const menuId = this.isMainChat() ? 'searchChat' : 'searchText';
+		const menuParam: Partial<I.MenuParam> = {
+			element: '#header',
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
+			classNameWrap: 'fromHeader',
+			noBorderY: true,
+			noFlipY: true,
+			fixedY: 0,
+			data: {},
+		};
+
+		if (this.isMainChat()) {
+			const rootId = this.getRootId();
+			const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+			const chatId = object.chatId || rootId;
+
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				rootId,
+				chatId,
+				scrollToMessage: (id: string) => {
+					$(window).trigger('scrollToMessage', { id });
 				},
 			});
+		} else {
+			menuParam.passThrough = true;
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				value,
+				route,
+			});
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 

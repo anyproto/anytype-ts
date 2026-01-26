@@ -18,7 +18,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
 
 	const unbind = () => {
-		const events = [ 'keydown', 'openSearchChat' ];
+		const events = [ 'keydown', 'scrollToMessage' ];
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
@@ -28,7 +28,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 		unbind();
 		win.on(`keydown.${ns}`, e => onKeyDown(e));
-		win.on(`openSearchChat.${ns}`, () => openSearchMenu());
+		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
+			chatRef.current?.getChildNode()?.scrollToMessage(id, true, true);
+		});
 	};
 
 	const open = () => {
@@ -78,42 +80,12 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('searchText', e, () => {
-			e.preventDefault();
-			openSearchMenu();
-		});
-
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
 
 				chatRef.current?.getChildNode()?.getFormRef()?.onAttachment();
 			};
-		});
-	};
-
-	const openSearchMenu = () => {
-		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-		const chatId = object.chatId || rootId;
-
-		S.Menu.closeAll(null, () => {
-			S.Menu.open('searchChat', {
-				element: '#header',
-				horizontal: I.MenuDirection.Center,
-				vertical: I.MenuDirection.Top,
-				classNameWrap: 'fromHeader',
-				noBorderY: true,
-				noFlipY: true,
-				fixedY: 0,
-				data: {
-					isPopup,
-					rootId,
-					chatId,
-					scrollToMessage: (id: string) => {
-						chatRef.current?.getChildNode()?.scrollToMessage(id, true, true);
-					},
-				},
-			});
 		});
 	};
 

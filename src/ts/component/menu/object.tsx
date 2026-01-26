@@ -61,7 +61,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let searchText = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
-		let searchChat = { id: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchChat') };
+		let searchChat = { id: 'searchChat', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
@@ -393,7 +393,12 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 			
 			case 'search': {
-				keyboard.onSearchMenu('', route);
+				keyboard.onSearchText('', route);
+				break;
+			};
+
+			case 'searchChat': {
+				keyboard.onSearchText('', route);
 				break;
 			};
 

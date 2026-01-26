@@ -180,12 +180,18 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const saveState = (filterValue: string, index: number) => {
-		storageSet?.({ filter: filterValue, currentIndex: index });
+		storageSet?.({ filter: filterValue, currentIndex: index, chatId });
 	};
 
 	const restoreState = () => {
 		const storage = storageGet?.() || {};
-		const { filter: savedFilter, currentIndex: savedIndex } = storage;
+		const { filter: savedFilter, currentIndex: savedIndex, chatId: savedChatId } = storage;
+
+		// Clear state if switching to a different chat
+		if (savedChatId && savedChatId !== chatId) {
+			storageSet?.({ filter: '', currentIndex: -1, chatId });
+			return;
+		};
 
 		if (savedFilter) {
 			filter.current = savedFilter;

@@ -808,7 +808,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Search
 			keyboard.shortcut('searchText', e, () => {
-				keyboard.onSearchMenu(text.substring(range.from, range.to), 'editor');
+				keyboard.onSearchText(text.substring(range.from, range.to), 'editor');
 			});
 
 			if (block.isTextToggle()) {
