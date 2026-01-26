@@ -5,7 +5,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Tag, Filter, IconObject, ObjectName } from 'Component';
+import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
 import $ from 'jquery';
 
@@ -100,6 +100,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const n = useRef(-1);
 	const [ filter, setFilter ] = useState('');
 	const [ activeId, setActiveId ] = useState<string | null>(null);
+	const [ isLoading, setIsLoading ] = useState(false);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -107,7 +108,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	);
 
 	useEffect(() => {
-		loadOptions();
+		load();
 		resize();
 
 		return () => {
@@ -116,7 +117,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	}, []);
 
 	useEffect(() => {
-		loadOptions();
+		load();
 	}, [ relationKey ]);
 
 	useEffect(() => {
@@ -128,10 +129,12 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		resize();
 	});
 
-	const loadOptions = () => {
+	const load = () => {
 		if (!relationKey && !searchParam) {
 			return;
 		};
+
+		setIsLoading(true);
 
 		U.Subscription.destroyList([ subId ], false, () => {
 			if (searchParam) {
@@ -155,7 +158,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					],
 					keys: searchParam.keys || J.Relation.default,
 					limit: searchParam.limit || LIMIT,
-				});
+				}, () => setIsLoading(false));
 			} else {
 				// Option mode
 				U.Subscription.subscribe({
@@ -169,7 +172,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 						{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
 					] as I.Sort[],
 					keys: U.Subscription.optionRelationKeys(false),
-				});
+				}, () => setIsLoading(false));
 			};
 		});
 	};
@@ -776,8 +779,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				/>
 			) : ''}
 
+			{isLoading ? <Loader /> : ''}
+
 			<div className="items">
-				{renderList()}
+				{!isLoading ? renderList() : ''}
 			</div>
 		</div>
 	);
