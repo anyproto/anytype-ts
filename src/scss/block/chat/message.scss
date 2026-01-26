@@ -177,6 +177,7 @@
 
 	&:not(.withText) {
 		.bubbleInner {
+			.bubble { position: relative; }
 			.bubble {
 				.textWrapper { padding: 0px !important; }
 				.time {
