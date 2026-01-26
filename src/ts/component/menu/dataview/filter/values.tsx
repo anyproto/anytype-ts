@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, translate, analytics, Relation } from 'Lib';
-import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect } from 'Component';
+import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect } from 'Component';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
@@ -56,9 +56,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		if (inputRef.current.setValue && !withFilter) {
 			if (isDate) {
-				if (item.quickOption == I.FilterQuickOption.ExactDate) {
-					inputRef.current.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
-				} else {
+				// NumberOfDaysAgo/NumberOfDaysNow use input, ExactDate uses CalendarSelect
+				if (item.quickOption != I.FilterQuickOption.ExactDate) {
 					inputRef.current.setValue(item.value);
 				};
 			} else {
@@ -122,8 +121,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		return ret;
 	};
 
-	const onOver = (e: any, item: any) => {
+	const onQuickOption = (e: any, item: any) => {
 		if (isReadonly || S.Menu.isAnimating('select')) {
+			return;
+		};
+
+		if (S.Menu.isOpen('select')) {
+			S.Menu.closeAll([ 'select' ]);
 			return;
 		};
 
@@ -137,11 +141,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			noFlipY: true,
 		};
 
-		let options = [];
-		if (item.id == 'quickOption') {
-			options = Relation.filterQuickOptions(item.format, item.condition);
-		};
-
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
 				...menuParam,
@@ -151,7 +150,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					noFilter: true,
 					noVirtualisation: true,
 					value: item[item.id],
-					options,
+					options: Relation.filterQuickOptions(item.format, item.condition),
 					onSelect: (e: any, el: any) => {
 						onChange(item.id, el.id);
 					}
@@ -242,34 +241,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		close();
 	};
 
-	const onSubmitDate = (e: any) => {
-		e.preventDefault();
-
-		const value = U.Date.parseDate(inputRef.current.getValue());
-		
-		onChange('value', value);
-		onCalendar(value);
-	};
-
 	const onFocusText = () => {
 		S.Menu.close('select');
-	};
-
-	const onFocusDate = (e: any) => {
-		if (isReadonly) {
-			return;
-		};
-
-		const item = getView().getFilter(itemId);
-		const value = item.value || U.Date.now();
-
-		S.Menu.closeAll([ 'select' ], () => {
-			if (S.Menu.isOpen('calendar')) {
-				S.Menu.updateData('calendar', { value });
-			} else {
-				onCalendar(value);
-			};
-		});
 	};
 
 	const onSelect = (e: any) => {
@@ -277,27 +250,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			from: e.currentTarget.selectionStart,
 			to: e.currentTarget.selectionEnd,
 		};
-	};
-
-	const onCalendar = (value: number) => {
-		const item = getView().getFilter(itemId);
-
-		S.Menu.open('calendar', {
-			className,
-			classNameWrap,
-			element: `#${getId()} #value`,
-			horizontal: I.MenuDirection.Center,
-			rebind,
-			parentId: props.id,
-			data: { 
-				value, 
-				canEdit: true,
-				relationKey: item.relationKey,
-				onChange: (value: number) => {
-					onChange('value', value);
-				},
-			},
-		});
 	};
 
 	const getRelationOptions = () => {
@@ -375,7 +327,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	let wrapValue = false;
 	let value = null;
-	let onSubmit = e => onSubmitHandler(e);
+	const onSubmit = e => onSubmitHandler(e);
 
 	switch (relation.format) {
 
@@ -478,23 +430,18 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			} else
 			if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
 				value = (
-					<>
-						<Input 
-							key="filter-value-date-exact-input"
-							ref={ref => inputRef.current = ref} 
-							value={item.value !== null ? U.Date.date('d.m.Y H:i:s', item.value) : ''} 
-							placeholder="dd.mm.yyyy hh:mm:ss"
-							maskOptions={{ mask: '99.99.9999 99:99:99' }}
-							onFocus={onFocusDate}
-							onSelect={onSelect}
-							readonly={isReadonly}
-						/>
-						<Icon className="clear" onClick={onClear} />
-					</>
+					<CalendarSelect
+						value={item.value}
+						onChange={v => onChange('value', v)}
+						isReadonly={isReadonly}
+						canClear={true}
+						position={position}
+						menuClassNameWrap="fromBlock"
+					/>
 				);
-				onSubmit = onSubmitDate;
+			} else {
+				wrapValue = true;
 			};
-			wrapValue = true;
 			break;
 		};
 
@@ -566,8 +513,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	}), [ isInlineRelation ]);
 
 	return (
-		<div ref={nodeRef}>
-			<div className="head">
+		<div ref={nodeRef} className="inner">
+			<div className="head menuHead">
 				<Label text={relationOption.name} />
 				<div onClickCapture={onConditionClick}>
 					<Select
@@ -588,7 +535,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						<MenuItemVertical
 							key={i}
 							{...item}
-							onMouseEnter={e => onOver(e, item)}
+							onClick={e => onQuickOption(e, item)}
 							readonly={isReadonly}
 						/>
 					))}
