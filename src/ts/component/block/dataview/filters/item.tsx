@@ -7,6 +7,7 @@ interface Props extends I.Filter {
 	id: string;
 	subId: string;
 	relation: any;
+	filter: I.Filter;
 	readonly?: boolean;
 	onOver?: (e: any) => void;
 	onClick?: (e: any) => void;
@@ -15,7 +16,8 @@ interface Props extends I.Filter {
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { id, relation, condition, quickOption, subId, readonly, onOver, onClick, onRemove } = props;
+	const { subId, filter, readonly, onOver, onClick, onRemove } = props;
+	const { id, condition, quickOption, relation } = filter;
 	const isDictionary = Relation.isDictionary(relation.relationKey);
 	const cn = [ 'filterItem' ];
 
@@ -35,11 +37,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
 	let name = relation.name;
-	let value = props.value;
+	let value = filter.value;
 	let v: any = null;
 	let list = [];
 	let Item: any = null;
-	let noCondition = false;
+
 
 	switch (relation.format) {
 
@@ -81,7 +83,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.RelationType.MultiSelect:
 		case I.RelationType.Select: {
-			noCondition = true;
 			list = Relation.getOptions(value);
 
 			if (list.length) {
@@ -126,8 +127,9 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		v = null;
 	};
 
-	if (v !== null) {
-		name = `${relation.name}:`;
+	let withValue = false;
+	if (Relation.isFilterActive(filter)) {
+		withValue = true;
 		cn.push('withValue');
 	};
 
@@ -143,12 +145,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="content">
 				<Label className="name" text={name} />
 
-				{(v !== null) && !noCondition ? (
-					<Label className="condition" text={conditionOption.name} />
-				) : ''}
-
-				{v !== null ? (
-					<div className="value">{v}</div>
+				{withValue ? (
+					<>
+						<Label className="condition" text={conditionOption.name} />
+						<div className="value">{v}</div>
+					</>
 				) : ''}
 			</div>
 

@@ -159,7 +159,8 @@ class Dataview {
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = U.Common.objectCopy(view.filters).concat(param.filters || []);
+		const viewFilters = U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		const filters = viewFilters.concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });

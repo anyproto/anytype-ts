@@ -155,6 +155,9 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 		v = null;
+	} else
+	if (!Relation.isFilterValueSet(value)) {
+		v = null;
 	};
 
 	return (
