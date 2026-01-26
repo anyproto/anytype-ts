@@ -652,7 +652,14 @@ class WindowManager {
 	};
 
 	getTabBarHeight (win) {
+		const Api = require('./api.js');
 		const ConfigManager = require('./config.js');
+
+		// Hide tabs when PIN check is required
+		if (Api.hasPinSet && !Api.isPinChecked) {
+			return 0;
+		};
+
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const configShowMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
@@ -677,11 +684,13 @@ class WindowManager {
 			return;
 		};
 
+		const Api = require('./api.js');
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
 		const isSingleTab = win.views && (win.views.length == 1);
-		const isVisible = alwaysShow || hasMultipleTabs;
+		const isPinCheckRequired = Api.hasPinSet && !Api.isPinChecked;
+		const isVisible = !isPinCheckRequired && (alwaysShow || hasMultipleTabs);
 
 		// Send to tabs.html window (tab bar UI)
 		Util.send(win, 'update-tab-bar-visibility', isVisible);

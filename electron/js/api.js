@@ -107,10 +107,16 @@ class Api {
 		} else {
 			this.stopPinTimer();
 		};
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	setHasPinSet (win, hasPinSet) {
 		this.hasPinSet = hasPinSet;
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	checkPinTimeout (win, pinTimeout) {
