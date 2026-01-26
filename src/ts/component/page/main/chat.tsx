@@ -18,9 +18,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
 
 	const unbind = () => {
-		const events = [ 'keydown' ];
+		const events = [ 'keydown', 'openSearchChat' ];
 
-		$(window).off(events.map(it => `${it}.chat${ns}`).join(' '));
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	const rebind = () => {

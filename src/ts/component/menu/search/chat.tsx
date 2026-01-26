@@ -191,13 +191,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			filter.current = savedFilter;
 			filterRef.current?.setValue(savedFilter);
 
-			window.setTimeout(() => {
-				load(true, () => {
-					if (typeof savedIndex === 'number' && savedIndex >= 0) {
-						setCurrentIndex(savedIndex);
-					};
-				});
-			}, 50);
+			load(true, () => {
+				if ((typeof(savedIndex) == 'number') && savedIndex) {
+					setCurrentIndex(savedIndex);
+				};
+			});
 		};
 	};
 
