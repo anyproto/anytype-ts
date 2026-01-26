@@ -5,12 +5,24 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
+import { Icon, Tag, Filter, IconObject, ObjectName } from 'Component';
+import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
 import $ from 'jquery';
 
 const HEIGHT = 28;
 const LIMIT = 40;
+
+interface SearchParam {
+	types?: string[];
+	filters?: I.Filter[];
+	sorts?: I.Sort[];
+	keys?: string[];
+	limit?: number;
+};
+
+interface AddParam {
+	details?: any;
+};
 
 interface Props {
 	subId: string;
@@ -54,6 +66,10 @@ interface Props {
 
 	// Rebind callback (for edit menu keyboard handling)
 	rebind?: () => void;
+
+	// Object mode (when searchParam is provided)
+	searchParam?: SearchParam;
+	addParam?: AddParam;
 };
 
 export interface OptionSelectRefProps {
@@ -72,6 +88,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
 		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
+		searchParam, addParam,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
@@ -111,27 +128,84 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	});
 
 	const loadOptions = () => {
-		if (!relationKey) {
+		if (!relationKey && !searchParam) {
 			return;
 		};
 
 		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				subId,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relationKey },
-				],
-				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
-				] as I.Sort[],
-				keys: U.Subscription.optionRelationKeys(false),
-			});
+			if (searchParam) {
+				// Object mode
+				const filters: I.Filter[] = [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+				].concat(searchParam.filters || []);
+
+				if (searchParam.types?.length) {
+					const types = searchParam.types.map(id => S.Record.getTypeById(id)).filter(it => it);
+					if (types.length) {
+						filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
+					};
+				};
+
+				U.Subscription.subscribe({
+					subId,
+					filters,
+					sorts: searchParam.sorts || [
+						{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+					],
+					keys: searchParam.keys || J.Relation.default,
+					limit: searchParam.limit || LIMIT,
+				});
+			} else {
+				// Option mode
+				U.Subscription.subscribe({
+					subId,
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+						{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relationKey },
+					],
+					sorts: [
+						{ relationKey: 'orderId', type: I.SortType.Asc },
+						{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+					] as I.Sort[],
+					keys: U.Subscription.optionRelationKeys(false),
+				});
+			};
 		});
 	};
 
 	const getItems = (): any[] => {
+		if (searchParam) {
+			// Object mode
+			const keys = searchParam.keys || J.Relation.default;
+			const skip = Relation.getArrayValue(skipIds);
+			const ret: any[] = [];
+
+			let items = S.Record.getRecords(subId, keys);
+			items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skip.includes(it.id));
+
+			if (filterMapper) {
+				items = items.filter(filterMapper);
+			};
+
+			if (filter) {
+				const reg = new RegExp(U.String.regexEscape(filter), 'gi');
+				items = items.filter(it => it.name?.match(reg));
+
+				if (canAdd && !isReadonly) {
+					const check = items.filter(it => it.name?.toLowerCase() == filter.toLowerCase());
+					if (!check.length) {
+						ret.push({
+							id: 'add',
+							name: U.String.sprintf(translate('commonCreateObjectWithName'), filter),
+						});
+					};
+				};
+			};
+
+			return items.concat(ret);
+		};
+
+		// Option mode
 		const isSelect = relation?.format == I.RelationType.Select;
 		const skip = Relation.getArrayValue(skipIds);
 		const ret: any[] = [];
@@ -180,7 +254,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		if (item.id == 'add') {
-			onOptionAdd();
+			searchParam ? onObjectAdd() : onOptionAdd();
 			return;
 		};
 
@@ -271,6 +345,43 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
+	const onObjectAdd = () => {
+		if (!filter?.trim()) {
+			return;
+		};
+
+		const types = searchParam?.types || [];
+		const typeKey = types.length ? S.Record.getTypeById(types[0])?.uniqueKey : '';
+		const details = {
+			...(addParam?.details || {}),
+			name: filter.trim(),
+		};
+
+		U.Object.create('', typeKey, details, I.BlockPosition.Bottom, '', [], analytics.route.relation, (message: any) => {
+			if (!message.targetId) {
+				return;
+			};
+
+			const newId = message.targetId;
+
+			filterRef.current?.setValue('');
+			setFilter('');
+
+			let newValue = [ ...value, newId ];
+			newValue = U.Common.arrayUnique(newValue);
+
+			if (maxCount) {
+				newValue = newValue.slice(newValue.length - maxCount, newValue.length);
+
+				if (maxCount == 1) {
+					onClose?.();
+				};
+			};
+
+			onChange(newValue);
+		});
+	};
+
 	const onEdit = (e: any, item: any) => {
 		e.stopPropagation();
 
@@ -346,7 +457,27 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		setActiveId(null);
 		keyboard.disableSelection(false);
 
-		if (!active || !over || !relation) {
+		if (!active || !over) {
+			return;
+		};
+
+		if (searchParam) {
+			// Object mode: reorder value array
+			let newValue = [ ...value ];
+			const oldIndex = newValue.indexOf(active.id);
+			const newIndex = newValue.indexOf(over.id);
+
+			if (oldIndex === -1 || newIndex === -1) {
+				return;
+			};
+
+			newValue = arrayMove(newValue, oldIndex, newIndex);
+			onChange(newValue);
+			return;
+		};
+
+		// Option mode: orderId-based reorder
+		if (!relation) {
 			return;
 		};
 
@@ -376,7 +507,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	let placeholder = '';
 	let empty = '';
 
-	if (canAdd) {
+	if (searchParam) {
+		placeholder = translate('commonFilterObjects');
+		empty = translate('menuDataviewOptionListTypeToSearch');
+	} else if (canAdd) {
 		placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
 		empty = translate('menuDataviewOptionListTypeToCreate');
 	} else {
@@ -454,11 +588,18 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
 					{!noSelect && isSelected ? <Icon className="chk" /> : ''}
-					<Tag
-						text={item.name}
-						color={item.color}
-						className={Relation.selectClassName(relation?.format)}
-					/>
+					{searchParam ? (
+						<>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</>
+					) : (
+						<Tag
+							text={item.name}
+							color={item.color}
+							className={Relation.selectClassName(relation?.format)}
+						/>
+					)}
 				</div>
 
 				{canEdit && isAllowed ? (
@@ -492,11 +633,18 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 				<div className="clickable">
 					{!noSelect ? <Icon className={isSelected ? 'chk' : 'chk empty'} /> : ''}
-					<Tag
-						text={item.name}
-						color={item.color}
-						className={Relation.selectClassName(relation?.format)}
-					/>
+					{searchParam ? (
+						<>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</>
+					) : (
+						<Tag
+							text={item.name}
+							color={item.color}
+							className={Relation.selectClassName(relation?.format)}
+						/>
+					)}
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">

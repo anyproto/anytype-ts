@@ -19,8 +19,8 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = param;
-	const { 
-		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, dataChange,
+	const {
+		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, dataChange, rootId,
 		placeholderFocus = translate('commonFilterObjects'),
 	} = data;
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
@@ -260,6 +260,9 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				close();
 			});
 		} else {
+			if (rootId) {
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+			};
 			cb(item.id);
 		};
 	};
