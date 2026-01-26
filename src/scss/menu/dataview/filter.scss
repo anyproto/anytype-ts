@@ -70,26 +70,30 @@
 
 	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
-		.head { display: flex; align-items: center; gap: 0px 4px; padding: 0px 16px; }
-		.head {
-			.label { @include text-common; color: var(--color-text-primary); font-weight: 500; padding: 0px; margin: 0px; }
-			.select {
-				display: flex; border: 0px; padding: 0px; flex-shrink: 0;
-				background-color: var(--color-bg-primary); color: var(--color-text-secondary);
+		.inner {
+			> .head { display: flex; align-items: center; gap: 0px 4px; padding: 0px 16px; }
+			> .head {
+				.label { @include text-common; color: var(--color-text-primary); font-weight: 500; padding: 0px; margin: 0px; }
+				.select {
+					display: flex; border: 0px; padding: 0px; flex-shrink: 0;
+					background-color: var(--color-bg-primary); color: var(--color-text-secondary);
+				}
+				.select {
+					.icon.arrow { position: static !important; margin: 0px !important; }
+				}
 			}
-			.select {
-				.icon.arrow { position: static !important; margin: 0px !important; }
-			}
-		}
-		.section {
-			.select { border: 0px; padding: 0px; display: block; width: 100%; }
-			.select:hover, .select.isFocused { background: none; }
-			.select {
-				.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
-			}
-			.select.checkboxValue {
-				.item { @include text-common; }
-				.icon.arrow { right: -8px !important; }
+			> .section {
+				.item {
+					.select { border: 0px; padding: 0px; display: block; width: 100%; }
+					.select:hover, .select.isFocused { background: none; }
+					.select {
+						.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+					}
+					.select.checkboxValue {
+						.item { @include text-common; }
+						.icon.arrow { right: -8px !important; }
+					}
+				}
 			}
 		}
 	}

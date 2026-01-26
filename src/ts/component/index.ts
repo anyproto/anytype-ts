@@ -110,6 +110,7 @@ import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
 import OptionSelect from './util/menu/optionSelect';
+import CalendarSelect from './util/menu/calendarSelect';
 
 export {
 	Page,
@@ -222,4 +223,5 @@ export {
 	LayoutPlug,
 
 	OptionSelect,
+	CalendarSelect,
 };
