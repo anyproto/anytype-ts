@@ -1889,8 +1889,6 @@
 
 	"menuChatCreatePlaceholder": "e.g. feature-chat",
 
-	"menuSearchChatPlaceholder": "Search messages...",
-
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
 	"syncButtonNameError3": "No access",

@@ -138,6 +138,13 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
+
+		const items = getItems();
+		const index = items.findIndex(it => it.id === item.id);
+		if (index >= 0) {
+			saveState(filter.current, index);
+		};
+
 		scrollToMessage?.(item.id);
 		close();
 	};
@@ -162,14 +169,14 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
+		setCurrentIndex(newIndex);
 		saveState(filter.current, newIndex);
 
 		const item = items[newIndex];
 		if (item) {
+			setActive(item, true);
 			scrollToMessage?.(item.id);
 		};
-
-		close();
 	};
 
 	const saveState = (filterValue: string, index: number) => {
@@ -301,7 +308,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<Filter
 					ref={filterRef}
 					className="outlined round"
-					placeholder={translate('menuSearchChatPlaceholder')}
+					placeholder={translate('commonSearch')}
 					value=""
 					icon="search"
 					onChange={onFilterChange}
