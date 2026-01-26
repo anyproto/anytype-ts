@@ -118,7 +118,7 @@
 			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.icon.expand { position: absolute; right: 8px; top: 8px; }
+			.icon.expand { position: absolute; right: 8px; top: 10px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -227,6 +227,8 @@
 	.block.blockDataview.isInline {
 		.viewContent.viewGrid { padding: 0px; }
 		.viewContent.viewGrid {
+			.icon.expand { top: 6px; }
+
 			&:not(.wrapContent) {
 				.row, .cell { height: 40px; }
 			}

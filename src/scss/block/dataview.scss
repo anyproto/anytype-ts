@@ -11,8 +11,9 @@
 		
 		.icon.edit,
 		.icon.expand { 
-			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 4px;
+			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
 			background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px var(--color-shape-highlight-medium);
+			z-index: 1;
 		}
 
 		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }

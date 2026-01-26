@@ -9,6 +9,8 @@
 			.ReactVirtualized__List { overflow: visible !important; }
 			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
+			.icon.edit, .icon.expand { background-color: unset; box-shadow: 0px 0px; }
+
 		    .row { 
 				height: 28px !important; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; 
 			}
