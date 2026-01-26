@@ -6,7 +6,7 @@ import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate } from 'Lib';
 
 const LIMIT = 16;
-const HEIGHT_ITEM = 56;
+const HEIGHT = 56;
 
 interface ChatSearchResult {
 	id?: string;
@@ -27,7 +27,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ currentIndex, setCurrentIndex ] = useState(-1);
 	const [ dummy, setDummy ] = useState(0);
-	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
 	const timeout = useRef(0);
@@ -207,17 +207,21 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
-		const obj = $(`#${getId()} .content`);
+		const menu = $(`#${getId()}`);
+		const obj = menu.find('.content');
 		const { wh } = U.Common.getWindowDimensions();
+		const header = $('#header .side.center');
+		const width = Math.min(header.width(), J.Size.editor);
 
 		let height = 0;
 		if (!items.length) {
 			height = 160;
 		} else {
-			height = items.length * HEIGHT_ITEM + 62;
+			height = items.length * HEIGHT + 62;
 		};
 
 		height = Math.min(height, wh - 104);
+		menu.css({ width });
 		obj.css({ height });
 	};
 
@@ -246,6 +250,33 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		result += U.String.sanitize(highlight.substring(lastIndex));
 
 		return result;
+	};
+
+	const scrollToRow = (items: any[], index: number) => {
+		if (!listRef.current || !items.length) {
+			return;
+		};
+
+		const listHeight = listRef.current.props.height;
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			if (i < index) {
+				offset += HEIGHT;
+			};
+			total += HEIGHT;
+		};
+
+		if (offset + HEIGHT < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - HEIGHT / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		listRef.current.scrollToPosition(offset);
 	};
 
 	const rowRenderer = (param: any) => {
@@ -304,6 +335,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		beforePosition,
+		scrollToRow,
 	}), []);
 
 	return (
@@ -346,7 +378,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 										height={height}
 										deferredMeasurmentCache={cache.current}
 										rowCount={items.length}
-										rowHeight={HEIGHT_ITEM}
+										rowHeight={HEIGHT}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}

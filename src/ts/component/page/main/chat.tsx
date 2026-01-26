@@ -29,7 +29,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		unbind();
 		win.on(`keydown.${ns}`, e => onKeyDown(e));
 		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
-			chatRef.current?.getChildNode()?.scrollToMessage(id, true, true);
+			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
 		});
 	};
 

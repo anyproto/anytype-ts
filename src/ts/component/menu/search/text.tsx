@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
@@ -22,7 +22,7 @@ interface ActiveMatch {
 
 const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, storageGet, storageSet, close } = props;
+	const { param, storageGet, storageSet, close, getId } = props;
 	const { data } = param;
 	const { route, isPopup } = data;
 
@@ -304,7 +304,20 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
+	const beforePosition = () => {
+		const menu = $(`#${getId()}`);
+		const header = $('#header .side.center');
+		const width = Math.min(header.width(), J.Size.editor);
+
+		menu.css({ width });
+	};
+
+	useImperativeHandle(ref, () => ({
+		beforePosition,
+	}), []);
+
 	useEffect(() => {
+		beforePosition();
 		const initTimeout = window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 			inputRef.current?.setValue(value);
