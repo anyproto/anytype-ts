@@ -370,6 +370,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		onClose: onSelectClose,
 		className,
 		classNameWrap,
+		rebind,
 	};
 
 	let wrapValue = false;
