@@ -77,7 +77,7 @@
 		.descr { margin: 0px 0px 12px 0px; }
 
 		ul { margin: 0px 0px 12px 0px; }
-		.buttons { flex-direction: row; gap: 0px 8px; }
+		.buttons { flex-direction: row-reverse; gap: 0px 8px; }
 	}
 
 	.popup.popupConfirm.techInfo {
