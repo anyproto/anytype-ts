@@ -229,20 +229,15 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		analytics.event('ClickTransferOwnership', { route: analytics.route.settingsSpaceShare });
 	};
 
-	const canTransferOwnership = () => {
-		if (!U.Space.isMyOwner()) {
-			return false;
-		};
-
-		if (!spaceview.isShared || spaceview.isOneToOne) {
+	const canTransferOwnership = (): boolean => {
+		if (!spaceview.isShared || spaceview.isOneToOne || !U.Space.isMyOwner()) {
 			return false;
 		};
 
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const participant = U.Space.getParticipant();
-		const otherMembers = members.filter(it => it.id !== participant?.id);
 
-		return otherMembers.length > 0;
+		return !!members.filter(it => it.id !== participant?.id).length;
 	};
 
 	const showTransferOwnership = canTransferOwnership();
