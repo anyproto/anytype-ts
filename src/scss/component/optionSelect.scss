@@ -7,7 +7,8 @@
     };
 
     .item { display: flex; align-items: center; }
-    .item:not(.add, .empty) { gap: 0px 4px; padding-left: 10px; }
+    .item:not(.add, .empty) { gap: 0px 4px; padding-left: 18px; }
+    .item.withHandle { padding-left: 10px; }
     .item {
         .buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
         .buttons {

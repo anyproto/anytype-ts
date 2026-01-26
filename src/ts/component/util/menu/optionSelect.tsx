@@ -5,12 +5,41 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
+import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
+import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
 import $ from 'jquery';
 
 const HEIGHT = 28;
 const LIMIT = 40;
+
+interface SelectItem {
+	id: string;
+	name: string;
+	color?: string;
+	isSection?: boolean;
+	isArchived?: boolean;
+	isDeleted?: boolean;
+	_empty_?: boolean;
+	restrictions?: any[];
+	style?: React.CSSProperties;
+};
+
+interface SearchParam {
+	types?: string[];
+	filters?: I.Filter[];
+	sorts?: I.Sort[];
+	keys?: string[];
+	limit?: number;
+};
+
+interface AddParamDetails {
+	type?: string;
+	[key: string]: any;
+};
+
+interface AddParam {
+	details?: AddParamDetails;
+};
 
 interface Props {
 	subId: string;
@@ -54,16 +83,21 @@ interface Props {
 
 	// Rebind callback (for edit menu keyboard handling)
 	rebind?: () => void;
+
+	// Object mode (when searchParam is provided)
+	searchParam?: SearchParam;
+	addParam?: AddParam;
+	rootId?: string;
 };
 
 export interface OptionSelectRefProps {
-	getItems: () => any[];
+	getItems: () => SelectItem[];
 	getIndex: () => number;
 	setIndex: (i: number) => void;
 	getFilterRef: () => any;
 	getListRef: () => any;
-	onOver: (e: any, item: any) => void;
-	onClick: (e: any, item: any) => void;
+	onOver: (e: React.MouseEvent, item: SelectItem) => void;
+	onClick: (e: React.MouseEvent | { stopPropagation: () => void }, item: SelectItem) => void;
 	onSortEnd?: (result: any) => void;
 };
 
@@ -72,6 +106,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
 		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
+		searchParam, addParam, rootId,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
@@ -82,6 +117,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const n = useRef(-1);
 	const [ filter, setFilter ] = useState('');
 	const [ activeId, setActiveId ] = useState<string | null>(null);
+	const [ isLoading, setIsLoading ] = useState(false);
+
+	const isObjectMode = !!searchParam;
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -89,7 +127,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	);
 
 	useEffect(() => {
-		loadOptions();
+		load();
 		resize();
 
 		return () => {
@@ -98,7 +136,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	}, []);
 
 	useEffect(() => {
-		loadOptions();
+		load();
 	}, [ relationKey ]);
 
 	useEffect(() => {
@@ -110,34 +148,101 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		resize();
 	});
 
-	const loadOptions = () => {
-		if (!relationKey) {
+	const loadObjects = (): void => {
+		if (!searchParam) {
 			return;
 		};
 
+		const filters: I.Filter[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		].concat(searchParam.filters || []);
+
+		if (searchParam.types?.length) {
+			const types = searchParam.types.map(id => S.Record.getTypeById(id)).filter(it => it);
+			if (types.length) {
+				filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
+			};
+		};
+
+		U.Subscription.subscribe({
+			subId,
+			filters,
+			sorts: searchParam.sorts || [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			],
+			keys: searchParam.keys || J.Relation.default,
+			limit: searchParam.limit || LIMIT,
+		}, () => setIsLoading(false));
+	};
+
+	const loadOptions = (): void => {
+		U.Subscription.subscribe({
+			subId,
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+				{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relationKey },
+			],
+			sorts: [
+				{ relationKey: 'orderId', type: I.SortType.Asc },
+				{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+			] as I.Sort[],
+			keys: U.Subscription.optionRelationKeys(false),
+		}, () => setIsLoading(false));
+	};
+
+	const load = (): void => {
+		if (!relationKey && !searchParam) {
+			return;
+		};
+
+		setIsLoading(true);
+
 		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				subId,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
-					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relationKey },
-				],
-				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
-				] as I.Sort[],
-				keys: U.Subscription.optionRelationKeys(false),
-			});
+			isObjectMode ? loadObjects() : loadOptions();
 		});
 	};
 
-	const getItems = (): any[] => {
+	const getObjectItems = (): SelectItem[] => {
+		if (!searchParam) {
+			return [];
+		};
+
+		const keys = searchParam.keys || J.Relation.default;
+		const skip = Relation.getArrayValue(skipIds);
+		const ret: SelectItem[] = [];
+
+		let items = S.Record.getRecords(subId, keys);
+		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skip.includes(it.id));
+
+		if (filterMapper) {
+			items = items.filter(filterMapper);
+		};
+
+		if (filter) {
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
+			items = items.filter(it => it.name?.match(reg));
+
+			if (canAdd && !isReadonly) {
+				const check = items.filter(it => it.name?.toLowerCase() == filter.toLowerCase());
+				if (!check.length) {
+					ret.push({
+						id: 'add',
+						name: U.String.sprintf(translate('commonCreateObjectWithName'), filter),
+					});
+				};
+			};
+		};
+
+		return items.concat(ret);
+	};
+
+	const getOptionItems = (): SelectItem[] => {
 		const isSelect = relation?.format == I.RelationType.Select;
 		const skip = Relation.getArrayValue(skipIds);
-		const ret: any[] = [];
+		const ret: SelectItem[] = [];
 
 		let items = S.Record.getRecords(subId, U.Subscription.optionRelationKeys(true));
-		let check: any[] = [];
+		let check: SelectItem[] = [];
 
 		items = items.filter(it => !it._empty_ && !skip.includes(it.id));
 
@@ -164,11 +269,15 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		return items.concat(ret);
 	};
 
-	const onFilterChange = (v: string) => {
+	const getItems = (): SelectItem[] => {
+		return isObjectMode ? getObjectItems() : getOptionItems();
+	};
+
+	const onFilterChange = (v: string): void => {
 		setFilter(v);
 	};
 
-	const onClick = (e: any, item: any) => {
+	const onClick = (e: React.MouseEvent | { stopPropagation: () => void }, item: SelectItem): void => {
 		e.stopPropagation();
 
 		if (cellRef) {
@@ -180,7 +289,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		if (item.id == 'add') {
-			onOptionAdd();
+			isObjectMode ? onObjectAdd() : onOptionAdd();
 			return;
 		};
 
@@ -194,6 +303,11 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			newValue = newValue.filter(id => id !== item.id);
 		} else {
 			newValue = [ ...newValue, item.id ];
+
+			// Persist object details to rootId so DataviewFilterItem can access them
+			if (isObjectMode && rootId && (item.id != rootId)) {
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+			};
 		};
 
 		if (maxCount) {
@@ -207,7 +321,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		onChange(U.Common.arrayUnique(newValue));
 	};
 
-	const onOptionAdd = () => {
+	const onOptionAdd = (): void => {
 		if (!relation) {
 			return;
 		};
@@ -271,7 +385,44 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onEdit = (e: any, item: any) => {
+	const onObjectAdd = (): void => {
+		if (!filter?.trim()) {
+			return;
+		};
+
+		const types = searchParam?.types || [];
+		const typeKey = types.length ? (S.Record.getTypeById(types[0])?.uniqueKey ?? '') : '';
+		const details: AddParamDetails = {
+			...(addParam?.details || {}),
+			name: filter.trim(),
+		};
+
+		U.Object.create('', typeKey, details, I.BlockPosition.Bottom, '', [], analytics.route.relation, (message: any) => {
+			if (!message.targetId) {
+				return;
+			};
+
+			const newId = message.targetId;
+
+			filterRef.current?.setValue('');
+			setFilter('');
+
+			let newValue = [ ...value, newId ];
+			newValue = U.Common.arrayUnique(newValue);
+
+			if (maxCount) {
+				newValue = newValue.slice(newValue.length - maxCount, newValue.length);
+
+				if (maxCount == 1) {
+					onClose?.();
+				};
+			};
+
+			onChange(newValue);
+		});
+	};
+
+	const onEdit = (e: React.MouseEvent, item: SelectItem): void => {
 		e.stopPropagation();
 
 		if (!item || item.id == 'add' || !canEdit || !menuId) {
@@ -303,7 +454,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onOver = (e: any, item: any) => {
+	const onOver = (e: React.MouseEvent, item: SelectItem): void => {
 		if (setActive) {
 			setActive(item, false);
 		};
@@ -314,7 +465,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onMouseEnter = (e: any, item: any) => {
+	const onMouseEnter = (e: React.MouseEvent, item: SelectItem): void => {
 		if (!keyboard.isMouseDisabled && setActive) {
 			setActive(item, false);
 		};
@@ -325,28 +476,36 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onMouseLeave = () => {
+	const onMouseLeave = (): void => {
 		Preview.tooltipHide(false);
 	};
 
 	// DnD handlers
-	const onSortStart = (e: any) => {
+	const onSortStart = (e: any): void => {
 		keyboard.disableSelection(true);
 		setActiveId(e.active.id);
 	};
 
-	const onSortCancel = () => {
+	const onSortCancel = (): void => {
 		keyboard.disableSelection(false);
 		setActiveId(null);
 	};
 
-	const onSortEnd = (result: any) => {
-		const { active, over } = result;
+	const onSortEndObjects = (active: any, over: any): void => {
+		let newValue = [ ...value ];
+		const oldIndex = newValue.indexOf(active.id);
+		const newIndex = newValue.indexOf(over.id);
 
-		setActiveId(null);
-		keyboard.disableSelection(false);
+		if (oldIndex === -1 || newIndex === -1) {
+			return;
+		};
 
-		if (!active || !over || !relation) {
+		newValue = arrayMove(newValue, oldIndex, newIndex);
+		onChange(newValue);
+	};
+
+	const onSortEndOptions = (active: any, over: any): void => {
+		if (!relation) {
 			return;
 		};
 
@@ -360,10 +519,23 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const resize = () => {
+	const onSortEnd = (result: any): void => {
+		const { active, over } = result;
+
+		setActiveId(null);
+		keyboard.disableSelection(false);
+
+		if (!active || !over) {
+			return;
+		};
+
+		isObjectMode ? onSortEndObjects(active, over) : onSortEndOptions(active, over);
+	};
+
+	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly ? 44 : 8;
+		const offset = !isReadonly && !noFilter ? 44 : 8;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
@@ -376,7 +548,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	let placeholder = '';
 	let empty = '';
 
-	if (canAdd) {
+	if (isObjectMode) {
+		placeholder = translate('commonFilterObjects');
+		empty = translate('menuDataviewOptionListTypeToSearch');
+	} else if (canAdd) {
 		placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
 		empty = translate('menuDataviewOptionListTypeToCreate');
 	} else {
@@ -388,7 +563,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		empty = translate('placeholderCellCommon');
 	};
 
-	const Item = (item: any) => {
+	const Item = (item: SelectItem): React.ReactElement | null => {
 		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
 		const isSelected = value.includes(item.id);
@@ -437,6 +612,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		if (isDragging) {
 			cn.push('isDragging');
 		};
+		if (canSort) {
+			cn.push('withHandle');
+		};
 
 		return (
 			<div
@@ -454,11 +632,18 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
 					{!noSelect && isSelected ? <Icon className="chk" /> : ''}
-					<Tag
-						text={item.name}
-						color={item.color}
-						className={Relation.selectClassName(relation?.format)}
-					/>
+					{isObjectMode ? (
+						<>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</>
+					) : (
+						<Tag
+							text={item.name}
+							color={item.color}
+							className={Relation.selectClassName(relation?.format)}
+						/>
+					)}
 				</div>
 
 				{canEdit && isAllowed ? (
@@ -470,7 +655,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		);
 	};
 
-	const DragOverlayContent = ({ item }: { item: any }) => {
+	const DragOverlayContent = ({ item }: { item: SelectItem | undefined }): React.ReactElement | null => {
 		if (!item || item.id == 'add' || item.isSection) {
 			return null;
 		};
@@ -492,11 +677,18 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 				<div className="clickable">
 					{!noSelect ? <Icon className={isSelected ? 'chk' : 'chk empty'} /> : ''}
-					<Tag
-						text={item.name}
-						color={item.color}
-						className={Relation.selectClassName(relation?.format)}
-					/>
+					{isObjectMode ? (
+						<>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</>
+					) : (
+						<Tag
+							text={item.name}
+							color={item.color}
+							className={Relation.selectClassName(relation?.format)}
+						/>
+					)}
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">
@@ -523,7 +715,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		);
 	};
 
-	const renderList = () => {
+	const renderList = (): React.ReactElement => {
 		if (!items.length) {
 			return <div className="item empty">{empty}</div>;
 		};
@@ -622,8 +814,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				/>
 			) : ''}
 
+			{isLoading ? <Loader /> : ''}
+
 			<div className="items">
-				{renderList()}
+				{!isLoading ? renderList() : ''}
 			</div>
 		</div>
 	);

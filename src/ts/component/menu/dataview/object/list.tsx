@@ -19,7 +19,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = param;
-	const { 
+	const {
 		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, dataChange,
 		placeholderFocus = translate('commonFilterObjects'),
 	} = data;
