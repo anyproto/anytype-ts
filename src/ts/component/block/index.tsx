@@ -790,7 +790,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	switch (type) {
 		case I.BlockType.Text: {
 			canDropMiddle = canDrop && block.canHaveChildren();
-			renderChildren = !isInsideTable && block.canHaveChildren();
+			renderChildren = !isInsideTable;
 
 			if (block.isTextCheckbox() && checked) {
 				cn.push('isChecked');
