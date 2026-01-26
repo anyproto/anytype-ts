@@ -535,7 +535,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly ? 44 : 8;
+		const offset = !isReadonly && !noFilter ? 44 : 8;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
@@ -611,6 +611,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 		if (isDragging) {
 			cn.push('isDragging');
+		};
+		if (canSort) {
+			cn.push('withHandle');
 		};
 
 		return (
