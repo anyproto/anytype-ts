@@ -566,7 +566,7 @@ class MenuManager {
 	openSettings (page) {
 		const Api = require('./api.js');
 
-		if (Api.isPinChecked) {
+		if (!Api.hasPinSet || Api.isPinChecked) {
 			Util.send(this.win, 'route', `/main/settings/${page}`);
 		};
 	};

@@ -20,6 +20,7 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	isPinChecked = false;
+	hasPinSet = false;
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
@@ -93,8 +94,11 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked, pinTimeout) {
+	setPinChecked (win, isPinChecked, pinTimeout, hasPinSet) {
 		this.isPinChecked = isPinChecked;
+		if (hasPinSet !== undefined) {
+			this.hasPinSet = hasPinSet;
+		};
 		if (isPinChecked) {
 			this.lastActivityTime = Date.now();
 			if (pinTimeout) {
@@ -103,6 +107,10 @@ class Api {
 		} else {
 			this.stopPinTimer();
 		};
+	};
+
+	setHasPinSet (win, hasPinSet) {
+		this.hasPinSet = hasPinSet;
 	};
 
 	checkPinTimeout (win, pinTimeout) {
