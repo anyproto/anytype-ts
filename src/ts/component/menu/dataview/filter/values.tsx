@@ -423,7 +423,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					onChange={v => onChange('value', v)}
 					setActive={setActive}
 					canAdd={canAddObject}
-					canSort={!isReadonly}
 					position={position}
 					menuId={getId()}
 					menuClassNameWrap="fromBlock"
@@ -434,6 +433,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					addParam={{
 						details: types.length == 1 ? { type: types[0] } : {},
 					}}
+					rootId={rootId}
 				/>
 			);
 			break;

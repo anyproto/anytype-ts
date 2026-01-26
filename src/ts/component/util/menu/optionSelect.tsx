@@ -70,6 +70,7 @@ interface Props {
 	// Object mode (when searchParam is provided)
 	searchParam?: SearchParam;
 	addParam?: AddParam;
+	rootId?: string;
 };
 
 export interface OptionSelectRefProps {
@@ -88,7 +89,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
 		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
-		searchParam, addParam,
+		searchParam, addParam, rootId,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
@@ -268,6 +269,11 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			newValue = newValue.filter(id => id !== item.id);
 		} else {
 			newValue = [ ...newValue, item.id ];
+
+			// Persist object details to rootId so DataviewFilterItem can access them
+			if (searchParam && rootId && (item.id != rootId)) {
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+			};
 		};
 
 		if (maxCount) {
