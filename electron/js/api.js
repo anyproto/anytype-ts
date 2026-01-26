@@ -364,8 +364,8 @@ class Api {
 		};
 	};
 
-	openTab (win, route, data, options) {
-		WindowManager.createTab(win, { ...data, route }, options);
+	openTab (win, data, options) {
+		WindowManager.createTab(win, data, options);
 	};
 
 	openTabs (win, tabs) {
@@ -374,7 +374,7 @@ class Api {
 		};
 
 		for (const tab of tabs) {
-			WindowManager.createTab(win, { ...tab.data, route: tab.route }, { setActive: false });
+			WindowManager.createTab(win, tab.data, { setActive: false });
 		};
 	};
 

@@ -238,7 +238,12 @@ class MenuManager {
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
-					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => WindowManager.createTab(this.win) },
+					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => {
+						const activeView = Util.getActiveView(this.win);
+
+						WindowManager.createTab(this.win, activeView?.data);
+					}
+				},
 					{ label: Util.translate('electronMenuPrevTab'), accelerator: this.getAccelerator('prevTab'), click: () => WindowManager.prevTab(this.win) },
 					{ label: Util.translate('electronMenuNextTab'), accelerator: this.getAccelerator('nextTab'), click: () => WindowManager.nextTab(this.win) },
 

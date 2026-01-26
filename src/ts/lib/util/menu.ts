@@ -993,12 +993,14 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					Renderer.send('openTab', U.Router.build({ 
+					const route = U.Router.build({ 
 						page: 'main', 
 						action: 'void', 
 						id: 'dashboard', 
 						spaceId: targetSpaceId,
-					}), {}, { setActive: false });
+					});
+
+					Renderer.send('openTab', { route }, { setActive: false });
 					break;
 				};
 
