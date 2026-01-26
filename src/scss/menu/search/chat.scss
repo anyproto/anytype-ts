@@ -1,0 +1,33 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuSearchChat { width: var(--menu-width-set); }
+	.menu.menuSearchChat {
+		.content { transition: none; padding: 0px; }
+
+		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; padding-top: 12px; }
+		.emptySearch { height: calc(100% - 42px); }
+		.loaderWrapper { top: 42px; height: calc(100% - 42px); }
+
+		.items { height: 100%; }
+
+		.filter { flex-shrink: 0; }
+
+		.item { padding: 8px 16px; display: flex; gap: 0 12px; align-items: flex-start; }
+		.item:hover, .item.hover { background-color: var(--color-shape-highlight-medium); }
+		.item {
+			.iconObject { flex-shrink: 0; }
+			.info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px 0px; }
+
+			.nameWrapper { display: flex; align-items: center; gap: 0px 8px; }
+			.name { @include text-overflow-nw; font-weight: 600; }
+			.time { @include text-small; color: var(--color-control-active); flex-shrink: 0; }
+			.text { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+
+			.highlight {
+				background-color: var(--color-system-accent-25); color: var(--color-text-primary); border-radius: 2px;
+				padding: 0 2px;
+			}
+		}
+	}
+}

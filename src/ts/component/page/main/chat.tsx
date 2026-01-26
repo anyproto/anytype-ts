@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
@@ -10,7 +11,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const headerRef = useRef(null);
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
-	const chatRef = useRef<any>(null);
+	const chatRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -44,7 +45,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			S.Common.setRightSidebarState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
-			chatRef.current?.ref?.forceUpdate();
+			chatRef.current?.getChildNode()?.forceUpdate();
 
 			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
@@ -65,24 +66,52 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const onDragOver = (e: DragEvent) => {
-		chatRef.current?.ref?.onDragOver(e);
+		chatRef.current?.getChildNode()?.onDragOver(e);
 	};
 	
 	const onDragLeave = (e: DragEvent) => {
-		chatRef.current?.ref?.onDragLeave(e);
+		chatRef.current?.getChildNode()?.onDragLeave(e);
 	};
 	
 	const onDrop = (e: React.DragEvent) => {
-		chatRef.current?.ref?.onDrop(e);
+		chatRef.current?.getChildNode()?.onDrop(e);
 	};
 
 	const onKeyDown = (e: any) => {
+		keyboard.shortcut('searchText', e, () => {
+			e.preventDefault();
+			openSearchMenu();
+		});
+
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
 
-				chatRef.current?.ref?.getFormRef()?.onAttachment();
+				chatRef.current?.getChildNode()?.getFormRef()?.onAttachment();
 			};
+		});
+	};
+
+	const openSearchMenu = () => {
+		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+		const chatId = object.chatId || rootId;
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('searchChat', {
+				element: '#header',
+				type: I.MenuType.Horizontal,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 10,
+				classNameWrap: 'fromHeader',
+				data: {
+					isPopup,
+					rootId,
+					chatId,
+					scrollToMessage: (id: string) => {
+						chatRef.current?.getChildNode()?.scrollToMessage(id, true, true);
+					},
+				},
+			});
 		});
 	};
 

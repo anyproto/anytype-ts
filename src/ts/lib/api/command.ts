@@ -2445,6 +2445,18 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
 };
 
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.Search.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatid(chatId);
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+
+	dispatcher.request(ChatSearch.name, request, callBack);
+};
+
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Relation.ListWithValue.Request();
 

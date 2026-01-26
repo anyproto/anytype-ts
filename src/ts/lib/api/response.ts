@@ -685,6 +685,12 @@ export const ChatSubscribeToMessagePreviews = (response: Rpc.Chat.SubscribeToMes
 	};
 };
 
+export const ChatSearch = (response: Rpc.Chat.Search.Response) => {
+	return {
+		list: (response.getResultsList() || []).map(Mapper.From.ChatSearchResult),
+	};
+};
+
 export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
 	return {
 		relations: (response.getListList() || []).map(it => {

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -33,9 +33,14 @@ interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
+interface Ref {
+	getNode: () => any;
+	getChildNode: () => any;
+};
+
 const SNAP = 0.01;
 
-const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
@@ -1053,6 +1058,11 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			</div>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
+		getChildNode: () => childRef.current,
+	}));
 
 	return (
 		<div 

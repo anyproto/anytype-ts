@@ -778,6 +778,17 @@ export const Mapper = {
 			return reactions;
 		},
 
+		ChatSearchResult: (obj: any): any => {
+			return {
+				chatId: obj.getChatid(),
+				messageId: obj.getMessageid(),
+				score: obj.getScore(),
+				highlight: obj.getHighlight(),
+				highlightRanges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+			};
+		},
+
 		PublishState: (obj: Rpc.Publishing.PublishState): any => {
 			return {
 				spaceId: obj.getSpaceid(),

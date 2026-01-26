@@ -16,6 +16,7 @@ interface RefProps {
 	onDragLeave: (e: DragEvent) => void;
 	onDrop: (e: DragEvent) => void;
 	getFormRef: () => any;
+	scrollToMessage: (id: string, animate?: boolean, highlight?: boolean) => void;
 };
 
 const GROUP_TIME = 300;
@@ -1039,6 +1040,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		onDragLeave,
 		onDrop,
 		getFormRef: () => formRef.current,
+		scrollToMessage,
 	}));
 
 	return (
