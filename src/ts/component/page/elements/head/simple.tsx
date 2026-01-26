@@ -340,7 +340,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank" 
 						className="c28" 
 						text={translate('commonEditType')} 
-						onClick={() => U.Object.createType(rootId, isPopup)}
+						onClick={() => U.Object.editType(rootId, isPopup)}
 					/>
 				);
 			};
