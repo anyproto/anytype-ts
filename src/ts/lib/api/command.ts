@@ -2314,6 +2314,17 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
 };
 
+export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, callBack?: (message: any) => void) => {
+	// Note: Requires middleware branch GO-6168-change-ownership
+	const request = new (Rpc.Space as any).ChangeOwnership.Request();
+
+	request.setSpaceid(spaceId);
+	request.setNewowneridentity(newOwnerIdentity);
+	request.setOldownerpermissions(I.ParticipantPermissions.Writer as number);
+
+	dispatcher.request(SpaceChangeOwnership.name, request, callBack);
+};
+
 // ---------------------- EXTENSION ---------------------- //
 
 export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) => void) => {

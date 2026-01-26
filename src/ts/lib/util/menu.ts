@@ -979,16 +979,18 @@ class UtilMenu {
 				};
 
 				case 'manage': {
-					this.menuContext?.close(() => S.Menu.open('widgetSection', {
-						recalcRect: () => {
-							const { ww, wh } = U.Common.getWindowDimensions();
-							return { x: 0, y: 0, width: ww, height: wh };
-						},
-						classNameWrap: 'fixed',
-						visibleDimmer: true,
-						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Center,
-					}));
+					this.menuContext?.close(() => {
+						S.Menu.open('widgetSection', {
+							recalcRect: () => {
+								const { ww, wh } = U.Common.getWindowDimensions();
+								return { x: 0, y: 0, width: ww, height: wh };
+							},
+							classNameWrap: 'fixed',
+							visibleDimmer: true,
+							vertical: I.MenuDirection.Center,
+							horizontal: I.MenuDirection.Center,
+						});
+					});
 					break;
 				};
 

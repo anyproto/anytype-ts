@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
+import { I, C, S, U, translate, Preview, Action, analytics, keyboard } from 'Lib';
 import Members from './share/members';
 
 const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
@@ -210,6 +210,43 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 	const { name, description, icon } = getOptionById(invite.type);
 
+	const onTransferOwnership = () => {
+		if (!canTransferOwnership()) {
+			return;
+		};
+
+		S.Menu.open('changeOwner', {
+			recalcRect: () => {
+				const { ww, wh } = U.Common.getWindowDimensions();
+				return { x: 0, y: 0, width: ww, height: wh };
+			},
+			classNameWrap: 'fixed',
+			visibleDimmer: true,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Center,
+		});
+
+		analytics.event('ClickTransferOwnership', { route: analytics.route.settingsSpaceShare });
+	};
+
+	const canTransferOwnership = () => {
+		if (!U.Space.isMyOwner()) {
+			return false;
+		};
+
+		if (!spaceview.isShared || spaceview.isOneToOne) {
+			return false;
+		};
+
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const participant = U.Space.getParticipant();
+		const otherMembers = members.filter(it => it.id !== participant?.id);
+
+		return otherMembers.length > 0;
+	};
+
+	const showTransferOwnership = canTransferOwnership();
+
 	useEffect(() => {
 		init();
 	}, []);
@@ -226,6 +263,13 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 			<div id="titleWrapper" className="titleWrapper">
 				<Title text={translate('popupSettingsSpaceShareTitle')} />
+				{showTransferOwnership ? (
+					<Label 
+						className="transferOwnership" 
+						text={translate('popupSettingsSpaceShareTransferOwnership')} 
+						onClick={onTransferOwnership} 
+					/>
+				) : ''}
 			</div>
 
 			<div id="sectionInvite" className="section sectionInvite">

@@ -38,6 +38,7 @@
 			.icon.join { background-image: url('~img/icon/popup/confirm/join.svg'); }
 			.icon.create { background-image: url('~img/icon/popup/confirm/create.svg'); }
 			.icon.success { background-image: url('~img/icon/popup/confirm/success.svg'); }
+			.icon.key { background-image: url('~img/icon/popup/confirm/key.svg'); }
 			.icon.anyId { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); }
 			.icon.emoji { width: 232px; height: 52px; background-image: url('~img/icon/popup/confirm/emoji.svg'); }
 		}
@@ -52,7 +53,6 @@
 		.confirmMessage { display: flex; flex-direction: column; gap: 4px 0px; justify-content: flex-start; margin: 0px 0px 16px 0px; text-align: left; }
 		.confirmMessage {
 			.label { margin: 0px; @include text-small; }
-			.input { border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
 		}
 
 		ul { padding-left: 1.25em; margin: 0.75em 0px; }
@@ -69,6 +69,15 @@
 
 	.popup.popupConfirm.lostPhrase {
 		.innerWrap { width: 500px; }
+	}
+
+	.popup.popupConfirm.changeOwner {
+		.innerWrap { text-align: left; }
+		.title { text-align: center; }
+		.descr { margin: 0px 0px 12px 0px; }
+
+		ul { margin: 0px 0px 12px 0px; }
+		.buttons { flex-direction: row; gap: 0px 8px; }
 	}
 
 	.popup.popupConfirm.techInfo {

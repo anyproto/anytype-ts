@@ -24,6 +24,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const colorCancel = data.colorCancel || 'blank';
 	const bgColor = data.bgColor || '';
 	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
+	const buttonSize = Number(data.buttonSize) || 36;
 
 	if (storageKey) {
 		cn.push('withCheckbox');
@@ -175,13 +176,13 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			{confirmMessage ? (
 				<div className="confirmMessage">
-					<Input type="text" ref={inputRef} placeholder={confirmMessage} />
+					<Input type="text" ref={inputRef} className={`round c${buttonSize}`} placeholder={confirmMessage} />
 				</div>
 			) : ''}
 
 			<div className="buttons">
-				{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
-				{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canConfirm ? <Button text={textConfirm} color={colorConfirm} className={`c${buttonSize}`} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canCancel ? <Button text={textCancel} color={colorCancel} className={`c${buttonSize}`} onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
 			</div>
 
 			<Error text={errorText} />
