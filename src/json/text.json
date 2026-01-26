@@ -21,7 +21,6 @@
 	"commonFilterClick": "Click to filter...",
 	"commonFilterEmpty": "No items match filter",
 	"commonFilterObjects": "Filter Objects...",
-	"menuSearchChatPlaceholder": "Search messages...",
 	"commonHome": "Home",
 	"commonSubmit": "Submit",
 	"commonValue": "Value",
@@ -1888,6 +1887,8 @@
 	"menuSelectEmpty": "No options found",
 
 	"menuChatCreatePlaceholder": "e.g. feature-chat",
+
+	"menuSearchChatPlaceholder": "Search messages...",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
