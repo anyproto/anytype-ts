@@ -150,7 +150,7 @@ html.bodyAuthSelect {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {
 		.iconObject { flex-shrink: 0; }
-		.name { @include text-overflow-nw; }
+		.name { @include text-overflow-nw; color: var(--color-text-secondary); }
 	}
 	.path:hover { border-color: var(--color-shape-secondary); }
 }

@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .pageMainEmpty {
-	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; }
+	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 48px 0px; }
 	.wrapper {
 
 		.iconObject { margin: 0px 0px 24px 0px; }

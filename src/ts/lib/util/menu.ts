@@ -10,6 +10,7 @@ interface SpaceContextParam {
 	withPin?: boolean;
 	withDelete?: boolean;
 	withOpenNewTab?: boolean;
+	withSearch?: boolean;
 	noShare?: boolean;
 	route: string;
 };
@@ -873,7 +874,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, withSearch, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -1002,16 +1003,28 @@ class UtilMenu {
 					break;
 				};
 
+				case 'searchChat': {
+					S.Menu.closeAll(null, () => {
+						$(window).trigger('openSearchChat');
+					});
+					break;
+				};
+
 			};
 		};
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
+				search: [],
 				general: [],
 				share: [],
 				archive: [],
 				manage: [],
 				delete: [],
+			};
+
+			if (withSearch) {
+				sections.search.push({ id: 'searchChat', icon: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') });
 			};
 
 			if (!noShare && inviteLink) {

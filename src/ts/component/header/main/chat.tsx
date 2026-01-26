@@ -62,6 +62,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				offsetY: 4,
 			}, { 
 				noManage: true,
+				withSearch: true,
 				route: analytics.route.header,
 			});
 		} else {

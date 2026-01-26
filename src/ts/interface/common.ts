@@ -405,3 +405,10 @@ export enum ClipboardMode {
 	Copy		= 0,
 	Cut			= 1,
 };
+
+export enum SearchSortKey {
+	OrderId		 = 0,
+	Score		 = 1,
+	CreatedAt	 = 2,
+	ModifiedAt	 = 3,
+};

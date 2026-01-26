@@ -7,7 +7,7 @@
 }
 
 .pageMainVoid {
-	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
 		.icon.vaultToggle { position: absolute; left: 12px; top: 12px; background-image: url('~img/icon/widget/toggle0.svg'); }
 

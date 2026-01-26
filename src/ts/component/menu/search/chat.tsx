@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, IconObject, ObjectName, EmptySearch } from 'Component';
+import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate } from 'Lib';
 
 const LIMIT = 16;
@@ -20,12 +20,12 @@ interface ChatSearchResult {
 
 const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId } = props;
+	const { param, onKeyDown, setActive, getId, close, storageGet, storageSet } = props;
 	const { data } = param;
 	const { chatId, scrollToMessage } = data;
-	const spaceId = S.Common.space;
-
+	const { showRelativeDates, dateFormat, space } = S.Common;
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ currentIndex, setCurrentIndex ] = useState(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
 	const filterRef = useRef(null);
@@ -40,6 +40,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		beforePosition();
+		restoreState();
 
 		return () => {
 			window.clearTimeout(timeout.current);
@@ -79,6 +80,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const reload = () => {
 		n.current = 0;
 		offset.current = 0;
+		setCurrentIndex(-1);
 		load(true);
 	};
 
@@ -88,6 +90,9 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const text = filter.current;
+		const sorts = [
+			{ key: I.SearchSortKey.CreatedAt, type: I.SortType.Desc },
+		];
 
 		if (!text) {
 			itemsRef.current = [];
@@ -100,7 +105,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ChatSearch(spaceId, chatId, text, offset.current, J.Constant.limit.menuRecords, (message: any) => {
+		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
@@ -113,6 +118,12 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			itemsRef.current = itemsRef.current.concat(message.list);
+
+			// Only reset index for new searches, not when restoring state
+			if (clear && itemsRef.current.length > 0 && !callBack) {
+				setCurrentIndex(0);
+				saveState(text, 0);
+			};
 
 			setDummy(prev => prev + 1);
 			callBack?.(message);
@@ -128,18 +139,59 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 		scrollToMessage?.(item.id);
+		close();
 	};
 
 	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
 			filter.current = filterRef.current?.getValue() || '';
+			saveState(filter.current, -1);
 			reload();
 		}, J.Constant.delay.keyboard);
 	};
 
-	const getRowHeight = (item: any) => {
-		return HEIGHT_ITEM;
+	const onArrow = (dir: number) => {
+		const items = getItems();
+		if (!items.length) {
+			return;
+		};
+
+		const newIndex = currentIndex + dir;
+		if (newIndex < 0 || newIndex >= items.length) {
+			return;
+		};
+
+		saveState(filter.current, newIndex);
+
+		const item = items[newIndex];
+		if (item) {
+			scrollToMessage?.(item.id);
+		};
+
+		close();
+	};
+
+	const saveState = (filterValue: string, index: number) => {
+		storageSet?.({ filter: filterValue, currentIndex: index });
+	};
+
+	const restoreState = () => {
+		const storage = storageGet?.() || {};
+		const { filter: savedFilter, currentIndex: savedIndex } = storage;
+
+		if (savedFilter) {
+			filter.current = savedFilter;
+			filterRef.current?.setValue(savedFilter);
+
+			window.setTimeout(() => {
+				load(true, () => {
+					if (typeof savedIndex === 'number' && savedIndex >= 0) {
+						setCurrentIndex(savedIndex);
+					};
+				});
+			}, 50);
+		};
 	};
 
 	const beforePosition = () => {
@@ -147,15 +199,14 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const obj = $(`#${getId()} .content`);
 		const { wh } = U.Common.getWindowDimensions();
 
-		let height = 16 + 40;
+		let height = 0;
 		if (!items.length) {
-			height = filter.current ? 160 : 56;
+			height = 160;
 		} else {
-			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
+			height = items.length * HEIGHT_ITEM + 62;
 		};
 
 		height = Math.min(height, wh - 104);
-
 		obj.css({ height });
 	};
 
@@ -196,6 +247,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { creator, createdAt } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
 		const highlightedText = getHighlightedText(item);
+		const day = showRelativeDates ? U.Date.dayString(createdAt) : null;
+		const date = day ? day : U.Date.dateWithFormat(dateFormat, createdAt);
 
 		return (
 			<CellMeasurer
@@ -216,7 +269,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="info">
 						<div className="nameWrapper">
 							<ObjectName object={author} />
-							<span className="time">{U.Date.date('d M Y, H:i', createdAt)}</span>
+							<span className="time">{date}</span>
 						</div>
 						<div
 							className="text"
@@ -244,15 +297,22 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div className="wrap">
-			<Filter
-				ref={filterRef}
-				className="outlined"
-				placeholder={translate('menuSearchChatPlaceholder')}
-				placeholderFocus={translate('menuSearchChatPlaceholder')}
-				value=""
-				onChange={onFilterChange}
-				focusOnMount={true}
-			/>
+			<div className="filterWrapper">
+				<Filter
+					ref={filterRef}
+					className="outlined round"
+					placeholder={translate('menuSearchChatPlaceholder')}
+					value=""
+					icon="search"
+					onChange={onFilterChange}
+					focusOnMount={true}
+				/>
+				
+				<div className="arrowWrapper">
+					<Icon className={[ 'arrow', 'up', (currentIndex >= items.length - 1 || currentIndex < 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(1)} />
+					<Icon className={[ 'arrow', 'down', (currentIndex <= 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(-1)} />
+				</div>
+			</div>
 
 			{!items.length && !isLoading && filter.current ? (
 				<EmptySearch filter={filter.current} />
@@ -261,7 +321,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{items.length && !isLoading ? (
 				<div className="items">
 					<InfiniteLoader
-						rowCount={items.length + 1}
+						rowCount={items.length}
 						loadMoreRows={loadMoreRows}
 						isRowLoaded={({ index }) => !!itemsRef.current[index]}
 						threshold={LIMIT}
@@ -275,7 +335,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 										height={height}
 										deferredMeasurmentCache={cache.current}
 										rowCount={items.length}
-										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowHeight={HEIGHT_ITEM}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}

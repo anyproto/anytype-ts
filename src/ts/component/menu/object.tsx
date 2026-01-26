@@ -60,7 +60,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let searchText = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let searchChat = { id: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchChat') };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
@@ -112,7 +113,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !isInSet && !isChat;
+		const allowedSearchText = !isFilePreview && !isInSet && !isChat;
+		const allowedSearchChat = isChat;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
 		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
@@ -140,7 +142,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedLock)			 pageLock = null;
 		if (!allowedCopy)			 pageCopy = null;
 		if (!allowedReload)			 pageReload = null;
-		if (!allowedSearch)			 search = null;
+		if (!allowedSearchText)		 searchText = null;
+		if (!allowedSearchChat)		 searchChat = null;
 		if (!allowedHistory)		 history = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (!allowedLinkTo)			 linkTo = null;
@@ -176,10 +179,11 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			sections = sections.concat([
+				{ children: [ searchChat ] },
 				{ children: [ openObject ] },
 				{ children: [ pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
-				{ children: [ search, pageCopy, archive, remove ] },
+				{ children: [ searchText, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile, copyMedia ] },
 			]);
@@ -187,22 +191,24 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (isTemplate) {
 				sections = sections.concat([
 					{ children: [ openObject ] },
-					{ children: [ search, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
+					{ children: [ searchText, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
 					{ children: [ print ] },
 				]);
 			} else
 			if (object.isArchived) {
 				sections = sections.concat([
+					{ children: [ searchChat ] },
 					{ children: [ openObject ] },
-					{ children: [ search, pageExport, remove, archive ] },
+					{ children: [ searchText, pageExport, remove, archive ] },
 					{ children: [ print ] },
 				]);
 			} else {
 				sections = sections.concat([
+					{ children: [ searchChat ] },
 					{ children: [ openObject ] },
 					{ children: [ pageLock ] },
 					{ children: [ linkTo, addCollection, template, pageLink ] },
-					{ children: [ search, history, pageCopy, archive ] },
+					{ children: [ searchText, history, pageCopy, archive ] },
 					{ children: [ pageReload ] },
 					{ children: [ print, pageExport ] },
 				]);

@@ -15,20 +15,20 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
 
 	const unbind = () => {
-		const ns = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown' ];
 
-		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+		$(window).off(events.map(it => `${it}.chat${ns}`).join(' '));
 	};
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = U.Common.getEventNamespace(isPopup);
 
 		unbind();
-		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+		win.on(`keydown.${ns}`, e => onKeyDown(e));
+		win.on(`openSearchChat.${ns}`, () => openSearchMenu());
 	};
 
 	const open = () => {
@@ -99,10 +99,12 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('searchChat', {
 				element: '#header',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 10,
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Top,
 				classNameWrap: 'fromHeader',
+				noBorderY: true,
+				noFlipY: true,
+				fixedY: 0,
 				data: {
 					isPopup,
 					rootId,
