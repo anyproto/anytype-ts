@@ -26,7 +26,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
-	const attachmentRefs = useRef({});
+	const attachmentRefs = useRef(new Map<string, any>());
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
@@ -43,7 +43,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 		return () => {
 			resizeObserver.disconnect();
-			attachmentRefs.current = {};
+			attachmentRefs.current.clear();
 		};
 	}, []);
 
@@ -141,8 +141,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const data: any = { ...preview };
 		const gallery = [];
 
-		Object.keys(attachmentRefs.current).forEach(key => {
-			const ref = attachmentRefs.current[key];
+		attachmentRefs.current.forEach((ref) => {
 			if (ref) {
 				const item = ref.getPreviewItem();
 				if (item) {
@@ -378,9 +377,9 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 												<Attachment
 													ref={ref => {
 													if (ref) {
-														attachmentRefs.current[item.id] = ref;
+														attachmentRefs.current.set(item.id, ref);
 													} else {
-														delete attachmentRefs.current[item.id];
+														attachmentRefs.current.delete(item.id);
 													};
 												}}
 													key={i}
