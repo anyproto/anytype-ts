@@ -142,11 +142,9 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const gallery = [];
 
 		attachmentRefs.current.forEach((ref) => {
-			if (ref) {
-				const item = ref.getPreviewItem();
-				if (item) {
-					gallery.push(item);
-				};
+			const item = ref?.getPreviewItem();
+			if (item) {
+				gallery.push(item);
 			};
 		});
 
@@ -376,12 +374,12 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											{attachments.map((item: any, i: number) => (
 												<Attachment
 													ref={ref => {
-													if (ref) {
-														attachmentRefs.current.set(item.id, ref);
-													} else {
-														attachmentRefs.current.delete(item.id);
-													};
-												}}
+														if (ref) {
+															attachmentRefs.current.set(item.id, ref);
+														} else {
+															attachmentRefs.current.delete(item.id);
+														};
+													}}
 													key={i}
 													object={item}
 													subId={subId}
