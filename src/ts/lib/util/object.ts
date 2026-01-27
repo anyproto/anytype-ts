@@ -1,3 +1,4 @@
+import route from 'json/route';
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
 const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
@@ -107,6 +108,7 @@ class UtilObject {
 			layout: object.layout,
 			isImage: object.iconImage,
 			uxType: spaceview?.uxType,
+			route: this.route(object),
 		};
 	};
 
@@ -195,7 +197,7 @@ class UtilObject {
 			return;
 		};
 
-		Renderer.send('openTab', this.route(object), this.getTabData(object), { setActive: false });
+		Renderer.send('openTab', this.getTabData(object), { setActive: false });
 	};
 
 	openTabs (objects: any[]) {

@@ -17,6 +17,7 @@ $(() => {
 	let draggedActiveId = '';
 	let activeId = '';
 	let timeoutResize = 0;
+	let tabsData = [];
 
 	// Tab detach state
 	let windowBounds = null;
@@ -236,7 +237,9 @@ $(() => {
 		`);
 
 		tab.off('click').on('click', () => {
-			electron.Api(winId, 'openTab', '', {}, { setActive: true });
+			const activeTab = tabsData.find(it => it.id == activeId);
+
+			electron.Api(winId, 'openTab', activeTab?.data, { setActive: true });
 		});
 
 		return tab;
@@ -378,6 +381,7 @@ $(() => {
 		container.empty();
 
 		tabs = tabs || [];
+		tabsData = tabs;
 		tabs.forEach((it, i) => {
 			container.append(renderTab(it));
 		});
