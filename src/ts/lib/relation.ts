@@ -475,6 +475,11 @@ class Relation {
 
 		const { condition, value, quickOption, relationKey } = filter;
 		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return false;
+		};
+
 		const { format } = relation;
 
 		// None condition is always inactive

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, Label } from 'Component';
 
-interface Props extends I.Filter {
+interface Props {
 	id: string;
 	subId: string;
 	relation: any;
@@ -40,8 +40,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let value = filter.value;
 	let v: any = null;
 	let list = [];
-	let Item: any = null;
-
 
 	switch (relation.format) {
 
@@ -58,18 +56,18 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.RelationType.Date: {
 			v = [];
 
-			let name = String(filterOption.name || '').toLowerCase();
+			let filterName = String(filterOption.name || '').toLowerCase();
 
 			if (quickOption == I.FilterQuickOption.ExactDate) {
 				v.push(value !== null ? U.Date.date('d.m.Y', value) : '');
 			} else
 			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 				value = Number(value) || 0;
-				name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-				v.push(U.String.sprintf(translate(name), value, U.Common.plural(value, translate('pluralDay'))));
+				filterName = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
+				v.push(U.String.sprintf(translate(filterName), value, U.Common.plural(value, translate('pluralDay'))));
 			} else
 			if (filterOption) {
-				v.push(name);
+				v.push(filterName);
 			};
 
 			v = v.join(' ');
@@ -95,17 +93,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.RelationType.File:
 		case I.RelationType.Object: {
-			Item = (item: any) => {
-				return (
-					<div className="element">
-						<div className="flex">
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
-						</div>
-					</div>
-				);
-			};
-
 			list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
 			list = list.filter(it => !it._empty_);
 
