@@ -804,6 +804,7 @@ class Analytics {
 			help:				 'MenuHelp',
 			widgetSection:		 'ScreenManageSections',
 			widget:				 'ScreenWidgetMenu',
+			changeOwner:		 'ScreenTransferSpaceOwnership',
 		};
 
 		return map[id] || '';

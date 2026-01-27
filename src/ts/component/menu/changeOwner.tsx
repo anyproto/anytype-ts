@@ -110,6 +110,9 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		close(() => {
 			S.Popup.open('confirm', {
 				className: 'changeOwner',
+				onOpen: () => {
+					analytics.event('ScreenTransferSpaceOwnershipWarning');
+				},
 				data: {
 					icon: 'key-red',
 					title: translate('popupConfirmOwnershipTransferTitle'),
@@ -124,6 +127,8 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					confirmMessage: spaceName,
 					buttonSize: 40,
 					onConfirm: () => {
+						analytics.event('ClickTransferSpaceOwnershipWarning');
+
 						window.setTimeout(() => {
 							S.Popup.open('confirm', {
 								className: 'changeOwnerLoading',
@@ -147,6 +152,9 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								window.setTimeout(() => {
 									S.Popup.open('confirm', {
 										className: 'changeOwnerSuccess',
+										onOpen: () => {
+											analytics.event('ScreenTransferSpaceOwnershipSuccess');
+										},
 										data: {
 											icon: 'key-green',
 											title: translate('popupConfirmOwnershipTransferredTitle'),
@@ -162,8 +170,6 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 										},
 									});
 								}, J.Constant.delay.popup);
-
-								analytics.event('TransferOwnership');
 							});
 
 						}, J.Constant.delay.popup);

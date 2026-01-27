@@ -108,7 +108,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 			horizontal: I.MenuDirection.Center,
 		});
 
-		analytics.event('ClickTransferOwnership', { route: analytics.route.settingsSpaceShare });
+		analytics.event('ClickTransferSpaceOwnership', { route: analytics.route.settings });
 	};
 
 	useEffect(() => {
