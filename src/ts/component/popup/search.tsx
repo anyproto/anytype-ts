@@ -25,6 +25,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const listRef = useRef(null);
 	const rowsRef = useRef([]);
 	const timeoutRef = useRef(0);
+	const rebindTimeoutRef = useRef(0);
 	const delayRef = useRef(0);
 	const cacheRef = useRef({});
 	const itemsRef = useRef([]);
@@ -573,7 +574,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		focus.clear(true);
-		window.setTimeout(() => rebind(), J.Constant.delay.popup);
+		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
 		if (storage.backlink) {
 			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
@@ -587,6 +588,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			unbind();
 			U.Subscription.destroyList([ J.Constant.subId.search ]);
 			window.clearTimeout(timeoutRef.current);
+			window.clearTimeout(rebindTimeoutRef.current);
 		};
 	}, []);
 

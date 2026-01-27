@@ -87,8 +87,6 @@
 			background-color: var(--color-shape-highlight-light);
 		}
 
-		.cellFoot.cellKeyHover::after, .cellFoot.hover::after { height: calc(100% - 1px); }
-
 		.cellHead.last::after, .cellHead.hover::after { background: none; }
 		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
@@ -115,7 +113,6 @@
 					.chatCounter { display: none;}
 				}
 			}
-			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.button.expand { position: absolute; right: 8px; top: 8px; }
@@ -238,7 +235,10 @@
 			.button.expand { top: 6px; }
 
 			&:not(.wrapContent) {
-				.row, .cell { height: 40px; }
+				.row, .cell, .cellHead, .rowFoot, .cellFoot { height: 40px; }
+				.cellFoot {
+					.cellContent { height: 40px !important; }
+				}
 			}
 
 			.cellHead:first-child {
@@ -267,7 +267,7 @@
 				.itemWrap { margin-bottom: 0px; }
 			}
 
-			.loadMore { padding-top: 11px; margin-top: 0px; }
+			.loadMore { padding-bottom: 4px; margin-top: 0px; }
 		}
 	}
 }
