@@ -17,17 +17,16 @@
 
 		.button.expand { 
 			display: none; flex-shrink: 0; background-color: var(--color-bg-primary); z-index: 1; @include text-common;
-			font-weight: 500; padding: 0px 8px;
+			font-weight: 500; padding: 0px 8px; border-color: var(--color-shape-highlight-medium);
 		}
+
 		.button.expand {
-			.icon { width: 20px; height: 20px; display: none; }
+			&:hover { background-color: var(--color-shape-tertiary); }
+			.icon { width: 20px; height: 20px; display: none; background-image: url('~img/icon/dataview/button/expand0.svg'); }
 		}
 
 		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
-
-		.icon.expand { background-image: url('~img/icon/dataview/button/expand0.svg'); }
-		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: var(--color-text-secondary);
