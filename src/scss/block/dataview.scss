@@ -10,9 +10,27 @@
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		
 		.icon.edit { 
-			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); 
-			background-size: 20px;
+			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
+			background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px var(--color-shape-highlight-medium);
+			z-index: 1;
 		}
+
+		.button.expand { 
+			display: none; flex-shrink: 0; background-color: var(--color-bg-primary); z-index: 1; @include text-common;
+			font-weight: 500; padding: 0px 8px; border-color: var(--color-shape-highlight-medium);
+			color: var(--color-text-secondary);
+		}
+
+		.button.expand {
+			&:hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
+			&:hover {
+				.icon { background-image: url('~img/icon/dataview/button/expand1.svg'); }
+			}
+
+			.icon { width: 20px; height: 20px; display: none; background-image: url('~img/icon/dataview/button/expand0.svg'); }
+		}
+
+		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 

@@ -47,6 +47,15 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const onSlideClick = (e: React.MouseEvent) => {
+		const target = e.target as HTMLElement;
+
+		// Only close if clicked outside the media container and loader (empty area)
+		if (!target.closest('.mediaContainer') && !target.closest('.loader')) {
+			close();
+		};
+	};
+
 	const onMore = (e: any) => {
 		e.stopPropagation();
 		e.preventDefault();
@@ -302,9 +311,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					onSlideChange={swiper => setCurrentItem(swiper.activeIndex)}
 				>
 					{gallery.map((item: any, i: number) => (
-						<SwiperSlide key={i}>
+						<SwiperSlide key={i} onClick={onSlideClick}>
 							{getContent(item, i)}
-							<div className="innerDimmer" onClick={() => close()} />
 						</SwiperSlide>
 					))}
 				</Swiper>

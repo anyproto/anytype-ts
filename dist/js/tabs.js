@@ -1,5 +1,6 @@
 $(() => {
 	const win = $(window);
+	const doc = $(document);
 	const body = $('body');
 	const electron = window.Electron;
 	const currentWindow = electron.currentWindow();
@@ -16,9 +17,25 @@ $(() => {
 	let draggedActiveId = '';
 	let activeId = '';
 	let timeoutResize = 0;
+	let tabsData = [];
+
+	// Tab detach state
+	let windowBounds = null;
+	let draggedTabId = null;
+	let lastCursorPos = null;
+	let cursorPollInterval = null;
+
+	// Clean up polling
+	const stopCursorPolling = () => {
+		if (cursorPollInterval) {
+			clearInterval(cursorPollInterval);
+			cursorPollInterval = null;
+		};
+	};
 
 	body.addClass(`platform-${electron.platform}`);
 	body.toggleClass('isFullScreen', isFullScreen);
+	body.addClass('tabsHidden'); // Start hidden, will be shown when tabs load
 
 	if (theme) {
 		document.documentElement.classList.add(`theme${ucFirst(theme)}`);
@@ -26,8 +43,94 @@ $(() => {
 
 	const config = electron.getConfig();
 	const showMenuBar = config.showMenuBar !== false; // Default to true
+	let menuBarHiddenByConfig = !showMenuBar;
 
 	body.toggleClass('showMenuBar', showMenuBar);
+
+	// Alt key toggle for hidden menu bar (Windows/Linux behavior)
+	// Single press of Alt toggles the menu bar visibility
+	if ((electron.platform === 'win32') || (electron.platform === 'linux')) {
+		let altKeyPressed = false;
+		let altKeyUsedWithOther = false;
+
+		doc.on('keydown', (e) => {
+			if (e.key === 'Alt') {
+				altKeyPressed = true;
+			} else
+			if (altKeyPressed) {
+				// Alt was used as modifier with another key (e.g., Alt+Tab)
+				altKeyUsedWithOther = true;
+			};
+		});
+
+		doc.on('keyup', (e) => {
+			if (e.key !== 'Alt') {
+				return;
+			};
+
+			// Only toggle if Alt was pressed alone (not as modifier)
+			if (altKeyPressed && !altKeyUsedWithOther && menuBarHiddenByConfig) {
+				const isCurrentlyVisible = body.hasClass('altVisible');
+
+				if (isCurrentlyVisible) {
+					body.removeClass('showMenuBar altVisible');
+					electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+				} else {
+					body.addClass('showMenuBar altVisible');
+					electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
+				};
+			};
+
+			altKeyPressed = false;
+			altKeyUsedWithOther = false;
+		});
+
+		// Hide menu bar when clicking outside the menu bar
+		doc.on('mousedown', (e) => {
+			if (!body.hasClass('altVisible')) {
+				return;
+			};
+
+			const target = $(e.target);
+			if (!target.closest('#menuBar').length) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			};
+		});
+
+		// Hide menu bar on window blur
+		win.on('blur', () => {
+			if (body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			};
+		});
+
+		// Hide menu bar on Escape key
+		doc.on('keydown', (e) => {
+			if ((e.key === 'Escape') && body.hasClass('altVisible')) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			};
+		});
+
+		// Handle Alt key toggle from main process (when focus is on tab content)
+		electron.on('alt-key-toggle', () => {
+			if (!menuBarHiddenByConfig) {
+				return;
+			};
+
+			const isCurrentlyVisible = body.hasClass('altVisible');
+
+			if (isCurrentlyVisible) {
+				body.removeClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+			} else {
+				body.addClass('showMenuBar altVisible');
+				electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
+			};
+		});
+	}
 
 	// Menu bar button handlers (Windows and Linux)
 	menuBar.find('#window-menu').off('click').on('click', () => electron.Api(winId,'menu'));
@@ -134,7 +237,9 @@ $(() => {
 		`);
 
 		tab.off('click').on('click', () => {
-			electron.Api(winId, 'openTab', '', {}, { setActive: true });
+			const activeTab = tabsData.find(it => it.id == activeId);
+
+			electron.Api(winId, 'openTab', activeTab?.data, { setActive: true });
 		});
 
 		return tab;
@@ -148,6 +253,21 @@ $(() => {
 			tabs.toggleClass('noClose', tabs.length == 1);
 			updateMarkerPosition(activeId);
 		}, 40);
+	};
+
+	// Check if screen coordinates are outside window bounds
+	const isOutsideWindow = (screenX, screenY) => {
+		if (!windowBounds) {
+			return false;
+		};
+
+		const padding = 10;
+		return (
+			screenX < windowBounds.x - padding ||
+			screenX > windowBounds.x + windowBounds.width + padding ||
+			screenY < windowBounds.y - padding ||
+			screenY > windowBounds.y + windowBounds.height + padding
+		);
 	};
 
 	const initSortable = () => {
@@ -167,8 +287,9 @@ $(() => {
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
-			onStart: (evt) => {
+			onStart: async (evt) => {
 				isDragging = true;
+				draggedTabId = $(evt.item).attr('data-id');
 
 				const item = $(evt.item);
 				item.css('visibility', 'hidden');
@@ -177,15 +298,61 @@ $(() => {
 					draggedActiveId = item.attr('data-id');
 					marker.removeClass('anim').css('pointer-events', 'none');
 				};
+
+				// Get window bounds for detecting drag outside (await to ensure it's ready)
+				try {
+					windowBounds = await electron.Api(winId, 'getWindowBounds');
+				} catch (e) {};
+
+				// Poll cursor position during drag (needed because mouse events don't fire outside window)
+				stopCursorPolling(); // Clear any existing interval first
+				cursorPollInterval = setInterval(async () => {
+					if (!isDragging) {
+						stopCursorPolling();
+						return;
+					};
+					try {
+						lastCursorPos = await electron.Api(winId, 'getCursorScreenPoint');
+					} catch (e) {};
+				}, 100);
 			},
 			onChange: (evt) => {
 				updateMarkerPosition(draggedActiveId || activeId);
 			},
-			onEnd: (evt) => {
+			onEnd: async (evt) => {
+				const tabId = draggedTabId;
+				const bounds = windowBounds;
+				const cursorPos = lastCursorPos;
+
+				// Stop polling
+				stopCursorPolling();
+
 				isDragging = false;
+				body.removeClass('draggingOutside');
 
 				const item = $(evt.item);
 				item.css('visibility', '');
+
+				// Check if cursor was outside window (using last polled position)
+				if (tabId && bounds && cursorPos) {
+					const isOutside = isOutsideWindow(cursorPos.x, cursorPos.y);
+					if (isOutside) {
+						const tabs = container.find('.tab:not(.isAdd)');
+						// Only allow detach if there's more than one tab
+						if (tabs.length > 1) {
+							electron.Api(winId, 'detachTab', {
+								tabId: tabId,
+								mouseX: cursorPos.x,
+								mouseY: cursorPos.y,
+							});
+						};
+					};
+				};
+
+				// Reset detach state
+				draggedTabId = null;
+				windowBounds = null;
+				lastCursorPos = null;
 
 				draggedActiveId = null;
 				marker.addClass('anim').css('pointer-events', '');
@@ -214,6 +381,7 @@ $(() => {
 		container.empty();
 
 		tabs = tabs || [];
+		tabsData = tabs;
 		tabs.forEach((it, i) => {
 			container.append(renderTab(it));
 		});
@@ -222,18 +390,18 @@ $(() => {
 		resize();
 		setActive(id, false);
 
-		// Set visibility if provided
-		if (typeof isVisible === 'boolean') {
-			tabsWrapper.toggleClass('isHidden', !isVisible);
-		};
+		// Set visibility - default to showing tabs if not specified
+		const visible = typeof isVisible === 'boolean' ? isVisible : (tabs.length > 1);
+		tabsWrapper.toggleClass('isHidden', !visible);
+		body.toggleClass('tabsHidden', !visible);
 
 		// Initialize sortable after a slight delay to ensure DOM is ready
 		setTimeout(() => initSortable(), 10);
 	};
 
-	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible));
+	electron.Api(winId, 'getTabs').then(({ tabs, id, isVisible }) => setTabs(tabs, id, isVisible)).catch(() => {});
 
-	electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
+	electron.on('update-tabs', (e, tabs, id, isVisible) => setTabs(tabs, id, isVisible));
 
 	electron.on('set-active-tab', (e, id) => setActive(id, false));
 
@@ -273,11 +441,18 @@ $(() => {
 		setTimeout(() => initSortable(), 10);
 	});
 
-	electron.on('update-tab-bar-visibility', (e, isVisible) => tabsWrapper.toggleClass('isHidden', !isVisible));
+	electron.on('update-tab-bar-visibility', (e, isVisible) => {
+		tabsWrapper.toggleClass('isHidden', !isVisible);
+		body.toggleClass('tabsHidden', !isVisible);
+	});
 	electron.on('set-theme', (e, theme) => $('html').toggleClass('themeDark', theme == 'dark'));
 	electron.on('native-theme', (e, isDark) => $('html').toggleClass('themeDark', isDark));
 	electron.on('set-tabs-dimmer', (e, show) => body.toggleClass('showDimmer', show));
-	electron.on('set-menu-bar-visibility', (e, show) => body.toggleClass('showMenuBar', show));
+	electron.on('set-menu-bar-visibility', (e, show) => {
+		menuBarHiddenByConfig = !show;
+		body.removeClass('altVisible');
+		body.toggleClass('showMenuBar', show);
+	});
 	electron.on('enter-full-screen', () => body.addClass('isFullScreen'));
 	electron.on('leave-full-screen', () => body.removeClass('isFullScreen'));
 	win.off('resize.tabs').on('resize.tabs', resize);

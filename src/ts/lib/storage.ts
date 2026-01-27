@@ -216,9 +216,6 @@ class Storage {
 		const obj = this.getSpace(isLocal, spaceId);
 
 		delete(obj[spaceId][key]);
-
-		console.log('deleteSpaceKey', key, spaceId, obj);
-
 		this.setSpace(obj, isLocal);
 	};
 

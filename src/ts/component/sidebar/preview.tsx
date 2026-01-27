@@ -57,10 +57,11 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 
 	const getNodeSize = (): { width: number; height: number } => {
 		const container = U.Common.getPageFlexContainer(isPopup);
+		const sidebarLeft = sidebar.leftPanelGetNode();
 		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 
 		return {
-			width: container.width() - sidebarRight.outerWidth() - 9,
+			width: container.width() - sidebarLeft.outerWidth() - sidebarRight.outerWidth() - 9,
 			height: container.height(),
 		};
 	};
@@ -69,7 +70,6 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		const size = getNodeSize();
 
 		let w = 0;
-
 		if (layoutFormat == I.LayoutFormat.List) {
 			w = size.width - 192;
 		} else {

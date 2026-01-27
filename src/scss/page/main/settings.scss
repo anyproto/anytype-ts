@@ -1151,10 +1151,10 @@
                 .item.anyName {
                     .top { align-items: center; }
                     .icon { width: 60px; height: 48px; margin-bottom: 10px; background: url('~img/icon/membership/anyname.svg'); }
-					.title { font-weight: 600; }
+					.title { font-weight: 600; width: 100%; }
 
 					&.withName {
-						.title { font-weight: 400; @include clamp2; }
+						.title { font-weight: 400; @include text-overflow-nw; }
 					}
                 }
             }

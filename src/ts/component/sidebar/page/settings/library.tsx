@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
+import { analytics, I, J, keyboard, S, Storage, translate, U, sidebar } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -91,7 +91,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			case I.ObjectContainerType.Type: {
 				filters = filters.concat([
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] }
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] },
+					{ relationKey: 'restrictions', condition: I.FilterCondition.NotIn, value: [ I.RestrictionObject.Details ] },
 				]);
 				break;
 			};
@@ -240,23 +241,30 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const onClick = (item: any) => {
-		const param = {
-			layout: I.ObjectLayout.Settings,
-			id: U.Object.actionByLayout(item.layout),
-			_routeParam_: {
-				additional: [
-					{ key: 'objectId', value: item.id }
-				],
-			},
-		};
-
-		U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
-
 		let e = '';
 
 		switch (item.layout) {
-			case I.ObjectLayout.Type: e = 'ClickSettingsSpaceType'; break;
-			case I.ObjectLayout.Relation: e = 'ClickSettingsSpaceRelation'; break;
+			case I.ObjectLayout.Type: {
+				U.Object.editType(item.id, isPopup);
+				e = 'ClickSettingsSpaceType'; 
+				break;
+			};
+
+			case I.ObjectLayout.Relation: {
+				const param = {
+					layout: I.ObjectLayout.Settings,
+					id: U.Object.actionByLayout(item.layout),
+					_routeParam_: {
+						additional: [
+							{ key: 'objectId', value: item.id }
+						],
+					},
+				};
+
+				U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
+				e = 'ClickSettingsSpaceRelation'; 
+				break;
+			};
 		};
 
 		analytics.event(e, { route: analytics.route.library });
@@ -378,6 +386,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	const onBack = () => {
 		S.Common.setLeftSidebarState('vault', 'settingsSpace');
+		sidebar.rightPanelClose(isPopup);
 		U.Router.go(U.Router.build(savedRoute.current.params), {});
 	};
 

@@ -790,9 +790,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			S.Chat.clear(subId);
 			loadMessagesByOrderId(reply.orderId, () => {
-				window.setTimeout(() => {
-					scrollToMessage(reply.id, true, true);
-				}, 30);
+				raf(() => scrollToMessage(reply.id, true, true));
 			});
 		});
 	};

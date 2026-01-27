@@ -1,3 +1,4 @@
+import route from 'json/route';
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
 const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
@@ -107,6 +108,7 @@ class UtilObject {
 			layout: object.layout,
 			isImage: object.iconImage,
 			uxType: spaceview?.uxType,
+			route: this.route(object),
 		};
 	};
 
@@ -125,6 +127,10 @@ class UtilObject {
 		};
 
 		param = this.checkParam(param);
+
+		if (!e) {
+			this.openRoute(object, param);
+		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -191,7 +197,7 @@ class UtilObject {
 			return;
 		};
 
-		Renderer.send('openTab', this.route(object), this.getTabData(object), { setActive: false });
+		Renderer.send('openTab', this.getTabData(object), { setActive: false });
 	};
 
 	openTabs (objects: any[]) {
@@ -855,18 +861,39 @@ class UtilObject {
 		};
 	};
 
-	createType (details: any, isPopup: boolean) {
-		details = details || {};
+	editType (id: string, isPopup: boolean) {
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = { 
+			page: 'type', 
+			rootId: id,
+			noPreview: false,
+			details: {},
+		};
 
-		sidebar.rightPanelToggle(isPopup, { 
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
+	};
+
+	createType (details: any, isPopup: boolean) {
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = {
 			page: 'type', 
 			rootId: '',
 			noPreview: false,
 			details: {
 				...this.getNewTypeDetails(),
-				...details,
+				...(details || {}),
 			},
-		});
+		};
+
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
 	};
 
 	getNewTypeDetails (): any {

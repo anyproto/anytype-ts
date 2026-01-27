@@ -510,6 +510,18 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return list;
 		};
 
+		// Sort blocks by their document tree order
+		const rootId = keyboard.getRootId();
+		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const treeOrder = S.Block.unwrapTree(tree).map(it => it.id);
+		const orderMap = new Map(treeOrder.map((id, idx) => [ id, idx ]));
+
+		list.sort((a, b) => {
+			const idxA = orderMap.get(a) ?? -1;
+			const idxB = orderMap.get(b) ?? -1;
+			return idxA - idxB;
+		});
+
 		let ret = [];
 
 		if (withChildren) {

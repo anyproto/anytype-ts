@@ -113,6 +113,18 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Custom block-based editor system
 - gRPC for backend communication
 - Electron for desktop app packaging
+- CSS supports native nesting - use nested selectors instead of flat/inline selectors
+
+### Code Style
+- Write `else if` with a linebreak before `if`:
+  ```typescript
+  if (condition) {
+      // ...
+  } else
+  if (anotherCondition) {
+      // ...
+  }
+  ```
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
@@ -124,3 +136,17 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 ## Web Mode Development
 
 Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
+
+## Linear API Integration
+
+Use the `LINEAR_API_KEY` environment variable to fetch issue details from Linear.
+
+**Fetch issue by ID:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{issue(id:\"JS-1234\"){title description state{name}priority labels{nodes{name}}comments{nodes{body createdAt}}}}"}' | jq .
+```
+
+**Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.

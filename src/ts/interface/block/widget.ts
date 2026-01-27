@@ -43,7 +43,7 @@ export interface WidgetComponent {
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;
-	onCreate?: (param: any) => void;
+	onCreate?: (e: any, param: any) => void;
 	onSetPreview?: () => void;
 	getObject?: (id: string) => any;
 	getContentParam?: () => { layout: WidgetLayout; limit: number; viewId: string; };

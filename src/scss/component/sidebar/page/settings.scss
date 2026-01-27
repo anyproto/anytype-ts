@@ -20,7 +20,7 @@
             .itemSection {
                 > .name { @include text-small; font-weight: 500; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
 
-                &.isFirst { padding-top: 4px; }
+                &.isFirst { padding-top: 0px; }
             }
 
             .item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; border-radius: 6px; }

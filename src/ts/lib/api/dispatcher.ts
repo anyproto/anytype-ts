@@ -371,7 +371,7 @@ class Dispatcher {
 						Sentry.captureMessage('[Dispatcher] BlockSetText: focus');
 					};
 
-					const content: any = {};
+					const content: Partial<I.ContentText> = {};
 
 					if (text !== null) {
 						content.text = text;
@@ -1007,13 +1007,13 @@ class Dispatcher {
 						const title = [];
 
 						if (spaceview) {
-							title.push(U.String.shorten(spaceview.name, 16));
+							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
 						if (!spaceview.isChat && !spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
-								title.push(U.String.shorten(chat.name, 16));
+								title.push(U.String.shorten(chat.name, 32));
 							};
 						};
 
@@ -1167,7 +1167,7 @@ class Dispatcher {
 			};
 
 			if (updateNumbers) {
-				S.Block.updateNumbers(rootId); 
+				S.Block.updateNumbers(rootId);
 			};
 
 			if (updateMarkup) {
@@ -1365,7 +1365,7 @@ class Dispatcher {
 		};
 
 		S.Block.updateStructureParents(contextId);
-		S.Block.updateNumbers(contextId); 
+		S.Block.updateNumbers(contextId);
 		S.Block.updateMarkup(contextId);
 
 		keyboard.setWindowTitle();

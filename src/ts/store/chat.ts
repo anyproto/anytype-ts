@@ -338,11 +338,29 @@ class ChatStore {
 		};
 
 		for (const space of spaces) {
-			const counters = this.getSpaceCounters(space.targetSpaceId);
+			const spaceId = space.targetSpaceId;
+			const spaceMap = this.stateMap.get(spaceId);
 
-			if (counters) {
-				ret.mentionCounter += counters.mentionCounter || 0;
-				ret.messageCounter += counters.messageCounter || 0;
+			if (!spaceMap) {
+				continue;
+			};
+
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+
+			for (const [ chatId, state ] of spaceMap) {
+				if (!chatId || U.Data.checkIsArchived(chatId)) {
+					continue;
+				};
+
+				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+					ret.mentionCounter += Number(state.mentionCounter) || 0;
+				};
+
+				if (state.messageCounter && [ I.NotificationMode.All ].includes(chatMode)) {
+					ret.messageCounter += Number(state.messageCounter) || 0;
+				};
 			};
 		};
 

@@ -550,7 +550,7 @@ class DetailStore {
 		object.source = Relation.getStringValue(object.source);
 
 		if (object.source && (!object.name || (object.name == translate('defaultNamePage')))) {
-			object.name = U.Common.shortUrl(object.source);
+			object.name = U.String.shortUrl(object.source);
 		};
 
 		return object;

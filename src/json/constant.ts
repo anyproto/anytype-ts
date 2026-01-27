@@ -54,7 +54,7 @@ export default {
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,
-			text:						 2000,
+			text:						 4000,
 			reactions: {
 				self:					 3,
 				all:					 12,

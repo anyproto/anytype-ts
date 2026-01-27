@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } f
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
 import { J, analytics, I, keyboard, translate } from 'Lib';
-import { range } from 'lodash';
+import { range, set } from 'lodash';
 
 const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	
@@ -137,6 +137,11 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	useEffect(() => {
 		setValue();
 	});
+
+	useEffect(() => {
+		rangeRef.current = null;
+		setValue();
+	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),

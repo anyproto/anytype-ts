@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
@@ -60,14 +60,14 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};
-	
+
 	const onToggle = (e: any) => {
-		const node = $(nodeRef.current);
-		
-		S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		e.stopPropagation();
+
+		S.Block.toggle(rootId, block.id, !$(nodeRef.current).hasClass('isToggled'));
 		focus.apply();
 	};
-	
+
 	const onDragStart = (e: any) => {
 		e.stopPropagation();
 
@@ -538,7 +538,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 
-			const container = smile.get(0);
+			const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
 			const root = container._reactRoot || createRoot(container);
 
 			container._reactRoot = root;
@@ -682,7 +682,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				const container = smile.get(0);
+				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
@@ -785,7 +785,7 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	switch (type) {
 		case I.BlockType.Text: {
 			canDropMiddle = canDrop && block.canHaveChildren();
-			renderChildren = !isInsideTable && block.canHaveChildren();
+			renderChildren = !isInsideTable;
 
 			if (block.isTextCheckbox() && checked) {
 				cn.push('isChecked');
@@ -800,12 +800,12 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			blockComponent = (
-				<BlockText 
-					key={key} 
-					ref={childRef} 
-					{...props} 
-					onToggle={onToggle} 
-					renderLinks={renderLinks} 
+				<BlockText
+					key={key}
+					ref={childRef}
+					{...props}
+					onToggle={onToggle}
+					renderLinks={renderLinks}
 					renderMentions={renderMentions}
 					renderObjects={renderObjects}
 					renderEmoji={renderEmoji}
@@ -848,11 +848,13 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				break;
 			};
 
+			let hasContent = false;
 			if (!object.isDeleted && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
+				hasContent = true;
 			};
 
-			if (style == I.FileStyle.Link) {
+			if ((style == I.FileStyle.Link) && hasContent) {
 				blockComponent = <BlockFile key={key} ref={childRef} {...props} />;
 				break;
 			};

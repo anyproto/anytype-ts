@@ -177,8 +177,13 @@
 
 	&:not(.withText) {
 		.bubbleInner {
+			.bubble { position: relative; }
 			.bubble {
-				.textWrapper { display: none; }
+				.textWrapper { padding: 0px !important; }
+				.time {
+    				position: absolute; bottom: 12px; right: 12px; z-index: 2; padding: 3px 6px; border-radius: 10px;
+					background-color: rgba(0, 0, 0, 0.11); color: #fff;
+				}
 			}
 		}
 	}

@@ -191,7 +191,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
-			close();
+			S.Menu.close(menuIdEdit, () => close());
 
 			if (addCommand && item) {
 				addCommand(rootId, blockId, item);
@@ -223,7 +223,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			});
 		} else {
 			onAdd(item);
-
 			analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 		};
 	};

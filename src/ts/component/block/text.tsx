@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
+import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
@@ -31,9 +32,9 @@ const TWIN_PAIRS = {
 
 const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
-	const { 
-		rootId, block, readonly, isPopup, isInsideTable, 
-		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp, 
+	const {
+		rootId, block, readonly, isPopup, isInsideTable,
+		onUpdate, onMenuAdd, onToggle, onFocus, onBlur, onPaste, onKeyDown, onKeyUp,
 		renderLinks, renderObjects, renderMentions, renderEmoji,
 	} = props;
 	const { id, content } = block;
@@ -50,6 +51,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const textRef = useRef('');
 	const marksRef = useRef<I.Mark[]>(marks || []);
+	const prevTextRef = useRef(text);
+	const prevMarksRef = useRef<I.Mark[]>(marks || []);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const preventMenu = useRef(false);
@@ -71,7 +74,22 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		marksRef.current = marks || [];
+		const textChanged = prevTextRef.current !== text;
+		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
+
+		if (textChanged || marksChanged) {
+			marksRef.current = marks || [];
+			setValue(text);
+
+			prevTextRef.current = text;
+			prevMarksRef.current = marks || [];
+		} else
+		if (marksRef.current.length) {
+			// Render markup even when text/marks haven't changed, to pick up
+			// newly loaded details for mentions/objects
+			renderMarkup();
+		};
+
 		setValue(text);
 
 		if (text) {
@@ -151,6 +169,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const value = getHtmlValue();
+
+		// Skip if already contains rendered LaTeX to prevent double-processing
+		if (value.includes('<markuplatex')) {
+			return;
+		};
+
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
@@ -234,12 +258,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'pageLock' },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
+			{ key: `${cmd}+v` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `shift+space` },
 			{ key: `shift+arrowleft` },
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
+			{ key: 'theme' },
 		];
 
 		if (isInsideTable) {
@@ -806,12 +832,16 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		textRef.current = value;
 
-		U.Data.blockSetText(rootId, block.id, value, marks, update, message => {
-			if (value.length > 1) {
-				U.Data.setRtl(rootId, block, U.String.checkRtl(value));
-			};
-			callBack?.();
-		});
+		const isRtl = U.String.checkRtl(value);
+		const cb = () => {
+			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+		};
+
+		if (isRtl != checkRtl) {
+			U.Data.setRtl(rootId, block, isRtl, cb);
+		} else {
+			cb();
+		};
 	};
 	
 	const onFocusHandler = (e: any) => {
@@ -821,11 +851,33 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		keyboard.setFocus(true);
 		onFocus?.(e);
 
-		// Workaround for focus issue and Latex rendering
+		// Calculate correct caret position accounting for rendered LaTeX elements
 		window.setTimeout(() => {
-			const range = getRange();
+			const selection = window.getSelection();
 
-			setValue(block.getText());
+			let range = getRange();
+
+			if (selection && selection.rangeCount > 0) {
+				const selRange = selection.getRangeAt(0);
+				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
+
+				if (editable && editable.contains(selRange.startContainer)) {
+					const from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
+					const to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+
+					range = { from, to };
+				};
+			};
+
+			// Only restore source text if there's rendered LaTeX that needs converting back for editing
+			const html = getHtmlValue();
+			if (html.includes('<markuplatex')) {
+				const currentBlock = S.Block.getLeaf(rootId, id);
+				if (currentBlock) {
+					setValue(currentBlock.getText());
+				};
+			};
+
 			focus.set(block.id, range);
 			focus.apply();
 		}, 0);
@@ -838,8 +890,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			placeholderHide();
 		};
 
-		focus.clear(true);
 		setText(marksRef.current, true);
+		focus.clear(true);
 		onBlur?.(e);
 
 		let key = '';
@@ -1182,11 +1234,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			marker = { type: I.MarkerType.Toggle, onClick: onToggle };
 			break;
 		};
-			
+
 		case I.TextStyle.Checkbox: {
 			marker = { type: I.MarkerType.Checkbox, active: checked, onClick: onCheckbox };
 			break;
 		};
+
 	};
 
 	return (

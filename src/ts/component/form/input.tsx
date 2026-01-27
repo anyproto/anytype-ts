@@ -48,6 +48,7 @@ export interface InputRef {
 	setType: (v: string) => void;
 	setError: (v: boolean) => void;
 	focus: (preventScroll?: boolean) => void;
+	setFocus: () => void;
 	blur: () => void;
 	select: () => void;
 	setRange: (range: I.TextRange, preventScroll?: boolean) => void;
@@ -297,6 +298,7 @@ const Input = forwardRef<InputRef, Props>(({
 
 	useImperativeHandle(ref, () => ({
 		focus: (preventScroll?: boolean) => focus(preventScroll),
+		setFocus: () => focus(true),
 		blur: () => inputRef.current?.blur(),
 		select: () => inputRef.current?.select(),
 		setValue: (v: string) => setValue(String(v || '')),

@@ -219,21 +219,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		}, withTimeout ? 1000 : 0);
 	};
 
-	const onDelete = (e: any, element: any) => {
-		const view = getView();
-		const item = view.getFilter(itemId);
-
-		if (!item) {
-			return;
-		};
-
-		let value = Relation.getArrayValue(item.value);
-		value = value.filter(it => it != element.id);
-		value = U.Common.arrayUnique(value);
-
-		onChange('value', value);
-	};
-
 	const onSubmitHandler = (e: any) => {
 		e.preventDefault();
 
@@ -261,7 +246,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	};
 
 	const checkClear = (v: any) => {
-		$(nodeRef.current).find('.icon.clear').toggleClass('active', v);
+		$(nodeRef.current).find('.icon.clear').toggleClass('active', !!v);
 	};
 
 	const onClear = (e: any) => {
@@ -328,6 +313,22 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	let wrapValue = false;
 	let value = null;
 	const onSubmit = e => onSubmitHandler(e);
+
+	const textInput = (key?: string, placeholder?: string): any => (
+		<div className="textInputWrapper">
+			<Input
+				key={key ? key : 'value-text'}
+				ref={ref => inputRef.current = ref}
+				value={item.value}
+				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+				onFocus={onFocusText}
+				onKeyUp={(e: any, v: string) => onChange('value', v, true)}
+				onSelect={onSelect}
+				readonly={isReadonly}
+			/>
+			<Icon className="clear" onClick={onClear} />
+		</div>
+	);
 
 	switch (relation.format) {
 
@@ -412,21 +413,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.Date: {
 			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
-				value = (
-					<>
-						<Input 
-							key="filter-value-date-days-input"
-							ref={ref => inputRef.current = ref} 
-							value={item.value} 
-							placeholder={translate('commonValue')} 
-							onFocus={onFocusText}
-							onKeyUp={(e: any, v: string) => onChange('value', v, true)} 
-							onSelect={onSelect}
-							readonly={isReadonly}
-						/>
-						<Icon className="clear" onClick={onClear} />
-					</>
-				);
+				value = textInput('filter-value-date-days-input', translate(`placeholderCell${I.RelationType.Number}`));
 			} else
 			if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
 				value = (
@@ -447,21 +434,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 
 		default: {
-			value = (
-				<>
-					<Input 
-						ref={ref => inputRef.current = ref} 
-						value={item.value} 
-						placeholder={translate('commonValue')} 
-						onFocus={onFocusText}
-						onKeyUp={(e: any, v: string) => onChange('value', v, true)} 
-						onSelect={onSelect}
-						readonly={isReadonly}
-					/>
-					<Icon className="clear" onClick={onClear} />
-				</>
-			);
-			wrapValue = true;
+			value = textInput();
 			break;
 		};
 	};
@@ -516,15 +489,16 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	return (
 		<div ref={nodeRef} className="inner">
 			<div className="head menuHead">
-				<Label text={relationOption.name} />
-				<div onClickCapture={onConditionClick}>
+				<div className="conditionSelect" onClickCapture={onConditionClick}>
+					<Label text={relationOption.name} />
 					<Select
 						ref={conditionRef}
 						id={`filter-condition-${item.id}`}
 						value={String(item.condition)}
+						element={`#${getId()} .conditionSelect`}
 						options={conditionOptions}
 						onChange={v => onChange('condition', Number(v))}
-						menuParam={selectParam}
+						menuParam={Object.assign(selectParam, { width: 224, offsetY: 4 })}
 						readonly={isReadonly}
 					/>
 				</div>

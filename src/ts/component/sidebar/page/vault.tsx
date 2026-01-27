@@ -303,12 +303,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		} else {
 			U.Space.openDashboard(routeParam);
 		};
+
+		Preview.tooltipHide();
 	};
 
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setHover(item);
-			tooltipShow(item, 300);
+			tooltipShow(item, 50);
 		};
 	};
 

@@ -421,7 +421,7 @@ class Sidebar {
 	 * Handles mouse move events for sidebar hover and auto-show/hide.
 	 */
 	onMouseMove (): void {
-		const { hideSidebar } = S.Common;
+		const { hideSidebar, windowIsFocused } = S.Common;
 
 		if (keyboard.isDragging || keyboard.isResizing) {
 			return;
@@ -430,12 +430,20 @@ class Sidebar {
 		if (
 			this.isAnimating ||
 			!hideSidebar ||
-			!keyboard.isMain()
+			!keyboard.isMain() ||
+			!windowIsFocused
 		) {
 			return;
 		};
 
-		const { x } = keyboard.mouse.page;
+		const { x, y } = keyboard.mouse.page;
+
+		// Skip if mouse position is at origin - indicates uninitialized state
+		// This can happen when switching tabs before any mouse movement
+		if (!x && !y) {
+			return;
+		};
+
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 		const leftState = S.Common.getLeftSidebarState();
@@ -506,6 +514,7 @@ class Sidebar {
 
 		const { config, singleTab } = S.Common;
 		const { alwaysShowTabs } = config;
+		const isAuth = keyboard.isAuth();
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
@@ -517,6 +526,8 @@ class Sidebar {
 		const objRight = this.rightPanelGetNode(isPopup);
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
 		const dummyLeft = $('#sidebarDummyLeft');
+		const isLeftClosed = dataLeft.isClosed || isAuth;
+		const isSubLeftClosed = dataSubLeft.isClosed || isAuth;
 
 		if ((widthLeft === null) && objLeft && objLeft.length) {
 			widthLeft = objLeft.outerWidth();
@@ -567,18 +578,18 @@ class Sidebar {
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
 
-			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 			
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			pageFlex.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+			pageFlex.toggleClass('withSidebarLeft', !isLeftClosed);
+			pageFlex.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
 			header.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			header.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			header.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+			header.toggleClass('withSidebarLeft', !isLeftClosed);
+			header.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
 			subPageWrapperLeft.toggleClass('sidebarAnimation', animate);
-			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 		} else {
 			objRight.css({ height: container.height() });
 		};

@@ -160,7 +160,10 @@ const App: FC = () => {
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('close-session', onCloseSession);
-		Renderer.on('set-single-tab', (e: any, v: boolean) => S.Common.singleTabSet(v));
+		Renderer.on('set-single-tab', (e: any, v: boolean) => {
+			S.Common.singleTabSet(v);
+			keyboard.setBodyClass();
+		});
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
 

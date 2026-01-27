@@ -535,7 +535,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly && !noFilter ? 44 : 8;
+		const offset = !isReadonly && !noFilter ? 36 : 8;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
@@ -804,8 +804,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		<div id="utilOptionSelect" ref={nodeRef} className={cn.join(' ')}>
 			{!noFilter ? (
 				<Filter
-					className="outlined"
-					icon="search"
+					className="outlined round"
 					ref={filterRef}
 					placeholderFocus={placeholder}
 					value={filter}
