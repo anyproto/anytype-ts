@@ -1787,6 +1787,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { rootId } = props;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const win = $(window);
+		const rect = U.Common.getSelectionRect();
 
 		if (!block) {
 			return;
@@ -1798,10 +1799,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${blockId}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
-			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
-			},
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
