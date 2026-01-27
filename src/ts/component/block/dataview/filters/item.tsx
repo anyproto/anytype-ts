@@ -3,21 +3,29 @@ import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, Label } from 'Component';
 
-interface Props {
-	id: string;
-	subId: string;
+interface FilterWithRelation extends I.Filter {
 	relation: any;
-	filter: I.Filter;
+};
+
+interface Props {
+	subId: string;
+	filter: FilterWithRelation;
 	readonly?: boolean;
 	onOver?: (e: any) => void;
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
+	onContextMenu?: (e: React.MouseEvent) => void;
 };
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, filter, readonly, onOver, onClick, onRemove } = props;
+	const { subId, filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
+	
+	if (!relation) {
+		return null;
+	};
+
 	const isDictionary = Relation.isDictionary(relation.relationKey);
 	const cn = [ 'filterItem' ];
 
@@ -36,7 +44,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
 	const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
-	let name = relation.name;
+	const name = relation.name;
 	let value = filter.value;
 	let v: any = null;
 	let list = [];
@@ -126,6 +134,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			className={cn.join(' ')}
 			onMouseEnter={onOver}
 			onClick={onClick}
+			onContextMenu={onContextMenu}
 		>
 			<IconObject size={20} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 

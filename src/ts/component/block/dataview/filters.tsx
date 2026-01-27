@@ -90,6 +90,50 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		props.onClear?.();
 	};
 
+	const onClearFilter = (item: any) => {
+		const conditions = Relation.filterConditionsByType(item.relation.format);
+		const condition = conditions[0]?.id || I.FilterCondition.Equal;
+		const quickOptions = Relation.filterQuickOptions(item.relation.format, condition);
+		const quickOption = quickOptions[0]?.id || I.FilterQuickOption.ExactDate;
+
+		const filter = {
+			...item,
+			condition,
+			quickOption,
+			value: Relation.formatValue(item.relation, null, false),
+		};
+
+		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+			loadData(view.id, 0, false);
+		});
+	};
+
+	const onContextMenu = (e: React.MouseEvent, item: any) => {
+		e.preventDefault();
+
+		if (isReadonly) {
+			return;
+		};
+
+		S.Menu.open('select', {
+			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			classNameWrap: 'fromBlock',
+			offsetY: 4,
+			data: {
+				options: [
+					{ id: 'clear', name: translate('commonClear') },
+					{ id: 'delete', name: translate('commonDelete') },
+				],
+				onSelect: (e: any, option: any) => {
+					switch (option.id) {
+						case 'clear': onClearFilter(item); break;
+						case 'delete': onRemove(e, item); break;
+					};
+				},
+			}
+		});
+	};
+
 	return (
 		<div ref={nodeRef} id="dataviewFilters" className={cn.join(' ')}>
 			<div className="sides">
@@ -102,6 +146,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 							subId={rootId}
 							onRemove={e => onRemove(e, item)}
 							onClick={e => onClick(e, item)}
+							onContextMenu={e => onContextMenu(e, item)}
 							readonly={isReadonly}
 						/>
 					))}
