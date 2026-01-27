@@ -94,6 +94,13 @@
 						.icon.arrow { right: -8px !important; }
 					}
 				}
+
+				.textInputWrapper { position: relative; margin: 0px 16px; }
+				.textInputWrapper {
+					.input { padding: 6px 28px 8px 12px; border-radius: 18px; border: 1px solid var(--color-shape-primary); }
+					.icon.clear { position: absolute; top: 5px; right: 6px; width: 20px; height: 20px; opacity: 0; }
+					.icon.clear.active { opacity: 1; }
+				}
 			}
 		}
 	}
