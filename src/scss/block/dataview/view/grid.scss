@@ -235,10 +235,11 @@
 			.button.expand { top: 6px; }
 
 			&:not(.wrapContent) {
-				.row, .cell, .cellHead, .rowFoot, .cellFoot { height: 40px; }
-				.cellFoot {
-					.cellContent { height: 40px !important; }
-				}
+				.row, .cell, .rowFoot, .cellFoot { height: 40px; }
+			}
+
+			.cellFoot {
+				.cellContent { height: 40px !important; }
 			}
 
 			.cellHead:first-child {
