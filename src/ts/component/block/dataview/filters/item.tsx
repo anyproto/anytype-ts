@@ -21,7 +21,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
-	
+
 	if (!relation) {
 		return null;
 	};

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, translate, analytics, Relation } from 'Lib';
+import { I, S, U, J, C, translate, analytics, Relation } from 'Lib';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect } from 'Component';
 
 const SUB_ID_PREFIX = 'filterOptionList';
@@ -20,6 +20,23 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const n = useRef(-1);
 	const timeout = useRef(0);
 	const [ dummy, setDummy ] = useState(0);
+
+	const view = getView();
+	const item = view?.getFilter(itemId);
+	const relation: any = item ? S.Record.getRelationByKey(item.relationKey) : null;
+	const isInlineRelation = relation && [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Object, I.RelationType.File ].includes(relation.format);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => isInlineRelation ? optionSelectRef.current?.getItems() || [] : [],
+		getIndex: () => isInlineRelation ? optionSelectRef.current?.getIndex() ?? -1 : n.current,
+		setIndex: (i: number) => isInlineRelation ? optionSelectRef.current?.setIndex(i) : n.current = i,
+		getFilterRef: () => isInlineRelation ? optionSelectRef.current?.getFilterRef() : inputRef.current,
+		getListRef: () => optionSelectRef.current?.getListRef(),
+		onOver: (e: any, item: any) => optionSelectRef.current?.onOver(e, item),
+		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
+	}), [ isInlineRelation ]);
 
 	useEffect(() => {
 		init();
@@ -279,18 +296,71 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 	};
 
-	const view = getView();
-	if (!view) {
-		return null;
+	const onMore = (e: React.MouseEvent) => {
+		e.stopPropagation();
+
+		const view = getView();
+		if (!view) {
+			return;
+		};
+
+		const item = view.getFilter(itemId);
+		if (!item) {
+			return;
+		};
+
+		const relation = S.Record.getRelationByKey(item.relationKey);
+		if (!relation) {
+			return;
+		};
+
+		S.Menu.open('select', {
+			element: `#${getId()} .icon.more`,
+			classNameWrap,
+			offsetY: 4,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options: [
+					{ id: 'clear', name: translate('commonClear') },
+					{ id: 'delete', name: translate('commonDelete') },
+				],
+				onSelect: (e: any, option: any) => {
+					switch (option.id) {
+						case 'clear': {
+							const conditions = Relation.filterConditionsByType(relation.format);
+							const condition = conditions[0]?.id || I.FilterCondition.Equal;
+							const quickOptions = Relation.filterQuickOptions(relation.format, condition);
+							const quickOption = quickOptions[0]?.id || I.FilterQuickOption.ExactDate;
+
+							const filter = {
+								...U.Common.objectCopy(item),
+								condition,
+								quickOption,
+								value: Relation.formatValue(relation, null, false),
+							};
+
+							view.setFilter(filter);
+							save();
+							setDummy(dummy + 1);
+							break;
+						};
+
+						case 'delete': {
+							C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ itemId ]);
+							close();
+							break;
+						};
+					};
+				},
+			}
+		});
 	};
 
-	const item = view.getFilter(itemId);
-	if (!item) {
+	if (!view || !item || !relation) {
 		return null;
 	};
 
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-	const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 	const relationOptions = getRelationOptions();
 	const conditionOptions = Relation.filterConditionsByType(relation.format);
 	const checkboxOptions: I.Option[] = [
@@ -462,29 +532,15 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	if (value && wrapValue) {
 		value = (
-			<div 
-				id="item-value" 
-				className="item" 
+			<div
+				id="item-value"
+				className="item"
 				onMouseEnter={onValueHover}
 			>
 				{value}
 			</div>
 		);
 	};
-
-	const isInlineRelation = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Object, I.RelationType.File ].includes(relation.format);
-
-	useImperativeHandle(ref, () => ({
-		rebind,
-		unbind,
-		getItems: () => isInlineRelation ? optionSelectRef.current?.getItems() || [] : [],
-		getIndex: () => isInlineRelation ? optionSelectRef.current?.getIndex() ?? -1 : n.current,
-		setIndex: (i: number) => isInlineRelation ? optionSelectRef.current?.setIndex(i) : n.current = i,
-		getFilterRef: () => isInlineRelation ? optionSelectRef.current?.getFilterRef() : inputRef.current,
-		getListRef: () => optionSelectRef.current?.getListRef(),
-		onOver: (e: any, item: any) => optionSelectRef.current?.onOver(e, item),
-		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
-	}), [ isInlineRelation ]);
 
 	return (
 		<div ref={nodeRef} className="inner">
@@ -502,6 +558,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						readonly={isReadonly}
 					/>
 				</div>
+				{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
 			</div>
 
 			{items.length ? (
