@@ -418,7 +418,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			{({ registerChild, measure }) => (
 				<div 
 					ref={registerChild} 
-					style={{ ...style, top: style.top + 2 }}
+					style={style}
 				>
 					<BodyRow 
 						key={`grid-row-${view.id + index}`} 

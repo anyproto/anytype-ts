@@ -2,8 +2,9 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
+		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; }
 		.rowHead { user-select: none; }
+		.rowFoot { height: 36px; }
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
 
@@ -16,7 +17,7 @@
 		}
 
 		.cellHead, .cellFoot { 
-			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative;
 			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead.canDrag { cursor: grab; }
@@ -40,6 +41,7 @@
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
 		}
 
+		.cellHead { height: 36px; }
 		.cellHead {
 			.name { user-select: none !important; }
 		}
@@ -235,7 +237,7 @@
 			.button.expand { top: 6px; }
 
 			&:not(.wrapContent) {
-				.row, .cell, .rowFoot, .cellFoot { height: 40px; }
+				.row, .cell, .rowFoot { height: 40px; }
 			}
 
 			.cellFoot {
