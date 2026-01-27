@@ -22,7 +22,11 @@
 		}
 
 		.button.expand {
-			&:hover { background-color: var(--color-shape-tertiary); }
+			&:hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
+			&:hover {
+				.icon { background-image: url('~img/icon/dataview/button/expand1.svg'); }
+			}
+
 			.icon { width: 20px; height: 20px; display: none; background-image: url('~img/icon/dataview/button/expand0.svg'); }
 		}
 
