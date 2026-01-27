@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
-import { Title, Label, Button, Icon } from 'Component';
+import { Title, Label, Button, Icon, Switch } from 'Component';
 import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { dataPath, spaceStorage } = S.Common;
+	const { dataPath, spaceStorage, autoDownload } = S.Common;
 	const { localUsage } = spaceStorage;
 	const isLocalNetwork = U.Data.isLocalNetwork();
 	const suffix = isLocalNetwork ? 'LocalOnly' : '';
@@ -65,6 +65,27 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 					</div>
 					<div className="side right">
 						<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={onOffload} />
+					</div>
+				</div>
+
+				<div className="item">
+					<div className="side left">
+						<Icon className="offline" />
+
+						<div className="txt">
+							<Title text={translate('popupSettingsDataOfflineAccess')} />
+							<Label text={translate('popupSettingsDataOfflineAccessDescription')} />
+						</div>
+					</div>
+					<div className="side right">
+						<Switch
+							className="big"
+							value={autoDownload}
+							onChange={(e: any, v: boolean) => {
+								S.Common.autoDownloadSet(v);
+								C.FileSetAutoDownload(v, false);
+							}}
+						/>
 					</div>
 				</div>
 

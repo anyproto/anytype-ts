@@ -371,6 +371,7 @@
         .icon.drive { background-image: url('~img/icon/settings/drive.svg'); }
         .icon.sites { background-image: url('~img/icon/settings/sites.svg'); }
         .icon.location { background-image: url('~img/icon/settings/location.svg'); }
+        .icon.offline { background-image: url('~img/icon/settings/offline.svg'); }
 
         .actionItems {
             .title { @include text-common; font-weight: 400; margin-bottom: 0; }
