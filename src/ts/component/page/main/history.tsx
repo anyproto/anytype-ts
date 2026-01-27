@@ -340,26 +340,21 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		return getWidth(U.Data.getLayoutWidth(rootId));
 	};
 
-	const getWidth = (w: number) => {
-		w = Number(w) || 0;
+	const getWidth = (weight: number) => {
+		weight = Number(weight) || 0;
 
 		const sideLeft = $(leftRef.current?.getNode());
-		const min = 300;
 
-		let mw = sideLeft.width();
+		let cw = sideLeft.width();
 		let width = 0;
 
 		if (isSetOrCollection()) {
-			width = mw - 192;
+			width = cw - 192;
 		} else {
-			const size = mw * 0.6;
-
-			mw -= 96;
-			w = (mw - size) * w;
-			width = Math.max(size, Math.min(mw, size + w));
+			width = Math.min(cw - 64, (1 + weight) * J.Size.editor);
 		};
 
-		return Math.max(min, width);
+		return Math.max(300, width);
 	};
 
 	const isSetOrCollection = (): boolean => {

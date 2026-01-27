@@ -212,8 +212,6 @@ const App: FC = () => {
 	const onInit = (data: any) => {
 		data = data || {};
 
-		console.log('[App.onInit] Data received', data);
-
 		const { id, dataPath, config, isDark, languages, isPinChecked, css, isSingleTab } = data;
 		const body = $('body');
 		const node = $(nodeRef.current);
