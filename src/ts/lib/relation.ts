@@ -492,10 +492,18 @@ class Relation {
 			return true;
 		};
 
-		// Date quick options
-		if ((format == I.RelationType.Date) && ![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
-			return true;
-		};
+
+		if (format == I.RelationType.Date) {
+			// Date condition In
+			if (condition == I.FilterCondition.In) {
+				return true;
+			};
+
+			// Date quick options
+			if (![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
+				return true;
+			};
+		}
 
 		// For all other conditions, check if value is present
 		return this.isFilterValueSet(value);
