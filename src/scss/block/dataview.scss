@@ -149,10 +149,17 @@
 
 			.icon { position: relative; transition: $transitionAllCommon; }
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); background-color: var(--color-shape-highlight-medium); }
 			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
 			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
 			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+
+			.icon.btn-filter {
+				.bullet {
+					position: absolute; right: -2px; top: -2px; width: 10px; height: 10px; border-radius: 50%;
+					border: 2px solid var(--color-bg-primary); background: var(--color-system-accent-100);
+				}
+			}
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
@@ -205,6 +212,49 @@
 					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
 				.element:hover { background-color: var(--color-shape-highlight-medium); }
+			}
+		}
+
+		.dataviewFilters { padding: 12px 0px; }
+		.dataviewFilters {
+			> .sides { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; }
+			> .sides {
+				> .side.left { flex-grow: 1; padding-left: 16px; max-width: 100%; display: flex; gap: 4px; flex-wrap: wrap; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; padding-right: 2px; align-items: flex-start; }
+
+				.filterItem {
+					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 32px; align-items: center; padding: 0px 10px 0px 8px;
+					border-radius: 16px; border: 1px solid var(--color-shape-highlight-medium); color: var(--color-text-secondary);
+				}
+				.filterItem {
+					&.withValue { color: var(--color-text-primary); }
+					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
+
+					.content { display: flex; gap: 4px; @include text-overflow-nw; max-width: 256px; }
+ 					.name { font-weight: 500; }
+					.value { @include text-overflow-nw; }
+
+					.label.condition { text-transform: lowercase; }
+
+					.icon.delete {
+						display: none; position: absolute; right: -4px; top: -4px; width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+						background: var(--color-bg-primary) url('~img/icon/menu/delete.svg') 50% 50% / 12px 12px no-repeat; border: 1px solid var(--color-shape-secondary);
+					}
+					.icon.delete:hover { background-color: var(--color-shape-secondary); }
+					&:hover {
+						.icon.delete { display: block; }
+					}
+				}
+
+				.icon.plus { width: 32px; height: 32px; border-radius: 16px; background-size: 20px; background-position: 50% 50%; background-repeat: no-repeat;  }
+				.icon.plus {
+					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); }
+				}
+
+				.buttons {
+					.label { font-weight: 500; color: var(--color-text-secondary); padding: 5px 8px; }
+					.labe:hover { color: var(--color-text-primary); }
+				}
 			}
 		}
 

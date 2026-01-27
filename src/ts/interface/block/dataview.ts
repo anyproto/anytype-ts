@@ -89,6 +89,13 @@ export enum FilterQuickOption {
 	NextYear		 = 14,
 };
 
+export enum FilterValueTemplate {
+	None			 = 0,
+	User			 = 1,
+	Object			 = 2,
+	Participant		 = 3,
+};
+
 export enum FormulaType {
 	None				 = 0,
 	Count				 = 1,
@@ -186,6 +193,7 @@ export interface ViewComponent {
 	onTemplateAdd?: () => void;
 	onSortAdd?: (item: any, callBack?: () => void) => void;
 	onFilterAdd?: (item: any, callBack?: () => void) => void;
+	onFilterAddClick?: (menuParam: I.MenuParam, noToggle?: boolean) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string, record?: any): void;
 	onContext?(e: any, id: string, subId?: string): void;
@@ -239,6 +247,7 @@ export interface View {
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
+	getFilter?: (id: string) => I.Filter;
 	isGrid?(): boolean;
 	isList?(): boolean;
 	isGallery?(): boolean;

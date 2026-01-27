@@ -6,10 +6,11 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action } from 'Lib';
+import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
+import Filters from './dataview/filters';
 import Empty from './dataview/empty';
 import AddRow from './dataview/view/grid/body/add';
 
@@ -33,6 +34,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const viewRef = useRef(null);
 	const controlsRef = useRef(null);
 	const selectRef = useRef(null);
+	const filtersRef = useRef(null);
 	const isCollection = Dataview.isCollection(rootId, block.id);
 	const isCreating = useRef(false);
 	const frame = useRef(0);
@@ -44,6 +46,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const cellRefs = useRef<Map<string, any>>(new Map());
 	const recordRefs = useRef<Map<string, any>>(new Map());
 	const [ searchIds, setSearchIds ] = useState<string[] | null>(null);
+	const [ dummy, setDummy ] = useState<number>(0);
 	const analyticsRoute = isCollection ? analytics.route.collection : analytics.route.set;
 
 	useEffect(() => {
@@ -1029,6 +1032,44 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
+	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
+		const { filters } = view;
+		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
+		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
+
+		if (items.length && !noToggle) {
+			const showFilters = Storage.checkToggle(rootId, filtersId);
+
+			Storage.setToggle(rootId, filtersId, !showFilters);
+			setDummy(dummy + 1);
+		} else {
+			U.Menu.sortOrFilterRelationSelect(menuParam, {
+				rootId,
+				blockId: block.id,
+				getView,
+				onSelect: item => {
+					const conditions = Relation.filterConditionsByType(item.format);
+					const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+					const quickOptions = Relation.filterQuickOptions(item.format, condition);
+					const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+
+					Storage.setToggle(rootId, filtersId, true);
+
+					onFilterAdd({
+						relationKey: item.relationKey ? item.relationKey : item.id,
+						condition: condition as I.FilterCondition,
+						value: Relation.formatValue(item, null, false),
+						quickOption,
+					});
+				},
+			});
+		};
+	};
+
+	const onFiltersClear = () => {
+		Storage.setToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`), false);
+	};
+
 	const onFilterAdd = (item: any, callBack?: () => void) => {
 		const view = getView();
 		const object = getTarget();
@@ -1441,6 +1482,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
+	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 
 	let ViewComponent: any = null;
 	let body = null;
@@ -1505,6 +1547,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		onTemplateAdd,
 		onSortAdd,
 		onFilterAdd,
+		onFilterAddClick,
 		isAllowedObject,
 		isAllowedDefaultType,
 		onSourceSelect,
@@ -1577,6 +1620,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					multiSelectAction={multiSelectAction} 
 				/>
 			</div>
+
+			{showFilters ? (
+				<Filters
+					ref={filtersRef}
+					{...props}
+					{...dataviewProps}
+					onClear={onFiltersClear}
+				/>
+			) : ''}
+
 			{body}
 		</div>
 	);

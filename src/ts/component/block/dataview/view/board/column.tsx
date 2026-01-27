@@ -85,8 +85,8 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(Dataview.filterMapper),
-				sorts: sorts.map(Dataview.filterMapper),
+				filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => Dataview.sortMapper(it)),
 				keys: getKeys(view.id),
 				sources: target.setOf || [],
 				limit,

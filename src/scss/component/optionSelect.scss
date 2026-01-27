@@ -1,0 +1,56 @@
+.utilOptionSelect,
+.menus .menu.vertical .utilOptionSelect {
+    .filter { padding: 0px 16px; }
+    .items { height: calc(100% - 28px); }
+    &.noFilter {
+        .items { height: 100%; }
+    };
+
+    .item { display: flex; align-items: center; }
+    .item:not(.add, .empty) { gap: 0px 4px; padding-left: 18px; }
+    .item.withHandle { padding-left: 10px; }
+    .item {
+        .buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
+        .buttons {
+            .icon.more { display: none; }
+        }
+
+        &.withCheckbox {
+            .clickable { width: calc(100% - 24px); }
+        }
+
+        &:hover, &.hover {
+            .clickable { width: calc(100% - 28px); }
+            .buttons {
+                .icon.more { display: block; }
+            }
+        }
+
+        &.withCheckbox:hover, &.withCheckbox.hover {
+            .clickable { width: calc(100% - 50px); }
+        }
+
+        &.add {
+            .name { @include text-overflow-nw; }
+        }
+
+        &.isDragging { z-index: 1; }
+    }
+
+    &:not(.canEdit) {
+        .item {
+            .icon.more { display: none; }
+        }
+    }
+
+    &.canEdit.canSelect {
+        .item {
+            .buttons,
+            .icon.chk { right: 14px; }
+
+            &:hover, &.hover {
+                .icon.chk { right: 40px; }
+            }
+        }
+    }
+}
