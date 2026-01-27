@@ -489,15 +489,16 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	return (
 		<div ref={nodeRef} className="inner">
 			<div className="head menuHead">
-				<Label text={relationOption.name} />
-				<div onClickCapture={onConditionClick}>
+				<div className="conditionSelect" onClickCapture={onConditionClick}>
+					<Label text={relationOption.name} />
 					<Select
 						ref={conditionRef}
 						id={`filter-condition-${item.id}`}
 						value={String(item.condition)}
+						element={`#${getId()} .conditionSelect`}
 						options={conditionOptions}
 						onChange={v => onChange('condition', Number(v))}
-						menuParam={selectParam}
+						menuParam={Object.assign(selectParam, { width: 224, offsetY: 4 })}
 						readonly={isReadonly}
 					/>
 				</div>

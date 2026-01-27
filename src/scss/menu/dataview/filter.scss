@@ -71,8 +71,21 @@
 	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
 		.inner {
-			> .head { display: flex; align-items: center; gap: 0px 4px; padding: 0px 16px; }
+			> .head { display: flex; align-items: center; gap: 0px 4px; padding: 0px 10px; }
 			> .head {
+				.conditionSelect { padding: 4px 0px 4px 6px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
+				.conditionSelect {
+					.select {
+						.currentSelected { text-transform: lowercase; }
+					}
+				}
+				.conditionSelect:hover,
+				.conditionSelect.hover { background-color: var(--color-shape-highlight-medium); }
+				.conditionSelect:hover,
+				.conditionSelect.hover {
+					.select { background: none; }
+				}
+
 				.label { @include text-common; color: var(--color-text-primary); font-weight: 500; padding: 0px; margin: 0px; }
 				.select {
 					display: flex; border: 0px; padding: 0px; flex-shrink: 0;
