@@ -78,75 +78,73 @@ class Relation {
 	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
 	 */
 	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
-		let ret = [
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-		];
+		let ret: { id: I.FilterCondition, name: string }[] = [];
 
 		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
+			case I.RelationType.ShortText:
+			case I.RelationType.LongText:
+			case I.RelationType.Url:
+			case I.RelationType.Email:
 			case I.RelationType.Phone: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') },
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') },
 					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
 
-			case I.RelationType.File: 
-			case I.RelationType.Object: 
-			case I.RelationType.Select: 
+			case I.RelationType.File:
+			case I.RelationType.Object:
+			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
+				ret = [
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') },
+					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') },
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
-			
+
 			case I.RelationType.Number: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: '=' },
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
+					{ id: I.FilterCondition.Greater,		 name: '>' },
+					{ id: I.FilterCondition.Less,			 name: '<' },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' },
 					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
 
 			case I.RelationType.Date: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') },
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') },
 					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
 					{ id: I.FilterCondition.In,				 name: translate('filterConditionInDate') },
-					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
-			
+
 			case I.RelationType.Checkbox:
 			default: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') },
 					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
-				]);
+				];
 				break;
 			};
 
@@ -257,11 +255,10 @@ class Relation {
 	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
 	 */
 	public filterConditionsDictionary () {
-		return [ 
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+		return [
+			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') },
+			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 			{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 		];
 	};
@@ -461,6 +458,76 @@ class Relation {
 			};
 		};
 		return ret;
+	};
+
+	/**
+	 * Checks if a filter is active (should affect search results).
+	 * A filter is inactive if:
+	 * - Condition is None, OR
+	 * - Condition requires a value but the value is empty
+	 * @param {I.Filter} filter - The filter to check.
+	 * @returns {boolean} True if the filter is active.
+	 */
+	public isFilterActive (filter: I.Filter): boolean {
+		if (!filter) {
+			return false;
+		};
+
+		const { condition, value, quickOption, relationKey } = filter;
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return false;
+		};
+
+		const { format } = relation;
+
+		// None condition is always inactive
+		if (condition == I.FilterCondition.None) {
+			return false;
+		};
+
+		// Empty/NotEmpty conditions don't require a value
+		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+			return true;
+		};
+
+		// Date quick options
+		if ((format == I.RelationType.Date) && ![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
+			return true;
+		};
+
+		// For all other conditions, check if value is present
+		return this.isFilterValueSet(value);
+	};
+
+	/**
+	 * Checks if a filter value is set (not empty).
+	 * @param {any} value - The value to check.
+	 * @returns {boolean} True if the value is set.
+	 */
+	public isFilterValueSet (value: any): boolean {
+		if (value === null || value === undefined) {
+			return false;
+		};
+
+		if (Array.isArray(value)) {
+			return value.length > 0;
+		};
+
+		if (typeof value === 'string') {
+			return value.length > 0;
+		};
+
+		if (typeof value === 'number') {
+			return true;
+		};
+
+		if (typeof value === 'boolean') {
+			return true;
+		};
+
+		return !!value;
 	};
 
 	/**

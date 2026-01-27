@@ -1,7 +1,16 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, U, J, translate } from 'Lib';
+import { I, U, J, translate, keyboard } from 'Lib';
 import { Select, Icon } from 'Component';
+
+export interface CalendarDay {
+	d: number;
+	m: number;
+	y: number;
+	isToday?: boolean;
+	isWeekend?: boolean;
+};
 
 interface Props {
 	value: number;
@@ -9,27 +18,54 @@ interface Props {
 	isReadonly?: boolean;
 	canClear?: boolean;
 	position?: () => void;
+	className?: string;
 	menuClassNameWrap?: string;
+
+	// Optional features for MenuCalendar integration
+	isEmpty?: boolean;
+	enableKeyboard?: boolean;
+	enableHoverState?: boolean;
+	showFooter?: boolean;
+	getDotMap?: (start: number, end: number, cb: (map: Map<string, boolean>) => void) => void;
+	onDayClick?: (item: CalendarDay, ts: number) => boolean | void;
+	onDayContextMenu?: (e: React.MouseEvent, item: CalendarDay) => void;
+	rebind?: () => void;
+	unbind?: () => void;
 };
 
 export interface CalendarSelectRefProps {
 	getValue: () => number;
 	setValue: (v: number) => void;
+	setDisplayValue: (v: number) => void;
+	getSelectedDate: () => CalendarDay | null;
+	setSelectedDate: (date: CalendarDay | null) => void;
 };
 
 const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
 
-	const { value, onChange, isReadonly, canClear = true, position, menuClassNameWrap } = props;
+	const {
+		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
+		isEmpty, enableKeyboard, enableHoverState, showFooter, getDotMap, onDayClick, onDayContextMenu, rebind, unbind,
+	} = props;
 
 	const [ displayValue, setDisplayValue ] = useState(value || U.Date.now());
+	const [ dotMap, setDotMap ] = useState<Map<string, boolean>>(new Map());
+	const [ selectedDate, setSelectedDate ] = useState<CalendarDay | null>(null);
+	const selectedDateRef = useRef<CalendarDay | null>(null);
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
 
 	const { m, y } = U.Date.getCalendarDateParam(displayValue);
-	const selectedParam = value ? U.Date.getCalendarDateParam(value) : null;
+	const valueParam = value ? U.Date.getCalendarDateParam(value) : null;
 	const todayParam = U.Date.getCalendarDateParam(U.Date.now());
 	const days = U.Date.getWeekDays();
 	const data = U.Date.getCalendarMonth(displayValue);
+
+	const cn = [ 'calendarSelect' ];
+
+	if (className) {
+		cn.push(className);
+	};
 
 	const months: I.Option[] = [];
 	const years: I.Option[] = [];
@@ -43,12 +79,31 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 	};
 
 	useEffect(() => {
+		if (value) {
+			const initialDate = U.Date.getCalendarDateParam(value);
+			setSelectedDate(initialDate);
+			selectedDateRef.current = initialDate;
+		};
+
+		initDotMap();
+
+		if (enableKeyboard) {
+			bindKeyboard();
+		};
+
 		position?.();
+
+		return () => {
+			if (enableKeyboard) {
+				unbindKeyboard();
+			};
+		};
 	}, []);
 
 	useEffect(() => {
 		monthRef.current?.setValue(m);
 		yearRef.current?.setValue(y);
+		position?.();
 	}, [ displayValue ]);
 
 	useEffect(() => {
@@ -56,6 +111,66 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 			setDisplayValue(value);
 		};
 	}, [ value ]);
+
+	const bindKeyboard = (): void => {
+		unbindKeyboard();
+		$(window).on('keydown.calendarSelect', e => onKeyDown(e));
+	};
+
+	const unbindKeyboard = (): void => {
+		$(window).off('keydown.calendarSelect');
+	};
+
+	const onKeyDown = (e: any): void => {
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			e.preventDefault();
+			onArrow(pressed);
+		});
+
+		keyboard.shortcut('enter', e, () => {
+			if (selectedDateRef.current) {
+				onClick(selectedDateRef.current);
+			};
+		});
+	};
+
+	const onArrow = (pressed: string): void => {
+		const num = [ 'arrowup', 'arrowdown' ].includes(pressed) ? 7 : 1;
+		const d = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
+		const daysDelta = num * d;
+		const currentSelected = selectedDateRef.current;
+
+		if (!currentSelected) {
+			return;
+		};
+
+		const newValue = U.Date.timestamp(currentSelected.y, currentSelected.m, currentSelected.d, 12) + daysDelta * J.Constant.day;
+		const newDate = U.Date.getCalendarDateParam(newValue);
+		const hasAnotherMonth = newDate.m != m;
+
+		if (hasAnotherMonth) {
+			setDisplayValue(newValue);
+		};
+
+		setSelectedDate(newDate);
+		selectedDateRef.current = newDate;
+	};
+
+	const initDotMap = (): void => {
+		if (!getDotMap || !data.length) {
+			return;
+		};
+
+		const first = data[0];
+		const last = data[data.length - 1];
+		const start = U.Date.timestamp(first.y, first.m, first.d);
+		const end = U.Date.timestamp(last.y, last.m, last.d);
+
+		getDotMap(start, end, map => setDotMap(map));
+	};
 
 	const stepMonth = (dir: number): void => {
 		let nY = y;
@@ -71,15 +186,26 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		};
 
 		setDisplayValue(U.Date.timestamp(nY, nM, 1));
-		position?.();
 	};
 
-	const onClick = (item: any): void => {
-		if (isReadonly || !item) {
+	const onClick = (item: CalendarDay): void => {
+		if (!item) {
 			return;
 		};
 
 		const ts = U.Date.timestamp(item.y, item.m, item.d);
+
+		if (onDayClick) {
+			const shouldContinue = onDayClick(item, ts);
+			if (shouldContinue === false) {
+				return;
+			};
+		};
+
+		if (isReadonly) {
+			return;
+		};
+
 		onChange(ts);
 	};
 
@@ -109,8 +235,26 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		onChange(null);
 	};
 
-	const compare = (a: any, b: any): boolean => {
-		return a && b && (a.d == b.d) && (a.m == b.m) && (a.y == b.y);
+	const onDayMouseEnter = (item: CalendarDay): void => {
+		if (!enableHoverState || keyboard.isMouseDisabled) {
+			return;
+		};
+
+		setSelectedDate(item);
+		selectedDateRef.current = item;
+	};
+
+	const onDayMouseLeave = (): void => {
+		if (!enableHoverState) {
+			return;
+		};
+
+		setSelectedDate(null);
+		selectedDateRef.current = null;
+	};
+
+	const compare = (a: CalendarDay | null, b: CalendarDay): boolean => {
+		return !!a && (a.d == b.d) && (a.m == b.m) && (a.y == b.y);
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -119,10 +263,18 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 			setDisplayValue(v || U.Date.now());
 			onChange(v);
 		},
+		setDisplayValue: (v: number) => {
+			setDisplayValue(v || U.Date.now());
+		},
+		getSelectedDate: () => selectedDateRef.current,
+		setSelectedDate: (date: CalendarDay | null) => {
+			setSelectedDate(date);
+			selectedDateRef.current = date;
+		},
 	}));
 
 	return (
-		<div className="calendarSelect">
+		<div className={cn.join(' ')}>
 			<div className="head">
 				<div className="sides">
 					<div className="side left">
@@ -174,12 +326,17 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 					if (item.isWeekend) {
 						cn.push('weekend');
 					};
-					if (compare(selectedParam, item)) {
+					if (!isEmpty && compare(valueParam, item)) {
 						cn.push('active');
 					};
 					if (compare(todayParam, item)) {
 						cn.push('isToday');
 					};
+					if (enableHoverState && compare(selectedDate, item)) {
+						cn.push('selected');
+					};
+
+					const hasDot = dotMap.get([ item.d, item.m, item.y ].join('-'));
 
 					return (
 						<div
@@ -187,14 +344,20 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 							id={[ 'day', item.d, item.m, item.y ].join('-')}
 							className={cn.join(' ')}
 							onClick={() => onClick(item)}
+							onMouseEnter={() => onDayMouseEnter(item)}
+							onMouseLeave={onDayMouseLeave}
+							onContextMenu={onDayContextMenu ? e => onDayContextMenu(e, item) : undefined}
 						>
-							<div className="inner">{item.d}</div>
+							<div className="inner">
+								{item.d}
+								{hasDot ? <div className="bullet" /> : ''}
+							</div>
 						</div>
 					);
 				})}
 			</div>
 
-			{!isReadonly ? (
+			{(showFooter ?? !isReadonly) ? (
 				<div className="foot">
 					<div className="sides">
 						<div className="side left">

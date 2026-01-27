@@ -98,7 +98,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 						<Item
 							{...props}
 							key={item.id}
-							{...item}
+							filter={item}
 							subId={rootId}
 							onRemove={e => onRemove(e, item)}
 							onClick={e => onClick(e, item)}

@@ -3,10 +3,11 @@ import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, Label } from 'Component';
 
-interface Props extends I.Filter {
+interface Props {
 	id: string;
 	subId: string;
 	relation: any;
+	filter: I.Filter;
 	readonly?: boolean;
 	onOver?: (e: any) => void;
 	onClick?: (e: any) => void;
@@ -15,7 +16,8 @@ interface Props extends I.Filter {
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { id, relation, condition, quickOption, subId, readonly, onOver, onClick, onRemove } = props;
+	const { subId, filter, readonly, onOver, onClick, onRemove } = props;
+	const { id, condition, quickOption, relation } = filter;
 	const isDictionary = Relation.isDictionary(relation.relationKey);
 	const cn = [ 'filterItem' ];
 
@@ -35,11 +37,9 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
 	let name = relation.name;
-	let value = props.value;
+	let value = filter.value;
 	let v: any = null;
 	let list = [];
-	let Item: any = null;
-	let noCondition = false;
 
 	switch (relation.format) {
 
@@ -56,18 +56,18 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.RelationType.Date: {
 			v = [];
 
-			let name = String(filterOption.name || '').toLowerCase();
+			let filterName = String(filterOption.name || '').toLowerCase();
 
 			if (quickOption == I.FilterQuickOption.ExactDate) {
 				v.push(value !== null ? U.Date.date('d.m.Y', value) : '');
 			} else
 			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 				value = Number(value) || 0;
-				name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-				v.push(U.String.sprintf(translate(name), value, U.Common.plural(value, translate('pluralDay'))));
+				filterName = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
+				v.push(U.String.sprintf(translate(filterName), value, U.Common.plural(value, translate('pluralDay'))));
 			} else
 			if (filterOption) {
-				v.push(name);
+				v.push(filterName);
 			};
 
 			v = v.join(' ');
@@ -81,7 +81,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.RelationType.MultiSelect:
 		case I.RelationType.Select: {
-			noCondition = true;
 			list = Relation.getOptions(value);
 
 			if (list.length) {
@@ -94,17 +93,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.RelationType.File:
 		case I.RelationType.Object: {
-			Item = (item: any) => {
-				return (
-					<div className="element">
-						<div className="flex">
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
-						</div>
-					</div>
-				);
-			};
-
 			list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
 			list = list.filter(it => !it._empty_);
 
@@ -126,8 +114,9 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		v = null;
 	};
 
-	if (v !== null) {
-		name = `${relation.name}:`;
+	let withValue = false;
+	if (Relation.isFilterActive(filter)) {
+		withValue = true;
 		cn.push('withValue');
 	};
 
@@ -143,12 +132,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="content">
 				<Label className="name" text={name} />
 
-				{(v !== null) && !noCondition ? (
-					<Label className="condition" text={conditionOption.name} />
-				) : ''}
-
-				{v !== null ? (
-					<div className="value">{v}</div>
+				{withValue ? (
+					<>
+						<Label className="condition" text={conditionOption.name} />
+						<div className="value">{v}</div>
+					</>
 				) : ''}
 			</div>
 
