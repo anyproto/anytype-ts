@@ -18,6 +18,7 @@
 		.button.expand { 
 			display: none; flex-shrink: 0; background-color: var(--color-bg-primary); z-index: 1; @include text-common;
 			font-weight: 500; padding: 0px 8px; border-color: var(--color-shape-highlight-medium);
+			color: var(--color-text-secondary);
 		}
 
 		.button.expand {
