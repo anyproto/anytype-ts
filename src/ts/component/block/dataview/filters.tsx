@@ -25,7 +25,13 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
-	}).filter(it => it.relation);
+	}).filter(it => it.relation).sort((a, b) => {
+		const aActive = Relation.isFilterActive(a);
+		const bActive = Relation.isFilterActive(b);
+
+		if (aActive === bActive) return 0;
+		return aActive ? -1 : 1;
+	});
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 	const cn = [ 'dataviewFilters' ];
