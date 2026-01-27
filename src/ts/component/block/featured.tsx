@@ -32,6 +32,10 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		init();
+
+		return () => {
+			cellRefs.current.clear();
+		};
 	}, []);
 
 	useEffect(() => {
