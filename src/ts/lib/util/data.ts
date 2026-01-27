@@ -350,6 +350,8 @@ class UtilData {
 			};
 		});
 
+		C.FileSetAutoDownload(S.Common.autoDownload, false);
+
 		this.getMembershipData();
 		
 		U.Subscription.createGlobal(() => {

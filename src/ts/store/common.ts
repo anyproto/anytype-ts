@@ -50,6 +50,7 @@ class CommonStore {
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
+	public autoDownloadValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -140,6 +141,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
@@ -172,6 +174,7 @@ class CommonStore {
 			widgetSections: computed,
 			recentEditMode: computed,
 			singleTab: computed,
+			autoDownload: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -200,6 +203,7 @@ class CommonStore {
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
 			singleTabSet: action,
+			autoDownloadSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -293,6 +297,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get autoDownload (): boolean {
+		return this.boolGet('autoDownload');
 	};
 
 	get chatCmdSend (): boolean {
@@ -650,6 +658,10 @@ class CommonStore {
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	autoDownloadSet (v: boolean) {
+		this.boolSet('autoDownload', v);
 	};
 
 	/**

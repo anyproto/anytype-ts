@@ -903,6 +903,8 @@
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",
 	"popupSettingsDataManagementOffloadFiles": "Offload files",
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
+	"popupSettingsDataOfflineAccess": "Offline Access",
+	"popupSettingsDataOfflineAccessDescription": "Auto sync files up to 20 MB for offline access",
 	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
