@@ -804,8 +804,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		<div id="utilOptionSelect" ref={nodeRef} className={cn.join(' ')}>
 			{!noFilter ? (
 				<Filter
-					className="outlined"
-					icon="search"
+					className="outlined round"
 					ref={filterRef}
 					placeholderFocus={placeholder}
 					value={filter}

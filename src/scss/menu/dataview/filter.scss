@@ -95,10 +95,15 @@
 					}
 				}
 
-				.textInputWrapper { position: relative; margin: 0px 16px; }
+				.textInputWrapper { position: relative; margin: 0px 16px 4px; }
 				.textInputWrapper {
-					.input { padding: 6px 28px 8px 12px; border-radius: 18px; border: 1px solid var(--color-shape-primary); }
-					.icon.clear { position: absolute; top: 5px; right: 6px; width: 20px; height: 20px; opacity: 0; }
+					.input {
+						padding: 6px 28px 8px 12px; border-radius: 18px; border: 1px solid var(--color-shape-secondary);
+						background-color: var(--color-shape-highlight-light);
+					}
+					.input.isFocused { border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
+					.icon.clear { position: absolute; top: 5px; right: 6px; width: 20px; height: 20px; opacity: 0; background-image: url('~img/icon/filter/clear0.svg'); }
+					.icon.clear:hover { background-image: url('~img/icon/filter/clear1.svg'); }
 					.icon.clear.active { opacity: 1; }
 				}
 			}

@@ -314,13 +314,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	let value = null;
 	const onSubmit = e => onSubmitHandler(e);
 
-	const textFilter = (key?: string): any => (
+	const textInput = (key?: string, placeholder?: string): any => (
 		<div className="textInputWrapper">
 			<Input
-				key={key ? key : 'filter-value-text'}
+				key={key ? key : 'value-text'}
 				ref={ref => inputRef.current = ref}
 				value={item.value}
-				placeholder={translate('commonValue')}
+				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 				onFocus={onFocusText}
 				onKeyUp={(e: any, v: string) => onChange('value', v, true)}
 				onSelect={onSelect}
@@ -413,7 +413,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.Date: {
 			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
-				value = textFilter('filter-value-date-days-input');
+				value = textInput('filter-value-date-days-input', translate(`placeholderCell${I.RelationType.Number}`));
 			} else
 			if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
 				value = (
@@ -434,7 +434,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 
 		default: {
-			value = textFilter();
+			value = textInput();
 			break;
 		};
 	};

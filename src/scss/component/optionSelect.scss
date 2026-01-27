@@ -1,6 +1,6 @@
 .utilOptionSelect,
 .menus .menu.vertical .utilOptionSelect {
-    .filter { padding-top: 8px; }
+    .filter { padding: 0px 16px; }
     .items { height: calc(100% - 36px); }
     &.noFilter {
         .items { height: 100%; }

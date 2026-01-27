@@ -77,6 +77,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 				onClick={onIconClick} 
 			/>
 		);
+		cn.push('withIcon');
 	};
 
 	const focus = () => {
