@@ -9,11 +9,18 @@
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		
-		.icon.edit,
-		.icon.expand { 
+		.icon.edit { 
 			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
 			background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px var(--color-shape-highlight-medium);
 			z-index: 1;
+		}
+
+		.button.expand { 
+			display: none; flex-shrink: 0; background-color: var(--color-bg-primary); z-index: 1; @include text-common;
+			font-weight: 500; padding: 0px 8px;
+		}
+		.button.expand {
+			.icon { width: 20px; height: 20px; display: none; }
 		}
 
 		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }

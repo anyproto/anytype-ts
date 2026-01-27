@@ -111,14 +111,14 @@
 				.icon.drag { opacity: 1; }
 				
 				.cell.isName.canEdit {
-					.icon.expand { display: block; }
+					.button.expand { display: flex; }
 					.chatCounter { display: none;}
 				}
 			}
 			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.icon.expand { position: absolute; right: 8px; top: 10px; }
+			.button.expand { position: absolute; right: 8px; top: 10px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -145,8 +145,8 @@
 			.cellContent.isName { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; }
 
 			.row.isNote {
-				.cell.isName.canEdit:hover {
-					.icon.expand { display: none; }
+				.cell.isName:hover {
+					.button.expand { display: none; }
 					.chatCounter { display: block; }
 				}
 			};
@@ -174,6 +174,14 @@
 				&.align2 { text-align: right; }
 				&.align2 {
 					.over { justify-content: flex-end; }
+				}
+
+				&.medium, &.small {
+					.button.expand { padding: 0px 4px; }
+					.button.expand {
+						.icon { display: block; margin: 0px; }
+						.txt { display: none; }
+					}
 				}
 			}
 
@@ -227,7 +235,7 @@
 	.block.blockDataview.isInline {
 		.viewContent.viewGrid { padding: 0px; }
 		.viewContent.viewGrid {
-			.icon.expand { top: 6px; }
+			.button.expand { top: 6px; }
 
 			&:not(.wrapContent) {
 				.row, .cell { height: 40px; }
