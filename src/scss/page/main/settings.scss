@@ -534,7 +534,7 @@
         .upsellBanner { margin-bottom: 8px; }
         .upsellBanner:last-child { margin-bottom: 44px; }
 
-        .titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; }
+        .titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
         .titleWrapper {
             .title { margin-bottom: 0px; }
 
@@ -543,9 +543,6 @@
                 .icon.question { background-image: url('~img/icon/question.svg'); }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
             }
-
-            .transferOwnership { @include text-common; color: var(--color-text-secondary); cursor: pointer; }
-            .transferOwnership:hover { color: var(--color-text-primary); }
         }
 
         .section { margin-bottom: 36px; }

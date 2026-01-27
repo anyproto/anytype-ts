@@ -75,11 +75,11 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
 
-	.label.share {
+	.label.btn {
 		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;
 		color: var(--color-text-secondary); transition: $transitionAllCommon;
 	}
-	.label.share {
+	.label.btn {
 		&:hover, &.hover, &.active { background-color: var(--color-shape-highlight-medium) !important; }
 	}
 

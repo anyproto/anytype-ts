@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Button, IconObject, ObjectName, Label, Icon, Title } from 'Component';
-import { I, C, S, U, keyboard, translate, Preview, analytics } from 'Lib';
+import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader } from 'Component';
+import { I, C, J, S, U, keyboard, translate, analytics } from 'Lib';
 
 const HEIGHT = 56;
 const LIMIT = 10;
@@ -111,8 +111,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Popup.open('confirm', {
 				className: 'changeOwner',
 				data: {
-					icon: 'key',
-					bgColor: 'orange',
+					icon: 'key-red',
 					title: translate('popupConfirmOwnershipTransferTitle'),
 					text: U.String.sprintf(
 						translate('popupConfirmOwnershipTransferText'),
@@ -125,14 +124,49 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					confirmMessage: spaceName,
 					buttonSize: 40,
 					onConfirm: () => {
-						C.SpaceChangeOwnership(space, item.identity, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
+						window.setTimeout(() => {
+							S.Popup.open('confirm', {
+								className: 'changeOwnerLoading',
+								preventCloseByClick: true,
+								data: {
+									icon: <Loader type={I.LoaderType.Loader} />,
+									title: translate('popupConfirmOwnershipTransferringTitle'),
+									text: translate('popupConfirmOwnershipTransferringText'),
+									canConfirm: false,
+									canCancel: false,
+								},
+							});
 
-							Preview.toastShow({ text: translate('toastOwnershipTransferred') });
-							analytics.event('TransferOwnership');
-						});
+							C.SpaceChangeOwnership(space, item.identity, (message: any) => {
+								S.Popup.close('confirm');
+
+								if (message.error.code) {
+									return;
+								};
+
+								window.setTimeout(() => {
+									S.Popup.open('confirm', {
+										className: 'changeOwnerSuccess',
+										data: {
+											icon: 'key-green',
+											title: translate('popupConfirmOwnershipTransferredTitle'),
+											text: U.String.sprintf(
+												translate('popupConfirmOwnershipTransferredText'),
+												spaceName,
+												item.name
+											),
+											textConfirm: translate('popupConfirmOwnershipTransferredButton'),
+											colorConfirm: 'blank',
+											canCancel: false,
+											buttonSize: 40,
+										},
+									});
+								}, J.Constant.delay.popup);
+
+								analytics.event('TransferOwnership');
+							});
+
+						}, J.Constant.delay.popup);
 					},
 				},
 			});

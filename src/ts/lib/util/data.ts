@@ -80,6 +80,7 @@ class UtilData {
 	 * @returns {string} The CSS class.
 	 */
 	spaceClass (v: I.SpaceUxType): string {
+		v = Number(v) || I.SpaceUxType.None;
 		return v ? `space${String(I.SpaceUxType[v])}` : '';
 	};
 

@@ -1306,6 +1306,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const { action, id } = match.params;
 		const titles = {
+			auth: translate('commonAuthentication'),
 			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),

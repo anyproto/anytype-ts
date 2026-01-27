@@ -144,12 +144,11 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 			</div>
 
 			<div className="side right">
-
 				{showShare ? (
 					<Label
 						id="button-header-share"
 						text={translate('commonShare')}
-						className="share"
+						className="btn"
 						onClick={onShare}
 						onDoubleClick={e => e.stopPropagation()}
 					/>

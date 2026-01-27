@@ -210,38 +210,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 	const { name, description, icon } = getOptionById(invite.type);
 
-	const onTransferOwnership = () => {
-		if (!canTransferOwnership()) {
-			return;
-		};
-
-		S.Menu.open('changeOwner', {
-			recalcRect: () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
-				return { x: 0, y: 0, width: ww, height: wh };
-			},
-			classNameWrap: 'fixed',
-			visibleDimmer: true,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Center,
-		});
-
-		analytics.event('ClickTransferOwnership', { route: analytics.route.settingsSpaceShare });
-	};
-
-	const canTransferOwnership = (): boolean => {
-		if (!spaceview.isShared || spaceview.isOneToOne || !U.Space.isMyOwner()) {
-			return false;
-		};
-
-		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const participant = U.Space.getParticipant();
-
-		return !!members.filter(it => it.id !== participant?.id).length;
-	};
-
-	const showTransferOwnership = canTransferOwnership();
-
 	useEffect(() => {
 		init();
 	}, []);
@@ -258,13 +226,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 			<div id="titleWrapper" className="titleWrapper">
 				<Title text={translate('popupSettingsSpaceShareTitle')} />
-				{showTransferOwnership ? (
-					<Label 
-						className="transferOwnership" 
-						text={translate('popupSettingsSpaceShareTransferOwnership')} 
-						onClick={onTransferOwnership} 
-					/>
-				) : ''}
 			</div>
 
 			<div id="sectionInvite" className="section sectionInvite">

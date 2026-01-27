@@ -33,6 +33,7 @@
 	"commonRetry": "Retry",
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
+	"commonAuthentication": "Authentication",
 	"commonGraph": "Graph",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
@@ -1042,6 +1043,12 @@
 	"popupConfirmOwnershipTransferText": "You're transferring ownership of \"<b>%s</b>\" to <b>%s</b>. This action is immediate and cannot be undone.<br/><br/>After the transfer:<ul><li>%s will become the new owner</li><li>You'll become an Editor</li><li>Only the new owner can transfer it again</li></ul>Type the space name to confirm:",
 
 	"toastOwnershipTransferred": "Ownership transferred successfully",
+
+	"popupConfirmOwnershipTransferringTitle": "Transferring ownership...",
+	"popupConfirmOwnershipTransferringText": "Reassigning space permissions and roles.",
+	"popupConfirmOwnershipTransferredTitle": "Ownership passed successfully",
+	"popupConfirmOwnershipTransferredText": "You've transferred <b>%s</b> to <b>%s</b>.<br/>You now have Editor access to this space.",
+	"popupConfirmOwnershipTransferredButton": "Back to Members",
 
 	"popupSettingsMembershipTitle": "Membership",
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",

@@ -14,6 +14,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner();
+	const showTransfer = U.Space.canTransferOwnership();
 
 	const init = () => {
 		if (space.isShared && (!invite.cid || !invite.key)) {
@@ -95,6 +96,21 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		);
 	};
 
+	const onTransferOwnership = () => {
+		S.Menu.open('changeOwner', {
+			recalcRect: () => {
+				const { ww, wh } = U.Common.getWindowDimensions();
+				return { x: 0, y: 0, width: ww, height: wh };
+			},
+			classNameWrap: 'fixed',
+			visibleDimmer: true,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Center,
+		});
+
+		analytics.event('ClickTransferOwnership', { route: analytics.route.settingsSpaceShare });
+	};
+
 	useEffect(() => {
 		init();
 	}, []);
@@ -119,7 +135,17 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 				) : ''}
 			</div>
 			<div className="side center">{renderIdentity()}</div>
-			<div className="side right">{renderMore()}</div>
+			<div className="side right">
+				{showTransfer ? (
+					<Label
+						text={translate('popupSettingsSpaceShareTransferOwnership')}
+						className="btn"
+						onClick={onTransferOwnership}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+				{renderMore()}
+			</div>
 		</>
 	);
 

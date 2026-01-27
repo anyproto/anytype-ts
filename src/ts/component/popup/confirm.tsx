@@ -22,7 +22,6 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const textCancel = data.textCancel || translate('commonCancel');
 	const colorConfirm = data.colorConfirm || 'black';
 	const colorCancel = data.colorCancel || 'blank';
-	const bgColor = data.bgColor || '';
 	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
 	const buttonSize = Number(data.buttonSize) || 36;
 
@@ -151,11 +150,12 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			unbind();
 		};
 	}, []);
+
 	
 	return (
 		<div ref={nodeRef} className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
 			{iconElement ? (
-				<div className={[ 'iconWrapper', bgColor ].join(' ')}>
+				<div className="iconWrapper">
 					{iconElement}
 				</div>
 			) : ''}
