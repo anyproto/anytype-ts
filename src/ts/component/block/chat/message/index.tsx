@@ -29,11 +29,12 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const attachmentRefs = useRef({});
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
 		};
@@ -41,9 +42,8 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		resize();
 
 		return () => {
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
+			resizeObserver.disconnect();
+			attachmentRefs.current = {};
 		};
 	}, []);
 
@@ -376,7 +376,13 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										<div className={ca.join(' ')}>
 											{attachments.map((item: any, i: number) => (
 												<Attachment
-													ref={ref => attachmentRefs.current[item.id] = ref}
+													ref={ref => {
+													if (ref) {
+														attachmentRefs.current[item.id] = ref;
+													} else {
+														delete attachmentRefs.current[item.id];
+													};
+												}}
 													key={i}
 													object={item}
 													subId={subId}

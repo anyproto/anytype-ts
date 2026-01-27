@@ -93,6 +93,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		return () => {
 			unbind();
 			window.clearTimeout(timeoutFilter.current);
+			cellRefs.current.clear();
+			recordRefs.current.clear();
 		};
 	}, []);
 
