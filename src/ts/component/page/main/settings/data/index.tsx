@@ -70,19 +70,6 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 				<div className="item">
 					<div className="side left">
-						<Icon className="location" />
-
-						<div className="txt">
-							<Title text={translate('popupSettingsDataManagementDataLocation')} />
-							<Label text={dataPath} />
-						</div>
-					</div>
-					<div className="side right">
-						<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
-					</div>
-				</div>
-				<div className="item">
-					<div className="side left">
 						<Icon className="offline" />
 
 						<div className="txt">
@@ -99,6 +86,20 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 								C.FileSetAutoDownload(v, false);
 							}}
 						/>
+					</div>
+				</div>
+
+				<div className="item">
+					<div className="side left">
+						<Icon className="location" />
+
+						<div className="txt">
+							<Title text={translate('popupSettingsDataManagementDataLocation')} />
+							<Label text={dataPath} />
+						</div>
+					</div>
+					<div className="side right">
+						<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
 					</div>
 				</div>
 			</div>
