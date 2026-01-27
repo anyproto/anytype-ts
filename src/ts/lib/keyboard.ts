@@ -1562,8 +1562,8 @@ class Keyboard {
 		};
 
 		this.isPinChecked = v;
-		// Pass pin timeout to main process so it can start the centralized timer
-		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0);
+		// Pass pin timeout and whether a PIN is set to main process
+		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0, Boolean(S.Common.pin));
 	};
 
 	/**

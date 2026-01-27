@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, MenuItemVertical, Icon } from 'Component';
-import { I, J, U, S, keyboard, Action, Relation, analytics } from 'Lib';
+import { Editable, MenuItemVertical, Icon, Input } from 'Component';
+import { I, J, U, S, keyboard } from 'Lib';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -11,8 +11,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const { data } = param;
 	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect } = data;
 	const relation = S.Record.getRelationByKey(relationKey);
-	const { relationFormat } = relation;
-	const isSingleLine = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(relationFormat);
+	const isSingleLine = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone, I.RelationType.Number ].includes(relation?.relationFormat);
 	const inputWrapper = useRef(null);
 	const inputRef = useRef(null);
 	const n = useRef(-1);
@@ -30,12 +29,14 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const rebind = () => {
 		unbind();
+		
 		if (inputRef.current) {
 			inputRef.current.setValue(U.String.htmlSpecialChars(value));
 			inputRef.current.setRange({ from: length, to: length });
-			inputRef.current.placeholderCheck();
+			inputRef.current.placeholderCheck?.();
 			inputRef.current.setFocus();
 		};
+
 		resize();
 
 		window.setTimeout(() => {
@@ -49,7 +50,8 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	};
 
 	const getValue = () => {
-		return String(inputRef.current?.getTextValue() || '').trim();
+		const v = isSingleLine ? inputRef.current?.getValue() : inputRef.current?.getTextValue();
+		return String(v || '').trim();
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -80,15 +82,13 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			});
 		};
 
-		if (ret) {
-			return;
+		if (!ret) {
+			onKeyDown(e);
 		};
-
-		onKeyDown(e);
 	};
 
-	const onInput = () => {
-		valueRef.current = getValue();
+	const onInput = (e: any, v: string) => {
+		valueRef.current = isSingleLine ? String(v || '').trim() : getValue();
 		resize();
 	};
 
@@ -147,7 +147,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onClear = () => {
 		inputRef.current.setValue('');
-		inputRef.current.placeholderCheck();
+		inputRef.current.placeholderCheck?.();
 		inputRef.current.setFocus();
 	};
 
@@ -182,18 +182,30 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				className="inputWrapper"
 				onMouseEnter={() => setHover(null, false)}
 			>
-				<Editable
-					ref={inputRef}
-					id="input"
-					placeholder={placeholder}
-					readonly={!canEdit}
-					onInput={onInput}
-					onPaste={onInput}
-					onFocus={onFocus}
-					onBlur={onBlur}
-				/>
-
-				<Icon className="clear" onClick={onClear} />
+				{isSingleLine ? (
+					<Input 
+						ref={inputRef}
+						id="input"
+						placeholder={placeholder}
+						readonly={!canEdit}
+						onInput={onInput}
+						onPaste={onInput}
+						onFocus={onFocus}
+						onBlur={onBlur}
+					/>
+				) : (
+					<Editable
+						ref={inputRef}
+						id="input"
+						placeholder={placeholder}
+						readonly={!canEdit}
+						onInput={(e) => onInput(e, '')}
+						onPaste={(e) => onInput(e, '')}
+						onFocus={onFocus}
+						onBlur={onBlur}
+					/>
+				)}
+				<Icon className="clear withBackground" onClick={onClear} />
 			</div>
 			{menuItems}
 		</div>

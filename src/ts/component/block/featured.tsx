@@ -697,6 +697,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 									tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 									arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
 									textLimit={150}
+									shortUrl={true}
 									onMouseLeave={onMouseLeave}
 									withName={true}
 									noInplace={true}

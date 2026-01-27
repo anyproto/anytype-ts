@@ -897,10 +897,11 @@ class BlockStore {
 
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
-		
+
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
 	};
+
 
 	/**
 	 * Updates the markup for all text blocks in a root.
@@ -911,7 +912,6 @@ class BlockStore {
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
-
 			if (!marks.length) {
 				continue;
 			};
@@ -1012,24 +1012,6 @@ class BlockStore {
 	 */
 	updateWidgetData (rootId: string) {
 		this.triggerWidgetEvent('updateWidgetData', rootId);
-	};
-
-	/**
-	 * Updates the content of a block in all widgets for a root.
-	 * @param {string} rootId - The root ID.
-	 * @param {string} blockId - The block ID.
-	 * @param {any} content - The new content.
-	 */
-	updateWidgetBlockContent (rootId: string, blockId: string, content: any) {
-		const widgets = this.getWidgetsForTarget(rootId);
-		const children = widgets.reduce((a: string[], c: any) => {
-			return a.concat(c.childBlocks.map(c => c.id));
-		}, []);
-		const rootIds = children.map(it => `${rootId}-widget-${it}`);
-
-		rootIds.forEach(rid => {
-			this.updateContent(rid, blockId, content);
-		});
 	};
 
 	/**

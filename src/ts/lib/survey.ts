@@ -7,6 +7,11 @@ class Survey {
 	 * @param {I.SurveyType} type - The survey type.
 	 */
 	check (type: I.SurveyType) {
+		const { account } = S.Auth;
+		if (!account) {
+			return;
+		};
+
 		const fn = `check${I.SurveyType[type]}`;
 
 		if (this[fn]) {

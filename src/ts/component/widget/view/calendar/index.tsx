@@ -66,7 +66,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		setValue(U.Date.timestamp(y, m, 1));
 	};
 
-	const onClick = (d: number, m: number, y: number) => {
+	const onClick = (e: any, d: number, m: number, y: number) => {
 		const element = `#${getElementId(d, m, y)}`;
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
@@ -90,11 +90,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 					readonly: !canCreate,
 					load: (subId, limit) => loadDay(searchIds, d, m, y, subId, limit),
 					subId: getDaySubId(d, m, y),
-					onCreate: () => {
-						const details = {};
-						details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
-
-						onCreate({ details });
+					onCreate: (e: any) => {
+						onCreate(e, { details: { [view.groupRelationKey]: U.Date.timestamp(y, m, d, 12, 0, 0) } });
 					}
 				}
 			});
@@ -263,7 +260,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 								id={getElementId(item.d, item.m, item.y)}
 								key={i}
 								className={cn.join(' ')} 
-								onClick={() => onClick(item.d, item.m, item.y)}
+								onClick={e => onClick(e, item.d, item.m, item.y)}
 								onContextMenu={(e: any) => onContextMenu(e, item)}
 							>
 								<div className="inner">

@@ -38,6 +38,7 @@ class CommonStore {
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public linkStyleValue = null;
+	public fileStyleValue = null;
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
@@ -136,6 +137,7 @@ class CommonStore {
 			singleTabValue: observable,
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
+			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
@@ -182,6 +184,7 @@ class CommonStore {
 			spaceSet: action,
 			spaceStorageSet: action,
 			linkStyleSet: action,
+			fileStyleSet: action,
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
@@ -330,6 +333,17 @@ class CommonStore {
 			ret = I.LinkCardStyle.Card;
 		};
 		return Number(ret) || I.LinkCardStyle.Text;
+	};
+
+	get fileStyle (): I.FileStyle {
+		let ret = this.fileStyleValue;
+		if (ret === null) {
+			ret = Storage.get('fileStyle');
+		};
+		if (undefined === ret) {
+			ret = I.FileStyle.Embed;
+		};
+		return Number(ret) || I.FileStyle.Embed;
 	};
 
 	get dateFormat (): I.DateFormat {
@@ -835,6 +849,16 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets the file style value.
+	 * @param {I.FileStyle} v - The file style value.
+	 */
+	fileStyleSet (v: I.FileStyle) {
+		v = Number(v);
+		this.fileStyleValue = v;
+		Storage.set('fileStyle', v);
+	};
+
+	/**
 	 * Sets the date format value.
 	 * @param {I.DateFormat} v - The date format value.
 	 */
@@ -1062,11 +1086,17 @@ class CommonStore {
 	widgetSectionsInit () {
 		const saved = Storage.get('widgetSections') || [];
 		const full = [ ...saved ];
+		const order = [ 
+			I.WidgetSection.Unread, 
+			I.WidgetSection.Pin, 
+			I.WidgetSection.RecentEdit, 
+			I.WidgetSection.Type, 
+			I.WidgetSection.Bin,
+		];
 
-		for (const id in I.WidgetSection) {
-			const n = Number(id);
-			if (!isNaN(n) && !full.find(it => it.id === n)) {
-				full.push({ id: n, isClosed: false, isHidden: false });
+		for (const id of order) {
+			if (!full.find(it => it.id == id)) {
+				full.push({ id, isClosed: false, isHidden: false });
 			};
 		};
 

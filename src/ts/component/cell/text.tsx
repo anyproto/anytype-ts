@@ -66,7 +66,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				range.current = null;
 				setEditingHandler(false);
 
-				if (onRecordAdd && (pressed == 'enter')) {
+				if (onRecordAdd && pressed.match('shift')) {
 					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
 				};
 			});
@@ -285,7 +285,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		if (isUrl && shortUrl) {
-			val = val !== null ? U.Common.shortUrl(val) : '';
+			val = val !== null ? U.String.shortUrl(val, true) : '';
 		};
 
 		if (isNumber) {

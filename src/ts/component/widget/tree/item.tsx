@@ -32,7 +32,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
-	const hasMore = U.Space.canMyParticipantWrite();
+	const hasMore = false;//U.Space.canMyParticipantWrite();
 	const isChat = U.Object.isChatLayout(object.layout);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const [ dummy, setDummy ] = useState(0);

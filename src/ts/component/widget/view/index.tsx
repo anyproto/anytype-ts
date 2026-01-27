@@ -326,7 +326,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 								color="blank" 
 								className="c28" 
 								text={translate('commonNew')} 
-								onClick={() => onCreate({ 
+								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
 									route: analytics.route.widget,
 									details: {

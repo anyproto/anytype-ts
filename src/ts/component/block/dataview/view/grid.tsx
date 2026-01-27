@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
@@ -165,12 +165,14 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const node = $(nodeRef.current);
 		const widths = getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const size = J.Size.dataview.cell;
 
 		relations.forEach(it => {
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			el.toggleClass('small', width <= J.Size.dataview.cell.icon);
+			el.toggleClass('small', width <= size.small);
+			el.toggleClass('medium', (width > size.small) && (width <= size.medium));
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
@@ -486,6 +488,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			</InfiniteLoader>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<div

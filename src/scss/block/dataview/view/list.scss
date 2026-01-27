@@ -9,6 +9,8 @@
 			.ReactVirtualized__List { overflow: visible !important; }
 			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
+			.icon.edit, .icon.expand { background-color: unset; box-shadow: 0px 0px; }
+
 		    .row { 
 				height: 28px !important; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; 
 			}
@@ -41,7 +43,7 @@
 					}
 
 					.cellWrapper.isName {
-						.icon.editMode { display: block; }
+						.icon.edit { display: block; }
 						.chatCounter { display: none; }
 					}
 				}
@@ -93,7 +95,7 @@
 				.cellContent {
 					.name { width: unset; max-width: 100%; }
 				}
-				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; display: none; }
+				.icon.edit { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; display: none; }
 			}
 
 			.cellWrapper:not(.isName) {

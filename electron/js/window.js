@@ -57,10 +57,16 @@ class WindowManager {
 			MenuManager.setWindow(win);
 
 			// Restore focus to active tab's webContents when window regains focus
-			const activeView = Util.getActiveView(win);
-			if (activeView && activeView.webContents && !activeView.webContents.isDestroyed()) {
-				activeView.webContents.focus();
-			};
+			// Use setImmediate to avoid focus race conditions when multiple windows exist
+			setImmediate(() => {
+				if (win.isDestroyed() || !win.isFocused()) {
+					return;
+				};
+				const activeView = Util.getActiveView(win);
+				if (activeView && activeView.webContents && !activeView.webContents.isDestroyed()) {
+					activeView.webContents.focus();
+				};
+			});
 		});
 
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
@@ -79,7 +85,7 @@ class WindowManager {
 	};
 
 	createMain (options) {
-		const { isChild } = options;
+		const { isChild, initialBounds, initialTabData } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
 		let state = {};
@@ -125,6 +131,14 @@ class WindowManager {
 			} catch (e) {
 				console.error('[WindowManager] Failed to restore window state:', e);
 			};
+		} else if (initialBounds) {
+			// Use provided bounds for detached tab windows
+			param = Object.assign(param, {
+				x: initialBounds.x,
+				y: initialBounds.y,
+				width: initialBounds.width || DEFAULT_WIDTH,
+				height: initialBounds.height || DEFAULT_HEIGHT,
+			});
 		} else {
 			const { width, height } = this.getScreenSize();
 
@@ -160,32 +174,38 @@ class WindowManager {
 			};
 		});
 
-		// Try to restore saved tabs, or create a single tab if none saved
-		const savedState = this.loadTabs();
-		if (savedState && savedState.tabs && savedState.tabs.length > 0) {
-			const activeIndex = savedState.activeIndex || 0;
-
-			// Create all tabs from saved state with lazy loading for non-active tabs
-			for (let i = 0; i < savedState.tabs.length; i++) {
-				const tabData = savedState.tabs[i];
-				const isActiveTab = i === activeIndex;
-
-				// Defer loading for non-active tabs, don't auto-activate
-				this.createTab(win, tabData.data || {}, {
-					deferLoad: !isActiveTab,
-					setActive: false,
-				});
-			};
-
-			// Set the active tab (this will trigger loading for the active tab)
-			if (win.views && win.views[activeIndex]) {
-				this.setActiveTab(win, win.views[activeIndex].id);
-			};
-
-			// Clear saved tabs after restoration
-			this.clearSavedTabs();
+		// Handle tab creation
+		if (initialTabData) {
+			// Create window from detached tab with provided data
+			this.createTab(win, initialTabData, { setActive: true });
 		} else {
-			this.createTab(win, {}, { setActive: true });
+			// Try to restore saved tabs, or create a single tab if none saved
+			const savedState = this.loadTabs();
+			if (savedState && savedState.tabs && savedState.tabs.length > 0) {
+				const activeIndex = savedState.activeIndex || 0;
+
+				// Create all tabs from saved state with lazy loading for non-active tabs
+				for (let i = 0; i < savedState.tabs.length; i++) {
+					const tabData = savedState.tabs[i];
+					const isActiveTab = i === activeIndex;
+
+					// Defer loading for non-active tabs, don't auto-activate
+					this.createTab(win, tabData.data || {}, {
+						deferLoad: !isActiveTab,
+						setActive: false,
+					});
+				};
+
+				// Set the active tab (this will trigger loading for the active tab)
+				if (win.views && win.views[activeIndex]) {
+					this.setActiveTab(win, win.views[activeIndex].id);
+				};
+
+				// Clear saved tabs after restoration
+				this.clearSavedTabs();
+			} else {
+				this.createTab(win, {}, { setActive: true });
+			};
 		};
 
 		return win;
@@ -305,6 +325,41 @@ class WindowManager {
 		view.webContents.on('context-menu', (e, param) => {
 			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
+
+		// Alt key handling for menu bar toggle (Windows/Linux)
+		// This allows Alt to work even when focus is on the tab content, not the tabs.html
+		if (is.windows || is.linux) {
+			let altKeyPressed = false;
+			let altKeyUsedWithOther = false;
+
+			view.webContents.on('before-input-event', (e, input) => {
+				const { showMenuBar } = ConfigManager.config;
+
+				// Only handle Alt toggle if menu bar is hidden by config
+				if (showMenuBar) {
+					return;
+				};
+
+				if (input.type === 'keyDown') {
+					if (input.key === 'Alt') {
+						altKeyPressed = true;
+						altKeyUsedWithOther = false;
+					} else
+					if (altKeyPressed) {
+						// Alt was used as modifier with another key
+						altKeyUsedWithOther = true;
+					};
+				} else
+				if ((input.type === 'keyUp') && (input.key === 'Alt')) {
+					// Alt was released - toggle menu bar if it wasn't used as modifier
+					if (altKeyPressed && !altKeyUsedWithOther) {
+						Util.send(win, 'alt-key-toggle');
+					};
+					altKeyPressed = false;
+					altKeyUsedWithOther = false;
+				};
+			});
+		};
 
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
@@ -502,9 +557,14 @@ class WindowManager {
 		win.views = newViews;
 
 		// Send updated tabs list to tabs.html
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const isVisible = alwaysShow || (win.views && win.views.length > 1);
+
 		Util.send(win, 'update-tabs',
 			win.views.map(it => ({ id: it.id, data: it.data })),
-			win.activeTabId
+			win.activeTabId,
+			isVisible
 		);
 
 		this.updateTabBarVisibility(win);
@@ -592,11 +652,21 @@ class WindowManager {
 	};
 
 	getTabBarHeight (win) {
+		const Api = require('./api.js');
 		const ConfigManager = require('./config.js');
+
+		// Hide tabs when PIN check is required
+		if (Api.hasPinSet && !Api.isPinChecked) {
+			return 0;
+		};
+
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const showMenuBar = ConfigManager.config.showMenuBar;
+		const configShowMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
 		const shouldShowTabs = alwaysShow || hasMultipleTabs;
+
+		// Check for temporary menu bar visibility (Alt key toggle)
+		const showMenuBar = win.tempMenuBarVisible !== undefined ? win.tempMenuBarVisible : configShowMenuBar;
 
 		let height = 0;
 		if (is.windows && showMenuBar) {
@@ -614,11 +684,13 @@ class WindowManager {
 			return;
 		};
 
+		const Api = require('./api.js');
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
 		const isSingleTab = win.views && (win.views.length == 1);
-		const isVisible = alwaysShow || hasMultipleTabs;
+		const isPinCheckRequired = Api.hasPinSet && !Api.isPinChecked;
+		const isVisible = !isPinCheckRequired && (alwaysShow || hasMultipleTabs);
 
 		// Send to tabs.html window (tab bar UI)
 		Util.send(win, 'update-tab-bar-visibility', isVisible);

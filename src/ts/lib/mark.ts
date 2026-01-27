@@ -476,6 +476,16 @@ class Mark {
 		});
 
 		obj.find(this.getTag(I.MarkType.Emoji)).removeAttr('class').html(' ');
+
+		// Restore original LaTeX from rendered markuplatex elements
+		obj.find(this.getTag(I.MarkType.Latex)).each((i: number, item: any) => {
+			item = $(item);
+			const original = item.attr('data-latex');
+			if (original) {
+				item.replaceWith(U.String.fromHtmlSpecialChars(original).replace(/&#36;/g, '$'));
+			};
+		});
+
 		return obj;
 	};
 	

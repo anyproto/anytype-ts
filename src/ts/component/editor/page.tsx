@@ -2266,7 +2266,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			const text = focused.getText();
 			const isRtl = U.String.checkRtl(text);
-			
+
 			if (isRtl) {
 				U.Data.setRtl(rootId, S.Block.getLeaf(rootId, message.blockId), true);
 			};
@@ -2340,7 +2340,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				last = null;
 			};
 		};
-		
+
 		if (!last) {
 			create = true;
 		} else {

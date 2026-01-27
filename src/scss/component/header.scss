@@ -107,8 +107,6 @@
 
 .header.authIndex { height: 52px; width: 100% !important; }
 .header.authIndex {
-	.side.left { padding: 86px; }
-
 	.select {
 		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px 4px 29px; border-radius: 6px;
 		@include text-small; font-weight: 500; color: var(--color-text-secondary);
@@ -172,8 +170,11 @@ html.bodyAuthSelect {
 }
 
 .header.mainSettings {
-	.identity { -webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; }
+	.identity { 
+		-webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; width: 100%; 
+		overflow: hidden;
+	}
 	.identity {
-		.label { color: var(--color-text-primary); }
+		.label { color: var(--color-text-primary); @include text-overflow-nw; }
 	}
 }

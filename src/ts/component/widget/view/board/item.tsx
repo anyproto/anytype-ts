@@ -23,7 +23,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-	const hasMore = U.Space.canMyParticipantWrite();
+	const hasMore = false;//U.Space.canMyParticipantWrite();
 
 	const onClick = (e: MouseEvent) => {
 		if (e.button) {

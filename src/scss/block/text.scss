@@ -301,6 +301,11 @@
 	.block.blockText.textHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
 	.block.blockText.textHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
+
+	@keyframes markerFadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
 }
 
 .editorWrapper.isTask {

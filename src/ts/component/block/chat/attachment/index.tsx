@@ -80,7 +80,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				<div className="side left">
 					<div className="link">
 						<IconObject object={object} size={14} />
-						<div className="source">{U.Common.shortUrl(source)}</div>
+						<div className="source">{U.String.shortUrl(source)}</div>
 					</div>
 					<ObjectName object={object} />
 					<ObjectDescription object={object} />

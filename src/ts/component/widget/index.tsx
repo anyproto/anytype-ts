@@ -107,19 +107,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews && childRef.current?.updateViews());
 	};
 
-	const onRemove = (e: MouseEvent): void => {
-		e.stopPropagation();
-		Action.removeWidget(block.id, object);
-	};
-
 	const onCreateClick = (e: MouseEvent): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCreate({ element: '.iconWrap.create', route: analytics.route.widget });
+		onCreate(e, { element: '.iconWrap.create', route: analytics.route.widget });
 	};
 
-	const onCreate = (param?: any): void => {
+	const onCreate = (e: any, param?: any): void => {
 		param = param || {};
 
 		if (!object) {
@@ -192,7 +187,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				};
 			};
 
-			U.Object.openEvent(null, newObject);
+			U.Object.openEvent(e, newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
@@ -219,7 +214,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Menu.onBookmarkMenu(menuParam, cb);
 			} else 
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, analytics.route.widget, cb);
+				U.Menu.onChatMenu(menuParam, route, cb);
 			}; 
 			return;
 		};

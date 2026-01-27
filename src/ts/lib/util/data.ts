@@ -284,6 +284,9 @@ class UtilData {
 				S.Common.pinInit(() => {
 					const { pin } = S.Common;
 
+					// Notify main process whether a PIN is set
+					Renderer.send('setHasPinSet', Boolean(pin));
+
 					// If no PIN, user is considered checked
 					if (!pin) {
 						keyboard.setPinChecked(true);
@@ -902,8 +905,9 @@ class UtilData {
 		C.MembershipV2GetStatus(true, (message: any) => {
 			if (!message.error.code) {
 				S.Membership.dataSet(message.data);
+				analytics.setProduct();
 			};
-
+			
 			callBack?.();
 		});
 	};
@@ -1142,8 +1146,9 @@ class UtilData {
 	 * @param {string} rootId - The root object ID.
 	 * @param {I.Block} block - The block.
 	 */
-	setRtl (rootId: string, block: I.Block, value: boolean) {
+	setRtl (rootId: string, block: I.Block, value: boolean, callBack?: (message: any) => void) {
 		if (!block) {
+			callBack?.({});
 			return;
 		};
 
@@ -1151,13 +1156,14 @@ class UtilData {
 		const current = Boolean(fields.isRtlDetected);
 		
 		if (current == value) {
+			callBack?.({});
 			return;
 		};
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: block.id, fields: { ...fields, isRtlDetected: value } }
 		], () => {
-			C.BlockListSetAlign(rootId, [ block.id ], value ? I.BlockHAlign.Right : I.BlockHAlign.Left);
+			C.BlockListSetAlign(rootId, [ block.id ], value ? I.BlockHAlign.Right : I.BlockHAlign.Left, callBack);
 		});
 	};
 

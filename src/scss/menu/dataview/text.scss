@@ -3,16 +3,17 @@
 .menus {
 
 	.menu.menuDataviewText {
-		#input { 
+		#input {
 			-webkit-user-modify: read-write-plaintext-only; white-space: normal; z-index: 1; @include text-common; overflow: auto; height: 100%; width: 100%;
 			user-select: text;
 		}
+		#input.input { border: 0px; padding: 0px; }
 	}
 
 	.menu.menuDataviewText:not(.fromBlockFeatured) { box-shadow: 0px 0px; background: transparent; }
 	.menu.menuDataviewText:not(.fromBlockFeatured) {
 		.content { overflow: visible !important; max-height: none; height: 100%; transition: $transitionAllCommon; padding: 0px; }
-		.editableWrap { height: 100%; }
+		.editableWrap, .inputWrapper { height: 100%; }
 
 		#input { border-radius: 4px; padding: 13px 14px; background: var(--color-bg-primary); }
 		#placeholder { padding: 13px 14px; }
@@ -33,7 +34,10 @@
 	.menu.menuDataviewText.fromBlockFeatured {
 		.inputWrapper { margin: 0px 8px; padding: 3px 8px; border-radius: 6px; position: relative; }
 		.inputWrapper {
-			.icon.clear { display: none; width: 20px; height: 20px; background: url('~img/icon/menu/clear.svg') 50% 50% / 10px 10px no-repeat; position: absolute; right: 8px; top: 4px; }
+			.icon.clear { 
+				display: none; background-image: url('~img/icon/menu/clear.svg'); position: absolute; right: 2px; top: 2px; 
+				background-size: 10px !important; width: 24px !important; height: 24px !important;
+			}
 		}
 		.inputWrapper:not(.focused) { cursor: default; padding-right: 28px; }
 		.inputWrapper:not(.focused):hover { background: var(--color-shape-highlight-medium); }

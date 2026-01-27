@@ -237,21 +237,39 @@ class UtilString {
 	 * @param {number} n - The number of characters to show at each end.
 	 * @returns {string} The masked string.
 	 */
-	shortMask (s: string, n: number): string {
+	shortMask (s: string, n1: number, n2?: number): string {
 		s = String(s || '');
+		n2 = Number(n2) || n1;
 
 		const l = s.length;
 
-		if (l <= n*2) {
+		if (l <= n1 + n2 + 3) {
 			return s;
 		};
 
 		let ret = '';
-		ret += s.substring(0, n);
+		ret += s.substring(0, n1);
 		ret += '...';
-		ret += s.substring(l - n);
+		ret += s.substring(l - n2);
 
 		return ret;
+	};
+
+	/**
+	 * Returns the hostname from a URL without www prefix, or the URL itself if invalid.
+	 * @param {string} url - The URL string.
+	 * @returns {string} The hostname without www or original URL.
+	 */
+	shortUrl (url: string, withPath?: boolean): string {
+		let a: any = {};
+		let p = '';
+		try { 
+			a = new URL(url); 
+			if (withPath) {
+				p = U.String.shortMask(a.pathname, 3, 6);
+			};
+		} catch (e) {};
+		return (a.hostname || url).replace(/^www\./, '') + p;
 	};
 
 	/**
