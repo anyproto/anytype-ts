@@ -234,6 +234,8 @@
  					.name { font-weight: 500; }
 					.value { @include text-overflow-nw; }
 
+					.label.condition { text-transform: lowercase; }
+
 					.icon.delete {
 						display: none; position: absolute; right: -4px; top: -4px; width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
 						background: var(--color-bg-primary) url('~img/icon/menu/delete.svg') 50% 50% / 12px 12px no-repeat; border: 1px solid var(--color-shape-secondary);
