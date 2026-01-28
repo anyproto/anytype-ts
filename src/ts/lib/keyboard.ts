@@ -222,9 +222,10 @@ class Keyboard {
 				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (!this.isFocused) {
-				if (this.isMainSettings) {
+				if (this.isMainSettings()) {
 					U.Space.openDashboard({ replace: false });
-				} else {
+				} else 
+				if (!this.isAuth()) {
 					this.onBack(isPopup);
 				};
 			};
