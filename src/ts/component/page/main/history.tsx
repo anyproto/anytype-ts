@@ -351,7 +351,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		if (isSetOrCollection()) {
 			width = cw - 192;
 		} else {
-			width = Math.min(cw - 64, (1 + weight) * J.Size.editor);
+			width = Math.min(cw - 96, (1 + weight) * J.Size.editor);
 		};
 
 		return Math.max(300, width);
