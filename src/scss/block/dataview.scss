@@ -312,8 +312,10 @@
 
 	.block.blockDataview.isInline {
 		.wrapMenu > .icon.dnd { height: 60px; }
-
-		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary); }
+		.dataviewEmpty { 
+			height: auto; padding: 48px 0px; border-top: 1px solid var(--color-shape-secondary); 
+			border-bottom: 1px solid var(--color-shape-secondary); 
+		}
 
 		.dataviewControls { margin: 0px 0px 8px 0px; }
 		.dataviewControls {
@@ -338,7 +340,7 @@
 		}
 
 		.content {
-			.scroll { padding-bottom: 2px; }
+			.scroll { padding-bottom: 2px; min-height: unset; }
 		}
 	}
 
