@@ -245,11 +245,11 @@
 			}
 
 			.cellHead:first-child {
-				.flex { padding-left: 0px; }
+				.flex { padding-left: 6px; }
 			}
 
 			.cell { padding: 10px 14px; }
-			.cell:first-child { padding-left: 0px; }
+			.cell:first-child { padding-left: 6px; }
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
