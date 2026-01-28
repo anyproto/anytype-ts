@@ -7,8 +7,6 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const STORAGE_KEY = 'sidebarData';
-
 /**
  * Sidebar manages the left and right sidebar panels in the application.
  *
@@ -42,7 +40,8 @@ class Sidebar {
 	 * Initializes sidebar objects and state from storage.
 	 */
 	init (isPopup: boolean) {
-		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
+		const key = J.Constant.storageKey.sidebarData;
+		const stored = Storage.get(key, Storage.isLocal(key));
 
 		for (const panel of [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft, I.SidebarPanel.Right ]) {
 			if (isPopup && (panel != I.SidebarPanel.Right)) {
@@ -73,7 +72,7 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The new sidebar data.
 	 */
 	setData (panel: I.SidebarPanel, isPopup: boolean, v: Partial<SidebarData>, save: boolean): void {
-		const isLocal = Storage.isLocal(STORAGE_KEY);
+		const storageKey = J.Constant.storageKey.sidebarData;
 		const ns = U.Common.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
 
@@ -81,7 +80,7 @@ class Sidebar {
 		this.setStyle(panel, isPopup, this.panelData[key]);
 
 		if (save) {
-			Storage.set(STORAGE_KEY, this.panelData, isLocal);
+			Storage.set(storageKey, this.panelData, Storage.isLocal(storageKey));
 		};
 	};
 
@@ -111,7 +110,7 @@ class Sidebar {
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				this.leftPanelSubPageClose(true);
+				this.leftPanelSubPageClose(true, true);
 				break;
 			};
 		};

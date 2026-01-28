@@ -48,6 +48,7 @@ class Keyboard {
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
+		win.on('resize.common', () => this.onResize());
 
 		win.on('online.common offline.common', () => {
 			S.Common.isOnlineSet(navigator.onLine);
@@ -80,6 +81,25 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+
+		this.onResize();
+	};
+
+	onResize () {
+		const { ww } = U.Common.getWindowDimensions();
+		const key = J.Constant.storageKey.sidebarData;
+		const stored = Storage.get(key, Storage.isLocal(key));
+		const data = stored?.[I.SidebarPanel.Left] || {};
+
+		if (data.isClosed) {
+			return;
+		};
+
+		if (ww <= 800) {
+			sidebar.leftPanelClose(false, false);
+		} else {
+			sidebar.leftPanelOpen(data.width, false, false);
+		};
 	};
 
 	/**
@@ -93,7 +113,7 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common resize.common');
 	};
 
 	/**
