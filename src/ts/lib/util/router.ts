@@ -281,7 +281,7 @@ class UtilRouter {
 						U.Data.onAuth({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
-							sidebar.leftPanelSubPageOpen('widget', false);
+							sidebar.leftPanelSubPageOpen('widget', false, true);
 						});
 					};
 

@@ -88,7 +88,7 @@ class Sidebar {
 	open (panel: I.SidebarPanel, subPage?: string, width?: number): void {
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				this.leftPanelOpen(width, true);
+				this.leftPanelOpen(width, true, true);
 				break;
 			};
 
@@ -97,7 +97,7 @@ class Sidebar {
 					subPage = S.Common.getLeftSidebarState().subPage;
 				};
 
-				this.leftPanelSubPageOpen(subPage, true);
+				this.leftPanelSubPageOpen(subPage, true, true);
 				break;
 			};
 		};
@@ -106,7 +106,7 @@ class Sidebar {
 	close (panel: I.SidebarPanel): void {
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				this.leftPanelClose(true);
+				this.leftPanelClose(true, true);
 				break;
 			};
 
@@ -134,7 +134,7 @@ class Sidebar {
 	/**
 	 * Closes the sidebar with animation and updates state.
 	 */
-	leftPanelClose (animate: boolean): void {
+	leftPanelClose (animate: boolean, save: boolean): void {
 		const { isClosed } = this.getData(I.SidebarPanel.Left);
 		if (this.isAnimating || isClosed) {
 			return;
@@ -156,7 +156,7 @@ class Sidebar {
 		};
 
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
-		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, true);
+		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
 		this.resizePage(false, newWidth, null, animate);
 
 		window.clearTimeout(this.timeoutAnim);
@@ -171,7 +171,7 @@ class Sidebar {
 	 * Opens the sidebar to the specified width with animation.
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
-	leftPanelOpen (width: number, animate: boolean): void {
+	leftPanelOpen (width: number, animate: boolean, save: boolean): void {
 		const { isClosed } = this.getData(I.SidebarPanel.Left);
 		if (this.isAnimating || !isClosed) {
 			return;
@@ -194,7 +194,7 @@ class Sidebar {
 		pageWrapperLeft.removeClass('isClosed');
 
 		this.setStyle(I.SidebarPanel.Left, false, { width });
-		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, true);
+		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, save);
 		this.resizePage(false, newWidth, null, animate);
 
 		window.clearTimeout(this.timeoutAnim);
@@ -215,7 +215,7 @@ class Sidebar {
 		
 		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
-		isClosed ? this.leftPanelOpen(width, true) : this.leftPanelClose(true);
+		isClosed ? this.leftPanelOpen(width, true, true) : this.leftPanelClose(true, true);
 		S.Menu.closeAll();
 		analytics.event(isClosed ? 'ExpandSidebar' : 'CollapseSidebar');
 	};
@@ -312,7 +312,7 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
-	leftPanelSubPageClose (animate: boolean, save: boolean = true) {
+	leftPanelSubPageClose (animate: boolean, save: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -348,7 +348,7 @@ class Sidebar {
 		analytics.event('CollapseWidgetPanel');
 	};
 
-	leftPanelSubPageOpen (id: string, animate: boolean) {
+	leftPanelSubPageOpen (id: string, animate: boolean, save: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -375,7 +375,7 @@ class Sidebar {
 		objLeft.css({ width });
 		dummyLeft.css({ width });
 		this.resizePage(false, newWidth, null, animate);
-		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, true);
+		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, save);
 
 		raf(() => {
 			subPageWrapperLeft.addClass('sidebarAnimation isOpening').css({ transform: 'translate3d(0px,0px,0px)' });
@@ -398,9 +398,9 @@ class Sidebar {
 		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
 
 		if (isClosed) {
-			this.leftPanelSubPageOpen(id, true);
+			this.leftPanelSubPageOpen(id, true, true);
 		} else {
-			this.leftPanelSubPageClose(true);
+			this.leftPanelSubPageClose(true, true);
 		};
 	};
 
@@ -472,16 +472,16 @@ class Sidebar {
 		};
 
 		if (show) {
-			this.leftPanelOpen(dataLeft.width, false);
-			this.leftPanelSubPageOpen(leftState.subPage, false);
+			this.leftPanelOpen(dataLeft.width, false, false);
+			this.leftPanelSubPageOpen(leftState.subPage, false, false);
 		};
 
 		if (hide) {
 			if (!dataLeft.isClosed) {
-				this.leftPanelClose(false);
+				this.leftPanelClose(false, false);
 			};
 			if (!dataSubLeft.isClosed) {
-				this.leftPanelSubPageClose(false);
+				this.leftPanelSubPageClose(false, false);
 			};
 		};
 	};

@@ -134,7 +134,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
-			sidebar.leftPanelSubPageOpen(page, false);
+			sidebar.leftPanelSubPageOpen(page, false, false);
 		};
 
 		sidebar.rightPanelClose(isPopup, false);
