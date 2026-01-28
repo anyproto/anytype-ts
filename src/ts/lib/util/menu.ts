@@ -873,7 +873,7 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId } = space;
+		const { targetSpaceId, uxType } = space;
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, withSearch, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
@@ -967,11 +967,9 @@ class UtilMenu {
 							colorConfirm: 'red',
 							onConfirm: () => {
 								C.SpaceStopSharing(S.Common.space, (message) => {
-									if (message.error.code) {
-										return;
+									if (!message.error.code) {
+										Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
 									};
-
-									Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
 								});
 							},
 						},
@@ -994,12 +992,15 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					Renderer.send('openTab', U.Router.build({ 
+					const route = U.Router.build({ 
 						page: 'main', 
 						action: 'void', 
 						id: 'dashboard', 
 						spaceId: targetSpaceId,
-					}), {}, { setActive: false });
+					});
+
+					Renderer.send('openTab', { route }, { setActive: false });
+					analytics.event('AddTab', { route: analytics.route.vault, uxType });
 					break;
 				};
 

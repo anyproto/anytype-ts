@@ -514,6 +514,7 @@ class Sidebar {
 
 		const { config, singleTab } = S.Common;
 		const { alwaysShowTabs } = config;
+		const isAuth = keyboard.isAuth();
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
@@ -525,6 +526,8 @@ class Sidebar {
 		const objRight = this.rightPanelGetNode(isPopup);
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
 		const dummyLeft = $('#sidebarDummyLeft');
+		const isLeftClosed = dataLeft.isClosed || isAuth;
+		const isSubLeftClosed = dataSubLeft.isClosed || isAuth;
 
 		if ((widthLeft === null) && objLeft && objLeft.length) {
 			widthLeft = objLeft.outerWidth();
@@ -575,18 +578,18 @@ class Sidebar {
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
 
-			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 			
 			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			pageFlex.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+			pageFlex.toggleClass('withSidebarLeft', !isLeftClosed);
+			pageFlex.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
 			header.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			header.toggleClass('withSidebarLeft', !dataLeft.isClosed);
-			header.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+			header.toggleClass('withSidebarLeft', !isLeftClosed);
+			header.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
 			subPageWrapperLeft.toggleClass('sidebarAnimation', animate);
-			subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 		} else {
 			objRight.css({ height: container.height() });
 		};

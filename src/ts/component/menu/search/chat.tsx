@@ -215,7 +215,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let height = 0;
 		if (!items.length) {
-			height = 160;
+			height = filter.current ? 160 : 46;
 		} else {
 			height = items.length * HEIGHT + 62;
 		};

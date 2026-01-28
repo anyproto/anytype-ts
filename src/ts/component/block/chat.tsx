@@ -984,7 +984,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					} else {
 						return (
 							<Message
-								ref={ref => messageRefs.current[item.id] = ref}
+								ref={ref => {
+									if (ref) {
+										messageRefs.current[item.id] = ref;
+									} else {
+										delete messageRefs.current[item.id];
+									};
+								}}
 								key={item.id}
 								{...props}
 								id={item.id}
@@ -1017,6 +1023,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			window.clearTimeout(timeoutInterface.current);
 			window.clearTimeout(timeoutScrollStop.current);
+			window.clearTimeout(timeoutResize.current);
+			raf.cancel(frameRef.current);
+			messageRefs.current = {};
 		};
 	}, []);
 

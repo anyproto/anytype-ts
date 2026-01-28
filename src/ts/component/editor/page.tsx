@@ -1787,6 +1787,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { rootId } = props;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const win = $(window);
+		const rect = U.Common.getSelectionRect();
 
 		if (!block) {
 			return;
@@ -1798,10 +1799,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${blockId}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
-			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
-			},
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
@@ -2438,10 +2436,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		weight = Number(weight) || 0;
 
 		const container = U.Common.getPageContainer(isPopup);
-		const maxWidth = container.width() - 128;
-		const base = maxWidth * 0.6;
-		const dynamic = base + (maxWidth - base) * weight;
-		const width = Math.max(base, Math.min(maxWidth, dynamic));
+		const width = Math.min(container.width() - 96, (1 + weight) * J.Size.editor);
 
 		return Math.max(300, width);
 	};

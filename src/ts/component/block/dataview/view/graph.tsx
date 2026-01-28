@@ -8,7 +8,7 @@ const PADDING = 46;
 
 const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	const { block, className, isCollection, isPopup, isInline, getView, getSearchIds, getTarget } = props;
+	const { rootId, block, className, isCollection, isPopup, isInline, getView, getSearchIds, getTarget } = props;
 	const cn = [ 'viewContent', className ];
 	const nodeRef = useRef(null);
 	const graphRef = useRef(null);
@@ -21,9 +21,9 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		};
 
 		const searchIds = getSearchIds();
+		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId }));
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 		const target = getTarget();
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(Dataview.filterMapper);
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });

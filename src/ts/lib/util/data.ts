@@ -284,6 +284,9 @@ class UtilData {
 				S.Common.pinInit(() => {
 					const { pin } = S.Common;
 
+					// Notify main process whether a PIN is set
+					Renderer.send('setHasPinSet', Boolean(pin));
+
 					// If no PIN, user is considered checked
 					if (!pin) {
 						keyboard.setPinChecked(true);
@@ -346,6 +349,8 @@ class UtilData {
 				};
 			};
 		});
+
+		C.FileSetAutoDownload(S.Common.autoDownload, false);
 
 		this.getMembershipData();
 		

@@ -1,7 +1,10 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSearchText { width: var(--menu-width-large); padding: 0px; position: fixed; top: 42px; box-shadow: 0px 0px; border-radius: 0px; background: unset; }
+	.menu.menuSearchText { 
+		width: var(--menu-width-large); padding: 0px; position: fixed; top: 42px; box-shadow: 0px 0px; 
+		border-radius: 0px; background: unset; transition-property: opacity; transform: none !important;
+	}
 	.menu.menuSearchText * { -webkit-app-region: no-drag; }
 	.menu.menuSearchText {
 		.content { transition: none; padding: 0px; overflow: visible; }

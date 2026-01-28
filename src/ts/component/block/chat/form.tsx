@@ -462,11 +462,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 
 			const res = U.String.insert(current, newText, from, to);
+			const skipMarks = [ I.MarkType.Color, I.MarkType.BgColor ];
 
 			newMarks = Mark.adjust(newMarks, 0, to);
 
 			marks.current = Mark.adjust(marks.current, from, newText.length);
 			marks.current = marks.current.concat(newMarks);
+			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
 
 			setMarks(marks.current);
 
@@ -1669,6 +1671,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
+			window.clearTimeout(timeoutHistory.current);
+			window.clearTimeout(timeoutDrag.current);
 			keyboard.disableSelection(false);
 		};
 	}, []);

@@ -1,0 +1,75 @@
+@import "~scss/_mixins";
+
+.calendarSelect { user-select: none; }
+.calendarSelect.isInline { padding: 8px 0px; }
+.calendarSelect {
+	.head { padding: 0px 8px; }
+	.head, .foot {
+		.sides { display: flex; align-items: center; }
+		.side { width: 50%; }
+		.side.right { text-align: right; }
+	}
+
+	.head {
+		.sides { margin-bottom: 10px; }
+		.side.left { display: flex; gap: 0px 4px; }
+		.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
+		.side.right {
+			.icon.arrow {
+				width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer;
+				background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%;
+			}
+			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.arrow.left { transform: rotateZ(180deg); }
+		}
+
+		.weekDays {
+			display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px;
+			align-items: center;
+		}
+
+		.weekDay { color: var(--color-control-active); @include text-small; width: 28px; text-align: center; }
+	}
+
+	.body { padding: 0px 8px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px; }
+
+	.day {
+		display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px;
+		align-items: center; justify-content: center; position: relative; cursor: pointer;
+	}
+
+	.day {
+		.inner {
+			width: 100%; max-width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon;
+			position: relative; display: flex; align-items: center; justify-content: center;
+		}
+		.bullet { width: 3px; height: 3px; border-radius: 50%; position: absolute; bottom: 2px; left: 50%; margin-left: -1.5px; background: var(--color-control-active); }
+	}
+
+	.day:hover:not(.active) {
+		.inner { background-color: var(--color-shape-highlight-medium); }
+	}
+
+	.day.isToday, .day.active { font-weight: 600; }
+	.day.isToday { color: var(--color-system-accent-125); }
+	.day.other { color: var(--color-control-active); }
+	.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
+	.day.weekend:not(.active) { background-color: var(--color-shape-highlight-light); }
+
+	.day.selected::before {
+		content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: inherit; background-color: var(--color-shape-highlight-medium);
+	}
+
+	.foot { padding: 8px 8px 0px 8px; margin-top: 8px; border-top: 1px solid var(--color-shape-secondary); }
+	.foot {
+		.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; cursor: pointer; }
+		.btn.clear { color: var(--color-text-secondary); }
+		.btn:last-child { margin: 0px; }
+		.btn:hover { color: var(--color-system-accent-100); }
+	}
+
+	.select { border: 0px; height: 24px; vertical-align: top; @include text-paragraph; padding: 2px 4px; }
+	.select {
+		.icon.arrow { display: none; }
+	}
+}

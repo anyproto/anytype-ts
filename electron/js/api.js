@@ -20,6 +20,7 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	isPinChecked = false;
+	hasPinSet = false;
 	lastActivityTime = Date.now();
 	notificationCallbacks = new Map();
 	shownNotificationIds = new Set();
@@ -93,8 +94,11 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked, pinTimeout) {
+	setPinChecked (win, isPinChecked, pinTimeout, hasPinSet) {
 		this.isPinChecked = isPinChecked;
+		if (hasPinSet !== undefined) {
+			this.hasPinSet = hasPinSet;
+		};
 		if (isPinChecked) {
 			this.lastActivityTime = Date.now();
 			if (pinTimeout) {
@@ -103,6 +107,16 @@ class Api {
 		} else {
 			this.stopPinTimer();
 		};
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
+	};
+
+	setHasPinSet (win, hasPinSet) {
+		this.hasPinSet = hasPinSet;
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	checkPinTimeout (win, pinTimeout) {
@@ -350,8 +364,8 @@ class Api {
 		};
 	};
 
-	openTab (win, route, data, options) {
-		WindowManager.createTab(win, { ...data, route }, options);
+	openTab (win, data, options) {
+		WindowManager.createTab(win, data, options);
 	};
 
 	openTabs (win, tabs) {
@@ -360,7 +374,7 @@ class Api {
 		};
 
 		for (const tab of tabs) {
-			WindowManager.createTab(win, { ...tab.data, route: tab.route }, { setActive: false });
+			WindowManager.createTab(win, tab.data, { setActive: false });
 		};
 	};
 

@@ -250,6 +250,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			S.Menu.closeAll(J.Menu.cell);
 			U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
+			cellRefs.current.clear();
 		};
 	}, [ loadObjects, initValues ]);
 

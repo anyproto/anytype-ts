@@ -303,6 +303,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		} else {
 			U.Space.openDashboard(routeParam);
 		};
+
+		Preview.tooltipHide();
 	};
 
 	const onOver = (item: any) => {

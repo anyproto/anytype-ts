@@ -58,7 +58,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	const onConfirm = (e: any) => {
 		e.preventDefault();
 
-		if (isLoading) {
+		if (isLoading || buttonRef.current?.isDisabled()) {
 			return;
 		};
 
@@ -84,7 +84,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	useEffect(() => {
 		buttonRef.current?.setDisabled(true);
-
 		analytics.event('ScreenMembershipFinalization', route);
 	}, []);
 

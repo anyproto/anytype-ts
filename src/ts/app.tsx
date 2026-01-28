@@ -21,7 +21,6 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
-import { active, transition } from 'd3';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();

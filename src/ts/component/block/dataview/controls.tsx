@@ -7,7 +7,7 @@ import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordin
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter, DropTarget } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
+import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -26,7 +26,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
-		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick,
 	} = props;
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
@@ -125,7 +125,18 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isFilter = component == 'dataviewFilterList';
 		const isSort = component == 'dataviewSort';
 
-		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
+		if (!readonly && isFilter) {
+			onFilterAddClick({
+				classNameWrap: 'fromBlock',
+				element,
+				horizontal: I.MenuDirection.Center,
+				offsetY: 10,
+				noFlipY: true,
+			});
+			return;
+		};
+
+		if (!readonly && (isSort && !view.sorts.length)) {
 			sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				onButton(element, component);
 			});
@@ -431,8 +442,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
+	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: showFilters },
 		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
 		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
@@ -445,10 +457,16 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			cn.push('on');
 		};
 
+		let inner = null;
+		if ((item.id == 'filter') && filterCnt) {
+			inner = <div className="bullet" />;
+		};
+
 		return (
 			<Icon
 				id={elementId} 
 				className={cn.join(' ')}
+				inner={inner}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>

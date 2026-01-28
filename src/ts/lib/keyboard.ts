@@ -222,9 +222,10 @@ class Keyboard {
 				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (!this.isFocused) {
-				if (this.isMainSettings) {
+				if (this.isMainSettings()) {
 					U.Space.openDashboard({ replace: false });
-				} else {
+				} else 
+				if (!this.isAuth()) {
 					this.onBack(isPopup);
 				};
 			};
@@ -1213,9 +1214,9 @@ class Keyboard {
 
 		const menuId = this.isMainChat() ? 'searchChat' : 'searchText';
 		const menuParam: Partial<I.MenuParam> = {
-			element: '#header',
+			element: '#header .side.center',
 			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
+			vertical: I.MenuDirection.Bottom,
 			classNameWrap: 'fromHeader',
 			noBorderY: true,
 			noFlipY: true,
@@ -1584,8 +1585,8 @@ class Keyboard {
 		};
 
 		this.isPinChecked = v;
-		// Pass pin timeout to main process so it can start the centralized timer
-		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0);
+		// Pass pin timeout and whether a PIN is set to main process
+		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0, Boolean(S.Common.pin));
 	};
 
 	/**
