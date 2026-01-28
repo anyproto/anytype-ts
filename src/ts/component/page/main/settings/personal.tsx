@@ -108,8 +108,9 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						value={alwaysShowTabs} 
 						onChange={(e: any, v: boolean) => {
 							Renderer.send('setAlwaysShowTabs', v);
-						}
-					} />
+							analytics.event(v ? 'ShowTabBar' : 'HideTabBar');
+						}}
+					/>
 				</div>
 
 				<div className="item">

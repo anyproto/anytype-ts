@@ -297,22 +297,22 @@ class Analytics {
 		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
-
+		let uxType = I.SpaceUxType.Data;
+		
 		if (spaceview) {
 			param.spaceType = I.SpaceType[Number(spaceview.spaceAccessType) || 0];
 			param.spaceId = String(spaceview.analyticsSpaceId || '');
 
-			let uxType = I.SpaceUxType.Data;
-			if (undefined !== data.uxType) {
-				uxType = data.uxType;
-			};
 			if (undefined !== spaceview.uxType) {
 				uxType = spaceview.uxType;
 			};
-			if (undefined !== uxType) {
-				param.uxType = I.SpaceUxType[Number(uxType) || 0];
-			};
 		};
+
+		if (undefined !== data.uxType) {
+			uxType = data.uxType;
+		};
+
+		data.uxType = I.SpaceUxType[Number(uxType) || 0];
 
 		if (participant) {
 			param.permissions = Number(participant.permissions) || 0;
@@ -582,7 +582,6 @@ class Analytics {
 			case 'ChangeMessageNotificationState': {
 				data.type = Number(data.type) || 0;
 				data.type = I.NotificationMode[data.type];
-				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
 				break;
 			};
 
@@ -638,11 +637,6 @@ class Analytics {
 					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
 					default:							res = I.InviteType[data.type]; break;
 				};
-				break;
-			};
-
-			case 'CreateSpace' : {
-				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
 				break;
 			};
 

@@ -198,6 +198,7 @@ class UtilObject {
 		};
 
 		Renderer.send('openTab', this.getTabData(object), { setActive: false });
+		analytics.event('AddTab', { objectType: object.type });
 	};
 
 	openTabs (objects: any[]) {
