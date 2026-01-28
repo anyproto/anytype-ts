@@ -13,6 +13,11 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const showInvite = !spaceview.isOneToOne;
 	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
+	const cnc = [ 'side', 'center' ];
+	
+	if (isSearchMenuOpen) {
+		cnc.push('withSearch');
+	};
 
 	let object = null;
 	if (spaceview.isChat || spaceview.isOneToOne) {
@@ -80,7 +85,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		};
 	};
 
-	if (!isDeleted && !isSearchMenuOpen) {
+	if (!isDeleted) {
 		if (bannerProps.type != I.BannerType.None) {
 			center = <HeaderBanner {...bannerProps} />;
 		};
@@ -105,7 +110,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		<>
 			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
 
-			<div className="side center">
+			<div className={cnc.join(' ')}>
 				{center}
 			</div>
 
