@@ -798,6 +798,8 @@ class Analytics {
 			help:				 'MenuHelp',
 			widgetSection:		 'ScreenManageSections',
 			widget:				 'ScreenWidgetMenu',
+			changeOwner:		 'ScreenTransferSpaceOwnership',
+			searchChat:			 'ScreenChatSearch',
 		};
 
 		return map[id] || '';

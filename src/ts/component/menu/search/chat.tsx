@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, analytics } from 'Lib';
 
 const LIMIT = 16;
 const HEIGHT = 56;
@@ -22,7 +22,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, close, storageGet, storageSet } = props;
 	const { data } = param;
-	const { chatId, scrollToMessage } = data;
+	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ currentIndex, setCurrentIndex ] = useState(-1);
@@ -44,6 +44,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		focus();
 		beforePosition();
 		restoreState();
+
+		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
 			window.clearTimeout(timeout.current);
@@ -149,6 +151,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			saveState(filter.current, index);
 		};
 
+		analytics.event('ClickChatSearchResult');
+
 		scrollToMessage?.(item.id);
 		close();
 	};
@@ -159,6 +163,10 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			filter.current = filterRef.current?.getValue() || '';
 			saveState(filter.current, -1);
 			reload();
+
+			if (filter.current) {
+				analytics.event('ChatSearchInput');
+			};
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -180,6 +188,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		setCurrentIndex(newIndex);
 		saveState(filter.current, newIndex);
+
+		analytics.event('ClickChatSearchNavigation', { type: dir > 0 ? 'Up' : 'Down' });
 
 		const item = items[newIndex];
 		if (item) {
