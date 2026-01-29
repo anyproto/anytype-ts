@@ -1253,6 +1253,7 @@ class Keyboard {
 				isPopup,
 				rootId,
 				chatId,
+				route,
 				scrollToMessage: (id: string) => {
 					$(window).trigger('scrollToMessage', { id });
 				},
