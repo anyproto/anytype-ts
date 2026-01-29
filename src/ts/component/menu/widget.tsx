@@ -243,7 +243,6 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'newTab': {
 				U.Object.openTab(target);
-				analytics.event('AddTab', { route: analytics.route.widget });
 				break;
 			};
 
