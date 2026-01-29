@@ -752,6 +752,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedUnsupported": "Unsupported embed. Please update the app.",
 	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
