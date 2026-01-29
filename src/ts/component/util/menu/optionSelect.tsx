@@ -319,6 +319,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		onChange(U.Common.arrayUnique(newValue));
+		filterRef.current?.setValue('');
+		setFilter('');
 	};
 
 	const onOptionAdd = (): void => {

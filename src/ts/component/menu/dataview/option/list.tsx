@@ -53,10 +53,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const onValueChange = (newValue: string[]) => {
 		S.Menu.updateData(id, { value: newValue });
-
-		if (onChange) {
-			onChange(newValue);
-		};
+		onChange?.(newValue);
 	};
 
 	const onMenuClose = () => {
