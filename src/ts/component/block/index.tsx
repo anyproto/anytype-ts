@@ -135,6 +135,8 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	const onContextMenu = (e: any) => {
 		const { focused, range } = focus.state;
 		const selection = S.Common.getRef('selectionProvider');
+		const selectedIds = selection?.get(I.SelectType.Block, false) || [];
+		const hasMultipleBlocksSelected = selectedIds.length > 1;
 
 		if (!U.Common.isPlatformMac() && e.ctrlKey) {
 			return;
@@ -148,7 +150,8 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		if (
 			isContextMenuDisabled ||
 			readonly ||
-			(block.isText() && (focused == block.id)) ||
+			// Allow native spellcheck menu for focused text blocks, but not when multiple blocks are selected
+			(block.isText() && (focused == block.id) && !hasMultipleBlocksSelected) ||
 			!block.canContextMenu()
 		) {
 			return;
