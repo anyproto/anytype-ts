@@ -277,6 +277,10 @@
 				"to": "node_modules/grpc-web"
 			},
 			{
+				"from": "node_modules/lodash.isequal",
+				"to": "node_modules/lodash.isequal"
+			},
+			{
 				"from": "node_modules/lodash.escaperegexp",
 				"to": "node_modules/lodash.escaperegexp"
 			},
@@ -307,6 +311,10 @@
 			{
 				"from": "node_modules/regedit",
 				"to": "node_modules/regedit"
+			},
+			{
+				"from": "node_modules/stream-slicer",
+				"to": "node_modules/stream-slicer"
 			},
 			{
 				"from": "node_modules/util",
@@ -469,6 +477,10 @@
 				"to": "node_modules/getos"
 			},
 			{
+				"from": "node_modules/glob",
+				"to": "node_modules/glob"
+			},
+			{
 				"from": "node_modules/graceful-fs",
 				"to": "node_modules/graceful-fs"
 			},
@@ -559,6 +571,10 @@
 			{
 				"from": "node_modules/lodash.escaperegexp",
 				"to": "node_modules/lodash.escaperegexp"
+			},
+			{
+				"from": "node_modules/lodash.isequal",
+				"to": "node_modules/lodash.isequal"
 			},
 			{
 				"from": "node_modules/lru-cache",
@@ -695,6 +711,10 @@
 			{
 				"from": "node_modules/sort-keys-length",
 				"to": "node_modules/sort-keys-length"
+			},
+			{
+				"from": "node_modules/stream-slicer",
+				"to": "node_modules/stream-slicer"
 			},
 			{
 				"from": "node_modules/string_decoder",
