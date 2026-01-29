@@ -18,6 +18,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const tree = S.Block.getTableOfContents(rootId, true).slice(0, J.Constant.limit.tableOfContents);
 	const blockRef = useRef('');
 	const containerOffset = useRef({ top: 0, left: 0 });
+	const frame = useRef(0);
+	const listRef = useRef([]);
 	const ns = `tableOfContents${U.Common.getEventNamespace(isPopup)}`;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
@@ -64,16 +66,18 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const list = useMemo(() => getList(), [ tree ]);
+	listRef.current = list;
 
 	const onScroll = () => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const co = containerOffset.current.top;
+		const currentList = listRef.current;
 
 		let blockId = '';
 
-		for (let i = 0; i < list.length; ++i) {
-			const block = list[i];
+		for (let i = 0; i < currentList.length; ++i) {
+			const block = currentList[i];
 			const el = $(`#block-${block.id}`);
 
 			if (!el.length) {
@@ -86,8 +90,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			};
 		};
 
-		if ((top == U.Common.getMaxScrollHeight(isPopup)) && list.length) {
-			blockId = list[list.length - 1].id;
+		if ((top == U.Common.getMaxScrollHeight(isPopup)) && currentList.length) {
+			blockId = currentList[currentList.length - 1].id;
 		};
 
 		setBlock(blockId);
@@ -123,18 +127,21 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		if (!node.length) {
-			return;
-		};
+		raf.cancel(frame.current);
+		frame.current = raf(() => {
+			const node = $(nodeRef.current);
+			if (!node.length) {
+				return;
+			};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const width = container.width();
+			const container = U.Common.getScrollContainer(isPopup);
+			const width = container.width();
 
-		containerOffset.current = container.offset();
+			containerOffset.current = container.offset();
 
-		node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
-		onScroll();
+			node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
+			onScroll();
+		});
 	};
 
 	useEffect(() => {
@@ -147,6 +154,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 		return () => {
 			unbind();
+			raf.cancel(frame.current);
 		};
 	}, []);
 
