@@ -811,7 +811,7 @@ class UtilData {
 	 */
 	setWindowTitle(rootId: string, objectId: string) {
 		const object = this.getObjectForTitle(rootId, objectId);
-		const name = U.Object.name(object, true)
+		const name = U.Object.name(object, true);
 
 		this.setWindowTitleText(name);
 	};

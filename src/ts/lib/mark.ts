@@ -1,14 +1,14 @@
 import $ from 'jquery';
 import { I, U } from 'Lib';
 
-const Tags = {};
+const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {
 	if (!isNaN(Number(i))) {
 		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
 	};
 };
 
-const Patterns = {
+const Patterns: { [key: string]: string } = {
 	// Arrows and Directional Indicators
 	'->': '→',
 	'—>': '⟶',
@@ -261,7 +261,7 @@ class Mark {
 	 * @param {I.TextRange} range - The range to check.
 	 * @returns {I.Mark|null} The found mark or null.
 	 */
-	getInRange(marks: I.Mark[], type: I.MarkType, range: I.TextRange, additional?: I.MarkOverlap[]): any {
+	getInRange(marks: I.Mark[], type: I.MarkType, range: I.TextRange, additional?: I.MarkOverlap[]): I.Mark | null {
 		if (!range) {
 			return null;
 		};
@@ -323,7 +323,7 @@ class Mark {
 
 		const r = text.split('');
 		const parts: I.Mark[] = [];
-		const ranges: any[] = [];
+		const ranges: I.TextRange[] = [];
 		const hasParam = [
 			I.MarkType.Link,
 			I.MarkType.Object,
@@ -334,7 +334,7 @@ class Mark {
 		];
 		const priorityRender = [I.MarkType.Mention, I.MarkType.Emoji];
 
-		let borders: any[] = [];
+		let borders: number[] = [];
 
 		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -536,12 +536,12 @@ class Mark {
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
 
-			let type: any = U.Common.getKeyByValue(tags, p2);
-			if (undefined === type) {
+			const key = U.Common.getKeyByValue(tags, p2);
+			if (undefined === key) {
 				return;
 			};
 
-			type = Number(type);
+			const type = Number(key) as I.MarkType;
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {

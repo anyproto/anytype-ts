@@ -136,8 +136,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			U.Object.openConfig(e, object);
 		};
 
-		let details: any = {};
-		let flags: I.ObjectFlag[] = [I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectTemplate];
+		const details: any = {};
+		const flags: I.ObjectFlag[] = [I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectTemplate];
 
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
