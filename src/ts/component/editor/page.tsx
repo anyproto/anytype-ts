@@ -2414,15 +2414,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const setLayoutWidth = (v: number) => {
 		v = Number(v) || 0;
 
-		const container = U.Common.getPageContainer(isPopup);
-		const cw = container.width();
 		const node = $(nodeRef.current);
 		const width = getWidth(v);
 		const elements = node.find('#elements');
-		const percent = width / cw * 100;
 
-		node.css({ width: `${percent}%` });
-		elements.css({ width: `${percent}%`, marginLeft: `-${percent / 2}%` });
+		node.css({ width });
+		elements.css({ width, marginLeft: width / 2 });
 
 		if (headerRef.current && headerRef.current.refDrag) {
 			headerRef.current.refDrag.setValue(v);
