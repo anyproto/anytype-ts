@@ -314,6 +314,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	request.setDroptargetid(targetId);
 	request.setPosition(position as number);
 	request.setLocalfilepathsList(paths);
+	request.setStyle(S.Common.fileStyle as number);
 
 	dispatcher.request(FileDrop.name, request, callBack);
 };
