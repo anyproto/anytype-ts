@@ -26,6 +26,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 	const text = String(content.text || '');
+	const isUnsupported = I.EmbedProcessor[processor] === undefined;
 	const css: any = {};
 	const nodeRef = useRef(null);
 	const editableRef = useRef(null);
@@ -49,6 +50,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	if (isEditing) {
 		cn.push('isEditing');
+	};
+
+	if (isUnsupported) {
+		cn.push('isUnsupported');
 	};
 
 	const init = () => {
@@ -374,6 +379,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const error = node.find('#error');
 
 		error.text('').hide();
+
+		if (isUnsupported) {
+			value.html('');
+			return;
+		};
 
 		if (!isShowing && !U.Embed.allowAutoRender(processor)) {
 			value.html('');
@@ -835,32 +845,43 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			<div id="valueWrap" className="valueWrap resizable" style={css}>
 				{select ? <div className="selectWrap">{select}</div> : ''}
 
-				<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
-					<Label text={translate('blockEmbedOffline')} />
-				</div>
-				<div id="value" onMouseDown={onEdit} />
+				{isUnsupported ? (
+					<div className="preview unsupported">
+						<Icon className="iconEmbed" />
+						<Label text={translate('blockEmbedUnsupported')} />
+					</div>
+				) : (
+					<>
+						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
+							<Label text={translate('blockEmbedOffline')} />
+						</div>
+						<div id="value" onMouseDown={onEdit} />
 
-				{empty ? <Label text={empty} className="label empty" onMouseDown={onEdit} /> : ''}					
-				{resizeIcon}
+						{empty ? <Label text={empty} className="label empty" onMouseDown={onEdit} /> : ''}
+						{resizeIcon}
+					</>
+				)}
 
 				<Error id="error" />
 				<Dimmer />
 			</div>
 
-			<Editable 
-				key={`block-${block.id}-editable`}
-				ref={editableRef}
-				id="input"
-				readonly={readonly}
-				placeholder={placeholder}
-				onSelect={onSelect}
-				onBlur={onBlurInput}
-				onKeyUp={onKeyUpInput} 
-				onKeyDown={onKeyDownInput}
-				onInput={onChange}
-				onPaste={onPaste}
-				onMouseDown={onSelect}
-			/>
+			{!isUnsupported ? (
+				<Editable
+					key={`block-${block.id}-editable`}
+					ref={editableRef}
+					id="input"
+					readonly={readonly}
+					placeholder={placeholder}
+					onSelect={onSelect}
+					onBlur={onBlurInput}
+					onKeyUp={onKeyUpInput}
+					onKeyDown={onKeyDownInput}
+					onInput={onChange}
+					onPaste={onPaste}
+					onMouseDown={onSelect}
+				/>
+			) : ''}
 		</div>
 	);
 
