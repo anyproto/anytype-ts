@@ -43,12 +43,12 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		beforePosition();
-		restoreState();
 
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
 			window.clearTimeout(timeout.current);
+			storageSet?.({ filter: '', currentIndex: -1, chatId: '' });
 		};
 	}, []);
 
