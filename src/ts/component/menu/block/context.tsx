@@ -363,8 +363,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const { type, content } = block;
 	const { style } = content;
 	const styleIcon = U.Data.styleIcon(type, style);
-	const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
-	const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
+	const colorMark: any = Mark.getInRange(marks, I.MarkType.Color, range) || {};
+	const bgMark: any = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 	const canTurn = block.canTurn() && !isInsideTable;
 	const hasMore = !isInsideTable;
 	const canHaveMarks = block.canHaveMarks();
@@ -414,9 +414,9 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 								let isSet = false;
 								if (action.type == I.MarkType.Link) {
 									const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
-									isSet = inRange && inRange.param;
+									isSet = inRange && inRange.param ? true : false;
 								} else {
-									isSet = Mark.getInRange(marks, action.type, range);
+									isSet = !!Mark.getInRange(marks, action.type, range);
 								};
 
 								if (isSet) {

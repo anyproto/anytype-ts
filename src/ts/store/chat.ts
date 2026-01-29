@@ -433,7 +433,7 @@ class ChatStore {
 		const counters = this.getTotalCounters();
 		const t = this.counterString(counters.messageCounter);
 
-		if (!this.badgeValue || (t != this.badgeValue)) {
+		if (t != this.badgeValue) {
 			this.badgeValue = t;
 			Renderer.send('setBadge', t);
 		};

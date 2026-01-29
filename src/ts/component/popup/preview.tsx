@@ -219,6 +219,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			unbind();
+			galleryMapRef.current.clear();
 		};
 	}, []);
 

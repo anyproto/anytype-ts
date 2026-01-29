@@ -202,25 +202,33 @@ class UtilCommon {
 	 * @param {function} [callBack] - Optional callback after copy.
 	 */
 	clipboardCopy (data: any, callBack?: () => void) {
+		let removed = false;
+
 		const handler = (e: any) => {
 			e.preventDefault();
-			
+
 			if (data.text) {
 				e.clipboardData.setData('text/plain', data.text);
 			};
 			if (data.html) {
-				e.clipboardData.setData('text/html', data.html);	
+				e.clipboardData.setData('text/html', data.html);
 			};
 			if (data.anytype) {
 				e.clipboardData.setData('application/json', JSON.stringify(data.anytype));
 			};
-			
+
+			removed = true;
 			document.removeEventListener('copy', handler, true);
 			callBack?.();
 		};
 
 		document.addEventListener('copy', handler, true);
 		document.execCommand('copy');
+
+		// Safety cleanup in case execCommand did not trigger the copy event
+		if (!removed) {
+			document.removeEventListener('copy', handler, true);
+		};
 	};
 
 	async clipboardCopyImageFromUrl(url: string) {

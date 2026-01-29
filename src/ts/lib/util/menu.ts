@@ -10,6 +10,7 @@ interface SpaceContextParam {
 	withPin?: boolean;
 	withDelete?: boolean;
 	withOpenNewTab?: boolean;
+	withSearch?: boolean;
 	noShare?: boolean;
 	route: string;
 };
@@ -872,8 +873,8 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
+		const { targetSpaceId, uxType } = space;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, withSearch, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -966,11 +967,9 @@ class UtilMenu {
 							colorConfirm: 'red',
 							onConfirm: () => {
 								C.SpaceStopSharing(S.Common.space, (message) => {
-									if (message.error.code) {
-										return;
+									if (!message.error.code) {
+										Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
 									};
-
-									Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
 								});
 							},
 						},
@@ -1003,6 +1002,15 @@ class UtilMenu {
 					});
 
 					Renderer.send('openTab', { route }, { setActive: false });
+					analytics.event('AddTab', { route: analytics.route.vault, uxType });
+					break;
+				};
+
+				case 'searchChat': {
+					S.Menu.closeAll(null, () => {
+						$(window).trigger('openSearchChat');
+					});
+					
 					break;
 				};
 
@@ -1011,11 +1019,16 @@ class UtilMenu {
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
+				search: [],
 				general: [],
 				share: [],
 				archive: [],
 				manage: [],
 				delete: [],
+			};
+
+			if (withSearch) {
+				sections.search.push({ id: 'searchChat', icon: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') });
 			};
 
 			if (!noShare && inviteLink) {

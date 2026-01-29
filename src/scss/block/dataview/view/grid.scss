@@ -2,8 +2,9 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
+		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; }
 		.rowHead { user-select: none; }
+		.rowFoot { height: 36px; }
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
 
@@ -16,7 +17,7 @@
 		}
 
 		.cellHead, .cellFoot { 
-			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative;
 			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead.canDrag { cursor: grab; }
@@ -40,6 +41,7 @@
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
 		}
 
+		.cellHead { height: 36px; }
 		.cellHead {
 			.name { user-select: none !important; }
 		}
@@ -87,8 +89,6 @@
 			background-color: var(--color-shape-highlight-light);
 		}
 
-		.cellFoot.cellKeyHover::after, .cellFoot.hover::after { height: calc(100% - 1px); }
-
 		.cellHead.last::after, .cellHead.hover::after { background: none; }
 		.cellHead.last:hover, .cellHead.last.hover {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
@@ -111,14 +111,13 @@
 				.icon.drag { opacity: 1; }
 				
 				.cell.isName.canEdit {
-					.icon.expand { display: block; }
+					.button.expand { display: flex; }
 					.chatCounter { display: none;}
 				}
 			}
-			.row.add { margin-top: 2px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.icon.expand { position: absolute; right: 8px; top: 10px; }
+			.button.expand { position: absolute; right: 8px; top: 8px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -145,8 +144,8 @@
 			.cellContent.isName { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 6px; }
 
 			.row.isNote {
-				.cell.isName.canEdit:hover {
-					.icon.expand { display: none; }
+				.cell.isName:hover {
+					.button.expand { display: none; }
 					.chatCounter { display: block; }
 				}
 			};
@@ -174,6 +173,14 @@
 				&.align2 { text-align: right; }
 				&.align2 {
 					.over { justify-content: flex-end; }
+				}
+
+				&.medium, &.small {
+					.button.expand { padding: 0px 5px; }
+					.button.expand {
+						.icon { display: block; margin: 0px; }
+						.txt { display: none; }
+					}
 				}
 			}
 
@@ -227,18 +234,22 @@
 	.block.blockDataview.isInline {
 		.viewContent.viewGrid { padding: 0px; }
 		.viewContent.viewGrid {
-			.icon.expand { top: 6px; }
+			.button.expand { top: 4px; }
 
 			&:not(.wrapContent) {
-				.row, .cell { height: 40px; }
+				.row, .cell, .rowFoot { height: 40px; }
+			}
+
+			.cellFoot {
+				.cellContent { height: 40px !important; }
 			}
 
 			.cellHead:first-child {
-				.flex { padding-left: 0px; }
+				.flex { padding-left: 6px; }
 			}
 
 			.cell { padding: 10px 14px; }
-			.cell:first-child { padding-left: 0px; }
+			.cell:first-child { padding-left: 6px; }
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
@@ -259,7 +270,7 @@
 				.itemWrap { margin-bottom: 0px; }
 			}
 
-			.loadMore { padding-top: 11px; margin-top: 0px; }
+			.loadMore { padding-bottom: 4px; margin-top: 0px; }
 		}
 	}
 }

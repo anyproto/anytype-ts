@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Icon, Label, Button, Phrase } from 'Component';
-import { I, keyboard, translate, Storage, S, Renderer, C, analytics, U } from 'Lib';
+import { I, keyboard, translate, Storage, S, Renderer, C, analytics, U, sidebar } from 'Lib';
 
 const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
@@ -54,7 +54,6 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 		U.Router.go('/auth/select', {
 			replace: true,
-			animate: true,
 			onRouteChange: () => {
 				S.Auth.logout(true, false);
 			},

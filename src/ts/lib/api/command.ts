@@ -372,6 +372,15 @@ export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => 
 	dispatcher.request(FileDiscardPreload.name, request, callBack);
 };
 
+export const FileSetAutoDownload = (enabled: boolean, wifiOnly: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.SetAutoDownload.Request();
+
+	request.setEnabled(enabled);
+	request.setWifiOnly(wifiOnly);
+
+	dispatcher.request(FileSetAutoDownload.name, request, callBack);
+};
+
 // ---------------------- NAVIGATION ---------------------- //
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -2454,6 +2463,19 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	request.setMessageidsList(ids);
 
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
+};
+
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.Search.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatid(chatId);
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setSortsList(sorts.map(Mapper.To.SearchSort));
+
+	dispatcher.request(ChatSearch.name, request, callBack);
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {

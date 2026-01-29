@@ -24,6 +24,7 @@ import MenuObjectContext from './object/context';
 
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
+import MenuSearchChat from './search/chat';
 
 import MenuPreviewObject from './preview/object';
 import MenuPreviewLatex from './preview/latex';
@@ -111,6 +112,7 @@ const Components: any = {
 
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,
+	searchChat:				 MenuSearchChat,
 
 	previewObject:			 MenuPreviewObject,
 	previewLatex:			 MenuPreviewLatex,

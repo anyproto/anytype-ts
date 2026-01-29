@@ -20,9 +20,6 @@ const Progress: FC = observer(() => {
 	const dy = useRef(0);
 	const width = useRef(0);
 	const height = useRef(0);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
 	const cn = [ 'progress' ];
 
 	const Item = (item: any) => {
@@ -120,6 +117,10 @@ const Progress: FC = observer(() => {
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
 		};
@@ -127,9 +128,8 @@ const Progress: FC = observer(() => {
 		resize();
 
 		return () => {
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
+			resizeObserver.disconnect();
+			$(window).off('mousemove.progress mouseup.progress');
 		};
 	}, []);
 

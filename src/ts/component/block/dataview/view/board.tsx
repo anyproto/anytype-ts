@@ -37,6 +37,8 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 		return () => {
 			unbind();
+			columnRefs.current.clear();
+			cache.current = {};
 		};
 	}, []);
 

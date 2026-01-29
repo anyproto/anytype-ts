@@ -114,6 +114,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - gRPC for backend communication
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
+- Do not use `cursor: pointer` in CSS - the app does not use custom cursors
 
 ### Code Style
 - Write `else if` with a linebreak before `if`:

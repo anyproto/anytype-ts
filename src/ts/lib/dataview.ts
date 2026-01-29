@@ -159,7 +159,8 @@ class Dataview {
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = U.Common.objectCopy(view.filters).concat(param.filters || []);
+		const viewFilters = U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		const filters = viewFilters.concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
@@ -191,8 +192,8 @@ class Dataview {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(this.filterMapper),
-				sorts: sorts.map(this.filterMapper),
+				filters: filters.map(it => this.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => this.sortMapper(it)),
 				keys,
 				limit,
 				offset,
@@ -208,11 +209,42 @@ class Dataview {
 	};
 
 	/**
-	 * Maps a filter or sort object for a dataview subscription.
+	 * Maps a filter object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {any} The mapped object.
+	 */
+	filterMapper (it: any, param?: any) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+
+		if (!relation) {
+			return it;
+		};
+
+		it.format = relation.format;
+		it.includeTime = relation.includeTime;
+
+		if (Relation.isArrayType(relation.format)) {
+			it.value = Relation.formatValue(relation, it.value, false);
+
+			if (Array.isArray(it.value)) {
+				it.value = it.value.map(it => this.valueTemplateMapper(it, param));
+			} else {
+				it.value = this.valueTemplateMapper(it.value, param);
+			};
+		};
+
+		return it;
+	};
+
+	/**
+	 * Maps a sort object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (it: any) {
+	sortMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
@@ -220,6 +252,51 @@ class Dataview {
 			it.includeTime = relation.includeTime;
 		};
 		return it;
+	};
+
+	/**
+	 * Maps a filter value template to a value.
+	 * @param {string} value - The filter value.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {string} The mapped value.
+	 */
+	valueTemplateMapper (value: string, param?: any): string {
+		param = param || {};
+
+		const { rootId } = param;
+		const { account } = S.Auth;
+		const { space } = S.Common;
+		const option = Relation.getFilterTemplateOption(value);
+
+		if (!option) {
+			return value;
+		};
+
+		let r = '';
+
+		switch (option.templateType) {
+			default: {
+				r = value;
+				break;
+			};
+
+			case I.FilterValueTemplate.User: {
+				r = account.id;
+				break;
+			};
+
+			case I.FilterValueTemplate.Participant: {
+				r = U.Space.getParticipantId(space, account.id);
+				break;
+			};
+
+			case I.FilterValueTemplate.Object: {
+				r = rootId;
+				break;
+			};
+		};
+
+		return r;
 	};
 
 	/**
@@ -302,12 +379,13 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const filters = view.filters.map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters.map(this.filterMapper), object.setOf || [], isCollection ? object.id : '', (message: any) => {
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -72,7 +72,7 @@ body.platform-win32.showMenuBar {
 
 #tabs {
 	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
-	overflow-y: hidden; -webkit-app-region: drag;
+	overflow-y: hidden;
 }
 #tabs::-webkit-scrollbar { display: none; }
 #tabs {
@@ -91,7 +91,12 @@ body.platform-win32.showMenuBar {
 	.tab.hideDiv .div { display: none; }
 
 	.tab.isAdd { flex: 0 0 auto; min-width: 32px; }
-	.tab.isAdd .icon { background-image: url('../img/icon/plus.svg'); }
+	.tab.isAdd {
+		.icon { 
+			width: 28px; height: 28px; background-size: 20px; background-image: url('../img/icon/plus.svg'); 
+			border-radius: 50%;
+		}
+	}
 
 	.tab {
 		.clickable {

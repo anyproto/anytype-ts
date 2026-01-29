@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -33,9 +33,14 @@ interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
+interface Ref {
+	getNode: () => any;
+	getChildNode: () => any;
+};
+
 const SNAP = 0.01;
 
-const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
@@ -130,6 +135,8 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onContextMenu = (e: any) => {
 		const { focused, range } = focus.state;
 		const selection = S.Common.getRef('selectionProvider');
+		const selectedIds = selection?.get(I.SelectType.Block, false) || [];
+		const hasMultipleBlocksSelected = selectedIds.length > 1;
 
 		if (!U.Common.isPlatformMac() && e.ctrlKey) {
 			return;
@@ -143,7 +150,8 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (
 			isContextMenuDisabled ||
 			readonly ||
-			(block.isText() && (focused == block.id)) ||
+			// Allow native spellcheck menu for focused text blocks, but not when multiple blocks are selected
+			(block.isText() && (focused == block.id) && !hasMultipleBlocksSelected) ||
 			!block.canContextMenu()
 		) {
 			return;
@@ -1053,6 +1061,11 @@ const Block = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			</div>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
+		getChildNode: () => childRef.current,
+	}));
 
 	return (
 		<div 

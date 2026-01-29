@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader } from 'Component';
+import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader, EmptySearch } from 'Component';
 import { I, C, J, S, U, keyboard, translate, analytics } from 'Lib';
 
 const HEIGHT = 56;
@@ -11,7 +11,7 @@ const LIMIT = 10;
 const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { setActive, onKeyDown, position, getId, close } = props;
-	const { space } = S.Common
+	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const [ selected, setSelected ] = useState('');
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
@@ -277,49 +277,60 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div className="wrap">
-			<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
+			<div className="titleWrap">
+				<div className="side left" />
+				<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
+				<div className="side right">
+					<Icon className="close withBackground" onClick={e => close()} />
+				</div>
+			</div>
 
 			<Filter
 				ref={filterRef}
-				className="outlined"
+				icon="search"
+				className="outlined round c32"
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}
 				focusOnMount={true}
 			/>
 
-			<div className="items">
-				{!length ? (
-					<div className="item empty">
-						<Label text={translate('commonNothingFound')} />
-					</div>
-				) : (
-					<InfiniteLoader
-						rowCount={length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => !!items[index]}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={listRef}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={cache.current}
-										rowCount={length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										onScroll={onScroll}
-										scrollToAlignment="center"
-										overscanRowCount={LIMIT}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				)}
-			</div>
+			{!length ? (
+				<EmptySearch text={translate('commonNothingFound')} />
+			) : (
+				<div className="items">
+					{!length ? (
+						<div className="item empty">
+							<Label text={translate('commonNothingFound')} />
+						</div>
+					) : (
+						<InfiniteLoader
+							rowCount={length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => !!items[index]}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={listRef}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={cache.current}
+											rowCount={length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											onScroll={onScroll}
+											scrollToAlignment="center"
+											overscanRowCount={LIMIT}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
+				</div>
+			)}
 
 			<div className="buttons">
 				<Button

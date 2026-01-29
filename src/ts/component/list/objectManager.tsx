@@ -480,6 +480,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			window.clearTimeout(timeout.current);
 			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
 			$(window).off('keydown.filter');
+			checkboxRef.current.clear();
 		};
 	}, []);
 

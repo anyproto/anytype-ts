@@ -85,7 +85,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		U.Subscription.subscribe({
 			subId,
 			limit,
-			filters: filters.map(Dataview.filterMapper),
+			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],

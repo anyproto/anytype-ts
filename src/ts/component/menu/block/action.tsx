@@ -489,7 +489,8 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		
 		const selection = S.Common.getRef('selectionProvider');
-		const ids = selection.getForClick(blockId, false, false);
+		const ids = selection.getForClick(blockId, true, false);
+		const idsWithChildren = selection.getForClick(blockId, true, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		if (Object.values(CB_KEYS).includes(item.itemId) && range) {
@@ -499,12 +500,12 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		switch (item.itemId) {
 			case 'clipboardCopy': {
-				Action.copyBlocks(rootId, ids, I.ClipboardMode.Copy);
+				Action.copyBlocks(rootId, idsWithChildren, I.ClipboardMode.Copy);
 				break;
 			};
 
 			case 'clipboardCut': {
-				Action.copyBlocks(rootId, ids, I.ClipboardMode.Cut);
+				Action.copyBlocks(rootId, idsWithChildren, I.ClipboardMode.Cut);
 				break;
 			};
 
