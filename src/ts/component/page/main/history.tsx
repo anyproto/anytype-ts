@@ -10,7 +10,7 @@ const Diff = require('diff');
 
 const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-	const [ isLoading, setLoading ] = useState(false);
+	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
 	const rootId = keyboard.getRootId(isPopup);
 	const ns = U.Common.getEventNamespace(isPopup);
@@ -21,7 +21,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const rightRef = useRef(null);
 
 	const unbind = () => {
-		const events = [ 'keydown' ];
+		const events = ['keydown'];
 
 		$(window).off(events.map(it => `${it}.history${ns}`).join(' '));
 	};
@@ -46,7 +46,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		let ids = selection?.get(I.SelectType.Block, true) || [];
 		if (!ids.length) {
-			ids = [ focused ];
+			ids = [focused];
 		};
 		ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 
@@ -104,7 +104,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const getElements = (previousId: string, event: any) => {
 		const { type, data } = event;
-		const oldContextId = [ rootId, previousId ].join('-');
+		const oldContextId = [rootId, previousId].join('-');
 
 		let elements = [];
 		switch (type) {
@@ -257,7 +257,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				break;
 			};
 
-			case 'ObjectDetailsSet': 
+			case 'ObjectDetailsSet':
 			case 'ObjectDetailsAmend': {
 				if (data.id != rootId) {
 					break;
@@ -345,7 +345,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		const sideLeft = $(leftRef.current?.getNode());
 
-		let cw = sideLeft.width();
+		const cw = sideLeft.width();
 		let width = 0;
 
 		if (isSetOrCollection()) {
@@ -399,17 +399,17 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			{isLoading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
 
 			<div id="body" className="flex">
-				<HistoryLeft 
-					ref={leftRef} 
-					{...props} 
-					rootId={rootId} 
-					onCopy={onCopy} 
+				<HistoryLeft
+					ref={leftRef}
+					{...props}
+					rootId={rootId}
+					onCopy={onCopy}
 					getWrapperWidth={getWrapperWidth}
 				/>
 
-				<HistoryRight 
-					ref={rightRef} 
-					{...props} 
+				<HistoryRight
+					ref={rightRef}
+					{...props}
 					rootId={rootId}
 					renderDiff={renderDiff}
 					setVersion={setVersion}
@@ -418,7 +418,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			</div>
 		</div>
 	);
-	
+
 }));
 
 export default PageMainHistory;

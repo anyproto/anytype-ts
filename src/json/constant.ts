@@ -1,4 +1,4 @@
-import storage from "Lib/storage";
+import storage from 'Lib/storage';
 
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',

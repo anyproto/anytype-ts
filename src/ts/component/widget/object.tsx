@@ -24,7 +24,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const canWrite = U.Space.canMyParticipantWrite();
 
 	const getId = (id: string) => {
-		return [ space, id ].join('-');
+		return [space, id].join('-');
 	};
 
 	const getSubId = () => {
@@ -51,7 +51,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getFileAndSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -72,7 +72,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 	};
-		
+
 	const onSortEnd = (event) => {
 		keyboard.disableSelection(false);
 
@@ -80,11 +80,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		if (!over || (active.id == over.id)) {
 			return;
 		};
-		
+
 		const items = getItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
-		
+
 		if ((oldIndex < 0) || (newIndex < 0)) {
 			return;
 		};
@@ -136,8 +136,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			U.Object.openConfig(e, object);
 		};
 
-		let details: any = {};
-		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectTemplate ];
+		const details: any = {};
+		const flags: I.ObjectFlag[] = [I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectTemplate];
 
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
@@ -152,10 +152,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 				U.Menu.onBookmarkMenu(menuParam, cb);
-			} else 
-			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, route, cb);
-			}; 
+			} else
+				if (U.Object.isChatLayout(type.recommendedLayout)) {
+					U.Menu.onChatMenu(menuParam, route, cb);
+				};
 			return;
 		};
 
@@ -190,7 +190,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const Item = (item: any) => {
 		const isChat = U.Object.isChatLayout(item.layout);
-		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag });
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -202,16 +202,16 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			icon = <Icon className={item.icon} />;
 		} else {
 			icon = (
-				<IconObject 
-					object={item} 
-					canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)} 
+				<IconObject
+					object={item}
+					canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)}
 					iconSize={20}
 				/>
 			);
 		};
 
 		return (
-			<div 
+			<div
 				id={`item-${item.id}`}
 				className="item"
 				ref={setNodeRef}
@@ -222,7 +222,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left">
-					{icon}	
+					{icon}
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
@@ -246,15 +246,15 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	return (
 		<>
 			{items.length ? (
-				<DndContext 
-					sensors={sensors} 
-					collisionDetection={closestCenter} 
-					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
-					onDragStart={onSortStart} 
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
+					onDragStart={onSortStart}
 					onDragEnd={onSortEnd}
 				>
-					<SortableContext 
-						items={items.map(it => it.id)} 
+					<SortableContext
+						items={items.map(it => it.id)}
 						strategy={verticalListSortingStrategy}
 					>
 						<div ref={nodeRef} className="items">
