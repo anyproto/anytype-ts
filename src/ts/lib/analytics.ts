@@ -637,6 +637,8 @@ class Analytics {
 					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
 					default:							res = I.InviteType[data.type]; break;
 				};
+
+				data.type = res;
 				break;
 			};
 

@@ -278,12 +278,14 @@ class Keyboard {
 				this.onSearchPopup(route);
 			});
 
+			/*
 			// Text search
 			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
 					this.onSearchText('', route);
 				};
 			});
+			*/
 
 			// Navigation links
 			this.shortcut('navigation', e, () => {
