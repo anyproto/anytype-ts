@@ -391,6 +391,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)).concat(I.ObjectLayout.Participant) },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+					{ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 },
 				],
 				sorts: [
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
