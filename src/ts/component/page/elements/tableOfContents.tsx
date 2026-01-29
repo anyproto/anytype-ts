@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, use
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, sidebar, keyboard } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -18,8 +18,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const tree = S.Block.getTableOfContents(rootId, true).slice(0, J.Constant.limit.tableOfContents);
 	const blockRef = useRef('');
 	const containerOffset = useRef({ top: 0, left: 0 });
-	const containerWidth = useRef(0);
-	const containerHeight = useRef(0);
 	const ns = `tableOfContents${U.Common.getEventNamespace(isPopup)}`;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
@@ -125,22 +123,18 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const resize = () => {
-		raf(() => {
-			const node = $(nodeRef.current);
-			if (!node.length) {
-				return;
-			};
+		const node = $(nodeRef.current);
+		if (!node.length) {
+			return;
+		};
 
-			const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
+		const width = container.width();
 
-			containerWidth.current = container.width();
-			containerHeight.current = container.height();
-			containerOffset.current = container.offset();
+		containerOffset.current = container.offset();
 
-			node.css({ left: containerOffset.current.left + containerWidth.current - node.outerWidth() - 6 });
-
-			onScroll();
-		});
+		node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
+		onScroll();
 	};
 
 	useEffect(() => {
