@@ -89,7 +89,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				if (email) {
 					nextRef.current?.setLoading(true);
 					
-					C.MembershipGetVerificationEmail(email, false, false, true, (message: any) => {
+					C.MembershipV2SubscribeToUpdates(email, (message: any) => {
 						nextRef.current?.setLoading(false);
 
 						if (message.error.code) {
