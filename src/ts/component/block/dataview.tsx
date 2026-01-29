@@ -1062,6 +1062,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						quickOption,
 					});
 				},
+				onAdvancedFilterAdd: () => {
+					Storage.setToggle(rootId, filtersId, true);
+
+					onFilterAdd({
+						relationKey: 'name',
+						condition: I.FilterCondition.In,
+						value: '',
+						operator: I.FilterOperator.And,
+					});
+				},
 			});
 		};
 	};

@@ -274,6 +274,7 @@
 	"pluralPdf": "Pdf|Pdfs",
 	"pluralBookmark": "Bookmark|Bookmarks",
 	"pluralAttachment": "Attachment|Attachments",
+	"pluralRule": "rule|rules",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1726,6 +1727,7 @@
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
 	"menuDataviewFilterNewFilter": "New filter",
+	"menuDataviewFilterAdvancedAdd": "Add advanced filter",
 	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open in browser",
