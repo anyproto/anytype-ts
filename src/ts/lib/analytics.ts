@@ -799,7 +799,6 @@ class Analytics {
 			widgetSection:		 'ScreenManageSections',
 			widget:				 'ScreenWidgetMenu',
 			changeOwner:		 'ScreenTransferSpaceOwnership',
-			searchChat:			 'ScreenChatSearch',
 		};
 
 		return map[id] || '';
