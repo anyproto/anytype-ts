@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px; }
+		.ReactVirtualized__List { padding: 8px; }
 
 		.innerWrap { width: 684px; height: 706px; max-height: calc(100% - 48px); overflow: hidden; }
 
@@ -35,7 +35,7 @@
 			}
 		}
 
-		.items { height: 100%; flex-grow: 1; padding: 0px 8px; }
+		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
 
