@@ -345,7 +345,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		const sideLeft = $(leftRef.current?.getNode());
 
-		const cw = sideLeft.width();
+		let cw = sideLeft.width();
 		let width = 0;
 
 		if (isSetOrCollection()) {
