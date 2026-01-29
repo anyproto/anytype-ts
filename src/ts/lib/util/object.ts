@@ -206,13 +206,22 @@ class UtilObject {
 			return;
 		};
 
-		const tabs = objects.filter(it => it).map(object => ({
+		const filtered = objects.filter(it => it);
+		if (!filtered.length) {
+			return;
+		};
+
+		const tabs = filtered.map(object => ({
 			route: this.route(object),
 			data: this.getTabData(object),
 		}));
 
 		if (tabs.length) {
 			Renderer.send('openTabs', tabs);
+
+			for (const object of filtered) {
+				analytics.event('AddTab', { objectType: object.type });
+			};
 		};
 	};
 
