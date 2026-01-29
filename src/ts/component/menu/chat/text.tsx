@@ -84,9 +84,9 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				let isSet = false;
 				if (action.type == I.MarkType.Link) {
 					const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
-					isSet = inRange && inRange.param;
+					isSet = inRange && inRange.param ? true : false;
 				} else {
-					isSet = Mark.getInRange(marks, action.type, range);
+					isSet = !!Mark.getInRange(marks, action.type, range);
 				};
 
 				if (isSet) {
