@@ -126,6 +126,7 @@
 		"electron-updater": "^6.6.7",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
+		"elkjs": "^0.11.0",
 		"emoji-mart": "^5.6.0",
 		"findandreplacedomtext": "^0.4.6",
 		"google-protobuf": "^3.21.4",
