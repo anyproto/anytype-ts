@@ -27,6 +27,12 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const isRelationOpen = (rightSidebar.page == 'object/relation');
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
+	const cnc = [ 'side', 'center' ];
+
+	if (isSearchMenuOpen) {
+		cnc.push('withSearch');
+	};
 
 	let center = null;
 	let label = '';
@@ -139,7 +145,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{renderLeftIcons(true, true, onOpen)}
 			</div>
 
-			<div className="side center">
+			<div className={cnc.join(' ')}>
 				{center}
 			</div>
 

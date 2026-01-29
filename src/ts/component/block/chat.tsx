@@ -16,6 +16,7 @@ interface RefProps {
 	onDragLeave: (e: DragEvent) => void;
 	onDrop: (e: DragEvent) => void;
 	getFormRef: () => any;
+	loadAndScrollToMessage: (id: string) => void;
 };
 
 const GROUP_TIME = 300;
@@ -665,6 +666,36 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		onReadStop();
 	};
 
+	const loadAndScrollToMessage = (id: string) => {
+		if (!id) {
+			return;
+		};
+
+		const subId = getSubId();
+		const message = S.Chat.getMessageById(subId, id);
+
+		if (message) {
+			scrollToMessage(message.id, true, true);
+			return;
+		};
+
+		setLoaded(false);
+		setIsBottom(false);
+
+		C.ChatGetMessagesByIds(chatId, [ id ], (message: any) => {
+			if (message.error.code || !message.messages.length) {
+				return;
+			};
+
+			const first = message.messages[0];
+
+			S.Chat.clear(subId);
+			loadMessagesByOrderId(first.orderId, () => {
+				raf(() => scrollToMessage(first.id, true, true));
+			});
+		});
+	};
+
 	const scrollToMessage = (id: string, animate?: boolean, highlight?: boolean) => {
 		if (!id) {
 			return;
@@ -767,32 +798,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onReplyClick = (e: MouseEvent, item: any) => {
+		jumpIds.current.push(item.id);
+		loadAndScrollToMessage(item.replyToMessageId);
 		analytics.event('ClickScrollToReply', { chatId: analyticsChatId });
-
-		const subId = getSubId();
-		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
-
-		if (message) {
-			scrollToMessage(message.id, true, true);
-			jumpIds.current.push(item.id);
-			return;
-		};
-
-		setLoaded(false);
-		setIsBottom(false);
-
-		C.ChatGetMessagesByIds(chatId, [ item.replyToMessageId ], (message: any) => {
-			if (message.error.code || !message.messages.length) {
-				return;
-			};
-
-			const reply = message.messages[0];
-
-			S.Chat.clear(subId);
-			loadMessagesByOrderId(reply.orderId, () => {
-				raf(() => scrollToMessage(reply.id, true, true));
-			});
-		});
 	};
 
 	const getReplyContent = (message: any): { title: string; text: string; attachment: any; isMultiple: boolean; } => {
@@ -1048,6 +1056,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		onDragLeave,
 		onDrop,
 		getFormRef: () => formRef.current,
+		loadAndScrollToMessage,
 	}));
 
 	return (

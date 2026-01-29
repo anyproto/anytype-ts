@@ -778,6 +778,17 @@ export const Mapper = {
 			return reactions;
 		},
 
+		ChatSearchResult: (obj: any): any => {
+			return {
+				chatId: obj.getChatid(),
+				messageId: obj.getMessageid(),
+				score: obj.getScore(),
+				highlight: obj.getHighlight(),
+				highlightRanges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+			};
+		},
+
 		PublishState: (obj: Rpc.Publishing.PublishState): any => {
 			return {
 				spaceId: obj.getSpaceid(),
@@ -1206,6 +1217,15 @@ export const Mapper = {
 
 			item.setAppname(obj.name);
 			item.setScope(obj.scope as number);
+
+			return item;
+		},
+
+		SearchSort : (obj: any): any => {
+			const item = new Model.Search.Message.Sort();
+
+			item.setKey(obj.key);
+			item.setType(obj.type as number);
 
 			return item;
 		},

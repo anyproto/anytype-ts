@@ -28,6 +28,7 @@ const LOCAL_KEYS = [
 	'progress',
 	'updateBanner',
 	'lastOpenedSimple',
+	'sidebarData',
 ];
 
 const Api = {

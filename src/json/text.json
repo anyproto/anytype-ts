@@ -1852,6 +1852,7 @@
 
 	"menuObjectPrint": "Print",
 	"menuObjectSearchOnPage": "Search in Object",
+	"menuObjectSearchInChat": "Search in Chat",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
 	"menuObjectUseAsTemplate": "Use as Template",

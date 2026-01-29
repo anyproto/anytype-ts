@@ -260,7 +260,7 @@ class Analytics {
 		const extraSeat = products.reduce((sum, it) => sum + (it.features.teamSeats || 0), 0);
 
 		this.setProperty({ 
-			product: data.getTopProduct()?.name || 'None',
+			productTier: data.getTopProduct()?.name || 'None',
 			extraPurchase: Boolean(extraPurchase.length),
 			extraStorageSize: Number(extraStorage) || 0,
 			extraSeat: Number(extraSeat) || 0,

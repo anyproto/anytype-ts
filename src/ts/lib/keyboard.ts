@@ -48,6 +48,7 @@ class Keyboard {
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
+		win.on('resize.common', () => this.onResize());
 
 		win.on('online.common offline.common', () => {
 			S.Common.isOnlineSet(navigator.onLine);
@@ -80,6 +81,25 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+
+		this.onResize();
+	};
+
+	onResize () {
+		const { ww } = U.Common.getWindowDimensions();
+		const key = J.Constant.storageKey.sidebarData;
+		const stored = Storage.get(key, Storage.isLocal(key));
+		const data = stored?.[I.SidebarPanel.Left] || {};
+
+		if (data.isClosed) {
+			return;
+		};
+
+		if (ww <= 800) {
+			sidebar.leftPanelClose(false, false);
+		} else {
+			sidebar.leftPanelOpen(data.width, false, false);
+		};
 	};
 
 	/**
@@ -93,7 +113,7 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common resize.common');
 	};
 
 	/**
@@ -261,7 +281,7 @@ class Keyboard {
 			// Text search
 			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', route);
+					this.onSearchText('', route);
 				};
 			});
 
@@ -664,7 +684,7 @@ class Keyboard {
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('', route);
+				this.onSearchText('', route);
 				break;
 			};
 
@@ -1197,13 +1217,13 @@ class Keyboard {
 	 * @param {string} value - The search value.
 	 * @param {string} [route] - The route context.
 	 */
-	onSearchMenu (value: string, route?: string) {
+	onSearchText (value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat() || this.isMainVoid() || this.isMainArchive();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainVoid() || this.isMainArchive();
 		} else {
 			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
@@ -1212,20 +1232,42 @@ class Keyboard {
 			return;
 		};
 
-		S.Menu.closeAll(null, () => {
-			S.Menu.open('searchText', {
-				element: '#header',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 10,
-				classNameWrap: 'fromHeader',
-				passThrough: true,
-				data: {
-					isPopup,
-					value,
-					route,
+		const menuId = this.isMainChat() ? 'searchChat' : 'searchText';
+		const menuParam: Partial<I.MenuParam> = {
+			element: '#header .side.center',
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Bottom,
+			classNameWrap: 'fromHeader',
+			noBorderY: true,
+			noFlipY: true,
+			fixedY: 0,
+			data: {},
+		};
+
+		if (this.isMainChat()) {
+			const rootId = this.getRootId();
+			const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+			const chatId = object.chatId || rootId;
+
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				rootId,
+				chatId,
+				scrollToMessage: (id: string) => {
+					$(window).trigger('scrollToMessage', { id });
 				},
 			});
+		} else {
+			menuParam.passThrough = true;
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				value,
+				route,
+			});
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 

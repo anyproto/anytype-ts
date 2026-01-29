@@ -13,6 +13,11 @@
 		.icon:last-child { margin-right: 0px; }
 	}
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
+	.side.center {
+		&.withSearch {
+			.path, .headerBanner { transition: opacity $transitionCommon; opacity: 0; pointer-events: none; }
+		}
+	}
 	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; }
 	.side.right {
 		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
@@ -148,7 +153,7 @@ html.bodyAuthSelect {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {
 		.iconObject { flex-shrink: 0; }
-		.name { @include text-overflow-nw; }
+		.name { @include text-overflow-nw; color: var(--color-text-secondary); }
 	}
 	.path:hover { border-color: var(--color-shape-secondary); }
 }

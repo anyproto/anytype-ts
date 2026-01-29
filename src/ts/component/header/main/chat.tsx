@@ -12,6 +12,12 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const showInvite = !spaceview.isOneToOne;
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
+	const cnc = [ 'side', 'center' ];
+	
+	if (isSearchMenuOpen) {
+		cnc.push('withSearch');
+	};
 
 	let object = null;
 	if (spaceview.isChat || spaceview.isOneToOne) {
@@ -62,6 +68,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				offsetY: 4,
 			}, { 
 				noManage: true,
+				withSearch: true,
 				route: analytics.route.header,
 			});
 		} else {
@@ -78,19 +85,21 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		};
 	};
 
-	if (bannerProps.type != I.BannerType.None) {
-		center = <HeaderBanner {...bannerProps} />;
-	};
+	if (!isDeleted) {
+		if (bannerProps.type != I.BannerType.None) {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 
-	if (bannerProps.type == I.BannerType.None) {
-		center = (
-			<div className="path" onClick={onSearch}>
-				<IconObject object={object} size={18} />
-				<ObjectName object={object} withPlural={true} />
-			</div>
-		);
-	} else {
-		center = <HeaderBanner {...bannerProps} />;
+		if (bannerProps.type == I.BannerType.None) {
+			center = (
+				<div className="path" onClick={onSearch}>
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} withPlural={true} />
+				</div>
+			);
+		} else {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -101,7 +110,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		<>
 			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
 
-			<div className="side center">
+			<div className={cnc.join(' ')}>
 				{center}
 			</div>
 
