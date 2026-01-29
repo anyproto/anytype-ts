@@ -68,7 +68,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		if (item.id == 'add') {
 			onAdd();
 		} else {
-			U.Object.openPopup(e, item);
+			U.Object.openConfig(e, item);
 		};
 	};
 
