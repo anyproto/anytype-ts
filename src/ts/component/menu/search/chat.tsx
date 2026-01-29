@@ -35,6 +35,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(0);
 	const offset = useRef(0);
 	const filter = useRef('');
+	const cnu = [ 'arrow', 'up' ];
+	const cnd = [ 'arrow', 'down' ];
 
 	useEffect(() => {
 		rebind();
@@ -177,6 +179,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setActive(item, true);
 			scrollToMessage?.(item.id);
 		};
+
+		close();
 	};
 
 	const saveState = (filterValue: string, index: number) => {
@@ -324,6 +328,12 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const items = getItems();
+	if ((currentIndex >= items.length - 1) || (currentIndex < 0)) {
+		cnu.push('disabled');
+	};
+	if (currentIndex <= 0) {
+		cnd.push('disabled');
+	};
 
 	useImperativeHandle(ref, () => ({
 		rebind,
@@ -352,8 +362,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon className={[ 'arrow', 'up', (currentIndex >= items.length - 1 || currentIndex < 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(1)} />
-					<Icon className={[ 'arrow', 'down', (currentIndex <= 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(-1)} />
+					<Icon className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 

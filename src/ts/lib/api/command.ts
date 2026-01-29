@@ -2455,7 +2455,6 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 };
 
 export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
-	/*
 	const request = new Rpc.Chat.Search.Request();
 
 	request.setSpaceid(spaceId);
@@ -2466,7 +2465,6 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 	request.setSortsList(sorts.map(Mapper.To.SearchSort));
 
 	dispatcher.request(ChatSearch.name, request, callBack);
-	*/
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
