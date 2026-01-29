@@ -2205,6 +2205,14 @@ export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message
 	dispatcher.request(MembershipV2AnyNameAllocate.name, request, callBack);
 };
 
+export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.SubscribeToUpdates.Request();
+	
+	request.setEmail(email);
+	
+	dispatcher.request(MembershipV2SubscribeToUpdates.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {

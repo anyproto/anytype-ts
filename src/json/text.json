@@ -1376,6 +1376,12 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
+	"popupSearchShortcutNavigate": "Navigate",
+	"popupSearchShortcutClose": "Close",
+	"popupSearchShortcutOpen": "Open",
+	"popupSearchShortcutCopyLink": "Copy link",
+	"popupSearchShortcutNewTab": "New tab",
+	"popupSearchShortcutSelect": "Select",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",

@@ -1988,6 +1988,9 @@ class Keyboard {
 			if (key == 'comma') {
 				return ',';
 			};
+			if (key == Key.escape) {
+				return 'Esc';
+			};
 			return U.String.ucFirst(key);
 		});
 	};

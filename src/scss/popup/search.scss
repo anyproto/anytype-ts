@@ -90,5 +90,25 @@
 				.icon.advanced { opacity: 1; }
 			}
 		}
+
+		.foot {
+			flex-shrink: 0; height: 40px; border-top: 1px solid var(--color-shape-secondary); display: flex;
+			align-items: center; justify-content: space-between; padding: 0px 16px;
+		}
+		.foot {
+			.side { display: flex; align-items: center; gap: 0px 32px; }
+
+			.item { display: flex; align-items: center; gap: 0px 8px; }
+			.item {
+				.keys { display: flex; align-items: center; gap: 0px 4px; }
+				.keys {
+					.label {
+						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
+						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
+					}
+				}
+				.label { @include text-small; color: var(--color-text-secondary); }
+			}
+		}
 	}
 }
