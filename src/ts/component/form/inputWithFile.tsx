@@ -42,7 +42,7 @@ const InputWithFile: FC<Props> = ({
 	const fileWrapRef = useRef(null);
 	const timeout = useRef(0);
 	const cn = [ 'inputWithFile', 'resizable' ];
-	const or = ` ${translate('commonOr')} `;
+	const or = ` ${String(translate('commonOr')).toLowerCase()} `;
 	const isSmall = size == Size.Small;
 	const isIcon = size == Size.Icon;
 
@@ -233,7 +233,7 @@ const InputWithFile: FC<Props> = ({
 
 				{withFile ? (
 					<span ref={fileWrapRef} className="fileWrap">
-						{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
+						{!isSmall ? <span>&nbsp;{String(translate('commonOr')).toLowerCase()}&nbsp;</span> : ''}
 						<span className="border">{textFile}</span>
 					</span>
 				) : ''}

@@ -22,7 +22,7 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 	const { filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
 	const { id } = filter;
 
-	const ruleCount = 1;
+	const ruleCount = filter.nestedFilters?.length || 1;
 	const cn = [ 'filterItem', 'isAdvanced', 'withValue' ];
 
 	if (readonly) {
