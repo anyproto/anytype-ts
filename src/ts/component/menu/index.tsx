@@ -84,6 +84,7 @@ import MenuOneToOne from './oneToOne';
 
 import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
+import MenuChangeOwner from './changeOwner';
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
@@ -171,6 +172,7 @@ const Components: any = {
 
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
+	changeOwner:			 MenuChangeOwner,
 };
 
 interface RefProps extends I.MenuRef {
