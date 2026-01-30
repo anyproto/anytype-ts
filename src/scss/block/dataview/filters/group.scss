@@ -71,10 +71,13 @@
 
 				.rule {
 					.inner {
+						.relationSelect,
+						.conditionSelect { background-color: var(--color-bg-primary); }
+						
 						.relationSelect:hover,
 						.relationSelect.hover,
 						.conditionSelect:hover,
-						.conditionSelect.hover { background-color: var(--color-shape-highlight-medium); }
+						.conditionSelect.hover { background-color: var(--color-shape-tertiary); }
 					}
 				}
 			}
