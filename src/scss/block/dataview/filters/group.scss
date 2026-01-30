@@ -2,8 +2,9 @@
 
 .menus {
 	.menu.menuDataviewFilterList {
+		.group { padding: 8px 16px 0px; }
 		.group {
-			.rule { padding: 0px 16px 8px; }
+			.rule { padding-bottom: 8px; }
 			.rule {
 				.head { padding: 0px 0px 6px 0px; @include text-common; color: var(--color-text-primary); }
 				.head {
@@ -54,10 +55,18 @@
 
 					.icon.more { flex-shrink: 0; }
 				}
+
+				.group { border-radius: 8px; background-color: var(--color-shape-highlight-light); }
 			}
 			.rule.isReadonly {
 				.relationSelect, .conditionSelect { opacity: 0.7; }
 			}
+
+			.separator {
+				.inner { margin: 8px 0px; }
+			}
+			.item { padding: 4px 0px; }
+			.item::before { width: calc(100% + 16px); left: -8px; }
 		}
 	}
 }

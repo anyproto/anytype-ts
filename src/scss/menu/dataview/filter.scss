@@ -3,6 +3,7 @@
 .menus {
 	.menu.menuDataviewFilterList { width: var(--menu-width-add); }
 	.menu.menuDataviewFilterList {
+		.content { padding-top: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 
@@ -61,7 +62,11 @@
 			.icon.dnd { margin-top: 0px; }
 		}
 
-		.bottom {  padding: 0px; flex-shrink: 0; }
+		.bottom {  padding: 0px; flex-shrink: 0; margin: 0px 8px; }
+		.bottom {
+			.item { padding: 4px 8px; }
+			.item::before { width: 100%; left: 0px; }
+		}
 	}
 
 	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
