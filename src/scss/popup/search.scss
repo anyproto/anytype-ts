@@ -22,7 +22,7 @@
 			.iconObject { margin-right: 6px; }
 			
 			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.icon.search { background-image: url('~img/icon/popup/search/search.svg') !important; }
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
@@ -93,11 +93,9 @@
 
 		.foot {
 			flex-shrink: 0; height: 40px; border-top: 1px solid var(--color-shape-secondary); display: flex;
-			align-items: center; justify-content: space-between; padding: 0px 16px;
+			align-items: center; padding: 0px 16px; gap: 0px 24px;
 		}
 		.foot {
-			.side { display: flex; align-items: center; gap: 0px 32px; }
-
 			.item { display: flex; align-items: center; gap: 0px 8px; }
 			.item {
 				.keys { display: flex; align-items: center; gap: 0px 4px; }

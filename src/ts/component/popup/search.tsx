@@ -822,22 +822,18 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div className="foot">
-				<div className="side left">
-					<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
-					<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
-				</div>
-				<div className="side right">
-					{isObject ? (
-						<>
-							<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
-							<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
-							<Shortcut keys={[ cmd, 'enter' ]} label={translate('popupSearchShortcutNewTab')} />
-						</>
-					) : ''}
-					{isAction ? (
-						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutSelect')} />
-					) : ''}
-				</div>
+				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
+				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
+				{isObject ? (
+					<>
+						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
+						<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+						<Shortcut keys={[ cmd, 'enter' ]} label={translate('popupSearchShortcutNewTab')} />
+					</>
+				) : ''}
+				{isAction ? (
+					<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutSelect')} />
+				) : ''}
 			</div>
 		);
 	};
