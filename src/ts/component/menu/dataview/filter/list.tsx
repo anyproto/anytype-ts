@@ -101,6 +101,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				rootId={rootId}
 				blockId={blockId}
 				filter={filter}
+				depth={0}
 				getView={getView}
 				getTarget={getTarget}
 				isInline={isInline}

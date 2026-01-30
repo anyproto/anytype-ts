@@ -2,20 +2,21 @@
 
 .menus {
 	.menu.menuDataviewFilterList {
-		.group { padding: 8px 16px 0px; }
+		.group { padding: 0px 0px 8px; }
 		.group {
+			.head { padding: 0px 0px 6px 0px; @include text-common; color: var(--color-text-primary); }
+			.head {
+				.label { @include text-common; padding: 0px; margin: 0px; color: var(--color-text-primary); }
+				.select {
+					border: 0px; font-weight: 500; padding: 2px 20px 2px 6px; display: inline-flex;
+					background: none; color: var(--color-text-primary); margin-left: -6px; border-radius: 6px;
+				}
+				.select.hover, .select:hover { background-color: var(--color-shape-highlight-medium); }
+			}
+
+			.items { padding: 0px 16px; }
 			.rule { padding-bottom: 8px; }
 			.rule {
-				.head { padding: 0px 0px 6px 0px; @include text-common; color: var(--color-text-primary); }
-				.head {
-					.label { @include text-common; padding: 0px; margin: 0px; color: var(--color-text-primary); }
-					.select {
-						border: 0px; font-weight: 500; padding: 2px 20px 2px 6px; display: inline-flex;
-						background: none; color: var(--color-text-primary); margin-left: -6px; border-radius: 6px;
-					}
-					.select.hover, .select:hover { background-color: var(--color-shape-highlight-medium); }
-				}
-
 				.inner { display: flex; align-items: center; gap: 0px 8px; }
 				.inner {
 					.relationSelect,
@@ -55,18 +56,42 @@
 
 					.icon.more { flex-shrink: 0; }
 				}
-
-				.group { border-radius: 8px; background-color: var(--color-shape-highlight-light); }
 			}
 			.rule.isReadonly {
 				.relationSelect, .conditionSelect { opacity: 0.7; }
 			}
 
+			.group {
+				.items { border-radius: 8px; background-color: var(--color-shape-highlight-light); padding: 8px 16px; }
+
+				.items {
+					.item { padding: 4px 8px; background: none; }
+					.item::before { width: 100%; left: 0px; }
+				}
+
+				.rule {
+					.inner {
+						.relationSelect:hover,
+						.relationSelect.hover,
+						.conditionSelect:hover,
+						.conditionSelect.hover { background-color: var(--color-shape-highlight-medium); }
+					}
+				}
+			}
+
 			.separator {
 				.inner { margin: 8px 0px; }
 			}
-			.item { padding: 4px 0px; }
-			.item::before { width: calc(100% + 16px); left: -8px; }
+
+			.item { background: none; }
+
+			&.depth0 { padding-top: 8px; padding-bottom: 0px; }
+			&.depth0 {
+				> .items {
+					> .item { padding: 4px 0px; background: none; }
+					> .item::before { width: calc(100% + 16px); left: -8px; }
+				}
+			}
 		}
 	}
 }

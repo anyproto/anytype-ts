@@ -8,6 +8,8 @@ interface Props {
 	blockId: string;
 	rule: I.Filter;
 	index: number;
+	depth: number;
+	parentPath: string;
 	operator: I.FilterOperator;
 	getView: () => any;
 	isInline: boolean;
@@ -15,11 +17,13 @@ interface Props {
 	onRemove: (index: number) => void;
 	onUpdate: (index: number, data: Partial<I.Filter>) => void;
 	onOperatorChange: (operator: I.FilterOperator) => void;
+	onTurnIntoGroup: (index: number) => void;
 };
 
 const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, blockId, rule, index, operator, getView, isInline, readonly, onRemove, onUpdate, onOperatorChange } = props;
+	const { rootId, blockId, rule, index, depth, parentPath, operator, getView, isInline, readonly, onRemove, onUpdate, onOperatorChange, onTurnIntoGroup } = props;
+	const nodeId = `rule-${parentPath}-${index}`;
 	const { relationKey, condition, value } = rule;
 	const operatorRef = useRef(null);
 	const conditionRef = useRef(null);
@@ -37,7 +41,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	const onRelationClick = (e: any) => {
 		e.stopPropagation();
 
-		const element = `#rule-${index} .relationSelect`;
+		const element = `#${nodeId} .relationSelect`;
 
 		U.Menu.sortOrFilterRelationSelect({
 			element,
@@ -64,17 +68,26 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	const onMore = (e: any) => {
 		e.stopPropagation();
 
+		const options: any[] = [];
+
+		if (depth < 2) {
+			options.push({ id: 'group', name: translate('menuDataviewFilterTurnIntoGroup'), icon: 'group' });
+		};
+
+		options.push({ id: 'delete', name: translate('commonDelete'), icon: 'remove' });
+
 		S.Menu.open('select', {
-			element: `#rule-${index} .icon.more`,
+			element: `#${nodeId} .icon.more`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			data: {
-				options: [
-					{ id: 'delete', name: translate('commonDelete'), icon: 'remove' },
-				],
-				onSelect: () => {
-					onRemove(index);
+				options,
+				onSelect: (e: any, option: any) => {
+					switch (option.id) {
+						case 'group': onTurnIntoGroup(index); break;
+						case 'delete': onRemove(index); break;
+					};
 				},
 			}
 		});
@@ -88,26 +101,26 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 	return (
 		<div
-			id={`rule-${index}`}
+			id={nodeId}
 			className={cn.join(' ')}
 		>
-			<div className="head">
-				{index == 0 ? (
-					<Label text={translate('commonWhere')} />
-				) : index == 1 ? (
+			{index == 0 ? '' : index == 1 ? (
+				<div className="head">
 					<Select
 						ref={operatorRef}
-						id={`rule-operator-${index}`}
+						id={`${nodeId}-operator`}
 						value={String(operator)}
 						options={operatorOptions}
 						onChange={v => onOperatorChange(Number(v) as I.FilterOperator)}
 						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
 						readonly={readonly}
 					/>
-				) : (
+				</div>
+			) : (
+				<div className="head">
 					<Label text={operatorName} />
-				)}
-			</div>
+				</div>
+			)}
 
 			<div className="inner">
 				<div className="relationSelect select" onClick={onRelationClick}>
@@ -118,9 +131,9 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 				<Select
 					className="conditionSelect"
-					key={`rule-condition-${index}-${relationKey}`}
+					key={`${nodeId}-condition-${relationKey}`}
 					ref={conditionRef}
-					id={`rule-condition-${index}`}
+					id={`${nodeId}-condition`}
 					value={String(condition)}
 					options={conditionOptions}
 					onChange={v => onUpdate(index, { condition: Number(v) as I.FilterCondition })}
