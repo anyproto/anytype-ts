@@ -27,6 +27,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const dragActive = useRef(false);
 	const timeoutDragOver = useRef(0);
 	const prevTargetKey = useRef<string | null>(null);
+	const prevDirectionClass = useRef<string | null>(null);
 
 	const getContainer = () => {
 		const isPopup = keyboard.isPopup();
@@ -261,6 +262,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				dragActive.current = false;
 				clearStyle();
 				prevTargetKey.current = null;
+				prevDirectionClass.current = null;
 			};
 		}, 100);
 	};
@@ -269,6 +271,22 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		// Reset the timeout on drag events too (not just dragOver)
+		// This prevents the timeout from clearing styles during active dragging
+		if (!dragActive.current) {
+			dragActive.current = true;
+		};
+
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+				prevTargetKey.current = null;
+				prevDirectionClass.current = null;
+			};
+		}, 100);
 	};
 
 	const onDragEnd = (e: any) => {
@@ -776,6 +794,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			const shouldShow = (currentPosition != I.BlockPosition.None) && canDrop.current && hd;
 			const dirClass = getDirectionClass(currentPosition);
 			const targetChanged = prevTargetKey.current !== currentKey;
+			const directionChanged = prevDirectionClass.current !== dirClass;
 			const prevKey = prevTargetKey.current;
 
 			// Only clear the previous target if it changed
@@ -788,8 +807,19 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 			// Apply new styles
 			if (shouldShow && currentObj) {
-				// Remove direction classes first, then add current ones
-				currentObj.removeClass('top bottom left right middle').addClass(`isOver ${dirClass}`);
+				if (targetChanged) {
+					// New target - add both isOver and direction class
+					currentObj.addClass(`isOver ${dirClass}`);
+				} else
+				if (directionChanged && prevDirectionClass.current) {
+					// Same target, different direction - only swap direction class
+					// This avoids removing isOver which would cause a visual gap
+					currentObj.removeClass(prevDirectionClass.current).addClass(dirClass);
+				} else
+				if (!currentObj.hasClass('isOver')) {
+					// Ensure styles are applied if somehow missing
+					currentObj.addClass(`isOver ${dirClass}`);
+				};
 			} else
 			if (targetChanged && !shouldShow) {
 				// Clear all styles if we're not hovering anything valid
@@ -797,6 +827,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			};
 
 			prevTargetKey.current = shouldShow ? currentKey : null;
+			prevDirectionClass.current = shouldShow ? dirClass : null;
 		});
 	};
 
@@ -876,6 +907,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		isInitialised.current = false;
 		objectData.current.clear();
 		prevTargetKey.current = null;
+		prevDirectionClass.current = null;
 	};
 
 	const setHoverData = (v: any) => {
