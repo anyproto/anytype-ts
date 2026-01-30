@@ -251,12 +251,42 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		if (!dragActive.current) {
+			dragActive.current = true;
+		};
+
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+				prevTargetKey.current = null;
+				prevDirectionClass.current = null;
+			};
+		}, 100);
 	};
 
 	const onDrag = (e: any) => {
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		// Reset the timeout on drag events too (not just dragOver)
+		// This prevents the timeout from clearing styles during active dragging
+		if (!dragActive.current) {
+			dragActive.current = true;
+		};
+
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+				prevTargetKey.current = null;
+				prevDirectionClass.current = null;
+			};
+		}, 100);
 	};
 
 	const onDragEnd = (e: any) => {
