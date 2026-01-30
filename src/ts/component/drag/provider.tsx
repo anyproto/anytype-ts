@@ -269,6 +269,16 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		// Reset timeout to prevent blinking on Linux where dragover events may not fire consistently
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+				prevTargetKey.current = null;
+			};
+		}, 100);
 	};
 
 	const onDragEnd = (e: any) => {
