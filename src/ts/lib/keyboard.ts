@@ -278,13 +278,6 @@ class Keyboard {
 				this.onSearchPopup(route);
 			});
 
-			// Text search
-			this.shortcut('searchText', e, () => {
-				if (!this.isFocused) {
-					this.onSearchText('', route);
-				};
-			});
-
 			// Navigation links
 			this.shortcut('navigation', e, () => {
 				e.preventDefault();
@@ -1989,6 +1982,9 @@ class Keyboard {
 			};
 			if (key == 'comma') {
 				return ',';
+			};
+			if (key == Key.escape) {
+				return 'Esc';
 			};
 			return U.String.ucFirst(key);
 		});

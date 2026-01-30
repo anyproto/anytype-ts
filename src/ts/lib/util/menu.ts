@@ -1002,15 +1002,14 @@ class UtilMenu {
 					});
 
 					Renderer.send('openTab', { route }, { setActive: false });
-					analytics.event('AddTab', { route: analytics.route.vault, uxType });
+					analytics.event('AddTab', { route, uxType });
 					break;
 				};
 
 				case 'searchChat': {
 					S.Menu.closeAll(null, () => {
-						$(window).trigger('openSearchChat');
+						keyboard.onSearchText('', route);
 					});
-					
 					break;
 				};
 

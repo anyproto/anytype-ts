@@ -53,7 +53,7 @@
 		.cell.isEditing {
 			.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
 			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
-			.icon.clear { right: 8px; }
+			.icon.clear { right: 6px; top: 6px; }
 
 			#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
 		}

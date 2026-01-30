@@ -129,6 +129,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
+- Translation keys are defined in `src/json/text.json`
 - Block operations should go through the command system
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
@@ -151,3 +152,22 @@ curl -s -X POST "https://api.linear.app/graphql" \
 ```
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
+
+## Figma MCP Integration
+
+Use the Figma MCP tools to fetch design context and screenshots from Figma files.
+
+**Available tools:**
+- `mcp__figma__get_design_context` - Get UI code/design context for a Figma node (preferred)
+- `mcp__figma__get_screenshot` - Get a screenshot of a Figma node
+- `mcp__figma__get_metadata` - Get metadata/structure of a Figma node
+
+**Extract parameters from Figma URLs:**
+- URL format: `https://www.figma.com/design/:fileKey/:fileName?node-id=:nodeId`
+- `fileKey` is the ID after `/design/`
+- `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
+
+**Example usage:**
+For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
+- `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
+- `nodeId`: `12769:19003`

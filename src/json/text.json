@@ -753,6 +753,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedUnsupported": "Unsupported embed. Please update the app.",
 	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
@@ -1390,6 +1391,12 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
+	"popupSearchShortcutNavigate": "Navigate",
+	"popupSearchShortcutClose": "Close",
+	"popupSearchShortcutOpen": "Open",
+	"popupSearchShortcutCopyLink": "Copy link",
+	"popupSearchShortcutNewTab": "New tab",
+	"popupSearchShortcutSelect": "Select",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -2445,17 +2452,6 @@
 	"errorAccountRecover109": "Vault has been deletesd",
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
-
-	"errorMembershipFinalize6": "Membership not found",
-	"errorMembershipFinalize7": "Membership has wrong state",
-	"errorMembershipFinalize8": "Bad Any name",
-	"errorMembershipFinalize9": "Please connect to the internet",
-
-	"errorMembershipGetVerificationEmail6": "Email format is invalid",
-	"errorMembershipGetVerificationEmail7": "This email is already verified",
-	"errorMembershipGetVerificationEmail8": "Email has been already sent",
-	"errorMembershipGetVerificationEmail9": "Failed to send email",
-	"errorMembershipGetVerificationEmail10": "Membership already exists",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",

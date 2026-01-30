@@ -34,6 +34,9 @@
 			.preview, .icon.source { display: none; }
 			.editableWrap { margin: 0px; }
 		}
+		.wrap.isUnsupported {
+			.preview.unsupported { display: flex; }
+		}
 
 		.empty { padding: 6px 8px; }
 
@@ -84,6 +87,17 @@
 		.preview.isImage { background-image: url('~img/icon/block/embed/image.svg'); }
 		.preview.isSpotify { background-image: url('~img/icon/block/embed/spotify.svg'); }
 		.preview.isAppleMusic { background-image: url('~img/icon/block/embed/appleMusic.svg'); }
+
+		.preview.unsupported {
+			display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; background-image: none;
+		}
+		.preview.unsupported {
+			.iconEmbed {
+				width: 28px; height: 28px; background-size: contain; background-repeat: no-repeat; background-position: center;
+				background-image: url('~img/icon/block/embed/default.svg');
+			}
+			.label { position: static; color: var(--color-text-secondary); @include text-common; }
+		}
 
 		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }

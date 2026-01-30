@@ -287,6 +287,7 @@ class Analytics {
 	 */
 	event (code: string, data?: any) {
 		data = data || {};
+		data.params = data.params || {};
 
 		if (!this.instance || !this.isAllowed() || !code) {
 			return;
@@ -535,7 +536,7 @@ class Analytics {
 					data.type = J.Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
-				data.layout = I.WidgetLayout[data.layout];
+				data.layout = I.WidgetLayout[Number(data.layout) || 0];
 				break;
 			};
 
@@ -637,6 +638,8 @@ class Analytics {
 					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
 					default:							res = I.InviteType[data.type]; break;
 				};
+
+				data.type = res;
 				break;
 			};
 
@@ -799,7 +802,6 @@ class Analytics {
 			widgetSection:		 'ScreenManageSections',
 			widget:				 'ScreenWidgetMenu',
 			changeOwner:		 'ScreenTransferSpaceOwnership',
-			searchChat:			 'ScreenChatSearch',
 		};
 
 		return map[id] || '';

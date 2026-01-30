@@ -27,6 +27,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ currentIndex, setCurrentIndex ] = useState(-1);
 	const [ dummy, setDummy ] = useState(0);
+	const [ isDropdownOpen, setIsDropdownOpen ] = useState(true);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
@@ -42,12 +43,14 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		beforePosition();
-		restoreState();
+
+		analytics.event('ScreenChatSearch', { route });
 
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
 			window.clearTimeout(timeout.current);
+			storageSet?.({ filter: '', currentIndex: -1, chatId: '' });
 		};
 	}, []);
 
@@ -85,6 +88,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		offset.current = 0;
 		setCurrentIndex(-1);
+		setIsDropdownOpen(true);
 		load(true);
 	};
 
@@ -174,6 +178,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
+		// Close dropdown when navigation buttons are clicked
+		if (isDropdownOpen) {
+			setIsDropdownOpen(false);
+		};
+
 		const newIndex = currentIndex + dir;
 		if (newIndex < 0 || newIndex >= items.length) {
 			return;
@@ -189,8 +198,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setActive(item, true);
 			scrollToMessage?.(item.id);
 		};
-
-		close();
 	};
 
 	const saveState = (filterValue: string, index: number) => {
@@ -228,6 +235,9 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const width = Math.min(header.width(), J.Size.editor);
 
 		let height = 0;
+		if (!isDropdownOpen) {
+			height = 46;
+		} else
 		if (!items.length) {
 			height = filter.current ? 160 : 46;
 		} else {
@@ -377,11 +387,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			</div>
 
-			{!items.length && !isLoading && filter.current ? (
+			{!items.length && !isLoading && filter.current && isDropdownOpen ? (
 				<EmptySearch filter={filter.current} />
 			) : ''}
 
-			{items.length && !isLoading ? (
+			{items.length && !isLoading && isDropdownOpen ? (
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
