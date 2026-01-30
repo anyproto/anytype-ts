@@ -90,7 +90,7 @@ body.platform-win32.showMenuBar {
 	.tab.active .div { display: none; }
 	.tab.hideDiv .div { display: none; }
 
-	.tab.isAdd { flex: 0 0 auto; min-width: 32px; }
+	.tab.isAdd { flex: 0 0 auto; min-width: 32px; padding: 4px 8px; }
 	.tab.isAdd {
 		.icon { 
 			width: 28px; height: 28px; background-size: 20px; background-image: url('../img/icon/plus.svg'); 
