@@ -496,6 +496,23 @@ class UtilSpace {
 		return [ 'https:/', this.getPublishDomain(), slug ].join('/');
 	};
 
+	/**
+	 * Checks if the current user can transfer ownership in the current space.
+	 * @returns {boolean} True if the user can transfer ownership, false otherwise.
+	 */
+	canTransferOwnership (): boolean {
+		const spaceview = this.getSpaceview();
+
+		if (!spaceview.isShared || spaceview.isOneToOne || !this.isMyOwner()) {
+			return false;
+		};
+
+		const members = this.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const participant = this.getParticipant();
+		
+		return !!members.filter(it => it.id !== participant?.id).length;
+	};
+
 };
 
 export default new UtilSpace();

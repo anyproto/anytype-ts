@@ -35,6 +35,10 @@
 		&:not(.withIcon) {
 			.inner { padding-left: 12px; }
 		}
+
+		&.c32 {
+			.inner { height: 32px; border-radius: 16px; }
+		}
 	}
 }
 .filter.outlined.isFocused {

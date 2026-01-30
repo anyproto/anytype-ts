@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
+import { I, C, S, U, translate, Preview, Action, analytics, keyboard } from 'Lib';
 import Members from './share/members';
 
 const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {

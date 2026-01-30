@@ -79,7 +79,8 @@ class UtilData {
 	 * @param {I.SpaceUxType} v - The space UX type.
 	 * @returns {string} The CSS class.
 	 */
-	spaceClass(v: I.SpaceUxType): string {
+	spaceClass (v: I.SpaceUxType): string {
+		v = Number(v) || I.SpaceUxType.None;
 		return v ? `space${String(I.SpaceUxType[v])}` : '';
 	};
 

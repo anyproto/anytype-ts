@@ -33,6 +33,7 @@
 	"commonRetry": "Retry",
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
+	"commonAuthentication": "Authentication",
 	"commonGraph": "Graph",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
@@ -1038,6 +1039,19 @@
 	"popupSettingsSpaceShareQRCode": "QR code",
 	"popupSettingsSpaceShareMakePrivate": "Make Private",
 	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
+	"popupSettingsSpaceShareTransferOwnership": "Transfer ownership",
+	"popupSettingsSpaceShareSelectNewOwner": "Select the new owner",
+
+	"popupConfirmOwnershipTransferTitle": "Confirm ownership transfer",
+	"popupConfirmOwnershipTransferText": "You're transferring ownership of \"<b>%s</b>\" to <b>%s</b>. This action is immediate and cannot be undone.<br/><br/>After the transfer:<ul><li>%s will become the new owner</li><li>You'll become an Editor</li><li>Only the new owner can transfer it again</li><li>The new owner's membership limits will apply to this channel</li></ul>Type the channel name to confirm:",
+
+	"toastOwnershipTransferred": "Ownership transferred successfully",
+
+	"popupConfirmOwnershipTransferringTitle": "Transferring ownership...",
+	"popupConfirmOwnershipTransferringText": "Reassigning channel permissions and roles.",
+	"popupConfirmOwnershipTransferredTitle": "Ownership passed successfully",
+	"popupConfirmOwnershipTransferredText": "You've transferred <b>%s</b> to <b>%s</b>.<br/>You now have Editor access to this channel.",
+	"popupConfirmOwnershipTransferredButton": "Back to Members",
 
 	"popupSettingsMembershipTitle": "Membership",
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",

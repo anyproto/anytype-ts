@@ -1,5 +1,3 @@
-import { I } from 'Lib';
-
 export interface PopupParam {
 	data?: any;
 	className?: string;
@@ -7,6 +5,7 @@ export interface PopupParam {
 	preventMenuClose?: boolean;
 	preventCloseByClick?: boolean;
 	preventCloseByEscape?: boolean;
+	onOpen?(context: any): void;
 	onClose?(): void;
 };
 
