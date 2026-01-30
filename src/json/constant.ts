@@ -96,7 +96,7 @@ export default {
 	},
 
 	fileExtension: {
-		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ],
+		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'heic', 'heif' ],
 		video:			 [ 'mp4', 'm4v', 'mov' ],
 		cover:			 [ 'jpg', 'jpeg', 'png', 'gif', 'webp' ],
 		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav' ],
