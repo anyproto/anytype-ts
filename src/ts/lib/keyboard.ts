@@ -95,7 +95,7 @@ class Keyboard {
 			return;
 		};
 
-		if (ww <= 800) {
+		if (ww <= 900) {
 			sidebar.leftPanelClose(false, false);
 		} else {
 			sidebar.leftPanelOpen(data.width, false, false);
