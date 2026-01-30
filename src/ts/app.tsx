@@ -310,9 +310,10 @@ const App: FC = () => {
 				U.Data.onAuthOnce();
 
 				const param = route ? U.Router.getParam(route) : {};
+				const spaceId = param.spaceId || Storage.get('spaceId');
 
-				if (param.spaceId) {
-					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+				if (spaceId) {
+					U.Router.switchSpace(spaceId, '', false, routeParam, true);
 				} else {
 					U.Router.go('/main/void/select', routeParam);
 				};

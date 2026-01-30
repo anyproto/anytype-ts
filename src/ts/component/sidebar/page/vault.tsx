@@ -290,18 +290,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const onClick = (item: any) => {
-		const routeParam = {
-			onRouteChange: () => {
-				if (!space) {
-					sidebar.leftPanelSubPageOpen('widget', false, false);
-				};
-			},
-		};
-
 		if (item.targetSpaceId != space) {
-			U.Router.switchSpace(item.targetSpaceId, '', !!space, routeParam, false);
+			U.Router.switchSpace(item.targetSpaceId, '', !!space, {}, false);
 		} else {
-			U.Space.openDashboard(routeParam);
+			U.Space.openDashboard();
 		};
 
 		Preview.tooltipHide();

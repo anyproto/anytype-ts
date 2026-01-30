@@ -34,6 +34,7 @@ class UtilSpace {
 
 		U.Object.openRoute(home, param);
 		S.Common.setLeftSidebarState('vault', 'widget');
+		sidebar.leftPanelSubPageOpen('widget', false, false);
 	};
 
 	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
