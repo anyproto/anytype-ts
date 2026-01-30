@@ -237,6 +237,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
 	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
+	const cns = [ 'status', 'syncing' ];
 
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);
@@ -245,10 +246,9 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	let userpicNode = null;
 	let authorNode = null;
-	let statusIcon = <Icon className="status syncing" />;
 
 	if (isSynced || !isSelf) {
-		statusIcon = null;
+		cns.push('isHidden');
 	};
 
 	if (!readonly) {
@@ -366,7 +366,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											className="text"
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
-										<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
+										<div className="time">
+											<Icon className={cns.join(' ')} />
+											{editedLabel} {U.Date.date('H:i', createdAt)}
+										</div>
 									</div>
 
 									{hasAttachments ? (
