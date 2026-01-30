@@ -287,6 +287,7 @@ class Analytics {
 	 */
 	event (code: string, data?: any) {
 		data = data || {};
+		data.params = data.params || {};
 
 		if (!this.instance || !this.isAllowed() || !code) {
 			return;
@@ -535,7 +536,7 @@ class Analytics {
 					data.type = J.Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
-				data.layout = I.WidgetLayout[data.layout];
+				data.layout = I.WidgetLayout[Number(data.layout) || 0];
 				break;
 			};
 

@@ -1,3 +1,4 @@
+import block from 'Component/block';
 import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
 const Diff = require('diff');
@@ -194,33 +195,6 @@ class Action {
 
 			analytics.event('DeleteBlock', { count: blockIds.length });
 		});
-	};
-
-	/**
-	 * Removes a widget block and updates storage.
-	 * @param {string} id - The widget block ID.
-	 * @param {any} target - The target parameter for analytics.
-	 */
-	removeWidget (id: string, target: any) {
-		const { widgets } = S.Block;
-		const block = S.Block.getLeaf(widgets, id);
-
-		if (!block) {
-			return;
-		};
-
-		const { layout } = block.content;
-
-		C.BlockListDelete(widgets, [ id ]);
-		Storage.setToggle('widget', id, false);
-		Storage.deleteToggle(`widget${id}`);
-
-		const childrenIds = S.Block.getChildrenIds(widgets, id);
-		if (childrenIds.length) {
-			Storage.deleteToggle(`widget${childrenIds[0]}`);
-		};
-
-		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	/**
@@ -844,6 +818,34 @@ class Action {
 		});
 	};
 
+	removeWidgetStorage (id: string) {
+		Storage.setToggle('widget', id, false);
+		Storage.deleteToggle(`widget${id}`);
+
+		const childrenIds = S.Block.getChildrenIds(S.Block.widgets, id);
+		if (childrenIds.length) {
+			Storage.deleteToggle(`widget${childrenIds[0]}`);
+		};
+	};
+
+	/**
+	 * Removes a widget block and updates storage.
+	 * @param {string} id - The widget block ID.
+	 * @param {any} target - The target parameter for analytics.
+	 */
+	removeWidget (id: string, target: any) {
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, id);
+		if (!block) {
+			return;
+		};
+
+		C.BlockListDelete(widgets, [ id ]);
+		this.removeWidgetStorage(id);
+
+		analytics.event('DeleteWidget', { layout: block.content.layout, params: { target } });
+	};
+
 	removeWidgetsForObjects (objectIds: string[], callBack?: (message: any) => void) {
 		const { widgets } = S.Block;
 		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
@@ -863,6 +865,11 @@ class Action {
 
 			const target = child.getTargetObjectId();
 			return objectIds.includes(target);
+		});
+
+		list.forEach(block => {
+			analytics.event('DeleteWidget', { layout: block.content.layout });
+			this.removeWidgetStorage(block.id);
 		});
 
 		C.BlockListDelete(widgets, list.map(it => it.id), callBack);
