@@ -26,6 +26,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const origin = useRef(null);
 	const dragActive = useRef(false);
 	const timeoutDragOver = useRef(0);
+	const prevTargetKey = useRef<string | null>(null);
 
 	const getContainer = () => {
 		const isPopup = keyboard.isPopup();
@@ -259,6 +260,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			if (dragActive.current) {
 				dragActive.current = false;
 				clearStyle();
+				prevTargetKey.current = null;
 			};
 		}, 100);
 	};
@@ -766,11 +768,35 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			raf.cancel(frame.current);
 		};
 
+		const currentKey = hd ? hd.cacheKey : null;
+		const currentPosition = position.current;
+		const currentObj = obj;
+
 		frame.current = raf(() => {
-			clearStyle();
-			if ((position.current != I.BlockPosition.None) && canDrop.current && hd) {
-				obj.addClass(`isOver ${getDirectionClass(position.current)}`);
+			const shouldShow = (currentPosition != I.BlockPosition.None) && canDrop.current && hd;
+			const dirClass = getDirectionClass(currentPosition);
+			const targetChanged = prevTargetKey.current !== currentKey;
+			const prevKey = prevTargetKey.current;
+
+			// Only clear the previous target if it changed
+			if (targetChanged && prevKey) {
+				const prevData = objectData.current.get(prevKey);
+				if (prevData && prevData.obj) {
+					$(prevData.obj).removeClass('isOver top bottom left right middle');
+				};
 			};
+
+			// Apply new styles
+			if (shouldShow && currentObj) {
+				// Remove direction classes first, then add current ones
+				currentObj.removeClass('top bottom left right middle').addClass(`isOver ${dirClass}`);
+			} else
+			if (targetChanged && !shouldShow) {
+				// Clear all styles if we're not hovering anything valid
+				clearStyle();
+			};
+
+			prevTargetKey.current = shouldShow ? currentKey : null;
 		});
 	};
 
@@ -838,11 +864,18 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			setHoverData(null);
 		};
 
+		// Cancel any pending RAF to prevent re-adding styles after clear
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
+		};
+
 		clearStyle();
 		setPosition(I.BlockPosition.None);
 
 		isInitialised.current = false;
 		objectData.current.clear();
+		prevTargetKey.current = null;
 	};
 
 	const setHoverData = (v: any) => {
