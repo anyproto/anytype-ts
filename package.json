@@ -175,6 +175,7 @@
 	"overrides": {
 		"async": "^3.2.5",
 		"getos": "^3.2.1",
+		"lodash-es": "^4.17.23",
 		"micromatch": "^4.0.8",
 		"tar": "^7.5.7",
 		"tmp": "^0.2.4",
