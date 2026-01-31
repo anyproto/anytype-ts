@@ -2419,7 +2419,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const elements = node.find('#elements');
 
 		node.css({ width });
-		elements.css({ width, marginLeft: width / 2 });
+		elements.css({ width, marginLeft: -width / 2 });
 
 		if (headerRef.current && headerRef.current.refDrag) {
 			headerRef.current.refDrag.setValue(v);

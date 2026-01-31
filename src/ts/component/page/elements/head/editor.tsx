@@ -16,12 +16,14 @@ interface RefProps {
 const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
-	const nodeRef = useRef(null);
 	const dragRef = useRef(null);
+	const dragValueRef = useRef(null);
 	const check = U.Data.checkDetails(rootId, rootId, []);
 	const header = S.Block.getLeaf(rootId, 'header');
 	const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 	const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
+	const root = S.Block.getLeaf(rootId, rootId);
+	const width = Number(root?.fields?.width) || 0;
 
 	if (U.Object.isInHumanLayouts(check.layout)) {
 		icon.type = I.BlockType.IconUser;
@@ -61,25 +63,17 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const setPercent = (v: number) => {
-		const node = $(nodeRef.current);
-		const value = node.find('#dragValue');
-
-		value.text(Math.ceil((v + 1) * 100) + '%');
+		$(dragValueRef.current).text(Math.ceil((v + 1) * 100) + '%');
 	};
-
-	useEffect(() => {
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		init();
-
-		if (root && dragRef.current) {
-			dragRef.current.setValue(root.fields.width);
-		};
-	}, []);
 
 	useEffect(() => {
 		init();
 	});
+
+	useEffect(() => {
+		dragRef.current?.setValue(width);
+		setPercent(width);
+	}, [ width ]);
 
 	useImperativeHandle(ref, () => ({
 		getDrag: () => dragRef.current,
@@ -87,7 +81,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<div ref={nodeRef}>
+		<>
 			<div id="editorSize" className="dragWrap">
 				<DragHorizontal 
 					ref={dragRef} 
@@ -97,7 +91,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onMove={onScaleMove} 
 					onEnd={onScaleEnd} 
 				/>
-				<div id="dragValue" className="number">100%</div>
+				<div ref={dragValueRef} className="number">100%</div>
 			</div>
 
 			{check.withCover ? <Block {...props} key={cover.id} block={cover} className="noPlus" /> : ''}
@@ -120,7 +114,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onPaste={onPaste}
 				/>
 			</div>
-		</div>
+		</>
 	);
 
 }));
