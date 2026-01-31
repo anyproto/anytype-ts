@@ -45,7 +45,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	}, [ view.wrapContent, relations.length ]);
 
 	useEffect(() => {
-		rebind();
 		resize();
 		onScrollHorizontal();
 		onScrollVertical();
@@ -58,7 +57,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		};
 
 		U.Common.triggerResizeEditor(isPopup);
-	});
+	}, [ relations.length, view?.id ]);
 
 	if (!view) {
 		return null;

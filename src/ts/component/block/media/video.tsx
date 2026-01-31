@@ -164,11 +164,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		return () => {
 			unbind();
 		};
-	}, [ rebind, initVideo, unbind ]);
-	
-	useEffect(() => {
-		rebind();
-	});
+	}, [ state, targetObjectId ]);
 
 	useImperativeHandle(ref, () => ({}));
 
