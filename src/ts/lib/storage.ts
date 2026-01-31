@@ -97,6 +97,18 @@ class Storage {
 		};
 
 		let o = Api.get(key, isLocal);
+
+		// Migration: if local storage is empty, check electron store as fallback
+		if ((undefined === o) && isLocal && electron.storeGet) {
+			o = electron.storeGet(key);
+
+			// If found in electron store, migrate to localStorage
+			if (o !== undefined) {
+				Api.set(key, o, true);
+				electron.storeDelete(key);
+			};
+		};
+
 		if (undefined === o) {
 			o = Api.parse(String(localStorage.getItem(key) || ''));
 		};
