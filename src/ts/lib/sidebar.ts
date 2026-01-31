@@ -54,6 +54,7 @@ class Sidebar {
 			const isClosed = (undefined !== data.isClosed) && (panel != I.SidebarPanel.Right) ? Boolean(data.isClosed) : true;
 
 			this.setData(panel, isPopup, { width, isClosed }, false);
+			this.setStyle(panel, isPopup, { width, isClosed });
 		};
 
 		this.resizePage(isPopup, null, null, false);
@@ -77,7 +78,6 @@ class Sidebar {
 		const key = [ panel, ns ].join('');
 
 		this.panelData[key] = Object.assign(this.panelData[key] || {}, v);
-		this.setStyle(panel, isPopup, this.panelData[key]);
 
 		if (save) {
 			Storage.set(storageKey, this.panelData, Storage.isLocal(storageKey));
@@ -139,7 +139,6 @@ class Sidebar {
 			return;
 		};
 
-
 		const objLeft = this.leftPanelGetNode();
 		const pageWrapperLeft = objLeft.find('#pageWrapper');
 
@@ -154,8 +153,8 @@ class Sidebar {
 			pageWrapperLeft.addClass('anim');
 		};
 
-		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
+		this.setStyle(I.SidebarPanel.Left, false, { width: 0, isClosed: true });
 		this.resizePage(false, newWidth, null, animate);
 
 		window.clearTimeout(this.timeoutAnim);
@@ -192,7 +191,7 @@ class Sidebar {
 
 		pageWrapperLeft.removeClass('isClosed');
 
-		this.setStyle(I.SidebarPanel.Left, false, { width });
+		this.setStyle(I.SidebarPanel.Left, false, { width, isClosed: false });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, save);
 		this.resizePage(false, newWidth, null, animate);
 
@@ -244,6 +243,8 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true }, true);
+			this.setStyle(I.SidebarPanel.Right, isPopup, { isClosed: true });
+
 			obj.removeClass('sidebarAnimation').css({ transform: '' });
 			this.resizePage(isPopup, null, null, false);
 
@@ -272,8 +273,8 @@ class Sidebar {
 
 		S.Common.setRightSidebarState(isPopup, state);
 
-		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false }, true);
+		this.setStyle(I.SidebarPanel.Right, isPopup, { width, isClosed: false });
 		this.resizePage(isPopup, null, width, animate);
 
 		raf(() => {
@@ -336,6 +337,7 @@ class Sidebar {
 
 		window.setTimeout(() => {
 			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, save);
+			this.setStyle(I.SidebarPanel.SubLeft, false, { isClosed: true });
 
 			objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			subPageWrapperLeft.removeClass('sidebarAnimation isClosing').css({ transform: '' });
@@ -375,6 +377,7 @@ class Sidebar {
 		dummyLeft.css({ width });
 		this.resizePage(false, newWidth, null, animate);
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, save);
+		this.setStyle(I.SidebarPanel.SubLeft, false, { isClosed: false });
 
 		raf(() => {
 			subPageWrapperLeft.addClass('sidebarAnimation isOpening').css({ transform: 'translate3d(0px,0px,0px)' });
@@ -408,11 +411,15 @@ class Sidebar {
 	 * @param {I.SidebarPanel} panel - Current sidebar panel.
 	 * @param {number} w - The width to set.
 	 */
-	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
+	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number, save: boolean): void {
+		width = this.limitWidth(panel, width);
+
 		if (panel == I.SidebarPanel.Left) {
-			S.Common.vaultIsMinimalSet(w <= J.Size.vaultStripeMaxWidth);
+			S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
 		};
-		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
+
+		this.setData(panel, isPopup, { width }, save);
+		this.setStyle(panel, isPopup, { width });
 		this.resizePage(isPopup, null, null, false);
 	};
 
@@ -643,6 +650,9 @@ class Sidebar {
 		if (undefined !== v.isClosed) {
 			obj.toggleClass('isClosed', v.isClosed);
 		};
+
+		console.log('SET STYLE', panel, isPopup, v);
+		console.trace();
 	};
 
 	/**
