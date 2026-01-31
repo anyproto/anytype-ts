@@ -14,7 +14,7 @@ module.exports = (env, argv) => {
 
 	const base = {
 		mode: 'development',
-		devtool: 'source-map',
+		//devtool: 'source-map',
 
 		optimization: {
 			minimize: false,
@@ -99,12 +99,14 @@ module.exports = (env, argv) => {
 						},
 					},
 				},
-				{
+				// source-map-loader causes V8 to retain multiple copies of the bundle in memory
+				// Only enable when explicitly needed for debugging external libraries
+				...(process.env.ENABLE_SOURCE_MAPS ? [{
 					enforce: 'pre',
 					test: /\.js$/,
 					exclude: [ /node_modules\/@excalidraw/ ],
 					loader: 'source-map-loader'
-				},
+				}] : []),
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
 					type: 'asset/inline'

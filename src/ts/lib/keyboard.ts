@@ -37,6 +37,7 @@ class Keyboard {
 	init () {
 		this.unbind();
 		this.initShortcuts();
+		this.onResize();
 		
 		const win = $(window);
 

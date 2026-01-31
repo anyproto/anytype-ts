@@ -437,8 +437,10 @@ class UtilSubscription {
 				crossSpace: true,
 			},
 		];
-
-		this.createList(list, () => this.createSubSpace(null, callBack));
+		
+		this.destroyList(list.map(it => it.subId), true, () => {
+			this.createList(list, () => this.createSubSpace(null, callBack));
+		});
 	};
 
 	/**
@@ -488,7 +490,9 @@ class UtilSubscription {
 			});
 		});
 
-		this.createList(list, callBack);
+		this.destroyList(list.map(it => it.subId), true, () => {
+			this.createList(list, callBack);
+		});
 	};
 
 	/**
@@ -622,7 +626,9 @@ class UtilSubscription {
 			},
 		];
 
-		this.createList(list, () => this.createTypeCheck(callBack));
+		this.destroyList(list.map(it => it.subId), true, () => {
+			this.createList(list, () => this.createTypeCheck(callBack));
+		});
 	};
 
 	/**

@@ -4,7 +4,7 @@ $transitionAllCommon: all $transitionCommon;
 
 $transitionMenuTime: 0.2s;
 $transitionPopupTime: 0.2s;
-$transitionSidebarTime: 0.3s;
+$transitionSidebarTime: 0.2s;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
