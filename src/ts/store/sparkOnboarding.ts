@@ -254,8 +254,10 @@ class SparkOnboardingStore {
 		// Clear all animation timeouts
 		this.animationTimeouts.forEach(id => clearTimeout(id));
 		this.animationTimeouts = [];
-		
+
 		if (this.service) {
+			// Remove all event listeners before disconnecting
+			this.service.removeAllListeners();
 			this.service.disconnect();
 			this.isConnected = false;
 		};

@@ -50,9 +50,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
 	const object = S.Detail.get(rootId, rootId, []);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
 
 	if (![ 'authIndex' ].includes(component)) {
 		cn.push('isCommon');
@@ -212,6 +209,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
 		};
@@ -219,9 +220,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		resize();
 
 		return () => {
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
+			resizeObserver.disconnect();
 		};
 	}, []);
 
