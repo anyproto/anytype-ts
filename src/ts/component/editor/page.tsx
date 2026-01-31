@@ -2433,7 +2433,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		weight = Number(weight) || 0;
 
 		const container = U.Common.getPageContainer(isPopup);
-		const width = Math.min(container.width() - 96, (1 + weight) * J.Size.editor);
+		const mw = container.width() - 96;
+		const width = Math.min(mw, J.Size.editor + (mw - J.Size.editor) * weight);
 
 		return Math.max(300, width);
 	};
