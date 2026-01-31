@@ -128,7 +128,15 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				if (removed.length) {
 					removed.forEach(it => {
 						const idx = oldChildrenIds.indexOf(it);
-						const afterId = newChildrenIds[idx - 1];
+
+						// Find the first block before this one that still exists in newChildrenIds
+						let afterId = '';
+						for (let i = idx - 1; i >= 0; i--) {
+							if (newChildrenIds.includes(oldChildrenIds[i])) {
+								afterId = oldChildrenIds[i];
+								break;
+							};
+						};
 
 						if (afterId) {
 							elements.push({ type: I.DiffType.Remove, element: `#block-${afterId} > .wrapContent` });
