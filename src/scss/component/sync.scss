@@ -1,38 +1,34 @@
 @import "~scss/_mixins";
 
 @keyframes syncing {
-	0% { transform: scale3d(1,1,1); opacity: 0.4; }
-	70% { transform: scale3d(3.2,3.2,1); opacity: 0; }
-	100% { transform: scale3d(3.5,3.5,1); opacity: 0; }
+	0%, 100% { opacity: 0.2; }
+	40%, 60% { opacity: 1; }
 };
 
 .sync { 
-	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
+	height: 28px; width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
 	border-radius: 4px; gap: 0px 8px; justify-content: center;
 }
-.sync:hover, .sync.hover { background: var(--color-shape-highlight-medium); }
 .sync {
-	.icon { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-control-active); }
-	.icon.error { background-color: var(--color-red); display: block; }
+	.icon { width: 20px; height: 20px; background-image: url('~img/icon/sync/default.svg'); pointer-events: none; }
 	.icon.synced,
-	.icon.syncing { background-color: var(--color-lime); }
-	.icon.upgrade { background-color: var(--color-yellow); }
+	.icon.syncing { background-image: url('~img/icon/sync/synced.svg'); }
+	.icon.error { background-image: url('~img/icon/sync/error.svg'); }
+	.icon.offline { background-image: url('~img/icon/sync/offline.svg'); }
+	.icon.upgrade { background-image: url('~img/icon/sync/upgrade.svg'); }
 
-	.icon.syncing::before,
-	.icon.syncing::after {
-		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px; display: block; width: 8px; height: 8px; border-radius: 50%; 
-		background-color: var(--color-lime); animation: syncing 1.6s ease-out infinite;
-	}
-	.icon.syncing::after { animation-delay: 1.5s; }
+	.icon.syncing { animation: syncing 2s ease-out infinite; }
 
-	.name { @include text-overflow-nw; margin-right: 10px; }
-
+	.name { @include text-overflow-nw; margin-right: 10px; display: none; }
 	.badge { padding-right: 10px; }
-}
-.sync:not(.errorIncompatibleVersion) {
-	.name { display: none; }
-}
-.sync:hover,
-.sync.hover {
-	.name { display: block; }
+
+	&.hover, &:hover { background: var(--color-shape-highlight-medium);  }
+	&.hover, &:hover {
+		.name { display: block; }
+	}
+
+	&.errorIncompatibleVersion { width: auto; }
+	&.errorIncompatibleVersion {
+		.name { display: block; }
+	}
 }

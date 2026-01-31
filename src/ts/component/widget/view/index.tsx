@@ -10,6 +10,7 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
+import { get } from 'jquery';
 
 interface WidgetViewRefProps {
 	updateData: () => void;
@@ -24,9 +25,10 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
-		getContentParam, getObject
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
+		getContentParam, getObject, onSetPreview
 	} = props;
+	const { space } = S.Common;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
@@ -37,13 +39,29 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
-	const rootId = block ? [ targetId, traceId ].join('-') : '';
+	const rootId = getRootId();
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-	const viewType = view ? view.type : I.ViewType.List;
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
+
+	let viewType = view ? view.type : I.ViewType.List;
+	let total = 0;
+
+	if (layout != I.WidgetLayout.View) {
+		viewType = I.ViewType.List;
+	};
+
+	const isAllowedShowAll = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+
+	if (isAllowedShowAll) {
+		if (view && view.isBoard()) {
+			total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+		} else {
+			total = S.Record.getMeta(subId, '').total;
+		};
+	};
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -68,6 +86,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (view) {
 			load(view.id, true);
 		};
+
+		checkShowAllButton(subId);
 	};
 
 	const updateViews = () => {
@@ -81,6 +101,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
 		selectRef.current?.setOptions(views);
+		checkShowAllButton(subId);
 	};
 
 	const load = (viewId: string, clear?: boolean) => {
@@ -108,7 +129,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters: getFilters(),
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
-			noDeps: true,
 			clear,
 		});
 	};
@@ -158,13 +178,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		switch (parent.content.section) {
 			case I.WidgetSection.Pin: {
 				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
-				break;
-			};
-
-			case I.WidgetSection.Type: {
-				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
-					S.Block.updateWidgetData(targetId);
-				});
 				break;
 			};
 		};
@@ -299,7 +312,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined"
+							className="outlined round"
 							icon="search"
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
@@ -313,7 +326,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 								color="blank" 
 								className="c28" 
 								text={translate('commonNew')} 
-								onClick={() => onCreate({ 
+								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
 									route: analytics.route.widget,
 									details: {
@@ -337,37 +350,32 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			</div>
 		);
 	} else {
-		if (layout == I.WidgetLayout.View) {
-			cn.push(`view${I.ViewType[viewType]}`);
-			switch (viewType) {
-				default: {
-					content = <WidgetViewList {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Gallery: {
-					content = <WidgetViewGallery {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Board: {
-					content = <WidgetViewBoard {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Graph: {
-					content = <WidgetViewGraph {...childProps} />;
-					break;
-				};
+		cn.push(`view${I.ViewType[viewType]}`);
+		switch (viewType) {
+			default: {
+				content = <WidgetViewList {...childProps} />;
+				break;
 			};
-		} else {
-			cn.push('viewList');
-			content = <WidgetViewList {...childProps} />;
+
+			case I.ViewType.Gallery: {
+				content = <WidgetViewGallery {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Board: {
+				content = <WidgetViewBoard {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Calendar: {
+				content = <WidgetViewCalendar {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Graph: {
+				content = <WidgetViewGraph {...childProps} />;
+				break;
+			};
 		};
 	};
 
@@ -389,7 +397,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				return;
 			};
 
-			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+			C.ObjectShow(targetId, traceId, S.Common.space, (message) => {
 				if (!message.error.code) {
 					cb();
 				};
@@ -401,7 +409,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (!isSystemTarget) {
 			load(viewId, true);
 		};
-	}, [ viewId ]);
+	}, [ viewId, viewType, space ]);
 
 	useEffect(() => {
 		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {
@@ -417,7 +425,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
-
 		checkShowAllButton(subId);
 	});
 
@@ -440,6 +447,14 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}
 			{content}
+			
+			<Button 
+				id="button-show-all" 
+				onClick={onSetPreview} 
+				text={translate('widgetSeeAll')} 
+				className="c28" 
+				color="blank" 
+			/>
 		</div>
 	);
 

@@ -1,8 +1,8 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
-import { I, U, J, translate, Action, analytics } from 'Lib';
+import { I, U, J, translate, Action, analytics, keyboard } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -54,8 +54,22 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: onRemove }
 	];
 
+	const onKeyDown = useCallback((e: KeyboardEvent) => {
+		keyboard.shortcut('searchText', e, () => {
+			e.preventDefault();
+			managerRef.current?.onFilterShow();
+		});
+	}, []);
+
 	useEffect(() => {
 		analytics.event('ScreenBin');
+	}, []);
+
+	useEffect(() => {
+		const win = $(window);
+
+		win.on('keydown.archive', (e: any) => onKeyDown(e));
+		return () => { win.off('keydown.archive'); };
 	}, []);
 
 	useImperativeHandle(ref, () => ({
@@ -64,7 +78,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	return (
 		<>
-			<Header {...props} component="mainEmpty" />
+			<Header 
+				{...props}
+				component={U.Common.settingsHeader(isPopup, 'mainEmpty')} 
+			/>
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">

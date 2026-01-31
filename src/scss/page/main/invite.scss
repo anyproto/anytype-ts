@@ -1,8 +1,11 @@
 @import "~scss/_mixins";
 
-.pageMainInvite { user-select: none; }
-.pageMainInvite {
-	.wrapper { width: 704px; margin: 0px auto; }
+.pageMainInvite,
+.pageMainOneToOne { user-select: none; }
+
+.pageMainInvite,
+.pageMainOneToOne {
+	.wrapper { width: var(--editor-width); margin: 0px auto; }
 	.wrapper {
 		.frame { position: absolute; text-align: center; }
 		.title { @include text-header3; }

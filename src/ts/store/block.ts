@@ -2,6 +2,26 @@ import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
 
+/**
+ * BlockStore manages the block data structure for all open objects.
+ *
+ * Key responsibilities:
+ * - Block storage: Maps storing blocks by root ID and block ID
+ * - Tree structure: Parent-child relationships between blocks
+ * - Restrictions: Block-level permissions and capabilities
+ * - Participants: Tracking who created/modified blocks
+ * - Block traversal: Navigation through block hierarchies
+ * - Widget management: Updating widget views and data
+ *
+ * Blocks are the fundamental content units in Anytype - text, images,
+ * links, tables, etc. are all represented as blocks with specific types.
+ *
+ * The store maintains several Maps:
+ * - blockMap: rootId -> blockId -> Block
+ * - treeMap: rootId -> blockId -> BlockStructure (parent/children)
+ * - restrictionMap: rootId -> blockId -> restrictions
+ * - participantMap: rootId -> blockId -> participantId
+ */
 class BlockStore {
 
 	public profileId = '';
@@ -175,21 +195,9 @@ class BlockStore {
 	 * @param {any[]} list - The structure list.
 	 */
 	setStructure (rootId: string, list: any[]) {
-		const map: Map<string, I.BlockStructure> = new Map();
-
-		list = U.Common.objectCopy(list || []);
-		list.map((item: any) => {
-			map.set(item.id, {
-				parentId: '',
-				childrenIds: item.childrenIds || [],
-			});
+		list.forEach((item: any) => {
+			this.updateStructure(rootId, item.id, item.childrenIds || []);
 		});
-
-		this.treeMap.set(rootId, map);
-
-		for (const [ id, item ] of map.entries()) {
-			map.set(id, new M.BlockStructure(item));
-		};
 	};
 
 	/**
@@ -200,9 +208,11 @@ class BlockStore {
 	 */
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const element = this.getMapElement(rootId, blockId);
+
 		if (!element) {
 			const map = this.getMap(rootId);
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
+			this.treeMap.set(rootId, map);
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};
@@ -369,23 +379,126 @@ class BlockStore {
 	 * @returns {any} The next block or null.
 	 */
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
-		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
+		// If list is provided, use the legacy flat-list approach for compatibility
+		if (list) {
+			const idx = list.findIndex(item => item.id == id);
+			const nidx = idx + dir;
+
+			if ((nidx < 0) || (nidx > list.length - 1)) {
+				return null;
+			};
+
+			const ret = list[nidx];
+			if (check && ret) {
+				return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
+			} else {
+				return ret;
+			};
 		};
 
-		const idx = list.findIndex(item => item.id == id);
-		const nidx = idx + dir;
-
-		if ((nidx < 0) || (nidx > list.length - 1)) {
+		// Optimized: Use tree traversal instead of flattening entire tree
+		const block = this.getLeaf(rootId, id);
+		if (!block) {
 			return null;
 		};
 
-		const ret = list[nidx];
-		if (check && ret) {
-			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
+		let nextBlock: I.Block = null;
+
+		if (dir > 0) {
+			// Going forward: try children first, then siblings, then parent's siblings
+			const children = this.getChildren(rootId, id);
+			if (children.length > 0) {
+				nextBlock = children[0];
+			} else {
+				// No children, find next sibling or parent's next sibling
+				nextBlock = this.getNextSiblingOrAncestorSibling(rootId, id, dir);
+			};
 		} else {
-			return ret;
+			// Going backward: try previous sibling's last descendant, then parent
+			const element = this.getMapElement(rootId, id);
+			if (!element) {
+				return null;
+			};
+
+			const parent = this.getParentLeaf(rootId, id);
+			if (!parent) {
+				return null;
+			};
+
+			const siblings = this.getChildren(rootId, parent.id);
+			const idx = siblings.findIndex(s => s.id === id);
+
+			if (idx > 0) {
+				// Has previous sibling, get its last descendant
+				const prevSibling = siblings[idx - 1];
+				nextBlock = this.getLastDescendant(rootId, prevSibling.id);
+			} else {
+				// No previous sibling, return parent
+				nextBlock = parent.id === rootId ? null : parent;
+			};
 		};
+
+		// Apply check filter
+		if (nextBlock && check) {
+			return check(nextBlock) ? nextBlock : this.getNextBlock(rootId, nextBlock.id, dir, check);
+		};
+
+		return nextBlock;
+	};
+
+	/**
+	 * Helper: Gets the next sibling or ancestor's sibling.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The current block ID.
+	 * @param {number} dir - The direction.
+	 * @returns {I.Block|null} The next sibling or ancestor's sibling.
+	 */
+	private getNextSiblingOrAncestorSibling (rootId: string, id: string, dir: number): I.Block {
+		// If we've reached the root itself, there's no next block
+		if (id === rootId) {
+			return null;
+		};
+
+		const element = this.getMapElement(rootId, id);
+		if (!element) {
+			return null;
+		};
+
+		const parent = this.getParentLeaf(rootId, id);
+		if (!parent) {
+			return null;
+		};
+
+		const siblings = this.getChildren(rootId, parent.id);
+		const idx = siblings.findIndex(s => s.id === id);
+
+		if (idx >= 0 && idx < siblings.length - 1) {
+			// Has next sibling
+			return siblings[idx + 1];
+		};
+
+		// No next sibling. If parent is root, we're at the end
+		if (parent.id === rootId) {
+			return null;
+		};
+
+		// Otherwise, check parent's next sibling
+		return this.getNextSiblingOrAncestorSibling(rootId, parent.id, dir);
+	};
+
+	/**
+	 * Helper: Gets the last descendant of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block} The last descendant.
+	 */
+	private getLastDescendant (rootId: string, id: string): I.Block {
+		const children = this.getChildren(rootId, id);
+		if (children.length === 0) {
+			return this.getLeaf(rootId, id);
+		};
+
+		return this.getLastDescendant(rootId, children[children.length - 1].id);
 	};
 
 	/**
@@ -396,8 +509,74 @@ class BlockStore {
 	 * @returns {I.Block} The first block passing the check.
 	 */
 	getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
-		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
-		return dir > 0 ? list[0] : list[list.length - 1];
+		// Optimized: Use tree traversal instead of flattening entire tree
+		if (dir > 0) {
+			// Find first block in depth-first order that passes check
+			return this.findFirstInOrder(rootId, rootId, check);
+		} else {
+			// Find last block in depth-first order that passes check
+			return this.findLastInOrder(rootId, rootId, check);
+		};
+	};
+
+	/**
+	 * Helper: Finds the first block in depth-first order that passes the check.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The current block ID.
+	 * @param {(item: I.Block) => any} check - The check function.
+	 * @returns {I.Block|null} The first matching block or null.
+	 */
+	private findFirstInOrder (rootId: string, blockId: string, check: (item: I.Block) => any): I.Block {
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
+		// Check current block
+		if (check(block)) {
+			return block;
+		};
+
+		// Check children in order
+		const children = this.getChildren(rootId, blockId);
+		for (const child of children) {
+			const result = this.findFirstInOrder(rootId, child.id, check);
+			if (result) {
+				return result;
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Helper: Finds the last block in depth-first order that passes the check.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The current block ID.
+	 * @param {(item: I.Block) => any} check - The check function.
+	 * @returns {I.Block|null} The last matching block or null.
+	 */
+	private findLastInOrder (rootId: string, blockId: string, check: (item: I.Block) => any): I.Block {
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
+		// Check children in reverse order first (to get last descendant)
+		const children = this.getChildren(rootId, blockId);
+		for (let i = children.length - 1; i >= 0; i--) {
+			const result = this.findLastInOrder(rootId, children[i].id, check);
+			if (result) {
+				return result;
+			};
+		};
+
+		// Then check current block
+		if (check(block)) {
+			return block;
+		};
+
+		return null;
 	};
 
 	/**
@@ -571,18 +750,24 @@ class BlockStore {
 	 * @returns {any} The wrapped tree structure.
 	 */
 	wrapTree (rootId: string, blockId: string) {
-		const map = this.getMap(rootId);
-		const ret: any = {};
-
-		for (const [ id, item ] of map.entries()) {
-			ret[id] = this.getLeaf(rootId, id);
-			if (ret[id]) {
-				ret[id].parentId = String(item.parentId || '');
-				ret[id].childBlocks = this.getChildren(rootId, id);
-			};
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
 		};
 
-		return ret[blockId];
+		const element = this.getMapElement(rootId, blockId);
+
+		// Preserve the actual block object to maintain prototype methods
+		const result: any = block;
+		result.parentId = String(element?.parentId || '');
+		result.childBlocks = this.getChildren(rootId, blockId);
+
+		// Recursively wrap children
+		result.childBlocks = result.childBlocks.map((child: I.Block) =>
+			this.wrapTree(rootId, child.id)
+		).filter(it => it);
+
+		return result;
 	};
 
 	/**
@@ -712,10 +897,11 @@ class BlockStore {
 
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
-		
+
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
 	};
+
 
 	/**
 	 * Updates the markup for all text blocks in a root.
@@ -726,7 +912,6 @@ class BlockStore {
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
-
 			if (!marks.length) {
 				continue;
 			};
@@ -751,11 +936,11 @@ class BlockStore {
 				};
 
 				const old = text.substring(from, to);
-				const name = U.Common.shorten(U.Object.name(object, true).trim(), 30);
+				const name = U.String.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-					text = U.Common.stringInsert(text, name, mark.range.from, mark.range.to);
+					text = U.String.insert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;
@@ -847,210 +1032,80 @@ class BlockStore {
 	};
 
 	/**
-	 * Closes recent widgets in the UI.
-	 */
-	closeRecentWidgets () {
-		const { recentEdit, recentOpen } = J.Constant.widgetId;
-		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.getTargetObjectId()));
-
-		if (blocks.length) {
-			blocks.forEach(it => {
-				if (it.parentId) {
-					Storage.setToggle('widget', it.parentId, true);
-				};
-			});
-		};
-	};
-
-	/**
 	 * Returns structure for Table of contents
 	 */
 	getTableOfContents (rootId: string, withTitle?: boolean) {
-		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
-			if (withTitle && it.isTextTitle()) {
-				return true;
-			};
-
-			return it.isTextHeader();
-		});
 		const list: any[] = [];
-
+		
 		let hasH1 = false;
 		let hasH2 = false;
 
-		blocks.forEach((block: I.Block) => {
-			let depth = 0;
-
-			if (block.isTextHeader1()) {
-				depth = 0;
-				hasH1 = true;
-				hasH2 = false;
+		// Optimized: Direct traversal instead of wrapTree/unwrapTree
+		const collectHeaders = (blockId: string) => {
+			const block = this.getLeaf(rootId, blockId);
+			if (!block) {
+				return;
 			};
 
-			if (block.isTextHeader2()) {
-				hasH2 = true;
-				if (hasH1) depth++;
+			// Check if this block should be included
+			const isHeader = block.isTextHeader();
+			const isTitle = withTitle && block.isTextTitle();
+
+			if (isHeader || isTitle) {
+				let depth = 0;
+
+				if (block.isTextHeader1()) {
+					depth = 0;
+					hasH1 = true;
+					hasH2 = false;
+				};
+
+				if (block.isTextHeader2()) {
+					hasH2 = true;
+					if (hasH1) depth++;
+				};
+
+				if (block.isTextHeader3()) {
+					if (hasH1) depth++;
+					if (hasH2) depth++;
+				};
+
+				list.push({
+					depth,
+					id: block.id,
+					text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
+					block,
+				});
 			};
 
-			if (block.isTextHeader3()) {
-				if (hasH1) depth++;
-				if (hasH2) depth++;
+			// Recursively process children
+			const childrenIds = this.getChildrenIds(rootId, blockId);
+			for (const childId of childrenIds) {
+				collectHeaders(childId);
 			};
+		};
 
-			list.push({ 
-				depth, 
-				id: block.id,
-				text: String(block.content.text || translate('defaultNamePage')),
-				block,
-			});
-		});
+		// Start traversal from root
+		collectHeaders(rootId);
 
+		// Adjust depth if withTitle is true
 		if (withTitle) {
-			list.map((it: any) => {
+			list.forEach((it: any) => {
 				if (!it.block.isTextTitle()) {
 					it.depth++;
 				};
-				return it;
 			});
 		};
 
 		return list;
 	};
 
-	typeWidgetId (id: string) {
-		return `type-${id}`;
-	};
-
-	checkSkippedTypes (key: string): boolean {
-		return [ 
-			J.Constant.typeKey.type, 
-			J.Constant.typeKey.template, 
-			J.Constant.typeKey.participant,
-			J.Constant.typeKey.dashboard,
-			J.Constant.typeKey.option,
-			J.Constant.typeKey.date,
-			J.Constant.typeKey.relation,
-			J.Constant.typeKey.spaceview,
-			J.Constant.typeKey.space,
-		].includes(key);
-	};
-
-	createWidget (id: string, section: I.WidgetSection) {
-		if (!id) {
-			return;
-		};
-
-		const { widgets } = this;
-
-		const parent = new M.Block({
-			id,
-			type: I.BlockType.Widget,
-			childrenIds: [],
-			content: {
-				layout: I.WidgetLayout.Link,
-				section,
-			},
-		});
-
-		const child = new M.Block({
-			id: `${id}-child`,
-			type: I.BlockType.Link,
-			content: { targetBlockId: id },
-		});
-
-		parent.childrenIds = [ child.id ];
-
-		this.add(widgets, parent);
-		this.add(widgets, child);
-		this.updateStructure(widgets, parent.id, [ child.id ]);
-	};
-
-	addTypeWidget (id: string) {
-		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
-
-		if (!element) {
-			return;
-		};
-
-		if (element.childrenIds.includes(id)) {
-			return;
-		};
-
-		const type = S.Record.getTypeById(id);
-		if (!type) {
-			return;
-		};
-
-		if (this.checkSkippedTypes(type.uniqueKey)) {
-			return;
-		};
-
-		this.createWidget(type.id, I.WidgetSection.Type);
-		element.childrenIds.push(id);
-
-		this.updateStructure(widgets, widgets, element.childrenIds);
-		this.updateStructureParents(widgets);
-	};
-
-	removeTypeWidget (id: string) {
-		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
-
-		if (!element) {
-			return;
-		};
-
-		this.delete(widgets, id);
-		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
-		this.updateStructureParents(widgets);
-	};
-
-	updateTypeWidgetList () {
-		const { widgets } = this;
-		const spaceview = U.Space.getSpaceview();
-		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-	
-		let element = this.getMapElement(widgets, widgets);
-		if (!element) {
-			return;
-		};
-
-		element = U.Common.objectCopy(element);
-
-		let childrenIds = element.childrenIds || [];
-
-		types.forEach(type => {
-			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
-				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
-
-				if (!total) {
-					childrenIds = childrenIds.filter(it => it != type.id);
-					return;
-				};
-			};
-
-			if (!childrenIds.includes(type.id)) {
-				this.createWidget(type.id, I.WidgetSection.Type);
-				childrenIds.push(type.id);
-			};
-		});
-
-		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
-			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
-			childrenIds.push(J.Constant.widgetId.bin);
-		};
-
-		this.updateStructure(widgets, widgets, childrenIds);
-		this.updateStructureParents(widgets);
-	};
-
-	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
+	getWidgetsForTarget (id: string): I.Block[] {
 		const { widgets } = this;
 		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
 
 		const list = this.getBlocks(widgets, (block: I.Block) => {
-			if (!block.isWidget() || (block.content.section != section)) {
+			if (!block.isWidget()) {
 				return false;
 			};
 

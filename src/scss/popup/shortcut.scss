@@ -9,8 +9,9 @@
 		}
 		.content { display: flex; flex-direction: column; height: 100%; }
 
-		.head { display: flex; flex-direction: column; gap: 16px 0px; flex-shrink: 0; padding: 16px 16px 12px 16px; }
+		.head { display: flex; flex-direction: column; gap: 16px 0px; flex-shrink: 0; padding: 16px 16px 12px 16px; -webkit-app-region: no-drag; }
 		.head {
+
 			.sides { display: flex; flex-direction: row; align-items: flex-start; gap: 0px 16px; }
 			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; }

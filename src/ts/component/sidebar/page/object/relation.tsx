@@ -1,165 +1,29 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, sidebar, translate, keyboard, Relation, C, Storage, analytics } from 'Lib';
+import { I, S, U, C, translate, keyboard, Relation, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
 
-const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation extends React.Component<I.SidebarPageComponent, {}> {
-	
-	sectionRefs: Map<string, any> = new Map();
+const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	constructor (props: I.SidebarPageComponent) {
-		super(props);
+	const [ dummy, setDummy ] = useState(0);
+	const { rootId, readonly, page, isPopup } = props;
+	const object = S.Detail.get(rootId, rootId);
+	const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+	const type = S.Record.getTypeById(object.type);
+	const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+	const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
+	const isTemplate = U.Object.isTemplateType(object.type);
+	const sectionsRef = useRef({});
 
-		this.onSetUp = this.onSetUp.bind(this);
-		this.getObject = this.getObject.bind(this);
-		this.onLocal = this.onLocal.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-	};
-
-    render () {
-		const { rootId, readonly } = this.props;
-		const object = this.getObject();
-		const sections = this.getSections();
-		const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
-		const type = S.Record.getTypeById(object.type);
-		const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
-		const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
-		const isTemplate = U.Object.isTemplateType(object.type);
-
-        return (
-			<>
-				<div id="head" className="head">
-					<div className="side left">
-						<Label text={translate('sidebarTypeRelation')} />
-					</div>
-
-					{allowTypeDetails ? (
-						<div className="side right">
-							<Button color="dark" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
-						</div>
-					) : ''}
-				</div>
-
-				<div id="body" className="body">
-					{!type ? (
-						<div className="section">
-							<div className="item empty">
-								{translate('sidebarObjectRelationTypeDeleted')}
-							</div>
-						</div>
-					) : ''}
-
-					{sections.map((section, i) => {
-						const { id, name, description, withToggle } = section;
-						const cnt = [ 'titleWrap' ];
-						const cnl = [ 'list' ];
-						const onToggle = withToggle ? () => this.onToggle(id) : null;
-
-						if (withToggle) {
-							cnt.push('withToggle');
-							cnl.push('withToggle');
-						};
-
-						let button = null;
-						if ((id == 'local') && allowObjectDetails && !readonly && !isTemplate) {
-							button = (
-								<Icon 
-									className="plus withBackground" 
-									tooltipParam={{ text: translate('commonAddRelation') }}
-									onClick={this.onAdd}
-								/>
-							);
-						};
-
-						return (
-							<div id={`relationGroup-${id}`} className="group" key={id}>
-								{name ? (
-									<div className={cnt.join(' ')}>
-										<div className="side left">
-											<Label text={name} onClick={onToggle} />
-											{description ? (
-												<Icon
-													className="question"
-													tooltipParam={{ 
-														text: description,
-														className: 'relationGroupDescription',
-														typeX: I.MenuDirection.Right,
-														typeY: I.MenuDirection.Center,
-														offsetX: -8,
-														delay: 0,
-													}}
-												/>
-											) : ''}
-										</div>
-
-										<div className="side right">
-											{button}
-										</div>
-									</div>
-								) : ''}
-
-								<div className={cnl.join(' ')}>
-									{!section.children.length && section.withEmpty ? (
-										<div className="section empty">
-											{translate('sidebarObjectRelationEmpty')}
-										</div>
-									) : ''}
-
-									{section.withToggle ? <div /> : ''}
-
-									{section.children.map((item, i) => (
-										<Section
-											{...this.props}
-											ref={ref => this.sectionRefs.set(item.id, ref)}
-											key={item.id}
-											id={item.id}
-											component="object/relation"
-											rootId={rootId}
-											object={object}
-											item={item}
-											readonly={isReadonly}
-											onDragStart={e => this.onDragStart(e, item)}
-										/>
-									))}
-								</div>
-							</div>
-						);
-					})}
-				</div>
-			</>
-		);
-	};
-
-	componentDidMount () {
-		analytics.event('ScreenObjectRelation');
-
-		const { page } = this.props;
-		const sections = this.getSections().filter(it => it.withToggle);
-
-		sections.forEach(section => {
-			const toggle = Storage.checkToggle(page, section.id);
-
-			this.initToggle(section.id, toggle);
-		});
-	};
-
-	getObject () {
-		const { rootId } = this.props;
-		return S.Detail.get(rootId, rootId);
-	};
-
-	getSections (): any[] {
-		const { rootId } = this.props;
-		const object = this.getObject();
+	const getSections = (): any[] => {
 		const isTemplate = U.Object.isTemplateType(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
 		const local = S.Record
 			.getConflictRelations(rootId, rootId, type.id)
 			.sort(U.Data.sortByName)
-			.map(it => ({ ...it, onMore: this.onLocal }));
+			.map(it => ({ ...it, onMore: onLocal }));
 		const featuredIds = Relation.getArrayValue(type.recommendedFeaturedRelations);
 		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
 		const hiddenIds = Relation.getArrayValue(type.recommendedHiddenRelations);
@@ -185,35 +49,27 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		].filter(it => it.children.length || it.withEmpty);
 	};
 
-	getRelations () {
-		const { rootId } = this.props;
-		const object = this.getObject();
-
-		return S.Record.getObjectRelations(rootId, object.type);
+	const onSetUp = () => {
+		S.Common.setRightSidebarState(isPopup, { 
+			page: 'type', 
+			rootId: object.targetObjectType || object.type, 
+			back: 'object/relation',
+			details: {},
+		});
 	};
 
-	onSetUp () {
-		const { isPopup } = this.props;
-		const object = this.getObject();
-		const rootId = object.targetObjectType || object.type;
-
-		sidebar.rightPanelSetState(isPopup, { page: 'type', rootId, noPreview: true, back: 'object/relation' });
-	};
-
-	onDragStart (e: any, item: any) {
+	const onDragStart = (e: any, item: any) => {
 		e.stopPropagation();
 
-		const dragProvider = S.Common.getRef('dragProvider');
-		const selection = S.Common.getRef('selectionProvider');
-
 		keyboard.disableSelection(true);
-		selection?.clear();
-		dragProvider?.onDragStart(e, I.DropType.Relation, [ item.id ], this);
+		S.Common.getRef('selectionProvider')?.clear();
+		S.Common.getRef('dragProvider')?.onDragStart(e, I.DropType.Relation, [ item.id ], {
+			getNode: () => sectionsRef.current[item.id]?.getNode(),
+		});
 	};
 
-	onLocal (e: React.MouseEvent, item: any) {
+	const onLocal = (e: MouseEvent, item: any) => {
 		const { x, y } = keyboard.mouse.page;
-		const object = this.getObject();
 		const isTemplate = U.Object.isTemplateType(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
@@ -247,9 +103,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
-	onAdd (e: any) {
-		const object = this.getObject();
-		const sections = this.getSections();
+	const onAdd = (e: any) => {
 		const keys = sections.reduce((acc, it) => {
 			const keys = it.children.map((it) => it.relationKey);
 			return acc.concat(keys);
@@ -273,7 +127,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		});
 	};
 
-	initToggle (id: string, isOpen: boolean) {
+	const initToggle = (id: string, isOpen: boolean) => {
 		const obj = $(`#sidebarRight #relationGroup-${id}`);
 		const title = obj.find('.titleWrap');
 		const list = obj.find('> .list');
@@ -282,8 +136,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
 	};
 
-	onToggle (id: string) {
-		const { page } = this.props;
+	const onToggle = (id: string) => {
 		const obj = $(`#sidebarRight #relationGroup-${id}`);
 		const title = obj.find('.titleWrap');
 		const list = obj.find('> .list');
@@ -296,6 +149,125 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
 	};
 
-});
+	const sections = getSections();
+
+	useEffect(() => {
+		analytics.event('ScreenObjectRelation');
+
+		sections.filter(it => it.withToggle).forEach(section => {
+			const toggle = Storage.checkToggle(page, section.id);
+
+			initToggle(section.id, toggle);
+		});
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	return (
+		<>
+			<div id="head" className="head">
+				<div className="side left" />
+				<div className="side center">
+					<Label text={translate('sidebarTypeRelation')} />
+				</div>
+
+				{allowTypeDetails ? (
+					<div className="side right">
+						<Button color="dark" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={onSetUp} />
+					</div>
+				) : ''}
+			</div>
+
+			<div id="body" className="body">
+				{type?.isDeleted ? (
+					<div className="section">
+						<div className="item empty">
+							{translate('sidebarObjectRelationTypeDeleted')}
+						</div>
+					</div>
+				) : ''}
+
+				{sections.map((section, i) => {
+					const { id, name, description, withToggle } = section;
+					const cnt = [ 'titleWrap' ];
+					const cnl = [ 'list' ];
+
+					if (withToggle) {
+						cnt.push('withToggle');
+						cnl.push('withToggle');
+					};
+
+					let button = null;
+					if ((id == 'local') && allowObjectDetails && !readonly && !isTemplate) {
+						button = (
+							<Icon 
+								className="plus withBackground" 
+								tooltipParam={{ text: translate('commonAddRelation') }}
+								onClick={onAdd}
+							/>
+						);
+					};
+
+					return (
+						<div id={`relationGroup-${id}`} className="group" key={id}>
+							{name ? (
+								<div className={cnt.join(' ')}>
+									<div className="side left">
+										<Label text={name} onClick={withToggle ? () => onToggle(id) : null} />
+										{description ? (
+											<Icon
+												className="question"
+												tooltipParam={{ 
+													text: description,
+													className: 'relationGroupDescription',
+													typeX: I.MenuDirection.Right,
+													typeY: I.MenuDirection.Center,
+													offsetX: -8,
+													delay: 0,
+												}}
+											/>
+										) : ''}
+									</div>
+
+									<div className="side right">
+										{button}
+									</div>
+								</div>
+							) : ''}
+
+							<div className={cnl.join(' ')}>
+								{!section.children.length && section.withEmpty ? (
+									<div className="section empty">
+										{translate('sidebarObjectRelationEmpty')}
+									</div>
+								) : ''}
+
+								{section.withToggle ? <div /> : ''}
+
+								{section.children.map((item, i) => (
+									<Section
+										{...props}
+										ref={ref => sectionsRef.current[item.id] = ref}
+										key={item.id}
+										id={item.id}
+										component="object/relation"
+										rootId={rootId}
+										object={object}
+										item={item}
+										readonly={isReadonly}
+										onDragStart={e => onDragStart(e, item)}
+									/>
+								))}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</>
+	);
+
+}));
 
 export default SidebarPageObjectRelation;

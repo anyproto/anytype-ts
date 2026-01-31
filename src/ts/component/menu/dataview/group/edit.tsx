@@ -1,100 +1,42 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
-const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
+const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	color = '';
-	isHidden = false;
-	timeout = 0;
-	n = -1;
+	const { param, onKeyDown, setActive, close } = props;
+	const { data } = param;
+	const { rootId, blockId, groupId, getView } = data;
+	const view = getView();
+	const n = useRef(0);
+	const group = S.Record.getGroup(rootId, blockId, groupId);
+	const colorRef = useRef(group?.bgColor);
+	const isHiddenRef = useRef(group?.isHidden);
 
-	render () {
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						if (action.isBgColor) {
-							action.inner = <div className={`inner isMultiSelect bgColor bgColor-${action.className}`} />;
-							action.icon = 'color';
-							action.checkbox = action.value == this.color;
-						};
-
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								onClick={e => this.onClick(e, action)}
-								onMouseEnter={e => this.onMouseEnter(e, action)}
-							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-
-		return (
-			<div>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, groupId } = data;
-		const group = S.Record.getGroup(rootId, blockId, groupId);
-
-		if (group) {
-			this.color = group.bgColor;
-			this.isHidden = group.isHidden;
-		};
-
-		this.rebind();
-		this.forceUpdate();
-	};
-
-	componentDidUpdate () {
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-		window.clearTimeout(this.timeout);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getSections () {
+	const getSections = () => {
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const name = isHiddenRef.current ? translate('menuDataviewGroupEditShowColumn') : translate('menuDataviewGroupEditHideColumn');
 
 		return [
-			{ 
-				children: [ 
-					{ id: 'hide', icon: 'hide', name: translate(this.isHidden ? 'menuDataviewGroupEditShowColumn' : 'menuDataviewGroupEditHideColumn') }
-				]
-			},
+			{ children: [ { id: 'hide', icon: 'hide', name } ] },
 			{ children: colors },
 		];
 	};
 
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -104,34 +46,25 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		return items;
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.isBgColor) {
-			this.color = item.value;
+			colorRef.current = item.value;
 		} else
 		if (item.id == 'hide') {
-			this.isHidden = !this.isHidden;
+			isHiddenRef.current = !isHiddenRef.current;
 		};
 
-		this.save();
-		this.props.close();
+		save();
+		close();
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, groupId, getView } = data;
-		const view = getView();
-		
-		if (!view) {
-			return;
-		};
-
+	const save = () => {
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		const groups = S.Record.getGroups(rootId, blockId);
 		const update: any[] = [];
@@ -139,8 +72,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		groups.forEach((it: any, i: number) => {
 			const item = { ...it, groupId: it.id, index: i };
 			if (it.id == groupId) {
-				item.bgColor = this.color;
-				item.isHidden = this.isHidden;
+				item.bgColor = colorRef.current;
+				item.isHidden = isHiddenRef.current;
 			};
 			update.push(item);
 		});
@@ -149,7 +82,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
-		if (!view.groupBackgroundColors && this.color) {
+		if (!view.groupBackgroundColors && colorRef.current) {
 			Dataview.viewUpdate(rootId, blockId, view.id, { groupBackgroundColors: true });
 		};
 
@@ -158,15 +91,61 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			const value = Relation.getArrayValue(group.value);
 
 			if (value.length) {
-				C.ObjectListSetDetails([ value[0] ], [ 
-					{ key: 'relationOptionColor', value: this.color },
-				]);
+				U.Object.setOptionColor(value[0], colorRef.current);
 			};
 		};
-
-		this.forceUpdate();
 	};
-	
-});
 
-export default MenuGroupEdit;
+	const sections = getSections();
+
+	const Section = (item: any) => (
+		<div className="section">
+			<div className="items">
+				{item.children.map((action: any, i: number) => {
+					if (action.isBgColor) {
+						action.inner = <div className={`inner isMultiSelect bgColor bgColor-${action.className}`} />;
+						action.icon = 'color';
+						action.checkbox = action.value == colorRef.current;
+					};
+
+					return (
+						<MenuItemVertical 
+							key={i} 
+							{...action} 
+							onClick={e => onClick(e, action)}
+							onMouseEnter={e => onMouseEnter(e, action)}
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
+
+	return (
+		<>
+			{sections.map((item: any, i: number) => (
+				<Section key={i} {...item} />
+			))}
+		</>
+	);
+
+}));
+
+export default MenuDataviewGroupEdit;

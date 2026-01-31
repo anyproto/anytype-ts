@@ -2,65 +2,6 @@
 
 .menus {
 	.menu.menuDataviewOptionList { width: var(--menu-width-value); }
-	.menu.menuDataviewOptionList {
-		.content { overflow: hidden; transition: none; padding: 0px; max-height: unset; }
-		.content {
-			.wrap { height: 100%; display: flex; flex-direction: column; }
-			.wrap.noFilter {
-				.items { height: 100%; }
-			}
-
-			.items { height: calc(100% - 38px); }
-		}
-
-		.item { display: flex; align-items: center; }
-		.item:not(.add, .empty) { gap: 0px 4px; padding-left: 10px; }
-		.item {
-			.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
-			.buttons {
-				.icon.more { display: none; }
-			}
-
-			&.withCheckbox {
-				.clickable { width: calc(100% - 24px); }
-			}
-
-			&:hover, &.hover {
-				.clickable { width: calc(100% - 28px); }
-				.buttons {
-					.icon.more { display: block; }
-				}
-			}
-
-			&.withCheckbox:hover, &.withCheckbox.hover {
-				.clickable { width: calc(100% - 50px); }
-			}
-
-			&.add {
-				.name { @include text-overflow-nw; }
-			}
-
-			&.isDragging { z-index: 1; }
-		}
-
-		&.fromFilter {
-			.item {
-				.icon.more { display: none; }
-			}
-		}
-
-		&.fromFeatured {
-			.filter { padding-top: 8px; }
-			.item {
-				.buttons,
-				.icon.chk { right: 14px; }
-
-				&:hover, &.hover {
-					.icon.chk { right: 40px; }
-				}
-			}
-		}
-	}
 
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }

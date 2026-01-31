@@ -1,225 +1,54 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellBanner } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
-interface State {
-	isLoading: boolean;
-};
-
 const HEIGHT = 28;
-const SUB_ID = 'syncStatusObjectsList';
 const LIMIT = 12;
+const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
+const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	cache: any = {};
-	currentInfo = '';
-	refList: any = null;
-	state = { 
-		isLoading: false,
-	};
-	n = 0;
+	const { param, setActive, getId, onKeyDown, position, close } = props;
+	const { classNameWrap } = param;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ itemId, setItemId ] = useState('');
+	const listRef = useRef(null);
+	const n = useRef(0);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 
-	constructor (props: I.Menu) {
-		super(props);
+	useEffect(() => {
+		load();
+		rebind();
+		resize();
 
-		this.cache = new CellMeasurerCache({
-			defaultHeight: HEIGHT,
-			fixedWidth: true,
-		});
-
-		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onPanelIconClick = this.onPanelIconClick.bind(this);
-		this.onCloseInfo = this.onCloseInfo.bind(this);
-	};
-
-	render () {
-		const { isLoading } = this.state;
-		const notSyncedCounter = S.Auth.getNotSynced().total;
-		const { setActive } = this.props;
-		const isOwner = U.Space.isMyOwner();
-		const canWrite = U.Space.canMyParticipantWrite();
-		const items = this.getItems();
-		const icons = this.getIcons();
-		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
-		const showIncentive = notSyncedCounter && canWrite && U.Data.isAnytypeNetwork();
-
-		const PanelIcon = (item) => {
-			const { id, className } = item;
-			const cn = [ 'iconWrapper' ];
-
-			if (className) {
-				cn.push(className);
-			};
-
-			return (
-				<div
-					id={`icon-${id}`}
-					className={cn.join(' ')}
-					onClick={e => this.onPanelIconClick(e, item)}
-				>
-					<div className="iconBg" />
-					<Icon className={id} />
-				</div>
-			);
+		return () => {
+			unbind();
+			U.Subscription.destroyList([ SUB_ID ]);
 		};
+	}, []);
 
-		const Item = (item: any) => {
-			const icon = U.Data.syncStatusClass(item.syncStatus);
+	useEffect(() => {
+		resize();	
+	});
 
-			return (
-				<div
-					id={`item-${item.id}`}
-					className="item sides"
-					onClick={e => this.onContextMenu(e, item)}
-					onMouseEnter={() => setActive(item, false)}
-					onContextMenu={e => this.onContextMenu(e, item)}
-				>
-					<div className="side left" >
-						<IconObject object={item} size={20} />
-						<div className="info">
-							<ObjectName object={item} />
-							{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
-						</div>
-					</div>
-					<div className="side right">
-						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
-					</div>
-				</div>
-			);
-		};
-
-		const rowRenderer = ({ index, key, style, parent }) => {
-			const item = items[index];
-
-			let content = null;
-			if (item.isSection) {
-				content = (
-					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
-						{item.name}
-					</div>
-				);
-			} else {
-				content = (
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
-					</div>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={key}
-					parent={parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<>
-				<div className="syncPanel">
-					<Title text={translate('menuSyncStatusTitle')} />
-
-					<div className="icons">
-						{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
-					</div>
-				</div>
-
-				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
-
-				{showIncentive ? (
-					<div className="incentiveBanner">
-						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
-						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
-						<div className="buttons">
-							<Button text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" className="c28" onClick={() => this.onIncentiveButtonClick('storage')} />
-							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
-						</div>
-					</div>
-				) : ''}
-
-				{!isLoading && !items.length ? (
-					<EmptySearch text={emptyText} />
-				) : ''}
-
-				{this.cache && items.length ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length}
-							isRowLoaded={({ index }) => !!items[index]}
-							threshold={20}
-							loadMoreRows={() => {}}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											scrollToAlignment="center"
-											overscanRowCount={20}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-			</>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		$(`#${getId()}`).on('click', () => onCloseInfo());
 	};
 
-	componentDidMount () {
-		this.load();
-		this.rebind();
-		this.resize();
-	};
-
-	componentDidUpdate (): void {
-		this.resize();	
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-
-		U.Subscription.destroyList([ SUB_ID ]);
-	};
-
-	rebind () {
-		const { getId } = this.props;
-
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		$(`#${getId()}`).on('click', () => this.onCloseInfo());
-	};
-
-	unbind () {
-		const { getId } = this.props;
-
+	const unbind = () => {
 		$(window).off('keydown.menu');
 		$(`#${getId()}`).off('click');
 	};
 
-	onContextMenu (e, item) {
+	const onContextMenu = (e, item) => {
 		e.stopPropagation();
 
-		const { getId, param } = this.props;
-		const { classNameWrap } = param;
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const element = $(e.currentTarget);
@@ -247,19 +76,18 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							U.Object.openAuto(item);
 							break;
 						};
+
 						case 'delete': {
 							Action.delete([ item.id ], analytics.route.syncStatus);
 							break;
 						};
 					};
-				}
-			}
+				},
+			},
 		});
 	};
 
-	onPanelIconClick (e, item) {
-		const { param, getId } = this.props;
-		const { classNameWrap } = param;
+	const onPanelIconClick = (e, item) => {
 		const menuParam = {
 			classNameWrap,
 			element: `#${getId()} #icon-${item.id}`,
@@ -273,64 +101,40 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		e.stopPropagation();
 
 		if (S.Menu.isOpen('syncStatusInfo')) {
-			if (item.id == this.currentInfo) {
-				this.onCloseInfo();
+			if (item.id == itemId) {
+				onCloseInfo();
 			} else {
-				this.currentInfo = item.id;
+				setItemId(item.id);
 				S.Menu.update('syncStatusInfo', menuParam);
 			};
 		} else {
-			this.currentInfo = item.id;
+			setItemId(item.id);
 			S.Menu.open('syncStatusInfo', menuParam);
 		};
 	};
 
-	onCloseInfo () {
-		this.currentInfo = '';
+	const onCloseInfo = () => {
+		setItemId('');
 
 		if (S.Menu.isOpen('syncStatusInfo')) {
 			S.Menu.close('syncStatusInfo');
 		};
 	};
 
-	onIncentiveButtonClick (id: string) {
-		switch (id) {
-			case 'storage': {
-				const { files } = S.Auth.getNotSynced();
-
-				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
-					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
-				} else {
-					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
-				};
-				break;
-			};
-
-			case 'upgrade': {
-				const usage = Math.round(U.Common.calculateStorageUsage());
-
-				Action.membershipUpgrade();
-
-				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.syncStatus });
-				break;
-			};
-		};
-	};
-
-	load () {
+	const load = () => {
 		if (U.Data.isLocalNetwork()) {
 			return;
 		};
 
 		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
 		];
 		const sorts = [
 			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Error, I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc, includeTime: true },
 		];
 
-		this.setState({ isLoading: true });
+		setIsLoading(true);
 
 		U.Subscription.subscribe({
 			subId: SUB_ID,
@@ -340,13 +144,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			offset: 0,
 			limit: 50,
 		}, () => {
-			this.setState({ isLoading: false });
-
+			setIsLoading(false);
 			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
 		});
 	};
 
-	getItems () {
+	const getItems = () => {
 		const records = S.Record.getRecords(SUB_ID).map(it => {
 			if ([ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued ].includes(it.syncStatus)) {
 				it.syncDate = U.Date.now();
@@ -357,22 +160,27 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
-	getIcons () {
+	const getIcons = () => {
 		const syncStatus = S.Auth.getSyncStatus(S.Common.space);
-		const iconNetwork = this.getIconNetwork(syncStatus);
-		const iconP2P = this.getIconP2P(syncStatus);
+		const iconNetwork = getIconNetwork(syncStatus);
+		const iconP2P = getIconP2P(syncStatus);
 
 		return [ iconP2P, iconNetwork ];
 	};
 
-	getIconP2P (syncStatus) {
+	const getIconP2P = (syncStatus) => {
 		const { p2p, devicesCounter } = syncStatus;
 
 		let className = '';
 		let message = '';
+		let label = '';
 
 		if (devicesCounter) {
-			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+			message = U.String.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+
+			if (devicesCounter > 1) {
+				label = devicesCounter;
+			};
 		} else {
 			message = translate('menuSyncStatusP2PNoDevicesConnected');
 		};
@@ -391,6 +199,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		return {
 			id: 'p2p',
+			label,
 			className,
 			title: translate('menuSyncStatusInfoP2pTitle'),
 			message,
@@ -398,11 +207,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
-	getIconNetwork (syncStatus) {
+	const getIconNetwork = (syncStatus) => {
 		const { network, syncingCounter, error, status } = syncStatus;
 		const buttons: any[] = [];
 
 		let id = '';
+		let label = '';
 		let title = '';
 		let className = '';
 		let message = '';
@@ -430,11 +240,16 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				className = 'error';
 				break;
 			};
+
+			case I.SyncStatusSpace.Offline: {
+				className = 'offline';
+			};
 		};
 
 		switch (network) {
 			case I.SyncStatusNetwork.Anytype: {
 				id = 'network';
+				label = translate('menuSyncStatusLabelAnyNetwork');
 				title = translate('menuSyncStatusInfoNetworkTitle');
 
 				if (isConnected) {
@@ -443,7 +258,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (syncingCounter) {
-						message = U.Common.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
+						message = U.String.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
 					} else {
 						message = translate('menuSyncStatusInfoNetworkMessageSynced');
 					};
@@ -468,6 +283,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			case I.SyncStatusNetwork.SelfHost: {
 				id = 'self';
+				label = translate('menuSyncStatusLabelCustom');
 				title = translate('menuSyncStatusInfoSelfTitle');
 
 				switch (status) {
@@ -499,31 +315,24 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 		};
 
-		return { id, className, title, message, buttons };
+		return { id, label, className, title, message, buttons };
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems().slice(0, LIMIT);
+	const resize = () => {
+		const items = getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
-
-		let height = 44;
-		if (!items.length) {
-			height = 160;
-		} else {
-			height = items.reduce((res: number, current: any) => res + HEIGHT, height);
-		};
+		const height = items.length ? items.length * HEIGHT + 64 : 160;
 
 		obj.css({ height });
 		position();
 	};
 
-	scrollToRow (items: any[], index: number) {
-		if (!this.refList || !items.length) {
+	const scrollToRow = (items: any[], index: number) => {
+		if (!listRef.current || !items.length) {
 			return;
 		};
 
-		const listHeight = this.refList.props.height;
+		const listHeight = listRef.current.props.height;
 
 		let offset = 0;
 		let total = 0;
@@ -542,9 +351,146 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		offset = Math.min(offset, total - listHeight + 16);
-		this.refList.scrollToPosition(offset);
+		listRef.current.scrollToPosition(offset);
 	};
 
-});
+	const items = getItems();
+	const icons = getIcons();
+
+	const PanelIcon = (item) => {
+		const { id, className, label } = item;
+		const cn = [ 'iconWrapper' ];
+		const cni = [ 'inner' ];
+
+		if (className) {
+			cn.push(className);
+		};
+
+		if (label) {
+			cni.push('withLabel');
+		};
+
+		return (
+			<div
+				id={`icon-${id}`}
+				className={cn.join(' ')}
+				onClick={e => onPanelIconClick(e, item)}
+			>
+				<div className="iconBg" />
+				<div className={cni.join(' ')}>
+					<Icon className={id} />
+					{label ? <Label text={label} /> : ''}
+				</div>
+			</div>
+		);
+	};
+
+	const rowRenderer = ({ index, key, style, parent }) => {
+		const item = items[index];
+
+		let content = null;
+		if (item.isSection) {
+			content = (
+				<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
+					{item.name}
+				</div>
+			);
+		} else {
+			content = (
+				<div
+					id={`item-${item.id}`}
+					className="item sides"
+					style={style}
+					onClick={e => onContextMenu(e, item)}
+					onMouseEnter={() => setActive(item, false)}
+					onContextMenu={e => onContextMenu(e, item)}
+				>
+					<div className="side left" >
+						<IconObject object={item} size={20} />
+						<div className="info">
+							<ObjectName object={item} />
+							{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
+						</div>
+					</div>
+					<div className="side right">
+						<Icon className={U.Data.syncStatusClass(item.syncStatus)} />
+						<Icon className="more" onClick={e => onContextMenu(e, item)} />
+					</div>
+				</div>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		scrollToRow,
+	}), []);
+
+	return (
+		<>
+			<div className="syncPanel">
+				<Title text={translate('menuSyncStatusTitle')} />
+
+				<div className="icons">
+					{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
+				</div>
+			</div>
+
+			<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
+
+			{!isLoading && !items.length ? (
+				<EmptySearch text={emptyText} />
+			) : ''}
+
+			{items.length ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={20}
+						loadMoreRows={() => {}}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache.current}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										scrollToAlignment="center"
+										overscanRowCount={20}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+		</>
+	);
+
+}));
 
 export default MenuSyncStatus;

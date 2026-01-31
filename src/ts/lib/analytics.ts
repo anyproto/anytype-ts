@@ -1,12 +1,12 @@
-import * as amplitude from 'amplitude-js';
+import amplitude from 'amplitude-js';
 import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
+	'tab', 'document', 'page', 'count', 'suggestCount', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
-	'uxType', 'usage',
+	'uxType', 'usage', 'chatId',
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -70,6 +70,7 @@ class Analytics {
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
 		menuPublish: 'MenuPublish',
+		menuParticipant: 'MenuParticipant',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -77,11 +78,15 @@ class Analytics {
 		settingsSpace: 'SettingsSpace',
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsSpaceNotifications: 'ScreenSettingsSpaceNotifications',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
+		settingsAccount: 'ScreenSettingsAccount',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
+
+		authSetup: 'ScreenAuthSetup',
 
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
@@ -97,6 +102,8 @@ class Analytics {
 		reaction: 'Reaction',
 		icon: 'Icon',
 		editor: 'Editor',
+
+		stripe: 'Stripe',
 	};
 
 	/**
@@ -239,11 +246,25 @@ class Analytics {
 	};
 
 	/**
-	 * Sets the user's tier property for analytics.
-	 * @param {I.TierType} tier - The user's tier.
+	 * Sets the user's purchased membership name property for analytics.
 	 */
-	setTier (tier: I.TierType) {
-		this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
+	setProduct () {
+		const { data } = S.Membership;
+		if (!data) {
+			return;
+		};
+
+		const products = (data.products || []).map(it => S.Membership.getProduct(it.product.id)).filter(it => it);
+		const extraPurchase = products.filter(it => it.isTopLevel);
+		const extraStorage = products.reduce((sum, it) => sum + (it.features.storageBytes || 0), 0) / 1024 / 1024;
+		const extraSeat = products.reduce((sum, it) => sum + (it.features.teamSeats || 0), 0);
+
+		this.setProperty({ 
+			productTier: data.getTopProduct()?.name || 'None',
+			extraPurchase: Boolean(extraPurchase.length),
+			extraStorageSize: Number(extraStorage) || 0,
+			extraSeat: Number(extraSeat) || 0,
+		});
 	};
 
 	/**
@@ -266,32 +287,33 @@ class Analytics {
 	 */
 	event (code: string, data?: any) {
 		data = data || {};
+		data.params = data.params || {};
 
 		if (!this.instance || !this.isAllowed() || !code) {
 			return;
 		};
 
 		const converted: any = {};
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
+		let uxType = I.SpaceUxType.Data;
+		
+		if (spaceview) {
+			param.spaceType = I.SpaceType[Number(spaceview.spaceAccessType) || 0];
+			param.spaceId = String(spaceview.analyticsSpaceId || '');
 
-		if (space) {
-			param.spaceType = Number(space.spaceAccessType) || 0;
-			param.spaceType = I.SpaceType[param.spaceType];
-
-			let uxType = I.SpaceUxType.Data;
-			if (undefined !== data.uxType) {
-				uxType = data.uxType;
-			};
-			if (undefined !== space.uxType) {
-				uxType = space.uxType;
-			};
-			if (undefined !== uxType) {
-				param.uxType = I.SpaceUxType[Number(uxType) || 0];
+			if (undefined !== spaceview.uxType) {
+				uxType = spaceview.uxType;
 			};
 		};
+
+		if (undefined !== data.uxType) {
+			uxType = data.uxType;
+		};
+
+		data.uxType = I.SpaceUxType[Number(uxType) || 0];
 
 		if (participant) {
 			param.permissions = Number(participant.permissions) || 0;
@@ -514,7 +536,7 @@ class Analytics {
 					data.type = J.Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
-				data.layout = I.WidgetLayout[data.layout];
+				data.layout = I.WidgetLayout[Number(data.layout) || 0];
 				break;
 			};
 
@@ -542,13 +564,13 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = data.id ? U.Common.toUpperCamelCase(`-${data.id}`) : '';
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.id = data.id ? U.String.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
 			case 'ChangeLibraryType': {
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
@@ -573,13 +595,7 @@ class Analytics {
 
 			case 'ChangePlan':
 			case 'ScreenMembership': {
-				data.name = I.TierType[data.params.tier];
-				break;
-			};
-
-			case 'ClickMembership': {
-				data.name = data.name || I.TierType[data.params.tier];
-				data.type = data.type || I.PaymentMethod[data.params.method];
+				//data.name = I.TierType[data.params.tier];
 				break;
 			};
 
@@ -589,7 +605,7 @@ class Analytics {
 			};
 
 			case 'ChangeSpaceDashboard': {
-				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				data.type = U.String.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
 				break;
 			};
 
@@ -615,12 +631,21 @@ class Analytics {
 
 			case 'ScreenInviteRequest' : {
 				data.type = Number(data.type) || 0;
-				data.type = I.InviteType[data.type];
+
+				let res = '';
+				switch (data.type) {
+					case I.InviteType.WithApprove:		res = 'Approval'; break;
+					case I.InviteType.WithoutApprove:	res = 'WithoutApproval'; break;
+					default:							res = I.InviteType[data.type]; break;
+				};
+
+				data.type = res;
 				break;
 			};
 
-			case 'CreateSpace' : {
-				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
+			case 'ShowSection':
+			case 'HideSection': {
+				data.type = I.WidgetSection[Number(data.type) || 0];
 				break;
 			};
 
@@ -774,6 +799,9 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
+			widgetSection:		 'ScreenManageSections',
+			widget:				 'ScreenWidgetMenu',
+			changeOwner:		 'ScreenTransferSpaceOwnership',
 		};
 
 		return map[id] || '';
@@ -838,17 +866,20 @@ class Analytics {
 	 * @param {any} [data] - Optional event data.
 	 */
 	stackAdd (code: string, data?: any) {
-		this.stack.push({ code, data });
+		if (code) {
+			this.stack.push({ code, data });
+		};
 	};
 
 	/**
 	 * Sends all stacked analytics events.
 	 */
 	stackSend () {
-		this.stack.forEach(({ code, data }) => {
-			this.event(code, data);
-		});
+		this.stack.forEach(({ code, data }) => this.event(code, data));
+		this.stackClear();
+	};
 
+	stackClear () {
 		this.stack = [];
 	};
 

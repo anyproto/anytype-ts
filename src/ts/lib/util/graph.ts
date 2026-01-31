@@ -1,5 +1,16 @@
 import { I, S, U, J, Relation } from 'Lib';
 
+/**
+ * UtilGraph provides utilities for the graph visualization feature.
+ *
+ * Key responsibilities:
+ * - Generating image sources for graph nodes based on object layouts
+ * - Handling different icon types (emoji, image, type icons)
+ * - Providing fallback icons for objects without custom icons
+ *
+ * The graph view displays objects as nodes with connections,
+ * and this utility helps determine how each node should be visually represented.
+ */
 class UtilGraph {
 
 	/**
@@ -62,11 +73,7 @@ class UtilGraph {
 					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				} else
 				if (d.iconName) {
-					src = U.Common.updateSvg(require(`img/icon/type/default/${d.iconName}.svg`), { 
-						id: d.iconName, 
-						size: 100, 
-						fill: U.Common.iconBgByOption(d.iconOption),
-					});
+					src = U.Object.typeIcon(d.iconName, d.iconOption, 100);
 				} else
 				if (d.iconEmoji) {
 					const code = U.Smile.getCode(d.iconEmoji);
@@ -95,6 +102,8 @@ class UtilGraph {
 						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
+				} else {
+					src = U.Object.defaultIcon(d.layout, d.type, 100);
 				};
 				break;
 			};

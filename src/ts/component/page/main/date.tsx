@@ -6,12 +6,13 @@ import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 const SUB_ID = 'dateListObject';
 
-const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
+const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const { space, config } = S.Common;
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ relations, setRelations ] = useState([]);
+	const [ dummy, setDummy ] = useState(0);
 	const match = keyboard.getMatch(isPopup);
 	const [ relationKey, setRelationKey ] = useState(match.params.relationKey);
 	const rootId = keyboard.getRootId(isPopup);
@@ -34,19 +35,14 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		setIsLoading(true);
-
 		idRef.current = rootId;
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
@@ -55,26 +51,17 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 				return;
 			};
 
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-
 			loadCategory();
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-
-		if (!id) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == id);
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const loadCategory = () => {
@@ -288,13 +275,20 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	};
 
 	useEffect(() => {
+		open();
+
 		return () => close();
 	}, []);
 
 	useEffect(() => {
-		open();
-		reload();	
-	});
+		if (idRef.current != rootId) {
+			close();
+			open();
+			return;
+		};
+
+		reload();
+	}, [ rootId, relationKey ]);
 
 	return content;
 

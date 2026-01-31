@@ -1,32 +1,49 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSearchText { width: var(--menu-width-large); height: 44px; padding: 0px; position: fixed; top: 42px; }
+	.menu.menuSearchText { 
+		width: var(--menu-width-large); padding: 0px; position: fixed; top: 42px; box-shadow: 0px 0px !important; 
+		border-radius: 0px; background: unset; transition-property: opacity; transform: none !important;
+	}
+	.menu.menuSearchText * { -webkit-app-region: no-drag; }
 	.menu.menuSearchText {
-		.content { height: 100%; display: block; }
-		.flex { width: 100%; flex-direction: row; align-items: center; padding: 0px 0px 0px 8px; }
-		.input { height: 100%; padding: 13.5px 0px 13.5px 6px; flex-grow: 1; width: 100%; }
-		.icon.search { flex-shrink: 0; margin: 0px; }
+		.content { transition: none; padding: 0px; overflow: visible; }
+		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
 
-		.buttons { 
-			flex-shrink: 0; color: var(--color-control-active); font-weight: 500; user-select: none; display: flex; gap: 0px 12px; height: 100%; 
-			align-items: center; padding: 0px 12px;
+		.filterWrapper {
+			padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px;
 		}
-		.buttons {
-			.switcher { display: none; flex-direction: row; align-items: center; gap: 0px 4px; }
-			.switcher.active { display: flex; }
 
-			.line { height: 20px; width: 1px; background: var(--color-shape-primary); }
+		.filterContainer {
+			display: flex; flex-direction: row; align-items: center; flex-grow: 1;
+			background-color: var(--color-shape-highlight-medium); border-radius: 16px; padding: 0px 12px; height: 32px;
+			border: 1px solid var(--color-shape-secondary); gap: 0px 6px;
+		}
+		.filterContainer {
+			.icon.search { flex-shrink: 0; margin: 0px; }
+			.input { flex-grow: 1; height: 100%; padding: 0px; border: 0px; }
 
-			.icon.arrow { 
-				width: 24px; height: 24px; border-radius: 4px; transition: $transitionAllCommon; margin: 0px; 	
-				background-image: url('~img/arrow/search.svg'); transform: rotateZ(90deg);
+			.cnt {
+				@include text-small; color: var(--color-control-active); white-space: nowrap; flex-shrink: 0;
+				padding: 0px 8px;
 			}
-			.icon.arrow.right { transform: rotateZ(270deg); }
-			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 
-			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; }
-			.icon.clear:hover { background-image: url('~img/icon/clear1.svg') !important; }
+			.icon.clear {
+				width: 20px; height: 20px; flex-shrink: 0; margin: 0px;
+				background-image: url('~img/icon/filter/clear-dark0.svg') !important;
+			}
+			.icon.clear:hover { background-image: url('~img/icon/filter/clear-dark0.svg') !important; }
+		}
+
+		.arrowWrapper {
+			display: flex; flex-direction: row; padding: 6px 8px; flex-shrink: 0; gap: 0px 8px;
+			background-color: var(--color-shape-highlight-medium); border-radius: 16px; align-items: center;
+		}
+		.arrowWrapper {
+			.icon { width: 20px; height: 20px; }
+			.icon.arrow { background-image: url('~img/arrow/searchText.svg'); }
+			.icon.arrow.down { transform: rotate(180deg); }
+			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
 	}
 }

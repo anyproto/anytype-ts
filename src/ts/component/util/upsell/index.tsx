@@ -28,14 +28,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 		return null;
 	};
 
-	const { membershipTiers } = S.Common;
-
-	if (!membershipTiers.length) {
-		return null;
-	};
-
-	const tier: I.MembershipTier = membershipTiers[0];
-	const { membership } = S.Auth;
+	const product = S.Membership.data?.getTopProduct();
 
 	const getConditions = (item): { isShown: boolean; isRed: boolean } => {
 		let isShown = false;
@@ -56,7 +49,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 			case 'members': {
 				const space = U.Space.getSpaceview();
-				if (!space || space.isChat) {
+				if (!space || space.isChat || space.isOneToOne) {
 					return { isShown, isRed };
 				};
 
@@ -123,19 +116,17 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 	const Component = Components[c] || null;
 	const { isShown, isRed } = getConditions(c);
-	const canShow = U.Common.checkCanMembershipUpgrade()
-		&& U.Space.isMyOwner()
-		&& U.Data.isAnytypeNetwork()
-		&& tier
-		&& (tier.id != membership.tier)
-		&& isShown;
-	const tierCanNotUpgrade = !tier.price || !tier.period || !tier.periodType;
 
-	if (!Component || !canShow || tierCanNotUpgrade) {
+	const canShow = U.Space.isMyOwner()
+		&& U.Data.isAnytypeNetwork()
+		&& isShown;
+
+	if (!Component || !canShow || (product && !product.isUpgradeable)) {
 		return null;
 	};
 
-	return <Component className={className} route={route} tier={tier} isRed={isRed} />;
+	return <Component className={className} route={route} isRed={isRed} />;
+
 
 }));
 

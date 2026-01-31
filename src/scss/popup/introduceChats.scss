@@ -4,142 +4,37 @@ $elementsTransition: opacity 0.2s linear;
 
 .popups {
     .popup.popupIntroduceChats {
-        .innerWrap { background: var(--color-bg-lime); width: 768px; height: 600px; border-radius: 20px; overflow: hidden; }
+        .innerWrap { background: var(--color-shape-tertiary); width: 768px; height: 600px; border-radius: 20px; overflow: hidden; }
 
         .steps { transition: margin-left 0.6s cubic-bezier(0.78, 0, 0.39, 1); display: flex; align-items: center; text-align: center; }
         .steps.s1 { margin-left: -100%; }
         .steps {
-            .step0 { display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 45px; flex-shrink: 0; }
+            .step0 { position: relative; display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 45px; flex-shrink: 0; }
             .step0.init {
-                .title,
-                > .label,
-                .button { opacity: 0; }
+                .chat { top: 380px; }
             }
             .step0 {
-                .chat { height: 324px; width: 512px; margin-bottom: 38px; display: flex; flex-direction: column; justify-content: flex-end; }
                 .chat {
-                    .feed { overflow: hidden; height: 0px; transition: height $easeInQuint 0.5s; }
-                    .message { @include text-common; position: relative; opacity: 0; transition: none; }
-                    .message {
-                        * { user-select: text !important; }
-
-                        &.show { opacity: 1; }
-                        &.show {
-                            .bubble { opacity: 1; }
-                        }
-
-                        .label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
-                        .label.small.withText { margin: 0px 0px 0px 4px; }
-
-                        > .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; }
-                        > .flex {
-                            > .side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }
-                            > .side.left {
-                                .userpic { width: 40px; height: 40px; border-radius: 50%; background-size: 40px; }
-                                .userpic.alice { background-image: url('~img/icon/onboarding/chats/alice.png'); }
-                                .userpic.self { background-image: url('~img/icon/onboarding/chats/self.png'); }
-                                .userpic.bob { background-image: url('~img/icon/onboarding/chats/bob.png'); }
-                            }
-                            > .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; }
-                        }
-
-                        .bubbleOuter { display: flex; flex-direction: column; width: 100%; }
-                        .bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
-
-                        .bubble {
-                            border-radius: 20px; background-color: var(--color-bg-primary); display: flex; flex-direction: column;
-                            transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0; @include text-paragraph;
-                        }
-                        .bubble {
-                            .textWrapper { padding: 8px 16px; }
-                            .text { user-select: text !important; display: inline; }
-                            .time {
-                                @include text-common; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 10px; padding-top: 4px;
-                                display: flex; align-items: center; gap: 0px 4px;
-                            }
-
-                            .attachment { padding: 16px; display: flex; align-items: center; gap: 0px 12px; width: 366px; }
-                            .attachment {
-                                .iconObject { flex-shrink: 0; border-radius: 12px; background-color: var(--color-shape-highlight-dark); }
-                                .info { text-align: left; }
-                                .title { @include text-paragraph; font-weight: 500; margin-bottom: 0; }
-                                .label { color: var(--color-text-secondary); }
-                            }
-                        }
-
-                        .author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 5px; padding-left: 16px; font-weight: 500 }
-                        .author * { user-select: text !important; }
-
-                        .expand { display: none; align-items: center; color: var(--color-text-secondary); white-space: nowrap; cursor: default; }
-
-                        &.isSelf {
-                            .author { display: none !important; }
-                            > .flex { flex-direction: row-reverse; }
-                            > .flex {
-                                > .side.right { align-items: flex-end; }
-                            }
-
-                            .bubbleOuter { align-items: flex-end; }
-
-                            .bubbleInner { flex-direction: row-reverse; }
-                            .bubbleInner {
-                                .bubble { background-color: var(--color-bg-tag-lime); }
-                            }
-                        }
-
-                        &:first-child { margin-top: 0px; }
-
-                        &.isFirst { margin: 20px 0px 0px 0px; }
-                        &.isFirst {
-                            .author { display: flex; }
-                        }
-
-                        &:not(.isLast) { margin-bottom: 8px; }
-                        &.stack {
-                            .userpic { display: none; }
-                        }
-
-                        &:not(.withText) {
-                            .bubbleInner {
-                                .bubble {
-                                    .textWrapper { display: none; }
-                                }
-                            }
-                        }
-
-                        &.isLast { margin: 0px 0px 20px 0px; }
-                        &.isLast {
-                            > .flex > .side.left {
-                                .iconObject { display: block; }
-                            }
-                        }
-
-                        &.withText {
-                            .attachments.isSingle {
-                                .attachment.isImage.withBlur {
-                                    .imgWrapper { width: 352px; }
-                                }
-                            }
-                        }
-                    }
-
-                    &.animationDone {
-                        .message { opacity: 1; }
-                        .message {
-                            .bubble { opacity: 1; }
-                            &:not(.isLast) {
-                                .userpic { display: none; }
-                            }
-                        }
-                    }
+                    position: absolute; z-index: 0; left: 50%; margin-left: -164px; width: 328px; height: 312px; top: 44px;
+                    background: url('~img/icon/onboarding/chats/feed.png'); background-size: 328px 312px;
+                    transition: top 2s $easeInQuint;
                 }
 
-                .title { @include text-title; margin-bottom: 5px; }
-                > .label { @include text-paragraph; font-weight: 500; margin-bottom: 14px; width: 544px; opacity: 0.7; }
+                .text { position: absolute; z-index: 2; width: 100%; bottom: 44px; display: flex; flex-direction: column; align-items: center; }
+                .text {
+                    .title { @include text-title; margin-bottom: 8px; }
+                    .label { @include text-paragraph; color: var(--color-text-secondary); font-weight: 500; width: 568px; margin-bottom: 20px; }
 
-                .title,
-                > .label,
-                .button { transition: opacity 1s $easeInQuint; }
+                    .title,
+                    .label,
+                    .button { transition: opacity 1s $easeInQuint; }
+
+                    .button { width: 164px; }
+                }
+                .grad {
+                    position: absolute; width: 100%; height: 400px; left: 0px; bottom: 0px;
+                    background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 0%, var(--color-shape-tertiary) 39.9%);
+                }
             }
 
             .step1 { height: 600px; width: 768px; flex-shrink: 0; position: relative; overflow: hidden; }
@@ -156,10 +51,10 @@ $elementsTransition: opacity 0.2s linear;
                     .text.hidden { opacity: 0; }
                     .text {
                         .title { @include text-header1; margin-bottom: 5px; }
-                        .label { @include text-paragraph; margin-bottom: 12px; opacity: 0.7; }
+                        .label { @include text-paragraph; color: var(--color-text-secondary); width: 480px; margin: 0px auto 12px; }
                         .label.count { @include text-small; margin-bottom: 0px; }
                     }
-                    .text3 {
+                    .text4 {
                         .title { margin-bottom: 12px; }
                         .button { border-radius: 18px; }
                     }
@@ -167,38 +62,98 @@ $elementsTransition: opacity 0.2s linear;
 
                 .introWrapper { width: 100%; height: 425px; position: relative; }
 
-                @keyframes introSidebar {
-                    0% { opacity: 0; top: 0px; }
-                    1% { opacity: 1; top: 0px; }
-                    100% { opacity: 1; top: -244px; }
-                };
-                @keyframes sidebarHeader {
+                @keyframes introHeader {
                     0% { opacity: 0; }
-                    1%,
-                    100% { opacity: 1; }
+                    1% { opacity: 1; }
+                    100% { opacity: 1; background-color: var(--color-shape-primary); }
                 };
+                @keyframes introHeaderMask {
+                    0% { left: 0px; }
+                    1% { left: 0px; }
+                    100% { left: 284px; }
+                };
+                @keyframes introHeaderIcons {
+                    0% { width: 72px; }
+                    1% { width: 72px; }
+                    100% { width: 284px; }
+                };
+                @keyframes introHeaderMaskIcon {
+                    0% { left: 112px; }
+                    1% { left: 112px; }
+                    100% { left: 16px; }
+                };
+                @keyframes introSidebar {
+                    0% { opacity: 0; width: 0px; }
+                    1% { opacity: 1; width: 0px; }
+                    100% { opacity: 1; width: 284px; }
+                };
+                @keyframes introBody {
+                    0% { background-position-x: 0px; }
+                    1% { background-position-x: 0px; }
+                    100% { background-position-x: 284px; }
+                };
+
+                @mixin animate($animationName) { animation: $animationName 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards; };
 
                 .intro { position: relative; z-index: 1; width: 100%; height: 100%; }
                 .intro {
                     .img {
-                        position: absolute; filter: drop-shadow(0 0 32px rgba(0, 0, 0, 0.15)); transition: all $easeInQuint 0.8s;
-                        background: url('~img/icon/onboarding/chats/intro.png') 0 0 / 1440px 900px no-repeat; width: 1440px; height: 900px;
-                        overflow: hidden; border-radius: 12px;
+                        position: absolute; transition: all $easeInQuint 0.8s; width: 1440px; height: 900px;
+                        background: var(--color-shape-primary) url('~img/icon/onboarding/chats/intro.png') 0 0 / 1440px 900px no-repeat;
+                        overflow: hidden; border-radius: 20px;
                     }
-                    .img.slide0 { left: 208px; top: 0px; }
-                    .img.slide1 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 4px; }
-                    .img.slide2 { left: -888px; top: 0px; }
+                    .img {
+                        .oneToOne { opacity: 0; }
+                    }
+                    .img.slide0,
+                    .img.slide2 { left: 208px; top: 0px; }
+                    .img.slide1,
+                    .img.slide3,
+                    .img.slide4 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 10px; }
+
                     .img.slide2,
-                    .img.slide3 {
-                        &:before,
-                        &:after {
-                            content: ''; position: absolute; right: 0px; top: 0px; width: 336px;
-                            background: url('~img/icon/onboarding/chats/sidebar.png') 0 0 / 336px 928px no-repeat; opacity: 0;
+                    .img.slide3,
+                    .img.slide4 { @include animate(introBody); }
+                    .img.slide2,
+                    .img.slide3,
+                    .img.slide4 {
+                        .header { @include animate(introHeader); position: absolute; z-index: 100; left: 0px; top: 0px; height: 52px; width: 336px; opacity: 0; }
+                        .header {
+                            &:before {
+                                @include animate(introHeaderIcons);
+                                content: ''; width: 284px; position: absolute; z-index: 1; height: 100%; background: url('~img/icon/onboarding/chats/header.svg');
+                            }
+                            .mask {
+                                @include animate(introHeaderMask);
+                                position: absolute; z-index: 0; left: 0px; bottom: 0px; height: 52px; width: 100%; background: var(--color-bg-primary);
+                                border-top-left-radius: 20px; border-left: 4px solid var(--color-shape-primary); border-top: 4px solid var(--color-shape-primary);
+                            }
+                            .mask {
+                                .icon {
+                                    @include animate(introHeaderMaskIcon);
+                                    position: absolute; left: 112px; top: 12px; width: 20px; height: 20px; background: url('~img/icon/header/widget1.svg');
+                                }
+                            }
                         }
-                        &:before { height: 100%;  animation: introSidebar 2s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards; }
-                        &:after { height: 52px; z-index: 2; animation: sidebarHeader 0s linear; animation-delay: 0.8s; animation-fill-mode: forwards; }
+                        .sidebar {
+                            position: absolute; left: 0px; top: 0px; width: 284px;
+                            background: url('~img/icon/onboarding/chats/sidebar.png') 0 0 / 284px 900px no-repeat; opacity: 0;
+                            height: 100%;  animation: introSidebar 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards;
+                        }
+                        .oneToOne {
+                            position: absolute; z-index: 300; left: 0px; top: 0px; width: 100%; height: 100%;
+                            background-image: url('~img/icon/onboarding/chats/oneToOne.png');
+                            transition: background-size $easeInQuint 0.8s;
+                        }
                     }
-                    .img.slide3 { left: -1450px; top: 0px; opacity: 0; }
+                    .img.slide2 {
+                        .oneToOne { background-size: 1440px 900px; }
+                    }
+                    .img.slide3,
+                    .img.slide4 {
+                        .oneToOne { background-size: 640px 400px; opacity: 1; }
+                    }
+                    .img.slide4 { left: -300px; top: 16px; opacity: 0; }
                 }
 
                 .swiper { width: 100%; height: 100%; z-index: 2; overflow: visible; position: absolute; left: 0px; top: 0px; }
@@ -216,7 +171,7 @@ $elementsTransition: opacity 0.2s linear;
 
                 .slide { display: flex; flex-direction: column; gap: 21px 0px; align-items: center; height: 425px; }
                 .slide {
-                    img { width: 680px; height: 425px; }
+                    img { width: 680px; height: 425px; border-radius: 10px; }
                 }
 
                 // transitions

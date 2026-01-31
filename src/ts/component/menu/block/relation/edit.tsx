@@ -1,315 +1,127 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation, Action } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 
-const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
+const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	node: any = null;
-	format: I.RelationType = null;
-	objectTypes: string[] = [];
-	includeTime: boolean = false;
-	ref = null;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onRelationType = this.onRelationType.bind(this);
-		this.onObjectType = this.onObjectType.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onOpen = this.onOpen.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onUnlink = this.onUnlink.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-		this.menuClose = this.menuClose.bind(this);
-		this.rebind = this.rebind.bind(this);
-	};
+	const { param, position, getId, getSize, close } = props;
+	const { data, classNameWrap } = param;
+	const { 
+		rootId, blockId, readonly, noDelete, noUnlink, filter, relationId, addParam, addCommand, deleteCommand, 
+		onChange, route, saveCommand,
+	} = data;
+	const filterRef = useRef(null);
+	const buttonRef = useRef(null);
+	const [ format, setFormat ] = useState<I.RelationType>(null);
+	const [ objectTypes, setObjectTypes ] = useState<string[]>([]);
+	const [ includeTime, setIncludeTime ] = useState(false);
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, ref, readonly, noDelete, noUnlink } = data;
-		const relation = this.getRelation();
-		const root = S.Block.getLeaf(rootId, rootId);
-		const isObject = this.format == I.RelationType.Object;
-		const isReadonly = this.isReadonly();
-		const object = S.Detail.get(rootId, rootId);
-		const isType = U.Object.isTypeLayout(object.layout);
-		const isName = relation && (relation.relationKey == 'name');
-		const isDescription = relation && (relation.relationKey == 'description');
-		const isDate = Relation.isDate(this.format);
-
-		let canDuplicate = true;
-		let canDelete = !noDelete;
-		let canUnlink = !noUnlink && !isName;
-		let opts: any = null;
-		let unlinkText = '';
-		let name = '';
+	useEffect(() => {
+		const relation = getRelation();
 
 		if (relation) {
-			name = relation.name;
+			setFormat(relation.format);
+			setObjectTypes(Relation.getArrayValue(relation.objectTypes));
+			setIncludeTime(relation.includeTime);
 		};
 
-		if (readonly) {	
-			canDuplicate = canDelete = false;
-		} else
-		if (root) {
-			if (root.isLocked() || !S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
-				canDuplicate = canDelete = false;
-			};
+		if (filter) {
+			filterRef.current?.setValue(filter);
 		};
 
-		if (relation) {
-			canDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
+		checkButton();
+		focus();
+		rebind();
+
+		return () => {
+			menuClose();
+			unbind();
 		};
 
-		switch (ref) {
-			case 'type':
-				unlinkText = translate('commonUnlinkFromType');
-				break;
+	}, []);
 
-			case 'object':
-				unlinkText = translate('commonUnlinkFromObject');
-				break;
-		};
+	useEffect(() => {
+		checkButton();
+		focus();
+		position();
+	});
 
-		canUnlink = canUnlink && !!unlinkText;
-
-		if (isType && isDescription) {
-			canUnlink = false;
-		};
-
-		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
-			const length = this.objectTypes.length;
-			const typeId = length ? this.objectTypes[0] : '';
-			const type = S.Record.getTypeById(typeId);
-			const typeProps: any = { 
-				name: translate('menuBlockRelationEditSelectObjectType'),
-				caption: (length > 1 ? '+' + (length - 1) : ''),
-			};
-
-			if (type) {
-				typeProps.name = type.name;
-				typeProps.object = type;
-			};
-
-			opts = (
-				<div className="section noLine">
-					<div className="name">{translate('menuBlockRelationEditLimitObjectTypes')}</div>
-					<MenuItemVertical
-						id="object-type"
-						onMouseEnter={this.onObjectType}
-						onClick={this.onObjectType}
-						arrow={!isReadonly}
-						{...typeProps}
-					/>
-				</div>
-			);
-		};
-
-		if (isDate && relation) {
-			opts = (
-				<div className="section">
-					<MenuItemVertical
-						id="includeTime"
-						icon="clock"
-						name={translate('commonIncludeTime')}
-						onMouseEnter={this.menuClose}
-						readonly={readonly}
-						withSwitch={true}
-						switchValue={this.includeTime}
-						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
-					/>
-				</div>
-			);
-		};
-
-		return (
-			<form 
-				ref={node => this.node = node}
-				className="form" 
-				onSubmit={this.onSubmit} 
-				onMouseDown={this.menuClose}
-			>
-				<div className="section">
-					<div className="name">{translate('menuBlockRelationEditRelationName')}</div>
-
-					{!isReadonly ? (
-						<div className="inputWrap">
-							<Input 
-								ref={ref => this.ref = ref} 
-								value={name}
-								onChange={this.onChange} 
-								onMouseEnter={this.menuClose}
-							/>
-						</div>
-					) : (
-						<div className="item isReadonly">
-							<Icon className="lock" />
-							{relation ? relation.name : ''}
-						</div>
-					)}
-				</div>
-
-				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
-					<div className="name">{translate('menuBlockRelationEditRelationType')}</div>
-					<MenuItemVertical 
-						id="relation-type" 
-						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
-						name={this.format === null ? translate('menuBlockRelationEditSelectRelationType') : translate('relationName' + this.format)}
-						onMouseEnter={this.onRelationType} 
-						onClick={this.onRelationType} 
-						readonly={isReadonly}
-						arrow={!relation}
-					/>
-				</div>
-				
-				{opts}
-
-				{!isReadonly ? (
-					<div className="section">
-						<div className="inputWrap">
-							<Button id="button" type="input" text={translate(relation ? 'commonSave' : 'commonCreate')} color="blank" className="c28" />
-						</div>
-					</div>
-				) : ''}
-
-				{relation && (canDuplicate || canDelete) ? (
-					<div className="section">
-						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
-						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
-					</div>
-				) : ''}
-			</form>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const relation = this.getRelation();
-
-		if (relation) {
-			this.format = relation.format;
-			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
-			this.includeTime = relation.includeTime;
-			this.forceUpdate();
-		};
-
-		if (this.ref && filter) {
-			this.ref.setValue(filter);
-		};
-
-		this.checkButton();
-		this.focus();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.checkButton();
-		this.focus();
-		this.props.position();
-	};
-
-	componentWillUnmount () {
-		this.menuClose();
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	focus () {
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+	const focus = () => {
+		window.setTimeout(() => filterRef.current?.focus(), 15);
 	};
 
-	checkButton () {
-		const node = $(this.node);
-		const name = this.ref ? this.ref.getValue() : '';
-		const button = node.find('#button');
-		const canSave = name.length && (this.format !== null) && !this.isReadonly();
+	const checkButton = () => {
+		const name = String(filterRef.current?.getValue() || '');
+		const canSave = name.length && (format !== null) && !isReadonlyHandler();
 
-		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
+		buttonRef.current?.setColor(canSave ? 'accent' : 'blank');
 	};
 
-	onRelationType (e: any) {
+	const onRelationType = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, param, getId } = this.props;
-		const { data } = param;
-		const relation = this.getRelation();
+		const relation = getRelation();
 
-		if ((relation && relation.id) || S.Menu.isAnimating(id)) {
+		if ((relation && relation.id) || S.Menu.isAnimating(props.id)) {
 			return;
 		};
 
-		this.menuOpen('select', { 
+		menuOpen('select', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
 				filter: '',
-				value: this.format,
+				value: format,
 				options: U.Menu.getRelationTypes(),
 				noFilter: true,
-				onSelect: (e: any, item: any) => {
-					this.format = item.id;
-					this.forceUpdate();
-				},
+				onSelect: (e: any, item: any) => setFormat(item.id),
 			}
 		});
 	};
 
-	onObjectType (e: any) {
+	const onObjectType = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id ,param, getSize } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const { getId } = this.props;
 		const type = S.Record.getTypeType();
 
-		if (!type || S.Menu.isAnimating(id)) {
+		if (!type || S.Menu.isAnimating(props.id)) {
 			return;
 		};
 		
-		let relation: any = this.getRelation();
+		let relation: any = getRelation();
 		if (!relation) {
-			relation = { format: this.format };
+			relation = { format };
 		};
 
-		this.menuOpen('dataviewObjectValues', { 
+		menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
 			width: getSize().width,
 			vertical: I.MenuDirection.Center,
 			data: {
 				rootId,
-				canEdit: !this.isReadonly(),
+				canEdit: !isReadonlyHandler(),
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
 				nameCreate: translate('commonCreateObjectTypeWithName'),
 				addParam: {
 					details: { type: type.id }
 				},
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
-				value: this.objectTypes, 
+				value: objectTypes, 
 				types: [ type.id ],
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
@@ -318,53 +130,41 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					this.objectTypes = Relation.getArrayValue(value);
-					this.forceUpdate();
+					setObjectTypes(Relation.getArrayValue(value));
 
 					if (relation.id) {
-						this.save();
+						save();
 					};
 					
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});
 	};
 
-	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			this.onSubmit(e);
-		});
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
 
-	onChange () {
-		this.checkButton();
-	};
+	const onChangeTime = (v: boolean) => {
+		const relation = getRelation();
 
-	onChangeTime (v: boolean) {
-		const relation = this.getRelation();
-
-		this.includeTime = v;
+		setIncludeTime(v);
 
 		if (relation && relation.id) {
-			this.save();
+			save();
 		};
 	};
 
-	menuOpen (id: string, options: I.MenuParam) {
-		const { getSize, param } = this.props;
-		const { classNameWrap } = param;
-
+	const menuOpen = (id: string, options: I.MenuParam) => {
 		options = Object.assign(options, {
 			isSub: true,
 			passThrough: true,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
-			rebind: this.rebind,
-			parentId: this.props.id,
+			rebind,
+			parentId: props.id,
 		});
 
 		if (!S.Menu.isOpen(id) && !S.Menu.isAnimating(id)) {
@@ -374,96 +174,84 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 	};
 
-	menuClose () {
+	const menuClose = () => {
 		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
-	onOpen (e: any) {
-		this.props.close();
-		U.Object.openConfig(this.getRelation());
+	const onOpen = (e: any) => {
+		close();
+		U.Object.openEvent(e, getRelation());
 	};
 
-	onCopy (e: any) {
-		const { close } = this.props;
-		const relation = this.getRelation();
+	const onCopy = () => {
+		const relation = getRelation();
+		if (!relation || !relation.id) {
+			return;
+		};
 
-		this.add({ 
-			name: relation.name, 
+		add({ 
+			name: relation?.name, 
 			relationFormat: relation.format,
-			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
-			relationFormatIncludeTime: this.includeTime,
+			relationFormatObjectTypes: Relation.isObject(relation.format) ? Relation.getArrayValue(relation.objectTypes) : [],
+			relationFormatIncludeTime: includeTime,
 		});
 
 		close();
 		analytics.event('DuplicateRelation');
 	};
 
-	onUnlink (e: any) {
-		const { close, param } = this.props;
-		const { data } = param;
-		const { deleteCommand } = data;
-		const relation = this.getRelation();
+	const onUnlink = () => {
+		const relation = getRelation();
 
-		if (deleteCommand) {
-			deleteCommand();
-		};
-
+		deleteCommand?.();
 		close();
 
 		if (relation) {
-			analytics.event('DeleteRelation', { relationKey: relation?.relationKey, format: relation?.format });
+			analytics.event('DeleteRelation', relation);
 		};
 	};
 
-	onRemove (e: any) {
-		const { close, param } = this.props;
-		const { data } = param;
-		const { deleteCommand } = data;
-		const relation = this.getRelation();
+	const onRemove = () => {
+		const relation = getRelation();
+		if (!relation || !relation.id) {
+			return;
+		};
 
 		Action.archive([ relation.id ], '', () => {
-			if (deleteCommand) {
-				deleteCommand();
-			};
-
+			deleteCommand?.();
 			close();
 		});
 	};
 
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		const node = $(this.node);
-		const button = node.find('#button');
-
-		if (button.hasClass('grey')) {
+		if (buttonRef.current?.getColor() == 'blank') {
 			return;
 		};
 
-		this.save();
-		this.props.close();
+		save();
+		close();
 	};
 
-	save () {
-		const name = this.ref ? this.ref.getValue() : '';
-		const relation = this.getRelation();
+	const save = () => {
+		const name = String(filterRef.current?.getValue() || '');
+		const relation = getRelation();
 		const item: any = { 
-			relationFormat: this.format,
-			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
-			relationFormatIncludeTime: this.includeTime,
+			relationFormat: format,
+			relationFormatObjectTypes: Relation.isObject(format) ? Relation.getArrayValue(objectTypes) : [],
+			relationFormatIncludeTime: includeTime,
 		};
 
 		if (name) {
 			item.name = name;
 		};
 
-		relation && relation.id ? this.update(item) : this.add(item);
+		relation && relation.id ? update(item) : add(item);
 	};
 
-	add (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, addCommand, onChange, ref, route } = data;
+	const add = (item: any) => {
+		
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
@@ -475,40 +263,24 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			
 			data.relationId = details.id;
 			S.Detail.update(J.Constant.subId.relation, { id: details.id, details }, false);
+			addCommand?.(rootId, blockId, details, onChange);
 
-			if (addCommand) {
-				addCommand(rootId, blockId, details, onChange);
-			};
-
-			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type, route: route || '' });
+			Preview.toastShow({ text: U.String.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: data.ref, objectType: object.type, route });
 		});
 	};
 
-	update (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationId, saveCommand } = data;
+	const update = (item: any) => {
 		const details: any[] = [];
-		const object = {};
 
 		for (const k in item) {
-			object[k] = item[k];
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectListSetDetails([ relationId ], details, () => {
-			if (saveCommand) {
-				saveCommand();
-			};
-		});
+		C.ObjectListSetDetails([ relationId ], details, saveCommand);
 	};
 
-	getRelation (): any {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationId, addParam } = data;
-
+	const getRelation = (): any => {
 		let ret: any = null;
 
 		if (relationId) {
@@ -522,34 +294,181 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		return ret;
 	};
 
-	isAllowed () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+	const isReadonlyHandler = () => {
+		const relation = getRelation();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const relation = this.getRelation();
 
-		let ret = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
-		if (ret && root) {
-			ret = !root.isLocked() && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let isAllowed = !root?.isLocked();
+		if (relation && relation.id) {
+			isAllowed = isAllowed && S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]);
 		};
-		return ret;
-	};
-	
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
-		const isAllowed = this.isAllowed();
-
-		return readonly || !isAllowed || this.isReadonlyRelation();
+		if (isAllowed && root) {
+			isAllowed = isAllowed && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		};
+		return readonly || !isAllowed || relation?.isReadonlyRelation;
 	};
 
-	isReadonlyRelation () {
-		const relation = this.getRelation();
-		return relation && relation.isReadonlyRelation;
+	const relation = getRelation();
+	const root = S.Block.getLeaf(rootId, rootId);
+	const isReadonly = isReadonlyHandler();
+	const object = S.Detail.get(rootId, rootId);
+	const isType = U.Object.isTypeLayout(object.layout);
+	const isName = relation && (relation.relationKey == 'name');
+	const isDescription = relation && (relation.relationKey == 'description');
+	const isDate = Relation.isDate(format);
+	const isObject = Relation.isObject(format);
+
+	let canDuplicate = true;
+	let canDelete = !noDelete;
+	let canUnlink = !noUnlink && !isName;
+	let opts: any = null;
+	let unlinkText = '';
+	let name = '';
+
+	if (relation) {
+		name = relation.name;
 	};
 
-});
+	if (readonly) {	
+		canDuplicate = canDelete = false;
+	} else
+	if (root) {
+		if (root.isLocked() || !S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+			canDuplicate = canDelete = false;
+		};
+	};
+
+	if (relation) {
+		canDelete = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Delete ]) : false;
+	};
+
+	switch (data.ref) {
+		case 'type':
+			unlinkText = translate('commonUnlinkFromType');
+			break;
+
+		case 'object':
+			unlinkText = translate('commonUnlinkFromObject');
+			break;
+	};
+
+	canUnlink = canUnlink && !!unlinkText;
+
+	if (isType && isDescription) {
+		canUnlink = false;
+	};
+
+	if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
+		const length = objectTypes.length;
+		const typeId = length ? objectTypes[0] : '';
+		const type = S.Record.getTypeById(typeId);
+		const typeProps: any = { 
+			name: translate('menuBlockRelationEditSelectObjectType'),
+			caption: (length > 1 ? `+${length - 1}` : ''),
+		};
+
+		if (type) {
+			typeProps.name = type.name;
+			typeProps.object = type;
+		};
+
+		opts = (
+			<div className="section noLine">
+				<div className="name">{translate('menuBlockRelationEditLimitObjectTypes')}</div>
+				<MenuItemVertical
+					id="object-type"
+					onMouseEnter={onObjectType}
+					onClick={onObjectType}
+					arrow={!isReadonly}
+					{...typeProps}
+				/>
+			</div>
+		);
+	};
+
+	if (isDate && relation) {
+		opts = (
+			<div className="section">
+				<MenuItemVertical
+					id="includeTime"
+					icon="clock"
+					name={translate('commonIncludeTime')}
+					onMouseEnter={menuClose}
+					readonly={readonly}
+					withSwitch={true}
+					switchValue={includeTime}
+					onSwitch={(e: any, v: boolean) => onChangeTime(v)}
+				/>
+			</div>
+		);
+	};
+
+	return (
+		<form 
+			className="form" 
+			onSubmit={onSubmit} 
+			onMouseDown={menuClose}
+		>
+			<div className="section">
+				<div className="name">{translate('menuBlockRelationEditRelationName')}</div>
+
+				{!isReadonly ? (
+					<div className="inputWrap">
+						<Input 
+							ref={filterRef} 
+							value={name}
+							onChange={checkButton} 
+							onMouseEnter={menuClose}
+						/>
+					</div>
+				) : (
+					<div className="item isReadonly">
+						<Icon className="lock" />
+						{relation ? relation.name : ''}
+					</div>
+				)}
+			</div>
+
+			<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
+				<div className="name">{translate('menuBlockRelationEditRelationType')}</div>
+				<MenuItemVertical 
+					id="relation-type" 
+					icon={format === null ? undefined : `relation ${Relation.className(format)}`} 
+					name={format === null ? translate('menuBlockRelationEditSelectRelationType') : translate(`relationName${format}`)}
+					onMouseEnter={onRelationType} 
+					onClick={onRelationType} 
+					readonly={isReadonly}
+					arrow={!relation}
+				/>
+			</div>
+			
+			{opts}
+
+			{!isReadonly ? (
+				<div className="section">
+					<div className="inputWrap">
+						<Button 
+							ref={buttonRef} 
+							type="input" 
+							text={translate(relation ? 'commonSave' : 'commonCreate')} 
+							color="blank"
+							className="c28"
+						/>
+					</div>
+				</div>
+			) : ''}
+
+			{relation ? (
+				<div className="section">
+					<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
+					{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
+					{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
+					{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
+				</div>
+			) : ''}
+		</form>
+	);
+
+}));
 
 export default MenuBlockRelationEdit;

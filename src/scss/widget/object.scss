@@ -1,0 +1,38 @@
+@import "~scss/_mixins";
+
+.widget.widgetObject {
+	.contentWrapper { padding: 8px; }
+
+	.item { height: 28px; padding: 0px 8px; display: flex; flex-direction: row; align-items: center; position: relative; line-height: 20px; }
+	.item {
+		.side.left { display: flex; flex-direction: row; align-items: center; flex-grow: 1; gap: 0px 6px; overflow: hidden; }
+		.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+
+		.side.left {
+			.iconObject { flex-shrink: 0; }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; }
+			.name { flex-grow: 1; @include text-overflow-nw; font-weight: 600; }
+		}
+
+		&::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
+			opacity: 0; border-radius: 6px;
+		}
+		&:hover::before, &.active::before { opacity: 1; }
+		&:hover, &.active {
+			.chatCounter { display: none; }
+			.buttons { display: flex; }
+		}
+
+		.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
+		.buttons {
+			.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+			.icon.plus:hover, .icon.plus.hover { background-image: url('~img/icon/widget/plus1.svg'); }
+		}
+	}
+
+	.empty { color: var(--color-text-secondary); padding: 3px 8px; }
+}

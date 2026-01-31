@@ -23,6 +23,7 @@ export enum SpaceUxType {
 	Data 					 = 1,
 	Stream					 = 2,
 	Chat 					 = 3,
+	OneToOne 				 = 4,
 };
 
 export enum ParticipantPermissions {

@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
-import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
+import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
+import { I, C, S, J, U, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -27,10 +27,10 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return width;
 		};
 		
-		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		const ew = el.width();
+		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 		
-		return Math.min(1, Math.max(0, w / rect.width));
+		return Math.min(1, Math.max(0, w / ew));
 	};
 
 	const onPlay = () => {
@@ -87,7 +87,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(nodeRef.current).addClass('isResizing');
 		win.on('mousemove.media', e => onResizeMove(e, checkMax));
 		win.on('mouseup.media', e => onResizeEnd(e, checkMax));
 	};
@@ -102,7 +102,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 		
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
 	};
@@ -115,10 +115,10 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		
 		const win = $(window);
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		win.off('mousemove.media mouseup.media');
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(nodeRef.current).removeClass('isResizing');
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 		
@@ -202,11 +202,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				break;
 			};
 				
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-				
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap resizable" style={css}>
@@ -226,7 +221,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	return (
 		<div 
 			ref={nodeRef} 
-			className={[ 'focusable', 'c' + id ].join(' ')} 
+			className={[ `focusable`, `c${id}` ].join(' ')} 
 			tabIndex={0} 
 			onKeyDown={onKeyDownHandler} 
 			onKeyUp={onKeyUpHandler} 

@@ -57,13 +57,17 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 				.swiper { z-index: 2; }
 				.swiper-slide { width: unset; display: flex; align-items: center; }
 				.previewItem { width: 72px; height: 72px; border-radius: 4px; overflow: hidden; }
-				.mediaContainer { position: relative; width: 100%; height: 100%; }
+				.mediaContainer { position: relative; width: 100%; height: 100%; display: flex; }
+				.mediaContainer {
+					.swiper-zoom-container { width: 100% }
+					video, img { display: block; }
+				}
 
 				.swiper-slide {
-					video, img { opacity: 0.5; }
+					.previewItem { filter: contrast(0.5); }
 				}
 				.swiper-slide.swiper-slide-thumb-active {
-					video, img { opacity: 1; }
+					.previewItem { filter: contrast(1); }
 				}
 
 				.previewItem.isVideo {
@@ -77,11 +81,9 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 					}
 				}
 			}
-
-			.innerDimmer { position: absolute; z-index: 0; width: 100%; height: 100%; left: 0px; top: 0px; }
 		}
 
 		
-		.media { width: 100%; height: 100%; object-fit: contain; margin: 0px auto; }
+		.media { width: 100%; height: 100%; object-fit: cover; margin: 0px auto; }
 	}
 }

@@ -14,6 +14,7 @@ class AccountInfo implements I.AccountInfo {
 	networkId = '';
 	workspaceObjectId = '';
 	ethereumAddress = '';
+	metadataKey = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.profileObjectId = String(props.profileObjectId || '');
@@ -27,6 +28,7 @@ class AccountInfo implements I.AccountInfo {
 		this.networkId = String(props.networkId || '');
 		this.workspaceObjectId = String(props.workspaceObjectId || '');
 		this.ethereumAddress = String(props.ethereumAddress || '');
+		this.metadataKey = String(props.metadataKey || '');
 
 		makeObservable(this, {
 			profileObjectId: observable,
@@ -40,6 +42,7 @@ class AccountInfo implements I.AccountInfo {
 			networkId: observable,
 			workspaceObjectId: observable,
 			ethereumAddress: observable,
+			metadataKey: observable,
 		});
 
 		intercept(this as any, change => U.Common.intercept(this, change));

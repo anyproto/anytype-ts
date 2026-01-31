@@ -2,29 +2,32 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; overflow: visible; }
+	body { margin: 0px; print-color-adjust: exact; caret-color: transparent; overflow: visible; }
 
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
 
-	#menuBar, 
-	#previewLink, 
-	.menu, 
-	.controlButtons, 
-	.header, 
+	#dragPanel,
+	#previewLink,
+	.menu,
+	.controlButtons,
+	.header,
 	.footer,
 	.notifications,
 	.sidebar,
+	#sidebarLeft,
+	#sidebarRight,
 	.sidebarDummy,
 	.progress,
 	.toast,
 	.focusable.isFocused::before,
 	#vault,
-	#sidebarLeftButton,
 	.tableOfContents
 	{ display: none !important; }
 
 	#selection { overflow: visible; }
+
+	.pageFlex { padding: 0px; }
 	#pageFlex.isFull {
 		#page { width: 100% !important; overflow: visible; }
 	}
@@ -79,7 +82,7 @@ html.printMedia {
 		.block.blockBookmark { break-inside: avoid; }
 
 		.block.blockLink {
-			.cover { -webkit-print-color-adjust: exact; }
+			.cover { print-color-adjust: exact; }
 		}
 
 		.block.blockEmbed {
@@ -109,6 +112,10 @@ html.printMedia {
 					}
 				}
 			}
+		}
+
+		.block.blockMedia.isPdf {
+			.react-pdf__Page__canvas { width: 100% !important; height: auto !important; }
 		}
 
 		.block.blockDataview.isInline {
@@ -150,7 +157,12 @@ html.printMedia {
 }
 
 html.printMedia.themeDark {
-	--color-bg-primary: #000;
+	--color-bg-primary: #171717;
+
+	@page { margin: 0 !important; }
+
+	&, body { background: var(--color-bg-primary) !important; print-color-adjust: exact !important; }
+	#page { padding-left: 1.5cm; padding-right: 1.5cm; }
 }
 
 html.printMedia.print {
@@ -160,9 +172,10 @@ html.printMedia.print {
 		.block.blockTable { width: 100% !important; margin: 0px !important; }
 		.block.blockTable {
 			.scrollWrap > .inner { width: 100% !important; }
-			.row { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; }
 		}
 	}
+
+	.row[data-print-columns] { grid-template-columns: var(--print-columns) !important; }
 }
 
 html.printMedia.withPopup {

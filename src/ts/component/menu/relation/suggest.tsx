@@ -1,216 +1,72 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Icon, MenuItemVertical, Loader, EmptySearch } from 'Component';
-import { I, S, U, J, analytics, keyboard, Relation, Action, translate } from 'Lib';
-
-interface State {
-	isLoading: boolean;
-};
+import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
+import { I, S, U, J, analytics, keyboard, Relation, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<I.Menu, State> {
+const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	state = {
-		isLoading: false,
-	};
+	const { param, close, onKeyDown, setActive, getId, getSize, position } = props;
+	const { data, className, classNameWrap } = param;
+	const { filter, blockId, noFilter, skipCreate, rootId, menuIdEdit, addCommand } = data;
+	const types = data.types || [];
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const filterRef = useRef(null);
+	const listRef = useRef(null);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const n = useRef(1);
+	const offset = useRef(0);
+	const timeout = useRef(0);
+	const itemsRef = useRef([]);
 
-	_isMounted = false;
-	filter = '';
-	cache: any = null;
-	items: any[] = [];
-	refFilter: any = null;
-	refList: any = null;
-	n = 1;
-	offset = 0;
-	timeoutFilter = 0;
+	useEffect(() => {
+		rebind();
+		resize();
+		load(true);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-	};
-	
-	render () {
-		const { isLoading } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, noFilter } = data;
-		const items = this.getItems();
-		const canWrite = U.Space.canMyParticipantWrite();
-
-		if (!this.cache) {
-			return null;
+		return () => {
+			unbind();
+			S.Menu.closeAll([ 'searchObject' ]);
+			window.clearTimeout(timeout.current);
 		};
+	}, []);
 
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
+	useEffect(() => {
+		resize();
+		rebind();
+	});
 
-			let content = null;
-			if (item.id == 'add') {
-				content = (
-					<div 
-						id="item-add" 
-						className="item add" 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						onClick={e => this.onClick(e, item)} 
-						style={param.style}
-					>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else {
-				content = (
-					<MenuItemVertical 
-						{...item}
-						index={param.index}
-						className={item.isHidden ? 'isHidden' : ''}
-						style={param.style}
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						withMore={true}
-						onMore={e => this.onEdit(e, item)}
-					/>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div className="wrap">
-				{!noFilter ? (
-					<Filter 
-						ref={ref => this.refFilter = ref}
-						className="outlined"
-						placeholderFocus={translate('menuRelationSuggestFilterOrCreateRelation')}
-						value={filter}
-						onChange={this.onFilterChange}
-						focusOnMount={true}
-					/>
-				) : ''}
-
-				{!items.length && !isLoading ? (
-					<EmptySearch readonly={!canWrite} filter={filter} />
-				) : ''}
-
-				{this.cache && items.length && !isLoading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length + 1}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!items[index]}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-			</div>
-		);
+	useEffect(() => {
+		n.current = -1;
+		offset.current = 0;
+		load(true);
+	}, [ filter ]);
+	
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-
-		this.rebind();
-		this.resize();
-		this.load(true);
-		this.forceUpdate();
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const filter = String(data.filter || '');
-		const items = this.getItems();
-
-		if (filter != this.filter) {
-			this.filter = filter;
-			this.n = -1;
-			this.offset = 0;
-			this.load(true);
-			return;
-		};
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.resize();
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		S.Menu.closeAll([ 'searchObject' ]);
-		window.clearTimeout(this.timeoutFilter);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
+			offset.current += J.Constant.limit.menuRecords;
+			load(false, resolve);
 		});
 	};
 
-	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { param } = this.props;
-		const { data } = param;
-		const types = data.types || [];
-		const filter = String(data.filter || '');
+	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const filters: any[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 			{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
@@ -225,53 +81,29 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		if (clear) {
-			this.setState({ isLoading: true });
-			this.items = [];
+			setIsLoading(true);
+			itemsRef.current = [];
 		};
 
-		const requestParam = {
+		U.Subscription.search({
 			filters,
 			sorts,
 			keys: J.Relation.relation,
 			fullText: filter,
-			offset: this.offset,
+			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
-		};
-
-		this.loadRequest(requestParam, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
-			};
+		}, (message: any) => {
+			setIsLoading(false);
+			itemsRef.current = itemsRef.current.concat(message.records || []);
+			setDummy(dummy + 1);
+			callBack?.(message);
 		});
 	};
 
-	loadRequest (param: any, callBack?: (message: any) => void) {
-		U.Subscription.search(param, (message: any) => {
-			this.items = this.items.concat(message.records || []);
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, skipCreate } = data;
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+	const getSections = () => {
+		const reg = new RegExp(U.String.regexEscape(data.filter), 'gi');
 		const systemKeys = Relation.systemKeys();
-		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const types = data.types || [];
@@ -282,7 +114,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			return it.name.match(reg);
 		}).map(it => ({ ...it, isType: true }));
-		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
 			canWrite && !skipCreate ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: typesList } : null,
@@ -290,8 +121,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];
 
-		if (canWrite && filter) {
-			sections.unshift({ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
+		if (canWrite && data.filter) {
+			sections.unshift({ 
+				children: [ 
+					{ id: 'add', name: U.String.sprintf(translate('menuRelationSuggestCreateRelation'), data.filter) },
+				],
+			});
 		};
 
 		sections = sections.filter((section: any) => {
@@ -300,14 +135,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			};
 
 			section.children = section.children.filter(it => it);
+			section.children = U.Menu.prepareForSelect(section.children);
 			return section.children.length > 0;
 		});
 
 		return sections;
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -325,27 +161,27 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		return items;
 	};
 
-	onFilterChange (v: string) {
-		if (v != this.filter) {
-			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
+	const onFilterChange = (v: string) => {
+		if (v != filter) {
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => data.filter = v, J.Constant.delay.keyboard);
 		};
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		e.persist();
 
-		if (!keyboard.isMouseDisabled && !S.Menu.isAnimating(this.props.id)) {
-			this.props.setActive(item, false);
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (!item) {
-			this.props.close();
+			close();
 			return;
 		};
 
@@ -353,12 +189,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			return;
 		};
 
-		const { id, close, param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, filter } = data;
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 		const onAdd = (item: any) => {
-			close();
+			S.Menu.close(menuIdEdit, () => close());
 
 			if (addCommand && item) {
 				addCommand(rootId, blockId, item);
@@ -375,10 +208,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				noAnimation: true,
 				className,
 				classNameWrap,
-				rebind: this.rebind,
-				parentId: id,
+				rebind,
+				parentId: props.id,
 				data: {
 					...data,
+					canEdit: true,
 					addParam: { 
 						name: filter,
 						format: item.isType ? item.id : I.RelationType.LongText,
@@ -389,18 +223,13 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			});
 		} else {
 			onAdd(item);
-
 			analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 		};
 	};
 
-	onEdit (e: any, item: any) {
+	const onEdit = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		const { param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { rootId, menuIdEdit } = data;
 
 		S.Menu.open(menuIdEdit, { 
 			element: `#${getId()} #item-${item.id}`,
@@ -414,27 +243,24 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				rootId,
 				relationId: item.id,
 				noUnlink: true,
-				saveCommand: () => this.load(true),
+				saveCommand: () => load(true),
 			}
 		});
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { noFilter } = data;
-		const items = this.getItems();
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
 			height = 160;
 		} else {
-			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 		height = Math.min(height, 376);
 
@@ -442,6 +268,112 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		position();
 	};
 
-});
+	const items = getItems();
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		let content = null;
+		if (item.id == 'add') {
+			content = (
+				<div 
+					id="item-add" 
+					className="item add" 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					onClick={e => onClick(e, item)} 
+					style={param.style}
+				>
+					<Icon className="plus" />
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else {
+			content = (
+				<MenuItemVertical 
+					{...item}
+					index={param.index}
+					className={item.isHidden ? 'isHidden' : ''}
+					style={param.style}
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					onClick={e => onClick(e, item)}
+					withMore={true}
+					onMore={e => onEdit(e, item)}
+				/>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		onClick,
+	}), []);
+
+	return (
+		<div className="wrap">
+			{!noFilter ? (
+				<Filter 
+					ref={filterRef}
+					className="outlined"
+					placeholderFocus={translate('menuRelationSuggestFilterOrCreateRelation')}
+					value={filter}
+					onChange={onFilterChange}
+					focusOnMount={true}
+				/>
+			) : ''}
+
+			{!items.length && !isLoading ? (
+				<EmptySearch readonly={!canWrite} filter={filter} />
+			) : ''}
+
+			{items.length && !isLoading ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+		</div>
+	);
+	
+}));
 
 export default MenuRelationSuggest;

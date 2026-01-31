@@ -1,176 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
 
-interface State {
-	value: number;
-};
-
 const PADDING = 16;
 
-const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent, State> {
+const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	node: any = null;
-	refMonth = null;
-	refYear = null;
-	refDays = {};
-	scroll = false;
-	state = {
-		value: U.Date.now(),
-	};
+	const { rootId, block, isCollection, className, isInline, isPopup, getView, getTypeId, getTemplateId, getTarget } = props;
+	const view = getView();
+	const [ value, setValue ] = useState(U.Date.now());
+	const nodeRef = useRef(null);
+	const yearRef = useRef(null);
+	const monthRef = useRef(null);
+	const daysRef = useRef({});
+	const scrollRef = useRef(false);
+	const cn = [ 'viewContent', className ];
+	const data = U.Date.getCalendarMonth(value);
+	const days = U.Date.getWeekDays();
+	const months = U.Date.getMonths();
+	const years = U.Date.getYears(0, 3000);
 
-	constructor (props: I.ViewComponent) {
-		super (props);
+	let { m, y } = U.Date.getDateParam(value);
 
-		this.onToday = this.onToday.bind(this);
-		this.onCreate = this.onCreate.bind(this);
-	};
-
-	render () {
-		const { block, className } = this.props;
-		const { value } = this.state;
-		const cn = [ 'viewContent', className ];
-		const data = U.Date.getCalendarMonth(value);
-		const { m, y } = U.Date.getDateParam(value);
-		const days = U.Date.getWeekDays();
-		const months = U.Date.getMonths();
-		const years = U.Date.getYears(0, 3000);
-
-		return (
-			<div ref={node => this.node = node}>
-				<div id="dateSelect" className="dateSelect">
-					<div className="side left">
-						<Select 
-							ref={ref => this.refMonth = ref}
-							id={`block-${block.id}-calendar-month`}
-							value={m} 
-							options={months} 
-							className="month" 
-							onChange={m => this.setValue(U.Date.timestamp(y, m, 1))} 
-						/>
-						<Select 
-							ref={ref => this.refYear = ref}
-							id={`block-${block.id}-calendar-year`}
-							value={y} 
-							options={years} 
-							className="year" 
-							onChange={y => this.setValue(U.Date.timestamp(y, m, 1))} 
-						/>
-					</div>
-
-					<div className="side right">
-						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div className="btn" onClick={this.onToday}>{translate('commonToday')}</div>
-						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
-					</div>
-				</div>
-
-				<div className="wrap">
-					<div className={cn.join(' ')}>
-						<div className="table">
-							<div className="head">
-								{days.map((item, i) => (
-									<div key={i} className={`item c${i}`}>
-										{item.name.substring(0, 2)}
-									</div>
-								))}
-							</div>
-
-							<div className="body">
-								{data.map((item, i) => {
-									const cn = [ `c${item.wd}` ];
-									const current = [ item.d, item.m, item.y ].join('-');
-
-									let isToday = false;
-
-									if (m != item.m) {
-										cn.push('other');
-									};
-									if (item.isToday) {
-										cn.push('active');
-										isToday = true;
-									};
-									if (item.isWeekend) {
-										cn.push('weekend');
-									};
-									if (i < 7) {
-										cn.push('first');
-									};
-
-									return (
-										<Item 
-											ref={ref => this.refDays[current] = ref}
-											key={current}
-											{...this.props} 
-											{...item} 
-											isToday={isToday}
-											className={cn.join(' ')}
-											onCreate={this.onCreate}
-										/>
-									);
-								})}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
-
-		if (this.scroll) {
-			this.scrollToday();
-			this.scroll = false;
+	const load = () => {
+		for (const key in daysRef.current) {
+			daysRef.current[key]?.load();
 		};
 	};
 
-	init () {
-		const { m, y } = U.Date.getDateParam(this.state.value);
-
-		this.refMonth?.setValue(m);
-		this.refYear?.setValue(y);
-	};
-
-	load () {
-		for (const key in this.refDays) {
-			this.refDays[key]?.load();
-		};
-	};
-
-	onArrow (dir: number) {
-		let { m, y } = U.Date.getDateParam(this.state.value);
-
+	const onArrow = (dir: number) => {
 		m += dir;
+
 		if (m < 0) {
 			m = 12;
 			y--;
 		};
+
 		if (m > 12) {
 			m = 1;
 			y++;
 		};
 
-		this.setValue(U.Date.timestamp(y, m, 1));
+		setValue(U.Date.timestamp(y, m, 1));
 	};
 
-	onToday () {
-		const today = U.Date.getDateParam(U.Date.now());
-
-		this.scroll = true;
-		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
+	const onToday = () => {
+		scrollRef.current = true;
+		setValue(U.Date.now());
 	};
 
-	onCreate (details: any) {
-		const { rootId, block,isCollection, getView, getTypeId, getTemplateId, getTarget } = this.props;
-		const view = getView();
+	const onCreate = (details: any) => {
 		const objectId = getTarget().id;
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const type = S.Record.getTypeById(getTypeId());
@@ -189,13 +70,13 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
-			U.Object.openConfig(object);
+			U.Object.openConfig(null, object);
 			analytics.createObject(object.type, object.layout, analytics.route.calendar, message.middleTime);
 		});
 	};
 
-	scrollToday () {
-		const node = $(this.node);
+	const scrollToday = () => {
+		const node = $(nodeRef.current);
 		const el = node.find('.day.active');
 
 		if (!el.length) {
@@ -212,26 +93,16 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		scroll.scrollTop(top);
 	};
 
-	setValue (value: number) {
-		this.setState({ value });
-	};
-
-	resize () {
-		const { isPopup, isInline } = this.props;
-
+	const resize = () => {
 		if (isInline) {
 			return;
 		};
 
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const wrap = node.find('.wrap');
-
-		wrap.css({ width: 0, marginLeft: 0 });
-
 		const container = U.Common.getPageContainer(isPopup);
-		const cw = container.width();
-		const mw = cw - PADDING * 2;
+		const mw = container.width() - PADDING * 2;
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
@@ -243,6 +114,101 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		};
 	};
 
-});
+	useEffect(() => {
+		monthRef.current?.setValue(m);
+		yearRef.current.setValue(y);
+
+		if (scrollRef.current) {
+			scrollToday();
+			scrollRef.current = false;
+		};
+	}, [ value ]);
+
+	useImperativeHandle(ref, () => ({
+		load,
+		resize,
+	}));
+
+	return (
+		<div ref={nodeRef}>
+			<div id="dateSelect" className="dateSelect">
+				<div className="side left">
+					<Select 
+						ref={monthRef}
+						id={`block-${block.id}-calendar-month`}
+						value={m} 
+						options={months} 
+						className="month" 
+						onChange={m => setValue(U.Date.timestamp(y, m, 1))} 
+					/>
+					<Select 
+						ref={yearRef}
+						id={`block-${block.id}-calendar-year`}
+						value={y} 
+						options={years} 
+						className="year" 
+						onChange={y => setValue(U.Date.timestamp(y, m, 1))} 
+					/>
+				</div>
+
+				<div className="side right">
+					<Icon className="arrow left" onClick={() => onArrow(-1)} />
+					<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
+					<Icon className="arrow right" onClick={() => onArrow(1)} />
+				</div>
+			</div>
+
+			<div className="wrap">
+				<div className={cn.join(' ')}>
+					<div className="table">
+						<div className="head">
+							{days.map((item, i) => (
+								<div key={i} className={`item c${i}`}>
+									{item.name.substring(0, 2)}
+								</div>
+							))}
+						</div>
+
+						<div className="body">
+							{data.map((item, i) => {
+								const cn = [ `c${item.wd}` ];
+								const current = [ item.d, item.m, item.y ].join('-');
+
+								let isToday = false;
+
+								if (m != item.m) {
+									cn.push('other');
+								};
+								if (item.isToday) {
+									cn.push('active');
+									isToday = true;
+								};
+								if (item.isWeekend) {
+									cn.push('weekend');
+								};
+								if (i < 7) {
+									cn.push('first');
+								};
+
+								return (
+									<Item 
+										ref={ref => daysRef.current[current] = ref}
+										key={current}
+										{...props} 
+										{...item} 
+										isToday={isToday}
+										className={cn.join(' ')}
+										onCreate={onCreate}
+									/>
+								);
+							})}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+
+}));
 
 export default ViewCalendar;

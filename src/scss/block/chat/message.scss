@@ -1,12 +1,11 @@
-.message { @include text-common; position: relative; opacity: 0; }
+.message { @include text-common; position: relative; }
 .message {
 	* { user-select: text !important; }
 
-	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-	&.show { opacity: 1; }
-
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
+
+	markupcode { color: var(--color-text-primary); }
 
 	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 	> .flex {
@@ -34,10 +33,12 @@
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
-		.textWrapper { max-width: 480px; }
+		.bubble:not(.withLayout) { max-width: 480px; }
+		.bubble.withLayout { max-width: 540px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
+	.icon.status.isHidden { visibility: hidden; }
 	.icon.status.syncing { background-image: url('~img/icon/chat/messageStatus/syncing.svg'); }
 	.icon.status.error { background-image: url('~img/icon/chat/messageStatus/error.svg'); }
 
@@ -49,7 +50,7 @@
 		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
 		.time { 
-			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
+			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding: 4px 0px 0px 4px;
 			display: flex; align-items: center; gap: 0px 4px;
 		}
 
@@ -80,7 +81,7 @@
 		.text { @include clamp3; }
 	}
 	.reply.withAttachment {
-		.text { @include clamp1; }
+		.text { @include text-overflow-nw; display: block; height: var(--line-height-small); }
 	}
 
 	.attachments {
@@ -111,7 +112,7 @@
 		.reaction {
 			&:hover { background-color: var(--color-shape-highlight-dark); }
 			&.isMulti { gap: 0px 2px; }
-			&.isMe { background-color: var(--color-bg-tag-lime); }
+			&.isSelf { color: #fff; background-color: var(--color-system-accent-100); }
 
 			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
@@ -124,6 +125,8 @@
 	}
 
 	&.isSelf {
+		::selection { background-color: var(--color-system-accent-25); }
+
 		> .flex { flex-direction: row-reverse; }
 		> .flex {
 			> .side.left { display: none; }
@@ -135,7 +138,11 @@
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
 			> .controls { flex-direction: row-reverse; }
-			.bubble { background-color: var(--color-bg-tag-lime); }
+
+			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
+			.bubble {
+				.time { color: var(--color-text-white60); }
+			}
 		}
 
 		.reactions { justify-content: flex-end; }
@@ -158,20 +165,6 @@
 		}
 	}
 
-	&.canExpand {
-		.bubbleInner {
-			.textWrapper { min-width: 200px; }
-			.expand { display: flex; }
-			.text { @include clamp; -webkit-line-clamp: 16; }
-		}
-	}
-
-	&.canExpand.isExpanded {
-		.bubbleInner {
-			.text { -webkit-line-clamp: 1000; }
-		}
-	}
-
 	&:hover, &.hover {
 		.controls { opacity: 1; }
 	}
@@ -185,8 +178,13 @@
 
 	&:not(.withText) {
 		.bubbleInner {
+			.bubble { position: relative; }
 			.bubble {
-				.textWrapper { display: none; }
+				.textWrapper { padding: 0px !important; }
+				.time {
+    				position: absolute; bottom: 12px; right: 12px; z-index: 2; padding: 3px 6px; border-radius: 10px;
+					background-color: rgba(0, 0, 0, 0.11); color: #fff;
+				}
 			}
 		}
 	}

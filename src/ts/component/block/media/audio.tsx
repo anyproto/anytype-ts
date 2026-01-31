@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Loader, Error, MediaAudio, Icon } from 'Component';
+import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
 import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
@@ -46,15 +46,11 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 		
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: any) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {
@@ -125,11 +121,6 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				break;
 			};
 				
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-				
 			case I.FileState.Done: {
 				element = (
 					<MediaAudio
@@ -148,7 +139,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	return (
 		<div
 			ref={nodeRef}
-			className={[ 'focusable', 'c' + id ].join(' ')}
+			className={[ 'focusable', `c${id}` ].join(' ')}
 			tabIndex={0}
 			onKeyDown={onKeyDownHandler}
 			onKeyUp={onKeyUpHandler}

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
@@ -65,7 +65,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const onSubmit = (withImport: boolean) => {
 		const { onCreate, route } = data;
-		const name = checkName(nameRef.current.getTextValue());
+		const name = checkName(nameRef.current?.getTextValue());
 		const isChatSpace = uxType == I.SpaceUxType.Chat;
 		const usecase = isChatSpace ? I.Usecase.ChatSpace : I.Usecase.DataSpace;
 
@@ -125,7 +125,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 						};
 
 						if (withImport) {
-							close(() => U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings }));
+							close(() => Action.openSettings('importIndex', ''));
 						} else 
 						if (startingId && !isChatSpace) {
 							U.Object.getById(startingId, {}, (object: any) => {
@@ -134,12 +134,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 								};
 							});
 						} else {
-							U.Space.openDashboard({ replace: true });
+							U.Space.openDashboard();
 						};
 
-						if (onCreate) {
-							onCreate(message.objectId);
-						};
+						onCreate?.(message.objectId);
 					} 
 				}, false);
 
@@ -158,6 +156,14 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		};
 
 		setIconOption(icon);
+	};
+
+	const onAiOnboarding = () => {
+		close(() => {
+			window.setTimeout(() => {
+				S.Popup.open('aiOnboarding', { preventCloseByClick: true });
+			}, J.Constant.delay.popup);
+		});
 	};
 
 	const updateCounter = () => {
@@ -220,25 +226,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
 
-					{config.experimental ? (
-						<Button 
-							text={translate('popupSpaceCreateAIOnboarding')} 
-							color="blank" 
-							onClick={() => {
-								close(() => {
-									S.Popup.open('aiOnboarding', {
-										preventCloseByClick: true,
-										data: {
-											onComplete: (spaceId: string) => {
-												// Space is already created and switched to by import
-											}
-										}
-									});
-								});
-							}}
-							className="aiOnboarding"
-						/>
-					) : ''}
+					{config.experimental ? <Button text={translate('popupSpaceCreateAIOnboarding')} color="blank" onClick={onAiOnboarding} className="aiOnboarding" /> : ''}
 				</>
 			</div>
 

@@ -16,7 +16,7 @@
 		.ReactVirtualized__List { padding: 0px 14px; }
 
 		.item { padding: 0px; text-align: center; }
-		.item:before { height: 78px; border-radius: 4px; }
+		.item:before { height: 78px; border-radius: 4px; width: 100%; left: 0px; }
 		.item {
 			.math { border: 0px; text-align: center; width: 100%; height: auto; position: static; display: inline-block; vertical-align: middle; }
 			.math {

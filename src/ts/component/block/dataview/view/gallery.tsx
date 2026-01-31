@@ -1,240 +1,125 @@
-import * as React from 'react';
-import $ from 'jquery';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
+import { throttle } from 'lodash';
 
-const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
+const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	cache: any = {};
-	cellPositioner: any = null;
-	refList = null;
-	refLoader = null;
-	width = 0;
-	columnCount = 0;
-	length = 0;
-	timeout = 0;
-	top = 0;
+	const { 
+		rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, 
+		getVisibleRelations, onRecordAdd, getEmptyView, getRecords, onRefRecord, loadData,
+		isAllowedObject,
+	} = props;
+	const [ columnCount, setColumnCount ] = useState(0);
+	const [ cardHeight, setCardHeight ] = useState(0);
+	const [ width, setWidth ] = useState(0);
+	const view = getView();
+	const relations = getVisibleRelations();
+	const subId = getSubId();
+	const records = getRecords();
+	const { coverRelationKey, cardSize, hideIcon } = view || {};
+	const { offset, total } = S.Record.getMeta(subId, '');
+	const limit = getLimit();
+	const cn = [ 'viewContent', className ];
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: J.Size.dataview.gallery.height }));
+	const listRef = useRef(null);
+	const topRef = useRef(0);
 
-	constructor (props: I.ViewComponent) {
-		super(props);
-
-		this.cache = new CellMeasurerCache({
-			defaultHeight: J.Size.dataview.gallery.height,
-			fixedWidth: true,
-		});
-
-		this.onResize = this.onResize.bind(this);
-		this.loadMoreCards = this.loadMoreCards.bind(this);
-		this.getCoverObject = this.getCoverObject.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-	};
-
-	render () {
-		const { rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmptyView, getRecords, onRefRecord } = this.props;
-		const view = getView();
-		const relations = getVisibleRelations();
-		const subId = getSubId();
-		const records = getRecords();
-		const { coverRelationKey, cardSize, hideIcon } = view;
-		const { offset, total } = S.Record.getMeta(subId, '');
-		const limit = getLimit();
-		const cn = [ 'viewContent', className ];
-		const cardHeight = this.getCardHeight();
-
-		if (!records.length) {
-			return getEmptyView(I.ViewType.Gallery);
-		};
-
-		const items = this.getItems();
-		const length = items.length;
-
-		// Subscriptions on dependent objects
-		for (const id of records) {
-			const item = S.Detail.get(subId, id, getKeys(view.id));
-			if (item._empty_) {
-				continue;
-			};
+	const getItems = () => {
+		const records = U.Common.objectCopy(getRecords());
 		
-			for (const k in item) {
-				const relation = S.Record.getRelationByKey(k);
-				if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
-					continue;
-				};
+		if (isAllowedObject()) {
+			records.push('add-record');
+		};
 
-				const v = Relation.getArrayValue(item[k]);
-				if (v && v.length) {
-					v.forEach((it: string) => {
-						const object = S.Detail.get(rootId, it, []);
-					});
-				};
+		return records;
+	};
+
+	const getRows = () => {
+		if (!width || !columnCount) {
+			return [];
+		};
+
+		const records = getItems();
+		const ret: any[] = [];
+
+		let n = 0;
+		let row = { children: [] };
+
+		for (const item of records) {
+			row.children.push(item);
+
+			n++;
+			if (n == columnCount) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
 			};
 		};
 
-		const cardItem = (index: number, id: string) => {
-			if (id == 'add-record') {
-				return (
-					<div 
-						key={`gallery-card-${view.id + id}`} 
-						className="card add" 
-						onClick={e => onRecordAdd(e, 1)} 
-					/>
-				);
-			};
-
-			return (
-				<Card
-					ref={ref => onRefRecord(ref, id)}
-					key={`gallery-card-${view.id + id}`}
-					{...this.props} 
-					getCoverObject={this.getCoverObject}
-					recordId={id}
-					recordIdx={records.indexOf(id)}
-					rowIndex={index}
-				/>
-			);
+		if (row.children.length < columnCount) {
+			ret.push(row);
 		};
 
-		const rowRenderer = (param: any) => {
-			const item = items[param.index];
-			const style = { ...param.style, gridTemplateColumns: `repeat(${this.columnCount}, minmax(0, 1fr))` };
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{({ measure }) => (
-						<div key={`gallery-row-${view.id + param.index}`} className="row" style={style}>
-							{item.children.map(id => cardItem(param.index, id))}
-						</div>
-					)}
-				</CellMeasurer>
-			);
-		};
-
-		let content = null;
-
-		if (isInline) {
-			const records = this.getRecords();
-			content = (
-				<>
-					{records.map((id: string, index: number) => cardItem(index, id))}
-				</>
-			);
-		} else {
-			content = (
-				<WindowScroller 
-					scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
-					onScroll={this.onScroll}
-					scrollTop={this.top}
-				>
-					{({ height }) => (
-						<AutoSizer disableHeight={true} onResize={this.onResize}>
-							{({ width }) => (
-								<List
-									autoHeight={true}
-									ref={ref => this.refList = ref}
-									width={Number(width) || 0}
-									height={Number(height) || 0}
-									deferredMeasurmentCache={this.cache}
-									rowCount={length}
-									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
-									rowRenderer={rowRenderer}
-									overscanRowCount={length}
-									scrollToAlignment="start"
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</WindowScroller>
-			);
-		};
-
-		return (
-			<div className="wrap">
-				<div className={cn.join(' ')}>
-					<div className={[ 'galleryWrap', U.Data.cardSizeClass(cardSize) ].join(' ')}>
-						{content}
-					</div>
-
-					{limit + offset < total ? (
-						<LoadMore limit={limit} loaded={records.length} total={total} onClick={this.loadMoreCards} />
-					) : ''}
-				</div>
-			</div>
-		);
+		return ret.filter(it => it.children.length > 0);
 	};
 
-	componentDidMount (): void {
-		this.reset();
-	};
+	useLayoutEffect(() => {
+		setCardHeight(getCardHeight());
+	}, []);
 
-	componentDidUpdate (): void {
-		this.reset();
+	useLayoutEffect(() => {
+		setColumnCount(getColumnCount());
+		setCardHeight(getCardHeight());
+	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length, view.type ]);
 
+	useLayoutEffect(() => {
+		if (!isInline) {
+			S.Common.setTimeout('galleryReset', 20, () => {
+				cache.current.clearAll();
+				listRef.current?.recomputeRowHeights(0);
+			});
+		};
+	}, [ columnCount, cardHeight, width, records.length, coverRelationKey ]);
+
+	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 
 		if (ids.length) {
 			selection?.renderSelection();
 		};
-	};
+	});
 
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-	};
-
-	reset () {
-		const { isInline } = this.props;
-		if (isInline) {
-			return;
-		};
-
-		S.Common.setTimeout('galleryReset', 500, () => {
-			this.setColumnCount();
-			this.cache.clearAll();
-
-			if (this.refList) {
-				this.refList.recomputeRowHeights(0);
-			};
-		});
-	};
-
-	setColumnCount () {
-		const { getView } = this.props;
+	const getColumnCount = () => {
+		const { margin, card } = J.Size.dataview.gallery;
 		const view = getView();
 
 		if (!view) {
-			return;
+			return card.small;
 		};
 
-		const { margin } = J.Size.dataview.gallery;
-
-		let size = 0;
+		let ret = card.small;
 		switch (view.cardSize) {
-			default:				 size = 224; break;
-			case I.CardSize.Medium:	 size = 360; break;
-			case I.CardSize.Large:	 size = 480; break;
+			case I.CardSize.Medium:	 ret = card.medium; break;
+			case I.CardSize.Large:	 ret = card.large; break;
 		};
 
-		this.columnCount = Math.max(1, Math.floor((this.width - margin) / size));
+		return Math.max(1, Math.floor((width - margin) / ret));
 	};
 
-	onResize ({ width }) {
-		this.width = width;
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.forceUpdate(), 50);
+	const onResize = ({ width }) => {
+		setWidth(width);
 	};
 
-	loadMoreCards ({ startIndex, stopIndex }) {
-		const { rootId, block, loadData, getSubId, getView, getLimit } = this.props;
+	const throttledResize = useMemo(() => {
+		return throttle(onResize, 40);
+	}, [ onResize ]);
+
+	const loadMoreCards = ({ startIndex, stopIndex }) => {
 		const subId = getSubId();
 		const view = getView();
 
@@ -247,89 +132,39 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		});
 	};
 
-	getRecords () {
-		const { getRecords, isAllowedObject } = this.props;
-		const records = U.Common.objectCopy(getRecords());
-		
-		if (isAllowedObject()) {
-			records.push('add-record');
-		};
+	const getCardHeight = (): number => {
+		const { padding, margin, height } = J.Size.dataview.gallery;
 
-		return records;
-	};
+		let ret = padding * 2 + margin - 4;
 
-	getItems () {
-		if (!this.width) {
-			return [];
-		};
-
-		this.setColumnCount();
-
-		const records = this.getRecords();
-		const ret: any[] = [];
-
-		let n = 0;
-		let row = { children: [] };
-
-		for (const item of records) {
-			row.children.push(item);
-
-			n++;
-			if (n == this.columnCount) {
-				ret.push(row);
-				row = { children: [] };
-				n = 0;
-			};
-		};
-
-		if (row.children.length < this.columnCount) {
-			ret.push(row);
-		};
-
-		return ret.filter(it => it.children.length > 0);
-	};
-
-	getCardHeight (): number {
-		const { getVisibleRelations } = this.props;
-		const relations = getVisibleRelations();
-		const size = J.Size.dataview.gallery;
-
-		let height = size.padding * 2 + size.margin - 4;
-
-		relations.forEach(it => {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-
-			if (!relation) {
+		relations.forEach((it: any) => {
+			if (it.relationKey == 'name') {
+				ret += 24;
 				return;
 			};
+			switch (it.relation.format) {
+				default: {
+					ret += 22; 
+					break;
+				};
 
-			if (it.relationKey == 'name') {
-				height += 24;
-			} else {
-				switch (relation.format) {
-					default: {
-						height += 22; break;
-					};
+				case I.RelationType.LongText: {
+					ret += 40; 
+					break;
+				};
 
-					case I.RelationType.LongText: {
-						height += 40; 
-						break;
-					};
-
-					case I.RelationType.Object:
-					case I.RelationType.File: {
-						height += 24; 
-						break;
-					};
+				case I.RelationType.Object:
+				case I.RelationType.File: {
+					ret += 24; 
+					break;
 				};
 			};
 		});
 
-		return Math.max(size.height, height);
+		return Math.max(height, ret);
 	};
 
-	getCoverObject (id: string): any {
-		const { getView, getKeys, getSubId } = this.props;
+	const getCoverObject = (id: string): any => {
 		const view = getView();
 
 		if (!view.coverRelationKey) {
@@ -342,10 +177,136 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
-	onScroll ({ scrollTop }) {
-		this.top = scrollTop;
+	const onScroll = ({ scrollTop }) => {
+		topRef.current = scrollTop;
 	};
 
-});
+	if (!records.length) {
+		return getEmptyView(I.ViewType.Gallery);
+	};
+
+	const keys = relations.filter((it: any) => Relation.isObjectType(it.relation.format)).map(it => it.relationKey);
+
+	// Subscriptions on dependent objects
+	for (const id of records) {
+		const item = S.Detail.get(subId, id, keys);
+		if (item._empty_) {
+			continue;
+		};
+
+		for (const k of keys) {
+			const v = Relation.getArrayValue(item[k]);
+			if (v && v.length) {
+				v.forEach(id => {
+					const object = S.Detail.get(rootId, id, []);
+				});
+			};
+		};
+	};
+
+	const cardItem = (id: string) => {
+		if (id == 'add-record') {
+			return (
+				<div 
+					key={`gallery-card-${view.id + id}`} 
+					className="card add" 
+					onClick={e => onRecordAdd(e, 1)} 
+				/>
+			);
+		} else {
+			return (
+				<Card
+					ref={ref => onRefRecord(ref, id)}
+					key={`gallery-card-${view.id + id}`}
+					{...props} 
+					getCoverObject={getCoverObject}
+					recordId={id}
+					recordIdx={records.indexOf(id)}
+				/>
+			);
+		};
+	};
+
+	let content = null;
+
+	if (isInline) {
+		const items = getItems();
+		content = (
+			<>
+				{items.map(id => cardItem(id))}
+			</>
+		);
+	} else {
+		const items = getRows();
+		const length = items.length;
+
+		const rowRenderer = (param: any) => {
+			const item = items[param.index];
+			const style = { ...param.style, gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={cache.current}
+					columnIndex={0}
+					rowIndex={param.index}
+				>
+					{({ registerChild, measure }) => (
+						<div 
+							ref={registerChild} 
+							key={`gallery-row-${view.id + param.index}`} 
+							className="row" style={style}
+						>
+							{item.children.map(id => cardItem(id))}
+						</div>
+					)}
+				</CellMeasurer>
+			);
+		};
+
+		content = (
+			<WindowScroller 
+				scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+				onScroll={onScroll}
+				scrollTop={topRef.current}
+			>
+				{({ height }) => (
+					<AutoSizer disableHeight={true} onResize={throttledResize}>
+						{({ width }) => (
+							<List
+								autoHeight={true}
+								ref={listRef}
+								width={Number(width) || 0}
+								height={Number(height) || 0}
+								deferredMeasurementCache={cache.current}
+								rowCount={length}
+								rowHeight={param => Math.max(cache.current.rowHeight(param), cardHeight)}
+								rowRenderer={rowRenderer}
+								overscanRowCount={length}
+								scrollToAlignment="start"
+							/>
+						)}
+					</AutoSizer>
+				)}
+			</WindowScroller>
+		);
+	};
+
+	return (
+		<div className="wrap">
+			<div className={cn.join(' ')}>
+				<div className={[ 'galleryWrap', U.Data.cardSizeClass(cardSize) ].join(' ')}>
+					{content}
+				</div>
+
+				{limit + offset < total ? (
+					<LoadMore limit={limit} loaded={records.length} total={total} onClick={loadMoreCards} />
+				) : ''}
+			</div>
+		</div>
+	);
+
+}));
 
 export default ViewGallery;

@@ -1,13 +1,13 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
-	
-	mouse: any = { 
+
+	mouse: any = {
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
 	};
-	timeoutPin = 0;
 	timeoutSidebarHide = 0;
 	source: any = null;
 	selection: any = null;
@@ -31,8 +31,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
-	isRtl = false;
-	
+
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
@@ -49,26 +48,32 @@ class Keyboard {
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
+		win.on('resize.common', () => this.onResize());
 
 		win.on('online.common offline.common', () => {
-			const { onLine } = navigator;
+			S.Common.isOnlineSet(navigator.onLine);
 
-			S.Common.isOnlineSet(onLine);
-
-			if (!S.Common.membershipTiers.length) {
-				U.Data.getMembershipTiers(false);
+			if (!S.Membership.products.length) {
+				U.Data.getMembershipData();
 			};
 		});
 
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
+
+			// Check if PIN timeout has elapsed since last activity
+			const { pin, pinTime } = S.Common;
+			if (pin && pinTime) {
+				Renderer.send('checkPinTimeout', pinTime);
+			};
+
+			this.initPinCheck();
 		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
 			S.Common.windowIsFocusedSet(false);
-
 			S.Menu.closeAll([ 'blockContext' ]);
 
 			$('.dropTarget.isOver').removeClass('isOver');
@@ -77,19 +82,24 @@ class Keyboard {
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 
-    Renderer.remove('macosMouseNavigation');
-    Renderer.on('macosMouseNavigation', (_e: any, direction: 'back' | 'forward') => {
-      if (!this.isNavigationDisabled) {
-        switch (direction) {
-          case 'back':
-            this.onBack();
-            break;
-          case 'forward':
-            this.onForward();
-            break;
-        }
-      };
-    });
+		this.onResize();
+	};
+
+	onResize () {
+		const { ww } = U.Common.getWindowDimensions();
+		const key = J.Constant.storageKey.sidebarData;
+		const stored = Storage.get(key, Storage.isLocal(key));
+		const data = stored?.[I.SidebarPanel.Left] || {};
+
+		if (data.isClosed) {
+			return;
+		};
+
+		if (ww <= 900) {
+			sidebar.leftPanelClose(false, false);
+		} else {
+			sidebar.leftPanelOpen(data.width, false, false);
+		};
 	};
 
 	/**
@@ -103,7 +113,7 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common resize.common');
 	};
 
 	/**
@@ -120,22 +130,23 @@ class Keyboard {
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
+		const isPopup = this.isPopup();
 
 		// Mouse back
 		if ((e.buttons & 8) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onBack();
+			this.onBack(isPopup);
 		};
 
 		// Mouse forward
 		if ((e.buttons & 16) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onForward();
+			this.onForward(isPopup);
 		};
 
 		// Remove isFocusable from focused block
 		if (target.parents(`#block-${focused}`).length <= 0) {
-			$('.focusable.c' + focused).removeClass('isFocused');
+			$(`.focusable.c${focused}`).removeClass('isFocused');
 		};
 	};
 
@@ -152,9 +163,7 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (this.isMain()) {
-			sidebar.onMouseMove();
-		};
+		sidebar.onMouseMove();
 	};
 	
 	/**
@@ -163,6 +172,7 @@ class Keyboard {
 	 */
 	onKeyDown (e: any) {
 		const { config, theme, pin } = S.Common;
+		const zoom = Number(config.zoom) || 0;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -171,7 +181,9 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const route = analytics.route.shortcut;
+		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -183,14 +195,14 @@ class Keyboard {
 			this.shortcut('tableOfContents', e, () => {
 				e.preventDefault();
 
-				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
 			});
 		};
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('back', e, () => this.onBack());
-			this.shortcut('forward', e, () => this.onForward());
+			this.shortcut('back', e, () => this.onBack(isPopup));
+			this.shortcut('forward', e, () => this.onForward(isPopup));
 		};
 
 		// Close popups and menus
@@ -200,9 +212,6 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (rightSidebar.isOpen) {
-				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
-			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
 
@@ -226,8 +235,19 @@ class Keyboard {
 					};
 				};
 			} else 
-			if (this.isMainSettings() && !this.isFocused) {
-				U.Space.openDashboard({ replace: false });
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
+			if (!data.isClosed) {
+				sidebar.rightPanelClose(isPopup, true);
+			} else
+			if (!this.isFocused) {
+				if (this.isMainSettings()) {
+					U.Space.openDashboard({ replace: false });
+				} else 
+				if (!this.isAuth()) {
+					this.onBack(isPopup);
+				};
 			};
 			
 			Preview.previewHide(false);
@@ -246,23 +266,16 @@ class Keyboard {
 			// Print
 			this.shortcut('print', e, () => {
 				e.preventDefault();
-				this.onPrint(analytics.route.shortcut);
+				this.onPrint(route);
 			});
 
 			// Navigation search
-			this.shortcut('search', e, (pressed: string) => {
-				if (S.Popup.isOpen('search') || !this.isPinChecked) {
+			this.shortcut('search', e, () => {
+				if (S.Popup.isOpen('search') || (pin && !this.isPinChecked)) {
 					return;
 				};
 
-				this.onSearchPopup(analytics.route.shortcut);
-			});
-
-			// Text search
-			this.shortcut('searchText', e, () => {
-				if (!this.isFocused) {
-					this.onSearchMenu('', analytics.route.shortcut);
-				};
+				this.onSearchPopup(route);
 			});
 
 			// Navigation links
@@ -292,7 +305,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut('settings', e, () => {
-				U.Object.openRoute({ id: 'account', layout: I.ObjectLayout.Settings });
+				Action.openSettings('account', route);
 			});
 
 			// Relation panel
@@ -302,7 +315,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-sidebar-select-type').trigger('click');
+				$('#button-create-arrow').trigger('click');
 			});
 
 			// Lock the app
@@ -330,20 +343,20 @@ class Keyboard {
 			// Copy page link
 			this.shortcut('copyPageLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'web', route);
 			});
 
 			// Copy deep link
 			this.shortcut('copyDeepLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'deeplink', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'deeplink', route);
 			});
 
 			// Settings
 			this.shortcut('settingsSpace', e, () => {
 				e.preventDefault();
 
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+				Action.openSettings('spaceIndex', route);
 			});
 
 			// Logout
@@ -363,7 +376,7 @@ class Keyboard {
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
 					this.shortcut('createObject', e, () => {
 						e.preventDefault();
-						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
 				};
 
@@ -381,20 +394,20 @@ class Keyboard {
 				this.shortcut('moveToBin', e, () => {
 					e.preventDefault();
 
-					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], route);
 				});
 
 				// Add to favorites
 				this.shortcut('addFavorite', e, () => {
 					e.preventDefault();
-					Action.toggleWidgetsForObject(rootId, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, route);
 				});
 			};
 
 			// Switch space
 			for (let i = 1; i <= 9; i++) {
 				const id = Number(i) - 1;
-				keyboard.shortcut(`space${i}`, e, () => {
+				this.shortcut(`space${i}`, e, () => {
 					const spaces = U.Menu.getVaultItems();
 					const item = spaces[id];
 	
@@ -410,34 +423,43 @@ class Keyboard {
 				});
 			};
 
-
-			keyboard.shortcut('createSpace', e, () => {
-				const element = `#button-create-space`;
-
-				let rect = null;
-				let horizontal = I.MenuDirection.Left;
-				let vertical = I.MenuDirection.Top;
-
-				if (!$(element).length) {
-					const { ww, wh } = U.Common.getWindowDimensions();
-
-					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-					horizontal = I.MenuDirection.Center;
-					vertical = I.MenuDirection.Center;
-				};
-
-				U.Menu.spaceCreate({
-					element,
-					rect,
-					className: 'spaceCreate fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal,
-					vertical,
-				}, analytics.route.shortcut);
-			});
+			this.shortcut('createSpace', e, this.createSpace);
 		};
 
+		this.shortcut(`${cmd}+numpadAdd, ${cmd}+numpadSubtract`, e, pressed => {
+			e.preventDefault();
+			Renderer.send('setZoom', zoom + (pressed.endsWith('numpadAdd') ? 1 : -1));
+		});
+
 		this.initPinCheck();
+	};
+
+	/**
+	 * Calls spaceCreate menu.
+	 */
+	createSpace () {
+		const element = `#button-create-space`;
+
+		let rect = null;
+		let horizontal = I.MenuDirection.Left;
+		let vertical = I.MenuDirection.Top;
+
+		if (!$(element).length) {
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+			horizontal = I.MenuDirection.Center;
+			vertical = I.MenuDirection.Center;
+		};
+
+		U.Menu.spaceCreate({
+			element,
+			rect,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal,
+			vertical,
+		}, analytics.route.shortcut);
 	};
 
 	/**
@@ -468,11 +490,8 @@ class Keyboard {
 		};
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
-			U.Object.openConfig(message.details);
-
-			if (callBack) {
-				callBack(message);
-			};
+			U.Object.openConfig(null, message.details);
+			callBack?.(message);
 		});
 	};
 
@@ -486,11 +505,8 @@ class Keyboard {
 	/**
 	 * Handles back navigation.
 	 */
-	onBack () {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-
-		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
+	onBack (isPopup: boolean) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack(isPopup)) {
 			return;
 		};
 
@@ -503,6 +519,7 @@ class Keyboard {
 				});
 			};
 		} else {
+			const { account } = S.Auth;
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
 			const prev = history.entries[history.index - 1];
@@ -515,17 +532,28 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substituteIndex = -1;
 				let substitute = '';
 
-				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
-					substitute = history.entries[history.index - 2]?.pathname;
+				if (U.Router.isDoubleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 2;
+				} else
+				if (U.Router.isTripleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 3;
 				};
 
-				if ((route.page == 'main') && (route.action == 'history')) {
-					substitute = history.entries[history.index - 3]?.pathname;
+				if (substituteIndex >= 0) {
+					substitute = history.entries[substituteIndex]?.pathname;
+				};
+
+				if (!substitute && (route.page == 'auth') && (route.action == 'pin-check')) {
+					return;
 				};
 
 				if (substitute) {
+					history.entries = history.entries.slice(0, substituteIndex + 1);
+					history.index = substituteIndex;
+					
 					U.Router.go(substitute, {});
 					return;
 				};
@@ -546,10 +574,8 @@ class Keyboard {
 	/**
 	 * Handles forward navigation.
 	 */
-	onForward () {
-		const isPopup = this.isPopup();
-
-		if (!this.checkForward()) {
+	onForward (isPopup: boolean) {
+		if (!this.checkForward(isPopup)) {
 			return;
 		};
 
@@ -569,32 +595,43 @@ class Keyboard {
 	 * Checks if back navigation is possible.
 	 * @returns {boolean} True if back is possible.
 	 */
-	checkBack (): boolean {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
+	checkBack (isPopup: boolean): boolean {
+		if (isPopup) {
+			return true;
 		};
 
-		if (!isPopup) {
-			const prev = history.entries[history.index - 1];
+		const history = U.Router.history;
+		if (!history) {
+			return false;
+		};
 
-			if (account && !prev) {
+		const { account } = S.Auth;
+		const prev = history.entries[history.index - 1];
+
+		if (!prev) {
+			return false;
+		};
+
+		const route = U.Router.getParam(prev.pathname);
+
+		if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+			return true;
+		};
+
+		if ([ 'index', 'auth' ].includes(route.page) && account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && !account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && (route.action == 'blank')) {
+			const prev = history.entries[history.index - 2];
+			const route = U.Router.getParam(prev?.pathname);
+
+			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;
-			};
-
-			if (prev) {
-				const route = U.Router.getParam(prev.pathname);
-
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return false;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return false;
-				};
 			};
 		};
 
@@ -605,18 +642,16 @@ class Keyboard {
 	 * Checks if forward navigation is possible.
 	 * @returns {boolean} True if forward is possible.
 	 */
-	checkForward (): boolean {
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
-		};
-
+	checkForward (isPopup: boolean): boolean {
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
 		} else {
+			const history = U.Router.history;
+			if (!history) {
+				return false;
+			};
+
 			ret = history.index + 1 <= history.entries.length - 1;
 		};
 		return ret;
@@ -628,7 +663,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || keyboard.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -638,16 +673,17 @@ class Keyboard {
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 		const canUndo = !this.isFocused && this.isMainEditor();
+		const isPopup = this.isPopup();
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('', route);
+				this.onSearchText('', route);
 				break;
 			};
 
 			case 'shortcut': {
 				this.onShortcut();
-				analytics.event('MenuHelpShortcut', { route: analytics.route.shortcut });
+				analytics.event('MenuHelpShortcut', { route: route });
 				break;
 			};
 
@@ -699,7 +735,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Data, route);
+				this.createSpace();
 				break;
 			};
 
@@ -811,7 +847,7 @@ class Keyboard {
 						className: 'isWide techInfo isLeft',
 						data: {
 							title: translate('menuHelpNet'),
-							text: U.Common.lbBr(result),
+							text: U.String.lbBr(result),
 							textConfirm: translate('commonCopy'),
 							colorConfirm: 'blank',
 							canCancel: false,
@@ -844,7 +880,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				Storage.delete('chatsOnboarding');
+				Storage.delete('multichatsOnboarding');
 
 				location.reload();
 				break;
@@ -900,6 +936,24 @@ class Keyboard {
 				break;
 			};
 
+			case 'mouseNavigation': {
+				if (!arg || this.isNavigationDisabled) {
+					break;
+				};
+
+				switch (arg) {
+					case 'left': {
+						this.onBack(isPopup);
+						break;
+					};
+
+					case 'right': {
+						this.onForward(isPopup);
+						break;
+					};
+				};
+				break;
+			};
 		};
 	};
 
@@ -931,10 +985,9 @@ class Keyboard {
 	 * Handles membership upgrade action.
 	 */
 	onMembershipUpgradeViaEmail () {
-		const { account, membership } = S.Auth;
-		const name = membership.name ? membership.name : account.id;
+		const participant = U.Space.getMyParticipant();
 
-		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, participant?.resolvedName));
 	};
 
 	/**
@@ -995,10 +1048,9 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
+
 		analytics.event('Undo', { route });
 	};
 
@@ -1021,9 +1073,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 
 		analytics.event('Redo', { route });
@@ -1037,9 +1087,11 @@ class Keyboard {
 	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
+		const body = $('body');
+		const theme = S.Common.getThemeClass();
 
 		html.addClass('printMedia');
-		
+
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
@@ -1052,7 +1104,32 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
-		$('#link-prism').remove();
+		// Set background color for dark mode to ensure it's captured in PDF
+		if (theme && !clearTheme) {
+			const bgColor = getComputedStyle(document.body).getPropertyValue('--color-bg-primary').trim();
+			if (bgColor) {
+				html.css('background-color', bgColor);
+				body.css('background-color', bgColor);
+			};
+		};
+
+		// Convert table column widths from pixels to percentages to preserve proportions
+		$('.block.blockTable .row').each((_, row) => {
+			const style = row.style.gridTemplateColumns;
+			if (!style) {
+				return;
+			};
+
+			const widths = style.split(' ').map(w => parseFloat(w) || 0);
+			const total = widths.reduce((sum, w) => sum + w, 0);
+
+			if (total > 0) {
+				const percentages = widths.map(w => `${(w / total) * 100}%`).join(' ');
+				row.style.setProperty('--print-columns', percentages);
+				row.setAttribute('data-print-columns', 'true');
+			};
+		});
+
 		focus.clearRange(true);
 	};
 
@@ -1060,8 +1137,21 @@ class Keyboard {
 	 * Removes print styles from the document.
 	 */
 	printRemove () {
-		$('html').removeClass('withPopup printMedia print save');
+		const html = $('html');
+		const body = $('body');
+
+		html.removeClass('withPopup printMedia print save');
+		html.css('background-color', '');
+		body.css('background-color', '');
+
 		S.Common.setThemeClass();
+
+		// Clean up table print columns
+		$('.block.blockTable .row[data-print-columns]').each((_, row) => {
+			row.style.removeProperty('--print-columns');
+			row.removeAttribute('data-print-columns');
+		});
+
 		$(window).trigger('resize');
 	};
 
@@ -1086,7 +1176,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
-		Renderer.send('winCommand', 'printHtml', { name: object.name });
+
+		// Wait for styles to be applied before capturing HTML
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printHtml', { name: object.name });
+		});
 	};
 
 	/**
@@ -1100,10 +1194,15 @@ class Keyboard {
 
 		if (theme) {
 			options.printBackground = true;
+			options.margins = { top: 0, bottom: 0, left: 0, right: 0 };
 		};
 
 		this.printApply('print', false);
-		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+
+		// Wait for styles to be applied before capturing PDF
+		requestAnimationFrame(() => {
+			Renderer.send('winCommand', 'printPdf', { name: object.name, options });
+		});
 	};
 
 	/**
@@ -1111,35 +1210,58 @@ class Keyboard {
 	 * @param {string} value - The search value.
 	 * @param {string} [route] - The route context.
 	 */
-	onSearchMenu (value: string, route?: string) {
+	onSearchText (value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainChat();
+			isDisabled = this.isMainSet() || this.isMainGraph() || this.isMainVoid() || this.isMainArchive();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph', 'chat' ].includes(popupMatch.params.action);
+			isDisabled = [ 'set', 'store', 'graph', 'chat', 'archive' ].includes(popupMatch.params.action);
 		};
 
 		if (isDisabled) {
 			return;
 		};
 
-		S.Menu.closeAll(null, () => {
-			S.Menu.open('searchText', {
-				element: '#header',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 10,
-				classNameWrap: 'fromHeader',
-				passThrough: true,
-				data: {
-					isPopup,
-					value,
-					route,
+		const menuId = this.isMainChat() ? 'searchChat' : 'searchText';
+		const menuParam: Partial<I.MenuParam> = {
+			element: '#header .side.center',
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Bottom,
+			classNameWrap: 'fromHeader',
+			noBorderY: true,
+			noFlipY: true,
+			fixedY: 0,
+			data: {},
+		};
+
+		if (this.isMainChat()) {
+			const rootId = this.getRootId();
+			const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+			const chatId = object.chatId || rootId;
+
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				rootId,
+				chatId,
+				route,
+				scrollToMessage: (id: string) => {
+					$(window).trigger('scrollToMessage', { id });
 				},
 			});
+		} else {
+			menuParam.passThrough = true;
+			menuParam.data = Object.assign(menuParam.data, {
+				isPopup,
+				value,
+				route,
+			});
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 
@@ -1218,19 +1340,36 @@ class Keyboard {
 		};
 
 		const match = this.getMatch();
-		const action = match?.params?.action;
+		const rootId = this.getRootId();
+		const { action, id } = match.params;
 		const titles = {
-			index: translate('commonDashboard'),
+			auth: translate('commonAuthentication'),
+			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),
 		};
 
-		if (titles[action]) {
-			U.Data.setWindowTitleText(titles[action]);
+		let title = titles[action];
+
+		if (action == 'settings') {
+			const map = U.Menu.settingsSectionsMap();
+			const mapped = map[id];
+
+			title = [ translate('commonSettings') ];
+			if (mapped) {
+				title.push(mapped);
+			};
+
+			title = title.join(' › ');
+		};
+
+		if (title) {
+			U.Data.setWindowTitleText(title);
+			U.Data.setTabTitleText(title);
 		} else {
-			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
+			U.Data.setTabTitle(rootId, rootId);
 		};
 	};
 
@@ -1257,10 +1396,10 @@ class Keyboard {
 	 * @returns {any} The match object.
 	 */
 	getPopupMatch () {
-		const popup = S.Popup.get('page');
-		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
+		const popup = U.Common.objectCopy(S.Popup.get('page'));
+		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
-		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
+		match.params = match.params || {};
 
 		return match;
 	};
@@ -1271,46 +1410,9 @@ class Keyboard {
 	 */
 	getRouteMatch () {
 		const route = U.Router.getRoute();
-		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+		const params = U.Router.getParam(route);
 
 		return { route, params };
-	};
-
-	checkUniversalRoutes (route: string) {
-		route = String(route || '');
-
-		const data = U.Common.searchParam(U.Router.getSearch());
-
-		let ret: any = {};
-
-		// Universal object route
-		if (route.match(/^\/object/)) {
-			ret = {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			};
-		};
-
-		// Invite route
-		if (route.match(/^\/invite/)) {
-			ret = {
-				page: 'main',
-				action: 'invite',
-				...data,
-			};
-		};
-
-		// Membership route
-		if (route.match(/^\/membership/)) {
-			ret = {
-				page: 'main',
-				action: 'membership',
-			};
-		};
-
-		return ret;
 	};
 
 	/**
@@ -1322,44 +1424,14 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 		
 		let ret: any = { params: {} };
-		let data: any = {};
 
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
 			ret = this.getRouteMatch();
-			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
 		ret.route = String(ret.route || '');
-
-		// Universal object route
-		if (ret.route.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (ret.route.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (ret.route.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
 		return ret;
 	};
 
@@ -1401,6 +1473,22 @@ class Keyboard {
 	 */
 	isMainChat () {
 		return this.isMain() && (this.getRouteMatch().params.action == 'chat');
+	};
+
+	/**
+	 * Returns true if the current context is the main void view.
+	 * @returns {boolean}
+	 */
+	isMainVoid () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	};
+
+	/**
+	 * Returns true if the current context is the main archive view.
+	 * @returns {boolean}
+	 */
+	isMainArchive () {
+		return this.isMain() && (this.getRouteMatch().params.action == 'archive');
 	};
 
 	/**
@@ -1512,7 +1600,8 @@ class Keyboard {
 		};
 
 		this.isPinChecked = v;
-		Renderer.send('setPinChecked', v);
+		// Pass pin timeout and whether a PIN is set to main process
+		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0, Boolean(S.Common.pin));
 	};
 
 	/**
@@ -1540,14 +1629,6 @@ class Keyboard {
 	};
 
 	/**
-	 * Sets the RTL (right-to-left) state.
-	 * @param {boolean} v - The RTL state.
-	 */
-	setRtl (v: boolean) {
-		this.isRtl = v;
-	};
-
-	/**
 	 * Sets the shortcut editing state.
 	 * @param {boolean} v - The shortcut editing state.
 	 */
@@ -1556,36 +1637,23 @@ class Keyboard {
 	};
 
 	/**
-	 * Initializes pin check logic.
+	 * Reports user activity to the main process for centralized pin timeout tracking.
+	 * The main process manages a single timer for all tabs/windows.
 	 */
 	initPinCheck () {
 		const { account } = S.Auth;
+		const { pin, windowIsFocused } = S.Common;
 
-		const check = () => {
-			const { pin } = S.Common;
-			if (!pin) {
-				this.setPinChecked(true);
-				return false;
-			};
-			return true;
-		};
-
-		if (!account || !check()) {
+		if (!account || !pin) {
 			return;
 		};
 
-		window.clearTimeout(this.timeoutPin);
-		this.timeoutPin = window.setTimeout(() => {
-			if (!check() || this.isAuthPinCheck()) {
-				return;
-			};
+		if (!windowIsFocused) {
+			return;
+		};
 
-			if (this.isMain()) {
-				S.Common.redirectSet(U.Router.getRoute());
-			};
-
-			Renderer.send('pinCheck');
-		}, S.Common.pinTime);
+		// Report activity to main process to reset the centralized timer
+		Renderer.send('resetPinTimer');
 	};
 
 	/**
@@ -1810,8 +1878,8 @@ class Keyboard {
 			pressed = pressed.concat(metaKeys);
 		};
 
-		// Cmd + Alt + N hack
-		if (which == J.Key.dead) {
+		// Cmd + Alt + N hack (only apply when both cmd and alt are pressed)
+		if ((which == J.Key.dead) && metaKeys.includes('cmd') && metaKeys.includes('alt')) {
 			pressed.push('n');
 		};
 
@@ -1915,7 +1983,10 @@ class Keyboard {
 			if (key == 'comma') {
 				return ',';
 			};
-			return U.Common.ucFirst(key);
+			if (key == Key.escape) {
+				return 'Esc';
+			};
+			return U.String.ucFirst(key);
 		});
 	};
 
@@ -1949,6 +2020,49 @@ class Keyboard {
 	 */
 	cmdKey () {
 		return U.Common.isPlatformMac() ? 'cmd' : 'ctrl';
+	};
+
+	getPageClass (prefix: string, isPopup: boolean) {
+		const spaceview = U.Space.getSpaceview();
+		const { page, action, id } = this.getMatch(isPopup).params;
+
+		return [ 
+			U.String.toCamelCase([ prefix, page ].join('-')),
+			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
+			U.String.toCamelCase([ prefix, page, action ].join('-')),
+			U.Common.getContainerClassName(isPopup),
+			U.Data.spaceClass(spaceview.uxType),
+		].join(' ');
+	};
+
+	setBodyClass () {
+		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
+		const { alwaysShowTabs, debug } = config;
+		const platform = U.Common.getPlatform();
+		const electron = U.Common.getElectron();
+		const theme = electron.getTheme();
+		const cn = [
+			this.getPageClass('body', false),
+			U.String.toCamelCase([ 'platform', platform ].join('-')),
+		];
+
+		if (theme) {
+			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
+		if (debug.ui) {
+			cn.push('debug');
+		};
+		if (isFullScreen) {
+			cn.push('isFullScreen');
+		};
+		if (singleTab && !alwaysShowTabs) {
+			cn.push('isSingleTab');
+		};
+		if (vaultIsMinimal) {
+			cn.push('vaultIsMinimal');
+		};
+
+		$('html').attr({ class: cn.join(' ') });
 	};
 
 };

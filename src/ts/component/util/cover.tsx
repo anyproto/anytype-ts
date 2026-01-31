@@ -1,5 +1,5 @@
-import React, { FC, MouseEvent } from 'react';
-import { I, S, J } from 'Lib';
+import React, { forwardRef, ReactNode, MouseEvent } from 'react';
+import { I, S } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -11,12 +11,12 @@ interface Props {
 	y?: number;
 	scale?: number;
 	withScale?: boolean;
-	children?: React.ReactNode;
-	onClick?(e: MouseEvent): void;
-	onMouseDown?(e: MouseEvent): void;
+	children?: ReactNode;
+	onClick?(e: MouseEvent<HTMLDivElement>): void;
+	onMouseDown?(e: MouseEvent<HTMLDivElement>): void;
 };
 
-const Cover: FC<Props> = ({ 
+const Cover = forwardRef<HTMLDivElement, Props>(({ 
 	id = '', 
 	image = '', 
 	src = '', 
@@ -29,10 +29,10 @@ const Cover: FC<Props> = ({
 	onClick, 
 	onMouseDown, 
 	children,
-}) => {
+}, ref) => {
 
 	const cn = [ 'cover', `type${type}`, id, className ];
-	const style: any = {};
+	const style: React.CSSProperties = {};
 	
 	if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
 		style.backgroundImage = `url("${S.Common.imageUrl(image, I.ImageSize.Large)}")`;
@@ -49,6 +49,7 @@ const Cover: FC<Props> = ({
 	
 	return (
 		<div 
+			ref={ref}
 			className={cn.join(' ')} 
 			onClick={onClick} 
 			onMouseDown={onMouseDown}
@@ -56,6 +57,6 @@ const Cover: FC<Props> = ({
 			{children}
 		</div>
 	);
-};
+});
 
 export default Cover;

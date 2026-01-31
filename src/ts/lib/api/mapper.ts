@@ -3,8 +3,28 @@ import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 
+/**
+ * Mapper provides bidirectional conversion between protobuf messages
+ * and TypeScript interfaces.
+ *
+ * Structure:
+ * - Type mapping functions (BlockType, BoardGroupType, etc.) - Convert protobuf enums to app types
+ * - From: Converts protobuf messages TO TypeScript objects (used when receiving data)
+ * - To: Converts TypeScript objects TO protobuf messages (used when sending data)
+ * - Event: Specialized mappers for real-time event processing
+ *
+ * Usage:
+ * - Mapper.From.Block(protoBlock) - Convert received block to TS interface
+ * - Mapper.To.Block(tsBlock) - Convert TS block to protobuf for sending
+ * - Mapper.Event.Type(valueCase) - Get event type string from protobuf enum
+ */
 export const Mapper = {
 
+	/**
+	 * Convert protobuf Block.ContentCase enum to application BlockType.
+	 * @param v - The protobuf content case value
+	 * @returns The corresponding I.BlockType enum value
+	 */
 	BlockType: (v: Model.Block.ContentCase): I.BlockType => {
 		const V = Model.Block.ContentCase;
 
@@ -70,8 +90,14 @@ export const Mapper = {
 		return t;
 	},
 
+	/**
+	 * From: Converters for transforming protobuf messages TO TypeScript objects.
+	 * Used when receiving data from the middleware.
+	 * Each method takes a protobuf message and returns a plain JS/TS object.
+	 */
 	From: {
 
+		/** Convert Account protobuf to I.Account interface */
 		Account: (obj: Model.Account): I.Account => {
 			return {
 				id: obj.getId(),
@@ -94,6 +120,7 @@ export const Mapper = {
 				networkId: obj.getNetworkid(),
 				workspaceObjectId: obj.getWorkspaceobjectid(),
 				ethereumAddress: obj.getEthereumaddress(),
+				metadataKey: obj.getMetadatakey(),
 			};
 		},
 
@@ -279,8 +306,8 @@ export const Mapper = {
 		Block: (obj: Model.Block): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
-			const fm = U.Common.toUpperCamelCase(`block-${type}`);
+			const fn = `get${U.String.ucFirst(type)}`;
+			const fm = U.String.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -341,6 +368,7 @@ export const Mapper = {
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
 				endRelationKey: obj.getEndrelationkey(),
+				wrapContent: obj.getWrapcontent(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
@@ -425,7 +453,7 @@ export const Mapper = {
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
@@ -475,7 +503,7 @@ export const Mapper = {
 
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
@@ -569,36 +597,70 @@ export const Mapper = {
 			};
 		},
 
-		Membership: (obj: Model.Membership): I.Membership => {
+		MembershipAmount: (obj: Model.MembershipV2.Amount): I.MembershipAmount => {
 			return {
-				tier: obj.getTier(),
-				status: obj.getStatus() as number,
-				dateStarted: obj.getDatestarted(),
-				dateEnds: obj.getDateends(),
-				isAutoRenew: obj.getIsautorenew(),
-				paymentMethod: obj.getPaymentmethod() as number,
-				name: obj.getNsname(),
-				nameType: obj.getNsnametype() as number,
-				userEmail: obj.getUseremail(),
-				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
+				currency: obj.getCurrency(),
+				amountCents: obj.getAmountcents(),
 			};
 		},
 
-		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
+		MembershipProduct: (obj: Model.MembershipV2.Product): I.MembershipProduct => {
+			const features = obj.getFeatures();
+
 			return {
 				id: obj.getId(),
 				name: obj.getName(),
 				description: obj.getDescription(),
-				nameMinLength: obj.getAnynameminlength(),
-				isTest: obj.getIstest(),
-				periodType: obj.getPeriodtype() as number,
-				period: obj.getPeriodvalue(),
-				priceCents: obj.getPricestripeusdcents(),
-				colorStr: obj.getColorstr(),
-				features: obj.getFeaturesList(),
-				namesCount: obj.getAnynamescountincluded(),
+				isTopLevel: obj.getIstoplevel(),
+				isIntro: obj.getIsintro(),
+				isHidden: obj.getIshidden(),
+				color: obj.getColorstr(),
 				offer: obj.getOffer(),
+				pricesYearly: (obj.getPricesyearlyList() || []).map(Mapper.From.MembershipAmount),
+				pricesMonthly: (obj.getPricesmonthlyList() || []).map(Mapper.From.MembershipAmount),
+				features: {
+					storageBytes: features.getStoragebytes(),
+					spaceReaders: features.getSpacereaders(),
+					spaceWriters: features.getSpacewriters(),
+					sharedSpaces: features.getSharedspaces(),
+					privateSpaces: features.getPrivatespaces(),
+					teamSeats: features.getTeamseats(),
+					anyNameCount: features.getAnynamecount(),
+					anyNameMinLen: features.getAnynameminlen(),
+				},
 			};
+		},
+
+		MembershipData: (obj: Model.MembershipV2.Data): I.MembershipData => {
+			const invoice = obj.getNextinvoice();
+
+			const ret: any = {
+				products: (obj.getProductsList() || []).map(it => {
+					const info = it.getPurchaseinfo();
+
+					return {
+						product: Mapper.From.MembershipProduct(it.getProduct()),
+						info: {
+							dateStarted: info.getDatestarted(),
+							dateEnds: info.getDateends(),
+							isAutoRenew: info.getIsautorenew(),
+							period: info.getPeriod(),
+						},
+						status: it.getProductstatus().getStatus() as number,
+					};
+				}),
+				teamOwnerId: obj.getTeamownerid(),
+				paymentProvider: obj.getPaymentprovider() as number,
+			};
+
+			if (invoice) {
+				ret.nextInvoice = {
+					date: invoice.getDate(),
+					total: invoice.hasTotal() ? Mapper.From.MembershipAmount(invoice.getTotal()) : null,
+				};
+			};
+
+			return ret;
 		},
 
 		Process: (obj: Events.Model.Process) => {
@@ -666,7 +728,6 @@ export const Mapper = {
 				mentions: Mapper.From.ChatStateUnreadMessages(obj.getMentions()),
 				lastStateId: obj.getLaststateid(),
 				order: obj.getOrder(),
-				lastMessageDate: 0,
 			};
 		},
 
@@ -717,6 +778,17 @@ export const Mapper = {
 			return reactions;
 		},
 
+		ChatSearchResult: (obj: any): any => {
+			return {
+				chatId: obj.getChatid(),
+				messageId: obj.getMessageid(),
+				score: obj.getScore(),
+				highlight: obj.getHighlight(),
+				highlightRanges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+			};
+		},
+
 		PublishState: (obj: Rpc.Publishing.PublishState): any => {
 			return {
 				spaceId: obj.getSpaceid(),
@@ -747,8 +819,14 @@ export const Mapper = {
 
 	//------------------------------------------------------------
 
+	/**
+	 * To: Converters for transforming TypeScript objects TO protobuf messages.
+	 * Used when sending data to the middleware.
+	 * Each method takes a plain JS/TS object and returns a protobuf message instance.
+	 */
 	To: {
 
+		/** Convert text range to protobuf Range */
 		Range: (obj: any) => {
 			const item = new Model.Range();
 
@@ -945,8 +1023,8 @@ export const Mapper = {
 				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
-			const fb = U.Common.toCamelCase(`set-${obj.type.toLowerCase()}`);
-			const fm = U.Common.toUpperCamelCase(`block-${obj.type}`);
+			const fb = U.String.toCamelCase(`set-${obj.type.toLowerCase()}`);
+			const fm = U.String.toUpperCamelCase(`block-${obj.type}`);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -1010,6 +1088,7 @@ export const Mapper = {
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
 			item.setEndrelationkey(obj.endRelationKey);
+			item.setWrapcontent(obj.wrapContent);
 			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize as any);
@@ -1142,10 +1221,32 @@ export const Mapper = {
 			return item;
 		},
 
+		SearchSort : (obj: any): any => {
+			const item = new Model.Search.Message.Sort();
+
+			item.setKey(obj.key);
+			item.setType(obj.type as number);
+
+			return item;
+		},
+
 	},
 
+	/**
+	 * Event: Specialized mappers for processing real-time events from middleware.
+	 * These handle the conversion of streaming event messages.
+	 *
+	 * - Type(): Maps event value case to string type name
+	 * - Data(): Extracts spaceId and event data
+	 * - [EventName](): Individual event type processors
+	 */
 	Event: {
 
+		/**
+		 * Convert event ValueCase enum to human-readable event type string.
+		 * @param v - The protobuf event value case number
+		 * @returns Event type name (e.g., 'BlockAdd', 'ObjectDetailsSet')
+		 */
 		Type (v: number): string {
 			const V = Events.Event.Message.ValueCase;
 
@@ -1211,8 +1312,6 @@ export const Mapper = {
 			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
 
 			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
-			
-			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
 
 			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
@@ -1233,12 +1332,15 @@ export const Mapper = {
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
 
+			if (v == V.MEMBERSHIPV2UPDATE)			 t = 'MembershipV2Update';
+			if (v == V.MEMBERSHIPV2PRODUCTSUPDATE)	 t = 'MembershipV2ProductsUpdate';
+
 			return t;
 		},
 
 		Data (e: any) {
 			const type = Mapper.Event.Type(e.getValueCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const data = e[fn] ? e[fn]() : {};
 
 			return {
@@ -1478,7 +1580,7 @@ export const Mapper = {
 			];
 
 			keys.forEach(key => {
-				const items = obj[U.Common.toCamelCase(`get-${key.id}-list`)]() || [];
+				const items = obj[U.String.toCamelCase(`get-${key.id}-list`)]() || [];
 
 				ret[key.field] = [];
 
@@ -1657,12 +1759,6 @@ export const Mapper = {
 			};
 		},
 
-		MembershipUpdate: (obj: Events.Event.Membership.Update) => {
-			return {
-				membership: Mapper.From.Membership(obj.getData()),
-			};
-		},
-
 		ProcessNew: (obj: Events.Event.Process.New) => {
 			return {
 				process: Mapper.From.Process(obj.getProcess()),
@@ -1774,6 +1870,18 @@ export const Mapper = {
 				ids: obj.getIdsList(),
 				isSynced: obj.getIssynced(),
 				subIds: obj.getSubidsList(),
+			};
+		},
+
+		MembershipV2Update: (obj: Events.Event.MembershipV2.Update) => {
+			return {
+				data: Mapper.From.MembershipData(obj.getData()),
+			};
+		},
+
+		MembershipV2ProductsUpdate: (obj: Events.Event.MembershipV2.ProductsUpdate) => {
+			return {
+				products: (obj.getProductsList() || []).map(Mapper.From.MembershipProduct),
 			};
 		},
 

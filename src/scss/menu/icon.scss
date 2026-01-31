@@ -85,7 +85,9 @@
 		.icon.reload { background-image: url('~img/icon/menu/action/reload0.svg'); }
 		.icon.reset { background-image: url('~img/icon/menu/action/reset.svg'); }
 		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
-		.icon.browse { background-image: url('~img/icon/menu/action/browse0.svg'); }
+		.icon.go-url { background-image: url('~img/icon/menu/action/browse0.svg'); }
+		.icon.go-email { background-image: url('~img/icon/menu/action/email0.svg'); }
+		.icon.go-phone { background-image: url('~img/icon/menu/action/phone0.svg'); }
 		.icon.unlink { background-image: url('~img/icon/menu/action/unlink0.svg'); }
 		.icon.store { background-image: url('~img/icon/menu/action/store0.svg'); }
 		.icon.pencil { background-image: url('~img/icon/menu/action/pencil0.svg'); }
@@ -99,6 +101,17 @@
 		.icon.editType { background-image: url('~img/icon/menu/action/editType0.svg'); }
 		.icon.editChat { background-image: url('~img/icon/menu/action/editChat0.svg'); }
 		.icon.openSidebar { background-image: url('~img/icon/menu/action/sidebar0.svg'); }
+		.icon.notification { background-image: url('~img/icon/menu/action/notification0.svg'); }
+		.icon.members { background-image: url('~img/icon/menu/action/members0.svg'); }
+		.icon.copyLink { background-image: url('~img/icon/menu/action/copyLink0.svg'); }
+		.icon.qr { background-image: url('~img/icon/menu/action/qr0.svg'); }
+		.icon.bin { background-image: url('~img/icon/menu/action/bin0.svg'); }
+		.icon.manage { background-image: url('~img/icon/menu/action/manage0.svg'); }
+		.icon.eye.off { background-image: url('~img/icon/menu/action/eye0.svg'); }
+		.icon.eye.on { background-image: url('~img/icon/menu/action/eye1.svg'); }
+
+		.icon.newTab { background-image: url('~img/icon/menu/action/newTab0.svg'); }
+		.icon.newWindow { background-image: url('~img/icon/menu/action/newWindow0.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
@@ -156,6 +169,42 @@
 		.icon.chat-copy { background-image: url('~img/icon/chat/buttons/copy0.svg'); }
 		.icon.chat-link { background-image: url('~img/icon/chat/buttons/link0.svg'); }
 		.icon.chat-pencil { background-image: url('~img/icon/chat/buttons/pencil0.svg'); }
+
+		.icon.filterTemplate-user { background-image: url('~img/icon/widget/button/member.svg'); }
+		.icon.filterTemplate-object { background-image: url('~img/icon/settings/spaces.svg'); }
+		.icon.filterTemplate-participant { background-image: url('~img/icon/settings/members.svg'); }
+		
+		.icon.clipboard-copy { background-image: url('~img/icon/menu/action/clipboard/copy.svg'); }
+		.icon.clipboard-cut { background-image: url('~img/icon/menu/action/clipboard/cut.svg'); }
+		.icon.clipboard-paste { background-image: url('~img/icon/menu/action/clipboard/paste.svg'); }
+
+		.icon.embed-latex { background-image: url('~img/icon/menu/action/block/embed/latex.svg'); }
+		.icon.embed-mermaid { background-image: url('~img/icon/menu/action/block/embed/mermaid.svg'); }
+		.icon.embed-youtube { background-image: url('~img/icon/menu/action/block/embed/youtube.svg'); }
+		.icon.embed-vimeo { background-image: url('~img/icon/menu/action/block/embed/vimeo.svg'); }
+		.icon.embed-googleMaps { background-image: url('~img/icon/menu/action/block/embed/googleMaps.svg'); }
+		.icon.embed-soundcloud { background-image: url('~img/icon/menu/action/block/embed/soundcloud.svg'); }
+		.icon.embed-chart { background-image: url('~img/icon/menu/action/block/embed/chart.svg'); }
+		.icon.embed-miro { background-image: url('~img/icon/menu/action/block/embed/miro.svg'); }
+		.icon.embed-figma { background-image: url('~img/icon/menu/action/block/embed/figma.svg'); }
+		.icon.embed-bilibili { background-image: url('~img/icon/menu/action/block/embed/bilibili.svg'); }
+		.icon.embed-codepen { background-image: url('~img/icon/menu/action/block/embed/codepen.svg'); }
+		.icon.embed-facebook { background-image: url('~img/icon/menu/action/block/embed/facebook.svg'); }
+		.icon.embed-githubGist { background-image: url('~img/icon/menu/action/block/embed/githubGist.svg'); }
+		.icon.embed-graphviz { background-image: url('~img/icon/menu/action/block/embed/graphviz.svg'); }
+		.icon.embed-instagram { background-image: url('~img/icon/menu/action/block/embed/instagram.svg'); }
+		.icon.embed-kroki { background-image: url('~img/icon/menu/action/block/embed/kroki.svg'); }
+		.icon.embed-openStreetMap { background-image: url('~img/icon/menu/action/block/embed/openStreetMap.svg'); }
+		.icon.embed-reddit { background-image: url('~img/icon/menu/action/block/embed/reddit.svg'); }
+		.icon.embed-telegram { background-image: url('~img/icon/menu/action/block/embed/telegram.svg'); }
+		.icon.embed-twitter { background-image: url('~img/icon/menu/action/block/embed/twitter.svg'); }
+		.icon.embed-excalidraw { background-image: url('~img/icon/menu/action/block/embed/excalidraw.svg'); }
+		.icon.embed-sketchfab { background-image: url('~img/icon/menu/action/block/embed/sketchfab.svg'); }
+		.icon.embed-drawio { background-image: url('~img/icon/menu/action/block/embed/drawio.svg'); }
+		.icon.embed-image { background-image: url('~img/icon/menu/action/block/embed/image.svg'); }
+		.icon.embed-spotify { background-image: url('~img/icon/menu/action/block/embed/spotify.svg'); }
+		.icon.embed-bandcamp { background-image: url('~img/icon/menu/action/block/embed/bandcamp.svg'); }
+		.icon.embed-appleMusic { background-image: url('~img/icon/menu/action/block/embed/appleMusic.svg'); }
 
 		.icon.color { z-index: 1; }
 		.icon.color {

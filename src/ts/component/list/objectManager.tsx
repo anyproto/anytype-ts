@@ -1,8 +1,9 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import { I, S, U, J, translate, keyboard } from 'Lib';
 
 interface Props {
 	isPopup?: boolean;
@@ -22,16 +23,19 @@ interface Props {
 	ignoreArchived?: boolean;
 	ignoreHidden?: boolean;
 	disableHeight?: boolean;
+	isCompact?: boolean;
 	scrollElement?: HTMLElement;
 	resize?: () => void;
-	onAfterLoad?: (message: any) => void;
+	onUpdate?: (message: any) => void;
 };
 
 interface ObjectManagerRefProps {
 	getSelected(): string[];
+	getItemsCount(): number;
 	setSelection(ids: string[]): void;
 	setSelectedRange(start: number, end: number): void;
 	selectionClear(): void;
+	onFilterShow(): void;
 };
 
 const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
@@ -84,10 +88,17 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	ignoreHidden = true,
 	isPopup = false,
 	disableHeight = true,
+	isCompact = false,
 	scrollElement,
 	resize,
-	onAfterLoad
+	onUpdate
 }, ref) => {
+
+	if (isCompact) {
+		rowHeight = 30;
+		iconSize = 20;
+		rowLength = 1;
+	};
 
 	const filterWrapperRef = useRef(null);
 	const filterRef = useRef(null);
@@ -105,8 +116,42 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const scrollContainer = scrollElement || U.Common.getScrollContainer(isPopup).get(0);
 
 	const onFilterShow = () => {
+		if (!filterRef.current) {
+			return;
+		};
+
+		const container = U.Common.getPageFlexContainer(isPopup);
+		const win = $(window);
+
 		$(filterWrapperRef.current).addClass('active');
-		filterRef.current.focus();
+		filterRef.current?.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
+			const value = filterRef.current?.getValue();
+
+			if (!value && !$(e.target).parents(`.filterWrapper`).length) {
+				onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			keyboard.shortcut('escape', e, () => {
+				onFilterHide();
+				win.off('keydown.filter');
+			});
+		});
+	};
+
+	const onFilterHide = () => {
+		if (!filterRef.current) {
+			return;
+		};
+
+		$(filterWrapperRef.current).removeClass('active');
+		filterRef.current.setValue('');
+		filterRef.current.blur();
+		load();
 	};
 
 	const onFilterChange = (v: string) => {
@@ -209,9 +254,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			sources: sources || [],
 			collectionId: collectionId || ''
 		}, (message) => {
-			if (onAfterLoad) {
-				onAfterLoad(message);
-			};
+			onUpdate?.(message);
 		});
 	};
 
@@ -261,8 +304,13 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	};
 
 	const items = getItems();
+	const cn = [ 'objectManagerWrapper' ];
 	const cnControls = [ 'controls' ];
 	const filter = getFilterValue();
+
+	if (isCompact) {
+		cn.push('isCompact');
+	};
 
 	if (filter) {
 		cnControls.push('withFilter');
@@ -296,7 +344,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					onChange={e => onClick(e, item)}
 				/>
 			)}
-			<div className="objectClickArea" onClick={() => U.Object.openConfig(item)}>
+			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)}>
 				<IconObject object={item} size={iconSize} />
 
 				<div className="info">
@@ -356,7 +404,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		if (!filter) {
 			controls = null;
 		} else {
-			textEmpty = U.Common.sprintf(translate('popupSearchNoObjects'), filter);
+			textEmpty = U.String.sprintf(translate('popupSearchNoObjects'), filter);
 		};
 
 		content = <EmptySearch text={textEmpty} />;
@@ -430,6 +478,9 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 		return () => {
 			window.clearTimeout(timeout.current);
+			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
+			$(window).off('keydown.filter');
+			checkboxRef.current.clear();
 		};
 	}, []);
 
@@ -465,13 +516,15 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	useImperativeHandle(ref, () => ({
 		getSelected: () => selected.current,
+		getItemsCount: () => items.length,
 		setSelection,
 		setSelectedRange,
 		selectionClear,
+		onFilterShow,
 	}));
 
 	return (
-		<div className="objectManagerWrapper">
+		<div className={cn.join(' ')}>
 			{controls}
 			{content}
 		</div>

@@ -7,9 +7,9 @@
 	.items {
 		.row { display: grid; grid-gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px 0px; }
 
-		.item { flex-shrink: 0; flex-grow: 0; background-color: var(--color-bg-primary); }
+		.item { flex-shrink: 0; flex-grow: 0; background-color: var(--color-bg-primary); border-radius: 8px; }
 		.item {
-			.dropTarget { height: 100%; border-radius: 8px; }
+			.dropTarget { height: 100%; border-radius: inherit; }
 			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
 
 			.cover { 

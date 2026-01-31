@@ -1,10 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
-import { I, U, S, translate, Animation, analytics } from 'Lib';
+import { I, U, S, translate, Animation, analytics, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const registerRef = useRef(null);
@@ -22,7 +22,26 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 
 	const onRegister = () => {
 		const { account } = S.Auth;
-		const cb = () => inflate(() => U.Router.go('/auth/onboard', {}));
+		const cb = () => {
+			const { account } = S.Auth;
+			if (!account) {
+				return;
+			};
+
+			U.Data.onInfo(account.info);
+			U.Data.onAuthOnce();
+
+			Storage.set('spaceId', account.info.accountSpaceId);
+			S.Common.showRelativeDatesSet(true);
+			
+			Storage.set('multichatsOnboarding', true);
+			Storage.setOnboarding('objectDescriptionButton');
+			Storage.setOnboarding('typeResetLayout');
+
+			U.Subscription.createGlobal(() => {
+				inflate(() => U.Router.go('/auth/onboard', {}));
+			});
+		};
 
 		if (account) {
 			cb();

@@ -51,7 +51,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	const onClick = (e: any, item: any) => {
 		if (item.id == 'sidebar') {
-			sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId, blockId });
+			sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId, blockId });
 			close();
 		} else {
 			U.Common.scrollToHeader(rootId, item, isPopup);

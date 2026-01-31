@@ -1,238 +1,98 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, C, S, sidebar, Storage, translate, U } from 'Lib';
-import { Button, Filter, Icon, IconObject, Title, ObjectName } from 'Component';
+import { analytics, I, J, keyboard, S, Storage, translate, U, sidebar } from 'Lib';
+import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
-interface Props extends React.Component {
-	page: string;
-};
-
-interface State {
-	isLoading: boolean;
-};
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 
-const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends React.Component<Props, State> {
+const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	state = {
-		isLoading: false,
-	};
-	node: any = null;
-	cache: any = {};
-	refFilter = null;
-	filter = '';
-	timeoutFilter = 0;
-	sortId: I.SortId = I.SortId.LastUsed;
-	sortType: I.SortType = I.SortType.Desc;
-	searchIds: string[] = null;
-	savedRoute: any = {};
+	const { page, isPopup } = props;
+	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
+	const { objectId } = keyboard.getMatch(isPopup).params;
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const filterInputRef = useRef(null);
+	const timeoutRef = useRef(0);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const sortId = useRef(I.SortId.LastUsed);
+	const sortType = useRef(I.SortType.Desc);
+	const savedRoute = useRef<any>({});
+	const spaceview = U.Space.getSpaceview();
+	const filter = useRef('');
+	const bodyRef = useRef(null);
 
-	constructor (props: any) {
-		super(props);
+	let type = '';
+	let title = '';
 
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterClear = this.onFilterClear.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.getAnalyticsSuffix = this.getAnalyticsSuffix.bind(this);
-		this.openFirst = this.openFirst.bind(this);
-
-		this.cache = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM });
-	};
-
-	render () {
-		const { isLoading } = this.state;
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
-		const items = this.getItems();
-		const title = this.getTitle();
-
-		const ItemSection = (item: any) => {
-			const cn = [ 'itemSection' ];
-
-			if (item.isFirst) {
-				cn.push('isFirst');
-			};
-
-			return (
-				<div className={cn.join(' ')}>
-					<div className="name">{item.name}</div>
-				</div>
-			);
+	switch (page) {
+		case 'settingsTypes': {
+			type = I.ObjectContainerType.Type;
+			title = U.Common.plural(10, translate('pluralObjectType'));
+			break;
 		};
 
-		const Item = (item: any) => {
-			if (item.isSection) {
-				return <ItemSection {...item} />;
-			};
-
-			const cn = [ 'item' ];
-			if (item.id == param?.objectId) {
-				cn.push('active');
-			};
-
-			return (
-				<div
-					id={`item-${item.id}`}
-					className={cn.join(' ')}
-					onClick={() => this.onClick(item)}
-					onContextMenu={() => this.onContext(item)}
-				>
-					<IconObject object={item} />
-					<ObjectName object={item} />
-				</div>
-			);
+		case 'settingsRelations': {
+			type = I.ObjectContainerType.Relation;
+			title = U.Common.plural(10, translate('pluralProperty'));
+			break;
 		};
-
-		const rowRenderer = ({ index, key, parent, style }) => (
-			<CellMeasurer
-				key={key}
-				parent={parent}
-				cache={this.cache}
-				columnIndex={0}
-				rowIndex={index}
-			>
-				<div className="row" style={style}>
-					<Item {...items[index]} />
-				</div>
-			</CellMeasurer>
-		);
-
-		return (
-			<>
-				<div className="subHead">
-					<div className="side left">
-						<Icon className="back" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
-					</div>
-					<div className="side center">
-						<div className="name">{title}</div>
-					</div>
-					<div className="side right">
-						<Icon id="button-object-more" className="more" onClick={this.onMore} />
-					</div>
-				</div>
-
-				<div id="body" className="body">
-					<div className="list">
-						<div className="filterWrapper">
-							<div className="side left">
-								<Filter
-									ref={ref => this.refFilter = ref}
-									icon="search"
-									className="outlined"
-									placeholder={translate('commonSearch')}
-									onChange={this.onFilterChange}
-									onClear={this.onFilterClear}
-								/>
-							</div>
-							<div className="side right">
-								{U.Space.canMyParticipantWrite() ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
-							</div>
-						</div>
-
-						{this.cache && items.length && !isLoading ? (
-							<div className="inner">
-								<InfiniteLoader
-									rowCount={items.length}
-									loadMoreRows={() => {}}
-									isRowLoaded={() => true}
-									threshold={LIMIT}
-								>
-									{({ onRowsRendered }) => (
-										<AutoSizer className="scrollArea">
-											{({ width, height }) => (
-												<List
-													width={width}
-													height={height}
-													deferredMeasurmentCache={this.cache}
-													rowCount={items.length}
-													rowHeight={({ index }) => this.getRowHeight(items[index])}
-													rowRenderer={rowRenderer}
-													onRowsRendered={onRowsRendered}
-													overscanRowCount={10}
-													scrollToAlignment="center"
-												/>
-											)}
-										</AutoSizer>
-									)}
-								</InfiniteLoader>
-							</div>
-						) : ''}
-					</div>
-				</div>
-			</>
-		);
 	};
 
-	componentDidMount () {
-		this.savedRoute = U.Common.objectCopy(keyboard.getMatch(false));
-		this.refFilter.focus();
-
-		this.initSort();
-		this.load(true, this.openFirst);
-	};
-
-	componentWillUnmount () {
-		U.Subscription.destroyList([ J.Constant.subId.library ]);
-		U.Router.go(`/${U.Router.build(this.savedRoute.params)}`, {});
-	};
-
-	initSort () {
-		const type = this.getType();
-		const storage = this.storageGet();
+	const initSort = () => {
+		const storage = storageGet();
 		const sort = storage.sort[type];
 
 		if (!sort) {
-			const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType).filter(it => it.isSort);
+			const options = U.Menu.getLibrarySortOptions(sortId.current, sortType.current).filter(it => it.isSort);
 			if (options.length) {
-				this.sortId = options[0].id;
-				this.sortType = options[0].defaultType;
+				sortId.current = options[0].id;
+				sortType.current = options[0].defaultType;
 			};
 		};
 
 		if (sort) {
-			this.sortId = sort.id;
-			this.sortType = sort.type;
+			sortId.current = sort.id;
+			sortType.current = sort.type;
 		};
 	};
 
-	load (clear: boolean, callBack?: (message: any) => void) {
-		const spaceview = U.Space.getSpaceview();
-		const type = this.getType();
-		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
-		const option = options.find(it => it.id == this.sortId);
+	const load = (callBack?: (message: any) => void) => {
+		const options = U.Menu.getLibrarySortOptions(sortId.current, sortType.current);
+		const option = options.find(it => it.id == sortId.current);
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [];
 
 		if (option) {
-			sorts.push({ relationKey: option.relationKey, type: this.sortType });
+			sorts.push({ relationKey: option.relationKey, type: sortType.current });
 		} else {
 			sorts = sorts.concat([
-				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
 				{ 
 					relationKey: 'uniqueKey', 
 					type: I.SortType.Custom, 
-					customOrder: U.Data.typeSortKeys(spaceview.isChat),
+					customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 				},
 				{ relationKey: 'name', type: I.SortType.Asc },
 			]);
 		};
 
-		if (this.searchIds) {
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		switch (type) {
 			case I.ObjectContainerType.Type: {
 				filters = filters.concat([
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] }
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.type ] },
+					{ relationKey: 'restrictions', condition: I.FilterCondition.NotIn, value: [ I.RestrictionObject.Details ] },
 				]);
 				break;
 			};
@@ -243,46 +103,33 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			};
 		};
 
-		if (clear) {
-			this.setState({ isLoading: true });
-		};
-
-		U.Subscription.subscribe({
-			subId: J.Constant.subId.library,
-			filters,
-			sorts,
-			keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
-			noDeps: true,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-		}, (message: any) => {
-			this.setState({ isLoading: false });
-
-			if (callBack) {
-				callBack(message);
-			};
+		U.Subscription.destroyList([ J.Constant.subId.library ], true, () => {
+			U.Subscription.subscribe({
+				subId: J.Constant.subId.library,
+				filters,
+				sorts,
+				keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
+				noDeps: true,
+			}, callBack);
 		});
 	};
 
-	loadSearchIds (clear: boolean) {
-		if (this.filter) {
+	const loadSearchIds = () => {
+		if (filter.current) {
 			U.Subscription.search({
 				filters: [],
 				sorts: [],
-				fullText: this.filter,
+				fullText: filter.current,
 				keys: [ 'id' ],
 			}, (message: any) => {
-				this.searchIds = (message.records || []).map(it => it.id);
-				this.load(clear);
+				setSearchIds((message.records || []).map(it => it.id));
 			});
 		} else {
-			this.searchIds = null;
-			this.load(clear);
+			setSearchIds(null);
 		};
 	};
 
-	getSections () {
-		const type = this.getType();
+	const getSections = () => {
 		const records = S.Record.getRecords(J.Constant.subId.library);
 
 		let myLabel = '';
@@ -314,8 +161,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		].filter(it => it.children.length);
 	};
 
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 
 		let items: any[] = [];
 
@@ -336,38 +183,32 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		return items;
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		if (item.isSection) {
 			return item.isFirst ? HEIGHT_SECTION_FIRST : HEIGHT_SECTION;
 		};
 		return HEIGHT_ITEM;
 	};
 
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			if (this.filter == v) {
-				return;
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeoutRef.current);
+		timeoutRef.current = window.setTimeout(() => {
+			if (filter.current != v) {
+				filter.current = v;
+				loadSearchIds();
 			};
-
-			this.filter = v;
-			this.loadSearchIds(true);
-
 		}, J.Constant.delay.keyboard);
 	};
 
-	onFilterClear () {
-		this.searchIds = null;
-		this.load(true);
-
+	const onFilterClear = () => {
+		setSearchIds(null);
 		analytics.event('SearchInput', { route: analytics.route.settings });
 	};
 
-	onMore (e) {
+	const onMore = (e) => {
 		e.stopPropagation();
 
-		const type = this.getType();
-		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
+		const options = U.Menu.getLibrarySortOptions(sortId.current, sortType.current);
 
 		let menuContext = null;
 
@@ -382,48 +223,61 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
-					const storage = this.storageGet();
+					const storage = storageGet();
 
-					this.sortId = item.id;
-					this.sortType = item.type;
+					sortId.current = item.id;
+					sortType.current = item.type;
 
 					storage.sort[type] = { id: item.id, type: item.type };
 					analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 
-					this.storageSet(storage);
-					this.initSort();
-					this.load(true);
-
-					menuContext.ref.updateOptions(U.Menu.getLibrarySortOptions(this.sortId, this.sortType));
+					storageSet(storage);
+					initSort();
+					load();
+					menuContext.getChildRef()?.updateOptions?.(U.Menu.getLibrarySortOptions(sortId.current, sortType.current));
 				},
 			}
 		});
 	};
 
-	onClick (item: any) {
-		const param = {
-			layout: I.ObjectLayout.Settings,
-			id: U.Object.actionByLayout(item.layout),
-			_routeParam_: {
-				additional: [
-					{ key: 'objectId', value: item.id }
-				],
-			},
-		};
-
-		U.Object.openRoute(param);
-
+	const onClick = (item: any) => {
 		let e = '';
 
 		switch (item.layout) {
-			case I.ObjectLayout.Type: e = 'ClickSettingsSpaceType'; break;
-			case I.ObjectLayout.Relation: e = 'ClickSettingsSpaceRelation'; break;
+			case I.ObjectLayout.Type: {
+				U.Object.editType(item.id, isPopup);
+				e = 'ClickSettingsSpaceType'; 
+				break;
+			};
+
+			case I.ObjectLayout.Relation: {
+				const param = {
+					layout: I.ObjectLayout.Settings,
+					id: U.Object.actionByLayout(item.layout),
+					_routeParam_: {
+						additional: [
+							{ key: 'objectId', value: item.id }
+						],
+					},
+				};
+
+				U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
+				e = 'ClickSettingsSpaceRelation'; 
+				break;
+			};
 		};
 
 		analytics.event(e, { route: analytics.route.library });
 	};
 
-	onContext (item: any) {
+	const setActive = (id: string) => {
+		const body = $(bodyRef.current);
+
+		body.find('.item.active').removeClass('active');
+		body.find(`#item-${id}`).addClass('active');
+	};
+
+	const onContext = (item: any) => {
 		const { x, y } = keyboard.mouse.page;
 		const menuParam = {
 			className: 'fixed',
@@ -450,7 +304,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 				menuId = 'blockRelationEdit';
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId: item.id,
-					filter: this.filter,
+					filter: item.name,
 					relationId: item.id,
 					route: analytics.route.settingsSpace,
 					noUnlink: true,
@@ -464,16 +318,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		});
 	};
 
-	onAdd (e) {
+	const onAdd = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const type = this.getType();
-		const isPopup = keyboard.isPopup();
-
 		switch (type) {
 			case I.ObjectContainerType.Type: {
-				U.Object.createType({ name: this.filter }, isPopup);
+				U.Object.createType({ name: filter.current }, isPopup);
 				break;
 			};
 
@@ -489,11 +340,10 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					classNameWrap: 'fromSidebar',
 					horizontal: I.MenuDirection.Right,
 					data: {
-						filter: this.filter,
+						filter: filter.current,
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-							if (relation.id && this.filter && this.searchIds) {
-								this.searchIds = this.searchIds.concat(relation.id);
-								this.load(false);
+							if (relation.id && filter && searchIds) {
+								setSearchIds(searchIds.concat(relation.id));
 							};
 						},
 						route: analytics.route.settingsSpace,
@@ -503,21 +353,20 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			};
 		};
 
-		analytics.event(`ScreenCreate${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
+		analytics.event(`ScreenCreate${getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
 	};
 
-	storageGet () {
+	const storageGet = () => {
 		const storage = Storage.get('settingsLibrary') || {};
 		storage.sort = storage.sort || {};
 		return storage;
 	};
 
-	storageSet (obj: any) {
+	const storageSet = (obj: any) => {
 		Storage.set('settingsLibrary', obj);
 	};
 
-	getAnalyticsSuffix () {
-		const type = this.getType();
+	const getAnalyticsSuffix = () => {
 		const map = {
 			[I.ObjectContainerType.Type]: 'Type',
 			[I.ObjectContainerType.Relation]: 'Relation',
@@ -525,53 +374,160 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		return map[type];
 	};
 
-	openFirst () {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
-		const records = this.getSections().reduce((acc, el) => acc.concat(el.children), []);
+	const openFirst = () => {
+		const records = getSections().reduce((acc, el) => acc.concat(el.children), []);
 
-		if (records.find(it => it.id == param?.objectId) || !records.length) {
+		if (records.find(it => it.id == objectId) || !records.length) {
 			return;
 		};
 
-		this.onClick(records[0]);
+		onClick(records[0]);
 	};
 
-	getType () {
-		let t = '';
+	const onBack = () => {
+		S.Common.setLeftSidebarState('vault', 'settingsSpace');
+		sidebar.rightPanelClose(isPopup);
+		U.Router.go(U.Router.build(savedRoute.current.params), {});
+	};
 
-		switch (this.props.page) {
-			case 'settingsTypes': {
-				t = I.ObjectContainerType.Type; 
-				break;
+	const rowRenderer = ({ index, key, parent, style }) => {
+		const item = items[index];
+
+		let content = null;
+		if (item.isSection) {
+			const cn = [ 'itemSection' ];
+
+			if (item.isFirst) {
+				cn.push('isFirst');
 			};
 
-			case 'settingsRelations': {
-				t = I.ObjectContainerType.Relation; break;
+			content = (
+				<div style={style} className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else {
+			const cn = [ 'item' ];
+			if (item.id == objectId) {
+				cn.push('active');
 			};
+
+			return (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={() => onClick(item)}
+					style={style}
+					onContextMenu={() => onContext(item)}
+				>
+					<IconObject object={item} />
+					<ObjectName object={item} />
+				</div>
+			);
 		};
 
-		return t;
+		return (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				{content}
+			</CellMeasurer>
+		);
 	};
 
-	getTitle () {
-		let t = '';
+	const items = getItems();
 
-		switch (this.props.page) {
-			case 'settingsTypes': {
-				t = U.Common.plural(10, translate('pluralObjectType'));
-				break;
-			};
+	useEffect(() => {
+		savedRoute.current = U.Common.objectCopy(keyboard.getMatch(false));
 
-			case 'settingsRelations': {
-				t = U.Common.plural(10, translate('pluralProperty'));
-				break;
-			};
+		initSort();
+		load(() => {
+			openFirst();
+			window.setTimeout(() => filterInputRef.current?.focus(), 50);
+		});
+
+		return () => {
+			U.Subscription.destroyList([ J.Constant.subId.library ]);
 		};
+	}, []);
 
-		return t;
-	};
+	useEffect(() => {
+		load();
+	}, [ searchIds, space ]);
 
-});
+	useEffect(() => {
+		setActive(objectId);
+	}, [ objectId ]);
 
-export default SidebarSettingsLibrary
+	return (
+		<>
+			<div id="head" className="head">
+				<div className="side left">
+					<Icon className="back withBackground" onClick={onBack} />
+				</div>
+				<div className="side center">
+					<div className="name">{title}</div>
+				</div>
+				<div className="side right">
+					<Icon id="button-object-more" className="more withBackground" onClick={onMore} />
+				</div>
+			</div>
+
+			<div id="body" ref={bodyRef} className="body">
+				<div className="list">
+					<div className="filterWrapper">
+						<div className="side left">
+							<Filter
+								ref={filterInputRef}
+								icon="search"
+								className="outlined round"
+								placeholder={translate('commonSearch')}
+								onChange={onFilterChange}
+								onClear={onFilterClear}
+							/>
+						</div>
+						<div className="side right">
+							{canWrite ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={onAdd} /> : ''}
+						</div>
+					</div>
+
+					{items.length ? (
+						<div className="inner">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={() => true}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												width={width}
+												height={height}
+												deferredMeasurmentCache={cache.current}
+												rowCount={items.length}
+												rowHeight={({ index }) => getRowHeight(items[index])}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</div>
+					) : ''}
+				</div>
+			</div>
+		</>
+	);
+
+}));
+
+export default SidebarPageSettingsLibrary;

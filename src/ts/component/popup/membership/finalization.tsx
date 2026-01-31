@@ -1,31 +1,31 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Input, Loader } from 'Component';
-import { I, C, S, U, J, translate } from 'Lib';
+import { Title, Label, Button, Input, Loader, Icon } from 'Component';
+import { I, C, J, translate, analytics, U } from 'Lib';
 
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param } = props;
+	const { param, close } = props;
+	const { data } = param;
+	const { product, route, onSuccess } = data;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nameRef = useRef(null);
 	const buttonRef = useRef(null);
-	const timeoutRef = useRef(null);
+	const timeoutRef = useRef<any>(null);
 
 	const setOk = (t: string) => {
 		setStatus(I.InterfaceStatus.Ok);
 		setStatusText(t);
 	};
 
-	const setError = (t: string) => {
+	const setError = (code: number) => {
 		setStatus(I.InterfaceStatus.Error);
-		setStatusText(t);
+		setStatusText(translate(`popupMembershipCode${code}`));
 	};
 
 	const onKeyUp = () => {
-		const { data } = param;
-		const { tier } = data;
 		const name = nameRef.current?.getValue() || '';
 
 		buttonRef.current?.setDisabled(true);
@@ -38,127 +38,77 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 			return;
 		};
 
+		setStatusText(translate('popupMembershipStatusWaitASecond'));
+
 		timeoutRef.current = window.setTimeout(() => {
-			C.MembershipIsNameValid(tier, name, (message: any) => {
+			C.MembershipV2AnyNameIsValid(name, (message: any) => {
 				if (message.error.code) {
-					setError(message.error.description);
+					buttonRef.current?.setDisabled(true);
+					setError(message.error.code);
 					return;
 				};
 
-				setStatusText(translate('popupMembershipStatusWaitASecond'));
-
-				C.NameServiceResolveName(name, (message: any) => {
-					let error = '';
-					if (message.error.code) {
-						error = message.error.description;
-					} else
-					if (!message.available) {
-						error = translate('popupMembershipStatusNameNotAvailable');
-					};
-
-					if (error) {
-						setError(error);
-					} else {
-						buttonRef.current?.setDisabled(false);
-						setOk(translate('popupMembershipStatusNameAvailable'));
-					};
-				});
+				buttonRef.current?.setDisabled(false);
+				setOk(translate('popupMembershipStatusNameAvailable'));
 			});
+
 		}, J.Constant.delay.keyboard);
 	};
 
-	const onConfirm = () => {
+	const onConfirm = (e: any) => {
+		e.preventDefault();
+
+		if (isLoading || buttonRef.current?.isDisabled()) {
+			return;
+		};
+
 		const name = nameRef.current?.getValue() || '';
 
+		setStatus('');
 		setIsLoading(true);
 		buttonRef.current?.setDisabled(true);
 
-		C.MembershipFinalize(name, (message) => {
+		C.MembershipV2AnyNameAllocate(name, (message) => {
+			setIsLoading(false);
+
 			if (message.error.code) {
-				setError(message.error.description);
+				setError(message.error.code);
 				return;
 			};
 
-			U.Data.getMembershipTiers(true, () => {
-				U.Data.getMembershipStatus((membership) => {
-					if (!membership || membership.isNone) {
-						setError(translate('pageMainMembershipError'));
-						return;
-					};
-
-					S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
-				});
-			});
+			onSuccess();
 		});
+
+		analytics.event('ClickMembershipFinalization');
 	};
 
 	useEffect(() => {
-		if (!S.Auth.membership?.name) {
-			buttonRef.current?.setDisabled(true);
-		};
+		buttonRef.current?.setDisabled(true);
+		analytics.event('ScreenMembershipFinalization', route);
 	}, []);
 
-	const { data } = param;
-	const { tier } = data;
-	const tierItem = U.Data.getMembershipTier(tier);
-
-	if (!tierItem) {
-		return null;
-	};
-
-	const { membership } = S.Auth;
-	const { period, periodType } = tierItem;
-	const { name, nameType } = membership;
-	
-	let labelText = translate('popupMembershipPaidTextUnlimited');
-	let periodLabel = translate('pluralYear');
-
-	if (periodType) {
-		switch (periodType) {
-			case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-				periodLabel = translate('pluralDay');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-				periodLabel = translate('pluralWeek');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-				periodLabel = translate('pluralMonth');
-				break;
-			};
-		};
-	};
-
-	if (period) {
-		if (period == 1) {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
-		} else {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
-		};
-	};
-
 	return (
-		<div className="anyNameForm">
-			<Title text={translate(`popupMembershipPaidTitle`)} />
-			<Label text={labelText} />
+		<form onSubmit={onConfirm} className="anyNameForm">
+			<Icon className={[ 'color', product.colorStr || 'default' ].join(' ')} />
+			<div className="text">
+				<Title text={U.String.sprintf(translate(`popupMembershipFinalizationTitle`), product.name)} />
+				<Label text={translate('popupMembershipFinalizationText1')} />
+				<Label text={translate('popupMembershipFinalizationText2')} />
+			</div>
+
+			<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 			<div className="inputWrapper">
 				<Input
 					ref={nameRef}
-					value={name}
 					onKeyUp={onKeyUp}
-					readonly={!!name}
-					className={name ? 'disabled' : ''}
-					placeholder={translate(`popupMembershipPaidPlaceholder`)}
+					placeholder={translate(`popupMembershipFinalizationPlaceholder`)}
 				/>
-				<div className="ns">{J.Constant.namespace[nameType]}</div>
+				<div className="ns">{J.Constant.namespace[0]}</div>
 			</div>
-
-			<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-			<Button ref={buttonRef} onClick={onConfirm} text={translate('commonConfirm')} />
+			<Button ref={buttonRef} type="input" onClick={onConfirm} color="accent" text={translate('popupMembershipFinalizationClaimName')} />
 			{isLoading ? <Loader /> : ''}
-		</div>
+		</form>
 	);
 
 }));

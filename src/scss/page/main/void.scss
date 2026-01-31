@@ -1,33 +1,40 @@
 @import "~scss/_mixins";
 
 .bodyMain.bodyMainVoidError {
-	#sidebarLeftButton,
 	#sidebarBack,
 	.sidebar,
     .sidebarDummy { display: none; }
 }
 
 .pageMainVoid {
-	.wrapper { width: 704px; height: 100vh; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
-		.container { text-align: center; }
+		.icon.vaultToggle { position: absolute; left: 12px; top: 12px; background-image: url('~img/icon/widget/toggle0.svg'); }
+
+		.frame { text-align: center; position: absolute; }
 		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
-		.icon { width: 100%; height: 100%; }
+		.iconWrapper {
+			.icon { width: 100%; height: 100%; }
+		}
 
 		.title { @include text-header3; margin-bottom: 4px; }
-		.label { margin-bottom: 24px; }
 
-		.buttons { display: flex; gap: 0px 8px; }
+		.buttons { display: flex; gap: 0px 8px; margin: 24px 0px 0px 0px; justify-content: center; }
+		.buttons:empty { display: none; }
 		.button { width: 176px; }
 
 		&.voidError {
 			.iconWrapper { width: 72px; height: 72px; margin: 0px auto 10px; }
-			.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+			.iconWrapper {
+				.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+			}
 		}
 
 		&.voidSelect {
 			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
-			.icon { background-image: url('~img/icon/void/select.svg'); }
+			.iconWrapper {
+				.icon { background-image: url('~img/icon/void/select.svg'); }
+			}
 			.label { width: 242px; color: var(--color-text-secondary); }
 		}
 	}

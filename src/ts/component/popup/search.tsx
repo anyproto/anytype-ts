@@ -10,18 +10,22 @@ const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const LIMIT_HEIGHT = 15;
 
+const isMac = U.Common.isPlatformMac();
+
 const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
-	
+
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
 	const { route, onObjectSelect, skipIds } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const backlinkRef = useRef(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
 	const rowsRef = useRef([]);
 	const timeoutRef = useRef(0);
+	const rebindTimeoutRef = useRef(0);
 	const delayRef = useRef(0);
 	const cacheRef = useRef({});
 	const itemsRef = useRef([]);
@@ -43,11 +47,20 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.search', e => onKeyDown(e));
+
+		const win = $(window);
+
+		win.on('keydown.search', e => onKeyDown(e));
+		win.on('archiveObject.search', (e: any, data: any) => {
+			const ids = U.Common.objectCopy(data.ids);
+			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
+
+			setDummy(dummy + 1);
+		});
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.search');
+		$(window).off('keydown.search archiveObject.search');
 	};
 
 	const onKeyDown = (e: any) => {
@@ -61,9 +74,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const cmd = keyboard.cmdKey();
 		const filter = getFilter();
 		const item = items[nRef.current];
-
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
 		keyboard.disableMouse(true);
-
 		keyboard.shortcut('escape', e, () => {
 			if (backlinkRef.current) {
 				onClearSearch();
@@ -81,8 +94,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
+			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
+			onArrow(dir);
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
@@ -96,6 +110,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const item = items[nRef.current];
 			if (item) {
 				onClick(e, item);
+			};
+		});
+
+		keyboard.shortcut(`${cmd}+l`, e, () => {
+			e.preventDefault();
+
+			const item = items[nRef.current];
+			if (item && item.isObject) {
+				U.Object.copyLink(item, S.Common.space, 'web', route);
 			};
 		});
 
@@ -201,10 +224,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		backlinkRef.current = item;
 
 		analytics.event('SearchBacklink', { route, type });
-
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 	};
 
 	const onClearSearch = () => {
@@ -237,29 +257,23 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: () => void) => {
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
-		const filters: any[] = [
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters: any[] = U.Subscription.getBaseFilters().concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-		];
+		]);
 		const sorts = [
+			{ relationKey: '_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		].map(U.Subscription.sortMapper);
 
-		if (!config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		let limit = J.Constant.limit.menuRecords;
 
 		if (!filterValueRef.current && clear && !backlinkRef.current) {
-			limit = 8;
+			limit = 9;
 		};
 
 		if (backlinkRef.current) {
@@ -308,10 +322,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (clear) {
 				setIsLoading(false);
-				if (callBack) callBack();
-			} else {
-				if (callBack) callBack();
 			};
+
+			callBack?.();
 		});
 	};
 
@@ -322,7 +335,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let name = '';
 		if (filter) {
-			name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
+			name = U.String.sprintf(translate('commonCreateObjectWithName'), filter);
 		} else {
 			name = translate('commonCreateObject');
 		};
@@ -330,8 +343,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
 		if (backlinkRef.current) {
-			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
-		} else 
+			items.unshift({ name: U.String.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
+		} else
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
@@ -348,7 +361,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		/* Settings and pages */
 
 		if (filter) {
-			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
 			if (canWrite) {
@@ -377,19 +390,19 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			settingsSpace = settingsSpace.map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
-			
+
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
-				{ 
+				{
 					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
-					aliases: [ 
+					aliases: [
 						translate('commonLanguage', lang), translate('commonLanguage'),
 						translate('commonSpelling', lang), translate('commonSpelling'),
-					] 
+					]
 				},
-				{ 
+				{
 					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
-					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
+					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ]
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
 				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
@@ -484,15 +497,14 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						window.setTimeout(() => {
 							focus.scroll(keyboard.isPopup(), meta.blockId);
 						}, J.Constant.delay.route);
-					}
+					},
 				});
-			} else 
+			} else
 
 			// Settings item
 			if (item.isSettings) {
-				U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
-			} else 
-
+				Action.openSettings(item.id, '');
+			} else
 			// Import action
 			if (item.isImport) {
 				Action.import(item.format, J.Constant.fileExtension.import[item.format]);
@@ -520,7 +532,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onContext = (e: any, item: any) => {
 		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
-			recalcRect: () => { 
+			recalcRect: () => {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
@@ -531,6 +543,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				subId: J.Constant.subId.search,
 				route,
 				objectIds: [ item.id ],
+				allowedNewTab: true,
 			},
 		});
 	};
@@ -539,7 +552,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
-		} else 
+		} else
 		if (item.isSmall) {
 			h = HEIGHT_SMALL;
 		};
@@ -570,7 +583,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		focus.clear(true);
-		window.setTimeout(() => rebind(), J.Constant.delay.popup);
+		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
 		if (storage.backlink) {
 			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
@@ -584,6 +597,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			unbind();
 			U.Subscription.destroyList([ J.Constant.subId.search ]);
 			window.clearTimeout(timeoutRef.current);
+			window.clearTimeout(rebindTimeoutRef.current);
 		};
 	}, []);
 
@@ -620,8 +634,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (highlight) {
 			const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
-			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
-		} else 
+			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />;
+		} else
 		if (relationDetails.name) {
 			const { relationOptionColor } = relationDetails;
 			const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
@@ -660,10 +674,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (item.isObject) {
 			object = item;
-		} else 
+		} else
 		if (item.id == 'account') {
 			object = U.Space.getParticipant();
-		} else 
+		} else
 		if (item.id == 'spaceIndex') {
 			object = U.Space.getSpaceview();
 		};
@@ -704,13 +718,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					name = U.File.name({ ...object, name });
 				};
 			} else {
-				name = U.Common.htmlSpecialChars(name);
+				name = U.String.htmlSpecialChars(name);
 			};
 
 			content = (
 				<div className="sides" onContextMenu={e => onContext(e, item)}>
 					<div className="side left">
-						<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						<Context {...meta} />
 						<div className="caption">
 							<ObjectType object={type} />
@@ -741,9 +755,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return (
 			<div
 				ref={node => rowsRef.current[item.index] = node}
-				id={`item-${item.id}`} 
+				id={`item-${item.id}`}
 				className={cn.join(' ')}
-				onMouseOver={e => onOver(e, item)} 
+				onMouseOver={e => onOver(e, item)}
 				onClick={e => onClick(e, item)}
 			>
 				{icon}
@@ -784,18 +798,58 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
+	const Footer = (props: { items: any[]; n: number }) => {
+		const { items, n } = props;
+		const item = items[n];
+		const cmd = keyboard.cmdKey();
+
+		const isObject = item && item.isObject;
+		const isAction = item && (item.isSettings || item.isImport || item.id == 'add' || item.id == 'graph' || item.id == 'navigation');
+
+		const Shortcut = (props: { keys: string[]; label: string }) => {
+			const symbols = keyboard.getSymbolsFromKeys(props.keys);
+			return (
+				<div className="item">
+					<div className="keys">
+						{symbols.map((s, i) => (
+							<Label key={i} text={s} />
+						))}
+					</div>
+					<div className="label">{props.label}</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className="foot">
+				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
+				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
+				{isObject ? (
+					<>
+						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
+						<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+						<Shortcut keys={[ cmd, 'enter' ]} label={translate('popupSearchShortcutNewTab')} />
+					</>
+				) : ''}
+				{isAction ? (
+					<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutSelect')} />
+				) : ''}
+			</div>
+		);
+	};
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className="wrap"
 		>
 			{isLoading ? <Loader id="loader" /> : ''}
-			
+
 			<div className="head">
-				<Filter 
+				<Filter
 					icon="search"
 					value={filterValueRef.current}
-					ref={filterInputRef} 
+					ref={filterInputRef}
 					placeholder={translate('popupSearchPlaceholder')}
 					onSelect={onFilterSelect}
 					onChange={v => onFilterChange(v)}
@@ -807,7 +861,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{!items.length && !isLoading ? (
 				<EmptySearch filter={filterValueRef.current} />
 			) : ''}
-			
+
 			{cacheRef.current && items.length && !isLoading ? (
 				<div key="items" className="items">
 					<InfiniteLoader
@@ -838,6 +892,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					</InfiniteLoader>
 				</div>
 			) : ''}
+
+			<Footer items={items} n={nRef.current} />
 		</div>
 	);
 

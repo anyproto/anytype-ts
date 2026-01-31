@@ -12,6 +12,8 @@
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
+
+			&.isDragging { z-index: 1; }
 		}
 		.item.hover::before { background: var(--color-shape-highlight-medium); }
 

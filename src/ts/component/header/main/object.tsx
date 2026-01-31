@@ -25,7 +25,14 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
-	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const isRelationOpen = (rightSidebar.page == 'object/relation');
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
+	const cnc = [ 'side', 'center' ];
+
+	if (isSearchMenuOpen) {
+		cnc.push('withSearch');
+	};
 
 	let center = null;
 	let label = '';
@@ -106,7 +113,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const onRelation = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 
 	const updateTemplatesCnt = () => {
@@ -138,26 +145,26 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{renderLeftIcons(true, true, onOpen)}
 			</div>
 
-			<div className="side center">
+			<div className={cnc.join(' ')}>
 				{center}
 			</div>
 
 			<div className="side right">
 				{showShare ? (
-					<Icon 
-						id="button-header-share" 
-						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'share', 'withBackground' ].join(' ')}
-						onClick={onShare} 
+					<Label
+						id="button-header-share"
+						text={translate('commonShare')}
+						className="btn"
+						onClick={onShare}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 
 				{showRelations ? (
 					<Icon 
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						className={[ 'relation', 'withBackground', (isRelationOpen ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

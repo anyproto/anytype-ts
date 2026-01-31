@@ -138,7 +138,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			noFilter,
 			noClose: true,
 			value,
-			options: U.Menu.prepareForSelect(options),
+			options,
 			onSelect: (e: any, item: any) => {
 				if (item.id !== '') {
 					if (isMultiple) {

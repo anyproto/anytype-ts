@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -36,10 +36,10 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 			return width;
 		};
 		
-		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		const ew = el.width();
+		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 		
-		return Math.min(1, Math.max(0, w / rect.width));
+		return Math.min(1, Math.max(0, w / ew));
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -75,12 +75,12 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	};
 
 	const onOpenFile = () => {
-		Action.openFile(block.getTargetObjectId(), analytics.route.block);
+		Action.openFile(object, analytics.route.block);
 	};
 
 	const onOpenObject = (e: any) => {
 		if (!keyboard.withCommand(e)) {
-			U.Object.openConfig({ id: block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
+			U.Object.openConfig(e, { id: block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 
@@ -105,7 +105,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		win.off('mousemove.media mouseup.media');
 		selection?.hide();
 
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(nodeRef.current).addClass('isResizing');
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
@@ -124,7 +124,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		};
 		
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
 		mediaRef.current?.resize();
@@ -139,9 +139,9 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		
 		const win = $(window);
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(nodeRef.current).removeClass('isResizing');
 
 		win.off('mousemove.media mouseup.media');
 		keyboard.disableSelection(false);
@@ -218,11 +218,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 				break;
 			};
 				
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-				
 			case I.FileState.Done: {
 				if (pages > 1) {
 					pager = (
@@ -245,7 +240,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 						</div>
 
 						<MediaPdf 
-							id={`pdf-block-${id}`}
 							ref={mediaRef}
 							src={S.Common.fileUrl(targetObjectId)}
 							page={page}
@@ -267,7 +261,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	return (
 		<div 
 			ref={nodeRef}
-			className={[ 'focusable', 'c' + id ].join(' ')} 
+			className={[ 'focusable', `c${id}` ].join(' ')} 
 			tabIndex={0} 
 			onKeyDown={onKeyDownHandler} 
 			onKeyUp={onKeyUpHandler} 

@@ -8,10 +8,6 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 	const { rootId, isPopup, blockId } = props;
 	const [ dummy, setDummy ] = useState(0);
 
-	const forceUpdate = () => {
-		setDummy(dummy + 1);
-	};
-
 	const onClick = (e: any, item: any) => {
 		U.Common.scrollToHeader(rootId, item, isPopup);
 	};
@@ -40,7 +36,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 	};
 
 	useImperativeHandle(ref, () => ({
-		forceUpdate,
+		forceUpdate: () => setDummy(dummy + 1),
 		getItems,
 	}));
 

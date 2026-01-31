@@ -14,31 +14,35 @@
 			}
 			.marker {
 				.icon { display: inline-block; }
-			}
 
-			.marker.bullet { display: flex; align-items: center; justify-content: center; }
-			.marker.bullet {
-				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
+				&.markerBulleted { display: flex; align-items: center; justify-content: center; }
+				&.markerBulleted {
+					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
+					.markerInner {
+						&.textColor-default { background-color: var(--color-text-primary) !important; }
+						&.textColor-black { background-color: var(--color-text-primary) !important; }
+						&.textColor-grey { background-color: var(--color-control-active) !important; }
+						&.textColor-yellow { background-color: var(--color-yellow) !important; }
+						&.textColor-orange { background-color: var(--color-orange) !important; }
+						&.textColor-red { background-color: var(--color-red) !important; }
+						&.textColor-pink { background-color: var(--color-pink) !important; }
+						&.textColor-purple { background-color: var(--color-purple) !important; }
+						&.textColor-blue { background-color: var(--color-blue) !important; }
+						&.textColor-ice { background-color: var(--color-ice) !important; }
+						&.textColor-teal { background-color: var(--color-teal) !important; }
+						&.textColor-lime { background-color: var(--color-lime) !important; }
+					}
+				}
 
-				.markerInner.textColor-default { background-color: var(--color-text-primary) !important; }
-				.markerInner.textColor-black { background-color: var(--color-text-primary) !important; }
-				.markerInner.textColor-grey { background-color: var(--color-control-active) !important; }
-				.markerInner.textColor-yellow { background-color: var(--color-yellow) !important; }
-				.markerInner.textColor-orange { background-color: var(--color-orange) !important; }
-				.markerInner.textColor-red { background-color: var(--color-red) !important; }
-				.markerInner.textColor-pink { background-color: var(--color-pink) !important; }
-				.markerInner.textColor-purple { background-color: var(--color-purple) !important; }
-				.markerInner.textColor-blue { background-color: var(--color-blue) !important; }
-				.markerInner.textColor-ice { background-color: var(--color-ice) !important; }
-				.markerInner.textColor-teal { background-color: var(--color-teal) !important; }
-				.markerInner.textColor-lime { background-color: var(--color-lime) !important; }
-			}
-			
-			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
-			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
-			
-			.marker.check, .marker.toggle {
-				img { width: 100%; height: 100%; }
+				&.markerNumbered { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
+				&.markerNumbered {
+					> span { min-width: 100%; display: inline-block; text-align: center; }
+				}
+
+				&.markerCheckbox,
+				&.markerToggle {
+					img { width: 100%; height: 100%; }
+				}
 			}
 		}
 
@@ -75,7 +79,6 @@
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
-					.marker.check { cursor: default; }
 					#value { min-height: var(--line-height-paragraph); cursor: text !important; user-select: text !important; white-space: pre-wrap; }
 					#placeholder { display: none; }
 				}
@@ -95,12 +98,11 @@
 
 	/* Title */
 
-	.block.blockText.textTitle { padding: 6px 0px 0px 0px !important; @include text-title; }
+	.block.blockText.textTitle { @include text-title; }
 	.block.blockText.textTitle {
 		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
 		> .wrapContent {
 			> .selectionTarget {
-				> .dropTarget { padding: 0px; }
 				> .dropTarget {
 					> .flex {
 						> .editableWrap {
@@ -230,7 +232,7 @@
 			> .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 
 			> .selectionTarget {
-				> .dropTarget { padding: 24px 0px 0px 0px; }
+				> .dropTarget { padding: 30px 0px 0px 0px; }
 				> .dropTarget {
 					.placeholder { display: none !important; }
 
@@ -239,7 +241,10 @@
 						#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; padding: 16px; }
 						#value * { background: none; }
 
-						.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
+						.additional { 
+							position: absolute; top: 8px; left: 0px; z-index: 3; display: flex; padding: 0px 16px; width: 100%; 
+							flex-direction: row; justify-content: space-between; align-items: center;
+						}
 						.additional {
 							.select { border: 0px; color: var(--color-control-active); border-radius: 0px; padding: 0px 20px 0px 0px; }
 							.select {
@@ -296,6 +301,11 @@
 	.block.blockText.textHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
 	.block.blockText.textHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
+
+	@keyframes markerFadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
 }
 
 .editorWrapper.isTask {

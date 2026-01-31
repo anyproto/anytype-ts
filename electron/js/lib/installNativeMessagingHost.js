@@ -17,7 +17,11 @@ const { fixPathForAsarUnpack, is } = require('electron-util');
 
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
-const EXTENSION_IDS = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf', 'lcamkcmpcofgmbmloefimnelnjpcdpfn' ];
+const EXTENSION_IDS = [ 
+	'jbnammhjiplhpjfncnlejjjejghimdkf', 
+	'jkmhmgghdjjbafmkgjmplhemjjnkligf', 
+	'lcamkcmpcofgmbmloefimnelnjpcdpfn',
+ ];
 const GECKO_ID = 'anytype@anytype.io';
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
@@ -127,6 +131,12 @@ const installToWindows = () => {
 	);
 
 	createWindowsRegistry(
+		'HKCU\\SOFTWARE\\net.imput.helium',
+		`HKCU\\SOFTWARE\\net.imput.helium\\NativeMessagingHosts\\${APP_NAME}`,
+		chromeManifestPath
+	);
+
+	createWindowsRegistry(
 		'HKCU\\SOFTWARE\\Mozilla',
 		`HKCU\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\${APP_NAME}`,
 		firefoxManifestPath
@@ -186,6 +196,7 @@ const getLinuxDirectory = () => {
 		'Chromium': path.join(home, 'chromium'),
 		'Brave': path.join(home, 'BraveSoftware', 'Brave-Browser'),
 		'BraveFlatpak': path.join('.var', 'app', 'com.brave.Browser', 'config', 'BraveSoftware', 'Brave-Browser'),
+		'Helium': path.join(home, 'net.imput.helium'),
 		'Firefox': path.join(getHomeDir(), '.mozilla'),
 	};
 };
@@ -202,6 +213,7 @@ const getDarwinDirectory = () => {
 		'Chrome Dev': path.join(home, 'Google', 'Chrome Dev'),
 		'Chrome Canary': path.join(home, 'Google', 'Chrome Canary'),
 		'Chromium': path.join(home, 'Chromium'),
+		'Helium': path.join(home, 'net.imput.helium'),
 		'Microsoft Edge': path.join(home, 'Microsoft Edge'),
 		'Microsoft Edge Beta': path.join(home, 'Microsoft Edge Beta'),
 		'Microsoft Edge Dev': path.join(home, 'Microsoft Edge Dev'),

@@ -1,80 +1,46 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, focus, Action, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
 
-class MenuContext extends React.Component<I.Menu> {
+const LIMIT_OPEN = 10;
+
+const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
+	const { param, onKeyDown, setActive, getId, getSize, close } = props;
+	const { data, className, classNameWrap } = param;
+	const { 
+		subId, getObject, isCollection, onLinkTo, route, onSelect, targetId, relationKeys, view, blockId, 
+	} = data;
+	const objectIds = data.objectIds || [];
+	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
+	const participantId = U.Space.getCurrentParticipantId();
+	const n = useRef(0);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			S.Menu.closeAll(J.Menu.objectContext);
+			unbind();
+		};
+	}, []);
 	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-	};
-
-	render () {
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical
-							key={i}
-							{...action}
-							icon={action.icon || action.id}
-							onMouseEnter={e => this.onMouseEnter(e, action)}
-							onClick={e => this.onClick(e, action)}
-						/>
-					))}
-				</div>
-			</div>
-		);
-
-		return (
-			<div>
-				{sections.length ? (
-					<>
-						{sections.map((item: any, i: number) => (
-							<Section key={i} index={i} {...item} />
-						))}
-					</>
-				) : (
-					<div className="item empty">{translate('menuObjectContextNoAvailableActions')}</div>
-				)}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		S.Menu.closeAll(J.Menu.objectContext);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { subId, getObject, isCollection } = data;
-		const objectIds = this.getObjectIds();
+	const getSections = () => {
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
-		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
@@ -84,6 +50,11 @@ class MenuContext extends React.Component<I.Menu> {
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
+		let notification = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
+		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
+		let newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
+		let newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -92,28 +63,40 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedArchive = true;
 		let allowedPin = true;
 		let allowedCopy = true;
-		let allowedType = true;
+		let allowedType = data.allowedType;
 		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
-		let allowedCollection = true;
+		let allowedCollection = data.allowedCollection;
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
+		let allowedNotification = true;
+		let allowedEditChat = true;
+		let allowedExport = data.allowedExport;
+		let allowedNewTab = data.allowedNewTab;
 
 		objectIds.forEach((it: string) => {
-			const object = this.getObject(subId, getObject, it);
+			const object = getObjectHandler(subId, getObject, it);
 
 			if (!object || object._empty_) {
 				return;
 			};
 
-			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
+			const isType = U.Object.isTypeLayout(object.layout);
+			const isRelation = U.Object.isRelationLayout(object.layout);
+			const isChat = U.Object.isChatLayout(object.layout);
+
+			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived || U.Object.isTemplateType(object.type)) {
+			if (spaceview.isOneToOne && (object.creator != participantId)) {
+				allowedArchive = false;
+			};
+
+			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
@@ -125,16 +108,27 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
-			if (U.Object.isTypeLayout(object.layout)) {
+
+			if (isType) {
 				allowedRelation = false;
 				allowedCopy	= false;
+				allowedType = false;
 			};
-			if (U.Object.isRelationLayout(object.layout)) {
+
+			if (isRelation) {
 				allowedRelation = false;
 				allowedLinkTo = false;
 				allowedCopy	= false;
 				allowedCollection = false;
 				allowedPin = false;
+			};
+
+			if (!isChat) {
+				allowedNotification = false;
+				allowedEditChat = false;
+			} else {
+				allowedExport = false;
+				allowedCollection = false;
 			};
 		});
 
@@ -148,7 +142,12 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedLink = false;
-			allowedPin = false;		
+			allowedPin = false;	
+			allowedEditChat = false;
+		};
+
+		if (length > LIMIT_OPEN) {
+			allowedNewTab = false;
 		};
 
 		if (!canWrite) {
@@ -160,6 +159,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedUnlink = false;
 			allowedRelation = false;
 			allowedCollection = false;
+			allowedNotification = false;
+			allowedEditChat = false;
 		};
 
 		if (archiveCnt && (archiveCnt == length)) {
@@ -169,6 +170,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedType = false;
 			allowedPin = false;
 			allowedCollection = false;
+			allowedNotification = false;
+			allowedEditChat = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -184,11 +187,19 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
+		if (!allowedNotification) notification = null;
+		if (!allowedEditChat)	 editChat = null;
+		if (!allowedExport)		 exportObject = null;
+		if (!allowedNewTab) {
+			newTab = null;
+			newWindow = null;
+		};
 
 		let sections = [
 			{ children: [ open, changeType, relation, pageLink ] },
-			{ children: [ pin, linkTo, addCollection ] },
+			{ children: [ pin, notification, editChat, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
+			{ children: [ newTab, newWindow ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -199,16 +210,12 @@ class MenuContext extends React.Component<I.Menu> {
 		return sections;
 	};
 
-	getObjectIds () {
-		return this.props.param.data.objectIds || [];
-	};
-
-	getObject (subId: string, getObject: (id: string) => any, id: string) {
+	const getObjectHandler = (subId: string, getObject: (id: string) => any, id: string) => {
 		return getObject ? getObject(id) : S.Detail.get(subId, id);
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -218,20 +225,14 @@ class MenuContext extends React.Component<I.Menu> {
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
-		this.onOver(e, item);
+	const onMouseEnter = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+			onOver(e, item);
+		};
 	};
 
-	onOver (e: any, item: any) {
-		const { id, param, getId, getSize, close } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { onLinkTo, route } = data;
-		const objectIds = this.getObjectIds();
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
-
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow || !objectIds.length) {
 			S.Menu.closeAll(J.Menu.objectContext);
 			return;
@@ -247,8 +248,8 @@ class MenuContext extends React.Component<I.Menu> {
 			noAutoHover: true,
 			className,
 			classNameWrap,
-			rebind: this.rebind,
-			parentId: id,
+			rebind,
+			parentId: props.id,
 			data: {},
 		};
 
@@ -336,6 +337,24 @@ class MenuContext extends React.Component<I.Menu> {
 				});
 				break;
 			};
+
+			case 'notification': {
+				let value = null;
+
+				if (objectIds.length == 1) {
+					value = String(U.Object.getChatNotificationMode(U.Space.getSpaceview(), objectIds[0])) || '';
+				};
+
+				menuId = 'select';
+				menuParam.data = {
+					value,
+					options: U.Menu.notificationModeOptions(),
+					onSelect: (e, option) => {
+						Action.setChatNotificationMode(space, objectIds, Number(option.id), route);
+						close();
+					},
+				};
+			};
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
@@ -345,32 +364,24 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 
-		const { widgets } = S.Block;
-		const { param, close } = this.props;
-		const { data } = param;
-		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
-		const objectIds = this.getObjectIds();
-		const space = U.Space.getSpaceview();
 		const win = $(window);
 		const length = objectIds.length;
-		const first = length == 1 ? this.getObject(subId, getObject, objectIds[0]) : null;
-		const cb = () => {
-			if (onSelect) {
-				onSelect(item.id);
-			};
-		};
+		const first = length == 1 ? getObjectHandler(subId, getObject, objectIds[0]) : null;
+		const cb = () => onSelect?.(item.id);
 
 		focus.clear(false);
+
+		let needClose = true;
 
 		switch (item.id) {
 
 			case 'open': {
-				U.Object.openConfig(first);
+				U.Object.openConfig(null, first);
 				break;
 			};
 
@@ -381,7 +392,7 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 
 					if (first) {
-						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
+						U.Object.openConfig(null, { id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count: length, route });
@@ -389,7 +400,6 @@ class MenuContext extends React.Component<I.Menu> {
 					if (isCollection) {
 						C.ObjectCollectionAdd(targetId, message.ids, () => {
 							cb();
-
 							analytics.event('LinkToObject', { linkType: 'Collection', route });
 						});
 					} else {
@@ -400,13 +410,13 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Object.copyLink(first, space, 'web', route);
+				U.Object.copyLink(first, spaceview, 'web', route);
 				break;
 			};
 
 			case 'archive': {
-				Action.archive(objectIds, route, cb);
-				win.trigger('removeGraphNode', { ids: objectIds });
+				Action.archiveCheckType(subId, objectIds, route);
+				win.trigger('archiveObject', { ids: objectIds });
 				break;
 			};
 
@@ -443,11 +453,85 @@ class MenuContext extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'editChat': {
+				U.Menu.onChatMenu({
+					element: `#${getId()} #item-${item.id}`,
+					className,
+					classNameWrap,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					data: {
+						details: first,
+					},
+				}, route);
+
+				needClose = false;
+				break;
+			};
+
+			case 'newTab':
+			case 'newWindow': {
+				const slice = objectIds.slice(0, LIMIT_OPEN);
+				const objects = slice.map(id => getObjectHandler(subId, getObject, id)).filter(it => it);
+
+				if (item.id == 'newTab') {
+					U.Object.openTabs(objects);
+				} else {
+					U.Object.openWindows(objects, S.Auth.token);
+				};
+				break;
+			};
+
 		};
 		
-		close();
+		if (needClose) {
+			close();
+		};
 	};
+	
+	const sections = getSections();
 
-};
+	const Section = (item: any) => (
+		<div id={`section-${item.id}`} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical
+						key={i}
+						{...action}
+						icon={action.icon || action.id}
+						onMouseEnter={e => onMouseEnter(e, action)}
+						onClick={e => onClick(e, action)}
+					/>
+				))}
+			</div>
+		</div>
+	);
 
-export default MenuContext;
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{sections.length ? (
+				<>
+					{sections.map((item: any, i: number) => (
+						<Section key={i} index={i} {...item} />
+					))}
+				</>
+			) : (
+				<div className="item empty">{translate('menuObjectContextNoAvailableActions')}</div>
+			)}
+		</div>
+	);
+	
+}));
+
+export default MenuObjectContext;

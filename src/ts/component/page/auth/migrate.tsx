@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
 import { I, C, S, U, Storage, translate } from 'Lib';
 
-const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { dataPath } = S.Common;
 	const accountId = Storage.get('accountId');
@@ -27,7 +27,7 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		C.AccountMigrate(accountId, dataPath, (message: any) => {
 			if (message.requiredSpace) {
 				setErrorTitle(translate('pageAuthMigrateErrorNotEnoughSpaceTitle'));
-				setErrorText(U.Common.sprintf(translate('pageAuthMigrateErrorNotEnoughSpaceText'), U.File.size(message.requiredSpace)));
+				setErrorText(U.String.sprintf(translate('pageAuthMigrateErrorNotEnoughSpaceText'), U.File.size(message.requiredSpace)));
 				setScreen('error');
 				return;
 			} else

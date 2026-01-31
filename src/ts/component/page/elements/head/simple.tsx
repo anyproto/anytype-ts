@@ -110,7 +110,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 
 	const getValue = (id: string): string => {
 		const value = String(editableRef.current[id]?.getTextValue() || '');
-		return U.Common.stripTags(value);
+		return U.String.stripTags(value);
 	};
 
 	const setValue = () => {
@@ -188,8 +188,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 				U.Object.setDefaultTemplateId(object.id, newObject.id);
 			};
 
-			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
-			U.Object.openConfig(object);
+			analytics.event('CreateTemplate', { objectType: newObject.type, route: analytics.route.screenType });
+			U.Object.openConfig(null, newObject);
 		});
 	};
 
@@ -215,7 +215,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	const changeDate = (dir: number) => {
 		const object = S.Detail.get(rootId, rootId);
 
-		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
+		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * J.Constant.day);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 
@@ -272,8 +272,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 			placeholder={placeholder[item.id]}
 			readonly={item.readonly}
 			classNameWrap={item.className}
-			classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
-			classNamePlaceholder={'c' + item.id}
+			classNameEditor={[ 'focusable', `c${item.id}` ].join(' ')}
+			classNamePlaceholder={`c${item.id}`}
 			onFocus={e => onFocus(e, item)}
 			onBlur={e => onBlur(e, item)}
 			onKeyDown={e => onKeyDown(e, item)}
@@ -340,7 +340,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank" 
 						className="c28" 
 						text={translate('commonEditType')} 
-						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'type', { rootId })}
+						onClick={() => U.Object.editType(rootId, isPopup)}
 					/>
 				);
 			};

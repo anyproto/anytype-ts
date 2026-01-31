@@ -25,7 +25,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const cache = useRef(new CellMeasurerCache());
 	const canWrite = U.Space.canMyParticipantWrite();
-	const addName = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
+	const addName = filter ? U.String.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 	const buttons = (data.buttons || []).map(it => ({ ...it, isButton: true }));
 
 	const getSections = () => {
@@ -40,7 +40,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (canWrite && filter && !add && canAdd) {
 			sections.push({ 
 				children: [ 
-					{ id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
+					{ id: 'add', name: U.String.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
 				], 
 			});
 		};
@@ -116,11 +116,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const spaceview = U.Space.getSpaceview();
 		const sorts: I.Sort[] = [
-			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
 			{ 
 				relationKey: 'uniqueKey', 
 				type: I.SortType.Custom, 
-				customOrder: U.Data.typeSortKeys(spaceview.isChat),
+				customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 			},
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -138,7 +138,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (clear) {
 			offset.current = 0;
-			itemList.current = [];
 		};
 
 		U.Subscription.search({
@@ -149,12 +148,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (clear) {
+				itemList.current = [];
+			};
+
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -188,9 +189,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				close();
 			};
 
-			if (onClick) {
-				onClick(S.Detail.mapper(item));
-			};
+			onClick?.(S.Detail.mapper(item));
 		};
 
 		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());
@@ -239,7 +238,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { data } = param;
 		const { noFilter } = data;
 		const obj = $(`#${getId()} .content`);
-		const offset = 16 + (noFilter ? 0 : 42);
+		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;
 		const itemsHeight = items.length ? items.reduce((res: number, current: any) => res + getRowHeight(current), 0) : 160;
 
@@ -323,6 +322,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		forceUpdate: () => setDummy(dummy + 1),
 		onClick: onClickHandler,
 		getData: () => data,
+		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
 	}), []);
 

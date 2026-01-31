@@ -9,7 +9,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { readonly, rootId, object, onChange } = props;
+	const { readonly, isPopup, object, onChange } = props;
 	const nodeRef = useRef(null);
 	const [ active, setActive ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
@@ -21,19 +21,16 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
     );
 
 	const skipKeys = [ 'name', 'description' ];
-	const filterMapper = it => it && !skipKeys.includes(it.relationKey);
+	const filterMapper = it => it && !it.isArchived && !skipKeys.includes(it.relationKey);
 
-	const recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
-	const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-	const recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
-	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
-	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
-	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
 	const lists: any[] = [
-		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
-		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
-		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
+		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), relationKey: 'recommendedFeaturedRelations' },
+		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), relationKey: 'recommendedRelations' },
+		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), relationKey: 'recommendedHiddenRelations' },
 	];
+	for (const list of lists) {
+		list.data = Relation.getArrayValue(object[list.relationKey]).map(id => S.Record.getRelationById(id)).filter(filterMapper);
+	};
 
 	const addConfirm = (ids: string[]) => {
 		let title = '';
@@ -93,7 +90,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	if (conflictIds.length) {
-		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const ids = lists.reduce((acc, list) => acc.concat(list.data.map(it => it.id)), []);
 		const systemKeys = Relation.systemKeysWithoutUser();
 
 		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(it => {
@@ -137,13 +134,20 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 		setActive(e.active);
+		U.Common.getScrollContainer(isPopup).addClass('isDraggingProperty');
 	};
-	
-	const onSortEnd = (event) => {
-		keyboard.disableSelection(false);
 
-        const { active, over } = event;
-        if (!over || (active.id == over.id)) {
+	const onSortCancel = () => {
+		keyboard.disableSelection(false);
+		U.Common.getScrollContainer(isPopup).removeClass('isDraggingProperty');
+		setActive(null);
+	};
+
+	const onSortEnd = (event) => {
+		onSortCancel();
+
+		const { active, over } = event;
+		if (!over || (active.id == over.id)) {
 			return;
 		};
 
@@ -172,11 +176,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         } else 
 		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
 			toItems.splice(newIndex + offset, 0, active.id);
-			onChange({
-				[from.relationKey]: fromItems.filter(id => id != active.id),
-				[to.relationKey]: toItems,
-			});
 
+			const update = {
+				[to.relationKey]: toItems,
+			};
+			if (from.relationKey) {
+				update[from.relationKey] = fromItems.filter(id => id != active.id);
+			};
+
+			onChange(update);
 			analyticsId = I.SidebarRelationList[to.id];
         };
 
@@ -366,12 +374,13 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				/>
 			</div>
 
-			<DndContext 
-				sensors={sensors} 
-				collisionDetection={closestCenter} 
-				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
-				onDragStart={onSortStart} 
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+				onDragStart={onSortStart}
 				onDragEnd={onSortEnd}
+				onDragCancel={onSortCancel}
 			>
 				{lists.map((list, i) => <List key={list.id} {...list} list={list.id} />)}
 

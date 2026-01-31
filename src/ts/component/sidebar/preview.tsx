@@ -1,168 +1,53 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
-import { I, S, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
+import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
 
-const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
+interface RefProps {
+	update: (object: any) => void;
+	show: (v: boolean) => void;
+};
 
-	node: any = null;
-	refPreview = null;
-	frame = 0;
-	timeout = 0;
-	object: any = {
+const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
+
+	const { isPopup } = props;
+	const [ object, setObject ] = useState({
+		name: '',
+		pluralName: '',
 		recommendedLayout: I.ObjectLayout.Page,
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultViewType: I.ViewType.List,
-	};
+		defaultViewType: I.ViewType.Grid,
+		headerRelationsLayout: I.FeaturedRelationLayout.Inline,
+		recommendedFeaturedRelations: [],
+		recommendedFileRelations: [],
+	});
+	const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, layoutWidth, headerRelationsLayout } = object;
+	const viewType = Number(object.defaultViewType) || I.ViewType.Grid;
+	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).
+		map(key => S.Record.getRelationById(key)).
+		filter(it => it && !it.isArchived);
+	const withDescription = featured.map(it => it.relationKey).includes('description');
+	const filtered = featured.filter(it => it.relationKey != 'description');
+	const isTask = U.Object.isTaskLayout(recommendedLayout);
+	const isHuman = U.Object.isInHumanLayouts(recommendedLayout);
+	const isNote = U.Object.isNoteLayout(recommendedLayout);
+	const isList = layoutFormat == I.LayoutFormat.List;
+	const isFile = U.Object.isInFileLayouts(recommendedLayout);
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const previewRef = useRef<HTMLDivElement>(null);
+	const timeoutRef = useRef<number>(0);
+	const ns = `sidebarPreview${U.Common.getEventNamespace(isPopup)}`;
 
-	constructor (props: I.SidebarPageComponent) {
-		super(props);
+	const show = (v: boolean) => {
+		resize();
 
-		this.getWidth = this.getWidth.bind(this);
-		this.onClose = this.onClose.bind(this);
-	};
-
-	render () {
-		const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, headerRelationsLayout } = this.object;
-		const viewType = this.getViewType();
-		const featured = this.getFeatured();
-		const withDescription = featured.map(it => it.relationKey).includes('description');
-		const filtered = featured.filter(it => it.relationKey != 'description');
-		const isTask = U.Object.isTaskLayout(recommendedLayout);
-		const isHuman = U.Object.isInHumanLayouts(recommendedLayout);
-		const isNote = U.Object.isNoteLayout(recommendedLayout);
-		const isList = layoutFormat == I.LayoutFormat.List;
-		const isFile = U.Object.isInFileLayouts(recommendedLayout);
-
-		const cn = [
-			'layoutPreview',
-			`align${layoutAlign}`,
-			`defaultView${I.ViewType[viewType]}`,
-			U.Data.layoutClass('', recommendedLayout),
-			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
-			`featuredRelationLayout${I.FeaturedRelationLayout[headerRelationsLayout]}`,
-		];
-
-		if (isFile) {
-			cn.push('isFile');
-		};
-
-		let icon = null;
-		if (!isFile) {
-			if (isTask) {
-				icon = <Checkbox readonly={true} value={false} />;
-			} else
-			if (isHuman) {
-				icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
-			} else {
-				icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
-			};
-		};
-
-		return (
-			<div ref={ref => this.node = ref} className="layoutPreviewWrapper">
-				<div ref={ref => this.refPreview = ref} className={cn.join(' ')}>
-					<div className="layoutHeader">
-						{!isNote ? (
-							<div className="titleWrapper">
-								{icon}
-								<Title text={name || translate('defaultNamePage')} />
-							</div>
-						) : ''}
-
-						{withDescription ? <Label text={'Description'} className="description" /> : ''}
-
-						<div className="featured">
-							{filtered.map((item, idx) => {
-								if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
-									let content: any = null;
-									if (item.relationKey == 'type') {
-										content = name || translate('defaultNamePage');
-									} else {
-										content = <EmptyNodes className="item" count={1} />;
-									};
-
-									return (
-										<dl key={idx} className="featuredColumnItem">
-											<dt><Label text={item.name} /></dt>
-											<dd>{content}</dd>
-										</dl>
-									);
-								};
-
-								return (
-									<div key={idx} className="featuredItem">
-										<Label text={item.name} />
-										<div className="bullet" />
-									</div>
-								);
-							})}
-						</div>
-					</div>
-
-					{isFile ? <div className="filePreview" /> : ''}
-
-					{isList ? (
-						<div className="listHeader">
-							<div className="left">
-								<EmptyNodes className="view" count={3} />
-							</div>
-
-							<div className="right">
-								{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
-									<Icon key={i} className={cn} />
-								))}
-								<div className="buttonPlug" />
-							</div>
-						</div>
-					) : ''}
-
-					<LayoutPlug
-						layoutFormat={layoutFormat}
-						recommendedLayout={recommendedLayout}
-						recommendedFileRelations={this.object.recommendedFileRelations}
-						viewType={this.object.defaultViewType}
-						layoutWidth={this.object.layoutWidth}
-						isPopup={this.props.isPopup}
-					/>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.resize();
-
-		$(window).off('resize.sidebarPreview').on('resize.sidebarPreview', () => this.resize());
-	};
-
-	componentDidUpdate (): void {
-		this.resize();	
-	};
-
-	componentWillUnmount (): void {
-		$(window).off('resize.sidebarPreview');
-	};
-
-	onClose () {
-		sidebar.rightPanelToggle(true, this.props.isPopup);
-	};
-
-	update (object: any) {
-		this.object = object;
-		this.forceUpdate();
-	};
-
-	show (v: boolean) {
-		this.resize();
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const node = $(this.node);
+		window.clearTimeout(timeoutRef.current);
+		timeoutRef.current = window.setTimeout(() => {
+			const node = $(nodeRef.current);
 
 			node.removeClass('in out');
 			v ? node.addClass('in') : node.addClass('out');
@@ -170,53 +55,158 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		}, 40);
 	};
 
-	getWidth () {
-		const { layoutWidth, layoutFormat } = this.object;
-
-		let { width: mw } = this.getNodeSize();
-		let width = 0;
-
-		if (layoutFormat == I.LayoutFormat.List) {
-			width = mw - 192;
-		} else {
-			const size = mw * 0.6;
-
-			mw -= 96;
-			width = Math.max(size, Math.min(mw, size + (mw - size) * layoutWidth));
-		};
-
-		return Math.max(300, width);
-	};
-
-	getFeatured () {
-		return Relation.getArrayValue(this.object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
-	};
-
-	getViewType () {
-		return Number(this.object.defaultViewType) || I.ViewType.Grid;
-	};
-
-	getNodeSize (): { width: number; height: number } {
-		const container = U.Common.getPageFlexContainer(this.props.isPopup);
+	const getNodeSize = (): { width: number; height: number } => {
+		const container = U.Common.getPageFlexContainer(isPopup);
+		const sidebarLeft = sidebar.leftPanelGetNode();
+		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 
 		return {
-			width: container.width() - J.Size.sidebar.right - 9,
+			width: container.width() - sidebarLeft.outerWidth() - sidebarRight.outerWidth() - 9,
 			height: container.height(),
 		};
 	};
 
-	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+	const resize = () => {
+		const size = getNodeSize();
+
+		let w = 0;
+		if (layoutFormat == I.LayoutFormat.List) {
+			w = size.width - 192;
+		} else {
+			const s = size.width * 0.6;
+			const mw = size.width - 96;
+
+			w = Math.max(s, Math.min(mw, s + (mw - s) * layoutWidth));
 		};
 
-		this.frame = raf(() => {
-			$(this.node).css(this.getNodeSize());
-			$(this.refPreview).css({ width: this.getWidth() });
-		});
+		w = Math.max(300, w);
+
+		$(nodeRef.current).css(size);
+		$(previewRef.current).css({ width: w });
 	};
 
-});
+	const cn = [
+		'layoutPreview',
+		`align${layoutAlign}`,
+		`defaultView${I.ViewType[viewType]}`,
+		U.Data.layoutClass('', recommendedLayout),
+		U.String.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
+		`featuredRelationLayout${I.FeaturedRelationLayout[headerRelationsLayout]}`,
+	];
+
+	if (isFile) {
+		cn.push('isFile');
+	};
+
+	let icon = null;
+	if (!isFile) {
+		if (isTask) {
+			icon = <Checkbox readonly={true} value={false} />;
+		} else
+		if (isHuman) {
+			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
+		} else {
+			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
+		};
+	};
+
+	const unbind = () => {
+		$(window).off(`resize.${ns} sidebarResize.${ns}`);
+	};
+
+	const rebind = () => {
+		unbind();
+		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+	};
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();	
+	});
+
+	useImperativeHandle(ref, () => ({
+		update: object => setObject({ ...object }),
+		show,
+	}));
+
+	return (
+		<div ref={nodeRef} className="layoutPreviewWrapper">
+			<div ref={previewRef} className={cn.join(' ')}>
+				<div className="layoutHeader">
+					{!isNote ? (
+						<div className="titleWrapper">
+							{icon}
+							<Title text={name || translate('defaultNamePage')} />
+						</div>
+					) : ''}
+
+					{withDescription ? <Label text={'Description'} className="description" /> : ''}
+
+					<div className="featured">
+						{filtered.map((item, idx) => {
+							if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
+								let content: any = null;
+								if (item.relationKey == 'type') {
+									content = name || translate('defaultNamePage');
+								} else {
+									content = <EmptyNodes className="item" count={1} />;
+								};
+
+								return (
+									<dl key={idx} className="featuredColumnItem">
+										<dt><Label text={item.name} /></dt>
+										<dd>{content}</dd>
+									</dl>
+								);
+							};
+
+							return (
+								<div key={idx} className="featuredItem">
+									<Label text={item.name} />
+									<div className="bullet" />
+								</div>
+							);
+						})}
+					</div>
+				</div>
+
+				{isFile ? <div className="filePreview" /> : ''}
+
+				{isList ? (
+					<div className="listHeader">
+						<div className="left">
+							<EmptyNodes className="view" count={3} />
+						</div>
+
+						<div className="right">
+							{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
+								<Icon key={i} className={cn} />
+							))}
+							<div className="buttonPlug" />
+						</div>
+					</div>
+				) : ''}
+
+				<LayoutPlug
+					{...props}
+					layoutFormat={layoutFormat}
+					recommendedLayout={recommendedLayout}
+					recommendedFileRelations={object.recommendedFileRelations}
+					viewType={object.defaultViewType}
+					layoutWidth={object.layoutWidth}
+					isPopup={props.isPopup}
+				/>
+			</div>
+		</div>
+	);
+
+}));
 
 export default SidebarLayoutPreview;

@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin } from 'Component';
-import { I, S, U, Storage, translate, keyboard } from 'Lib';
+import { I, S, U, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
 	const { pin } = S.Common;
@@ -15,25 +15,24 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('focus.pin', () => pinRef.current.focus());
+		$(window).on('focus.pin', () => pinRef.current?.focus());
 	};
 
 	const onError = () => {
-		pinRef.current.reset();	
+		pinRef.current?.reset();
 		setError(translate('authPinCheckError'));
 	};
 
 	const onSuccess = () => {
 		const { account } = S.Auth;
 		const { redirect } = S.Common;
-		const routeParam = { replace: true, animate: true };
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard(routeParam);
+			redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
 		} else {
-			U.Router.go('/', routeParam);
+			U.Router.go('/auth/select', { replace: true });
 		};
 
 		S.Common.redirectSet('');

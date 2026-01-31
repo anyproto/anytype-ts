@@ -1,7 +1,8 @@
 import React, { FC, useRef } from 'react';
+import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, J, U, Relation } from 'Lib';
-import { Cell, Icon } from 'Component';
+import { I, S, J, U, Relation, translate } from 'Lib';
+import { Cell, Button } from 'Component';
 
 interface Props {
 	rootId?: string;
@@ -54,17 +55,31 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 		cn.push('canEdit');
 	};
 
-	if (width <= size.icon) {
+	if (width <= size.small) {
 		cn.push('small');
+	} else
+	if ((width > size.small) && (width <= size.medium)) {
+		cn.push('medium');
 	};
 
 	if (className) {
 		cn.push(className);
 	};
 
-	let iconEdit = null;
+	let button = null;
+	let onClick = e => onCellClick(e, relationKey, record.id);
+
 	if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
-		iconEdit = <Icon className="edit" onClick={e => onEdit(e)} />;
+		onClick = onEdit;
+		button = (
+			<Button
+				color="blank"
+				icon="expand"
+				className="expand c32"
+				text={translate('commonOpen')}
+				onClick={e => onCellClick(e, relationKey, record.id)}
+			/>
+		);
 	};
 
 	return (
@@ -72,7 +87,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 			key={id}
 			id={id}
 			className={cn.join(' ')}
-			onClick={e => onCellClick(e, relationKey, record.id)}
+			onClick={onClick}
 		>
 			<Cell
 				ref={ref => {
@@ -89,7 +104,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				maxWidth={J.Size.dataview.cell.edit}
 				menuParam={{ noBorderY: true }}
 			/>
-			{iconEdit}
+			{button}
 		</div>
 	);
 });

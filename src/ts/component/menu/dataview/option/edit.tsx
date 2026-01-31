@@ -1,121 +1,31 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, C, U, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 
-const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
+const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	node = null;
-	refName = null;
-	color = '';
-	n = -1;
+	const { id, param, getId, close, setActive, onKeyDown } = props;
+	const { data } = param;
+	const { option, isNew, onChange, relationKey } = data;
+	const [ dummy, setDummy ] = useState(0);
+	const nodeRef = useRef(null);
+	const nameRef = useRef(null);
+	const colorRef = useRef('');
+	const n = useRef(-1);
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onClear = this.onClear.bind(this);
-	};
-
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option, isNew } = data;
-		const sections = this.getSections();
-
-		const Color = (item: any) => {
-			const cn = [ 'item', 'color', `color-${item.className}` ];
-
-			if (this.color == item.value) {
-				cn.push('selected');
-			};
-
-			return (
-				<div
-					id={`item-${item.id}`}
-					className={cn.join(' ')}
-					onClick={e => this.onClick(e, item)}
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-				/>
-			);
-		};
-
-		const Section = (item: any) => (
-			<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						if (action.isBgColor) {
-							return <Color key={i} {...action} />;
-						};
-
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								onClick={e => this.onClick(e, action)}
-								onMouseEnter={e => this.onMouseEnter(e, action)}
-							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-
-		return (
-			<div ref={ref => this.node = ref}>
-				<Filter
-					ref={ref => this.refName = ref}
-					placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
-					className="outlined"
-					value={option.name}
-					onKeyUp={(e: any, v: string) => this.onKeyUp(e, v)}
-					onClear={this.onClear}
-				/>
-
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option } = data;
-
-		this.color = option.color;
-		this.rebind();
-		this.forceUpdate();
-	};
-
-	componentDidUpdate () {
-		this.props.setActive();
-		this.checkButton();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	focus () {
-		window.setTimeout(() => this.refName?.focus(), 15);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isNew } = data;
+	const getSections = () => {
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		let button = null;
@@ -127,14 +37,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		return [
 			{ children: colors, className: 'colorPicker' },
-			{ 
-				children: [ button ]
-			},
+			{ children: [ button ] },
 		];
 	};
 
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -144,40 +52,36 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		return items;
 	};
 
-	onKeyDown (e: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { isNew } = data;
-
+	const onKeyDownHandler = (e: any) => {
 		let ret = false;
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			if (isNew) {
-				this.create();
+				create();
 			} else {
-				this.save();
-				this.props.close();
+				save();
+				close();
 			};
 
 			ret = true;
 		});
 
 		if (!ret) {
-			this.props.onKeyDown(e);
+			onKeyDown(e);
 		};
 	};
 
-	onKeyUp (e: any, v: string) {
-		this.checkButton();
+	const onKeyUp = (e: any, v: string) => {
+		checkButton();
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.isBgColor) {
-			this.color = item.value;
-			this.save();
-			this.forceUpdate();
+			colorRef.current = item.value;
+			save();
+			setDummy(dummy + 1);
 		} else
 		if (item.id == 'remove') {
 			S.Popup.open('confirm', {
@@ -186,36 +90,30 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					title: translate('commonAreYouSure'),
 					text: translate('popupConfirmRelationOptionRemoveText'),
 					textConfirm: translate('commonDelete'),
-					onConfirm: () => {
-						this.remove();
-					}
-				}
+					onConfirm: remove,
+				},
 			});
 		} else
 		if (item.id == 'create') {
-			this.create();
+			create();
 		};
 	};
 
-	onMouseEnter (e: any, item: any) {
-		const { getId } = this.props;
+	const onMouseEnter = (e: any, item: any) => {
 		const el = $(`#${getId()} #item-${item.id}`);
 
 		if (el.hasClass('disabled') || keyboard.isMouseDisabled) {
 			return;
 		};
 
-		this.props.setActive(item, false);
+		setActive(item, false);
 	};
 
-	onClear () {
-		$(this.node).find('#item-create').addClass('disabled');
+	const onClear = () => {
+		$(nodeRef.current).find('#item-create').addClass('disabled');
 	};
 
-	remove () {
-		const { param, close, id } = this.props;
-		const { data } = param;
-		const { option, onChange } = data;
+	const remove = () => {
 		const value = Relation.getArrayValue(data.value).filter(it => it != option.id);
 
 		C.RelationListRemoveOption([ option.id ], false);
@@ -223,18 +121,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		S.Menu.updateData(id, { value });
 		S.Menu.updateData('dataviewOptionList', { value });
 
-		if (onChange) {
-			onChange(value);
-		};
-
+		onChange?.(value);
 		close();
 	};
 
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option, isNew } = data;
-		const value = String(this.refName?.getValue() || '');
+	const save = () => {
+		const value = String(nameRef.current?.getValue() || '');
 
 		if (!value || isNew) {
 			return;
@@ -242,15 +134,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		C.ObjectListSetDetails([ option.id ], [
 			{ key: 'name', value },
-			{ key: 'relationOptionColor', value: this.getColor() },
+			{ key: 'relationOptionColor', value: getColor() },
 		]);
 	};
 
-	create () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { relationKey } = data;
-		const value = String(this.refName?.getValue() || '');
+	const create = () => {
+		const value = String(nameRef.current?.getValue() || '');
 
 		if (!value) {
 			return;
@@ -264,34 +153,109 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		C.ObjectCreateRelationOption({
 			relationKey,
 			name: value,
-			relationOptionColor: this.getColor(),
+			relationOptionColor: getColor(),
 		}, S.Common.space);
+
 		close();
 	};
 
-	getColor () {
-		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
-
-		if (this.n > -1) {
-			return colors[this.n]?.value || this.color;
-		};
-		return this.color;
+	const getColor = () => {
+		return colorRef.current;
 	};
 	
-	checkButton () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isNew } = data;
-
+	const checkButton = () => {
 		if (!isNew) {
 			return;
 		};
 
-		const v = String(this.refName?.getValue() || '').trim();
+		const v = String(nameRef.current?.getValue() || '').trim();
 
-		$(this.node).find('#item-create').toggleClass('disabled', !v.length);
+		$(nodeRef.current).find('#item-create').toggleClass('disabled', !v.length);
 	};
 
-});
+	const Color = (item: any) => {
+		const cn = [ 'item', 'color', `color-${item.className}` ];
+
+		if (colorRef.current == item.value) {
+			cn.push('selected');
+		};
+
+		return (
+			<div
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
+				onClick={e => onClick(e, item)}
+				onMouseEnter={e => onMouseEnter(e, item)}
+			/>
+		);
+	};
+
+	const Section = (item: any) => (
+		<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
+			<div className="items">
+				{item.children.map((action: any, i: number) => {
+					if (action.isBgColor) {
+						return <Color key={i} {...action} />;
+					} else {
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								onClick={e => onClick(e, action)}
+								onMouseEnter={e => onMouseEnter(e, action)}
+							/>
+						);
+					};
+				})}
+			</div>
+		</div>
+	);
+
+	const sections = getSections();
+
+	useEffect(() => {
+		colorRef.current = option.color;
+
+		rebind();
+		setDummy(dummy + 1);
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		setActive();
+		checkButton();
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
+
+	return (
+		<div ref={nodeRef}>
+			<Filter
+				ref={nameRef}
+				placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
+				className="outlined"
+				value={option.name}
+				onKeyUp={(e: any, v: string) => onKeyUp(e, v)}
+				onClear={onClear}
+				focusOnMount={true}
+			/>
+
+			{sections.map((item: any, i: number) => (
+				<Section key={i} {...item} />
+			))}
+		</div>
+	);
+
+}));
 
 export default MenuOptionEdit;

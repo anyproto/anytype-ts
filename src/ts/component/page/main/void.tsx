@@ -1,15 +1,16 @@
 import React, { forwardRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Button } from 'Component';
+import { Icon, Title, Label, Button, Frame } from 'Component';
 import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
 
-const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const spaces = U.Space.getList().filter(it => it.isLocalOk);
+	const spaces = U.Menu.getVaultItems().filter(it => it.isLocalOk);
 	const match = keyboard.getMatch(isPopup);
 	const { id } = match.params || {};
-	const cn = [ 'wrapper', U.Common.toCamelCase(`void-${id}`) ];
+	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
 
 	const onClick = () => {
 		U.Menu.spaceCreate({
@@ -39,8 +40,13 @@ const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
+		if (id == 'dashboard') {
+			U.Space.openDashboard();
+		};
+
 		if (id == 'select') {
 			S.Common.setLeftSidebarState('vault', '');
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	}, []);
 
@@ -51,18 +57,36 @@ const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	}, [ spaces, spaces.length ]);
 
 	return (
-		<div className={cn.join(' ')}>
-			<div className="container">
-				<div className="iconWrapper">
-					<Icon />
-				</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				className={cn.join(' ')}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				<Icon
+					className="vaultToggle withBackground"
+					onClick={() => sidebar.leftPanelToggle()}
+					tooltipParam={{
+						text: translate('commonVault'),
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
 
-				<Title text={title} />
-				<Label text={text} />
+				<Frame>
+					<div className="iconWrapper">
+						<Icon />
+					</div>
 
-				{button}
-			</div>
-		</div>
+					<Title text={title} />
+					<Label text={text} />
+
+					<div className="buttons">
+						{button}
+					</div>
+				</Frame>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

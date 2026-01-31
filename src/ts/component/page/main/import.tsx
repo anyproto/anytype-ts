@@ -1,9 +1,9 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, keyboard } from 'Lib';
 
-const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
@@ -18,9 +18,9 @@ const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const search = U.Common.searchParam(U.Router.history.location.search);
+		const { source } = keyboard.getMatch(false).params;
 
-		C.GalleryDownloadManifest(search.source, (message: any) => {
+		C.GalleryDownloadManifest(source, (message: any) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {

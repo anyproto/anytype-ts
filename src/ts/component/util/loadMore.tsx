@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from 'Component';
 import { translate, U } from 'Lib';
 
@@ -23,10 +24,18 @@ const LoadMore = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	return (
-		<div className="loadMore" onClick={onClick}>
-			<Icon />
-			<div className="name">{U.Common.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				className="loadMore"
+				onClick={onClick}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				<Icon />
+				<div className="name">{U.String.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 });

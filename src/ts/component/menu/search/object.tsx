@@ -1,13 +1,9 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
-
-interface State {
-	isLoading: boolean;
-};
 
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
@@ -15,213 +11,67 @@ const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(class MenuSearchObject extends React.Component<I.Menu, State> {
+const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	state = {
-		isLoading: false,
+	const { param, onKeyDown, setActive, getId, position } = props;
+	const { data, menuKey } = param;
+	const { 
+		filter, value, placeholder, label, noFilter, noIcon, onMore, withPlural, canAdd, addParam,
+		isBig, noInfiniteLoading, type, dataMapper, dataSort, dataChange, skipIds, keys, limit,
+	} = data;
+
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM_SMALL }));
+	const filterRef = useRef(null);
+	const listRef = useRef(null);
+	const timeout = useRef(0);
+	const itemsRef = useRef([]);
+	const n = useRef(0);
+	const offset = useRef(0);
+	const cn = [ 'wrap' ];
+	const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
+
+	if (label) {
+		cn.push('withLabel');
+	};
+	if (!noFilter) {
+		cn.push('withFilter');
 	};
 
-	_isMounted = false;	
-	filter = '';
-	index: any = null;
-	cache: any = {};
-	items: any = [];
-	refFilter: any = null;
-	refList: any = null;
-	n = 0;
-	timeoutFilter = 0;
-	offset = 0;
+	useEffect(() => {
+		rebind();
+		resize();
+		load(true);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterKeyDown = this.onFilterKeyDown.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
+		return () => {
+			window.clearTimeout(timeout.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		rebind();
+	});
+
+	useEffect(() => {
+		n.current = 0;
+		reload();
+	}, [ menuKey, filter ]);
+	
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { isLoading } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore, withPlural } = data;
-		const items = this.getItems();
-		const cn = [ 'wrap' ];
-		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
-
-		if (label) {
-			cn.push('withLabel');
-		};
-		if (!noFilter) {
-			cn.push('withFilter');
-		};
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			if (!item) {
-				return null;
-			};
-
-			const checkbox = value && value.length && value.includes(item.id);
-			const cn = [];
-			const props = {
-				...item,
-				object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
-				withPlural,
-			};
-
-			if (item.isAdd) {
-				cn.push('add');
-				props.isAdd = true;
-			};
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-
-			if (isBig && !item.isAdd) {
-				props.withDescription = true;
-				props.iconSize = 40;
-			} else 
-			if (item.type) {
-				const type = S.Record.getTypeById(item.type);
-				props.caption = <ObjectType object={type} />;
-			};
-
-			if (undefined !== item.caption) {
-				props.caption = item.caption;
-			};
-
-			if (noIcon) {
-				props.object = undefined;
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<MenuItemVertical
-						{...props}
-						index={param.index}
-						name={<ObjectName object={item} withPlural={withPlural} />}
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onClick={e => this.onClick(e, item)}
-						onMore={onMore ? e => onMore(e, item) : undefined}
-						style={param.style}
-						checkbox={checkbox}
-						className={cn.join(' ')}
-					/>
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div className={cn.join(' ')}>
-				{!noFilter ? (
-					<Filter 
-						ref={ref => this.refFilter = ref}
-						className="outlined"
-						placeholder={placeholder} 
-						placeholderFocus={placeholderFocus} 
-						value={filter}
-						onChange={this.onFilterChange} 
-						onKeyDown={this.onFilterKeyDown}
-						focusOnMount={true}
-					/>
-				) : ''}
-
-				{!items.length && !isLoading ? (
-					<EmptySearch filter={filter} />
-				) : ''}
-
-				{this.cache && items.length && !isLoading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length + 1}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.rebind();
-		this.resize();
-		this.load(true);
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const items = this.getItems();
-
-		if (this.filter != filter) {
-			this.n = 0;
-			this.filter = filter;
-			this.reload();
-			return;
-		};
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM_SMALL,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.resize();
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		window.clearTimeout(this.timeoutFilter);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, label, canAdd, addParam } = data;
-		const length = this.items.length;
-		const items = [].concat(this.items);
+	const getItems = () => {
+		const length = itemsRef.current.length;
+		const items = [].concat(itemsRef.current);
 		const canWrite = U.Space.canMyParticipantWrite();
 		
 		if (label && length) {
@@ -235,7 +85,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
-					name = U.Common.sprintf(addParam.nameWithFilter, filter);
+					name = U.String.sprintf(addParam.nameWithFilter, filter);
 				} else 
 				if (addParam.name) {
 					name = addParam.name;
@@ -249,7 +99,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 
 			if (!name) {
-				name = filter ? U.Common.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
+				name = filter ? U.String.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
 			};
 
 			if (name) {
@@ -264,32 +114,28 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return items;
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
+		if (noInfiniteLoading) {
+			return Promise.resolve();
+		};
+
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
+			offset.current += J.Constant.limit.menuRecords;
+			load(false, resolve);
 		});
 	};
 
-	reload () {
-		this.n = 0;
-		this.offset = 0;
-		this.load(true);
+	const reload = () => {
+		n.current = 0;
+		offset.current = 0;
+		load(true);
 	};
 	
-	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { isLoading } = this.state;
+	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		if (isLoading) {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
 		const filter = String(data.filter || '');
 		const spaceId = data.spaceId || S.Common.space;
 		
@@ -320,7 +166,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (clear) {
-			this.setState({ isLoading: true });
+			setIsLoading(true);
 		};
 
 		U.Subscription.search({
@@ -329,69 +175,54 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			sorts,
 			keys: keys || J.Relation.default,
 			fullText: filter,
-			offset: this.offset,
-			limit: J.Constant.limit.menuRecords,
+			offset: offset.current,
+			limit: limit || J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
+			setIsLoading(false);
 
 			if (message.error.code) {
-				this.setState({ isLoading: false });
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
-				this.items = [];
+				itemsRef.current = [];
 			};
 
-			this.items = this.items.concat(message.records || []);
+			itemsRef.current = itemsRef.current.concat(message.records || []);
 
 			if (clear && dataChange) {
-				this.items = dataChange(this, this.items);
+				itemsRef.current = dataChange(this, itemsRef.current);
 			};
 
 			if (dataMapper) {
-				this.items = this.items.map(dataMapper);
+				itemsRef.current = itemsRef.current.map(dataMapper);
 			};
 
 			if (dataSort) {
-				this.items.sort(dataSort);
+				itemsRef.current.sort(dataSort);
 			};
 
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
-			};
+			setDummy(dummy + 1);
 		});
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
+			props.setActive(item, false);
+			onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onOver } = data;
-
-		if (onOver) {
-			onOver(e, this, item);
-		};
+	const onOver = (e: any, item: any) => {
+		props.param.data.onOver?.(e, this, item);
 	};
 	
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		const { param, close } = this.props;
+		const { param, close } = props;
 		const { data } = param;
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose, route } = data;
 		const addParam: any = data.addParam || {};
@@ -404,9 +235,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		const process = (target: any, isNew: boolean) => {
-			if (onSelect) {
-				onSelect(target, isNew);
-			};
+			onSelect?.(target, isNew);
 
 			if (!type) {
 				return;
@@ -476,8 +305,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	onFilterKeyDown (e: any, v: string) {
-		const { param, close } = this.props;
+	const onFilterKeyDown = (e: any, v: string) => {
+		const { param, close } = props;
 		const { data } = param;
 		const { onBackspaceClose } = data;
 
@@ -489,15 +318,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	onFilterChange (v: string) {
-		const { param } = this.props;
+	const onFilterChange = (v: string) => {
+		const { param } = props;
 		const { data } = param;
 		const { onFilterChange } = data;
 
-		if (v != this.filter) {
-			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				const filter = this.refFilter.getValue();
+		if (v != filter) {
+			window.clearTimeout(timeout.current);
+			timeout.current = window.setTimeout(() => {
+				const filter = filterRef.current.getValue();
 
 				data.filter = filter;
 
@@ -508,14 +337,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		if (!item) {
 			return HEIGHT_ITEM_SMALL;
 		};
-
-		const { param } = this.props;
-		const { data } = param;
-		const { isBig } = data;
 
 		let h = HEIGHT_ITEM_SMALL;
 		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
@@ -524,24 +349,152 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return h;
 	};
 
-	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { noFilter } = data;
-		const items = this.getItems().slice(0, LIMIT);
+	const resize = () => {
+		const items = getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
 			height = 160;
 		} else {
-			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
 		obj.css({ height });
 		position();
 	};
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+		if (!item) {
+			return null;
+		};
+
+		const checkbox = value && value.length && value.includes(item.id);
+		const cn = [];
+		const props = {
+			...item,
+			object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
+			withPlural,
+		};
+
+		let name = item.name;
+		if (item.isAdd) {
+			cn.push('add');
+			props.isAdd = true;
+		} else {
+			name = <ObjectName object={item} withPlural={withPlural} />;
+		};
+
+		if (item.isHidden) {
+			cn.push('isHidden');
+		};
+
+		if (isBig && !item.isAdd) {
+			props.withDescription = true;
+			props.iconSize = 40;
+		} else 
+		if (item.type) {
+			const type = S.Record.getTypeById(item.type);
+			props.caption = <ObjectType object={type} />;
+		};
+
+		if (undefined !== item.caption) {
+			props.caption = item.caption;
+		};
+
+		if (noIcon) {
+			props.object = undefined;
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<MenuItemVertical
+					{...props}
+					index={param.index}
+					name={name}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
+					onMore={onMore ? e => onMore(e, item) : undefined}
+					style={param.style}
+					checkbox={checkbox}
+					className={cn.join(' ')}
+				/>
+			</CellMeasurer>
+		);
+	};
+
+	const items = getItems();
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div className={cn.join(' ')}>
+			{!noFilter ? (
+				<Filter 
+					ref={filterRef}
+					className="outlined"
+					placeholder={placeholder} 
+					placeholderFocus={placeholderFocus} 
+					value={filter}
+					onChange={onFilterChange} 
+					onKeyDown={onFilterKeyDown}
+					focusOnMount={true}
+				/>
+			) : ''}
+
+			{!items.length && !isLoading ? (
+				<EmptySearch filter={filter} />
+			) : ''}
+
+			{items.length && !isLoading ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!itemsRef.current[index]}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+		</div>
+	);
 	
-});
+}));
 
 export default MenuSearchObject;

@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta name="referrer" content="origin" />
+		<meta charset="utf-8" />
+
 		<script src="../js/jquery.js"></script>
 		<style type="text/css">
 			* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
@@ -199,9 +202,7 @@
 
 				function loadLibs (list, callBack) {
 					if (!list.length) {
-						if (callBack) {
-							callBack();
-						};
+						callBack?.();
 						return;
 					};
 
@@ -212,9 +213,8 @@
 					script.onload = function (e) {
 						if (list.length) {
 							loadLibs(list, callBack);
-						} else 
-						if (callBack) {
-							callBack();
+						} else {
+							callBack?.();
 						};
 					};
 

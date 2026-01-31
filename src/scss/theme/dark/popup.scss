@@ -15,12 +15,6 @@
 		a:hover { color: var(--color-system-accent-100); }
 	}
 
-	/* PopupMigration */
-
-	.popup.popupMigration {
-		.qrWrap { background-color: var(--color-bg-secondary); }
-	}
-
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
@@ -48,19 +42,6 @@
 		.page.pageItem {
 			.screenWrap {
 				.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
-			}
-		}
-	}
-
-	/* PopupMembership */
-
-	.popup.popupMembership {
-		.sides {
-			.side.left { background: var(--color-shape-tertiary) !important; }
-			.side.left {
-				.contentList {
-					li::before { background-image: url('#{$themePath}/icon/payment/tick.svg'); }
-				}
 			}
 		}
 	}
@@ -98,14 +79,19 @@
 
 	.popup.popupIntroduceChats {
 		.steps {
+			.step0 {
+				.chat { background-image: url('#{$themePath}/icon/onboarding/chats/feed.png'); }
+				.grad { background: linear-gradient(180deg, rgba(49, 49, 49, 0) 0%, var(--color-shape-tertiary) 39.9%); }
+			}
 			.step1 {
 				.intro {
 					.img { background-image: url('#{$themePath}/icon/onboarding/chats/intro.png'); }
 
 					.img.slide2,
-					.img.slide3 {
-						&:after,
-						&:before { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+					.img.slide3,
+					.img.slide4 {
+						.sidebar { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+						.oneToOne { background-image: url('#{$themePath}/icon/onboarding/chats/oneToOne.png'); }
 					}
 				}
 				.swiper-button-prev,

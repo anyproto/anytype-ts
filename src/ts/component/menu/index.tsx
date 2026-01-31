@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -24,6 +24,7 @@ import MenuObjectContext from './object/context';
 
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
+import MenuSearchChat from './search/chat';
 
 import MenuPreviewObject from './preview/object';
 import MenuPreviewLatex from './preview/latex';
@@ -48,8 +49,9 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
-import MenuWidget from './widget';
 import MenuObject from './object';
+import MenuWidget from './widget';
+import MenuWidgetSection from './widget/section';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -78,16 +80,16 @@ import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
 import MenuIdentity from './identity';
+import MenuOneToOne from './oneToOne';
 
 import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
-
-interface State {
-	tab: string;
-};
+import MenuChangeOwner from './changeOwner';
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
+
+const isMac = U.Common.isPlatformMac();
 
 const Components: any = {
 
@@ -110,6 +112,7 @@ const Components: any = {
 
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,
+	searchChat:				 MenuSearchChat,
 
 	previewObject:			 MenuPreviewObject,
 	previewLatex:			 MenuPreviewLatex,
@@ -134,8 +137,9 @@ const Components: any = {
 	typeSuggest:			 MenuTypeSuggest,
 
 	graphSettings:			 MenuGraphSettings,
-	widget:					 MenuWidget,
 	object:					 MenuObject,
+	widget:					 MenuWidget,
+	widgetSection:			 MenuWidgetSection,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -164,173 +168,60 @@ const Components: any = {
 	syncStatusInfo:			 MenuSyncStatusInfo,
 
 	identity:				 MenuIdentity,
+	oneToOne:				 MenuOneToOne,
 
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
+	changeOwner:			 MenuChangeOwner,
 };
 
-const Menu = observer(class Menu extends React.Component<I.Menu, State> {
+interface RefProps extends I.MenuRef {
+	getChildRef: () => any;
+	close: (callBack?: () => void) => void;
+	getId: () => string;
+	getSize: () => { width: number; height: number; };
+	props: I.Menu;
+};
 
-	_isMounted = false;
-	node: any = null;
-	timeoutPoly = 0;
-	ref = null;
-	isAnimating = false;
-	poly: any = null;
+const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
-	state = {
-		tab: '',
-	};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.position = this.position.bind(this);
-		this.close = this.close.bind(this);
-		this.setHover = this.setHover.bind(this);
-		this.setActive = this.setActive.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.storageGet = this.storageGet.bind(this);
-		this.storageSet = this.storageSet.bind(this);
-		this.getId = this.getId.bind(this);
-		this.getSize = this.getSize.bind(this);
-		this.getPosition = this.getPosition.bind(this);
-		this.getMaxHeight = this.getMaxHeight.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onDimmerClick = this.onDimmerClick.bind(this);
-	};
+	const { id, param } = props;
+	const { 
+		element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack,
+		initialTab, onOpen, noAutoHover, isSub, noAnimation, parentId, classNameWrap, recalcRect, fixedX, fixedY, 
+		noFlipX, noFlipY, stickToElementEdge, noBorderX, noBorderY, noClose, commonFilter, visibleDimmer,
+	} = param;
+	const { data } = param;
+	const { preventFilter } = data;
+	const [ tab, setTab ] = useState('');
+	const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
+	const nodeRef = useRef(null);
+	const childRef = useRef(null);
+	const timeoutPoly = useRef(0);
+	const polyRef = useRef(null);
+	const isAnimating = useRef(false);
+	const framePosition = useRef(0);
 
-	render () {
-		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack } = param;
-		const { data } = param;
-		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
-		const menuId = this.getId();
-		const arrowDirection = this.getArrowDirection();
-		const cn = [
-			'menu',
-			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
-			'v' + vertical,
-			'h' + horizontal
-		];
-		const cd = [];
-		
-		let tab = '';
-		let title = '';
-		let Component = null;
+	const getContext = () => ({
+		getChildRef: () => childRef.current,
+		close,
+		getId,
+		getSize,
+		props,
+	});
 
-		if (tabs.length) {
-			tab = this.state.tab || tabs[0].id;
-		};
+	useImperativeHandle(ref, getContext);
 
-		if (param.title) {
-			title = param.title;
-		};
+	useEffect(() => {
+		polyRef.current = $('#menu-polygon');
+		setClass();
+		position();
+		animate();
+		rebind();
+		setActive();
 
-		if (component) {
-			cn.push(U.Common.toCamelCase('menu-' + component));
-		} else {
-			cn.push(menuId);
-		};
-
-		if (tab) {
-			const item = tabs.find(it => it.id == tab);
-			if (item) {
-				Component = Components[item.component];
-			};
-		} else
-		if (component) {
-			Component = Components[component];
-		} else {
-			Component = Components[id];
-		};
-
-		if (!Component) {
-			return null;
-		};
-		
-		if (param.className) {
-			cn.push(param.className);
-		};
-
-		if (passThrough) {
-			cd.push('passThrough');
-		};
-
-		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => this.onTab(item.id)}>
-				{item.name}
-			</div>
-		);
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={`${menuId}-wrap`} 
-				className="menuWrap"
-			>
-				<div 
-					id={menuId} 
-					className={cn.join(' ')} 
-					onMouseLeave={this.onMouseLeave}
-				>
-					{tabs.length ? (
-						<div className="tabs">
-							{tabs.map((item: any, i: number) => (
-								<Tab key={i} {...item} />
-							))}
-						</div>
-					) : ''}
-
-					{title ? (
-						<div className="titleWrapper">
-							{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
-							<Title text={title} />
-						</div>
-					) : ''}
-
-					<div className="content">
-						<Component 
-							ref={ref => this.ref = ref}
-							{...this.props} 
-							setActive={this.setActive}
-							setHover={this.setHover}
-							onKeyDown={this.onKeyDown}
-							storageGet={this.storageGet}
-							storageSet={this.storageSet}
-							getId={this.getId} 
-							getSize={this.getSize}
-							getPosition={this.getPosition}
-							getMaxHeight={this.getMaxHeight}
-							position={this.position} 
-							close={this.close}
-							/>
-					</div>
-					
-					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
-				</div>
-				{!noDimmer ? (
-					<Dimmer onClick={this.onDimmerClick} className={cd.join(' ')} />
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { id, param } = this.props;
-		const { initialTab, onOpen, noAutoHover } = param;
-
-		this._isMounted = true;
-		this.poly = $('#menu-polygon');
-
-		this.setClass();
-		this.position();
-		this.animate();
-		this.rebind();
-		this.setActive();
-		
-		const obj = $(`#${this.getId()}`);
-		const el = this.getElement();
+		const obj = $(`#${getId()}`);
+		const el = getElement();
 
 		if (!noAutoHover && el && el.length) {
 			el.addClass('hover');
@@ -340,68 +231,61 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			obj.css({ height: param.height });
 		};
 
-		if (initialTab) {
-			this.onTab(initialTab);
+		if (tabs.length) {
+			setTab(initialTab || tabs[0].id);
 		};
 
-		if (onOpen) {
-			onOpen(this);
-		};
-
+		onOpen?.(getContext());
 		analytics.event('menu', { params: { id } });
-	};
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { noAnimation } = param;
-		const node = $(this.node); 
+		return () => {
+			const el = getElement();
+
+			unbind();
+
+			if (el && el.length) {
+				el.removeClass('hover');
+			};
+
+			if (isSub) {
+				polyRef.current.hide();
+				window.clearTimeout(timeoutPoly.current);
+			};
+
+			rebindPrevious();
+			raf.cancel(framePosition.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		const node = $(nodeRef.current); 
 		const menu = node.find('.menu');
-
-		this.setClass();
 
 		if (noAnimation) {
 			menu.addClass('noAnimation');
 		};
 
+		setClass();
+
 		menu.addClass('show').css({ transform: 'none' });
-		this.position();
-	};
+		position();
+	});
 
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { isSub } = param;
-		const el = this.getElement();
+	useEffect(() => {
+		onOpen?.(getContext());
+	}, [ param.menuKey ]);
 
-		this._isMounted = false;
-		this.unbind();
-
-		if (el && el.length) {
-			el.removeClass('hover');
-		};
-		
-		if (isSub) {
-			this.poly.hide();
-			window.clearTimeout(this.timeoutPoly);
-		};
-
-		this.rebindPrevious();
-	};
-
-	rebindPrevious () {
-		const { id, param } = this.props;
-		const { data, rebind, parentId } = param;
+	const rebindPrevious = () => {
 		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
 
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
+		childRef.current?.unbind?.();
 
 		if (!canRebind) {
 			return;
 		};
 
-		if (rebind) {
-			rebind();
+		if (param.rebind) {
+			param.rebind();
 		} else
 		if (data.rebind) {
 			data.rebind();
@@ -409,18 +293,16 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 	};
 
-	setClass () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { param } = this.props;
-		const { classNameWrap } = param;
-		const node = $(this.node);
+	const setClass = () => {
+		const node = $(nodeRef.current);
 		const cn = [ 'menuWrap' ];
 
 		if (classNameWrap) {
 			cn.push(classNameWrap);	
+		};
+
+		if (visibleDimmer) {
+			cn.push('visibleDimmer');
 		};
 
 		if (S.Popup.isOpen()) {
@@ -430,76 +312,74 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		node.attr({ class: cn.join(' ') });
 	};
 
-	rebind () {
-		this.unbind();
-		$(window).on(`resize.${this.getId()}`, () => this.position());
+	const rebind = () => {
+		const id = getId();
+		const container = U.Common.getScrollContainer(keyboard.isPopup());
+
+		unbind();
+		$(window).on(`resize.${id} sidebarResize.${id}`, () => position());
+		container.on(`scroll.${id}`, () => {
+			raf.cancel(framePosition.current);
+			framePosition.current = raf(() => position());
+		});
 	};
 	
-	unbind () {
-		$(window).off(`resize.${this.getId()}`);
+	const unbind = () => {
+		const id = getId();
+		const container = U.Common.getScrollContainer(keyboard.isPopup());
+
+		$(window).off(`resize.${id} sidebarResize.${id}`);
+		container.off(`scroll.${id}`);
 	};
 	
-	animate () {
-		if (this.isAnimating) {
+	const animate = () => {
+		if (isAnimating.current) {
 			return;
 		};
 
-		const { param } = this.props;
-		const { noAnimation } = param;
-		const menu = $(`#${this.getId()}`);
+		const menu = $(`#${getId()}`);
 
 		if (noAnimation) {
 			menu.addClass('noAnimation show').css({ transform: 'none' });
 		} else {
-			this.isAnimating = true;
+			isAnimating.current = true;
 
 			raf(() => {
-				if (!this._isMounted) {
-					return;
-				};
-				
 				menu.addClass('show');
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
-					this.isAnimating = false;
+					isAnimating.current = false;
 				}, S.Menu.getTimeout());
 			});
 		};
 	};
 
-	getBorderTop () {
+	const getBorderTop = () => {
 		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || J.Size.header;
 	};
 	
-	getBorderBottom () {
+	const getBorderBottom = () => {
 		return Number(window.AnytypeGlobalConfig?.menuBorderBottom) || J.Size.menuBorder;
 	};
 
-	getBorderLeft (isFixed) {
+	const getBorderLeft = (isFixed) => {
 		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
 	};
 
-	position () {
-		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorderX, noBorderY } = param;
-
-		if (this.ref && this.ref.beforePosition) {
-			this.ref.beforePosition();
+	const position = () => {
+		if (childRef.current && childRef.current.beforePosition) {
+			childRef.current.beforePosition();
 		};
 
 		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			const node = $(this.node);
+			const node = $(nodeRef.current);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const winSize = U.Common.getWindowDimensions();
-			const borderLeft = this.getBorderLeft(isFixed);
-			const borderTop = this.getBorderTop();
-			const borderBottom = this.getBorderBottom();
+			const borderLeft = getBorderLeft(isFixed);
+			const borderTop = getBorderTop();
+			const borderBottom = getBorderBottom();
 			const ww = winSize.ww;
 			const wh = winSize.wh;
 			const width = param.width ? param.width : menu.outerWidth();
@@ -526,7 +406,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				ox = Number(rect.x) || 0;
 				oy = Number(rect.y) || 0;
 			} else {
-				const el = this.getElement();
+				const el = getElement();
 				if (!el || !el.length) {
 					console.log('[Menu].position', id, 'element not found', element);
 					return;
@@ -620,6 +500,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
+
 			menu.css(css);
 
 			if (isSub) {
@@ -657,7 +538,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					clipPath = `polygon(0 ${height}px, 100% ${height}px, ${ox - x + ew}px 100%, ${ox - x}px 100%)`;
 				};
 
-				this.poly.show().css({
+				polyRef.current.show().css({
 					width: w,
 					height: h,
 					left,
@@ -668,15 +549,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					zIndex: 100000,
 				});
 
-				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
+				window.clearTimeout(timeoutPoly.current);
+				timeoutPoly.current = window.setTimeout(() => polyRef.current.hide(), 500);
 			};
 
 			// Arrow positioning
 
 			if (withArrow) {
-				const arrowDirection = this.getArrowDirection();
-				const size = this.getSize();
+				const arrowDirection = getArrowDirection();
+				const size = getSize();
 				const { width, height } = size;
 				const min = 8;
 				const css: any = { left: '', right: '', top: '', bottom: '' };
@@ -727,112 +608,104 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		});
 	};
 
-	close (callBack?: () => void) {
-		S.Menu.close(this.props.id, () => {
-			window.setTimeout(() => this.rebindPrevious(), S.Menu.getTimeout());
-
-			if (callBack) {
-				callBack();
-			};
+	const close = (callBack?: () => void) => {
+		S.Menu.close(props.id, () => {
+			window.setTimeout(() => rebindPrevious(), S.Menu.getTimeout());
+			callBack?.();
 		});
 	};
 
-	onDimmerClick () {
-		const { param } = this.props;
-		const { noClose } = param;
-
+	const onDimmerClick = () => {
 		if (!noClose) {
-			this.close();
+			close();
 		};
 	};
 	
-	onMouseLeave (e: any) {
-		const { param } = this.props;
-		const { isSub } = param;
-		
+	const onMouseLeave = (e: any) => {
 		if (isSub) {
-			this.poly.hide();
+			polyRef.current.hide();
 		};
 	};
 
-	getIndex (): number {
-		if (!this.ref) {
-			return -1;
-		};
-
-		return this.ref.getIndex ? this.ref.getIndex() : this.ref.n;
+	const getIndex = (): number => {
+		return childRef.current ? Number(childRef.current.getIndex?.()) || 0 : -1;
 	};
 
-	setIndex (n: number) {
-		if (!this.ref) {
+	const setIndex = (n: number) => {
+		childRef.current?.setIndex?.(n);
+	};
+
+	const onKeyDown = (e: any) => {
+		if (!childRef.current || !childRef.current.getItems || keyboard.isComposition) {
 			return;
 		};
 
-		this.ref.setIndex ? this.ref.setIndex(n) : this.ref.n = n;
-	};
+		const cmd = keyboard.cmdKey();
+		
+		let isClipboard = false;
 
-	onKeyDown (e: any) {
-		if (!this.ref || !this.ref.getItems || keyboard.isComposition) {
+		keyboard.shortcut(`${cmd}+c, ${cmd}+v, ${cmd}+x, ${cmd}+a`, e, () => isClipboard = true);
+
+		if (isClipboard) {
 			return;
 		};
 
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const { param } = this.props;
-		const { commonFilter, data } = param;
-		const { preventFilter } = data;
-		const refInput = this.ref.refFilter || this.ref.refName;
+		const inputRef = getInputRef();
 		const shortcutClose = [ 'escape' ];
 		const shortcutSelect = [ 'tab', 'enter' ];
-		
-		let index = this.getIndex();
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
+			
+		let index = getIndex();
 		let ret = false;
 
-		if (refInput) {
-			if (refInput.isFocused && (index < 0)) {
+		if (inputRef) {
+			if (inputRef.isFocused() && (index < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
-				keyboard.shortcut('arrowdown', e, () => {
-					refInput.blur();
+				keyboard.shortcut(shortcutNext, e, () => {
+					inputRef.blur();
 
-					this.setIndex(0);
-					this.setActive(null, true);
+					setIndex(0);
+					setActive(null, true);
 
 					ret = true;
 				});
 
-				if (this.ref && this.ref.onClick && !preventFilter) {	
+				if (childRef.current && childRef.current.onClick && !preventFilter) {	
 					keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 						e.preventDefault();
 
-						const items = this.ref.getItems();
+						const items = childRef.current.getItems();
 						const item = items.length ? items[0] : null;
 
 						if (item) {
-							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+							item.arrow && !item.skipOver && childRef.current.onOver ? childRef.current.onOver(e, item) : childRef.current.onClick(e, item);
 						};
 					});
 				};
 
-				keyboard.shortcut('arrowup', e, () => {
-					if (!this.ref.getItems) {
+				keyboard.shortcut(shortcutPrev, e, () => {
+					if (!childRef.current.getItems) {
 						return;
 					};
 
-					this.setIndex(this.ref.getItems().length - 1);
-					this.setActive(null, true);
+					setIndex(childRef.current.getItems().length - 1);
+					setActive(null, true);
 
-					refInput.blur();
+					inputRef?.blur();
 					ret = true;
 				});
 			} else {
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut(shortcutPrev, e, () => {
 					if (index < 0) {
-						refInput.focus();
+						inputRef?.focus();
 
-						this.setIndex(-1);
-						this.setActive(null, true);
+						setIndex(-1);
+						setActive(null, true);
 
 						ret = true;
 					};
@@ -851,26 +724,26 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		keyboard.shortcut(shortcutClose.join(', '), e, () => {
 			e.preventDefault();
-			this.close();
+			close();
 		});
 
-		if (!this.ref || !this.ref.getItems) {
+		if (!childRef.current || !childRef.current.getItems) {
 			return;
 		};
 
-		const items = this.ref.getItems();
+		const items = childRef.current.getItems();
 		const l = items.length;
 		
-		index = this.getIndex();
+		index = getIndex();
 
 		const item = items[index];
 		const onArrow = (dir: number) => {
 			index += dir;
 
 			if (index < 0) {
-				if ((index == -1) && refInput) {
+				if ((index == -1) && inputRef) {
 					index = -1;
-					refInput.focus();
+					inputRef.focus();
 				} else {
 					index = l - 1;
 				};
@@ -880,7 +753,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				index = 0;
 			};
 
-			this.setIndex(index);
+			setIndex(index);
 
 			const item = items[index];
 			if (!item) {
@@ -892,109 +765,111 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			this.setActive(null, true, dir);
+			setActive(null, true, dir);
 
-			if (!item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
+			if (!item.arrow && childRef.current.onOver) {
+				childRef.current.onOver(e, item);
 			};
 		};
 
-		keyboard.shortcut('arrowup', e, () => {
+		keyboard.shortcut(shortcutPrev, e, () => {
 			e.preventDefault();
 			onArrow(-1);
 		});
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut(shortcutNext, e, () => {
 			e.preventDefault();
 			onArrow(1);
 		});
 
-		if (this.ref && this.ref.onClick) {	
+		if (childRef.current && childRef.current.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();
 				if (item) {
-					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+					item.arrow && !item.skipOver && childRef.current.onOver ? childRef.current.onOver(e, item) : childRef.current.onClick(e, item);
 				};
 			});
 		};
 
-		if (this.ref && this.ref.onSortEnd) {
+		if (childRef.current && childRef.current.onSortEnd) {
 			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 				e.preventDefault();
-				this.onSortMove(pressed.match('arrowup') ? -1 : 1);
+				onSortMove(pressed.match('arrowup') ? -1 : 1);
 			});
 		};
 
-		if (!keyboard.isFocused && (!refInput || (refInput && !refInput.isFocused))) {
-			if (this.ref && this.ref.onRemove) {
+		if (!keyboard.isFocused && (!inputRef || (inputRef && !inputRef.isFocused()))) {
+			if (childRef.current && childRef.current.onRemove) {
 				keyboard.shortcut('backspace', e, () => {
 					e.preventDefault();
 
-					this.setIndex(index - 1);
-					this.checkIndex();
-					this.ref.onRemove(e, item);
-					this.setActive(null, true);
+					setIndex(index - 1);
+					checkIndex();
+					childRef.current.onRemove(e, item);
+					setActive(null, true);
 				});
 			};
 
-			if (this.ref && this.ref.onSwitch) {
+			if (childRef.current && childRef.current.onSwitch) {
 				keyboard.shortcut('space', e, () => {
 					e.preventDefault();
 
-					this.ref.onSwitch(e, item);
+					childRef.current.onSwitch(e, item);
 				});
 			};
 		};
 	};
 
-	onSortMove (dir: number) {
-		const index = this.getIndex();
-
-		this.setIndex(index + dir);
-		this.checkIndex();
-		this.ref.onSortEnd({ oldIndex: index, newIndex: index + dir });
+	const getInputRef = () => {
+		return childRef.current?.getFilterRef?.();
 	};
 
-	checkIndex () {
-		const items = this.ref.getItems();
+	const getListRef = () => {
+		return childRef.current?.getListRef?.();
+	};
+
+	const onSortMove = (dir: number) => {
+		const items = childRef.current.getItems();
+		const index = getIndex();
+
+		setIndex(index + dir);
+		checkIndex();
+		childRef.current.onSortEnd({ active: items[index], over: items[getIndex()] });
+	};
+
+	const checkIndex = () => {
+		const items = childRef.current.getItems();
 		
-		let index = this.getIndex();
+		let index = getIndex();
 		index = Math.max(0, index);
 		index = Math.min(items.length - 1, index);
 
-		this.setIndex(index);
+		setIndex(index);
 	};
 
-	setActive (item?: any, scroll?: boolean, dir?: number) {
+	const setActive = (item?: any, scroll?: boolean, dir?: number) => {
 		dir = dir || 1;
 
-		if (!this.ref || !this.ref.getItems) {
+		if (!childRef.current || !childRef.current.getItems) {
 			return;
 		};
 
-		const refInput = this.ref.refFilter || this.ref.refName;
+		const inputRef = getInputRef();	
+		const listRef = getListRef();
 
-		let index = this.getIndex();
-		if ((index < 0) && refInput) {
-			refInput.focus();
+		let index = getIndex();
+		if ((index < 0) && inputRef) {
+			inputRef.focus();
 		};
 
-		const items = this.ref.getItems();
+		const items = childRef.current.getItems();
 		if (item && (undefined !== item.id)) {
 			index = items.findIndex(it => it.id == item.id);
 		};
 
-		let listRef = null;
-		if (this.ref.refList) {
-			listRef = this.ref.refList;
-		} else 
-		if (this.ref.getListRef) {
-			listRef = this.ref.getListRef();
-		};
-
 		if (scroll) {
-			if (this.ref.scrollToRow) {
-				this.ref.scrollToRow(items, Math.max(0, index));
+			if (childRef.current.scrollToRow) {
+				childRef.current.scrollToRow(items, Math.max(0, index));
 			} else
 			if (listRef) {
 				listRef.scrollToRow(Math.max(0, index));
@@ -1008,24 +883,20 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (next.isDiv || next.isSection || next.isEmpty) {
 			index += dir;
-			this.setIndex(index);
+			setIndex(index);
 
 			if (items[index]) {
-				this.setActive(items[index], scroll);
+				setActive(items[index], scroll);
 			};
 		} else {
-			this.setHover(next, scroll);
+			setHover(next, scroll);
 		};
 
-		this.setIndex(index);
+		setIndex(index);
 	};
 	
-	setHover (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
+	const setHover = (item?: any, scroll?: boolean) => {
+		const node = $(nodeRef.current);
 		const menu = node.find('.menu');
 		
 		menu.find('.item.hover').removeClass('hover');
@@ -1064,25 +935,16 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 	};
 
-	onTab (tab: string) {
-		this.setState({ tab });
+	const storageGet = () => {
+		return Storage.get(getId()) || {};
 	};
 
-	storageGet () {
-		return Storage.get(this.getId()) || {};
+	const storageSet = (data: any) => {
+		const current = storageGet();
+		Storage.set(getId(), Object.assign(current, data));
 	};
 
-	storageSet (data: any) {
-		const current = this.storageGet();
-		Storage.set(this.getId(), Object.assign(current, data));
-	};
-
-	getId (): string {
-		const { param } = this.props;
-		const { getTabs } = param;
-		const { tab } = this.state;
-		const tabs = getTabs ? getTabs() : [];
-
+	const getId = (): string => {
 		let id = '';
 
 		if (tab) {
@@ -1091,32 +953,28 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				id = item.component;
 			};
 		} else {
-			id = this.props.id;
+			id = props.id;
 		};
 
-		return U.Common.toCamelCase('menu-' + id);
+		return U.String.toCamelCase(`menu-${id}`);
 	};
 
-	getElement () {
-		return $(this.props.param.element).first();
+	const getElement = () => {
+		return $(props.param.element).first();
 	};
 
-	getSize (): { width: number; height: number; } {
-		const obj = $(`#${this.getId()}`);
+	const getSize = (): { width: number; height: number; } => {
+		const obj = $(`#${getId()}`);
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
-	getPosition (): DOMRect {
-		const obj = $(`#${this.getId()}`);
+	const getPosition = (): DOMRect => {
+		const obj = $(`#${getId()}`);
 		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
 	};
 
-	getArrowDirection (): I.MenuDirection {
-		const { param } = this.props;
-		const { vertical, horizontal } = param;
-
+	const getArrowDirection = (): I.MenuDirection => {
 		let dir: I.MenuDirection = I.MenuDirection.None;
-
 		if (vertical == I.MenuDirection.Bottom) {
 			dir = I.MenuDirection.Top;
 		};
@@ -1129,14 +987,118 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		if ((vertical == I.MenuDirection.Center) && (horizontal == I.MenuDirection.Right)) {
 			dir = I.MenuDirection.Left;
 		};
-
 		return dir;
 	};
 
-	getMaxHeight (isPopup: boolean): number {
-		return U.Common.getScrollContainer(isPopup).height() - this.getBorderTop() - this.getBorderBottom();
+	const getMaxHeight = (isPopup: boolean): number => {
+		return U.Common.getScrollContainer(isPopup).height() - getBorderTop() - getBorderBottom();
 	};
 
-});
+	const menuId = getId();
+	const arrowDirection = getArrowDirection();
+	const cn = [
+		'menu',
+		(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
+		`v${vertical}`,
+		`h${horizontal}`
+	];
+	const cd = [];
+	
+	let title = '';
+	let Component = null;
+
+	if (param.title) {
+		title = param.title;
+	};
+
+	if (component) {
+		cn.push(U.String.toCamelCase(`menu-${component}`));
+	} else {
+		cn.push(menuId);
+	};
+
+	if (tab) {
+		const item = tabs.find(it => it.id == tab);
+		if (item) {
+			Component = Components[item.component];
+		};
+	} else
+	if (component) {
+		Component = Components[component];
+	} else {
+		Component = Components[id];
+	};
+
+	if (!Component) {
+		return null;
+	};
+	
+	if (param.className) {
+		cn.push(param.className);
+	};
+
+	if (passThrough) {
+		cd.push('passThrough');
+	};
+
+	const Tab = (item: any) => (
+		<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => setTab(item.id)}>
+			{item.name}
+		</div>
+	);
+
+	return (
+		<div 
+			ref={nodeRef}
+			id={`${menuId}-wrap`} 
+			className="menuWrap"
+		>
+			<div 
+				id={menuId} 
+				className={cn.join(' ')} 
+				onMouseLeave={onMouseLeave}
+			>
+				{tabs.length ? (
+					<div className="tabs">
+						{tabs.map((item: any, i: number) => (
+							<Tab key={i} {...item} />
+						))}
+					</div>
+				) : ''}
+
+				{title ? (
+					<div className="titleWrapper">
+						{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
+						<Title text={title} />
+					</div>
+				) : ''}
+
+				<div className="content">
+					<Component 
+						ref={childRef}
+						{...props} 
+						setActive={setActive}
+						setHover={setHover}
+						onKeyDown={onKeyDown}
+						storageGet={storageGet}
+						storageSet={storageSet}
+						getId={getId} 
+						getSize={getSize}
+						getPosition={getPosition}
+						getMaxHeight={getMaxHeight}
+						position={position} 
+						close={close}
+						/>
+				</div>
+				
+				{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', `c${arrowDirection}` ].join(' ')} /> : ''}
+			</div>
+			{!noDimmer ? (
+				<Dimmer onClick={onDimmerClick} className={cd.join(' ')} />
+			) : ''}
+		</div>
+	);
+	
+}));
 
 export default Menu;

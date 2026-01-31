@@ -4,7 +4,6 @@ html.bodyIndex, html.bodyAuth {
 	body { overflow: hidden; }
 
 	#vault,
-	#sidebarLeftButton,
 	#notifications,
 	.sidebar,
 	.sidebarDummy,
@@ -26,6 +25,7 @@ html.bodyIndex, html.bodyAuth {
 		}
 	}
 
+	.pageFlex { padding: 4px; }
 	.pageFlex {
 		> .page { transition: background-color linear 0.2s; }
 	}
@@ -61,19 +61,6 @@ html.bodyAuthDeleted {
 	.small:hover { color: var(--color-text-primary) !important; }
 
 	.error { margin: 0.3em 0px; }
-}
-
-
-.pageIndexIndex, .pageAuthSelect { background-color: var(--color-shape-tertiary); }
-.pageIndexIndex, .pageAuthSelect {
-	.frame { width: 720px; }
-
-	.intro { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 4px 0px; margin-bottom: 32px; }
-	.intro {
-		.label { margin: 0px; line-height: 60px; font-weight: 400;  }
-		.label.line1 { font-size: 58px; letter-spacing: -3.77px; color: var(--color-text-primary); }
-		.label.line2 { font-size: 64px; font-family: 'RiccioneExtraLight'; letter-spacing: -1.74px; color: var(--color-text-secondary); }
-	}
 
 	$easingBubbleWrapper: cubic-bezier(0.5, 0, 0.75, 0);
 	@keyframes bubble {
@@ -91,12 +78,24 @@ html.bodyAuthDeleted {
 			.img { width: 100%; height: 100%; background-size: 100%; background-image: url('~img/icon/bubble.svg'); transition: opacity $easingBubbleWrapper 1s; }
 		}
 	}
-	.bubbleWrapper.inflate { width: 150vw; height: 150vw; }
+	.bubbleWrapper.inflate { transform: scale3d(10,10,1); }
 	.bubbleWrapper.inflate {
 		.bubble { transition: background-color ease-in-out 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
 		.bubble {
 			.img { opacity: 0; }
 		}
+	}
+}
+
+.pageIndexIndex, .pageAuthSelect { background-color: var(--color-shape-tertiary); }
+.pageIndexIndex, .pageAuthSelect {
+	.frame { width: 720px; }
+
+	.intro { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 4px 0px; margin-bottom: 32px; }
+	.intro {
+		.label { margin: 0px; line-height: 60px; font-weight: 400;  }
+		.label.line1 { font-size: 58px; letter-spacing: -3.77px; color: var(--color-text-primary); }
+		.label.line2 { font-size: 64px; font-family: 'RiccioneExtraLight'; letter-spacing: -1.74px; color: var(--color-text-secondary); }
 	}
 
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 456px; }

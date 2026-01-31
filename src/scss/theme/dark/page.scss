@@ -86,9 +86,9 @@
 	.pageSettingsSpaceIndexEmpty {
 		.spaceButtons {
 			.btn {
-				.icon.invite { background-image: url('#{$themePath}/icon/settings/invite.svg'); }
-				.icon.qr { background-image: url('#{$themePath}/icon/settings/qr.svg'); }
-				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/copy.svg'); }
+				.icon.invite { background-image: url('#{$themePath}/icon/settings/space/buttons/invite.svg'); }
+				.icon.qr { background-image: url('#{$themePath}/icon/settings/space/buttons/qr.svg'); }
+				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/space/buttons/copy.svg'); }
 			}
 		}
 
@@ -157,28 +157,32 @@
 	}
 
 	.pageSettingsMembership {
-		.swiper {
-			.slide,
-			.tier { background: var(--color-shape-tertiary) !important; }
-		}
+		.membershipIntro {
+			.tiers {
+				.tier {
+					.features {
+						.label:before { background: url('#{$themePath}/icon/membership/tick.svg'); }
+					}
+				}
+			}
 
-		.swiper.featuresList {
-			.slide.c0 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
-			}
-			.slide.c1 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
-			}
-			.slide.c2 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
-			}
-			.slide.c3 {
-				.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
+			.actions {
+				.action {
+					.icon.activation { background-image: url('#{$themePath}/icon/membership/activation.svg'); }
+					.icon.contact { background-image: url('#{$themePath}/icon/membership/contact.svg'); }
+				}
 			}
 		}
-
-		.actionItems {
-			.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+		.membershipPurchased {
+			.section {
+				.item { background: var(--color-bg-secondary); }
+				.item.current {
+					&.blue { box-shadow: 0px 0px 32px 0px rgba(54, 56, 78, 0.50); }
+					&.red { box-shadow: 0px 0px 32px 0px rgba(68, 42, 42, 0.50); }
+					&.purple,
+					&.default { box-shadow: 0px 0px 32px 0px rgba(158, 105, 156, 0.20); }
+				}
+			}
 		}
 	}
 
@@ -186,6 +190,7 @@
 		.icon.drive { background-image: url('#{$themePath}/icon/settings/drive.svg'); }
 		.icon.sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
 		.icon.location { background-image: url('#{$themePath}/icon/settings/location.svg'); }
+		.icon.offline { background-image: url('#{$themePath}/icon/settings/offline.svg'); }
 	}
 
 	.pageSettingsSpaceShare {
@@ -195,6 +200,35 @@
 				.icon.viewer { background-image: url('#{$themePath}/icon/menu/inviteLink/viewer.svg'); }
 				.icon.manual { background-image: url('#{$themePath}/icon/menu/inviteLink/manual.svg'); }
 				.icon.none { background-image: url('#{$themePath}/icon/menu/inviteLink/none.svg'); }
+			}
+		}
+	}
+
+	.pageSettingsSpaceNotifications {
+        .section { display: flex; flex-direction: column; gap: 8px 0px; }
+        .section {
+            &.options {
+                .item.selected {
+                    &:after { background-image: url('#{$themePath}/icon/menu/chk.svg'); }
+                }
+            }
+
+            &.chats {
+                .side.right {
+                    .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+                    .icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+                }
+            }
+        }
+    }
+
+	> .pageSettingsIndex,
+	> .pageSettingsAccount {
+		.sections {
+			.section {
+				.anyNameWrapper {
+					.icon.badge { background-image: url('#{$themePath}/icon/membership/badge-bw.svg'); }
+				}
 			}
 		}
 	}

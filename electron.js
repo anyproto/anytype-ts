@@ -4,7 +4,6 @@ const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog 
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const storage = require('electron-json-storage');
-const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
@@ -50,18 +49,29 @@ app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1')
 app.commandLine.appendSwitch('gtk-version', '3');
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
+// GPU/Hardware acceleration settings
+// Check for --disable-gpu CLI argument or stored setting
+const disableGpu = process.argv.includes('--disable-gpu') || (store.get('hardwareAcceleration') === false);
+
+if (disableGpu) {
+	app.disableHardwareAcceleration();
+	app.commandLine.appendSwitch('disable-gpu');
+	app.commandLine.appendSwitch('disable-gpu-compositing');
+	
+	console.log('[GPU] Hardware acceleration disabled');
+};
+
 app.removeAsDefaultProtocolClient(protocol);
 
-if (process.defaultApp) {
-	if (process.argv.length >= 2) {
-		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
-
-		if (!is.macos) {
-			deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
-		};
-	};
-} else {
+if (!process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
+};
+
+if (!is.macos && (process.argv.length >= 2)) {
+	if (process.defaultApp) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+	};
+	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
 };
 
 powerMonitor.on('suspend', () => {	
@@ -91,24 +101,15 @@ powerMonitor.on('resume', () => {
 	Util.log('info', '[PowerMonitor] resume');
 });
 
-ipcMain.on('storeGet', (e, key) => {
-	e.returnValue = store.get(key);
-});
-ipcMain.on('storeSet', (e, key, value) => {
-	e.returnValue = store.set(key, value);
-});
-ipcMain.on('storeDelete', (e, key) => {
-	e.returnValue = store.delete(key);
-});
-
-if (is.development && !port) {
-	console.error('ERROR: Please define SERVER_PORT env var');
-	Api.exit(mainWindow, '', false);
-	return;
-};
+ipcMain.on('storeGet', (e, key) => { e.returnValue = store.get(key); });
+ipcMain.on('storeSet', (e, key, value) => { e.returnValue = store.set(key, value); });
+ipcMain.on('storeDelete', (e, key) => { e.returnValue = store.delete(key); });
+ipcMain.on('getTheme', (e) => { e.returnValue = Util.getTheme(); });
+ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
+ipcMain.on('getConfig', (e) => { e.returnValue = ConfigManager.config || {}; });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
-	Api.exit(mainWindow, '' ,false);
+	Api.exit(mainWindow, '', false, false);
 	return;
 };
 
@@ -117,6 +118,8 @@ Util.setAppPath(path.join(__dirname));
 
 function waitForLibraryAndCreateWindows () {
 	const { userDataPath } = ConfigManager.config;
+
+	Util.setNativeThemeSource();
 
 	let currentPath = app.getPath('userData');
 	if (userDataPath && (userDataPath != currentPath)) {
@@ -148,9 +151,10 @@ nativeTheme.on('updated', () => {
 	const isDark = Util.isDarkTheme();
 
 	MenuManager.updateTrayIcon();
-	Api.setBackground(isDark ? 'dark' : '');
+	Api.setBackground(Util.getTheme());
 
 	WindowManager.sendToAll('native-theme', isDark);
+	WindowManager.sendToAllTabs('native-theme', isDark);
 });
 
 function createWindow () {
@@ -169,7 +173,7 @@ function createWindow () {
 			const { config } = ConfigManager;
 
 			if (config.hideTray && (WindowManager.list.size <= 1)) {
-				Api.exit(mainWindow, '', false);
+				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
 			};
@@ -222,6 +226,30 @@ app.on('ready', async () => {
 				'Content-Security-Policy': [ csp.join('; ') ]
 			}
 		});
+	});
+
+	// Intercept requests and add referrer/origin for YouTube only
+	session.defaultSession.webRequest.onBeforeSendHeaders({ 
+		urls: [
+			'*://www.youtube.com/*', 
+			'*://www.youtube-nocookie.com/*',
+		],
+	}, (details, callBack) => {
+		const headers = details.requestHeaders;
+
+		// Detect missing or file:// origin
+		const currentOrigin = headers['Origin'];
+		const isFileOrigin =
+			!currentOrigin ||
+			(currentOrigin === 'null') ||
+			currentOrigin.startsWith('file://');
+
+		if (isFileOrigin) {
+			details.requestHeaders['Referer'] = 'https://localhost/';
+			details.requestHeaders['Origin'] = 'https://localhost';
+		};
+
+		callBack({ requestHeaders: details.requestHeaders });
 	});
 
 	// Load gRPC DevTools extension in development mode
@@ -280,14 +308,19 @@ app.on('before-quit', e => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		Api.exit(mainWindow, '', false);
+		Api.exit(mainWindow, '', false, false);
 	};
 });
 
-app.on('activate', () => { 
+app.on('activate', () => {
 	if (WindowManager.list.size && mainWindow) {
 		mainWindow.show();
-	} else 
+		mainWindow.focus();
+
+		if (is.macos) {
+			app.focus({ steal: true });
+		};
+	} else
 	if (isReady) {
 		createWindow();
 	};

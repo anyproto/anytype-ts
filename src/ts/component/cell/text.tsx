@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
-import { Input, IconObject } from 'Component';
+import { Input, IconObject, ChatCounter } from 'Component';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
@@ -52,6 +52,27 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 	};
 
+	const onKeyDown = (e: any, v: string) => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		keyboard.shortcut('escape, enter, enter+shift', e, pressed => {
+			e.preventDefault();
+
+			save(v, () => {
+				S.Menu.closeAll(J.Menu.cell);
+
+				range.current = null;
+				setEditingHandler(false);
+
+				if (onRecordAdd && pressed.match('shift')) {
+					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
+				};
+			});
+		});
+	};
+
 	const onKeyUp = (e: any, v: string) => {
 		if (isLongText) {
 			return;
@@ -62,26 +83,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		setValue(v);
-
-		if (keyboard.isComposition) {
-			return;
-		};
-
-		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
-			e.preventDefault();
-			e.persist();
-
-			save(v, () => {
-				S.Menu.closeAll(J.Menu.cell);
-
-				range.current = null;
-				setEditingHandler(false);
-
-				if (onRecordAdd && (pressed == 'enter+shift')) {
-					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
-				};
-			});
-		});
 	};
 
 	const onKeyUpDate = (e: any, v: any) => {
@@ -159,6 +160,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let EditorComponent = null;
 	let val = record[relation.relationKey];
 	let icon = null;
+	let counter = null;
 
 	if (isDate || isNumber) {
 		val = Relation.formatValue(relation, val, true);
@@ -169,7 +171,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		val = String(val || '');
 	};
 
-	if (isLongText && !isEditing && isInline) {
+	if (isLongText && !view?.wrapContent) {
 		val = val.replace(/\n/g, ' ');
 	};
 
@@ -224,12 +226,13 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			);
 		} else {
 			EditorComponent = (item: any) => (
-				<Input 
+				<Input
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
-					ref={inputRef} 
-					id="input" 
-					{...item} 
+					ref={inputRef}
+					id="input"
+					{...item}
 					placeholder={placeholder}
+					onKeyDown={onKeyDown}
 					onKeyUp={onKeyUp}
 				/>
 			);
@@ -254,7 +257,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			if (name) {
 				if (textLimit) {
-					name = U.Common.shorten(name, textLimit);
+					name = U.String.shorten(name, textLimit);
 				};
 				content = <div className="name">{name}</div>;
 			} else {
@@ -282,7 +285,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		if (isUrl && shortUrl) {
-			val = val !== null ? U.Common.shortUrl(val) : '';
+			val = val !== null ? U.String.shortUrl(val, true) : '';
 		};
 
 		if (isNumber) {
@@ -317,6 +320,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				val = record.name || record.pluralName || translate('defaultNamePage');
 			} else {
 				val = val || translate('defaultNamePage');
+			};
+
+			if (U.Object.isChatLayout(record.layout)) {
+				counter = <ChatCounter chatId={record.id} />;
 			};
 		};
 	};
@@ -397,6 +404,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		<>
 			{icon}
 			<Name name={val} />
+			{counter}
 		</>
 	);
 

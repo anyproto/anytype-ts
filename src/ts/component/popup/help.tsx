@@ -1,8 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
-import { Label, Icon, Cover, Button } from 'Component';
-import { I, U, J, translate, Action, keyboard } from 'Lib';
+import { Cover, Button } from 'Component';
+import { I, U, translate, keyboard } from 'Lib';
 import Block from 'Component/block/help';
 
 const LIMIT = 1;
@@ -13,11 +13,10 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const [ page, setPage ] = useState(0);
 	const nodeRef = useRef(null);
-	const document = U.Common.toUpperCamelCase(data.document);
+	const document = U.String.toUpperCamelCase(data.document);
 	const f = Docs.Help[document];
 
 	const blocks = 'function' == typeof f ? f() : f;
-	const title = blocks.find(it => it.style == I.TextStyle.Title);
 	const cover = blocks.find(it => it.type == I.BlockType.Cover);
 	const isWhatsNew = document == 'WhatsNew';
 	const cn = [ 'editor', 'help' ];

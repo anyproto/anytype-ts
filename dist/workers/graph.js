@@ -24,6 +24,7 @@ const util = new Util();
 const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
+const maxClusterRadius = 500;
 
 const Layout = {
 	Human:		 1,
@@ -90,7 +91,6 @@ let root = null;
 let paused = false;
 let isOver = '';
 let maxDegree = 0;
-let clusters = {};
 let selectBox = { x: 0, y: 0, width: 0, height: 0 };
 let borderRadius = 0;
 let lineWidth = 0;
@@ -114,6 +114,7 @@ init = (param) => {
 	ctx = canvas.getContext('2d');
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
+	zoom = data.zoom;
 
 	util.ctx = ctx;
 	resize(data);
@@ -124,13 +125,12 @@ init = (param) => {
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
 	
-	transform = d3.zoomIdentity.translate(0, 0).scale(1);
+	transform = d3.zoomIdentity.translate(zoom.x, zoom.y).scale(zoom.k);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 	simulation.alphaDecay(0.05);
 
 	initForces();
-
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
@@ -181,30 +181,12 @@ image = ({ src, bitmap }) => {
 };
 
 /**
- * Initializes D3 forces and clusters for the simulation.
+ * Initializes D3 forces for the simulation.
  */
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
-	const maxRadius = 500;
 
 	updateOrphans();
-
-	nodes.forEach(d => {
-		if (d.typeKey && !clusters[d.typeKey]) {
-			clusters[d.typeKey] = { id: d.typeKey, radius: 0, x: 0, y: 0 };
-		};
-	});
-
-	clusters = Object.values(clusters);
-
-	const l = clusters.length;
-
-	clusters = clusters.map((c, i) => {
-		c.radius = Math.sqrt((i + 1) / l * -Math.log(Math.random())) * maxRadius;
-		c.x = Math.cos(i / l * 2 * Math.PI) * 150 + width / 2 + Math.random();
-		c.y = Math.sin(i / l * 2 * Math.PI) * 150 + height / 2 + Math.random();
-		return c;
-	});
 
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
@@ -243,9 +225,14 @@ initForces = () => {
  */
 updateForces = () => {
 	const old = getNodeMap();
+	
 	let types = [];
-	if (settings.link) types.push(EdgeType.Link);
-	if (settings.relation) types.push(EdgeType.Relation);
+	if (settings.link) {
+		types.push(EdgeType.Link);
+	};
+	if (settings.relation) {
+		types.push(EdgeType.Relation);
+	};
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
@@ -300,18 +287,6 @@ updateForces = () => {
 		.id(d => d.id)
 		.links(edges);
 
-	// Cluster by object type
-	if (settings.cluster) {
-		simulation.force('cluster', d3.forceCluster()
-			.centers(d => clusters.find(c => c.id == d.typeKey))
-			.strength(1)
-			.centerInertia(0.1));
-		simulation.force('collide', d3.forceCollide(d => getRadius(d)));
-	} else {
-		simulation.force('cluster', null);
-		simulation.force('collide', null);
-	};
-
 	// Build edgeMap in a single pass over edges
 	const tmpEdgeMap = getEdgeMap();
 
@@ -320,10 +295,30 @@ updateForces = () => {
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
 
-	simulation.alpha(0.5).restart();
+	simulation.alpha(1).restart();
 	nodeMap = getNodeMap();
 
+	updateClusters();
 	redraw();
+};
+
+/**
+ * Updates cluster by types force
+ */
+updateClusters = () => {
+	if (settings.cluster) {
+		const clusters = getClusters();
+
+		simulation.force('cluster', d3.forceCluster()
+			.centers(d => clusters.find(c => c.id == d.typeKey))
+			.strength(1)
+			.centerInertia(0.1));
+
+		simulation.force('collide', d3.forceCollide(d => getRadius(d) * 1.2));
+	} else {
+		simulation.force('cluster', null);
+		simulation.force('collide', null);
+	};
 };
 
 /**
@@ -400,6 +395,29 @@ getEdgeMap = () => {
 	};
 
 	return map;
+};
+
+getClusters = () => {
+	const map = new Map();
+
+	nodes.forEach(d => {
+		if (d.typeKey && !map.has(d.typeKey)) {
+			map.set(d.typeKey, { id: d.typeKey, radius: 0, x: 0, y: 0 });
+		};
+	});
+
+	let clusters = Array.from(map.values());
+
+	const l = clusters.length;
+
+	clusters = clusters.map((c, i) => {
+		c.radius = Math.sqrt((i + 1) / l * -Math.log(Math.random())) * maxClusterRadius;
+		c.x = Math.cos(i / l * 2 * Math.PI) * 150 + width / 2 + Math.random();
+		c.y = Math.sin(i / l * 2 * Math.PI) * 150 + height / 2 + Math.random();
+		return c;
+	});
+
+	return clusters;
 };
 
 /**
@@ -595,8 +613,10 @@ drawNode = (d) => {
 	const diameter = radius * 2;
 	const isSelected = selected.includes(d.id);
 	const io = isOver == d.id;
+	const iconColors = data.colors?.icon || {};
+	const opt = (iconColors.list || [])[d.iconOption - 1];
 	
-	let colorNode = data.colors.node;
+	let colorNode = iconColors.bg[opt] || data.colors.node;
 	let colorText = data.colors.text;
 	let colorLine = '';
 	let lw = 0;

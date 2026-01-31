@@ -14,10 +14,10 @@
 		.block.blockMedia { max-height: unset; }
 	}
 
-	.blocks.horizontal { max-width: 704px; width: calc(100% - 32px); flex-direction: column; padding-bottom: 80px; }
+	.blocks.horizontal { max-width: var(--editor-width); width: calc(100% - 32px); flex-direction: column; padding-bottom: 80px; }
 	.blocks.horizontal {
 		> .side.left { text-align: center; }
-		> .side.right { padding-top: 32px; margin-top: 52px; border-top: 1px solid var(--color-shape-highlight-medium); }
+		> .side.right { padding-top: 32px; margin-top: 44px; border-top: 1px solid var(--color-shape-highlight-medium); }
 	}
 
 	.blocks.withContent.horizontal {

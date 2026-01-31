@@ -1,6 +1,8 @@
 .sidebarPage.pageObjectRelation {
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
+		> .head { height: 52px; }
+
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
 		> .wrap {
 			&:hover {

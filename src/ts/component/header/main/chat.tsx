@@ -10,10 +10,17 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const showInvite = !spaceview.isOneToOne;
+	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
+	const cnc = [ 'side', 'center' ];
+	
+	if (isSearchMenuOpen) {
+		cnc.push('withSearch');
+	};
 
 	let object = null;
-	if (rootId == S.Block.workspace) {
+	if (spaceview.isChat || spaceview.isOneToOne) {
 		object = spaceview;
 	} else {
 		object = S.Detail.get(rootId, rootId, []);
@@ -21,8 +28,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat;
-	const showPin = canWrite && !spaceview.isChat;
+	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
+	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	let center = null;
@@ -36,7 +43,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onRelation = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 	
 	const onOpen = () => {
@@ -50,31 +57,49 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onMore = () => {
-		menuOpen('object', '#button-header-more', {
-			horizontal: I.MenuDirection.Right,
-			subIds: J.Menu.object,
-			data: {
-				rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				isPopup,
-			}
-		});
+		const element = '#button-header-more';
+
+		if (spaceview.isChat || spaceview.isOneToOne) {
+			U.Menu.spaceContext(spaceview, {
+				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				className: 'fixed',
+				classNameWrap: 'fromHeader',
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+			}, { 
+				noManage: true,
+				withSearch: true,
+				route: analytics.route.header,
+			});
+		} else {
+			menuOpen('object', element, {
+				horizontal: I.MenuDirection.Right,
+				subIds: J.Menu.object,
+				data: {
+					rootId,
+					blockId: rootId,
+					blockIds: [ rootId ],
+					isPopup,
+				}
+			});
+		};
 	};
 
-	if (bannerProps.type != I.BannerType.None) {
-		center = <HeaderBanner {...bannerProps} />;
-	};
+	if (!isDeleted) {
+		if (bannerProps.type != I.BannerType.None) {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 
-	if (bannerProps.type == I.BannerType.None) {
-		center = (
-			<div className="path" onClick={onSearch}>
-				<IconObject object={object} size={18} />
-				<ObjectName object={object} withPlural={true} />
-			</div>
-		);
-	} else {
-		center = <HeaderBanner {...bannerProps} />;
+		if (bannerProps.type == I.BannerType.None) {
+			center = (
+				<div className="path" onClick={onSearch}>
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} withPlural={true} />
+				</div>
+			);
+		} else {
+			center = <HeaderBanner {...bannerProps} />;
+		};
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -83,20 +108,22 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
 
-			<div className="side center">
+			<div className={cnc.join(' ')}>
 				{center}
 			</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-invite"
-					tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
-					className="invite withBackground"
-					onClick={() => Action.openSpaceShare(analytics.route.chat)}
-					onDoubleClick={e => e.stopPropagation()}
-				/>
+				{showInvite ? (
+					<Icon 
+						id="button-header-invite"
+						tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
+						className="invite withBackground"
+						onClick={() => Action.openSpaceShare(analytics.route.chat)}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
 
 				{showRelations ? (
 					<Icon 

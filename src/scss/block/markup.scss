@@ -9,7 +9,6 @@ smile .loaderWrapper { display: inline-block; }
 .markuplink { color: inherit; text-decoration: none; }
 
 markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
-markupcode::after { content: ''; display: inline; width: 0.5em; height: 0.5em; vertical-align: middle; }
 
 markupemoji { display: inline; user-select: all; }
 markupemoji * { user-select: all; }
@@ -19,7 +18,7 @@ markupemoji {
 
 .markuplink, markupobject { 
 	position: relative; color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; 
-	user-select: text !important;
+	user-select: text !important; border-color: color-mix(in srgb, currentColor 30%, transparent);
 }
 .markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
@@ -30,7 +29,10 @@ markupmention {
 	smile img { margin-top: 2px !important; }
 
 	.space { width: 4px; height: 20px; vertical-align: middle; display: none; }
-	name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
+	name { 
+		display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid;
+		border-color: color-mix(in srgb, currentColor 30%, transparent);
+	}
 }
 markupmention.disabled {
 	name { border-width: 0px; }
@@ -55,8 +57,8 @@ markupunderline { border-bottom: 0.05em solid; }
 markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
 markuphighlight.active { background: orange !important; }
 
-markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-markupsearch.active { background: orange !important; }
+markupsearch { color: var(--color-system-accent-100) !important; border-radius: 2px; display: inline; }
+markupsearch.active { background: var(--color-system-selection) !important; }
 
 markuplatex { user-select: all !important; }
 

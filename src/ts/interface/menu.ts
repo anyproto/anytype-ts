@@ -38,6 +38,7 @@ export interface MenuParam {
 	withBack?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
+	visibleDimmer?: boolean;
 	highlightElements?: string[];
 	hiddenElements?: string[];
 	noFlipX?: boolean;
@@ -71,15 +72,20 @@ export interface Menu {
 };
 
 export interface MenuRef {
-	rebind: () => void,
-	unbind: () => void,
-	getItems: () => any[];
-	getIndex: () => number,
-	setIndex: (i: number) => void,
-	onClick?: (e: any, item: any) => void,
-	onOver?: (e: any, item: any) => void,
-	getData?: () => any,
-	getListRef?: () => any,
+	rebind?: () => void;
+	unbind?: () => void;
+	getItems?: () => any[];
+	getIndex?: () => number;
+	setIndex?: (i: number) => void;
+	onClick?: (e: any, item: any) => void;
+	onOver?: (e: any, item: any) => void;
+	getData?: () => any;
+	getFilterRef?: () => any;
+	getListRef?: () => any;
+	beforePosition?: () => void;
+	updateOptions?: (options: any[]) => void;
+	onSwitch?: (e: any, item: any, v: boolean) => void;
+	onSortEnd?: (result: any) => void;
 };
 
 export interface MenuItem {
@@ -120,4 +126,5 @@ export interface MenuItem {
 	onSwitch?(e: any, v: boolean): void;
 	onSelect?(id: string): void;
 	onMore?(e: any): void;
+	tooltipParam?: I.TooltipParam;
 };

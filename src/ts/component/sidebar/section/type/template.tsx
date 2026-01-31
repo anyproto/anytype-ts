@@ -1,13 +1,14 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, J, U, S, C, translate, analytics, sidebar } from 'Lib';
+import { I, J, U, S, C, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
-const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { rootId, object, readonly, isPopup, onChange } = props;
+	const { rootId, object, readonly, onChange } = props;
+	const [ dummy, setDummy ] = useState(0);
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
@@ -28,18 +29,13 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 				return;
 			};
 
-			const object = message.details;
-
+			U.Object.openConfig(null, message.details);
 			analytics.event('CreateTemplate', { objectType: rootId });
-			U.Object.openConfig(object);
 		});
 	};
 
 	const onClick = (e: any, item: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		U.Object.openConfig(item, {
+		U.Object.openConfig(e, item, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});
 	};
@@ -77,7 +73,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 					templateId,
 					noToast: true,
 					route: '',
-					onDuplicate: object => U.Object.openConfig(object, {}),
+					onDuplicate: object => U.Object.openConfig(null, object, {}),
 					onSetDefault: id => onChange({ defaultTemplateId: id }),
 				},
 			});
@@ -121,14 +117,16 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 			filters,
 			sorts,
 			keys,
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		});
 	};
 
 	useEffect(() => {
 		load();
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div 

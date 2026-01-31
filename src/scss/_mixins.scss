@@ -1,9 +1,7 @@
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
-$transitionCommon: 0.1s $easeInQuint;
+$transitionCommon: 0.15s ease-in-out;
 $transitionAllCommon: all $transitionCommon;
 $transitionSidebarTime: 0.2s;
-$transitionChatMessageTime: 0.3s;
-$sidebarRightWidth: 348px;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -13,7 +11,6 @@ $sidebarRightWidth: 348px;
 }
 @mixin text-very-small { 
 	font-size: var(--font-size-very-small); line-height: var(--line-height-very-small); letter-spacing: var(--letter-spacing-very-small); 
-	color: var(--color-control-active); 
 }
 @mixin text-small { 
 	font-size: var(--font-size-small); line-height: var(--line-height-small); letter-spacing: var(--letter-spacing-small); 
@@ -49,3 +46,4 @@ $sidebarRightWidth: 348px;
 @mixin clamp4 { @include clamp; -webkit-line-clamp: 4; }
 @mixin clamp5 { @include clamp; -webkit-line-clamp: 5; }
 @mixin clamp10 { @include clamp; -webkit-line-clamp: 10; }
+@mixin clamp15 { @include clamp; -webkit-line-clamp: 15; }

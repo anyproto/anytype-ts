@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -12,175 +12,29 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
+const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	n = -1;
-	cache: any = null;
-	filter = '';
-	refFilter: any = null;
-	refList: any = null;
-	top = 0;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, value, disabled, placeholder, noVirtualisation, menuLabel } = data;
-		const items = this.getItems(true);
-		const withFilter = this.isWithFilter();
+	const { param, setActive, onKeyDown, position, getId, close } = props;
+	const { data } = param;
+	const { 
+		filter, value, disabled, placeholder, noVirtualisation, menuLabel, noKeys, preventFilter, withAdd, 
+		canSelectInitial, onSelect, noClose, noScroll, maxHeight, noFilter, onSwitch,
+	} = data;
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const filterRef = useRef(null);
+	const listRef = useRef(null);
+	const n = useRef(-1);
+	const top = useRef(0);
+	const sections = data.sections || [];
 
-		items.forEach((item: any) => {
-			const { switchValue } = item;
-		});
-
-		const Item = (item) => {
-			const cn = [];
-
-			let content = null;
-			if (item.id == 'add') {
-				content = (
-					<div
-						id="item-add"
-						className="item add"
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onClick={e => this.onClick(e, item)}
-						style={item.style}
-					>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else {
-				if (item.className) {
-					cn.push(item.className);
-				};
-				if (item.isInitial) {
-					cn.push('isInitial');
-				};
-				if (item.isHidden) {
-					cn.push('isHidden');
-				};
-				if (disabled || item.disabled) {
-					cn.push('disabled');
-				};
-
-				content = (
-					<MenuItemVertical 
-						{...item} 
-						icon={item.icon}
-						className={cn.join(' ')} 
-						checkbox={this.isActive(item)} 
-						onClick={e => this.onClick(e, item)} 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						style={item.style}
-					/>
-				);
-			};
-
-			return content;
-		};
-
-		let content = null;
-		if (noVirtualisation) {
-			content = (
-				<>
-					{items.map((item, i) => (
-						<Item {...item} key={i} index={i} />
-					))}
-				</>
-			);
-		} else {
-			const rowRenderer = (param: any) => (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<Item {...items[param.index]} index={param.index} style={param.style} />
-				</CellMeasurer>
-			);
-
-			content = (
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => !!items[index]}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={({ index }) => this.getRowHeight(items[index])}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									onScroll={this.onScroll}
-									scrollToAlignment="center"
-									overscanRowCount={10}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			);
-		};
-		
-		return (
-			<>
-				{withFilter ? (
-					<Filter 
-						ref={ref => this.refFilter = ref}
-						className="outlined"
-						value={filter}
-						placeholder={placeholder}
-						onChange={this.onFilterChange}
-						onKeyUp={this.onFilterKeyUp}
-						focusOnMount={true}
-					/>
-				) : ''}
-
-				{menuLabel ? (
-					<Label className="menuLabel" text={menuLabel} />
-				) : ''}
-				
-				<div className="items">
-					{content}
-				</div>
-			</>
-		);
-	};
-	
-	componentDidMount () {
-		const { param, setActive } = this.props;
-		const { data } = param;
-		const { value, noKeys } = data;
-		const items = this.getItems(true);
-		const withFilter = this.isWithFilter();
+	useEffect(() => {
+		const items = getItems(true);
+		const withFilter = isWithFilter();
 		
 		if (!noKeys) {
-			this.rebind();
+			rebind();
 		};
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
-		
 		let active = value ? items.find(it => it.id == value) : null;
 		if (!active && items.length && !withFilter) {
 			active = items[0];
@@ -190,77 +44,48 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			window.setTimeout(() => setActive(active, true), 15);
 		};
 
-		this.resize();
-	};
+		resize();
+	}, []);
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const withFilter = this.isWithFilter();
-		const items = this.getItems(true);
+	useEffect(() => {
+		listRef.current?.scrollToPosition(top.current);
 
-		if (withFilter && (this.filter != filter)) {
-			this.filter = filter;
-			this.n = -1;
-			this.top = 0;
+		if (n.current == -1) {
+			focus();
 		};
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
+		resize();
+	});
 
-		if (this.refList) {
-			this.refList.scrollToPosition(this.top);
+	useEffect(() => {
+		if (!withFilter) {
+			return;
 		};
+		
+		n.current = -1;
+		top.current = 0;
+		listRef.current?.scrollToPosition(top.current);
+	}, [ filter ]);
 
-		if (this.n == -1) {
-			this.focus();
-		};
-
-		this.resize();
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
+	const focus = () => {
+		window.setTimeout(() => filterRef.current?.focus(), 15);
 	};
 
-	getItemsWithoutFilter () {
-		const { param } = this.props;
-		const { data } = param;
-
-		return (data.options || []).filter(it => it);
+	const getItemsWithoutFilter = () => {
+		return U.Menu.prepareForSelect((data.options || [])).filter(it => it);
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-
-		return (data.sections || []);
-	};
-	
-	getItems (withSections: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { preventFilter, withAdd } = data;
-		const sections = this.getSections();
-
+	const getItems = (withSections: boolean) => {
 		let items: any[] = [];
 
 		if (sections && sections.length) {
@@ -271,11 +96,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				items = items.concat(section.children);
 			};
 		} else {
-			items = this.getItemsWithoutFilter();
+			items = getItemsWithoutFilter();
 		};
 
 		if (data.filter && !preventFilter) {
-			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
+			const filter = new RegExp(U.String.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
 		};
@@ -294,61 +119,41 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		return items || [];
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
-		};
-	};
-	
-	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { canSelectInitial, onOver } = data;
-
-		if (item.isInitial && !canSelectInitial) {
-			return;
-		};
-
-		if (onOver) {
+			setActive(item, false);
 			onOver(e, item);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onSelect, canSelectInitial, noClose, disabled } = data;
+	const onOver = (e: any, item: any) => {
+		if (item.isInitial && !canSelectInitial) {
+			return;
+		};
 
+		data.onOver?.(e, item);
+	};
+	
+	const onClick = (e: any, item: any) => {
 		if (item.isSection || item.disabled || (item.isInitial && !canSelectInitial)) {
 			return;
 		};
 
-		if (!noClose) {
-			close();
+		const cb = () => {
+			if (!disabled && onSelect) {
+				onSelect(e, item);
+			};
 		};
-		
-		if (!disabled && onSelect) {
-			onSelect(e, item);
-		};
+
+		noClose ? cb() : close(cb);
 	};
 
-	onSwitch (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onSwitch } = data;
-
-		if (onSwitch) {
-			onSwitch(e, item);
-		};
+	const onFilterChange = (v: string) => {
+		props.param.data.filter = v;
 	};
 
-	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
-	};
-
-	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
-		const { param } = this.props;
+	const onFilterKeyUp = (e: React.KeyboardEvent, v: string) => {
+		const { param } = props;
 		const { data } = param;
 		const { onFilterKeyUp } = data;
 
@@ -357,7 +162,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
 		if (item.withDescription) return HEIGHT_DESCRIPTION;
@@ -365,49 +170,38 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		return HEIGHT_ITEM;
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			top.current = scrollTop;
 		};
 	};
 
-	isWithFilter () {
-		const { param } = this.props;
-		const { data } = param;
-		const { noFilter, withFilter } = data;
-
+	const isWithFilter = () => {
 		if (withFilter) {
 			return true;
 		};
 
-		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
+		const options = getItemsWithoutFilter().filter(it => !it.isDiv);
 		return !noFilter && (options.length > LIMIT);
 	};
 
-	updateOptions (options: any[]) {
-		this.props.param.data.options = options;
+	const updateOptions = (options: any[]) => {
+		data.options = options;
 	};
 
-	isActive (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const value = Relation.getArrayValue(data.value);
-
+	const isActive = (item: any) => {
 		if (undefined !== item.checkbox) {
 			return item.checkbox;
 		};
 
-		return value.includes(String(item.id));
+		return Relation.getArrayValue(value).includes(String(item.id));
 	};
 
-	resize () {
-		const { position, getId, param } = this.props;
-		const { data } = param;
-		const { noScroll, maxHeight, noVirtualisation, withAdd } = data;
-		const items = this.getItems(true);
+	const resize = () => {
+		const items = getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
-		const withFilter = this.isWithFilter();
+		const withFilter = isWithFilter();
 		
 		if (!noScroll) {
 			let height = 0;
@@ -421,7 +215,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			if (!items.length) {
 				height += HEIGHT_ITEM;
 			} else {
-				height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+				height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 			};
 
 			height = Math.min(maxHeight || 370, height);
@@ -438,6 +232,149 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		position();
 	};
 
-});
+	const items = getItems(true);
+	const withFilter = isWithFilter();
+
+	items.forEach((item: any) => {
+		const { switchValue } = item;
+	});
+
+	const Item = (item) => {
+		const cn = [];
+
+		let content = null;
+		if (item.id == 'add') {
+			content = (
+				<div
+					id="item-add"
+					className="item add"
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
+					style={item.style}
+				>
+					<Icon className="plus" />
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else {
+			if (item.className) {
+				cn.push(item.className);
+			};
+			if (item.isInitial) {
+				cn.push('isInitial');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+			if (disabled || item.disabled) {
+				cn.push('disabled');
+			};
+
+			content = (
+				<MenuItemVertical 
+					{...item} 
+					icon={item.icon}
+					className={cn.join(' ')} 
+					checkbox={isActive(item)} 
+					onClick={e => onClick(e, item)} 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					style={item.style}
+				/>
+			);
+		};
+
+		return content;
+	};
+
+	let content = null;
+	if (noVirtualisation) {
+		content = (
+			<>
+				{items.map((item, i) => (
+					<Item {...item} key={i} index={i} />
+				))}
+			</>
+		);
+	} else {
+		const rowRenderer = (param: any) => (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<Item {...items[param.index]} index={param.index} style={param.style} />
+			</CellMeasurer>
+		);
+
+		content = (
+			<InfiniteLoader
+				rowCount={items.length}
+				loadMoreRows={() => {}}
+				isRowLoaded={({ index }) => !!items[index]}
+			>
+				{({ onRowsRendered }) => (
+					<AutoSizer className="scrollArea">
+						{({ width, height }) => (
+							<List
+								ref={listRef}
+								width={width}
+								height={height}
+								deferredMeasurmentCache={cache.current}
+								rowCount={items.length}
+								rowHeight={({ index }) => getRowHeight(items[index])}
+								rowRenderer={rowRenderer}
+								onRowsRendered={onRowsRendered}
+								onScroll={onScroll}
+								scrollToAlignment="center"
+								overscanRowCount={10}
+							/>
+						)}
+					</AutoSizer>
+				)}
+			</InfiniteLoader>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+		getItems: () => getItems(false),
+		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
+		updateOptions,
+		onSwitch,
+	}));
+	
+	return (
+		<>
+			{withFilter ? (
+				<Filter 
+					ref={filterRef}
+					className="outlined"
+					value={filter}
+					placeholder={placeholder}
+					onChange={onFilterChange}
+					onKeyUp={onFilterKeyUp}
+					focusOnMount={true}
+				/>
+			) : ''}
+
+			{menuLabel ? (
+				<Label className="menuLabel" text={menuLabel} />
+			) : ''}
+			
+			<div className="items">
+				{content}
+			</div>
+		</>
+	);
+	
+}));
 
 export default MenuSelect;

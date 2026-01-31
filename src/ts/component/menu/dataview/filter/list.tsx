@@ -18,7 +18,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly } = data;
 	const view = getView();
-	const subId = S.Record.getSubId(rootId, blockId);
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const n = useRef(-1);
@@ -262,6 +261,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setIndex: (i: number) => n.current = i,
 		onClick,
 		getListRef: () => listRef.current,
+		onSortEnd,
 	}), []);
 	
 	return (

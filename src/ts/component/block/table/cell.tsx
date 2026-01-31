@@ -18,13 +18,13 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 	} = props;
 
 	const { isHeader } = row.content;
-	const cn = [ 'cell', 'column' + column.id ];
+	const cn = [ 'cell', `column${column.id}` ];
 	const cellId = [ row.id, column.id ].join('-');
 	const inner = <div className="inner" />;
 	const cnm = [ 'menu' ];
 
 	if (block) {
-		cn.push('align-v' + block.vAlign);
+		cn.push(`align-v${block.vAlign}`);
 
 		if (block.bgColor) {
 			cnm.push(`bgColor bgColor-${block.bgColor}`);
@@ -126,8 +126,8 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 			onMouseDown={onMouseDown}
 			{...U.Common.dataProps({ 'column-id': column.id })}
 		>
-			{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}
-			{!columnIdx ? <Handle key={'handle-row-' + cellId} type={I.BlockType.TableRow} {...row} /> : ''}
+			{!rowIdx ? <Handle key={`handle-column-${cellId}`} type={I.BlockType.TableColumn} {...column} /> : ''}
+			{!columnIdx ? <Handle key={`handle-row-${cellId}`} type={I.BlockType.TableRow} {...row} /> : ''}
 
 			{block ? (
 				<Block 

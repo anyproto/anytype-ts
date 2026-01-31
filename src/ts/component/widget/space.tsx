@@ -1,7 +1,8 @@
-import React, { useRef, forwardRef } from 'react';
+import React, { useRef, forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, C, translate, analytics, Action } from 'Lib';
+import { I, U, S, translate, analytics, Action, keyboard } from 'Lib';
+import MemberCnt from 'Component/util/memberCnt';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -10,147 +11,151 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		return null;
 	};
 
-	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const requestCnt = participants.filter(it => it.isJoining).length;
-	const isSpaceOwner = U.Space.isMyOwner();
-	const canWrite = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
-	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
-	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const [ dummy, setDummy ] = useState(0);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const route = analytics.route.widget;
+	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
+	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
+	const rootId = keyboard.getRootId();
 
-	if (isSpaceOwner && requestCnt) {
-		cn.push('withCnt');
-	};
+	const icon = (
+		<IconObject
+			size={iconSize}
+			iconSize={iconSize}
+			object={spaceview}
+			onClick={() => U.Space.openDashboard()}
+		/>
+	);
+
+	const buttons = [
+		canWrite ? { 
+			id: 'create', 
+			name: translate('commonCreate'), 
+			withArrow: true,
+			arrowTooltipParam: { 
+				text: translate('popupShortcutMainBasics19'), 
+				caption: keyboard.getCaption('selectType'), 
+				typeY: I.MenuDirection.Bottom as any,
+			},
+		} : null,
+		{ id: 'search', name: translate('commonSearch') },
+		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
+	].filter(it => it);
 
 	const onButtonClick = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'member': {
-				Action.openSpaceShare(analytics.route.navigation);
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
-				break;
-			};
-
-			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+			case 'search': {
+				keyboard.onSearchPopup(analytics.route.widget);
 				break;
 			};
 
 			case 'create': {
-				U.Menu.typeSuggest({ 
-					element: '#widget-space #item-create',
-					offsetX: $(nodeRef.current).width() + 4,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					vertical: I.MenuDirection.Center,
-				}, {}, { 
-					deleteEmpty: true,
-					selectTemplate: true,
-					withImport: true,
-				}, analytics.route.navigation, object => U.Object.openConfig(object));
+				keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
 			case 'chat': {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-				break;
-			};
-
-			case 'mute': {
-				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
+				U.Object.openRoute({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
 		};
 	};
 
-	let content = null;
-	if (spaceview.isChat) {
-		const buttons = [
-			{ id: 'chat', name: translate('commonChat') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
-			{ id: 'settings', name: translate('commonSettings') }
-		];
+	const onArrow = (e: any) => {
+		e.stopPropagation();
 
+		U.Menu.typeSuggest({ 
+			element: '#button-create-arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.navigation, object => U.Object.openConfig(null, object));
+	};
+
+	const onMore = () => {
+		U.Menu.spaceContext(U.Space.getSpaceview(), {
+			element: '#widget-space .nameWrap .arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+		}, { route: analytics.route.widget });
+	};
+
+	let content = null;
+	if (spaceview.isChat || spaceview.isOneToOne) {
 		content = (
-			<>
-				<div className="spaceInfo">
-					<IconObject
-						id="spaceIcon"
-						size={80}
-						iconSize={80}
-						object={{ ...spaceview, spaceId: S.Common.space }}
-					/>
-					<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
-					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+			<div className="spaceInfo">
+				{icon}
+				<div className="nameWrap" onClick={onMore}>
+					<ObjectName object={spaceview} />
+					<Icon className="arrow" />
 				</div>
-				<div className="buttons">
-					{buttons.map((item, idx) => (
-						<div className="item" onClick={e => onButtonClick(e, item)} key={idx}>
-							<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
-							<Label text={item.name} />
-						</div>
-					))}
-				</div>
-			</>
+
+				<MemberCnt route={analytics.route.widget} />
+			</div>
 		);
 	} else {
-		const buttons = [
-			canWrite ? { id: 'create', name: translate('commonNewObject') } : null,
-			!spaceview.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-			{ id: 'settings', name: translate('commonSettings') },
-		].filter(it => it);
-
 		content = (
-			<>
-				<div className="head">
-					<div className="sides">
-						<div className="side left">
-							<div className="clickable">
-								<IconObject object={spaceview} />
-								<ObjectName object={spaceview} />
-							</div>
-						</div>
+			<div className="head">
+				{icon}
+				<div className="info">
+					<div className="nameWrap" onClick={onMore}>
+						<ObjectName object={spaceview} />
+						<Icon className="arrow" />
 					</div>
+
+					<MemberCnt route={analytics.route.widget} />
 				</div>
-
-				<div className="buttons">
-					{buttons.map((item, i) => {
-						let cnt = null;
-
-						if (item.id == 'member') {
-							cnt = <div className="cnt">{requestCnt}</div>;
-						};
-
-						return (
-							<div 
-								key={i} 
-								id={`item-${item.id}`} 
-								className="item" 
-								onClick={e => onButtonClick(e, item)}
-							>
-								<div className="side left">
-									<Icon className={item.id} />
-									<div className="name">
-										{item.name}
-									</div>
-								</div>
-								<div className="side right">
-									{cnt}
-								</div>
-							</div>
-						);
-					})}
-				</div>
-			</>
+			</div>
 		);
 	};
+
+	useEffect(() => {
+		const win = $(window);
+
+		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+
+		return () => {
+			win.off('objectView');
+		};
+	}, []);
 
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
 			{content}
+			<div className="buttons">
+				{buttons.map((item, idx) => {
+					const cn = [ 'item' ];
+
+					if ((item.id == 'chat') && (rootId == S.Block.workspace)) {
+						cn.push('active');
+					};
+
+					return (
+						<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
+							<Icon className={item.id} />
+							<Label text={item.name} />
+							{item.withArrow ? (
+								<Icon 
+									id={`button-${item.id}-arrow`}
+									className="arrow withBackground"
+									onClick={onArrow}
+									tooltipParam={item.arrowTooltipParam}
+								/>
+							) : ''}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 

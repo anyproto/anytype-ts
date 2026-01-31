@@ -1,12 +1,14 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
-import { I, S, keyboard, Renderer } from 'Lib';
+import { I, S, U, keyboard, Renderer, Action } from 'Lib';
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive } = props;
 	const { data } = param;
-	const { title, message, buttons } = data;
+	const { title, message } = data;
+	const buttons = data.buttons || [];
+	const n = useRef(-1);
 	
 	const rebind = () => {
 		unbind();
@@ -28,7 +30,7 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 			};
 
 			case 'upgradeMembership': {
-				S.Popup.open('membership', { data: { tier: I.TierType.Builder } });
+				Action.membershipUpgrade();
 				break;
 			};
 		};
@@ -40,16 +42,19 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 		};
 	};
 
-	const getItems = () => {
-		return buttons || [];
-	};
-
-	const items = getItems();
-
 	useEffect(() => {
 		rebind();
 		return () => unbind();
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => buttons,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
 
 	return (
 		<>
@@ -58,9 +63,9 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 				<Label text={message} />
 			</div>
 
-			{items.length ? (
+			{buttons.length ? (
 				<div className="items">
-					{items.map((item: any, i: number) => (
+					{buttons.map((item: any, i: number) => (
 						<MenuItemVertical
 							key={i}
 							{...item}

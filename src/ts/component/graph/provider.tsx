@@ -1,10 +1,11 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import * as ReactDOM from 'react-dom';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, S, U, J, translate, analytics, keyboard, Action } from 'Lib';
+import { I, S, U, J, translate, analytics, keyboard, Action, Storage } from 'Lib';
+import { sub } from 'date-fns';
 
 interface Props {
 	id?: string;
@@ -19,6 +20,7 @@ interface GraphRefProps {
 	init: () => void;
 	resize: () => void;
 	addNewNode: (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => void;
+	forceUpdate: () => void;
 };
 
 const Graph = observer(forwardRef<GraphRefProps, Props>(({
@@ -46,6 +48,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const zoom = useRef(null);
 	const isDraggingToSelect = useRef(false);
 	const nodesSelectedByDragToSelect = useRef([]);
+	const [ dummy, setDummy ] = useState(0);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		try {
@@ -62,12 +65,12 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		win.on(`updateGraphSettings.${id}`, () => updateSettings());
 		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
 		win.on(`updateGraphData.${id}`, () => load());
-		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`archiveObject.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'removeGraphNode', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'archiveObject', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 		$(canvas.current).off('touchstart touchmove');
@@ -87,6 +90,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const height = node.height();
 		const settings = S.Common.getGraph(storageKey);
 		const cnv = $(canvas.current);
+		const graphData = Storage.getGraphData();
 
 		images.current = {};
 		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
@@ -151,7 +155,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			rootId,
 			nodes: nodes.current,
 			edges: edges.current,
-			colors: J.Theme[theme].graph || {},
+			zoom: graphData.zoom,
+			colors: {
+				...J.Theme[theme].graph || {},
+				icon: J.Theme.icon,
+			},
 		}, [ transfer ]);
 
 		d3.select(canvas.current)
@@ -162,7 +170,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			on('end', (e: any, d: any) => onDragEnd(e))
 		)
 		.call(zoom.current)
-		.call(zoom.current.transform, d3.zoomIdentity.translate(0, 0).scale(1))
+		.call(zoom.current.transform, d3.zoomIdentity.translate(graphData.zoom.x, graphData.zoom.y).scale(graphData.zoom.k))
 		.on('click', (e: any) => {
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
@@ -203,8 +211,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
-		d.shortName = U.Common.shorten(d.name, 24);
-		d.typeKey = type?.uniqueKey || d.type;
+		d.shortName = U.String.shorten(d.name, 24);
+
+		if (type) {
+			d.typeKey = type.uniqueKey || d.type;
+
+			if (d.iconOption === undefined) {
+				d.iconOption = type.iconOption;
+			};
+		};
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {
@@ -220,15 +235,21 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					return;
 				};
 
+				const ratio = img.naturalHeight / img.naturalWidth || 1; 
+
 				try {
-					createImageBitmap(img, { resizeWidth: I.ImageSize.Small, resizeQuality: 'high' }).then((res: any) => {
+					createImageBitmap(img, { 
+						resizeWidth: I.ImageSize.Small, 
+						resizeHeight: I.ImageSize.Small * ratio, 
+						resizeQuality: 'high',
+					}).then((res: any) => {
 						if (images.current[d.src]) {
 							return;
 						};
 
 						images.current[d.src] = true;
 						send('image', { src: d.src, bitmap: res });
-					});
+					}).catch(() => { /**/ });
 				} catch (e) { /**/ };
 			};
 			img.crossOrigin = 'anonymous';
@@ -240,7 +261,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const edgeMapper = (d: any) => {
 		d.type = Number(d.type) || 0;
-		d.typeName = translate('edgeType' + d.type);
+		d.typeName = translate(`edgeType${d.type}`);
 		return d;
 	};
 
@@ -289,7 +310,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onZoom = ({ transform, sourceEvent }) => {
-		if (isDraggingToSelect.current && sourceEvent) {
+		if (!sourceEvent) {
+			return;
+		};
+
+		if (isDraggingToSelect.current) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
 			const node = $(nodeRef.current);
 			const { left, top } = node.offset();
@@ -297,6 +322,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			send('onDragToSelectMove', { x: p[0] - left, y: p[1] - top });
 		} else {
 			send('onZoom', { transform });
+			Storage.setGraphData({ zoom: transform });
 		};
 	};
 
@@ -314,39 +340,73 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			return;
 		};
 
-		const win = $(window);
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const { left, top } = node.offset();
-		const render = previewId.current != subject.current.id;
-
-		previewId.current = subject.current.id;
-
-		let el = $('#graphPreview');
-
-		const position = () => {
-			const obj = el.find('.previewGraph');
-			const x = data.x + left - obj.outerWidth() / 2;
-			const y = data.y + top + 20 - win.scrollTop();
-
-			el.css({ left: x, top: y });
+		const container = $('#graphPreview');
+		const el = container.get(0) as any;
+		if (!el) {
+			return;
 		};
 
-		if (!el.length || render) {
-			el = $('<div id="graphPreview" />');
+		// Reuse existing React root if present, otherwise create & store it
+		let root = el._reactRoot;
+		if (!root) {
+			root = createRoot(el);
+			el._reactRoot = root;
+		};
 
-			body.find('#graphPreview').remove();
-			body.append(el);
+		const item = $('#graphPreviewItem');
+		const isSameSubject = previewId.current == subject.current.id;
 
-			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" noLoad={true} />, el.get(0), position);
-			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
+		if (!item.length || !isSameSubject) {
+			previewId.current = subject.current.id;
+
+			root.render(
+				<PreviewDefault
+					key={subject.current.id}
+					id="graphPreviewItem"
+					object={subject.current}
+					noLoad={true}
+				/>
+			);
+
+			analytics.event('SelectGraphNode', {
+				objectType: subject.current.type,
+				layout: subject.current.layout,
+			});
 		} else {
-			position();
+			item.show();
 		};
+
+		previewPosition(data);
+	};
+
+	const previewPosition = (data: any) => {
+		const item = $('#graphPreviewItem');
+		if (!item.length) {
+			return;
+		}
+
+		const node = $(nodeRef.current);
+		const offset = node.offset();
+		if (!offset) {
+			return;
+		}
+
+		const { left, top } = offset;
+		const st = $(window).scrollTop();
+
+		item.css({
+			left: data.x + left - item.outerWidth() / 2,
+			top: data.y + top + 20 - st,
+		});
 	};
 
 	const onPreviewHide = () => {
-		$('#graphPreview').remove();
+		const item = $('#graphPreviewItem');
+		if (item.length) {
+			item.hide();
+		};
+
+		previewId.current = null;
 	};
 
 	const onMessage = (e) => {
@@ -444,7 +504,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 				nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.filter(id => currentSelected.includes(id));
 
-
 				currentSelected.forEach((id: string) => {
 					if (ids.current.includes(id)){
 						return;
@@ -485,6 +544,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				getObject: id => getNode(id),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
+				allowedCollection: true,
+				allowedExport: true,
+				allowedType: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
 					const target = getNode(targetId);
 					if (target) {
@@ -524,7 +587,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					switch (item.id) {
 						case 'newObject': {
 							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.graph, (message: any) => {
-								U.Object.openConfig(message.details, { onClose: () => addNewNode(message.targetId, '', data) });
+								U.Object.openConfig(null, message.details, { onClose: () => addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
@@ -562,7 +625,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onClickObject = (id: string) => {
 		setSelected([]);
 		onPreviewHide();
-		U.Object.openConfig(getNode(id));
+		U.Object.openConfig(null, getNode(id));
 	};
 
 	const addNewNode = (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => {
@@ -576,9 +639,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			nodes.current.push(object);
 			send('onAddNode', { target: object, sourceId });
 
-			if (callBack) {
-				callBack(object);
-			};
+			callBack?.(object);
 		});
 	};
 
@@ -626,6 +687,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		init,
 		resize,
 		addNewNode,
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (
@@ -634,6 +696,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			className="graphWrapper"
 		>
 			<div id={elementId} />
+			<div id="graphPreview" />
 		</div>
 	);
 }));

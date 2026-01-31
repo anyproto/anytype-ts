@@ -2,14 +2,15 @@ import Account from './account';
 import Block from './block';
 import BlockStructure from './blockStructure';
 import Notification from './notification';
-import Membership from './membership';
-import MembershipTier from './membershipTier';
 import ChatMessage from './chatMessage';
 
 import View from './view';
 import ViewRelation from './viewRelation';
 import Filter from './filter';
 import Sort from './sort';
+
+import MembershipData from './membershipData';
+import MembershipProduct from './membershipProduct';
 
 export { 
 	Account,
@@ -18,8 +19,6 @@ export {
 	BlockStructure,
 
 	Notification,
-	Membership,
-	MembershipTier,
 
 	ChatMessage,
 
@@ -27,4 +26,7 @@ export {
 	ViewRelation,
 	Filter,
 	Sort,
+
+	MembershipData,
+	MembershipProduct,
 };

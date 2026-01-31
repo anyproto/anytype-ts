@@ -1,266 +1,79 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
 import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
 
-interface State {
-	isDeleted: boolean;
-	isLoading: boolean;
-};
+const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-const PageMainRelation = observer(class PageMainRelation extends React.Component<I.PageComponent, State> {
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const { isPopup } = props;
+	const rootId = keyboard.getRootId(isPopup);
+	const object = S.Detail.get(rootId, rootId, J.Relation.relation);
+	const { isReadonlyRelation, objectTypes } = object;
+	const relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+	const canWrite = U.Space.canMyParticipantWrite();
+	const subIdObject = S.Record.getSubId(rootId, 'object');
+	const totalObject = S.Record.getMeta(subIdObject, '').total;
+	const headerRef = useRef(null);
+	const headRef = useRef(null);
+	const listRef = useRef(null);
+	const idRef = useRef('');
 
-	id = '';
-	refHeader: any = null;
-	refHead: any = null;
-	refListObject: any = null;
+	useEffect(() => {
+		open();
 
-	state = {
-		isDeleted: false,
-		isLoading: false
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onMore = this.onMore.bind(this);
-		this.onOptionClick = this.onOptionClick.bind(this);
-		this.onOptionAdd = this.onOptionAdd.bind(this);
-		this.onOptionRemove = this.onOptionRemove.bind(this);
-		this.onOptionMore = this.onOptionMore.bind(this);
-	};
-
-	render () {
-		const { isLoading, isDeleted } = this.state;
-		const { isPopup } = this.props;
-
-		if (isDeleted) {
-			return <Deleted {...this.props} />;
-		} else
-		if (isLoading) {
-			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
+		return () => {
+			close();
 		};
+	}, []);
 
-		const rootId = this.getRootId();
-		const object = this.getObject();
-		const { relationFormat, isReadonlyRelation } = object;
-		const canWrite = U.Space.canMyParticipantWrite();
-		const subIdObject = S.Record.getSubId(rootId, 'object');
-		const totalObject = S.Record.getMeta(subIdObject, '').total;
-		const { output, more, label, canAdd } = this.getOptionsData();
-
-		const columnsObject: any[] = [
-			{ relationKey: 'type', name: translate('commonObjectType'), isCell: true },
-			{ 
-				relationKey: 'createdDate', name: translate('commonCreated'),
-				mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
-			},
-			{ relationKey: object.relationKey, name: translate('commonValue'), isCell: true },
-		];
-
-		let options = null;
-		let optionsLabel = label;
-		let withMore = false;
-
-		switch (relationFormat) {
-			case I.RelationType.Object: {
-				options = output.map((type) => (
-					<div key={type.id} className="item object" onClick={e => this.onOptionClick(e, type)}>
-						<IconObject object={type} />
-						<ObjectName object={type} />
-
-						{!isReadonlyRelation && canWrite ? <Icon onClick={e => this.onOptionRemove(e, type)} className="remove" /> : ''}
-					</div>
-				));
-				break;
-			};
-
-			case I.RelationType.Date: {
-				optionsLabel = translate('commonIncludeTime');
-				options = (
-					<Switch
-						value={object.includeTime}
-						onChange={(e: any, v: boolean) => this.onSwitch(e, 'relationFormatIncludeTime', v)}
-					/>
-				);
-				break;
-			};
-
-			case I.RelationType.Select:
-			case I.RelationType.MultiSelect: {
-				options = output.map((option) => (
-					<div key={option.id} id={`item-${option.id}`} className="item" onClick={e => this.onOptionClick(e, option)}>
-						<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
-					</div>
-				));
-				break;
-			};
+	useEffect(() => {
+		if (idRef.current != rootId) {
+			close();
+			open();
 		};
-
-		if (options && more > 0) {
-			withMore = true;
-			options.push(<div key="optionMore" className="more" onClick={this.onOptionMore}>{more} {translate('commonMore')}...</div>);
-		};
-
-		if (options && canAdd && !isReadonlyRelation) {
-			const add = <Icon key="optionAdd" className="add" onClick={this.onOptionAdd} />;
-
-			if (withMore) {
-				options.unshift(add);
-			} else {
-				options.push(add);
-			};
-		};
-
-		if (!output.length && (!canAdd || isReadonlyRelation)) {
-			options = null;
-		};
-
-		return (
-			<>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
-				/>
-
-				<div className="blocks wrapper">
-					<HeadSimple 
-						{...this.props} 
-						ref={ref => this.refHead = ref} 
-						placeholder={translate('defaultNameRelation')} 
-						rootId={rootId}
-					/>
-
-					<div className="relationData">
-						<dl>
-							<dt>{translate('pageMainRelationPropertyType')}</dt>
-							<dd>{translate(`relationName${relationFormat}`)}</dd>
-						</dl>
-
-						{options ? (
-							<dl className={[ 'options', Relation.selectClassName(relationFormat) ].join(' ')}>
-								<dt>{optionsLabel}</dt>
-								<dd>{options}</dd>
-							</dl>
-						) : ''}
-					</div>
-
-					{!object._empty_ ? (
-						<div className="section set">
-							<div className="title">
-								<div className="side left">
-									{U.Common.plural(totalObject, translate('pluralObject'))}
-									<span className="cnt">{totalObject}</span>
-								</div>
-
-								<div className="side right">
-									<Icon
-										id="button-create"
-										className="more withBackground"
-										onClick={this.onMore}
-									/>
-								</div>
-							</div>
-
-							<div className="content">
-								<ListObject
-									ref={ref => this.refListObject = ref}
-									{...this.props}
-									sources={[ rootId ]}
-									spaceId={object.spaceId}
-									subId={subIdObject}
-									rootId={rootId}
-									columns={columnsObject}
-									route={analytics.route.screenRelation}
-								/>
-							</div>
-						</div>
-					) : ''}
-				</div>
-
-				<Footer component="mainObject" {...this.props} />
-			</>
-		);
-	};
-
-	componentDidMount () {
-		this.open();
-	};
-
-	componentDidUpdate () {
-		this.open();
-	};
-
-	componentWillUnmount () {
-		this.close();
-	};
-
-	open () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
-		if (this.id == rootId) {
-			return;
-		};
-
-		this.close();
-		this.id = rootId;
-		this.setState({ isLoading: true });
+	}, [ rootId ]);
+	
+	const open = () => {
+		idRef.current = rootId;
+		setIsLoading(true);
+		setIsDeleted(false);
 		
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
+			setIsLoading(false);
+
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
 			const object = S.Detail.get(rootId, rootId);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+				setIsDeleted(true);
 				return;
 			};
 
-			this.refHeader?.forceUpdate();
-			this.refHead?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
-			this.setState({ isLoading: false });
+			headerRef.current?.forceUpdate();
+			headRef.current?.forceUpdate();
+			listRef.current?.getData(1);
+			S.Common.setRightSidebarState(isPopup, { rootId });
+			setDummy(dummy + 1);
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
 		});
 	};
 
-	close () {
-		if (!this.id) {
-			return;
-		};
-
-		const { isPopup } = this.props;
-		const close = !isPopup || (this.getRootId() == this.id);
-
-		if (close) {
-			Action.pageClose(this.id, true);
-		};
+	const close = () => {
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
-	getRootId () {
-		return keyboard.getRootId(this.props.isPopup);
-	};
-
-	getObject () {
-		const rootId = this.getRootId();
-		return S.Detail.get(rootId, rootId, J.Relation.relation);
-	};
-
-	getOptionsData (): { output: any[], more: number, label: string, canAdd: boolean } {
-		const object = this.getObject();
-		const { relationFormat } = object;
-		const canWrite = U.Space.canMyParticipantWrite();
-
+	const getOptionsData = (): { output: any[], more: number, label: string, canAdd: boolean } => {
 		let output = [];
 		let more = 0;
 		let label = '';
-		let canAdd = false;
 
 		const checkMore = (arr: any[]) => {
 			output = arr.slice(0, J.Constant.limit.relation.option);
@@ -274,7 +87,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			case I.RelationType.Object: {
 				const types = (object?.objectTypes.map(it => S.Record.getTypeById(it)) || []).filter(it => it);
 
-				canAdd = canWrite;
 				label = U.Common.plural(types.length, translate('pluralObjectType'));
 
 				checkMore(types);
@@ -291,28 +103,24 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						return 0;
 					});
 
-				canAdd = canWrite;
 				label = U.Common.plural(relationsOptions.length, translate('pluralOption'));
-
 				checkMore(relationsOptions);
 				break;
 			};
 		};
 
-		return { output, more, label, canAdd };
+		return { output, more, label, canAdd: canWrite };
 	};
 
-	onSetAdd () {
-		const object = this.getObject();
-
-		C.ObjectCreateSet([ object.id ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
+	const onSetAdd = () => {
+		C.ObjectCreateSet([ object.id ], { name: `${object.name} set` }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				U.Object.openConfig(message.details);
+				U.Object.openConfig(null, message.details);
 			};
 		});
 	};
 
-	onMore () {
+	const onMore = () => {
 		const options = [
 			{ id: 'set', name: translate('pageMainTypeNewSetOfObjects') }
 		];
@@ -326,7 +134,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'set':
-							this.onSetAdd();
+							onSetAdd();
 							break;
 					};
 				},
@@ -334,35 +142,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		});
 	};
 
-	onSwitch (e, key, value) {
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		const object = this.getObject();
-
+	const onSwitch = (e, key, value) => {
 		C.ObjectListSetDetails([ object.id ], [ { key, value: Boolean(value) } ]);
 	};
 
-	onOptionClick (e, option) {
-		const object = this.getObject();
-		const { relationFormat } = object;
-		const canWrite = U.Space.canMyParticipantWrite();
-
+	const onOptionClick = (e, option) => {
 		switch (relationFormat) {
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				if (!canWrite) {
-					break;
-				};
-
-				S.Menu.open('dataviewOptionEdit', {
-					element: `#page #item-${option.id}`,
-					offsetY: 4,
-					data: {
-						option,
-					}
-				});
+				onOptionMore();
 				break;
 			};
 
@@ -373,9 +161,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 	};
 
-	onOptionAdd () {
-		const object = this.getObject();
-		const { relationFormat, objectTypes } = object;
+	const onOptionAdd = () => {
 		const param = {
 			element: `#page .relationData .options .add`,
 			className: 'single',
@@ -391,7 +177,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						data: {
 							canAdd: true,
 							canEdit: true,
-							rootId: this.getRootId(),
+							rootId,
 							relation: observable.box(object),
 							value: objectTypes,
 							addParam: {
@@ -401,10 +187,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 								{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 							],
-							onChange: (value: any, callBack?: () => void) => {
-								const details = [ { key: 'relationFormatObjectTypes', value: value } ];
-
-								C.ObjectListSetDetails([ object.id ], details);
+							onChange: (value: any) => {
+								U.Object.setObjectTypes(object.id, value);
 								S.Menu.closeAll();
 							},
 						}
@@ -431,30 +215,23 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 	};
 
-	onOptionRemove (e, item) {
-		const object = this.getObject();
-		const { relationFormat, objectTypes } = object;
-
+	const onOptionRemove = (e, item) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		switch (relationFormat) {
 			case I.RelationType.Object: {
-				const details = [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(objectTypes.filter(it => it != item.id)) } ];
-
-				C.ObjectListSetDetails([ object.id ], details);
+				U.Object.setObjectTypes(object.id, objectTypes.filter(it => it != item.id));
 				break;
 			};
 		};
 	};
 
-	onOptionMore () {
-		const object = this.getObject();
-		const { output, canAdd } = this.getOptionsData();
+	const onOptionMore = () => {
+		const { output, canAdd } = getOptionsData();
 		const skipIds = output.map(it => it.id);
-		const { relationFormat, isReadonlyRelation } = object;
 		const param = {
-			element: `#page .relationData .options .more`,
+			element: `#page .relationData .options dd`,
 			className: 'single',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 8,
@@ -486,9 +263,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								onSelect: (event: any, element: any) => {
 									switch (element.id) {
 										case 'unlink': {
-											const details = [ { key: 'relationFormatObjectTypes', value: typeIds.filter(it => it != type.id) } ];
-
-											C.ObjectListSetDetails([ object.id ], details);
+											U.Object.setObjectTypes(object.id, typeIds.filter(it => it != type.id));
 											S.Menu.close('typeSuggest');
 											break;
 										};
@@ -510,9 +285,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						],
 						onClick: (option: any) => {
 							if (!typeIds.includes(option.id)) {
-								const details = [ { key: 'relationFormatObjectTypes', value: [ option.id ].concat(typeIds) } ];
-
-								C.ObjectListSetDetails([ object.id ], details);
+								U.Object.setObjectTypes(object.id, [ option.id ].concat(typeIds));
 							} else {
 								U.Object.openAuto(option);
 							};
@@ -540,6 +313,148 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 	};
 
-});
+	if (isDeleted) {
+		return <Deleted {...props} />;
+	} else
+	if (isLoading) {
+		return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
+	};
+
+	const columnsObject: any[] = [
+		{ relationKey: 'type', name: translate('commonObjectType'), isCell: true },
+		{ 
+			relationKey: 'createdDate', name: translate('commonCreated'),
+			mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
+		},
+		{ relationKey: object.relationKey, name: translate('commonValue'), isCell: true },
+	];
+
+	const data = getOptionsData();
+	const { output, more, label } = data;
+
+	let options = null;
+	let optionsLabel = label;
+	let withMore = false;
+	let canAdd = data.canAdd;
+
+	switch (relationFormat) {
+		case I.RelationType.Object: {
+			options = output.map((type) => (
+				<div key={type.id} className="item object" onClick={e => onOptionClick(e, type)}>
+					<IconObject object={type} />
+					<ObjectName object={type} />
+
+					{!isReadonlyRelation && canWrite ? <Icon onClick={e => onOptionRemove(e, type)} className="remove" /> : ''}
+				</div>
+			));
+			break;
+		};
+
+		case I.RelationType.Date: {
+			optionsLabel = translate('commonIncludeTime');
+			options = [
+				(
+					<Switch
+						value={object.includeTime}
+						onChange={(e: any, v: boolean) => onSwitch(e, 'relationFormatIncludeTime', v)}
+					/>
+				)
+			];
+			canAdd = false;
+			break;
+		};
+
+		case I.RelationType.Select:
+		case I.RelationType.MultiSelect: {
+			options = output.map((option) => (
+				<div key={option.id} id={`item-${option.id}`} className="item" onClick={e => onOptionClick(e, option)}>
+					<Tag text={option.name} color={option.color} className={Relation.selectClassName(relationFormat)} />
+				</div>
+			));
+			break;
+		};
+	};
+
+	if (options && (more > 0)) {
+		withMore = true;
+		options.push(<div key="optionMore" className="more" onClick={onOptionMore}>{more} {translate('commonMore')}...</div>);
+	};
+
+	if (options && canAdd && !isReadonlyRelation) {
+		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
+		withMore ? options.unshift(add) : options.push(add);
+	};
+
+	if (!output.length && isReadonlyRelation) {
+		options = null;
+	};
+
+	return (
+		<>
+			<Header 
+				{...props} 
+				component="mainObject" 
+				ref={headerRef} 
+				rootId={rootId} 
+			/>
+
+			<div className="blocks wrapper">
+				<HeadSimple 
+					{...props} 
+					ref={headRef} 
+					placeholder={translate('defaultNameRelation')} 
+					rootId={rootId}
+				/>
+
+				<div className="relationData">
+					<dl>
+						<dt>{translate('pageMainRelationPropertyType')}</dt>
+						<dd>{translate(`relationName${relationFormat}`)}</dd>
+					</dl>
+
+					{options ? (
+						<dl className={[ 'options', Relation.selectClassName(relationFormat) ].join(' ')}>
+							<dt>{optionsLabel}</dt>
+							<dd>{options}</dd>
+						</dl>
+					) : ''}
+				</div>
+
+				<div className="section set">
+					<div className="title">
+						<div className="side left">
+							{U.Common.plural(totalObject, translate('pluralObject'))}
+							<span className="cnt">{totalObject}</span>
+						</div>
+
+						<div className="side right">
+							<Icon
+								id="button-create"
+								className="more withBackground"
+								onClick={onMore}
+							/>
+						</div>
+					</div>
+
+					<div className="content">
+						<ListObject
+							ref={listRef}
+							{...props}
+							sources={[ rootId ]}
+							spaceId={object.spaceId}
+							subId={subIdObject}
+							rootId={rootId}
+							columns={columnsObject}
+							route={analytics.route.screenRelation}
+						/>
+					</div>
+				</div>
+			</div>
+
+			<Footer component="mainObject" {...props} />
+		</>
+	);
+
+}));
 
 export default PageMainRelation;

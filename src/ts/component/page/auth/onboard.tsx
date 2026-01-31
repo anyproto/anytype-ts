@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -10,10 +10,9 @@ enum Stage {
 	UseCase		= 3,
 };
 
-const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
-	const { redirect } = S.Common;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const nextRef = useRef(null);
@@ -30,6 +29,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
 	const cnb = [ 'c48' ];
+	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
 		$(window).off('keydown.onboarding');
@@ -58,25 +58,12 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = { replace: true };
-
-		S.Common.showRelativeDatesSet(true);
-
-		Storage.set('isNewUser', true);
-		Storage.set('chatsOnboarding', true);
-		Storage.setOnboarding('objectDescriptionButton');
-		Storage.setOnboarding('typeResetLayout');
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
-
-		U.Data.onInfo(account.info);
-		U.Data.onAuthOnce(true);
-
-		S.Common.spaceSet('');
-
-		U.Subscription.createGlobal(() => {
-			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
-			S.Common.redirectSet('');
-		});
+		U.Router.switchSpace(S.Common.space, '', false, {
+			onFadeIn: () => {
+				Onboarding.startCommon(props.isPopup);
+				analytics.event('OpenAccount');
+			},
+		}, false);
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
@@ -87,13 +74,11 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 
 		switch (stage) {
 			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(stage + (needEmail ? 1 : 2)));
 				break;
 			};
 
 			case Stage.Email: {
-				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 				if (!needEmail) {
 					Animation.from(() => setStage(stage + 1));
 					break;
@@ -104,7 +89,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				if (email) {
 					nextRef.current?.setLoading(true);
 					
-					C.MembershipGetVerificationEmail(email, false, false, true, (message: any) => {
+					C.MembershipV2SubscribeToUpdates(email, (message: any) => {
 						nextRef.current?.setLoading(false);
 
 						if (message.error.code) {
@@ -156,7 +141,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		};
 
 		if (stage == Stage.Phrase) {
-			Animation.from(() => U.Router.go('/', { replace: true }));
+			Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 		} else {
 			setStage(stage - 1);
 		};
@@ -178,7 +163,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
-		const isValid = U.Common.matchEmail(v);
+		const isValid = U.String.matchEmail(v);
 
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};
@@ -199,7 +184,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
 
 		return items.map(it => {
-			const type = U.Common.toUpperCamelCase(it);
+			const type = U.String.toUpperCamelCase(it);
 
 			return { id: it, name: translate(`authOnboardOptions${type}`), type, stage };
 		});
@@ -293,9 +278,14 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			);
 
 			buttons = (
-				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
-				</div>
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+					</div>
+				</>
 			);
 			break;
 		};
@@ -364,7 +354,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		init();
 
 		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
+			Renderer.send('keytarGet', account.id).then((value: string) => {
+				if (value) {
+					phraseRef.current?.setValue(value);
+				};
+			}).catch((err: any) => {
+				console.error('[Onboard] Error retrieving phrase from keychain:', err);
+			});
 		};
 
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });

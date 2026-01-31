@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Cover, Icon, ObjectName } from 'Component';
+import { IconObject, Cover, Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
@@ -38,6 +38,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const nodeRef = useRef(null);
 	const idRef = useRef('');
 	const [ dummy, setDummy ] = useState(0);
+	const contextId = [ rootId, TRACE_ID ].join('-');
 
 	let n = 0;
 	let c = 0;
@@ -122,7 +123,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Numbered: {
 						inner = (
 							<>
-								<div id={'marker-' + item.id} className="number" />
+								<div id={`marker-${item.id}`} className="number" />
 								{line}
 							</>
 						);
@@ -157,7 +158,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 				switch (content.type) {
 					default:
 					case I.FileType.File: {
-						bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
+						bullet = <div className={[ 'bullet', 'bgColor', `bgColor-${Colors[c]}` ].join(' ')} />;
 						inner = (
 							<>
 								<Icon className="color" inner={bullet} />
@@ -192,7 +193,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			};
 
 			case I.BlockType.Link: {
-				bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
+				bullet = <div className={[ 'bullet', 'bgColor', `bgColor-${Colors[c]}` ].join(' ')} />;
 				inner = (
 					<>
 						<Icon className="color" inner={bullet} />
@@ -283,31 +284,19 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
-
+		onMouseEnter?.(e);
 		$(nodeRef.current).addClass('hover');
 	};
 
 	const onMouseLeaveHandler = (e: any) => {
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
-
+		onMouseLeave?.(e);
 		$(nodeRef.current).removeClass('hover');
 	};
 
 	const load = () => {
-		const contextId = getRootId();
-
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		idRef.current = rootId;
 
-		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
+		C.ObjectShow(rootId, TRACE_ID, S.Common.space, () => {
 			if (setObject) {
 				setObject(S.Detail.get(contextId, rootId, []));
 			};
@@ -327,16 +316,11 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		return n;
 	};
 
-	const getRootId = () => {
-		return [ rootId, TRACE_ID ].join('-');
-	};
-
 	const update = () => {
 		idRef.current = '';
 		load();
 	};
 
-	const contextId = getRootId();
 	const check = U.Data.checkDetails(contextId, rootId);
 	const object = S.Detail.get(contextId, rootId);
 	const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
@@ -387,11 +371,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	);
 
 	if (isTask || isBookmark) {
-		heading = (
-			<div className="flex">
-				{heading}
-			</div>
-		);
+		heading = <div className="flex">{heading}</div>;
 	};
 
 	if (!object._empty_) {
@@ -442,23 +422,23 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		load();
 		rebind();
 
-		const contextId = getRootId();
 		const root = S.Block.wrapTree(contextId, rootId);
 
 		if (root) {
 			S.Block.updateNumbersTree([ root ]);
 		};
 
-		if (position) {
-			position();
-		};
+		position?.();
 
 		return () => {
 			unbind();
-
-			Action.pageClose(getRootId(), false);
+			Action.pageClose(false, contextId, false);
 		};
-	});
+	}, []);
+
+	useEffect(() => {
+		load();
+	}, [ rootId ]);
 
 	return (
 		<div

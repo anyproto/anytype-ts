@@ -118,9 +118,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 						};
 						
 						case 'position': {
-							if (onEdit) {
-								onEdit(e);
-							};
+							onEdit?.(e);
 							break;
 						};
 

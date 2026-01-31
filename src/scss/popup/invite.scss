@@ -2,26 +2,19 @@
 
 .popups {
     .popup.popupInviteRequest {
-        .innerWrap { width: 424px; padding: 28px 32px; text-align: center; }
+        .innerWrap { width: 480px; padding: 0px 56px 32px 56px; text-align: center; }
 
-        .title { @include text-header3; margin-bottom: 20px; }
+        .label.top { @include text-paragraph; font-weight: 600; padding: 16px 0px; margin: 0px 0px 16px 0px; }
+        .iconWrapper { display: flex; margin: 0px auto 10px; align-items: center; justify-content: center; }
+        .title { @include text-header2; margin: 0px 0px 2px 0px; }
+        .label.creator { margin: 0px 0px 22px 0px; display: flex; align-items: center; justify-content: center; gap: 0px 6px; }
+        .label.creator b { font-weight: 500; display: inline-flex; align-items: center; gap: 0px 4px; }
+        .label.text { margin: 0px 0px 18px 0px; }
 
-        .iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 28px; align-items: center; justify-content: space-around; }
-        .icon { width: 56px; height: 56px; }
-        .icon.invite { background-image: url('~img/icon/popup/confirm/invite.svg'); }
-        .icon.join { background-image: url('~img/icon/popup/confirm/join.svg'); }
-
-        .invitation { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
-        .invitation {
-            .profileItem { position: relative; top: 3px; display: inline-flex; align-items: center; flex-wrap: nowrap; gap: 0px 3px; }
-        }
-        .textarea { margin-bottom: 16px; height: 68px; padding: 12px; @include text-small; font-family: 'Inter'; border: 1px solid var(--color-shape-primary); border-radius: 6px; }
-
-        .buttons { margin-bottom: 16px; }
+        .buttons { display: flex; flex-direction: column; gap: 8px; }
         .buttons {
             .button { width: 100%; }
         }
-        .note { @include text-small; color: var(--color-text-secondary); }
     }
 
     .popup.popupInviteConfirm {

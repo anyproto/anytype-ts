@@ -4,14 +4,12 @@ import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
 interface Props {
-	tier: any;
 	route: string;
 	isRed: boolean;
 	className?: string;
 };
 
 const UpsellStorage = observer(forwardRef<{}, Props>(({
-	tier = {},
 	route = '',
 	isRed = false,
 	className = '',
@@ -29,6 +27,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 	const usagePercent = bytesUsed / bytesLimit * 100;
 	const roundedUsagePercent = Math.ceil(usagePercent / 5) * 5;
 	const output = usagePercent < 90 ? roundedUsagePercent : Math.round(usagePercent);
+	const isOwner = U.Space.isMyOwner();
 
 	let incentiveText = '';
 	let upsellText = '';
@@ -37,37 +36,32 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 		cn.push('isRed');
 
 		if (notSyncedCounter) {
-			incentiveText = U.Common.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
+			incentiveText = U.String.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
 		};
 		upsellText = translate('upsellBannerStorageFullUpsellText');
-	} else {
-		const periodLabel = U.Common.getMembershipPeriodLabel(tier);
 
-		let period = '';
-		if (tier.period == 1) {
-			period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
-		} else {
-			period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
+		if (!isOwner) {
+			incentiveText = translate('upsellBannerStorageNonOwnerIncentive');
+			upsellText = translate('upsellBannerStorageNonOwnerUpsell');
 		};
-
-		incentiveText = translate('upsellBannerStorageIncentiveText');
-		upsellText = U.Common.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`);
+	} else {
+		if (!isOwner) {
+			return null;
+		};
 	};
 
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
-
-		analytics.event('ClickUpgradePlanTooltip', { type: `StorageWarning`, usage: Math.round(usagePercent), route });
+		Action.membershipUpgrade({ type: 'StorageWarning', usage: Math.round(usagePercent), route });
 	};
 
 	return (
 		<div className={cn.join(' ')}>
 			<div className="text">
-				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
+				{isOwner ? <Label className="usage" text={U.String.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} /> : ''}
 				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
 				<Label className="upsell" text={upsellText} />
 			</div>
-			<Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} />
+			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} /> : ''}
 		</div>
 	);
 

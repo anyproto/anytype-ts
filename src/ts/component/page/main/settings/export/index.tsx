@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, translate, analytics } from 'Lib';
+import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageSettingsComponent {
@@ -8,70 +8,46 @@ interface Props extends I.PageSettingsComponent {
 	onExport: (type: I.ExportType, param: any) => void;
 };
 
-const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex extends React.Component<Props> {
+const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
-	render () {
-		const items = this.getItems();
+	const { onPage } = props;
+	const items = [
+		{ id: 'markdown', name: 'Markdown' },
+		{ id: 'protobuf', name: 'Any-Block', isApp: true },
+	];
 
-		const Item = (item: any) => {
-			const cn = [ 'item', item.id ];
+	const onClick = (id: string) => {
+		onPage(U.String.toCamelCase(`export-${id}`));
+	};
 
-			if (item.isApp) {
-				cn.push('isApp');
-			};
+	const Item = (item: any) => {
+		const cn = [ 'item', item.id ];
 
-			return (
-				<div className={cn.join(' ')} onClick={() => this.onClick(item.id)} >
-					<Icon className={`import-${item.id}`} />
-					<div className="name">{item.name}</div>
-				</div>
-			);
+		if (item.isApp) {
+			cn.push('isApp');
 		};
 
 		return (
-			<>
-				<Title text={translate('popupSettingsExportTitle')} />
-				<Label className="description" text={translate('popupSettingsExportText')} />
-
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
-			</>
+			<div className={cn.join(' ')} onClick={() => onClick(item.id)} >
+				<Icon className={`import-${item.id}`} />
+				<div className="name">{item.name}</div>
+			</div>
 		);
 	};
 
-	onClick (id: string) {
-		const { onPage } = this.props;
-		const items = this.getItems();
-		const item = items.find(it => it.id == id);
-		const fn = U.Common.toCamelCase('onExport-' + item.id);
+	return (
+		<>
+			<Title text={translate('popupSettingsExportTitle')} />
+			<Label className="description" text={translate('popupSettingsExportText')} />
 
-		if (item.skipPage && this[fn]) {
-			this[fn]();
-		} else {
-			onPage(U.Common.toCamelCase('export-' + item.id));
-		};
-	};
+			<div className="items">
+				{items.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
+			</div>
+		</>
+	);
 
-	getItems (): any[] {
-		return [
-			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'protobuf', name: 'Any-Block', isApp: true },
-		];
-	};
-
-	onExportCommon (type: I.ExportType, options?: any) {
-		const { onExport } = this.props;
-
-		onExport(type, options);
-	};
-
-	onExportProtobuf () {
-		this.onExportCommon(I.ExportType.Protobuf);
-	};
-
-});
+}));
 
 export default PageMainSettingsExportIndex;

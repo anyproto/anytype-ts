@@ -1,180 +1,55 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
 import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
-interface State {
-	isEditing: boolean;
-};
-
-const BlockCover = observer(class BlockCover extends React.Component<I.BlockComponent, State> {
+const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
-	_isMounted = false;
-	node: any = null;
-	state = {
-		isEditing: false,
-	};
-	cover: any = null;
-	refDrag: any = null;
-	rect: any = {};
-	x = 0;
-	y = 0;
-	cx = 0;
-	cy = 0;
-	loaded = false;
-	scale = 0;
-	coords: { x: number, y: number } = { x: 0, y: 0 };
-	
-	constructor (props: I.BlockComponent) {
-		super(props);
-		
-		this.onIcon = this.onIcon.bind(this);
-		this.onCoverOpen = this.onCoverOpen.bind(this);
-		this.onCoverClose = this.onCoverClose.bind(this);
-		this.onCoverSelect = this.onCoverSelect.bind(this);
-		this.onLayout = this.onLayout.bind(this);
+	const { rootId, block, readonly, isPopup } = props;
+	const [ isEditing, setIsEditing ] = useState(false);
+	const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Relation.cover), true);
+	const { coverType, coverId } = object;
+	const isImage = U.Data.coverIsImage(coverType);
+	const root = S.Block.getLeaf(rootId, rootId);
+	const cn = [ 'elements', 'editorControlElements' ];
+	const nodeRef = useRef(null);
+	const elementsRef = useRef(null);
+	const coverRef = useRef(null);
+	const loaderRef = useRef(null);
+	const dragRef = useRef(null);
+	const loadedRef = useRef(false);
+	const rectRef = useRef(null);
+	const x = useRef(0);
+	const y = useRef(0);
+	const cx = useRef(0);
+	const cy = useRef(0);
+	const scale = useRef(0);
+	const coords = useRef({ x: 0, y: 0 });
 
-		this.onEdit = this.onEdit.bind(this);
-		this.onSave = this.onSave.bind(this);
-		this.onCancel = this.onCancel.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onUploadStart = this.onUploadStart.bind(this);
-		
-		this.onScaleStart = this.onScaleStart.bind(this);
-		this.onScaleMove = this.onScaleMove.bind(this);
-		this.onScaleEnd = this.onScaleEnd.bind(this);
-		
-		this.onDragOver = this.onDragOver.bind(this);
-		this.onDragLeave = this.onDragLeave.bind(this);
-		this.onDrop = this.onDrop.bind(this);
-		
-		this.onDragStart = this.onDragStart.bind(this);
-		this.onDragMove = this.onDragMove.bind(this);
-		this.onDragEnd = this.onDragEnd.bind(this);
-	};
-	
-	render () {
-		const { isEditing } = this.state;
-		const { rootId, readonly } = this.props;
-		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Relation.cover), true);
-		const { coverType, coverId } = object;
-		const isImage = U.Data.coverIsImage(coverType);
-		const root = S.Block.getLeaf(rootId, rootId);
-		const cn = [ 'elements', 'editorControlElements' ];
+	useEffect(() => {
+		resize();
 
-		if (!root) {
-			return null;
+		if (nodeRef.current) {
+			U.Common.renderLinks($(nodeRef.current));
 		};
+		$(window).off('resize.cover').on('resize.cover', () => resize());
 
-		let image = null;
-		let author = null;
-		let elements = null;
-		let content = null;
-
-		if (coverType == I.CoverType.Source) {
-			image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
-			author = (
-				<Label className="author" text={U.Common.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)} />
-			);
+		return () => {
+			$(window).off('resize.cover');
 		};
+	}, []);
+	
+	useEffect(() => {
+		resize();
 
-		if (isImage) { 
-			content = <img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />;
-		} else {
-			content = <Cover id={coverId} image={coverId} type={coverType} className={coverId} />;
+		if (nodeRef.current) {
+			U.Common.renderLinks($(nodeRef.current));
 		};
-
-		if (isEditing) {
-			cn.push('active');
-
-			elements = (
-				<>
-					<div key="btn-drag" className="btn black drag withIcon">
-						<Icon />
-						<div className="txt">{translate('blockCoverDrag')}</div>
-					</div>
-					
-					<div className="dragWrap">
-						<DragHorizontal 
-							ref={ref => this.refDrag = ref} 
-							onStart={this.onScaleStart} 
-							onMove={this.onScaleMove} 
-							onEnd={this.onScaleEnd} 
-						/>
-						<div id="dragValue" className="number">100%</div>
-					</div>
-					
-					<div className="controlButtons">
-						<div className="btn white" onMouseDown={this.onSave}>{translate('commonSave')}</div>
-						<div className="btn white" onMouseDown={this.onCancel}>{translate('commonCancel')}</div>
-					</div>
-				</>
-			);
-		} else {
-			elements = (
-				<ControlButtons 
-					rootId={rootId} 
-					readonly={readonly}
-					onIcon={this.onIcon} 
-					onCoverOpen={this.onCoverOpen}
-					onCoverClose={this.onCoverClose}
-					onCoverSelect={this.onCoverSelect}
-					onLayout={this.onLayout}
-					onEdit={this.onEdit}
-					onUploadStart={this.onUploadStart}
-					onUpload={this.onUpload}
-				/>
-			);
-		};
-
-		elements = (
-			<div id="elements" className={cn.join(' ')}>
-				{elements}
-			</div>
-		);
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
-				onMouseDown={this.onDragStart} 
-				onDragOver={this.onDragOver} 
-				onDragLeave={this.onDragLeave} 
-				onDrop={this.onDrop}
-			>
-				<Loader id="cover-loader" />
-				{content}
-				{elements}
-				{author}
-			</div>
-		);
-	};
+	}, [ coverType, coverId ]);
 	
-	componentDidMount () {
-		this._isMounted = true;
-		this.resize();
-
-		U.Common.renderLinks($(this.node));
-		$(window).off('resize.cover').on('resize.cover', () => this.resize());
-	};
-	
-	componentDidUpdate () {
-		this.resize();
-
-		U.Common.renderLinks($(this.node));
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		$(window).off('resize.cover');
-	};
-
-	onIcon (e: any) {
-		const { rootId, block } = this.props;
-		const node = $(this.node);
-		const elements = node.find('#elements');
+	const onIcon = (e: any) => {
 		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 
@@ -182,141 +57,111 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		S.Menu.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
+			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => elements.addClass('hover'),
-			onClose: () => elements.removeClass('hover'),
+			onOpen: () => $(elementsRef.current).addClass('hover'),
+			onClose: () => $(elementsRef.current).removeClass('hover'),
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
-				onSelect: (icon: string) => {
-					U.Object.setIcon(rootId, icon, '', cb);
-				},
-				onUpload (objectId: string) {
-					U.Object.setIcon(rootId, '', objectId, cb);
-				},
+				onSelect: (icon: string) => U.Object.setIcon(rootId, icon, '', cb),
+				onUpload: (objectId: string) => U.Object.setIcon(rootId, '', objectId, cb),
 				route: analytics.route.icon,
-			}
+			},
 		});
 	};
 	
-	onLayout () {
-		const { rootId, block } = this.props;
-		const node = $(this.node);
-		const elements = node.find('#elements');
-		
+	const onLayout = () => {
 		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
-			onOpen: () => elements.addClass('hover'),
-			onClose: () => elements.removeClass('hover'),
+			classNameWrap: 'fromBlock',
+			onOpen: () => $(elementsRef.current).addClass('hover'),
+			onClose: () => $(elementsRef.current).removeClass('hover'),
 			subIds: J.Menu.layout,
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			}
 		});
 	};
 
-	onCoverOpen () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		node.find('#elements').addClass('hover');
-
+	const onCoverOpen = () => {
+		$(elementsRef.current).addClass('hover');
 		focus.clear(true);
 	};
 
-	onCoverClose () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		node.find('#elements').removeClass('hover');
+	const onCoverClose = () => {
+		$(elementsRef.current).removeClass('hover');
 	};
 
-	onCoverSelect (item: any) {
-		const { rootId } = this.props;
-
-		this.loaded = false;
-		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+	const onCoverSelect = (item: any) => {
+		loadedRef.current = false;
+		U.Object.setCover(rootId, item.type, item.itemId, item.coverX, item.coverY, item.coverScale);
 	};
 	
-	onEdit (e: any) {
-		const { rootId } = this.props;
+	const onEdit = (e: any) => {
+		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
-		this.coords.x = object.coverX;
-		this.coords.y = object.coverY;
-		this.scale = object.coverScale;
-
-		this.setState({ isEditing: true });
+		coords.current.x = object.coverX;
+		coords.current.y = object.coverY;
+		scale.current = object.coverScale;
+		setIsEditing(true);
 	};
 
-	setLoading (v: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const loader = node.find('#cover-loader');
+	const setLoading = (v: boolean) => {
+		const loader = $(loaderRef.current);
 
 		v ? loader.show() : loader.hide();
 	};
 	
-	onUploadStart () {
-		this.setLoading(true);
+	const onUploadStart = () => {
+		setLoading(true);
 	};
 	
-	onUpload (type: I.CoverType, objectId: string) {
-		const { rootId } = this.props;
+	const onUpload = (type: I.CoverType, objectId: string) => {
+		const { rootId } = props;
 
-		this.coords.x = 0;
-		this.coords.y = -0.25;
-		this.scale = 0;
+		coords.current.x = 0;
+		coords.current.y = 0;
+		scale.current = 0;
 
-		U.Object.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
-			this.loaded = false;
-			this.setLoading(false);
+		U.Object.setCover(rootId, type, objectId, coords.current.x, coords.current.y, scale.current, () => {
+			loadedRef.current = false;
+			setLoading(false);
 		});
 	};
 	
-	onSave (e: any) {
+	const onSave = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
-		U.Object.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
-			this.setState({ isEditing: false });
+		U.Object.setCover(rootId, object.coverType, object.coverId, coords.current.x, coords.current.y, scale.current, () => {
+			setIsEditing(false);
 		});
 	};
 	
-	onCancel (e: any) {
+	const onCancel = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.setState({ isEditing: false });
+		setIsEditing(false);
 	};
 	
-	resize () {
-		if (!this._isMounted) {
-			return false;
-		};
-		
-		const { rootId } = this.props;
+	const resize = () => {
+		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const { coverId, coverType } = object;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
+		const cover = $(coverRef.current);
 		const isImage = U.Data.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
 		};
 		
-		this.cover = node.find('.cover');
-		
-		const el = this.cover.get(0);
+		const el = cover.get(0) as HTMLImageElement;
 		if (!el) {
 			return;
 		};
@@ -324,22 +169,22 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const cb = () => {
 			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 
-			this.rect = (node.get(0) as Element).getBoundingClientRect();
-			this.onScaleMove($.Event('resize'), object.coverScale);
-			this.cover.css({ opacity: 1 });
-			this.refDrag?.setValue(object.coverScale);
+			rectRef.current = (node.get(0) as Element).getBoundingClientRect();
+			onScaleMove($.Event('resize'), object.coverScale);
+			cover.css({ opacity: 1 });
+			dragRef.current?.setValue(object.coverScale);
 
-			if (!this.loaded) {
-				this.setLoading(false);
+			if (!loadedRef.current) {
+				setLoading(false);
 			};
-			this.loaded = true;
+			loadedRef.current = true;
 		};
 
-		if (this.loaded) {
+		if (loadedRef.current) {
 			cb();
 		} else {
-			this.cover.css({ opacity: 0 });
-			this.setLoading(true);
+			cover.css({ opacity: 0 });
+			setLoading(true);
 
 			el.onload = cb;
 			el.onerror = cb;
@@ -350,170 +195,243 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 	};
 	
-	onDragStart (e: any) {
+	const onDragStart = (e: any) => {
 		e.preventDefault();
 		
-		const { isEditing } = this.state;
-		
-		if (!this._isMounted || !isEditing) {
+		if (!isEditing) {
 			return false;
 		};
 		
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		
-		this.x = e.pageX - this.rect.x - this.x;
-		this.y = e.pageY - this.rect.y - this.y;
-		this.onDragMove(e);
+		x.current = e.pageX - rectRef.current.x - x.current;
+		y.current = e.pageY - rectRef.current.y - y.current;
+		onDragMove(e);
 
 		keyboard.disableSelection(true);
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', e => this.onDragMove(e));
-		win.on('mouseup.cover', e => this.onDragEnd(e));
+		win.on('mousemove.cover', e => onDragMove(e));
+		win.on('mouseup.cover', e => onDragEnd(e));
 	};
 	
-	onDragMove (e: any) {
-		if (!this._isMounted || !this.rect) {
+	const onDragMove = (e: any) => {
+		if (!rectRef.current) {
 			return false;
 		};
 		
-		const { x, y } = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
-		this.cx = x;
-		this.cy = y;
+		const { x: newX, y: newY } = setTransform(e.pageX - rectRef.current.x - x.current, e.pageY - rectRef.current.y - y.current);
+		cx.current = newX;
+		cy.current = newY;
 	};
 	
-	onDragEnd (e: any) {
-		if (!this._isMounted) {
-			return false;
-		};
-		
+	const onDragEnd = (e: any) => {
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
+		const rect = rectRef.current;
 		
-		keyboard.disableSelection(true);
+		keyboard.disableSelection(false);
 		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
-		this.x = e.pageX - this.rect.x - this.x;
-		this.y = e.pageY - this.rect.y - this.y;
+		x.current = e.pageX - rect.x - x.current;
+		y.current = e.pageY - rect.y - y.current;
 
-		this.coords = { x: this.cx / this.rect.cw, y: this.cy / this.rect.ch };
+		coords.current = { x: cx.current / rect.cw, y: cy.current / rect.ch };
 	};
 	
-	onScaleStart (e: any, v: number) {
+	const onScaleStart = (e: any, v: number) => {
 		keyboard.disableSelection(true);
 	};
 	
-	onScaleMove (e: any, v: number) {
-		if (!this._isMounted || !this.cover || !this.cover.length) {
-			return false;
-		};
-
-		const node = $(this.node);
-		const { rootId } = this.props;
+	const onScaleMove = (e: any, v: number) => {
+		const node = $(nodeRef.current);
+		const cover = $(coverRef.current);
+		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
-		this.cover.css({ height: 'auto', width: v + '%' });
+		cover.css({ height: 'auto', width: v + '%' });
 
-		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
-
-		this.rect.cw = rect.width;
-		this.rect.ch = rect.height;
-
-		this.x = coverX * this.rect.cw;
-		this.y = coverY * this.rect.ch;
-
-		this.setTransform(this.x, this.y);
-	};
-	
-	onScaleEnd (e: any, v: number) {
-		keyboard.disableSelection(false);
-		this.scale = v;
-	};
-
-	canDrop (e: any) {
-		return this._isMounted && !this.props.readonly && U.File.checkDropFiles(e);
-	};
-	
-	onDragOver (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		$(this.node).addClass('isDraggingOver');
-	};
-	
-	onDragLeave (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		$(this.node).removeClass('isDraggingOver');
-	};
-	
-	onDrop (e: any) {
-		if (!this.canDrop(e)) {
+		const el = cover.get(0);
+		if (!el) {
 			return;
 		};
 
-		const { rootId, readonly } = this.props;
+		const rect = el.getBoundingClientRect() as DOMRect;
 
-		if (!this._isMounted || !U.File.checkDropFiles(e) || readonly) {
+		rectRef.current.cw = rect.width;
+		rectRef.current.ch = rect.height;
+
+		x.current = coverX * rect.width;
+		y.current = coverY * rect.height;
+		setTransform(x.current, y.current);
+	};
+	
+	const onScaleEnd = (e: any, v: number) => {
+		keyboard.disableSelection(false);
+		scale.current = v;
+	};
+
+	const canDrop = (e: any) => {
+		return !props.readonly && U.File.checkDropFiles(e);
+	};
+	
+	const onDragOver = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		$(nodeRef.current).addClass('isDraggingOver');
+	};
+	
+	const onDragLeave = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		$(nodeRef.current).removeClass('isDraggingOver');
+	};
+	
+	const onDrop = (e: any) => {
+		if (!canDrop(e) || readonly) {
 			return;
 		};
 
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
-		this.setLoading(true);
+		setLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
-			this.setLoading(false);
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
+			setLoading(false);
 			keyboard.disableCommonDrop(false);
-			
-			if (!message.error.code) {
-				this.loaded = false;
-				U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
+
+			if (message?.error?.code) {
+				return;
 			};
 			
-			this.loaded = false;
+			loadedRef.current = false;
 			U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
 	};
 	
-	setTransform (x: number, y: number) {
-		const mx = this.rect.cw - this.rect.width;
-		const my = this.rect.ch - this.rect.height;
+	const setTransform = (x: number, y: number) => {
+		const rect = rectRef.current;
+		const mx = rect.cw - rect.width;
+		const my = rect.ch - rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 
-		const px = Math.min(0, x / this.rect.cw * 100);
-		const py = Math.min(0, y / this.rect.ch * 100);
+		const px = Math.min(0, x / rect.cw * 100);
+		const py = Math.min(0, y / rect.ch * 100);
 		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
 
-		if (this.rect.ch < this.rect.height) {
+		if (rect.ch < rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';
-			css.height = this.rect.height;
+			css.height = rect.height;
 			css.width = 'auto';
 		};
 
-		this.cover.css(css);
+		$(coverRef.current).css(css);
 
 		return { x, y };
 	};
 	
-	checkPercent (p: number): number {
-		return Math.min(1, Math.max(0, p));
+	if (!root) {
+		return null;
 	};
 
-});
+	let image = null;
+	let author = null;
+	let elements = null;
+	let content = null;
+
+	if (coverType == I.CoverType.Source) {
+		image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
+		author = (
+			<Label 
+				className="author" 
+				text={U.String.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)}
+			/>
+		);
+	};
+
+	if (isImage) { 
+		content = <img ref={coverRef} id="cover" src="" className={[ 'cover', `type${coverType}`, coverId ].join(' ')} />;
+	} else {
+		content = <Cover ref={coverRef} id={coverId} image={coverId} type={coverType} className={coverId} />;
+	};
+
+	if (isEditing) {
+		cn.push('active');
+
+		elements = (
+			<>
+				<div key="btn-drag" className="btn black drag withIcon">
+					<Icon />
+					<div className="txt">{translate('blockCoverDrag')}</div>
+				</div>
+				
+				<div className="dragWrap">
+					<DragHorizontal 
+						ref={dragRef} 
+						onStart={onScaleStart} 
+						onMove={onScaleMove} 
+						onEnd={onScaleEnd} 
+					/>
+					<div id="dragValue" className="number">100%</div>
+				</div>
+				
+				<div className="controlButtons">
+					<div className="btn white" onMouseDown={onSave}>{translate('commonSave')}</div>
+					<div className="btn white" onMouseDown={onCancel}>{translate('commonCancel')}</div>
+				</div>
+			</>
+		);
+	} else {
+		elements = (
+			<ControlButtons 
+				rootId={rootId} 
+				readonly={readonly}
+				onIcon={onIcon} 
+				onCoverOpen={onCoverOpen}
+				onCoverClose={onCoverClose}
+				onCoverSelect={onCoverSelect}
+				onLayout={onLayout}
+				onEdit={onEdit}
+				onUploadStart={onUploadStart}
+				onUpload={onUpload}
+			/>
+		);
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
+			onMouseDown={onDragStart} 
+			onDragOver={onDragOver} 
+			onDragLeave={onDragLeave} 
+			onDrop={onDrop}
+		>
+			<Loader ref={loaderRef} />
+			{content}
+			{author}
+
+			<div ref={elementsRef} id="elements" className={cn.join(' ')}>
+				{elements}
+			</div>
+		</div>
+	);
+	
+}));
 
 export default BlockCover;

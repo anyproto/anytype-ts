@@ -13,6 +13,7 @@ interface Props {
 	onMouseLeave?: (e: any) => void;
 	onMouseDown?: (e: any) => void;
 	onClick?: (e: any) => void;
+	onDoubleClick?: (e: any) => void;
 };
 
 const Label: FC<Props> = ({
@@ -20,12 +21,13 @@ const Label: FC<Props> = ({
 	text = '',
 	color = '',
 	className = '',
-  	tooltipParam = {},
+	tooltipParam = {},
 	dataset = {},
 	onClick,
 	onMouseDown,
 	onMouseEnter,
 	onMouseLeave,
+	onDoubleClick,
 }) => {
 	const nodeRef = useRef<HTMLDivElement | null>(null);
 	const cn = [ 'label' ];
@@ -51,17 +53,12 @@ const Label: FC<Props> = ({
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};
 
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 
 	const mouseLeaveHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
-
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 
 	useEffect(() => {
@@ -75,11 +72,12 @@ const Label: FC<Props> = ({
 			ref={nodeRef}
 			id={id}
 			className={cn.join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseEnter={mouseEnterHandler}
 			onMouseLeave={mouseLeaveHandler}
+			onDoubleClick={onDoubleClick}
 			{...U.Common.dataProps(dataProps)}
 		/>
 	);

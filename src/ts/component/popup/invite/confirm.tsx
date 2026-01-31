@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject, Loader } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, Action } from 'Lib';
 
 const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -10,18 +10,12 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { param, close } = props;
 	const { data } = param;
 	const { icon, identity, route, spaceId } = data;
-	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
-	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
 	const onMembership = (type: string) => {
-		S.Popup.closeAll(null, () => {
-			U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
-		});
-
-		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
+		S.Popup.closeAll(null, () => Action.membershipUpgrade({ type, route: analytics.route.inviteConfirm }));
 	};
 
 	const onConfirm = (permissions: I.ParticipantPermissions) => {
@@ -64,22 +58,21 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],
 			ignoreHidden: false,
-			ignoreDeleted: true,
 			noDeps: true,
 		}, (message: any) => {
 			const records = (message.records || []).filter(it => it.isActive);
 
-			readerLimt.current = space.readersLimit - records.length;
-			writerLimit.current = space.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
+			readerLimt.current = spaceview?.readersLimit - records.length;
+			writerLimit.current = spaceview?.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
 
 			setIsLoading(false);
 		});
 	};
 
-	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
+	const name = U.String.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 	let buttons = [];
-	if (!readerLimt.current && !tier?.price) {
+	if (!readerLimt.current) {
 		buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => onMembership('members') });
 	} else 
 	if (!writerLimit.current) {
@@ -107,7 +100,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 			</div>
 
-			<Title text={U.Common.sprintf(translate('popupInviteConfirmTitle'), name, U.Common.shorten(space.name, 32))} />
+			<Title text={U.String.sprintf(translate('popupInviteConfirmTitle'), name, U.String.shorten(spaceview?.name, 32))} />
 
 			<div className="buttons">
 				<div className="sides">

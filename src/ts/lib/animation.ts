@@ -66,10 +66,7 @@ class Animation {
 	finish (callBack?: () => void) {
 		window.setTimeout(() => {
 			this.isAnimating = false;
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		}, this.getDuration());
 	};
 

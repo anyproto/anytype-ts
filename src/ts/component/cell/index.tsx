@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -26,6 +26,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
 	} = props;
+	const [ dummy, setDummy ] = useState(0);
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
 	const relation = S.Record.getRelationByKey(relationKey) || {};
@@ -39,7 +40,19 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		if ((noInplace && editModeOn) || withMenu.current) {
 			return true;
 		};
-		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
+
+		if (isName) {
+			return true;
+		};
+
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
+			const options = Relation.getOptions(record[relation.relationKey])
+				.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+			
+			return !!options.length;
+		};
+
+		return Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
 	const onClickHandler = (e: any) => {
@@ -114,13 +127,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (childRef.current) {
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(true);
-				};
-
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.setEditing?.(true);
+				childRef.current.onClick?.(e);
 			};
 
 			keyboard.disableSelection(true);
@@ -132,13 +140,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			keyboard.disableSelection(false);
 
 			if (childRef.current) {
-				if (childRef.current.onBlur) {
-					childRef.current.onBlur();
-				};
-
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(false);
-				};
+				childRef.current.onBlur?.();
+				childRef.current.setEditing?.(false);
 			};
 
 			if (!isGrid && isName) {
@@ -275,12 +278,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					break;
 				};
 
-				param = Object.assign(param, {
-					width: 288,
-				});
-				param.data = Object.assign(param.data, {
-					noResize: true,
-				});
+				param = Object.assign(param, { width: J.Size.menu.value });
+				param.data = Object.assign(param.data, { noResize: true });
 
 				menuId = 'dataviewText';
 				closeIfOpen = false;
@@ -289,13 +288,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const wh = win.height();
-					const hh = J.Size.header;
-					const height = Math.min(wh - hh - 20, cell.outerHeight());
+					const { wh } = U.Common.getWindowDimensions();
+					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
 					param = Object.assign(param, {
 						noFlipX: true,
-						noFlipY: true,
 						horizontal: I.MenuDirection.Left,
 						element: cell,
 						offsetY: -height,
@@ -303,12 +300,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						height,
 					});
 				} else {
-					param = Object.assign(param, {
-						width: 288,
-					});
-					param.data = Object.assign(param.data, {
-						noResize: true,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
+					param.data = Object.assign(param.data, { noResize: true });
 				};
 
 				menuId = 'dataviewText';
@@ -319,16 +312,50 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
+				const options = [
+					{ id: 'go', icon: `go-${I.RelationType[relation.format].toLowerCase()}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', icon: 'copy', name: translate('commonCopy') },
+				];
+				if (relation.relationKey == 'source') {
+					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
+				};
+
+				const onSelect = (event: any, item: any) => {
+					const value = childRef.current.getValue();
+					if (!value) {
+						return;
+					};
+
+					switch (item.id) {
+						case 'go': {
+							Action.openUrl(Relation.checkUrlScheme(relation.format, value));
+							analytics.event('RelationUrlOpen');
+							break;
+						};
+
+						case 'copy': {
+							U.Common.clipboardCopy({ text: value, html: value });
+							analytics.event('RelationUrlCopy');
+							break;
+						};
+
+						case 'reload': {
+							C.ObjectBookmarkFetch(record.id, value.trim(), () => analytics.event('ReloadSourceData'));
+							break;
+						};
+					};
+				};
+
 				if (noInplace) {
-					param = Object.assign(param, {
-						width: 288,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
 					param.data = Object.assign(param.data, {
 						noResize: true,
+						actions: value ? options : [],
+						onSelect,
 					});
+
 					menuId = 'dataviewText';
 					closeIfOpen = false;
-
 					break;
 				};
 
@@ -348,43 +375,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					break;
 				};
 
-				const options = [
-					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('commonCopyLink') },
-				];
-				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
-				};
-
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
 					noFilter: !noInplace,
 					options,
-					onSelect: (event: any, item: any) => {
-						const value = childRef.current.getValue();
-						if (!value) {
-							return;
-						};
-
-						switch (item.id) {
-							case 'go': {
-								Action.openUrl(Relation.checkUrlScheme(relation.format, value));
-								analytics.event('RelationUrlOpen');
-								break;
-							};
-
-							case 'copy': {
-								U.Common.clipboardCopy({ text: value, html: value });
-								analytics.event('RelationUrlCopy');
-								break;
-							};
-
-							case 'reload': {
-								C.ObjectBookmarkFetch(record.id, value.trim(), () => analytics.event('ReloadSourceData'));
-								break;
-							};
-						};
-					},
+					onSelect,
 				});
 
 				menuId = 'select';
@@ -393,9 +388,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Checkbox: {
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.onClick?.(e);
 				ret = true;
 				break; 
 			};
@@ -409,7 +402,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const bindContainerClick = () => {
 			const pc = $(pageContainer);
 
-			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
@@ -447,7 +440,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		} else {
 			setOn();
 
-			if (!canEdit && Relation.isText(relation.format)) {
+			if (canEdit && Relation.isText(relation.format)) {
 				bindContainerClick();
 			};
 		};
@@ -492,7 +485,15 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const canEdit = canCellEdit(relation, record);
-		return !canEdit ? translate(`placeholderCellCommon`) : (props.placeholder || translate(`placeholderCell${relation.format}`));
+		if (!canEdit) {
+			return translate(`placeholderCellCommon`);
+		};
+
+		if (props.placeholder) {
+			return props.placeholder;
+		};
+
+		return translate(`placeholderCell${relation.format}`);
 	};
 
 	const canCellEdit = (relation: any, record: any): boolean => {
@@ -518,7 +519,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const placeholder = getPlaceholder(relation, record);
 	const cn = [ 
 		'cellContent', 
-		'c-' + relation.relationKey,
+		`c-${relation.relationKey}`,
 		Relation.className(relation.format), 
 		(canEdit ? 'canEdit' : ''), 
 		(relationKey == 'name' ? 'isName' : ''),
@@ -532,7 +533,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const childProps = {
 		...props,
 		id,
-		key: id,
 		canEdit,
 		relation,
 		placeholder,
@@ -574,13 +574,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
-		isEditing: () => childRef.current.isEditing(),
+		isEditing: () => childRef.current.isEditing?.(),
 		canEdit: () => canCellEdit(relation, record),
-		onBlur: () => {
-			if (childRef.current.onBlur) {
-				childRef.current.onBlur();
-			};
-		},
+		onBlur: () => childRef.current.onBlur?.(),
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (
@@ -592,7 +589,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			onMouseEnter={onMouseEnterHandler} 
 			onMouseLeave={onMouseLeaveHandler}
 		>
-			<CellComponent ref={childRef} {...childProps} />
+			<CellComponent ref={childRef} key={id} {...childProps} />
 		</div> 
 	);
 

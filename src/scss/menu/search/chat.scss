@@ -1,0 +1,50 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuSearchChat { 
+		width: var(--editor-width); box-shadow: 0px 0px !important; border-radius: 0px; background: unset; 
+		transition-property: opacity; transform: none !important;
+	}
+	.menu.menuSearchChat * { -webkit-app-region: no-drag; }
+	.menu.menuSearchChat {
+		.content { transition: none; padding: 0px; overflow: visible; }
+		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
+		.filterWrapper { padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px; }
+
+		.arrowWrapper {
+			display: flex; flex-direction: row; padding: 6px 8px; flex-shrink: 0; gap: 0px 8px;
+			background-color: var(--color-shape-highlight-medium); border-radius: 16px; align-items: center;
+		}
+		.arrowWrapper {
+			.icon { width: 20px; height: 20px; }
+			.icon.arrow { background-image: url('~img/arrow/searchText.svg'); }
+			.icon.arrow.down { transform: rotate(180deg); }
+			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
+		}
+
+		.filter { background-color: var(--color-bg-primary); flex-grow: 1; }
+		.filter {
+			.inner { gap: 0px 6px; padding: 0px 12px; height: 32px; border-radius: 16px; }
+		}
+
+		.items, .emptySearch { 
+			flex-grow: 1; border-radius: 8px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
+			background: var(--color-bg-primary); overflow: hidden;
+		}
+
+		.item { padding: 8px 16px; display: flex; gap: 0 12px; align-items: flex-start; }
+		.item {
+			.iconObject { flex-shrink: 0; margin: 0px; }
+			.info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+			.nameWrapper { display: flex; align-items: center; gap: 0px 8px; }
+			.name { @include text-overflow-nw; font-weight: 500; flex-grow: 1; }
+			.time { @include text-small; color: var(--color-control-active); flex-shrink: 0; }
+			.text { 
+				@include text-overflow-nw; @include text-small; @include text-overflow-nw; 
+				color: var(--color-text-secondary); 
+			}
+			.highlight { color: var(--color-system-accent-100); }
+		}
+	}
+}

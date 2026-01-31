@@ -31,8 +31,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const onClick = (e: any, item: any) => {
 		if (isEditing) {
-			e.stopPropagation();
-			U.Object.openConfig(item);
+			U.Object.openConfig(e, item);
 		};
 	};
 

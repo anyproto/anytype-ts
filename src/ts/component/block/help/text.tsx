@@ -59,7 +59,7 @@ const ContentText = forwardRef<HTMLDivElement, Props>(({
 				{marker ? <Marker {...marker} color={color} /> : ''}
 			</div>
 			{additional}
-			<div className="wrap" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+			<div className="wrap" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 		</div>
 	);
 

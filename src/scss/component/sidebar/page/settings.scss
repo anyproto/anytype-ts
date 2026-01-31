@@ -1,7 +1,4 @@
-.containerSettings { 
-	height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; 
-	padding: 8px 0px 0px 0px;
-}
+.containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .containerSettings {
     > .head {
         display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
@@ -16,18 +13,15 @@
         .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-bottom: 8px; }
         .list {
 			.ReactVirtualized__List { padding: 0px 8px; }
-
             .inner { flex-grow: 1; }
-            .row {
-                > .itemSection { padding-top: 16px; }
-                > .itemSection.isFirst { padding-top: 4px; }
-            }
+            .items { display: flex; flex-direction: column; }
 
+            .itemSection { padding-top: 16px; }
             .itemSection {
                 > .name { @include text-small; font-weight: 500; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
-            }
 
-            .items { display: flex; flex-direction: column; }
+                &.isFirst { padding-top: 0px; }
+            }
 
             .item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; border-radius: 6px; }
 			.item::before {
@@ -44,7 +38,7 @@
                 .name { @include text-overflow-nw; flex-grow: 1; }
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
-                .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
+                .caption.join { color: var(--color-system-accent-100); }
                 .caption.alert { width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: var(--color-red); color: var(--color-control-bg); border-radius: 50%; }
             }
 

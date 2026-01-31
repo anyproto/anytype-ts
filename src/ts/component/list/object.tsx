@@ -40,15 +40,16 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	route = '',
 }, ref) => {
 
-	const [ sortId, setSortId ] = useState('');
-	const [ sortType, setSortType ] = useState(I.SortType.Asc);
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const { dateFormat } = S.Common;
-
 
 	const getColumns = (): Column[] => {
 		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(columns || []);
 	};
+
+	const columnList = getColumns();
+	const [ sortType, setSortType ] = useState(I.SortType.Asc);
+	const [ sortId, setSortId ] = useState(columnList.length ? columnList[0].relationKey : '');
 
 	const getKeys = () => {
 		return J.Relation.default.concat(getColumns().map(it => it.relationKey)).concat(relationKeys || []);
@@ -76,8 +77,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			filters: fl,
 			offset,
 			limit,
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		}, callBack);
 	};
 
@@ -103,6 +102,10 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 				relationKeys: getKeys(),
 				allowedLinkTo: true,
 				allowedOpen: true,
+				allowedNewTab: true,
+				allowedCollection: true,
+				allowedExport: true,
+				allowedType: true,
 			}
 		});
 	};
@@ -120,7 +123,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		analytics.event('ObjectListSort', { relationKey, route, type });
 	};
 
-	const columnList = getColumns();
 	const items = getItems();
 	const widths = [ 'minmax(0, 1fr)' ];
 	for (let i = 1; i < columnList.length; ++i) {
@@ -190,7 +192,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 						};
 
 						if (!object._empty_) {
-							onClick = () => U.Object.openConfig(object);
+							onClick = e => U.Object.openEvent(e, object);
 							content = (
 								<div className="flex">
 									<IconObject object={object} />
@@ -231,8 +233,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	useEffect(() => {
-		setSortId(columnList[0].relationKey);
-
 		return () => {
 			U.Subscription.destroyList([ subId ]);
 		};

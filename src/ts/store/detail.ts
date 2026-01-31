@@ -1,5 +1,6 @@
-import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { observable, action, makeObservable, set } from 'mobx';
 import { I, S, U, J, Relation, translate } from 'Lib';
+import { memoize } from 'lodash';
 
 interface Detail {
 	relationKey: string;
@@ -12,12 +13,53 @@ interface Item {
 	details: any;
 };
 
+const keyMap = {
+	[I.ObjectLayout.Relation]: {
+		isReadonlyRelation: 'isReadonly',
+		isReadonlyValue: 'relationReadonlyValue',
+		maxCount: 'relationMaxCount',
+		objectTypes: 'relationFormatObjectTypes',
+	},
+	[I.ObjectLayout.Option]: {
+		color: 'relationOptionColor',
+	},
+	[I.ObjectLayout.SpaceView]: {
+		notificationMode: 'spacePushNotificationMode',
+		uxType: 'spaceUxType',
+		orderId: 'spaceOrder',
+		allIds: 'spacePushNotificationForceAllIds',
+		muteIds: 'spacePushNotificationForceMuteIds',
+		mentionIds: 'spacePushNotificationForceMentionIds',
+	},
+	[I.ObjectLayout.Participant]: {
+		permissions: 'participantPermissions',
+		status: 'participantStatus',
+	},
+};
+keyMap[I.ObjectLayout.Space] = keyMap[I.ObjectLayout.SpaceView];
+
+/**
+ * DetailStore manages object details (properties/relations) for all objects.
+ *
+ * Key responsibilities:
+ * - Storing and retrieving object details by root ID and object ID
+ * - Mapping raw details to typed objects with layout-specific properties
+ * - Providing computed/derived properties based on object layout
+ * - Managing MobX observability for reactive UI updates
+ *
+ * Details are the properties/relations of objects - name, icon, type, custom
+ * relations, etc. The store provides layout-aware mappers that add convenience
+ * properties (e.g., isOwner, isWriter for Participants).
+ *
+ * Structure: Map<rootId, Map<objectId, Map<relationKey, Detail>>>
+ */
 class DetailStore {
 
-	private map: Map<string, Map<string, Detail[]>> = new Map();
+	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this, {
+		makeObservable(this as any, {
+			map: observable.shallow,
 			set: action,
 			update: action,
 			delete: action
@@ -39,9 +81,6 @@ class DetailStore {
 			isDeleted: observable,
 		});
 
-		intercept(el as any, (change: any) => {
-			return (change.newValue === el[change.name] ? null : change); 
-		});
 		return el;
 	}; 
 
@@ -59,13 +98,13 @@ class DetailStore {
 		const map = observable.map(new Map());
 
 		for (const item of items) {
-			const list: Detail[] = [];
+			const detailMap = new Map<string, Detail>();
 
 			for (const k in item.details) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		this.map.set(rootId, map);
@@ -101,28 +140,28 @@ class DetailStore {
 			map.delete(item.id);
 		};
 
-		let list = map.get(item.id);
-		if (!list) {
-			list = [];
+		let detailMap = map.get(item.id);
+		if (!detailMap) {
+			detailMap = new Map<string, Detail>();
 			createList = true;
 		};
 
 		for (const k in item.details) {
 			if (clear) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 				continue;
 			};
 
-			const el = list.find(it => it.relationKey == k);
+			const el = detailMap.get(k);
 			if (el) {
 				set(el, { value: item.details[k], isDeleted: false });
 			} else {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 		};
 
 		if (createList) {
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		// Update fast key maps in S.Record to keep consistency
@@ -163,18 +202,49 @@ class DetailStore {
 	 * @param {string[]} [keys] - The keys to clear.
 	 */
 	public delete (rootId: string, id: string, keys?: string[]): void {
-		const map = this.map.get(rootId);
+		if (!rootId) {
+			console.log('[S.Detail].delete: rootId is not defined');
+			return;
+		};
 
+		const map = this.map.get(rootId);
 		if (!map) {
 			return;
 		};
 
 		if (keys && keys.length) {
-			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+			const detailMap = map.get(id);
+			if (!detailMap) {
+				return;
+			};
+
+			for (const k of keys) {
+				detailMap.delete(k);
+			};
 		} else {
-			map.set(id, []);
+			map.set(id, new Map());
 		};
 	};
+
+	computeKeySet = memoize((withKeys?: string[], forceKeys?: boolean) => {
+		const keys = new Set<string>();
+
+		if (withKeys) {
+			withKeys.forEach(k => keys.add(k));
+
+			if (!forceKeys) {
+				J.Relation.default.forEach(k => keys.add(k));
+			};
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+			if (keys.has('layout')) {
+				keys.add('resolvedLayout');
+			};
+		};
+
+		return keys;
+	}, (withKeys, forceKeys) => (withKeys?.join('|') ?? '') + '|' + (forceKeys ? '1' : '0'));
 
 	/**
 	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
@@ -186,45 +256,21 @@ class DetailStore {
 	 * @returns {any} The object.
 	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
-		let list = this.map.get(rootId)?.get(id) || [];
-		if (!list.length) {
+		const detailMap = this.map.get(rootId)?.get(id);
+
+		if (!detailMap || detailMap.size == 0) {
 			return { id, _empty_: true };
 		};
 		
 		const object = { id };
-		const keys = new Set<string>();
+		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
-		if (withKeys) {
-			for (const key of withKeys) {
-				keys.add(key);
-			};
-
-			if (!forceKeys) {
-				for (const key of J.Relation.default) {
-					keys.add(key);
-				};
+		for (const [ relationKey, item ] of detailMap.entries()) {
+			if (item.isDeleted || (withKeys && !keys.has(item.relationKey))) {
+				continue;
 			};
 
-			if (keys.has('name')) {
-				keys.add('pluralName');
-			};
-			if (keys.has('layout')) {
-				keys.add('resolvedLayout');
-			};
-		};
-
-		list = list.filter(it => {
-			if (it.isDeleted) {
-				return false;
-			};
-			if (withKeys && !keys.has(it.relationKey)) {
-				return false;
-			};
-			return true;
-		});
-
-		for (let i = 0; i < list.length; i++) {
-			object[list[i].relationKey] = list[i].value;
+			object[item.relationKey] = item.value;
 		};
 
 		return this.mapper(object, skipLayoutFormat);
@@ -237,7 +283,8 @@ class DetailStore {
 	 * @returns {string[]} The keys.
 	 */
 	public getKeys (rootId: string, id: string): string[] {
-		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
+		const detailMap = this.map.get(rootId)?.get(id);
+		return detailMap ? Array.from(detailMap.keys()) : [];
 	};
 
 	/**
@@ -257,6 +304,14 @@ class DetailStore {
 
 			if (U.Object.isInFileLayouts(object.layout)) {
 				object = this.mapFile(object);
+			};
+
+			const mappedKeys = keyMap[object.layout];
+
+			if (mappedKeys) {
+				for (const k in mappedKeys) {
+					object[k] = object[mappedKeys[k]];
+				};
 			};
 		};
 
@@ -339,14 +394,6 @@ class DetailStore {
 		object.pluralName = Relation.getStringValue(object.pluralName);
 		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
 		object.orderId = Relation.getStringValue(object.orderId);
-		object.widgetLimit = Number(object.widgetLimit) || 0;
-		object.widgetViewId = Relation.getStringValue(object.widgetViewId);
-
-		if (undefined === object.widgetLayout) {
-			object.widgetLayout = I.WidgetLayout.Compact;
-		};
-
-		object.widgetLayout = Number(object.widgetLayout) || I.WidgetLayout.Link;
 
 		if (object.name == translate('defaultNamePage')) {
 			object.name = '';
@@ -368,21 +415,16 @@ class DetailStore {
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
-		object.maxCount = Number(object.maxCount || object.relationMaxCount) || 0;
-		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
-		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
-		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
+		object.relationMaxCount = Number(object.relationMaxCount) || 0;
+		object.relationFormatObjectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+		object.isReadonly = Boolean(object.isReadonly);
+		object.relationReadonlyValue = Boolean(object.relationReadonlyValue);
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.includeTime = Boolean(object.relationFormatIncludeTime) || false;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedRelation');
 		};
-
-		delete(object.isReadonly);
-		delete(object.relationMaxCount);
-		delete(object.relationReadonlyValue);
-		delete(object.relationFormatObjectTypes);
 
 		return object;
 	};
@@ -395,10 +437,8 @@ class DetailStore {
 	 */
 	private mapOption (object: any) {
 		object.text = object.name;
-		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
+		object.relationOptionColor = Relation.getStringValue(object.relationOptionColor);
 		object.orderId = Relation.getStringValue(object.orderId);
-
-		delete(object.relationOptionColor);
 
 		return object;
 	};
@@ -450,9 +490,12 @@ class DetailStore {
 		object.chatId = Relation.getStringValue(object.chatId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
-		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
-		object.orderId = Relation.getStringValue(object.orderId || object.spaceOrder);
+		object.spacePushNotificationMode = Number(object.spacePushNotificationMode) || I.NotificationMode.All;
+		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
 		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
+		object.spacePushNotificationForceAllIds = Relation.getArrayValue(object.spacePushNotificationForceAllIds);
+		object.spacePushNotificationForceMuteIds = Relation.getArrayValue(object.spacePushNotificationForceMuteIds);
+		object.spacePushNotificationForceMentionIds = Relation.getArrayValue(object.spacePushNotificationForceMentionIds);
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;
@@ -474,17 +517,14 @@ class DetailStore {
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		// UX type
-		object.uxType = Number(object.uxType || object.spaceUxType) || I.SpaceUxType.Data;
+		object.spaceUxType = Number(object.spaceUxType) || I.SpaceUxType.Data;
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
-		object.isSpace = object.spaceUxType == I.SpaceUxType.Data;
+		object.isData = object.spaceUxType == I.SpaceUxType.Data;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
+		object.isOneToOne = object.spaceUxType == I.SpaceUxType.OneToOne;
 
 		// Chat
-		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.notificationMode);
-
-		delete(object.spacePushNotificationMode);
-		delete(object.spaceUxType);
-		delete(object.spaceOrder);
+		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.spacePushNotificationMode);
 
 		return object;
 	};
@@ -510,7 +550,7 @@ class DetailStore {
 		object.source = Relation.getStringValue(object.source);
 
 		if (object.source && (!object.name || (object.name == translate('defaultNamePage')))) {
-			object.name = U.Common.shortUrl(object.source);
+			object.name = U.String.shortUrl(object.source);
 		};
 
 		return object;
@@ -523,26 +563,23 @@ class DetailStore {
 	 * @returns {any} The mapped object.
 	 */
 	private mapParticipant (object) {
-		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
-		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
+		object.participantPermissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.participantStatus = Number(object.participantStatus) || I.ParticipantStatus.Joining;
 		object.identity = Relation.getStringValue(object.identity);
 		object.globalName = Relation.getStringValue(object.globalName);
 		object.resolvedName = object.globalName || object.identity;
 
-		delete(object.participantPermissions);
-		delete(object.participantStatus);
-
-		// Permission flags
-		object.isOwner = object.permissions == I.ParticipantPermissions.Owner;
-		object.isWriter = object.permissions == I.ParticipantPermissions.Writer;
-		object.isReader = object.permissions == I.ParticipantPermissions.Reader;
+			// Permission flags
+		object.isOwner = object.participantPermissions == I.ParticipantPermissions.Owner;
+		object.isWriter = object.participantPermissions == I.ParticipantPermissions.Writer;
+		object.isReader = object.participantPermissions == I.ParticipantPermissions.Reader;
 
 		// Status flags
-		object.isJoining = object.status == I.ParticipantStatus.Joining;
-		object.isActive = object.status == I.ParticipantStatus.Active;
-		object.isRemoved = object.status == I.ParticipantStatus.Removed;
-		object.isDeclined = object.status == I.ParticipantStatus.Declined;
-		object.isCanceled = object.status == I.ParticipantStatus.Canceled;
+		object.isJoining = object.participantStatus == I.ParticipantStatus.Joining;
+		object.isActive = object.participantStatus == I.ParticipantStatus.Active;
+		object.isRemoved = object.participantStatus == I.ParticipantStatus.Removed;
+		object.isDeclined = object.participantStatus == I.ParticipantStatus.Declined;
+		object.isCanceled = object.participantStatus == I.ParticipantStatus.Canceled;
 
 		return object;
 	};

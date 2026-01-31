@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence, animate } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
@@ -8,39 +10,45 @@ import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
 
-const LINES_LIMIT = 16;
-
 interface ChatMessageRefProps {
 	highlight: () => void;
 	onReactionAdd: () => void;
 	getNode: () => HTMLElement;
 };
 
-const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, scrollToBottom, onContextMenu, onMore, onReplyEdit,
-		renderLinks, renderMentions, renderObjects, renderEmoji,
+		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
+		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
 	} = props;
-	const { space } = S.Common;
+	const { space, theme } = S.Common;
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
-	const expandRef = useRef(null);
-	const attachmentRefs = useRef({});
+	const attachmentRefs = useRef(new Map<string, any>());
+	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
 
-		node.addClass('anim');
-		window.setTimeout(() => node.addClass('show'), J.Constant.delay.chatMessage);
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			resizeObserver.disconnect();
+			attachmentRefs.current.clear();
+		};
 	}, []);
 
 	useEffect(() => {
 		init();
-
-		$(nodeRef.current).addClass('show');
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -76,31 +84,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		resize();
 	};
 
-	const setExpandText = (isExpanded: boolean) => {
-		const expand = $(expandRef.current);
-		expand.text(isExpanded ? translate('blockChatMessageCollapse') : translate('blockChatMessageExpand'));
-	};
-
-	const onExpand = () => {
-		const node = $(nodeRef.current);
-
-		node.toggleClass('isExpanded');
-
-		setExpandText(node.hasClass('isExpanded'));
-		scrollToBottom();
-	};
-
-	const initExpand = () => {
-		const node = $(nodeRef.current);
-		const wrapper = node.find('.textWrapper');
-		const textHeight = wrapper.height();
-		const lineHeight = parseInt(wrapper.css('line-height'));
-		const canExpand = textHeight / lineHeight > LINES_LIMIT;
-
-		node.toggleClass('canExpand', canExpand);
-		setExpandText(node.hasClass('isExpanded'));
-	};
-
 	const onReactionAdd = () => {
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
@@ -127,13 +110,13 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 				value: '',
 				onSelect: icon => {
 					onReactionSelect(icon);
-					menuContext.close();
+					menuContext?.close();
 				},
 				route: analytics.route.reaction,
 			}
 		});
 
-		analytics.event('ClickMessageMenuReaction');
+		analytics.event('ClickMessageMenuReaction', { chatId: analyticsChatId });
 	};
 
 	const onReactionSelect = (icon: string) => {
@@ -147,7 +130,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		};
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
-		analytics.event(hasReaction ? 'RemoveReaction' : 'AddReaction');
+		analytics.event(hasReaction ? 'RemoveReaction' : 'AddReaction', { chatId: analyticsChatId });
 	};
 
 	const onAttachmentRemove = (attachmentId: string) => {
@@ -158,13 +141,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		const data: any = { ...preview };
 		const gallery = [];
 
-		Object.keys(attachmentRefs.current).forEach(key => {
-			const ref = attachmentRefs.current[key];
-			if (ref) {
-				const item = ref.getPreviewItem();
-				if (item) {
-					gallery.push(item);
-				};
+		attachmentRefs.current.forEach((ref) => {
+			const item = ref?.getPreviewItem();
+			if (item) {
+				gallery.push(item);
 			};
 		});
 
@@ -184,27 +164,27 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
-	const getAttachmentsClass = (): string => {
+	const getAttachmentsLayout = (): number => {
 		const attachments = getAttachments();
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
 		const ml = media.length;
-		const c = [];
 
+		let layout = 0;
 		if (ml && (ml == al)) {
 			if (ml == 1) {
 				const { widthInPixels, heightInPixels } = attachments[0];
 
 				if (Math.max(widthInPixels, heightInPixels) < 100) {
-					return '';
+					return 0;
 				};
 			};
 
-			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
+			layout = Math.min(10, ml);
 		};
 
-		return c.join(' ');
+		return layout;
 	};
 
 	const canAddReaction = (): boolean => {
@@ -232,11 +212,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const bubble = node.find('.bubbleInner .bubble');
+		const bubble = $(bubbleRef.current);
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
-		initExpand();
 	};
 
 	if (!message) {
@@ -249,22 +228,27 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const hasReactions = reactions.length;
 	const hasAttachments = attachments.length;
 	const isSelf = creator == account.id;
-	const attachmentsLayout = getAttachmentsClass();
+	const attachmentsLayout = getAttachmentsLayout();
 	const canAddReactionValue = canAddReaction();
 	const cn = [ 'message' ];
-	const ca = [ 'attachments', attachmentsLayout ];
+	const ca = [ 'attachments' ];
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
-	const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
+	const cns = [ 'status', 'syncing' ];
+
+	if (attachmentsLayout) {
+		ca.push(`withLayout layout-${attachmentsLayout}`);
+		cnBubble.push('withLayout');
+	};
 
 	let userpicNode = null;
 	let authorNode = null;
-	let statusIcon = <Icon className="status syncing" />;
 
 	if (isSynced || !isSelf) {
-		statusIcon = null;
+		cns.push('isHidden');
 	};
 
 	if (!readonly) {
@@ -275,7 +259,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
-			controls.push({ className: 'more', onClick: onMore });
+			controls.push({ className: 'more', onClick: onMore, tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -302,7 +286,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	if (text) {
 		cn.push('withText');
 	};
-	if (U.Common.checkRtl(text)) {
+	if (U.String.checkRtl(text)) {
 		ct.push('isRtl');
 	};
 	if (!isReadMessage || !isReadMention) {
@@ -321,12 +305,12 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			<IconObject
 				object={{ ...author, layout: I.ObjectLayout.Participant }}
 				size={32}
-				onClick={e => U.Object.openConfig(author)}
+				onClick={e => U.Object.openConfig(e, author)}
 			/>
 		);
 
 		authorNode = (
-			<div className="author" onClick={e => U.Object.openConfig(author)}>
+			<div className="author" onClick={e => U.Object.openConfig(e, author)}>
 				<ObjectName object={author} />
 			</div>
 		);
@@ -342,90 +326,103 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	};
 
 	return (
-		<div
-			ref={nodeRef}
-			id={`item-${id}`}
-			className={cn.join(' ')}
-			onContextMenu={onContextMenu}
-			onDoubleClick={onReplyEdit}
-			style={style}
-			{...U.Common.dataProps({ 'order-id': message.orderId })}
-		>
-			{isNew ? (
-				<div className="newMessages">
-					<Label text={translate('blockChatNewMessages')} />
-				</div>
-			) : ''}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef}
+				id={`item-${id}`}
+				className={cn.join(' ')}
+				onContextMenu={onContextMenu}
+				style={style}
+				{...U.Common.dataProps({ 'order-id': message.orderId })}
+				{...U.Common.animationProps({ 
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.3, delay: 0.1 },
+				})}
+			>
+				{isNew ? (
+					<div className="newMessages">
+						<Label text={translate('blockChatNewMessages')} />
+					</div>
+				) : ''}
 
-			<div className="flex">
-				<div className="side left">
-					{userpicNode}
-				</div>
+				<div className="flex">
+					<div className="side left">
+						{userpicNode}
+					</div>
 
-				<div className="side right">
-					<Reply {...props} id={replyToMessageId} />
+					<div className="side right">
+						<Reply {...props} id={replyToMessageId} />
 
-					{authorNode}
+						{authorNode}
 
-					<div className="bubbleOuter">
-						<div className="bubbleInner">
-							<div className={cnBubble.join(' ')}>
-								<div className={ct.join(' ')}>
-									<div
-										ref={textRef}
-										className="text"
-										dangerouslySetInnerHTML={{ __html: text }}
-									/>
-									<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
-									<div ref={expandRef} className="expand" onClick={onExpand} />
+						<div className="bubbleOuter">
+							<div className="bubbleInner">
+								<div ref={bubbleRef} className={cnBubble.join(' ')}>
+									<div className={ct.join(' ')}>
+										<div
+											ref={textRef}
+											className="text"
+											dangerouslySetInnerHTML={{ __html: text }}
+										/>
+										<div className="time">
+											<Icon className={cns.join(' ')} />
+											{editedLabel} {U.Date.date('H:i', createdAt)}
+										</div>
+									</div>
+
+									{hasAttachments ? (
+										<div className={ca.join(' ')}>
+											{attachments.map((item: any, i: number) => (
+												<Attachment
+													ref={ref => {
+														if (ref) {
+															attachmentRefs.current.set(item.id, ref);
+														} else {
+															attachmentRefs.current.delete(item.id);
+														};
+													}}
+													key={i}
+													object={item}
+													subId={subId}
+													onRemove={() => onAttachmentRemove(item.id)}
+													onPreview={(preview) => onPreview(preview)}
+													showAsFile={!attachmentsLayout}
+													bookmarkAsDefault={attachments.length > 1}
+													isDownload={!isSelf}
+												/>
+											))}
+										</div>
+									) : ''}
 								</div>
 
-								{hasAttachments ? (
-									<div className={ca.join(' ')}>
-										{attachments.map((item: any, i: number) => (
-											<Attachment
-												ref={ref => attachmentRefs.current[item.id] = ref}
-												key={i}
-												object={item}
-												subId={subId}
-												onRemove={() => onAttachmentRemove(item.id)}
-												onPreview={(preview) => onPreview(preview)}
-												showAsFile={!attachmentsLayout}
-												bookmarkAsDefault={attachments.length > 1}
-												isDownload={!isSelf}
-											/>
+								{controls.length ? (
+									<div className="controls">
+										{controls.map((item, i) => (
+											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
 									</div>
 								) : ''}
 							</div>
 
-							{controls.length ? (
-								<div className="controls">
-									{controls.map((item, i) => (
-										<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+							{hasReactions ? (
+								<div className="reactions">
+									{reactions.map((item: any, i: number) => (
+										<Reaction key={i} {...item} onSelect={onReactionSelect} />
 									))}
+									{!readonly && canAddReactionValue ? (
+										<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+									) : ''}
 								</div>
 							) : ''}
 						</div>
-
-						{hasReactions ? (
-							<div className="reactions">
-								{reactions.map((item: any, i: number) => (
-									<Reaction key={i} {...item} onSelect={onReactionSelect} />
-								))}
-								{!readonly && canAddReactionValue ? (
-									<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
-								) : ''}
-							</div>
-						) : ''}
 					</div>
 				</div>
-			</div>
-		</div>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));
 
-const ChatMessage = memo(ChatMessageBase);
-
-export default ChatMessage;
+export default memo(ChatMessage);

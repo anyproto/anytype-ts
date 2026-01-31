@@ -28,4 +28,26 @@
 		.buttons { padding: 8px 16px 0px 16px; }
 		.button { width: 100%; }
 	}
+
+	.menu.menuWidgetSection { width: var(--menu-width-set); }
+	.menu.menuWidgetSection {
+		.content { padding: 16px 0px; }
+		.menuLabel { margin: 0px 16px 16px; @include text-paragraph; font-weight: 600; padding-left: 8px; color: var(--color-text-primary); }
+
+		.itemsWrapper { margin-bottom: 12px; overflow: auto; }
+		.items { display: flex; flex-direction: column; gap: 8px; padding: 0px 8px; }
+		.item { 
+			display: flex; align-items: center; gap: 0px 6px; height: 44px; @include text-small; color: var(--color-text-secondary);
+			font-weight: 500;
+		}
+		.item {
+			.icon.eye { margin: 0px; }
+
+			&.isDragging { z-index: 1; }
+			&.isHidden { color: var(--color-text-tertiary); }
+			&::before { background: var(--color-shape-highlight-light) !important; }
+		}
+
+		.button { margin: 0px 16px; width: calc(100% - 32px); }
+	}
 }

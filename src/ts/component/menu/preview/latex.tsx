@@ -1,32 +1,31 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { I, U, translate } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-class MenuPreviewLatex extends React.Component<I.Menu> {
+const MenuPreviewLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { text, example } = data;
+	const { param } = props;
+	const { data } = param;
+	const { text, example } = data;
 
-		const math = katex.renderToString(String(text || ''), {
-			displayMode: true,
-			throwOnError: false,
-			output: 'html',
-			fleqn: true,
-			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-		});
+	const math = katex.renderToString(String(text || ''), {
+		displayMode: true,
+		throwOnError: false,
+		output: 'html',
+		fleqn: true,
+		trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+	});
 
-		return (
-			<div>
-				<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
-				{example ? <div className="example">{U.Common.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
-			</div>
-		);
-	};
+	return (
+		<div>
+			<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
+			{example ? <div className="example">{U.String.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
+		</div>
+	);
 
-};
+}));
 
 export default MenuPreviewLatex;

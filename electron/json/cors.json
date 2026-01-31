@@ -8,27 +8,68 @@
 
 	"img-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
 		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
 		"https://*.sndcdn.com",
-		"https://scontent.cdninstagram.com"
-	],
+		"https://scontent.cdninstagram.com",
+		"https://*.any.coop",
+		"https://*.ytimg.com",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://*.bcbits.com",
+		"https://*.unsplash.com",
+		"https://*.apple.com",
+		"https://*.mzstatic.com",
+		"https://*.spotifycdn.com",
+		"https://*.ggpht.com",
+		"https://*.openstreetmap.org",
+		"https://*.openstreetmap.fr",
+		"https://*.jawg.io",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
+    ],
 
 	"media-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
-		"file://*", 
+		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
+		"http://localhost:*", 
 		"https://*.googlevideo.com",
 		"https://scontent.cdninstagram.com",
 		"https://media.sketchfab.com",
 		"https://*.spotify.com",
-  		"https://*.spotifycdn.com"
+		"https://*.spotifycdn.com",
+		"https://*.apple.com",
+		"https://*.mzstatic.com",
+		"https://*.any.coop",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://*.unsplash.com",
+		"https://*.spotifycdn.com",
+		"https://*.openstreetmap.org",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org",
+		"https://*.scdn.co",
+		"https://*.redditstatic.com",
+		"https://*.redd.it",
+		"https://*.redditmedia.com",
+		"https://*.gstatic.com"
 	],
 
 	"style-src": [ 
@@ -40,6 +81,7 @@
 		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
+		"https://*.apple.com",
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
 		"https://*.googleapis.com",
@@ -60,6 +102,9 @@
 		"https://static.sketchfab.com",
 		"https://*.diagrams.net",
 		"https://*.bstarstatic.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"http://*.openstreetmap.fr/",
         "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
 	],
 
@@ -71,6 +116,7 @@
 		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
+		"https://*.apple.com",
 		"https://encore.scdn.co/",
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
@@ -82,7 +128,9 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://static.sketchfab.com",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://unpkg.com/@excalidraw/",
+		"https://*.openstreetmap.fr"
 	],
 
 	"connect-src": [ 
@@ -101,7 +149,8 @@
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
 		"https://*.vimeocdn.com", 
-		"https://*.vimeo.com", 
+		"https://*.vimeo.com",
+		"https://*.apple.com",
 		"https://*.googlevideo.com", 
 		"https://*.akamaized.net",
 		"https://*.soundcloud.com",
@@ -144,7 +193,11 @@
 		"https://kroki.io",
 		"https://*.vimeo.com",
 		"https://*.statsigapi.net",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://*.google-analytics.com",
+		"http://*.openstreetmap.fr/"
 	],
 
 	"script-src-elem": [
@@ -157,6 +210,7 @@
 		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
+		"https://*.apple.com",
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
 		"https://*.sndcdn.com",
@@ -187,7 +241,12 @@
 		"https://*.googletagmanager.com",
 		"https://*.facebook.net",
 		"https://*.diagrams.net",
-        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
+        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
+		"https://unpkg.com/@excalidraw/",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"http://*.openstreetmap.fr/",
+		"https://*.sentry-cdn.com/"
 	],
 
 	"frame-src": [
@@ -198,6 +257,7 @@
 		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
+		"https://*.apple.com",
 		"https://*.vimeo.com",
 		"https://w.soundcloud.com",
 		"https://*.google.com",
@@ -218,6 +278,10 @@
 		"https://kroki.io",
 		"https://sketchfab.com",
 		"https://*.diagrams.net",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://www.googletagmanager.com/",
+		"http://*.openstreetmap.fr/",
 		"chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
     ],
 

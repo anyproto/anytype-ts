@@ -1,9 +1,9 @@
 <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" fill="none">
   <!-- Clock outline -->
-  <circle cx="6" cy="6" r="5.5" stroke="#828282" stroke-width="1"/>
+  <circle cx="6" cy="6" r="5.5" stroke="#fff" stroke-width="1"/>
 
   <!-- Hour hand -->
-  <line x1="6" y1="6" x2="6" y2="3.5" stroke="#828282" stroke-width="1">
+  <line x1="6" y1="6" x2="6" y2="3.5" stroke="#fff" stroke-width="1">
     <animateTransform
       attributeName="transform"
       type="rotate"
@@ -14,7 +14,7 @@
   </line>
 
   <!-- Minute hand -->
-  <line x1="6" y1="6" x2="6" y2="3.5" stroke="#828282" stroke-width="1">
+  <line x1="6" y1="6" x2="6" y2="3.5" stroke="#fff" stroke-width="1">
     <animateTransform
       attributeName="transform"
       type="rotate"

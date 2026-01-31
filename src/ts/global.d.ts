@@ -4,3 +4,6 @@ declare const SPARK_ONBOARDING_URL: string;
 declare const SPARK_ONBOARDING_TOKEN: string;
 declare const SPARK_ONBOARDING_NO_AUTH: string;
 declare const SENTRY_DSN: string;
+declare const __IS_EXTENSION__: string;
+
+declare module 'selection-ranges';

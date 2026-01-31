@@ -11,7 +11,7 @@
 		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
 	}
 	> .note {
-		.inner { display: inline-block; width: 704px; margin: 0px auto; vertical-align: middle; line-height: 1; }
+		.inner { display: inline-block; width: var(--editor-width); margin: 0px auto; vertical-align: middle; line-height: 1; }
 		.sides { display: flex; }
 		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; line-height: 20px; }
 		.side.right { text-align: right; }
@@ -36,7 +36,7 @@
 		}
 	}
 
-	#editorSize { position: absolute; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
+	#editorSize { position: absolute; width: 400px; top: 60px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
 
 	.dragEmpty { height: 40px; transition: $transitionAllCommon; }
 	.dragWrap {
@@ -69,7 +69,7 @@
 	}
 
 	&.withCover { padding-top: 348px; }
-	&.withIconAndCover { padding-top: 234px; }
+	&.withIconAndCover { padding-top: 244px; }
 
 	&.withCover,
 	&.withIconAndCover {
@@ -159,7 +159,7 @@
 
 	&.isChat { margin: 0px; }
 	&.isChat {
-		.blocks { width: calc(100% - 64px); margin: 0px auto; padding: 0px; user-select: none; max-width: 960px; }
+		.blocks { width: calc(100% - 64px); margin: 0px auto; padding: 0px; user-select: none; max-width: var(--editor-width); }
 		.blocks {
 			.block {
 				.wrapMenu { display: none; }
@@ -213,7 +213,9 @@
 		}
 	}
 
-	&.isSet, 
+	&.isSet,
+	&.isCollection { padding-bottom: 80px; }
+	&.isSet,
 	&.isCollection {
 		.blocks {
 			.headSimple {

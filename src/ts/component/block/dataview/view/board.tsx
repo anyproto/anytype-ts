@@ -1,90 +1,50 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
+import { StickyScrollbar } from 'Component';
 import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
 
 const PADDING = 46;
 
-const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent> {
+const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	node: any = null;
-	cache: any = {};
-	frame = 0;
-	newIndex = -1;
-	newGroupId = '';
-	columnRefs: any = {};
-	isDraggingColumn = false;
-	isDraggingCard = false;
-	ox = 0;
-	creating = false;
-	hoverId = '';
+	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate } = props;
+	const view = getView();
+	const relation = S.Record.getRelationByKey(view.groupRelationKey);
+	const cn = [ 'viewContent', className ];
+	const nodeRef = useRef(null);
+	const scrollRef = useRef(null);
+	const stickyScrollRef = useRef(null);
+	const isSyncingScroll = useRef(false);
+	const hoverId = useRef('');
+	const newIndex = useRef(-1);
+	const newGroupId = useRef('');
+	const frame = useRef(0);
+	const cache = useRef({});
+	const isDraggingColumn = useRef(false);
+	const isDraggingCard = useRef(false);
+	const ox = useRef(0);
+	const columnRefs = useRef(new Map());
+	const [ dummy, setDummy ] = useState(0);
 
-	constructor (props: I.ViewComponent) {
-		super(props);
+	useEffect(() => {
+		resize();
+		rebind();
 
-		this.onDragStartColumn = this.onDragStartColumn.bind(this);
-		this.onDragStartCard = this.onDragStartCard.bind(this);
-	};
-
-	render () {
-		const { rootId, block, getView, className, onViewSettings } = this.props;
-		const view = getView();
-		const groups = this.getGroups(false);
-		const relation = S.Record.getRelationByKey(view.groupRelationKey);
-		const cn = [ 'viewContent', className ];
-
-		if (!relation) {
-			return (
-				<Empty
-					{...this.props}
-					title={translate('blockDataviewBoardRelationDeletedTitle')}
-					description={translate('blockDataviewBoardRelationDeletedDescription')}
-					button={translate('blockDataviewBoardOpenViewMenu')}
-					className="withHead"
-					onClick={onViewSettings}
-				/>
-			);
+		return () => {
+			unbind();
+			columnRefs.current.clear();
+			cache.current = {};
 		};
+	}, []);
 
-		return (
-			<div 
-				ref={node => this.node = node} 
-				id="scrollWrap"
-				className="scrollWrap"
-			>
-				<div id="scroll" className="scroll">
-					<div className={cn.join(' ')}>
-						<div id="columns" className="columns">
-							{groups.map((group: any, i: number) => (
-								<Column 
-									key={`board-column-${group.id}`} 
-									ref={ref => this.columnRefs[group.id] = ref}
-									{...this.props} 
-									{...group}
-									onDragStartColumn={this.onDragStartColumn}
-									onDragStartCard={this.onDragStartCard}
-									getSubId={() => this.getSubId(group.id)}
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.resize();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-		U.Common.triggerResizeEditor(this.props.isPopup);
+	useEffect(() => {
+		resize();
+		U.Common.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -92,54 +52,58 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		if (ids.length) {
 			selection?.renderSelection();
 		};
+	});
+
+	const rebind = () => {
+		const scroll = $(scrollRef.current);
+
+		unbind();
+
+		scroll.on('scroll', () => onScrollHorizontal());
+		U.Common.getPageContainer(isPopup).on('scroll.board', onScrollView);
+
+		if (!isInline) {
+			stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
+		};
 	};
 
-	componentWillUnmount () {
-		this.unbind();
+	const unbind = () => {
+		const scroll = $(scrollRef.current);
+
+		scroll.off('scroll');
+		stickyScrollRef.current?.unbind();
+		U.Common.getPageContainer(isPopup).off('scroll.board');
 	};
 
-	rebind () {
-		this.unbind();
-
-		const node = $(this.node);
-		node.find('#scroll').on('scroll', () => this.onScrollView());
+	const onScrollHorizontal = () => {
+		if (stickyScrollRef.current) {
+			isSyncingScroll.current = stickyScrollRef.current.sync($(scrollRef.current), isSyncingScroll.current);
+		};
 	};
 
-	unbind () {
-		const node = $(this.node);
-		node.find('#scroll').off('scroll');
-	};
-
-	loadGroupList () {
-		const { rootId, block, getView, getTarget } = this.props;
+	const load = () => {
 		const object = getTarget();
 		const view = getView();
 
 		S.Record.groupsClear(rootId, block.id);
 
 		if (!view.groupRelationKey) {
-			this.forceUpdate();
-			return;
+			setDummy(dummy + 1);
+		} else {
+			Dataview.loadGroupList(rootId, block.id, view.id, object);
 		};
-
-		Dataview.loadGroupList(rootId, block.id, view.id, object);
 	};
 
-	getGroups (withHidden: boolean) {
-		const { rootId, block, getView } = this.props;
+	const getGroups = (withHidden: boolean) => {
 		const view = getView();
-		if (!view) {
-			return [];
-		};
-
-		return Dataview.getGroups(rootId, block.id, view.id, withHidden);
+		return view ? Dataview.getGroups(rootId, block.id, view.id, withHidden) : [];
 	};
 
-	initCacheColumn () {
-		const groups = this.getGroups(true);
-		const node = $(this.node);
+	const initCacheColumn = () => {
+		const groups = getGroups(true);
+		const node = $(nodeRef.current);
 
-		this.cache = {};
+		cache.current = {};
 		groups.forEach((group: any, i: number) => {
 			const el = node.find(`#column-${group.id}`);
 			const item = {
@@ -160,18 +124,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				item.height = el.outerHeight();
 			};
 			
-			this.cache[group.id] = item;
+			cache.current[group.id] = item;
 		});
 	};
 
-	initCacheCard () {
-		const groups = this.getGroups(false);
-		const node = $(this.node);
+	const initCacheCard = () => {
+		const groups = getGroups(false);
+		const node = $(nodeRef.current);
 
-		this.cache = {};
+		cache.current = {};
 
 		groups.forEach((group: any, i: number) => {
-			const column = this.columnRefs[group.id];
+			const column = columnRefs.current.get(group.id);
 			if (!column) {
 				return;
 			};
@@ -186,7 +150,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				};
 
 				const { left, top } = el.offset();
-				this.cache[item.id] = {
+				cache.current[item.id] = {
 					id: item.id,
 					groupId: group.id,
 					x: left,
@@ -200,15 +164,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
-	onDragStartCommon (e: any, target: any) {
+	const onDragStartCommon = (e: any, target: any) => {
 		e.stopPropagation();
 
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const view = node.find('.viewContent');
 		const clone = target.clone();
 		
-		this.ox = node.find('#columns').offset().left;
+		ox.current = node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
@@ -227,10 +191,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		selection.clear();
 	};
 
-	onDragEndCommon (e: any) {
+	const onDragEndCommon = (e: any) => {
 		e.preventDefault();
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
 		$('body').removeClass('grab');
 		$(window).off('dragend.board drag.board').trigger('mouseup.selection');
@@ -243,14 +207,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		keyboard.disableCommonDrop(false);
 		keyboard.setDragging(false);
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
 		};
 	};
 
-	onDragStartColumn (e: any, groupId: string) {
-		const { readonly } = this.props;
+	const onDragStartColumn = (e: any, groupId: string) => {
 		if (readonly) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -258,20 +221,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
-		this.onDragStartCommon(e, node.find(`#column-${groupId}`));
-		this.initCacheColumn();
-		this.isDraggingColumn = true;
+		onDragStartCommon(e, node.find(`#column-${groupId}`));
+		initCacheColumn();
+		isDraggingColumn.current = true;
 
-		win.on('drag.board', e => this.onDragMoveColumn(e, groupId));
-		win.on('dragend.board', e => this.onDragEndColumn(e, groupId));
+		win.on('drag.board', e => onDragMoveColumn(e, groupId));
+		win.on('dragend.board', e => onDragEndColumn(e, groupId));
 	};
 
-	onDragMoveColumn (e: any, groupId: any) {
-		const node = $(this.node);
-		const current = this.cache[groupId];
-		const groups = this.getGroups(false);
+	const onDragMoveColumn = (e: any, groupId: any) => {
+		const node = $(nodeRef.current);
+		const current = cache.current[groupId];
+		const groups = getGroups(false);
 
 		if (!current) {
 			return;
@@ -279,55 +242,53 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		let isLeft = false;
 
-		this.hoverId = '';
+		hoverId.current = '';
 
 		for (const group of groups) {
-			const rect = this.cache[group.id];
+			const rect = cache.current[group.id];
 			if (!rect || (group.id == groupId)) {
 				continue;
 			};
 
-			if (rect && this.cache[groupId] && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && cache.current[groupId] && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
-				this.hoverId = group.id;
+				hoverId.current = group.id;
 
-				this.newIndex = rect.index;
+				newIndex.current = rect.index;
 
 				if (isLeft && (rect.index > current.index)) {
-					this.newIndex--;
+					newIndex.current--;
 				};
 
 				if (!isLeft && (rect.index < current.index)) {
-					this.newIndex++;
+					newIndex.current++;
 				};
 				break;
 			};
 		};
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
 		};
 
-		this.frame = raf(() => {
+		frame.current = raf(() => {
 			node.find('.isOver').removeClass('isOver left right');
 
-			if (this.hoverId) {
-				node.find(`#column-${this.hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+			if (hoverId.current) {
+				node.find(`#column-${hoverId.current}`).addClass(`isOver ${isLeft ? 'left' : 'right'}`);
 			};
 		});
 	};
 
-	onDragEndColumn (e: any, groupId: string) {
-		const { rootId, block, getView } = this.props;
-
-		if (this.hoverId) {
+	const onDragEndColumn = (e: any, groupId: string) => {
+		if (hoverId.current) {
 			const view = getView();
 			const update: any[] = [];
-			const current = this.cache[groupId];
+			const current = cache.current[groupId];
 
-			let groups = this.getGroups(true);
-			groups = arrayMove(groups, current.index, this.newIndex);
+			let groups = getGroups(true);
+			groups = arrayMove(groups, current.index, newIndex.current);
 			S.Record.groupsSet(rootId, block.id, groups);
 
 			groups.forEach((it: any, i: number) => {
@@ -338,14 +299,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 		};
 
-		this.cache = {};
-		this.isDraggingColumn = false;
-		this.onDragEndCommon(e);
-		this.resize();
+		cache.current = {};
+		isDraggingColumn.current = false;
+		onDragEndCommon(e);
+		resize();
 	};
 
-	onDragStartCard (e: any, groupId: any, record: any) {
-		const { readonly } = this.props;
+	const onDragStartCard = (e: any, groupId: any, record: any) => {
 		if (readonly) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -354,17 +314,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		const win = $(window);
 
-		this.onDragStartCommon(e, $(e.currentTarget));
-		this.initCacheCard();
-		this.isDraggingCard = true;
+		onDragStartCommon(e, $(e.currentTarget));
+		initCacheCard();
+		isDraggingCard.current = true;
 
-		win.on('drag.board', e => this.onDragMoveCard(e, record));
-		win.on('dragend.board', e => this.onDragEndCard(e, record));
+		win.on('drag.board', e => onDragMoveCard(e, record));
+		win.on('dragend.board', e => onDragEndCard(e, record));
 	};
 
-	onDragMoveCard (e: any, record: any) {
-		const node = $(this.node);
-		const current = this.cache[record.id];
+	const onDragMoveCard = (e: any, record: any) => {
+		const node = $(nodeRef.current);
+		const current = cache.current[record.id];
 
 		if (!current) {
 			return;
@@ -372,10 +332,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		let isTop = false;
 		
-		this.hoverId = '';
+		hoverId.current = '';
 
-		for (const i in this.cache) {
-			const rect = this.cache[i];
+		for (const i in cache.current) {
+			const rect = cache.current[i];
 			if (!rect || (rect.id == record.id)) {
 				continue;
 			};
@@ -383,48 +343,52 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			if (U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 
-				this.hoverId = rect.id;
-				this.newGroupId = rect.groupId;
-				this.newIndex = isTop ? rect.index : rect.index + 1;
+				hoverId.current = rect.id;
+				newGroupId.current = rect.groupId;
+				newIndex.current = isTop ? rect.index : rect.index + 1;
 				break;
 			};
 		};
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
 		};
 
-		this.frame = raf(() => {
+		frame.current = raf(() => {
 			node.find('.isOver').removeClass('isOver top bottom');
 
-			if (this.hoverId) {
-				node.find(`#record-${this.hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+			if (hoverId.current) {
+				node.find(`#record-${hoverId.current}`).addClass(`isOver ${isTop ? 'top' : 'bottom'}`);
 			};
 		});
 	};
 
-	onDragEndCard (e: any, record: any) {
-		const current = this.cache[record.id];
+	const onDragEndCard = (e: any, record: any) => {
+		const current = cache.current[record.id];
 
 		if (!current) {
 			return;
 		};
 
-		this.onDragEndCommon(e);
-		this.cache = {};
-		this.isDraggingCard = false;
+		onDragEndCommon(e);
+		cache.current = {};
+		isDraggingCard.current = false;
 
-		if (!this.hoverId || !current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
+		if (
+			!hoverId.current || 
+			!current.groupId || 
+			!newGroupId.current || 
+			((current.index == newIndex.current) && (current.groupId == newGroupId.current))
+		) {
 			return;
 		};
 
-		const { rootId, block, getView, objectOrderUpdate } = this.props;
 		const view = getView();
 		const oldSubId = S.Record.getGroupSubId(rootId, block.id, current.groupId);
-		const newSubId = S.Record.getGroupSubId(rootId, block.id, this.newGroupId);
-		const newGroup = S.Record.getGroup(rootId, block.id, this.newGroupId);
-		const change = current.groupId != this.newGroupId;
+		const newSubId = S.Record.getGroupSubId(rootId, block.id, newGroupId.current);
+		const newGroup = S.Record.getGroup(rootId, block.id, newGroupId.current);
+		const change = current.groupId != newGroupId.current;
 
 		let records: any[] = [];
 		let orders: any[] = [];
@@ -434,39 +398,39 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			S.Detail.delete(oldSubId, record.id, Object.keys(record));
 
 			S.Record.recordDelete(oldSubId, '', record.id);
-			S.Record.recordAdd(newSubId, '', record.id, this.newIndex);
+			S.Record.recordAdd(newSubId, '', record.id, newIndex.current);
 
 			C.ObjectListSetDetails([ record.id ], [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				orders = [
 					{ viewId: view.id, groupId: current.groupId, objectIds: S.Record.getRecordIds(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: S.Record.getRecordIds(newSubId, '') }
+					{ viewId: view.id, groupId: newGroupId.current, objectIds: S.Record.getRecordIds(newSubId, '') }
 				];
 
 				objectOrderUpdate(orders, records);
 			});
 		} else {
-			if (current.index + 1 == this.newIndex) {
+			if (current.index + 1 == newIndex.current) {
 				return;
 			};
 
-			if (this.newIndex > current.index) {
-				this.newIndex -= 1;
+			if (newIndex.current > current.index) {
+				newIndex.current -= 1;
 			};
 
-			records = arrayMove(S.Record.getRecordIds(oldSubId, ''), current.index, this.newIndex);
+			records = arrayMove(S.Record.getRecordIds(oldSubId, ''), current.index, newIndex.current);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
 			objectOrderUpdate(orders, records, () => S.Record.recordsSet(oldSubId, '', records));
 		};
 	};
 
-	onScrollView () {
-		const groups = this.getGroups(false);
-		const node = $(this.node);
+	const onScrollView = () => {
+		const groups = getGroups(false);
+		const node = $(nodeRef.current);
 
-		if (this.isDraggingColumn) {
+		if (isDraggingColumn.current) {
 			groups.forEach((group: any, i: number) => {
-				const rect = this.cache[group.id];
+				const rect = cache.current[group.id];
 				if (!rect) {
 					return;
 				};
@@ -481,9 +445,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				rect.y = top;
 			});
 		} else
-		if (this.isDraggingCard) {
+		if (isDraggingCard.current) {
 			groups.forEach((group: any, i: number) => {
-				const column = this.columnRefs[group.id];
+				const column = columnRefs.current.get(group.id);
 				if (!column) {
 					return;
 				};
@@ -496,41 +460,45 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					};
 
 					const { left, top } = el.offset();
-					this.cache[item.id].x = left;
-					this.cache[item.id].y = top;
+					cache.current[item.id].x = left;
+					cache.current[item.id].y = top;
 				});
 			});
 		};
 	};
 
-	getSubId (id: string): string {
-		const { rootId, block } = this.props;
-
+	const getSubId = (id: string): string => {
 		return S.Record.getGroupSubId(rootId, block.id, id);
 	};
 
-	resize () {
-		const { rootId, block, isPopup, isInline } = this.props;
+	const resize = () => {
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
+		const node = $(nodeRef.current);
+		const scroll = $(scrollRef.current);
 		const view = node.find('.viewContent');
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = J.Size.dataview.board;
-		const groups = this.getGroups(false);
+		const groups = getGroups(false);
 		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
-			const maxWidth = cw - PADDING * 2;
-			const margin = width >= maxWidth ? PADDING : 0;
+			const mw = cw - PADDING * 2;
+			const margin = (cw - mw) / 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: `calc(100% + ${PADDING * 2}px)`, marginLeft: -margin, paddingLeft: margin / 2 });
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			view.css({ width: vw, paddingRight: pr });
 
-			if (width > maxWidth) {
-				view.css({ width: width + size.margin });
-			};
-		} else 
+			stickyScrollRef.current?.resize({
+				width: mw,
+				left: margin,
+				paddingLeft: margin,
+				display: vw <= mw ? 'none' : '',
+				trackWidth: vw,
+			});
+		} else
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');
 			const ww = wrapper.width();
@@ -541,6 +509,54 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 	};
 
-});
+	if (!relation) {
+		return (
+			<Empty
+				{...props}
+				title={translate('blockDataviewBoardRelationDeletedTitle')}
+				description={translate('blockDataviewBoardRelationDeletedDescription')}
+				button={translate('blockDataviewBoardOpenViewMenu')}
+				className="withHead"
+				onClick={onViewSettings}
+			/>
+		);
+	};
+
+	const groups = getGroups(false);
+
+	useImperativeHandle(ref, () => ({
+		load,
+		resize,
+	}));
+
+	return (
+		<div
+			ref={nodeRef}
+			className="wrap"
+		>
+			<div id="scrollWrap" className="scrollWrap">
+				<div ref={scrollRef} id="scroll" className="scroll">
+					<div className={cn.join(' ')}>
+						<div id="columns" className="columns">
+							{groups.map((group: any, i: number) => (
+								<Column
+									key={`board-column-${group.id}`}
+									ref={ref => columnRefs.current.set(group.id, ref)}
+									{...props}
+									{...group}
+									onDragStartColumn={onDragStartColumn}
+									onDragStartCard={onDragStartCard}
+									getSubId={() => getSubId(group.id)}
+								/>
+							))}
+						</div>
+					</div>
+				</div>
+			</div>
+			{!isInline ? <StickyScrollbar ref={stickyScrollRef} /> : ''}
+		</div>
+	);	
+
+}));
 
 export default ViewBoard;

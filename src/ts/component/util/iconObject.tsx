@@ -131,11 +131,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const theme = S.Common.getThemeClass();
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
+	const [ stateObject, setStateObject ] = useState(null);
 	
 	let object: any = getObject ? getObject() : props.object || {};
-
-	const [ stateObject, setStateObject ] = useState(null);
-
 	if (stateObject) {
 		object = Object.assign(object, stateObject || {});
 	};
@@ -170,9 +168,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][1] });
 		};
 		
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
+		onMouseEnter?.(e);
 	};
 	
 	const onMouseLeaveHandler = (e: any) => {
@@ -182,22 +178,18 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][0] });
 		};
 		
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
+		onMouseLeave?.(e);
 	};
 
 	const onMouseDown = (e: any) => {
-		const isTask = U.Object.isTaskLayout(object.layout);
-		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
-
-		if (onClick) {
-			onClick(e);
-		};
+		onClick?.(e);
 
 		if (!canEdit) {
 			return;
 		};
+
+		const isTask = U.Object.isTaskLayout(layout);
+		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(layout);
 
 		if (isTask || isEmoji) {
 			e.preventDefault();
@@ -298,54 +290,40 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		let ret = String(name || translate('defaultNamePage'));
 		ret = U.Smile.strip(ret);
 		ret = ret.trim().substring(0, 1).toUpperCase();
-		ret = U.Common.htmlSpecialChars(ret);
+		ret = U.String.htmlSpecialChars(ret);
 		return ret;
 	};
 
-	const defaultIcon = (id: string) => {
-		const type = S.Detail.get(J.Constant.subId.type, object.type, [ 'name', 'iconName' ], true);
-
-		let src = '';
-		if (type.iconName) {
-			src = U.Object.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
-		} else {
-			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
-		};
+	const defaultIcon = () => {
+		const src = U.Object.defaultIcon(layout, object.type, size);
 
 		cn.push('withDefault');
-		icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+		icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
 		icon = <img src={src} className={icn.join(' ')} />;
 	};
 
 	switch (layout) {
 		default: {
+			if (iconEmoji) {
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
+			} else
 			if (iconImage) {
 				cn.push('withImage');
-			};
-
-			let di = 'page';
-			switch (layout) {
-				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat: di = 'chat'; break;
-				case I.ObjectLayout.Collection: di = 'collection'; break;
-				case I.ObjectLayout.Set: di = 'set'; break;
-			};
-
-			if (iconEmoji || iconImage) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				icn = icn.concat([ 'iconImage', `c${size}` ]);
+				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />;
 			} else {
-				defaultIcon(di);
+				defaultIcon();
 			};
 			break;
 		};
 
 		case I.ObjectLayout.Date:
-			defaultIcon('date');
+			defaultIcon();
 			break;
 
 		case I.ObjectLayout.Human: 
 		case I.ObjectLayout.Participant: {
-			icn = icn.concat([ 'iconImage', 'c' + size ]);
+			icn = icn.concat([ 'iconImage', `c${size}` ]);
 
 			if (iconImage) {
 				cn.push('withImage');
@@ -357,7 +335,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Task: {
-			icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
+			icn = icn.concat([ 'iconCheckbox', `c${iconSize}` ]);
 			icon = <img ref={checkboxRef} src={done ? CheckboxTask[theme][2] : CheckboxTask[theme][0]} className={icn.join(' ')} />;
 			break;
 		};
@@ -367,26 +345,26 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.Note: {
-			defaultIcon('page');
+			defaultIcon();
 			break;
 		};
 
 		case I.ObjectLayout.Type: {
 			if (iconImage) {
-				icn = icn.concat([ 'iconImage', 'c' + size ]);
+				icn = icn.concat([ 'iconImage', `c${size}` ]);
 				cn.push('withImage');
 				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 			} else
 			if (iconName) {
 				const src = U.Object.typeIcon(iconName, iconOption, size);
 
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
 				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;
 			} else
 			if (iconEmoji) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
 			} else {
-				defaultIcon('type');
+				defaultIcon();
 			};
 			break;
 		};
@@ -398,17 +376,17 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 			const folder = size > 24 ? 'big/' : '';
 
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
 			icon = <img src={`./img/icon/relation/${folder}${Relation.iconName(relationKey, relationFormat)}.svg`} className={icn.join(' ')} />;
 			break;
 		};
 
 		case I.ObjectLayout.Bookmark: {
 			if (iconImage) {
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 			} else {
-				defaultIcon('bookmark');
+				defaultIcon();
 			};
 			break;
 		};
@@ -416,10 +394,10 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		case I.ObjectLayout.Image: {
 			if (id) {
 				cn.push('withImage');
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
 				icon = <img src={S.Common.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 			} else {
-				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+				icn = icn.concat([ 'iconFile', `c${iconSize}` ]);
 				icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
 			};
 			break;
@@ -429,14 +407,14 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		case I.ObjectLayout.Audio:
 		case I.ObjectLayout.Pdf:
 		case I.ObjectLayout.File: {
-			icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+			icn = icn.concat([ 'iconFile', `c${iconSize}` ]);
 			icon = <img src={U.File.iconPath(object)} className={icn.join(' ')} />;
 			break;
 		};
 
 		case I.ObjectLayout.SpaceView: {
 			icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
-			cn.push('withImage', `uxType${uxType}`);
+			cn.push('withImage', U.Data.spaceClass(uxType));
 
 			if (iconImage) {
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
@@ -492,7 +470,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		setObject: object => setStateObject(object),
 	}));
 
-	return icon ? (
+	if (!icon) {
+		return null;
+	};
+
+	return (
 		<div 
 			ref={nodeRef}
 			id={props.id} 
@@ -510,7 +492,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		>
 			{icon}
 		</div>
-	) : null;
+	);
 
 }));
 

@@ -1,4 +1,4 @@
-import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { observable, action, set, makeObservable } from 'mobx';
 import { S, I, M, U, J, Dataview, Relation } from 'Lib';
 
 enum KeyMapType {
@@ -6,6 +6,24 @@ enum KeyMapType {
 	Type = 'type',
 };
 
+/**
+ * RecordStore manages dataview records, views, relations, and groups.
+ *
+ * Key responsibilities:
+ * - Record management: Lists of object IDs per subscription/dataview
+ * - View management: Dataview configurations (filters, sorts, columns)
+ * - Relation management: Available relations and their mappings
+ * - Group management: Kanban board groupings
+ * - Type/Relation lookups: Fast ID retrieval by unique key
+ *
+ * This store is heavily used by Set/Collection views and widgets
+ * that display lists of objects with filtering and sorting.
+ *
+ * Key maps for fast lookups:
+ * - relationKeyMap: spaceId -> relationKey -> relationId
+ * - typeKeyMap: spaceId -> uniqueKey -> typeId
+ * - spaceMap: targetSpaceId -> spaceViewId
+ */
 class RecordStore {
 
 	public relationMap: Map<string, any[]> = observable(new Map());
@@ -265,13 +283,6 @@ class RecordStore {
 			meta.keys = meta.keys || [];
 			meta = observable(meta);
 
-			intercept(meta as any, (change: any) => {
-				if (change.newValue === meta[change.name]) {
-					return null;
-				};
-				return change;
-			});
-
 			this.metaMap.set(this.getId(rootId, blockId), meta);
 		};
 	};
@@ -468,7 +479,7 @@ class RecordStore {
 	 * @returns {any|null} The chat type object or null.
 	 */
 	getChatType () {
-		return this.getTypeByKey(J.Constant.typeKey.chat);
+		return this.getTypeByKey(J.Constant.typeKey.chatDerived);
 	};
 
 	/**
@@ -534,12 +545,12 @@ class RecordStore {
 	 * @returns {any[]} The sorted list of types.
 	 */
 	sortTypes (list: any[]) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, space.isChat) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isChat || spaceview.isOneToOne) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});

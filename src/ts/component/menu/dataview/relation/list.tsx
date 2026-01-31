@@ -138,6 +138,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	};
 
 	const onSortEnd = (result: any) => {
+		keyboard.disableSelection(false);
+
 		const view = getView();
 		if (!view) {
 			return;
@@ -151,12 +153,11 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const ids = items.map(it => it.relationKey);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
-		const list = arrayMove(getItems(), oldIndex, newIndex);
 
+		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		n.current = newIndex;
-		view.relations = list;
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it && it.relationKey));
-		keyboard.disableSelection(false);
+
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map((it: any) => it && it.relationKey));
 	};
 
 	const onSwitch = (e: any, item: any, v: boolean) => {
@@ -204,7 +205,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	});
 
 	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: isReadonly });
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: isReadonly });
 		const isName = item.relationKey == 'name';
 		const canHide = !isReadonly && (!isName || (view.type == I.ViewType.Gallery));
 		const cn = [ 'item' ];
@@ -219,6 +220,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 		if (isReadonly) {
 			cn.push('isReadonly');
+		};
+		if (isDragging) {
+			cn.push('isDragging');
 		};
 
 		return (
@@ -300,6 +304,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		setIndex: (i: number) => n.current = i,
 		onClick,
 		getListRef: () => listRef.current,
+		onSortEnd,
+		onSwitch,
 	}), []);
 	
 	return (

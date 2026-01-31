@@ -1,15 +1,15 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding } from 'Lib';
+import { Frame, Button, Footer, Error } from 'Component';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
 
-const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
-	const cn = [ 'animation' ];
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const match = keyboard.getMatch(isPopup);
+	const errorText = error.code ? error.description : '';
 
 	const init = () => {
 		const { dataPath } = S.Common;  
@@ -21,21 +21,28 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+			// If phrase is null/empty (can happen on Windows after sleep/reboot when
+			// Credential Manager fails), redirect to login
+			if (!phrase) {
+				console.warn('[Setup] Failed to retrieve phrase from keychain, redirecting to login');
+				U.Router.go('/auth/select', { replace: true });
+				return;
+			};
+
 			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (setErrorHandler(message.error)) {
 					return;
 				};
 
-				if (phrase) {
-					U.Data.createSession(phrase, '', '', (message: any) => {
-						if (!setErrorHandler(message.error)) {
-							select(accountId, false);
-						};
-					});
-				} else {
-					U.Router.go('/auth/select', { replace: true });
-				};
+				U.Data.createSession(phrase, '', '', (message: any) => {
+					if (!setErrorHandler(message.error)) {
+						select(accountId, false);
+					};
+				});
 			});
+		}).catch((err: any) => {
+			console.error('[Setup] Error retrieving phrase from keychain:', err);
+			U.Router.go('/auth/select', { replace: true });
 		});
 	};
 
@@ -60,7 +67,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				animate,
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = Storage.get('chatsOnboarding');
+					const chatsOnboarding = Storage.get('multichatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
@@ -69,41 +76,43 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					].forEach(it => Survey.check(it));
 
 					const cb1 = () => {
-						U.Data.getMembershipStatus(membership => {
-							if (membership.status == I.MembershipStatus.Finalization) {
-								S.Popup.open('membershipFinalization', { 
-									onClose: cb2,
-									data: { tier: membership.tier },
-								});
+						const { data } = S.Membership;
+						const purchased = data?.getTopPurchasedProduct();
+						const product = data?.getTopProduct();
+
+						if (!purchased) {
+							cb2();
+						} else {
+							if (purchased.isFinalization) {
+								Action.finalizeMembership(product, analytics.route.authSetup, cb2);
 							} else {
 								cb2();
 							};
-						});
+						};
 					};
 
 					const cb2 = () => {
-						const whatsNewParam = {
-							onClose: () => Onboarding.startBasics(isPopup),
-						};
-
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
-									Storage.set('chatsOnboarding', true);
+									Storage.set('multichatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
 
-									window.setTimeout(() => U.Common.showWhatsNew(whatsNewParam), J.Constant.delay.popup * 2);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
 								},
 							});
 						} else
 						if (whatsNew) {
-							U.Common.showWhatsNew(whatsNewParam);
+							U.Common.showWhatsNew();
 						};
 					};
 
 					Action.checkDiskSpace(cb1);
 				},
 			};
+
+			U.Data.onInfo(account.info);
+			U.Data.onAuthOnce();
 		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
@@ -111,9 +120,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				U.Router.go('/main/void/select', routeParam);
 			};
 			
-			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(false);
-
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -132,45 +138,11 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		return U.Common.checkErrorCommon(error.code);
 	};
 
-	const onBackup = () => {
-		Action.restoreFromBackup(setErrorHandler);
-	};
-
 	const onCancel = () => {
 		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 	};
-
-	let loader = null;
-	let title = '';
-	let label = '';
-	let buttonText = translate('commonBack');
-	let more = null;
-	let icon = null;
-
-	if (error.code) {
-		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-			title = translate('pageAuthSetupImportTitle');
-			label = translate('pageAuthSetupImportText');
-			buttonText = translate('pageAuthSetupTryAgain');
-			more = (
-				<div className="animation">
-					<Button text={translate('pageAuthSetupImportBackup')} color="simple" onClick={onBackup} />
-				</div>
-			);
-			icon = <Icon className="warning animation" />;
-
-			cn.push('fromBackup');
-		} else {
-			title = translate('commonError');
-			label = error.description;
-			buttonText = translate('commonBack');
-		};
-	} else {
-		title = translate('pageAuthSetupEntering');
-		loader = <Loader className="animation" />;
-	};
-
+	
 	useEffect(() => {
 		switch (match?.params?.id) {
 			case 'init': {
@@ -190,21 +162,25 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	});
 	
 	return (
-		<div 
-			className="wrapper"
-		>
+		<div className="wrapper">
 			<Frame>
-				{icon}
-				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
-				{label ? <Label className={cn.join(' ')} text={label} /> : ''}
-				{loader}
+				<Error text={errorText} />
 
-				<div className="buttons">
-					<div className="animation">
-						<Button text={buttonText} className="c28" onClick={onCancel} />
+				{!error.code ? (
+					<div className="bubbleWrapper">
+						<div className="bubble">
+							<div className="img" />
+						</div>
 					</div>
-					{more}
-				</div>
+				) : ''}
+
+				{error.code ? (
+					<div className="buttons">
+						<div className="animation">
+							<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
+						</div>
+					</div>
+				) : ''}
 			</Frame>
 
 			<Footer {...props} component="authIndex" />

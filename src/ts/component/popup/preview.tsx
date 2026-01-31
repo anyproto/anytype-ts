@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, keyboard, sidebar, translate } from 'Lib';
+import { I, S, J, U, sidebar, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
 
@@ -23,6 +23,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const swiperRef = useRef(null);
 	const thumbsRef = useRef(null);
 	const galleryMapRef = useRef(new Map());
+	const nodeRef = useRef(null);
 
 	const unbind = () => {
 		$(window).off('resize.popupPreview keydown.popupPreview');
@@ -36,16 +37,22 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const setCurrentItem = (idx?: number) => {
-		const initialIdx = data.initialIdx || 0;
-
-		if (!idx) {
-			idx = initialIdx;
+		if (undefined === idx) {
+			idx = data.initialIdx || 0;
 		};
 
 		const item = gallery[idx];
-
 		if (item && item.object) {
 			setCurrent(item.object);
+		};
+	};
+
+	const onSlideClick = (e: React.MouseEvent) => {
+		const target = e.target as HTMLElement;
+
+		// Only close if clicked outside the media container and loader (empty area)
+		if (!target.closest('.mediaContainer') && !target.closest('.loader')) {
+			close();
 		};
 	};
 
@@ -207,16 +214,39 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		reload();
 		rebind();
+		resize(initial);
 		setCurrentItem();
 
 		return () => {
 			unbind();
+			galleryMapRef.current.clear();
 		};
 	}, []);
 
+	useEffect(() => {
+		const node = $(nodeRef.current);
+		const item = gallery.find(el => el.object?.id == current?.id);
+
+		U.Common.pauseMedia();
+
+		if (!item) {
+			return;
+		};
+
+		if (item.type == I.FileType.Video) {
+			const video: any = node.find('.swiper-slide-active video').get(0);
+
+			if (video) {
+				video.currentTime = 0;
+				video.play();
+			};
+		};
+
+	}, [ current ]);
+
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
 		const { src, type } = item;
-		const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
+		const id = U.String.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 		const loader = !isThumb ? <Loader className="loader" /> : '';
 		const cn = [ 'previewItem' ];
 
@@ -250,7 +280,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	return (
-		<div id="wrap" className="wrap">
+		<div ref={nodeRef} id="wrap" className="wrap">
 			<div className="galleryHeader">
 				{current ? (
 					<>
@@ -279,12 +309,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					navigation={true}
 					loop={false}
 					modules={[ Mousewheel, Keyboard, Thumbs, Navigation, Zoom ]}
-					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
+					onSlideChange={swiper => setCurrentItem(swiper.activeIndex)}
 				>
 					{gallery.map((item: any, i: number) => (
-						<SwiperSlide key={i}>
+						<SwiperSlide key={i} onClick={onSlideClick}>
 							{getContent(item, i)}
-							<div className="innerDimmer" onClick={() => close()} />
 						</SwiperSlide>
 					))}
 				</Swiper>
@@ -298,7 +327,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							initialSlide={initial}
 							spaceBetween={8}
 							slidesPerView="auto"
-							modules={[ Thumbs ]}
+							mousewheel={true}
+							modules={[ Thumbs, Mousewheel ]}
+							slidesOffsetAfter={BORDER}
+							slidesOffsetBefore={BORDER}
 						>
 							{gallery.map((item: any, i: number) => (
 								<SwiperSlide key={i}>

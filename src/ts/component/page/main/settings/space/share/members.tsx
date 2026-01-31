@@ -1,236 +1,57 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Button, IconObject, ObjectName, Tag, Loader } from 'Component';
+import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import { I, C, S, U, translate, Action, analytics, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
-interface State {
-	isLoading: boolean;
-};
-
-interface Props extends I.PageSettingsComponent {
-	onStopSharing: () => void;
-};
-
 const HEIGHT = 64;
 
-const Members = observer(class Members extends React.Component<Props, State> {
+const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	node: any = null;
-	cache: any = null;
-	top = 0;
-	refList: any = null;
+	const { isPopup } = props;
+	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
+	const participant = U.Space.getParticipant();
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const topRef = useRef(0);
+	const isOwner = U.Space.isMyOwner();
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
 
-	state = {
-		isLoading: false,
-	};
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onScroll = this.onScroll.bind(this);
-		this.onChangePermissions = this.onChangePermissions.bind(this);
-		this.onPermissionsSelect = this.onPermissionsSelect.bind(this);
-		this.onUpgrade = this.onUpgrade.bind(this);
-	};
-
-	render () {
-		const { isLoading } = this.state;
-
-		if (isLoading) {
-			return <Loader id="loader" />;
-		};
-
-		const { isPopup } = this.props;
-		const { membership } = S.Auth;
-		const tier = U.Data.getMembershipTier(membership.tier);
-		const space = U.Space.getSpaceview();
-		const participant = U.Space.getParticipant();
-		const members = this.getParticipantList();
-		const length = members.length;
-		const isSpaceOwner = U.Space.isMyOwner();
-
-		let limitLabel = '';
-		let limitButton = '';
-		let showLimit = false;
-		let memberUpgradeType = '';
-
-		if (space.isShared && !U.Space.getReaderLimit() && tier?.price) {
-			limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
-			limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
-			memberUpgradeType = 'members';
-			showLimit = true;
-		};
-
-		const Member = (item: any) => {
-			const isCurrent = item.id == participant?.id;
-			const isNew = item.isJoining;
-
-			let button = null;
-
-			if (isSpaceOwner) {
-				if (isCurrent) {
-					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
-				} else {
-					const placeholder = isNew ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
-
-					button = (
-						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item, isNew)}>
-							<div className="item">
-								<div className="name">{placeholder}</div>
-							</div>
-							<Icon className={[ 'arrow', isNew ? 'light' : 'dark' ].join(' ')} />
-						</div>
-					);
-				};
-			} else
-			if (item.isActive) {
-				button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
-			} else
-			if (item.isDeclined || item.isRemoved) {
-				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
-			};
-
-			return (
-				<div id={`item-${item.id}`} className={[ 'row', isNew ? 'isNew' : '' ].join(' ')} style={item.style} >
-					<div className="side left" onClick={() => U.Object.openConfig(item)}>
-						<IconObject size={48} object={item} />
-						<ObjectName object={item} />
-						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
-					</div>
-					<div className="side right">
-						{button}
-					</div>
-				</div>
-			);
-		};
-
-		const rowRenderer = (param: any) => {
-			const item: any = members[param.index];
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-					hasFixedWidth={() => {}}
-				>
-					<Member key={item.id} {...item} index={param.index} style={param.style} />
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div
-				ref={node => this.node = node}
-				id="sectionMembers"
-				className="section sectionMembers"
-			>
-				<div className="membersTitle">
-					<Title text={translate('commonMembers')} />
-					{length > 1 ? <Label text={String(length)} /> : ''}
-				</div>
-
-				{showLimit ? (
-					<div className="row payment">
-						<Label text={limitLabel} />
-						<Button className="payment" text={limitButton} onClick={() => this.onUpgrade(memberUpgradeType)} />
-					</div>
-				) : ''}
-
-				{this.cache ? (
-					<div id="list" className="rows">
-						<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
-							{({ height, isScrolling, registerChild, scrollTop }) => (
-								<AutoSizer disableHeight={true} className="scrollArea">
-									{({ width }) => (
-										<List
-											ref={ref => this.refList = ref}
-											autoHeight={true}
-											height={Number(height) || 0}
-											width={Number(width) || 0}
-											deferredMeasurmentCache={this.cache}
-											rowCount={length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onScroll={this.onScroll}
-											isScrolling={isScrolling}
-											scrollTop={scrollTop}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</WindowScroller>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const items = this.getParticipantList();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.forceUpdate();
-	};
-
-	componentDidUpdate() {
-		this.resize();
-	};
-
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	onUpgrade (type: string) {
-		Action.membershipUpgrade();
-
-		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
+	const onUpgrade = (type: string) => {
+		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
 	};
 
-	getParticipantList () {
-		const isSpaceOwner = U.Space.isMyOwner();
+	const getParticipantList = () => {
 		const statuses = [ I.ParticipantStatus.Active ];
 
-		if (isSpaceOwner) {
+		if (isOwner) {
 			statuses.push(I.ParticipantStatus.Joining);
 		};
 
-		let records = U.Space.getParticipantsList(statuses);
-
-		records = records.sort((c1, c2) => {
-			const isRequest1 = c1.isJoining;
-			const isRequest2 = c2.isJoining;
-			const cd1 = c1.createdDate;
-			const cd2 = c2.createdDate;
-
-			if (isRequest1 && !isRequest2) return -1;
-			if (!isRequest1 && isRequest2) return 1;
-			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
-
-			return 0;
-		});
-
-		return records.sort((c1, c2) => {
+		return U.Space.getParticipantsList(statuses).sort((c1, c2) => {
 			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
 			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+			const isRequest1 = c1.isJoining;
+			const isRequest2 = c2.isJoining;
 
 			if (isOwner1 && !isOwner2) return -1;
 			if (!isOwner1 && isOwner2) return 1;
+			if (isRequest1 && !isRequest2) return -1;
+			if (!isRequest1 && isRequest2) return 1;
+			if (isRequest1 && isRequest2) return c1.createdDate < c2.createdDate ? -1 : 1;
 
 			return 0;
 		});
 	};
 
-	getParticipantOptions (isNew?: boolean) {
+	const getParticipantOptions = (isNew?: boolean) => {
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
 		const isReaderLimit = U.Space.getReaderLimit() <= 0;
 		const isWriterLimit = U.Space.getWriterLimit() <= 0;
@@ -251,36 +72,22 @@ const Members = observer(class Members extends React.Component<Props, State> {
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return U.Menu.prepareForSelect(items);
+		return items;
 	};
 
-	onPermissionsSelect (item: any, isNew?: boolean) {
+	const onPermissionsSelect = (item: any, isNew?: boolean) => {
 		S.Menu.open('select', {
 			element: `#item-${item.id}-select`,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				value: item.permissions,
-				options: this.getParticipantOptions(isNew),
-				onSelect: (e: any, el: any) => {
-					this.onChangePermissions(item, el.id, isNew);
-				},
+				options: getParticipantOptions(isNew),
+				onSelect: (e: any, el: any) => onChangePermissions(item, el.id, isNew),
 			},
 		});
 	};
 
-	onChangePermissions (item: any, v: any, isNew?: boolean) {
-		const { space } = S.Common;
-
-		const onAfterRemove = () => {
-			const my = U.Space.getParticipant();
-			const members = this.getParticipantList().filter(it => it.id != my.id);
-
-			if (!members.length) {
-				this.props.onStopSharing();
-				return;
-			};
-		};
-
+	const onChangePermissions = (item: any, v: any, isNew?: boolean) => {
 		let title = '';
 		let text = '';
 		let button = '';
@@ -289,14 +96,13 @@ const Members = observer(class Members extends React.Component<Props, State> {
 		switch (v) {
 			case 'remove': {
 				title = translate('popupConfirmMemberRemoveTitle');
-				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
+				text = U.String.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
-
 				onConfirm = () => {
 					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity, onAfterRemove);
+						C.SpaceRequestDecline(space, item.identity);
 					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ], onAfterRemove);
+						C.SpaceParticipantRemove(space, [ item.identity ]);
 					};
 
 					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');
@@ -308,7 +114,7 @@ const Members = observer(class Members extends React.Component<Props, State> {
 				v = Number(v) || I.ParticipantPermissions.Reader;
 
 				title = translate('commonAreYouSure');
-				text = U.Common.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
+				text = U.String.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {
 					if (isNew) {
@@ -334,24 +140,134 @@ const Members = observer(class Members extends React.Component<Props, State> {
 		});
 	};
 
-	onJoinRequest (item: any) {
-		S.Popup.open('inviteConfirm', {
-			data: {
-				name: item.name,
-				icon: item.iconImage,
-				spaceId: S.Common.space,
-				identity: item.identity,
-				route: analytics.route.settings,
-			}
-		});
+	const resize = () => {
+		listRef.current?.recomputeRowHeights(0);
 	};
 
-	resize () {
-		if (this.refList) {
-			this.refList.recomputeRowHeights(0);
+	const members = getParticipantList();
+	const length = members.length;
+
+	let limitLabel = '';
+	let limitButton = '';
+	let showLimit = false;
+	let memberUpgradeType = '';
+
+	if (spaceview.isShared && !U.Space.getReaderLimit()) {
+		limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+		limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+		memberUpgradeType = 'members';
+		showLimit = true;
+	};
+
+	const Member = (item: any) => {
+		const { style, id, permissions, status, isActive, isDeclined, isRemoved, isJoining, globalName } = item;
+		const isCurrent = id == participant?.id;
+
+		let button = null;
+
+		if (isOwner) {
+			if (isCurrent) {
+				button = <Label text={translate(`participantPermissions${permissions}`)} />;
+			} else {
+				const placeholder = isJoining ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
+
+				button = (
+					<div id={`item-${id}-select`} className="select" onClick={() => onPermissionsSelect(item, isJoining)}>
+						<div className="item">
+							<div className="name">{placeholder}</div>
+						</div>
+						<Icon className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} />
+					</div>
+				);
+			};
+		} else
+		if (isActive) {
+			button = <Label color="grey" text={translate(`participantPermissions${permissions}`)} />;
+		} else
+		if (isDeclined || isRemoved) {
+			button = <Label color="red" text={translate(`participantStatus${status}`)} />;
 		};
+
+		return (
+			<div id={`item-${id}`} className={[ 'row', isJoining ? 'isNew' : '' ].join(' ')} style={style} >
+				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
+					<IconObject size={48} object={item} />
+					<div className="text">
+						<ObjectName object={item} withPronoun={item.id == participant?.id} withBadge={true} />
+						{globalName ? <Label className="anyId" text={globalName} /> : ''}
+					</div>
+				</div>
+				<div className="side right">
+					{button}
+				</div>
+			</div>
+		);
 	};
 
-});
+	const rowRenderer = (param: any) => {
+		const item: any = members[param.index];
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+				hasFixedWidth={() => {}}
+			>
+				<Member key={item.id} {...item} index={param.index} style={param.style} />
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		resize();
+	}, [ length ]);
+
+	return (
+		<div
+			ref={nodeRef}
+			id="sectionMembers"
+			className="section sectionMembers"
+		>
+			<div className="membersTitle">
+				<Title text={translate('commonMembers')} />
+				{length > 1 ? <Label text={String(length)} /> : ''}
+			</div>
+
+			{showLimit ? (
+				<div className="row payment">
+					<Label text={limitLabel} />
+					<Button className="payment" text={limitButton} onClick={() => onUpgrade(memberUpgradeType)} />
+				</div>
+			) : ''}
+
+			<div id="list" className="rows">
+				<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+					{({ height, isScrolling, registerChild, scrollTop }) => (
+						<AutoSizer disableHeight={true} className="scrollArea">
+							{({ width }) => (
+								<List
+									ref={listRef}
+									autoHeight={true}
+									height={Number(height) || 0}
+									width={Number(width) || 0}
+									deferredMeasurmentCache={cache.current}
+									rowCount={length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onScroll={onScroll}
+									isScrolling={isScrolling}
+									scrollTop={scrollTop}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</WindowScroller>
+			</div>
+		</div>
+	);
+
+}));
 
 export default Members;

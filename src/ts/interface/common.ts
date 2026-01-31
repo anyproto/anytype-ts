@@ -14,6 +14,7 @@ export enum DropType {
 	Relation = 'relation',
 	Record	 = 'record',
 	Widget	 = 'widget',
+	View	 = 'view',
 };
 
 export enum SelectType {
@@ -62,12 +63,16 @@ export enum ToastAction {
 	TemplateCreate	 = 6,
 	Archive 		 = 7,
 	Widget			 = 8,
+	Restore			 = 9,
 };
 
 export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	color?: string;
+	isSection?: boolean;
+	isDiv?: boolean;
 };
 
 export interface HistoryVersion {
@@ -167,8 +172,6 @@ export interface PageSettingsComponent extends PageComponent {
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
 	getId?(): string;
-	storageGet?(): any;
-	storageSet?(data: any): void;
 };
 
 export interface FooterComponent {
@@ -203,6 +206,7 @@ export enum SurveyType {
 	Object			 = 3,
 	Shared			 = 4,
 	Multiplayer		 = 5,
+	Cta				 = 6,
 };
 
 export enum SliceOperation {
@@ -237,6 +241,7 @@ export enum ObjectManagerItemInfo {
 
 export enum ObjectManagerPopup {
 	Favorites		 = 0,
+	TypeArchive 	 = 1,
 };
 
 export enum NetworkMode {
@@ -276,6 +281,7 @@ export interface RouteParam {
 	replace: boolean;
 	animate: boolean;
 	delay: number;
+	updateTabRoute: boolean;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
@@ -299,6 +305,7 @@ export interface SearchSubscribeParam {
 	ignoreArchived: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
+	crossSpace: boolean;
 };
 
 export interface SearchIdsParam extends SearchSubscribeParam {
@@ -307,14 +314,8 @@ export interface SearchIdsParam extends SearchSubscribeParam {
 };
 
 export enum SortId {
-	All			 = 'all',
-	Orphan		 = 'orphan',
-	Updated		 = 'updated',
-	Created		 = 'created',
 	Name		 = 'name',
 	LastUsed	 = 'lastUsed',
-	List		 = 'list',
-	Compact		 = 'compact',
 };
 
 export enum LoaderType {
@@ -369,4 +370,45 @@ export enum ImageSize {
 export enum AppDeviceState {
 	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
+};
+
+export enum RecentEditMode {
+	All			 = 0,
+	Me			 = 1,
+};
+
+export interface DragProviderRefProps {
+	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
+	onScroll: () => void;
+};
+
+export interface DragComponentProps {
+	getNode: () => any;
+	onRecordDrop?: (targetId: string, ids: string[], position: I.BlockPosition) => void;
+};
+
+export interface ImageParam {
+	src: string;
+	width: number;
+	height: number;
+	excavate: boolean;
+};
+
+export interface StickyScrollbarRef {
+	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
+	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	unbind: () => void;
+	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+};
+
+export enum ClipboardMode {
+	Copy		= 0,
+	Cut			= 1,
+};
+
+export enum SearchSortKey {
+	OrderId		 = 0,
+	Score		 = 1,
+	CreatedAt	 = 2,
+	ModifiedAt	 = 3,
 };

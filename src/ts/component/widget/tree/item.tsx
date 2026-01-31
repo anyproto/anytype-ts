@@ -32,8 +32,9 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
-	const hasMore = U.Space.canMyParticipantWrite();
+	const hasMore = false;//U.Space.canMyParticipantWrite();
 	const isChat = U.Object.isChatLayout(object.layout);
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const [ dummy, setDummy ] = useState(0);
 
 	if (isOpen) {
@@ -48,11 +49,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isSection');
 	};
 
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, id);
-	};
-
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -60,7 +56,18 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const element = $(moreRef.current);
 
-		onContext({ node, element, withElement, subId, objectId: id });
+		onContext({ 
+			node, 
+			element, 
+			withElement, 
+			subId, 
+			objectId: id, 
+			data: {
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
+			},
+		});
 	};
 
 	const onToggleHandler = (e: MouseEvent): void => {
@@ -98,7 +105,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isSection) {
 		inner = (
 			<div className="inner">
-				<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
+				<Label text={translate(U.String.toCamelCase([ 'common', id ].join('-')))} />
 			</div>
 		);
 	} else {
@@ -124,8 +131,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 					<ObjectName object={object} withPlural={true} />
 				</div>
 
-				<ChatCounter {...counters} />
-
+				{isChat && !hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
 				<div className="buttons">{more}</div>
 			</div>
 		);

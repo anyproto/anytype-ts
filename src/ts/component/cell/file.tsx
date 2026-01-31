@@ -13,7 +13,7 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 	value = value.map(it => S.Detail.get(subId, it, []));
 	value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
-	
+
 	if (elementMapper) {
 		value = value.map(it => elementMapper(relation, it));
 	};

@@ -25,6 +25,14 @@ class ConfigManager {
 				this.config.showMenuBar = true;
 			};
 
+			if (undefined === this.config.alwaysShowTabs) {
+				this.config.alwaysShowTabs = false;
+			};
+
+			if (undefined === this.config.hardwareAcceleration) {
+				this.config.hardwareAcceleration = true;
+			};
+
 			this.checkChannel();
 			this.checkTheme();
 
@@ -34,9 +42,7 @@ class ConfigManager {
 				console.error(error);
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -48,9 +54,7 @@ class ConfigManager {
 		console.log('[ConfigManager].set:', this.config);
 
 		storage.set(CONFIG_NAME, this.config, (error) => {
-			if (callBack) {
-				callBack(error);
-			};
+			callBack?.(error);
 		});
 	};
 

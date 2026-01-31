@@ -113,10 +113,61 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Custom block-based editor system
 - gRPC for backend communication
 - Electron for desktop app packaging
+- CSS supports native nesting - use nested selectors instead of flat/inline selectors
+- Do not use `cursor: pointer` in CSS - the app does not use custom cursors
+
+### Code Style
+- Write `else if` with a linebreak before `if`:
+  ```typescript
+  if (condition) {
+      // ...
+  } else
+  if (anotherCondition) {
+      // ...
+  }
+  ```
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
+- Translation keys are defined in `src/json/text.json`
 - Block operations should go through the command system
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
+
+## Web Mode Development
+
+Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
+
+## Linear API Integration
+
+Use the `LINEAR_API_KEY` environment variable to fetch issue details from Linear.
+
+**Fetch issue by ID:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{issue(id:\"JS-1234\"){title description state{name}priority labels{nodes{name}}comments{nodes{body createdAt}}}}"}' | jq .
+```
+
+**Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
+
+## Figma MCP Integration
+
+Use the Figma MCP tools to fetch design context and screenshots from Figma files.
+
+**Available tools:**
+- `mcp__figma__get_design_context` - Get UI code/design context for a Figma node (preferred)
+- `mcp__figma__get_screenshot` - Get a screenshot of a Figma node
+- `mcp__figma__get_metadata` - Get metadata/structure of a Figma node
+
+**Extract parameters from Figma URLs:**
+- URL format: `https://www.figma.com/design/:fileKey/:fileName?node-id=:nodeId`
+- `fileKey` is the ID after `/design/`
+- `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
+
+**Example usage:**
+For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
+- `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
+- `nodeId`: `12769:19003`

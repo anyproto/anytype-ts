@@ -75,6 +75,13 @@ export enum ObjectOrigin {
 	Api				 = 9,
 };
 
+export enum ImageKind {
+    Basic				 = 0,
+    Cover				 = 1,
+    Icon				 = 2,
+    AutomaticallyAdded	 = 3,
+}
+
 export enum LayoutFormat {
 	Page = 0,
 	List = 1,

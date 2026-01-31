@@ -22,12 +22,14 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate } = props;
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
 	const archivedIds = new Set(S.Record.getRecordIds(J.Constant.subId.archived, ''));
+	const dl = deletedIds.size;
+	const al = archivedIds.size;
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
@@ -52,9 +54,13 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const updateData = () => {
-		if (isSystemTarget) {
-			getData(getSubId());
+		if (!isSystemTarget) {
+			return;
 		};
+
+		getData(subId);
+		checkShowAllButton(subId);
+		resize();
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
@@ -144,7 +150,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const filterDeletedLinks = (ids: string[]): string[] => {
-		return ids.filter(id => !deletedIds.has(id) && !archivedIds.has(id));
+		return ids.filter(id => (id != J.Constant.missingObjectId) && !deletedIds.has(id) && !archivedIds.has(id));
 	};
 
 	// return the child nodes details for the given subId
@@ -225,7 +231,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Object.openEvent(e, item);
+		U.Object.openConfig(e, item);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -267,10 +273,9 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const resize = () => {
-		const nodes = loadTree();
 		const node = $(nodeRef.current);
-		const length = nodes.length;
-		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
+		const showAll = node.find('#button-show-all').css('display') != 'none';
+		const bh = showAll ? HEIGHT : 0;
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 
 		if (isPreview) {
@@ -290,6 +295,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const nodes = loadTree();
 	const length = nodes.length;
+	const subId = getSubId();
 
 	let content = null;
 	let head = null;
@@ -301,7 +307,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined"
+							className="outlined round"
 							icon="search"
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
@@ -314,7 +320,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 								color="blank"
 								className="c28"
 								text={translate('commonNew')}
-								onClick={() => onCreate({ 
+								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
 									route: analytics.route.widget,
 									details: {
@@ -421,16 +427,11 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		links.current = object.links;
-
-		if (isSystemTarget) {
-			getData(getSubId());
-		};
+		updateData();
+		resize();
 	}, []);
 
 	useEffect(() => {
-		checkShowAllButton(getSubId());
-		resize();
-
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
 			clear();
@@ -439,11 +440,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		listRef.current?.recomputeRowHeights(0);
 		listRef.current?.scrollToPosition(top.current);
+	});
+
+	useEffect(() => {
+		checkShowAllButton(getSubId());
+		resize();
 
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
-
-		checkShowAllButton(getSubId());
-	});
+	}, [ nodes ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
@@ -463,6 +467,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		>
 			{head}
 			{content}
+
+			<Button 
+				id="button-show-all" 
+				onClick={onSetPreview} 
+				text={translate('widgetSeeAll')} 
+				className="c28" 
+				color="blank" 
+			/>
 		</div>
 	);
 

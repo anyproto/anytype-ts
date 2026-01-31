@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { I, S } from 'Lib';
+import { I, S, U } from 'Lib';
 import { Icon } from 'Component';
 import Cell from './cell';
 
@@ -39,25 +40,30 @@ const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 				items={relations.map(it => it.relationKey)}
 				strategy={horizontalListSortingStrategy}
 			>
-				<div 
-					id="rowHead"
-					className="rowHead"
-					style={{ gridTemplateColumns: str }}
-				>
-					{relations.map((relation: any, i: number) => (
-						<Cell 
-							key={`grid-head-${relation.relationKey}`} 
-							{...props}
-							{...relation}
-							index={i} 
-							onResizeStart={onResizeStart} 
-						/>
-					))}
+				<AnimatePresence mode="popLayout">
+					<motion.div
+						id="rowHead"
+						className="rowHead"
+						style={{ gridTemplateColumns: str }}
+						{...U.Common.animationProps({
+							transition: { duration: 0.2, delay: 0.1 },
+						})}
+					>
+						{relations.map((relation: any, i: number) => (
+							<Cell 
+								key={`grid-head-${relation.relationKey}`} 
+								{...props}
+								{...relation}
+								index={i} 
+								onResizeStart={onResizeStart} 
+							/>
+						))}
 
-					<div className="cellHead last">
-						{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
-					</div>
-				</div>
+						<div className="cellHead last">
+							{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+						</div>
+					</motion.div>
+				</AnimatePresence>
 			</SortableContext>
 		</DndContext>
 	);

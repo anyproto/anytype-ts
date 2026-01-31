@@ -1,22 +1,18 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
+import $, { get } from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
 import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
+import { init } from 'emoji-mart';
 
 interface Props {
 	children?: React.ReactNode;
 };
 
-interface DragProviderRefProps {
-	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
-	onScroll: () => void;
-};
-
 const OFFSET = 100;
 
-const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, ref: any) => {
+const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
 	const { children } = props;
 	const nodeRef = useRef(null);
@@ -25,73 +21,91 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const position = useRef(I.BlockPosition.None);
 	const hoverData = useRef(null);
 	const canDrop = useRef(false);
-	const top = useRef(0);
 	const frame = useRef(0);
-	const objects = useRef(null);
 	const objectData = useRef(new Map());
 	const origin = useRef(null);
 	const dragActive = useRef(false);
 	const timeoutDragOver = useRef(0);
+	const prevTargetKey = useRef<string | null>(null);
+
+	const getContainer = () => {
+		const isPopup = keyboard.isPopup();
+		return $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
+	};
 
 	const initData = () => {
 		if (isInitialised.current) {
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '#root');
-
 		clearState();
 		isInitialised.current = true;
-		objects.current = container.find('.dropTarget.isDroppable');
 
-		objects.current.each((i: number, el: any) => {
-			const item = $(el);
-			const data = {
-				id: item.attr('data-id'),
-				rootId: item.attr('data-root-id'),
-				cacheKey: item.attr('data-cache-key'),
-				dropType: item.attr('data-drop-type'),
-				type: item.attr('data-type'),
-				style: item.attr('data-style'),
-				targetContextId: item.attr('data-target-context-id'),
-				viewType: item.attr('data-view-type'),
+		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
+			const data = initNode(el, i);
+			if (data) {
+				objectData.current.set(data.cacheKey, data);
 			};
-
-			const offset = item.offset();
-			const rect = el.getBoundingClientRect() as DOMRect;
-			const x = offset.left;
-			const width = rect.width;
-
-			let y = offset.top;
-			let height = rect.height;
-
-			// Add block's paddings to height
-			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $(`#block-${data.id}`);
-				if (block.length) {
-					const top = parseInt(block.css('paddingTop'));
-					const bot = parseInt(block.css('paddingBottom'));
-
-					y -= top + 2;
-					height += top + bot + 2;
-				};
-			};
-
-			objectData.current.set(data.cacheKey, {
-				...data,
-				obj: item,
-				index: i,
-				x,
-				y,
-				width,
-				height,
-				isTargetTop: item.hasClass('targetTop'),
-				isTargetBot: item.hasClass('targetBot'),
-				isTargetCol: item.hasClass('targetCol'),
-				isEmptyToggle: item.hasClass('emptyToggle'),
-			});
 		});
+	};
+
+	const initNode = (el: any, index: number) => {
+		const item = $(el);
+
+		if (!item.length) {
+			return null;
+		};
+
+		const keys = [
+			'id',
+			'root-id',
+			'cache-key',
+			'drop-type',
+			'type',
+			'style',
+			'target-context-id',
+			'view-type',
+		];
+
+		const data: any = {};
+
+		keys.forEach(key => {
+			data[U.String.toCamelCase(key)] = item.attr(`data-${key}`);
+		});
+
+		return {
+			...data,
+			obj: item,
+			index,
+			...getNodeRect(item, data),
+			isTargetTop: item.hasClass('targetTop'),
+			isTargetBot: item.hasClass('targetBot'),
+			isTargetCol: item.hasClass('targetCol'),
+			isEmptyToggle: item.hasClass('emptyToggle'),
+		};
+	};
+
+	const getNodeRect = (el: any, data: any): { x: number, y: number, width: number, height: number } => {
+		const { left, top } = el.offset();
+		const x = left;
+		const width = el.width();
+
+		let y = top;
+		let height = el.height();
+
+		// Add block's paddings to height
+		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
+			const block = $(`#block-${data.id}`);
+			if (block.length) {
+				const top = parseInt(block.css('paddingTop'));
+				const bot = parseInt(block.css('paddingBottom'));
+
+				y -= top + 2;
+				height += top + bot + 2;
+			};
+		};
+
+		return { x, y, width, height };
 	};
 
 	const onDropCommon = (e: any) => {
@@ -172,7 +186,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		clearState();
 	};
 
-	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: any) => {
+	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: I.DragComponentProps) => {
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
 		const selection = S.Common.getRef('selectionProvider');
@@ -191,7 +205,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		console.log('[DragProvider].onDragStart', dropType, ids);
 
-		top.current = container.scrollTop();
 		layerRef.current.show(rootId, dropType, ids, component);
 		setClass(ids);
 		initData();
@@ -199,7 +212,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
-		e.dataTransfer.setData('data-' + JSON.stringify(dataTransfer), '1');
+		e.dataTransfer.setData(`data-${JSON.stringify(dataTransfer)}`, '1');
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
@@ -234,6 +247,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		e.preventDefault();
 		e.stopPropagation();
 
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
 
@@ -246,17 +260,28 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			if (dragActive.current) {
 				dragActive.current = false;
 				clearStyle();
+				prevTargetKey.current = null;
 			};
 		}, 100);
 	};
 
 	const onDrag = (e: any) => {
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		initData();
+		checkNodes(e, e.pageX, e.pageY);
+
+		// Reset timeout to prevent blinking on Linux where dragover events may not fire consistently
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+				prevTargetKey.current = null;
+			};
+		}, 100);
 	};
 
 	const onDragEnd = (e: any) => {
-		console.log('[DragProvider].onDragEnd');
-
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
@@ -451,21 +476,24 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
-						if (!origin.current) {
-							break;
-						};
-
-						// Sort
-						const { onRecordDrop } = origin.current;
-
-						if (onRecordDrop) {
-							onRecordDrop(targetId, ids, position);
-						};
+						origin.current?.onRecordDrop?.(targetId, ids, position);
 						break;
 					};
 
 					case I.BlockPosition.InnerFirst: {
 						processAddRecord();
+						break;
+					};
+				};
+
+				break;
+			};
+
+			case I.DropType.View: {
+
+				switch (position) {
+					case I.BlockPosition.InnerFirst: {
+						origin.current?.onViewDrop?.(targetId, ids);
 						break;
 					};
 				};
@@ -527,11 +555,26 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			return;
 		};
 
-		for (const [ key, value ] of objectData.current) {
-			const { left, top } = value.obj.offset();
+		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
+			const item = $(el);
+			const cacheKey = item.attr('data-cache-key');
 
-			objectData.current.set(key, { ...value, x: left, y: top });
-		};
+			let data = {};
+
+			if (objectData.current.has(cacheKey)) {
+				data = objectData.current.get(cacheKey);
+
+				objectData.current.set(cacheKey, {
+					...data,
+					...getNodeRect(item, data),
+				});
+			} else {
+				const data = initNode(el, i);
+				if (data) {
+					objectData.current.set(data.cacheKey, data);
+				};
+			};
+		});
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
@@ -584,7 +627,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		let type: any = '';
 		let style = 0;
 		let canDropMiddle = 0;
-		let isReversed = false;
+		let isReversed = 0;
 		let col1 = 0; 
 		let col2 = 0;
 
@@ -596,7 +639,9 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			};
 
 			const initVars = () => {
-				const hd = hoverData.current;
+				if (!hd) {
+					return;
+				};
 
 				x = hd.x;
 				y = hd.y;
@@ -611,7 +656,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				type = obj.attr('data-type');
 				style = Number(obj.attr('data-style')) || 0;
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
-				isReversed = Boolean(obj.attr('data-reversed'));
+				isReversed = Number(obj.attr('data-reversed')) || 0;
 
 				col1 = x - J.Size.blockMenu / 4;
 				col2 = x + width;
@@ -690,6 +735,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 					};
 				};
 
+				// You can only drop inside of views
+				if (hd.dropType == I.DropType.View) {
+					setPosition(I.BlockPosition.InnerFirst);
+				};
+
 				if (isTargetTop || (hd.id == 'blockLast')) {
 					setPosition(I.BlockPosition.Top);
 				};
@@ -701,6 +751,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				if (isEmptyToggle) {
 					setPosition(I.BlockPosition.InnerFirst);
 				};
+			};
+
+			// You can only drop records into views
+			if ((hd.dropType == I.DropType.View) && (dropType != I.DropType.Record)) {
+				setPosition(I.BlockPosition.None);
 			};
 
 			if ((dropType == I.DropType.Record) && (hd.dropType == I.DropType.Record) && !canDropMiddle) {
@@ -723,11 +778,35 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			raf.cancel(frame.current);
 		};
 
+		const currentKey = hd ? hd.cacheKey : null;
+		const currentPosition = position.current;
+		const currentObj = obj;
+
 		frame.current = raf(() => {
-			clearStyle();
-			if ((position.current != I.BlockPosition.None) && canDrop.current && hd) {
-				obj.addClass(`isOver ${getDirectionClass(position.current)}`);
+			const shouldShow = (currentPosition != I.BlockPosition.None) && canDrop.current && hd;
+			const dirClass = getDirectionClass(currentPosition);
+			const targetChanged = prevTargetKey.current !== currentKey;
+			const prevKey = prevTargetKey.current;
+
+			// Only clear the previous target if it changed
+			if (targetChanged && prevKey) {
+				const prevData = objectData.current.get(prevKey);
+				if (prevData && prevData.obj) {
+					$(prevData.obj).removeClass('isOver top bottom left right middle');
+				};
 			};
+
+			// Apply new styles
+			if (shouldShow && currentObj) {
+				// Remove direction classes first, then add current ones
+				currentObj.removeClass('top bottom left right middle').addClass(`isOver ${dirClass}`);
+			} else
+			if (targetChanged && !shouldShow) {
+				// Clear all styles if we're not hovering anything valid
+				clearStyle();
+			};
+
+			prevTargetKey.current = shouldShow ? currentKey : null;
 		});
 	};
 
@@ -741,8 +820,9 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 	const setClass = (ids: string[]) => {
 		$('.block.isDragging').removeClass('isDragging');
+		
 		for (const id of ids) {
-			$('#block-' + id).addClass('isDragging');
+			$(`#block-${id}`).addClass('isDragging');
 		};
 	};
 
@@ -794,12 +874,18 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			setHoverData(null);
 		};
 
+		// Cancel any pending RAF to prevent re-adding styles after clear
+		if (frame.current) {
+			raf.cancel(frame.current);
+			frame.current = 0;
+		};
+
 		clearStyle();
 		setPosition(I.BlockPosition.None);
 
 		isInitialised.current = false;
-		objects.current = null;
 		objectData.current.clear();
+		prevTargetKey.current = null;
 	};
 
 	const setHoverData = (v: any) => {
@@ -811,7 +897,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	};
 
 	const unbind = () => {
-		$(window).off('drag.drag dragend.drag');
+		$(window).off('dragend.drag');
 	};
 
 	useEffect(() => {

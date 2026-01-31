@@ -31,9 +31,9 @@
 	.content { padding-bottom: 44px; }
 }
 
-.previewGraph {
+#graphPreviewItem {
 	background: var(--color-bg-primary); height: auto; padding: 8px 12px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; width: 320px;
-	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); position: fixed; top: -100000px; left: -100000px;
 }
 
 .previewDefault { padding: 8px 12px; }

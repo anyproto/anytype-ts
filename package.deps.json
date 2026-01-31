@@ -8,6 +8,7 @@
 	"build",
 	"!dist/*",
 	"dist/index.html",
+	"dist/tabs.html",
 	"dist/embed/**/*",
 	"dist/challenge/**/*",
 	"dist/lib/**/*",
@@ -80,5 +81,9 @@
     {
 		"from": "node_modules/mime-types",
 		"to": "node_modules/mime-types"
+    },
+	{
+		"from": "node_modules/mime-db",
+		"to": "node_modules/mime-db"
     }
 ]

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U } from 'Lib';
 
-const ChatMessageReplyBase = observer(forwardRef<{}, I.ChatMessageComponent>((props, ref) => {
+const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const { id, subId, getReplyContent, onReplyClick } = props;
@@ -31,7 +31,7 @@ const ChatMessageReplyBase = observer(forwardRef<{}, I.ChatMessageComponent>((pr
 		cn.push('withAttachment');
 	};
 
-	if (U.Common.checkRtl(text)) {
+	if (U.String.checkRtl(text)) {
 		cn.push('isRtl');
 	};
 
@@ -41,7 +41,7 @@ const ChatMessageReplyBase = observer(forwardRef<{}, I.ChatMessageComponent>((pr
 			<div className="bubble">
 				{icon}
 				<div className="textWrapper">
-					<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+					<div className="text" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 				</div>
 			</div>
 		</div>
@@ -49,6 +49,4 @@ const ChatMessageReplyBase = observer(forwardRef<{}, I.ChatMessageComponent>((pr
 
 }));
 
-const ChatMessageReply = memo(ChatMessageReplyBase);
-
-export default ChatMessageReply;
+export default memo(ChatMessageReply);

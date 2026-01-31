@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
@@ -14,7 +14,6 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupExport from './export';
-import PopupMigration from './migration';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
@@ -24,7 +23,6 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
-import PopupMembership from './membership';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -39,12 +37,13 @@ import PopupIntroduceChats from './introduceChats';
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { id, param } = props;
+	const { onOpen } = param;
 	const nodeRef = useRef(null);
-	const componentRef = useRef(null);
+	const childRef = useRef(null);
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
-		return U.Common.toCamelCase('popup-' + id);
+		return U.String.toCamelCase(`popup-${id}`);
 	};
 
 	const storageGet = () => {
@@ -101,9 +100,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const position = () => {
-		if (componentRef.current && componentRef.current.beforePosition) {
-			componentRef.current.beforePosition();
-		};
+		childRef.current?.beforePosition?.();
 
 		raf(() => {
 			const node = $(nodeRef.current);
@@ -127,6 +124,13 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	const getContext = () => ({
+		getChildRef: () => childRef.current,
+		close,
+		getId,
+		props,
+	});
+
 	useEffect(() => {
 		if (!param.preventResize) {
 			position();
@@ -134,6 +138,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		rebind();
 		animate();
+		onOpen?.(getContext());
 
 		analytics.event('popup', { params: { id } });
 
@@ -153,7 +158,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		shortcut:				 PopupShortcut,
 		page:					 PopupPage,
 		export:					 PopupExport,
-		migration:				 PopupMigration,
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,
@@ -163,7 +167,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
-		membership: 		 	 PopupMembership,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
@@ -189,14 +192,14 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 	
 	if (!Component) {
-		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+		return <div>{U.String.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 	};
 
 	let dimmer = null;
 	if (id == 'aiOnboarding') {
 		dimmer = <DimmerWithGraph onClick={onDimmer} />;
 	} else {
-		dimmer = <Dimmer onClick={onDimmer} />;
+		dimmer = <Dimmer onMouseDown={onDimmer} />;
 	};
 
 	return (
@@ -209,7 +212,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="content">
 					<Component 
 						{...props}
-						ref={componentRef}
+						ref={childRef}
 						position={position} 
 						close={close}
 						storageGet={storageGet}

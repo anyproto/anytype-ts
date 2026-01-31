@@ -7,6 +7,11 @@ class Survey {
 	 * @param {I.SurveyType} type - The survey type.
 	 */
 	check (type: I.SurveyType) {
+		const { account } = S.Auth;
+		if (!account) {
+			return;
+		};
+
 		const fn = `check${I.SurveyType[type]}`;
 
 		if (this[fn]) {
@@ -58,7 +63,7 @@ class Survey {
 		};
 
 		Storage.setSurvey(type, param);
-		Action.openUrl(U.Common.sprintf(J.Url.survey[t], account.id));
+		Action.openUrl(U.String.sprintf(J.Url.survey[t], account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 
@@ -111,7 +116,7 @@ class Survey {
 		const obj = Storage.getSurvey(type);
 		const timeRegister = this.getTimeRegister();
 		const lastTime = Number(obj.time) || 0;
-		const month = 86400 * 30;
+		const month = J.Constant.day * 30;
 		const registerTime = timeRegister <= time - month;
 		const cancelTime = obj.cancel && registerTime && (lastTime <= time - month * 2);
 
@@ -137,7 +142,7 @@ class Survey {
 	checkRegister (type: I.SurveyType) {
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
-		const surveyTime = timeRegister && ((U.Date.now() - 86400 * 7 - timeRegister) > 0);
+		const surveyTime = timeRegister && ((U.Date.now() - J.Constant.day * 7 - timeRegister) > 0);
 
 		if (!isComplete && surveyTime && !S.Popup.isOpen()) {
 			this.show(type);
@@ -173,7 +178,7 @@ class Survey {
 			spaceId: space,
 			filters: [
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
+				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + J.Constant.day * 3 }
 			],
 			limit: 50,
 		}, (message: any) => {
@@ -209,13 +214,25 @@ class Survey {
 	checkMultiplayer (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		const timeRegister = this.getTimeRegister();
-		const surveyTime = timeRegister && (timeRegister <= U.Date.now() - 86400 * 7);
+		const surveyTime = timeRegister && (timeRegister <= U.Date.now() - J.Constant.day * 7);
 
 		if (isComplete || this.isComplete(I.SurveyType.Shared) || !surveyTime) {
 			return;
 		};
 
 		if (this.checkRandSeed(30)) {
+			this.show(type);
+		};
+	};
+
+	/**
+	 * Checks if the CTA survey should be shown, based on completion state.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
+	checkCta (type: I.SurveyType) {
+		const isComplete = this.isComplete(type);
+
+		if (!isComplete) {
 			this.show(type);
 		};
 	};

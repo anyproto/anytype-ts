@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow } = require('electron');
+const { app, shell, BrowserWindow, Notification, ipcMain, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -19,30 +19,39 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	token = '';
 	isPinChecked = false;
+	hasPinSet = false;
+	lastActivityTime = Date.now();
+	notificationCallbacks = new Map();
+	shownNotificationIds = new Set();
+	pinTimer = null;
+	pinTimeValue = 0;
 
-	appOnLoad (win) {
-		const cssPath = path.join(Util.userPath(), 'custom.css');
+	getInitData (win, tabId) {
+		let route = win.route || '';
 
-		let css = '';
-		if (fs.existsSync(cssPath)) {
-			css = fs.readFileSync(cssPath, 'utf8');
+		win.route = '';
+
+		// Try to get route from active tab data
+		if (!route && tabId && win.views && (win.views.length > 0)) {
+			const tab = win.views.find(it => it.id == tabId);
+
+			route = tab?.data?.route || '';
 		};
 
-		Util.send(win, 'init', {
+		return {
 			id: win.id,
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
 			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
-			route: win.route,
+			route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
-			css: String(css || ''),
-			token: this.token,
-		});
-		win.route = '';
+			css: Util.getCss(),
+			activeTabId: win.activeTabId,
+			isSingleTab: win.views && (win.views.length == 1),
+		};
 	};
 
 	logout (win) {
@@ -61,46 +70,158 @@ class Api {
 		WindowManager.sendToAll('pin-remove');
 	};
 
+	paste (win) {
+		if (!win || win.isDestroyed()) {
+			return;
+		};
+
+		const view = Util.getActiveView(win);
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.webContents.paste();
+		};
+	};
+
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
-			if (callBack) {
-				callBack();
+			// Update tab bar visibility if alwaysShowTabs changed
+			if ('alwaysShowTabs' in config) {
+				WindowManager.updateTabBarVisibility(win);
 			};
+
+			callBack?.();
 		});
 	};
 
-	setToken (win, token) {
-		this.token = token;
+	setPinChecked (win, isPinChecked, pinTimeout, hasPinSet) {
+		this.isPinChecked = isPinChecked;
+		if (hasPinSet !== undefined) {
+			this.hasPinSet = hasPinSet;
+		};
+		if (isPinChecked) {
+			this.lastActivityTime = Date.now();
+			if (pinTimeout) {
+				this.startPinTimer(win, pinTimeout);
+			};
+		} else {
+			this.stopPinTimer();
+		};
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
-	setPinChecked (win, isPinChecked) {
-		this.isPinChecked = isPinChecked;
+	setHasPinSet (win, hasPinSet) {
+		this.hasPinSet = hasPinSet;
+
+		// Update tab bar visibility for all windows when PIN state changes
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
+	};
+
+	checkPinTimeout (win, pinTimeout) {
+		if (!this.isPinChecked || !pinTimeout) {
+			return;
+		};
+
+		const elapsed = Date.now() - this.lastActivityTime;
+		if (elapsed >= pinTimeout) {
+			this.isPinChecked = false;
+			this.pinCheck(win);
+		};
+	};
+
+	/**
+	 * Starts or restarts the centralized pin timeout timer.
+	 * Called when pin is enabled or user activity is detected.
+	 * @param {BrowserWindow} win - The window (not used, for API consistency)
+	 * @param {number} pinTimeout - Timeout in milliseconds
+	 */
+	startPinTimer (win, pinTimeout) {
+		if (!pinTimeout || !this.isPinChecked) {
+			return;
+		};
+
+		this.pinTimeValue = pinTimeout;
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, pinTimeout);
+	};
+
+	/**
+	 * Resets the pin timer due to user activity.
+	 * Called from any renderer when user activity is detected.
+	 */
+	resetPinTimer (win) {
+		if (!this.isPinChecked || !this.pinTimeValue) {
+			return;
+		};
+
+		this.lastActivityTime = Date.now();
+
+		this.stopPinTimer();
+		this.pinTimer = setTimeout(() => {
+			if (!this.isPinChecked) {
+				return;
+			};
+
+			this.isPinChecked = false;
+			WindowManager.sendToAll('pin-check');
+		}, this.pinTimeValue);
+	};
+
+	/**
+	 * Stops the pin timer.
+	 * Called when pin is disabled or user logs out.
+	 */
+	stopPinTimer (win) {
+		if (this.pinTimer) {
+			clearTimeout(this.pinTimer);
+			this.pinTimer = null;
+		};
 	};
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
-		this.setBackground(win, theme);
+
+		Util.setNativeThemeSource();
+
+		const resolvedTheme = Util.getTheme();
+		this.setBackground(win, resolvedTheme);
+		
+		WindowManager.sendToAll('set-theme', theme);
+		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
+		const bgColor = Util.isWayland() ? '#00000000' : Util.getBgColor(theme);
+
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
 	};
 
 	setZoom (win, zoom) {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
-		win.webContents.setZoomLevel(zoom);
-		Util.send(win, 'zoom');
+		const view = Util.getActiveView(win);
+		if (view && view.webContents) {
+			view.webContents.setZoomLevel(zoom);
+			Util.sendToActiveTab(win, 'zoom');
+		};
 		this.setConfig(win, { zoom });
 	};
 
 	setHideTray (win, show) {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
 			this.initMenu(win);
 		});
 	};
@@ -109,9 +230,52 @@ class Api {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
+			// Notify tabs.html about menu bar visibility change
+			Util.send(win, 'set-menu-bar-visibility', show);
+
+			// Clear any temporary visibility override
+			delete win.tempMenuBarVisible;
+
+			// Update tab bar height when menu bar visibility changes
+			WindowManager.updateTabBarVisibility(win);
+
 			win.setMenuBarVisibility(show);
 			win.setAutoHideMenuBar(!show);
 		});
+	};
+
+	// Temporary menu bar visibility for Alt key toggle (doesn't persist to config)
+	setMenuBarTemporaryVisibility (win, show) {
+		const { config } = ConfigManager;
+
+		// Only allow temporary show when menu bar is hidden by config
+		if (config.showMenuBar) {
+			return;
+		};
+
+		if (show) {
+			win.tempMenuBarVisible = true;
+		} else {
+			delete win.tempMenuBarVisible;
+		};
+
+		// Update view bounds
+		WindowManager.updateTabBarVisibility(win);
+	};
+
+	setAlwaysShowTabs (win, show) {
+		this.setConfig(win, { alwaysShowTabs: show }, () => {
+			WindowManager.updateTabBarVisibility(win);
+		});
+	};
+
+	setHardwareAcceleration (win, enabled) {
+		const Store = require('electron-store');
+		const suffix = app.isPackaged ? '' : 'dev';
+		const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+
+		store.set('hardwareAcceleration', enabled);
+		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true, false));
 	};
 
 	spellcheckAdd (win, s) {
@@ -125,7 +289,35 @@ class Api {
 	};
 
 	async keytarGet (win, key) {
-		return await keytar.getPassword(KEYTAR_SERVICE, key);
+		const maxRetries = is.windows ? 3 : 1;
+		const retryDelay = 500; // ms
+
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			let value = null;
+			let shouldRetry = false;
+
+			try {
+				value = await keytar.getPassword(KEYTAR_SERVICE, key);
+				shouldRetry = (value === null);
+
+				if (shouldRetry) {
+					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
+				};
+			} catch (err) {
+				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
+				shouldRetry = true;
+			};
+
+			if (!shouldRetry || (attempt >= maxRetries)) {
+				return value;
+			};
+
+			// On Windows, retry with delay as Credential Manager can be temporarily
+			// unavailable after sleep/reboot
+			await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+		};
+
+		return null;
 	};
 
 	keytarDelete (win, key) {
@@ -143,7 +335,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, '', true);
+		this.exit(win, '', true, true);
 	};
 
 	updateCancel (win) {
@@ -158,8 +350,32 @@ class Api {
 		WindowManager.command(win, cmd, param);
 	};
 
-	openWindow (win, route) {
-		WindowManager.createMain({ route, isChild: true });
+	openWindow (win, route, token) {
+		WindowManager.createMain({ route, token, isChild: true });
+	};
+
+	openWindows (win, routes, token) {
+		if (!routes || !routes.length) {
+			return;
+		};
+
+		for (const route of routes) {
+			WindowManager.createMain({ route, token, isChild: true });
+		};
+	};
+
+	openTab (win, data, options) {
+		WindowManager.createTab(win, data, options);
+	};
+
+	openTabs (win, tabs) {
+		if (!tabs || !tabs.length) {
+			return;
+		};
+
+		for (const tab of tabs) {
+			WindowManager.createTab(win, tab.data, { setActive: false });
+		};
 	};
 
 	openUrl (win, url) {
@@ -197,29 +413,92 @@ class Api {
 		};
 	};
 
-	shutdown (win, relaunch) {
-		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch);
+	shutdown (win, relaunch, isUpdate) {
+		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
 		if (relaunch) {
-			UpdateManager.relaunch();
+			if (isUpdate) {
+				UpdateManager.relaunch();
+			} else {
+				app.relaunch();
+				app.exit(0);
+			};
 		} else {
 			app.exit(0);
 		};
 	};
 
-	exit (win, signal, relaunch) {
+	exit (win, signal, relaunch, isUpdate) {
 		if (app.isQuiting) {
 			return;
 		};
+
+		app.isQuiting = true;
+
+		// Save tabs before closing
+		WindowManager.saveTabs(win);
 
 		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
-		Util.send(win, 'shutdownStart');
+		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
-		Server.stop(signal).then(() => this.shutdown(win, relaunch));
+		// Send shutdown start to all tabs and wait for them to close their sessions
+		this.closeAllTabSessions(win).then(() => {
+			Util.send(win, 'shutdownStart');
+			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+		});
+	};
+
+	/**
+	 * Closes sessions for all tabs in the window
+	 * @param {BrowserWindow} win - The window
+	 * @returns {Promise} Resolves when all sessions are closed
+	 */
+	closeAllTabSessions (win) {
+		if (!win || win.isDestroyed() || !win.views || win.views.length === 0) {
+			return Promise.resolve();
+		};
+
+		const timeout = 5000; // 5 second timeout per tab
+		const promises = win.views.map(view => {
+			return new Promise(resolve => {
+				if (!view.webContents || view.webContents.isDestroyed()) {
+					resolve();
+					return;
+				};
+
+				let handler = null;
+
+				const cleanup = () => {
+					if (handler) {
+						ipcMain.removeListener('tab-session-closed', handler);
+					};
+					resolve();
+				};
+
+				const timeoutId = setTimeout(() => {
+					Util.log('warn', `[Api].closeAllTabSessions: Timeout waiting for tab ${view.id} to close session`);
+					cleanup();
+				}, timeout);
+
+				// Listen for the tab to signal it's ready to close
+				handler = (event, readyTabId) => {
+					if (readyTabId === view.id) {
+						clearTimeout(timeoutId);
+						cleanup();
+					};
+				};
+
+				ipcMain.on('tab-session-closed', handler);
+
+				// Tell the tab to close its session
+				Util.sendToTab(win, view.id, 'close-session');
+			});
+		});
+
+		return Promise.all(promises);
 	};
 
 	setChannel (win, id) {
@@ -271,8 +550,11 @@ class Api {
 	};
 
 	reload (win, route) {
-		win.route = route;
-		win.webContents.reload();
+		const view = Util.getActiveView(win);
+		if (view && view.webContents && !view.webContents.isDestroyed()) {
+			view.data = { ...view.data, route };
+			view.webContents.reload();
+		};
 	};
 
 	systemInfo (win) {
@@ -354,6 +636,220 @@ class Api {
 
 	close (win) {
 		win.close();
+	};
+
+	toggleFullScreen (win) {
+		win.setFullScreen(!win.isFullScreen());
+	};
+
+	getTabs (win) {
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const hasMultipleTabs = win.views && win.views.length > 1;
+
+		return {
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
+			id: win.activeTabId || win.views?.[0]?.id,
+			isVisible: alwaysShow || hasMultipleTabs,
+		};
+	};
+
+	setActiveTab (win, id) {
+		WindowManager.setActiveTab(win, id);
+	};
+
+	getTab (win, id) {
+		const view = (win.views || []).find(it => it.id == id);
+		return view ? { id: view.id, data: view.data } : null;
+	};
+
+	updateTab (win, id, data) {
+		WindowManager.updateTab(win, id, data);
+	};
+
+	removeTab (win, id, updateActive) {
+		WindowManager.removeTab(win, id, updateActive);
+	};
+
+	closeOtherTabs (win, id) {
+		WindowManager.closeOtherTabs(win, id);
+	};
+
+	reorderTabs (win, tabIds) {
+		WindowManager.reorderTabs(win, tabIds);
+	};
+
+	setTabsDimmer (win, show) {
+		Util.send(win, 'set-tabs-dimmer', show);
+	};
+
+	getWindowBounds (win) {
+		return WindowManager.getBounds(win);
+	};
+
+	getCursorScreenPoint (win) {
+		const { screen } = require('electron');
+		return screen.getCursorScreenPoint();
+	};
+
+	/**
+	 * Detaches a tab from its window, either creating a new window or moving to an existing one
+	 * @param {BrowserWindow} win - Source window
+	 * @param {Object} param - Parameters { tabId, mouseX, mouseY }
+	 */
+	detachTab (win, param) {
+		const { tabId, mouseX, mouseY } = param || {};
+
+		if (!tabId || !win || !win.views) {
+			return;
+		};
+
+		// Don't detach if this is the only tab
+		if (win.views.length <= 1) {
+			return;
+		};
+
+		// Find the tab to detach
+		const tab = win.views.find(it => it.id == tabId);
+		if (!tab) {
+			return;
+		};
+
+		// Get tab data before removing
+		const tabData = { ...tab.data };
+
+		// Check if there's another window at the mouse position
+		const targetWin = this.getWindowAtPoint(mouseX, mouseY, win);
+
+		if (targetWin) {
+			// Transfer tab to existing window
+			this.transferTabToWindow(win, targetWin, tabId, tabData);
+		} else {
+			// Create new window with this tab
+			this.createWindowFromTab(win, tabId, tabData, mouseX, mouseY);
+		};
+	};
+
+	/**
+	 * Finds a window at the given screen coordinates, excluding a specific window
+	 * @param {number} x - Screen X coordinate
+	 * @param {number} y - Screen Y coordinate
+	 * @param {BrowserWindow} excludeWin - Window to exclude from search
+	 * @returns {BrowserWindow|null}
+	 */
+	getWindowAtPoint (x, y, excludeWin) {
+		for (const win of WindowManager.list) {
+			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+				continue;
+			};
+
+			const bounds = WindowManager.getBounds(win);
+			if (!bounds) {
+				continue;
+			};
+
+			if (x >= bounds.x && x <= bounds.x + bounds.width &&
+				y >= bounds.y && y <= bounds.y + bounds.height) {
+				return win;
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Transfers a tab from source window to target window
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {BrowserWindow} targetWin - Target window
+	 * @param {string} tabId - Tab ID to transfer
+	 * @param {Object} tabData - Tab data
+	 */
+	transferTabToWindow (sourceWin, targetWin, tabId, tabData) {
+		// Create tab in target window first
+		WindowManager.createTab(targetWin, tabData, { setActive: true });
+
+		// Remove tab from source window after target is ready
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus target window once after removal is done
+			if (targetWin && !targetWin.isDestroyed()) {
+				targetWin.focus();
+			};
+		}, 100);
+	};
+
+	/**
+	 * Creates a new window from a detached tab
+	 * @param {BrowserWindow} sourceWin - Source window
+	 * @param {string} tabId - Tab ID to detach
+	 * @param {Object} tabData - Tab data
+	 * @param {number} mouseX - Mouse X screen coordinate
+	 * @param {number} mouseY - Mouse Y screen coordinate
+	 */
+	createWindowFromTab (sourceWin, tabId, tabData, mouseX, mouseY) {
+		// Get source window size
+		const sourceBounds = WindowManager.getBounds(sourceWin);
+		const width = sourceBounds?.width;
+		const height = sourceBounds?.height;
+
+		// Create new window first, then remove tab from source (to avoid race conditions)
+		const newWin = WindowManager.createMain({
+			isChild: true,
+			initialBounds: { x: mouseX - 50, y: mouseY - 20, width, height },
+			initialTabData: tabData,
+		});
+
+		// Remove tab from source window after new window is created
+		setTimeout(() => {
+			WindowManager.removeTab(sourceWin, tabId, true);
+			// Focus new window once after removal is done
+			if (newWin && !newWin.isDestroyed()) {
+				newWin.focus();
+			};
+		}, 100);
+	};
+
+	notification (win, param) {
+		const { id, title, text, cmd, payload } = param || {};
+
+		if (!text) {
+			return;
+		};
+
+		// Prevent duplicate notifications across tabs
+		if (id && this.shownNotificationIds.has(id)) {
+			return;
+		};
+
+		if (id) {
+			this.shownNotificationIds.add(id);
+
+			// Clean up old notification IDs after 30 seconds
+			setTimeout(() => this.shownNotificationIds.delete(id), 30000);
+		};
+
+		const notification = new Notification({
+			title: String(title || ''),
+			body: String(text || ''),
+		});
+
+		notification.on('click', () => {
+			this.focusWindow(win);
+
+			if (cmd) {
+				Util.sendToActiveTab(win, 'notification-callback', cmd, payload);
+			};
+		});
+
+		notification.show();
+	};
+
+	payloadBroadcast (win, payload) {
+		if (payload.type == 'openObject') {
+			this.focusWindow(win);
+		};
+		
+		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
 };

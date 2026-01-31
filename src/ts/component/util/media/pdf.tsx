@@ -1,17 +1,14 @@
-import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect, useMemo } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { U } from 'Lib';
-import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
-pdfjs.GlobalWorkerOptions.useWorkerFetch = true;
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
+//pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = './workers/pdf.worker.mjs';
 
 interface Props {
-	id: string;
 	src: string;
 	page: number;
 	onDocumentLoad: (result: any) => void;
@@ -24,7 +21,6 @@ interface MediaPdfRefProps {
 };
 
 const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
-	id = '',
 	src = '',
 	page = 0,
 	onDocumentLoad,
@@ -35,13 +31,10 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	const [ width, setWidth ] = useState(0);
 	const nodeRef = useRef(null);
 	const frame = useRef(0);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
-	const options = { 
+	const options = useMemo(() => ({
 		isEvalSupported: false, 
 		cMapUrl: U.Common.fixAsarPath('./cmaps/'),
-	};
+	}), []);
 
 	const resize = () => {
 		if (frame.current) {
@@ -61,25 +54,26 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
 		};
 
 		return () => {
 			raf.cancel(frame.current);
-
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
+			resizeObserver.disconnect();
 		};
-	});
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		resize,
 	}));
 
 	return (
-		<div ref={nodeRef}>
+		<div ref={nodeRef} className="mediaPdf">
 			<Document
 				file={src}
 				onLoadSuccess={onDocumentLoad}

@@ -22,6 +22,7 @@
 		.iconWrapper { display: flex; width: 320px; border-radius: 320px; margin: 0px auto 10px; align-items: center; justify-content: space-around; }
 		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #fff0c8 0%, rgba(255, 240, 200, 0.00) 100%); }
 		.iconWrapper.blue { background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
+		.iconWrapper.green { background: radial-gradient(50% 50% at 50% 50%, #c8f5a0 0%, rgba(200, 245, 160, 0.00) 100%); }
 
 		.iconWrapper {
 			.icon { width: 56px; height: 56px; }
@@ -29,6 +30,7 @@
 			.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
 			.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
 			.icon.noAccess { display: block; background-image: url('~img/icon/popup/confirm/lock.svg'); }
+			.icon.noAccessRed { display: block; background-image: url('~img/icon/popup/confirm/red-lock.svg'); }
 			.icon.confirm { background-image: url('~img/icon/popup/confirm/confirm.svg'); }
 			.icon.invite { background-image: url('~img/icon/popup/confirm/invite.svg'); }
 			.icon.warning { background-image: url('~img/icon/popup/confirm/warning.svg'); }
@@ -37,6 +39,10 @@
 			.icon.join { background-image: url('~img/icon/popup/confirm/join.svg'); }
 			.icon.create { background-image: url('~img/icon/popup/confirm/create.svg'); }
 			.icon.success { background-image: url('~img/icon/popup/confirm/success.svg'); }
+			.icon.key-red { background-image: url('~img/icon/popup/confirm/key-red.svg'); }
+			.icon.key-green { background-image: url('~img/icon/popup/confirm/key-green.svg'); }
+			.icon.anyId { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); }
+			.icon.emoji { width: 232px; height: 52px; background-image: url('~img/icon/popup/confirm/emoji.svg'); }
 		}
 
 		.checkboxWrapper { 
@@ -49,7 +55,6 @@
 		.confirmMessage { display: flex; flex-direction: column; gap: 4px 0px; justify-content: flex-start; margin: 0px 0px 16px 0px; text-align: left; }
 		.confirmMessage {
 			.label { margin: 0px; @include text-small; }
-			.input { border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
 		}
 
 		ul { padding-left: 1.25em; margin: 0.75em 0px; }
@@ -66,6 +71,27 @@
 
 	.popup.popupConfirm.lostPhrase {
 		.innerWrap { width: 500px; }
+	}
+
+	.popup.popupConfirm.changeOwner {
+		.innerWrap { text-align: left; }
+		.title { text-align: center; }
+		.descr { margin: 0px 0px 12px 0px; }
+
+		ul { margin: 0px 0px 12px 0px; }
+		.buttons { flex-direction: row-reverse; gap: 0px 8px; }
+	}
+
+	.popup.popupConfirm.changeOwnerLoading {
+		.innerWrap { text-align: center; }
+
+		.iconWrapper { width: 56px; height: 56px; }
+		.loaderWrapper { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; }
+		.loaderWrapper { .loader { width: 40px; height: 40px; } }
+	}
+
+	.popup.popupConfirm.changeOwnerSuccess {
+		.buttons { .button.blank:not(:hover):not(.hover) { border: 1px solid var(--color-shape-secondary); } }
 	}
 
 	.popup.popupConfirm.techInfo {

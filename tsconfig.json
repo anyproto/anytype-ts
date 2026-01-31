@@ -2,6 +2,7 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "sourceMap": true,
+        "skipLibCheck": true,
         "noImplicitAny": false,
         "module": "esnext",
         "target": "es2017",
@@ -10,6 +11,7 @@
         "moduleResolution": "Node",
         "experimentalDecorators": false,
         "allowSyntheticDefaultImports": true,
+        "preserveConstEnums": true,
         "allowJs": true,
         "baseUrl": "./src",
 		"lib": [ "es5", "dom" ],

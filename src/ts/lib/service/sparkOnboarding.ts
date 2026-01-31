@@ -29,10 +29,10 @@ export class SparkOnboardingService extends EventEmitter {
 		// Convert http to ws and https to wss if needed
 		if (this.url.startsWith('http://')) {
 			this.url = this.url.replace('http://', 'ws://');
-		} else if (this.url.startsWith('https://')) {
+		} else 
+			if (this.url.startsWith('https://')) {
 			this.url = this.url.replace('https://', 'wss://');
 		};
-		
 		
 		this.maxReconnectAttempts = config.maxRetries || 3;
 		

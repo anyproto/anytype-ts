@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, analytics, translate } from 'Lib';
+import { I, S, U, analytics, translate, Preview } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -17,26 +17,18 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const syncStatus = S.Auth.getSyncStatus(S.Common.space);
-	const isDevelopment = U.Data.isDevelopmentNetwork();
+	const { status, network } = syncStatus;
 	const cn = [ 'sync', className ];
+	const tooltip = U.Data.isDevelopmentNetwork() ? translate('syncButtonStaging') : translate('menuSyncStatusTitle');
+	const icon = network == I.SyncStatusNetwork.LocalOnly ? I.SyncStatusSpace.Offline : I.SyncStatusSpace[status];
 
 	if (syncStatus.error) {
 		cn.push(`error${I.SyncStatusError[syncStatus.error]}`);
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
-		if (onClick) {
-			onClick(e);
-		};
-
-		analytics.event('ClickSyncStatus', { status: syncStatus.status });
-	};
-
-	const getIcon = (): string => {
-		const { status, network } = syncStatus;
-		const icon = network == I.SyncStatusNetwork.LocalOnly ? I.SyncStatusSpace.Offline : I.SyncStatusSpace[status];
-
-		return String(icon).toLowerCase();
+		onClick?.(e);
+		analytics.event('ClickSyncStatus', { status });
 	};
 
 	return (
@@ -45,8 +37,10 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 			id={id} 
 			className={cn.join(' ')} 
 			onClick={onClickHandler}
+			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom })}
+			onMouseLeave={() => Preview.tooltipHide(false)}
 		>
-			<Icon tooltipParam={{ text: isDevelopment ? translate('syncButtonStaging') : '' }} className={getIcon()} />
+			<Icon className={String(icon).toLowerCase()} />
 		</div>
 	);
 

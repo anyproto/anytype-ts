@@ -17,7 +17,7 @@ interface RefProps {
 
 const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { rootId, readonly, resize, onLayoutSelect } = props;
+	const { rootId, readonly, isPopup, resize, onLayoutSelect } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, J.Relation.cover);
@@ -71,7 +71,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onCoverSelect = (item: any) => {
-		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.itemId, item.coverX, item.coverY, item.coverScale);
 	};
 
 	const onLayout = () => {
@@ -85,6 +85,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 			subIds: J.Menu.layout,
 			data: {
 				rootId,
+				isPopup,
 				onLayoutSelect,
 			}
 		});
@@ -115,7 +116,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			

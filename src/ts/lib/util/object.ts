@@ -1,9 +1,29 @@
+import route from 'json/route';
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
 const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
 
+/**
+ * UtilObject provides utilities for working with Anytype objects.
+ *
+ * Key responsibilities:
+ * - Object navigation and routing (opening objects in different contexts)
+ * - Object property management (icons, covers, names, descriptions)
+ * - Layout type checking and categorization
+ * - Object type and relation management
+ * - Link copying and sharing
+ *
+ * This is one of the most heavily used utility classes, as objects are
+ * the fundamental data unit in Anytype.
+ */
 class UtilObject {
 
+	/**
+	 * Get the router action string for a given object layout.
+	 * Maps layout types to their corresponding page action identifiers.
+	 * @param v - The object layout type
+	 * @returns Action string used in routing (e.g., 'edit', 'media', 'chat')
+	 */
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
@@ -33,6 +53,11 @@ class UtilObject {
 		return r;
 	};
 
+	/**
+	 * Build the route URL for an object.
+	 * @param object - The object to generate a route for
+	 * @returns Route string suitable for navigation
+	 */
 	route (object: any): string {
 		if (!object) {
 			return '';
@@ -54,6 +79,11 @@ class UtilObject {
 		return U.Router.build(param);
 	};
 
+	/**
+	 * Generate a universal deep link route for an object.
+	 * @param object - The object to link to
+	 * @returns Universal route string with objectId and spaceId params
+	 */
 	universalRoute (object: any): string {
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
@@ -65,12 +95,42 @@ class UtilObject {
 		return param;
 	};
 
+	getTabData (object: any) {
+		if (!object) {
+			return;
+		};
+
+		const spaceview = U.Space.getSpaceview();
+
+		return { 
+			title: U.Object.name(object, true),
+			icon: U.Graph.imageSrc(object),
+			layout: object.layout,
+			isImage: object.iconImage,
+			uxType: spaceview?.uxType,
+			route: this.route(object),
+		};
+	};
+
+	/**
+	 * Open an object based on keyboard modifiers in the event.
+	 * - Shift or popup context: Opens in popup
+	 * - Cmd/Ctrl or middle mouse button: Opens in new tab
+	 * - Default: Opens via route navigation
+	 * @param e - The DOM event (for modifier key detection)
+	 * @param object - The object to open
+	 * @param param - Optional parameters for route/menu customization
+	 */
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
 		};
 
 		param = this.checkParam(param);
+
+		if (!e) {
+			this.openRoute(object, param);
+		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -83,13 +143,19 @@ class UtilObject {
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
-		if ((e.metaKey || e.ctrlKey)) {
-			this.openWindow(object);
+		if ((e.metaKey || e.ctrlKey) || (e.button == 1)) {
+			this.openTab(object);
 		} else {
 			this.openRoute(object, param);
 		};
 	};
 
+	/**
+	 * Open an object automatically choosing popup or route based on context.
+	 * Uses popup if already in popup context, otherwise navigates via route.
+	 * @param object - The object to open
+	 * @param param - Optional parameters for route/menu customization
+	 */
 	openAuto (object: any, param?: any) {
 		if (!object) {
 			return;
@@ -111,22 +177,63 @@ class UtilObject {
 		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
-	openRoute (object: any, param?: any) {
-		param = this.checkParam(param);
-
-		const route = this.route(object);
-		if (!route) {
+	openRoute (object: any, param?: Partial<I.RouteParam>) {
+		if (!object) {
 			return;
 		};
 
+		param = this.checkParam(param);
+
 		keyboard.setSource(null);
-		U.Router.go(`/${route}`, param);
+		U.Router.go(this.route(object), param);
 	};
 
 	openWindow (object: any) {
-		const route = this.route(object);
-		if (route) {
-			Renderer.send('openWindow', `/${route}`);
+		Renderer.send('openWindow', this.route(object), S.Auth.token);
+	};
+
+	openTab (object: any) {
+		if (!object) {
+			return;
+		};
+
+		Renderer.send('openTab', this.getTabData(object), { setActive: false });
+		analytics.event('AddTab', { objectType: object.type });
+	};
+
+	openTabs (objects: any[]) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const filtered = objects.filter(it => it);
+		if (!filtered.length) {
+			return;
+		};
+
+		const tabs = filtered.map(object => ({
+			route: this.route(object),
+			data: this.getTabData(object),
+		}));
+
+		if (tabs.length) {
+			Renderer.send('openTabs', tabs);
+
+			for (const object of filtered) {
+				analytics.event('AddTab', { objectType: object.type });
+			};
+		};
+	};
+
+	openWindows (objects: any[], token: string) {
+		if (!objects || !objects.length) {
+			return;
+		};
+
+		const routes = objects.filter(it => it).map(object => this.route(object));
+
+		if (routes.length) {
+			Renderer.send('openWindows', routes, token);
 		};
 	};
 
@@ -159,9 +266,10 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
+		sidebar.rightPanelClose(true, false);
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
@@ -170,10 +278,26 @@ class UtilObject {
 	/**
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
-	openConfig (object: any, param?: any) {
+	openConfig (e: any, object: any, param?: any) {
+		if (e && (e.button == 1)) {
+			this.openTab(object);
+			return;
+		};
+
 		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 
+	/**
+	 * Create a new object as a linked block within another object.
+	 * @param rootId - Parent object ID where the link block will be created
+	 * @param targetId - Block ID for positioning the new link
+	 * @param details - Object details/properties to set on creation
+	 * @param position - Block position relative to target
+	 * @param templateId - Template to use for the new object
+	 * @param flags - Creation flags (e.g., SelectTemplate, DeleteEmpty)
+	 * @param route - Analytics route for tracking
+	 * @param callBack - Optional callback with creation result
+	 */
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
@@ -202,9 +326,7 @@ class UtilObject {
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				const object = message.details;
 				analytics.createObject(object.type, object.layout, route, message.middleTime);
@@ -266,6 +388,14 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
 	};
 
+	setObjectTypes (rootId: string, ids: string[], callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(ids) } ], callBack);
+	};
+
+	setOptionColor (rootId: string, color: string, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationOptionColor', value: color } ], callBack);
+	};
+
 	name (object: any, withPlural?: boolean): string {
 		if (!object) {
 			return '';
@@ -294,9 +424,7 @@ class UtilObject {
 		param.limit = 1;
 
 		this.getByIds([ id ], param, objects => {
-			if (callBack) {
-				callBack(objects[0]);
-			};
+			callBack?.(objects[0]);
 		});
 	};
 
@@ -318,34 +446,41 @@ class UtilObject {
 		};
 
 		U.Subscription.search(param, (message: any) => {
-			if (callBack) {
-				callBack((message.records || []).filter(it => !it._empty_));
-			};
+			callBack?.((message.records || []).filter(it => !it._empty_));
 		});
 	};
 
 	// --------------------------------------------------------- //
+	// Layout Type Checking Methods
+	// These methods check if a layout belongs to specific categories
+	// --------------------------------------------------------- //
 
+	/** Check if layout is a Set-like layout (Set, Collection, Type) */
 	isInSetLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSetLayouts().includes(layout);
 	};
 
+	/** Check if layout is a file-based layout (File, Image, Audio, Video, PDF) */
 	isInFileLayouts (layout: I.ObjectLayout): boolean {
 		return this.getFileLayouts().includes(layout);
 	};
 
+	/** Check if layout is a system layout (Type, Relation, Option, etc.) */
 	isInSystemLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSystemLayouts().includes(layout);
 	};
 
+	/** Check if layout is either file or system layout */
 	isInFileOrSystemLayouts (layout: I.ObjectLayout): boolean {
 		return this.getFileAndSystemLayouts().includes(layout);
 	};
 
+	/** Check if layout is a page-like layout (Page, Human, Task, Note, Bookmark) */
 	isInPageLayouts (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	/** Check if layout is a human-like layout (Human, Participant) */
 	isInHumanLayouts (layout: I.ObjectLayout): boolean {
 		return this.getHumanLayouts().includes(layout);
 	};
@@ -446,7 +581,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -482,7 +617,7 @@ class UtilObject {
 	};
 
 	getGraphSkipLayouts () {
-		return this.getFileAndSystemLayouts().filter(it => !this.isTypeLayout(it));
+		return this.getSystemLayouts().filter(it => !this.isTypeLayout(it));
 	};
 
 	// --------------------------------------------------------- //
@@ -525,7 +660,7 @@ class UtilObject {
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
 		method = method || 'auto';
 
-		let fn = U.Common.toCamelCase(`open-${method}`);
+		let fn = U.String.toCamelCase(`open-${method}`);
 		if (!this[fn]) {
 			fn = 'openAuto';
 		};
@@ -679,11 +814,7 @@ class UtilObject {
 			};
 
 			S.Detail.update(J.Constant.subId.type, { id: typeId, details: { [key]: value } }, false);
-			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(typeId)), (message: any) => {
-				if (onChange) {
-					onChange(message);
-				};
-			});
+			C.BlockDataviewRelationSet(typeId, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(typeId)), onChange);
 		});
 	};
 
@@ -740,15 +871,39 @@ class UtilObject {
 		};
 	};
 
-	createType (details: any, isPopup: boolean) {
-		details = details || {};
-
-		const newDetails: any = {
-			...this.getNewTypeDetails(),
-			...details,
+	editType (id: string, isPopup: boolean) {
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = { 
+			page: 'type', 
+			rootId: id,
+			noPreview: false,
+			details: {},
 		};
 
-		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
+	};
+
+	createType (details: any, isPopup: boolean) {
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const state = {
+			page: 'type', 
+			rootId: '',
+			noPreview: false,
+			details: {
+				...this.getNewTypeDetails(),
+				...(details || {}),
+			},
+		};
+
+		if (data.isClosed) {
+			sidebar.rightPanelToggle(isPopup, state);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
+		};
 	};
 
 	getNewTypeDetails (): any {
@@ -784,6 +939,53 @@ class UtilObject {
 		};
 
 		return svg;
+	};
+
+	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
+		const theme = S.Common.getThemeClass();
+		const type = S.Detail.get(J.Constant.subId.type, typeId, [ 'name', 'iconName' ], true);
+
+		let src = '';
+		if (type.iconName) {
+			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
+		} else {
+			let id = '';
+			switch (layout) {
+				default: id = 'page'; break;
+				case I.ObjectLayout.ChatOld:
+				case I.ObjectLayout.Chat: id = 'chat'; break;
+				case I.ObjectLayout.Collection: id = 'collection'; break;
+				case I.ObjectLayout.Set: id = 'set'; break;
+				case I.ObjectLayout.Date: id = 'date'; break;
+				case I.ObjectLayout.Type: id = 'type'; break;
+				case I.ObjectLayout.Bookmark: id = 'page'; break;
+			};
+			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
+		};
+
+		return src;
+	};
+
+	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.All;
+		};
+
+		const allIds = Relation.getArrayValue(spaceview.allIds);
+		const mentionIds = Relation.getArrayValue(spaceview.mentionIds);
+		const muteIds = Relation.getArrayValue(spaceview.muteIds);
+
+		if (allIds.includes(chatId)) {
+			return I.NotificationMode.All;
+		} else
+		if (mentionIds.includes(chatId)) {
+			return I.NotificationMode.Mentions;
+		} else
+		if (muteIds.includes(chatId)) {
+			return I.NotificationMode.Nothing;
+		};
+
+		return spaceview.notificationMode as I.NotificationMode;
 	};
 
 };

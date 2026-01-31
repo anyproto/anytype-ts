@@ -120,9 +120,7 @@ class Dataview {
 
 				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 			} else {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			};
 		});
 	};
@@ -161,7 +159,8 @@ class Dataview {
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = U.Common.objectCopy(view.filters).concat(param.filters || []);
+		const viewFilters = U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		const filters = viewFilters.concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
 		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
@@ -193,14 +192,12 @@ class Dataview {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(this.filterMapper),
-				sorts: sorts.map(this.filterMapper),
+				filters: filters.map(it => this.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => this.sortMapper(it)),
 				keys,
 				limit,
 				offset,
 				collectionId,
-				ignoreDeleted: true,
-				ignoreHidden: true,
 			}, callBack);
 		};
 
@@ -212,12 +209,42 @@ class Dataview {
 	};
 
 	/**
-	 * Maps a filter or sort object for a dataview subscription.
+	 * Maps a filter object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {any} The mapped object.
+	 */
+	filterMapper (it: any, param?: any) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+
+		if (!relation) {
+			return it;
+		};
+
+		it.format = relation.format;
+		it.includeTime = relation.includeTime;
+
+		if (Relation.isArrayType(relation.format)) {
+			it.value = Relation.formatValue(relation, it.value, false);
+
+			if (Array.isArray(it.value)) {
+				it.value = it.value.map(it => this.valueTemplateMapper(it, param));
+			} else {
+				it.value = this.valueTemplateMapper(it.value, param);
+			};
+		};
+
+		return it;
+	};
+
+	/**
+	 * Maps a sort object for a dataview subscription.
 	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (it: any) {
+	sortMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
@@ -225,6 +252,51 @@ class Dataview {
 			it.includeTime = relation.includeTime;
 		};
 		return it;
+	};
+
+	/**
+	 * Maps a filter value template to a value.
+	 * @param {string} value - The filter value.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {string} The mapped value.
+	 */
+	valueTemplateMapper (value: string, param?: any): string {
+		param = param || {};
+
+		const { rootId } = param;
+		const { account } = S.Auth;
+		const { space } = S.Common;
+		const option = Relation.getFilterTemplateOption(value);
+
+		if (!option) {
+			return value;
+		};
+
+		let r = '';
+
+		switch (option.templateType) {
+			default: {
+				r = value;
+				break;
+			};
+
+			case I.FilterValueTemplate.User: {
+				r = account.id;
+				break;
+			};
+
+			case I.FilterValueTemplate.Participant: {
+				r = U.Space.getParticipantId(space, account.id);
+				break;
+			};
+
+			case I.FilterValueTemplate.Object: {
+				r = rootId;
+				break;
+			};
+		};
+
+		return r;
 	};
 
 	/**
@@ -307,12 +379,13 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const filters = view.filters.map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters.map(this.filterMapper), object.setOf || [], isCollection ? object.id : '', (message: any) => {
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -544,6 +617,7 @@ class Dataview {
 			I.FilterCondition.AllIn,
 		];
 		const details: any = {};
+		const hasGroupValue = view.groupRelationKey && [ I.ViewType.Board, I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type);
 
 		if (relations.length) {
 			relations.forEach(it => {
@@ -555,7 +629,7 @@ class Dataview {
 			return details;
 		};
 
-		if (view.groupRelationKey) {
+		if (hasGroupValue) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
 				if (group) {
@@ -569,12 +643,12 @@ class Dataview {
 
 			if (view.type == I.ViewType.Timeline) {
 				details[view.groupRelationKey] = U.Date.now();
-				details[view.endRelationKey] = U.Date.now() + 86400 * 5;
+				details[view.endRelationKey] = U.Date.now() + J.Constant.day * 5;
 			};
 		};
 
 		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition) || (filter.relationKey == view.groupRelationKey)) {
+			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
 
@@ -609,7 +683,6 @@ class Dataview {
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
-
 		if (view && view.defaultTypeId && isAllowedDefaultType) {
 			typeId = view.defaultTypeId;
 		} else
@@ -662,7 +735,7 @@ class Dataview {
 			const type = S.Record.getTypeById(typeId);
 
 			if (type) {
-				return U.Common.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
+				return U.String.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
 		return translate('commonCreateNewObject');
@@ -681,6 +754,45 @@ class Dataview {
 		if (view && view.id) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, Object.assign(view, param), callBack);
 		};
+	};
+
+	/**
+	 * Duplicates an existing view in a dataview block, preserving its configuration and optionally its group order.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View} view - The view object to duplicate.
+	 * @param {string[]} sources - The source object IDs for the duplicated view.
+	 * @param {function} [callBack] - Optional callback after duplication.
+	 */
+	duplicateView (
+		rootId: string,
+		blockId: string,
+		view: I.View,
+		sources: string[],
+		callBack?: (message: any) => void,
+	) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block || !view) {
+			return;
+		};
+
+		const sourceOrder = (block.content.groupOrder || []).find(it => it.viewId == view.id);
+
+		C.BlockDataviewViewCreate(rootId, blockId, { ...view }, sources, (message: any) => {
+			if (message.error?.code) {
+				callBack?.(message);
+				return;
+			};
+
+			if (sourceOrder) {
+				const groupsCopy = (sourceOrder.groups || []).map((it: any) => ({ ...it }));
+
+				this.groupOrderUpdate(rootId, blockId, message.viewId, groupsCopy);
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: message.viewId, groups: groupsCopy });
+			};
+
+			callBack?.(message);
+		});
 	};
 
 	/**
@@ -770,7 +882,16 @@ class Dataview {
 			return map.length ? Math.max(...map.map(it => Number(it || 0))) : null;
 		};
 		const float = (v: any): string => {
-			return (v === null) ? null : U.Common.formatNumber(U.Common.round(v, 3));
+			if (v === null) {
+				return null;
+			};
+
+			const mapped = Relation.mapValue(relation, v);
+			if (mapped !== null) {
+				return mapped;
+			};
+
+			return U.Common.formatNumber(U.Common.round(v, 3));
 		};
 		const filtered = (filterEmpty: boolean) => {
 			return records.filter(it => {

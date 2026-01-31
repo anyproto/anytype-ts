@@ -1,4 +1,33 @@
-#page.isFull { overflow-x: hidden; overflow-y: auto; }
+#page { overflow-x: hidden; overflow-y: auto; overscroll-behavior: none; scrollbar-gutter: stable; }
+#page.isDraggingProperty { pointer-events: none; }
+
+.pageFlex { 
+	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; padding: 0px 8px 8px 0px;
+	background: var(--color-bg-primary);
+}
+.pageFlex {
+	.sidebarDummy { flex-shrink: 0; }
+	#page { width: 100%; position: relative; border-radius: 12px; }
+
+	&.withSidebarRight { padding-right: 0px; }
+	&.withSidebarRight {
+		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	}
+
+	&.withSidebarSubLeft {
+		#page { border-top-left-radius: 0px; border-bottom-left-radius: 0px; }
+	}
+
+	&.withSidebarLeft {
+		.pageMainVoid {
+			.wrapper {
+				> .icon.vaultToggle { display: none; }
+			}
+		}
+	}
+
+	&.sidebarAnimation { transition-property: padding; }
+}
 
 @import "./auth";
 @import "./main/edit";

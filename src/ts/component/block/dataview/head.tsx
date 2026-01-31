@@ -1,106 +1,42 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, analytics, translate, Dataview } from 'Lib';
 
-interface State {
-	isEditing: boolean;
-};
+const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-const Head = observer(class Head extends React.Component<I.ViewComponent, State> {
+	const { 
+		rootId, block, readonly, className, isCollection, getTarget, onSourceSelect, onSourceTypeSelect, loadData,
+	} = props;
+	const [ isEditing, setIsEditing ] = useState(false);
+	const nodeRef = useRef(null);
+	const editableRef = useRef(null);
+	const rangeRef = useRef<I.TextRange>(null);
+	const menuContext = useRef(null);
+	const targetObjectId = block.getTargetObjectId();
+	const object = getTarget();
+	const cn = [ 'dataviewHead' ];
+	const placeholder = Dataview.namePlaceholder(object.layout);
 
-	state = {
-		isEditing: false,
-	};
-	_isMounted = false;
-	node: any = null;
-	menuContext: any = null;
-	ref = null;
-	range: I.TextRange = null;
+	useEffect(() => {
+		setValue();
 
-	constructor (props: I.ViewComponent) {
-		super(props);
-
-		this.onSelect = this.onSelect.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onTitle = this.onTitle.bind(this);
-		this.onTitleOver = this.onTitleOver.bind(this);
-		this.onTitleSelect = this.onTitleSelect.bind(this);
-		this.onSource = this.onSource.bind(this);
-	};
-
-	render () {
-		const { block, readonly, className, isCollection, getTarget } = this.props;
-		const { isEditing } = this.state;
-		const targetObjectId = block.getTargetObjectId();
-		const object = getTarget();
-		const cn = [ 'dataviewHead' ];
-		const placeholder = Dataview.namePlaceholder(object.layout);
-
-		if (className) {
-			cn.push(className);
+		return () => {
+			save();
 		};
+
+	}, []);
+
+	useEffect(() => {
+		setValue();
 
 		if (isEditing) {
-			cn.push('isEditing');
+			const l = getValue().length;
+			setRange(rangeRef.current || { from: l, to: l });
 		};
+	});
 
-		let icon = null;
-		if (targetObjectId && !isCollection) {
-			icon = <Icon id="head-source-select" className="source withBackground" onClick={this.onSource} />;
-		} else {
-			icon = <div id="head-source-select" />;
-		};
-
-		return (
-			<div 
-				id={`block-head-${block.id}`}
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-			>
-				<Editable
-					ref={ref => this.ref = ref}
-					id="value"
-					readonly={readonly || !isEditing}
-					placeholder={placeholder}
-					onMouseDown={this.onTitle}
-					onBlur={this.onBlur}
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onSelect={this.onSelect}
-				/>
-				{icon}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		this.setValue();
-	};
-
-	componentDidUpdate () {
-		this.setValue();
-
-		if (this.state.isEditing && this.ref) {
-			window.setTimeout(() => { 
-				const l = this.getValue().length;
-				this.setRange(this.range || { from: l, to: l });
-			}, 15);
-		};
-	};
-
-	componentWillUnmount () {
-		this.save();
-		this._isMounted = false;
-	};
-
-	onTitle () {
-		const { rootId, block, readonly, onSourceSelect, isCollection } = this.props;
-		const { targetObjectId } = block.content;
-		const { isEditing } = this.state;
+	const onTitle = () => {
 		const element = `#block-head-${block.id}`;
 		const object = S.Detail.get(rootId, targetObjectId);
 		const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
@@ -118,30 +54,28 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		const options: any[] = [
 			canEdit ? { id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') } : null,
-			canSource ? { id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
-			{ id: 'sourceOpen', icon: 'expand', name: U.Common.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
+			canSource ? { id: 'sourceChange', icon: 'source', name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
+			{ id: 'sourceOpen', icon: 'expand', name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		].filter(it => it);
 
 		S.Menu.open('select', {
 			element,
 			offsetY: 4,
 			width: 240,
-			onOpen: context => this.menuContext = context,
+			classNameWrap: 'fromBlock',
+			onOpen: context => menuContext.current = context,
 			data: {
 				options,
-				onOver: this.onTitleOver,
-				onSelect: this.onTitleSelect,
+				onOver: onTitleOver,
+				onSelect: onTitleSelect,
 			},
 		});
 	};
 
-	onTitleOver (e: any, item: any) {
-		if (!this.menuContext) {
+	const onTitleOver = (e: any, item: any) => {
+		if (!menuContext.current) {
 			return;
 		};
-
-		const { rootId, block, loadData, isCollection } = this.props;
-		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
 			S.Menu.closeAll([ 'searchObject' ]);
@@ -155,8 +89,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			if (isNew) {
-				this.menuContext?.close();
-				this.setEditing(true);
+				menuContext.current.close();
+				setIsEditing(true);
 			};
 
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
@@ -166,9 +100,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		let menuId = '';
 		let menuParam: any = {
 			menuKey: item.id,
-			element: `#${this.menuContext.getId()} #item-${item.id}`,
-			offsetX: this.menuContext.getSize().width,
+			element: `#${menuContext.current.getId()} #item-${item.id}`,
+			offsetX: menuContext.current.getSize().width,
 			vertical: I.MenuDirection.Center,
+			classNameWrap: 'fromBlock',
 			isSub: true,
 			data: {},
 		};
@@ -198,7 +133,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						$(this.node).find('#head-source-select').trigger('click');
+						$(nodeRef.current).find('#head-source-select').trigger('click');
 						onCreate(message, true);
 					});
 				});
@@ -211,8 +146,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 				menuParam = Object.assign(menuParam, {
 					className: 'single',
-					rebind: this.menuContext.ref.rebind,
-					parentId: this.menuContext.props.id,
+					rebind: menuContext.current.getChildRef()?.rebind,
+					parentId: menuContext.current.props.id,
 				});
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -226,7 +161,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					withPlural: true,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => onCreate(message, false));
-						this.menuContext.close();
+						menuContext.current?.close();
 					}
 				});
 				break;
@@ -239,22 +174,19 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 	};
 
-	onTitleSelect (e: any, item: any) {
+	const onTitleSelect = (e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 
-		const { getTarget } = this.props;
-		const object = getTarget();
-
 		switch (item.id) {
 			case 'editTitle': {
-				this.setEditing(true);
+				setIsEditing(true);
 				break;
 			};
 
 			case 'sourceOpen': {
-				U.Object.openAuto(object);
+				U.Object.openAuto(getTarget());
 				analytics.event('InlineSetOpenSource');
 				break;
 			};
@@ -262,40 +194,38 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 	};
 
-	onSource () {
-		const { block, onSourceTypeSelect } = this.props;
-
+	const onSource = () => {
 		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
 	};
 
-	onBlur () {
-		this.save();
-		window.setTimeout(() => this.setEditing(false), 40);
+	const onBlur = () => {
+		save();
+		rangeRef.current = null;
+		window.setTimeout(() => setIsEditing(false), 40);
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => { 
 			e.preventDefault();
-			this.save(); 
+			save(); 
 		});
 	};
 
-	onKeyUp () {
-		this.checkInput(!this.getValue());
+	const onKeyUp = () => {
+		checkInput(!getValue());
 	};
 
-	onSelect () {
-		if (this.ref) {
-			this.range = this.ref.getRange();
+	const onSelect = () => {
+		if (editableRef.current) {
+			rangeRef.current = editableRef.current.getRange();
 		};
 	};
 
-	setValue () {
-		if (!this._isMounted || !this.ref) {
+	const setValue = () => {
+		if (!editableRef.current) {
 			return;
 		};
 
-		const { getTarget } = this.props;
 		const object = getTarget();
 		const placeholder = Dataview.namePlaceholder(object.layout);
 
@@ -307,34 +237,28 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			name = '';
 		};
 
-		this.ref.setValue(name);
-		this.ref.placeholderCheck();
-		this.checkInput(!name);
+		editableRef.current.setValue(name);
+		editableRef.current.placeholderCheck();
+		checkInput(!name);
 	};
 
-	getValue () {
-		return this.ref ? this.ref.getTextValue() : '';
+	const getValue = () => {
+		return String(editableRef.current?.getTextValue() || '');
 	};
 
-	checkInput (isEmpty: boolean) {
-		if (this.ref) {
-			$(this.ref.getNode()).toggleClass('isEmpty', isEmpty);
-		};
+	const checkInput = (isEmpty: boolean) => {
+		$(editableRef.current?.getNode()).toggleClass('isEmpty', isEmpty);
 	};
 
-	save () {
-		const { isEditing } = this.state;
-		const { block, getTarget } = this.props;
-		const targetId = block.getTargetObjectId();
-
-		if (!isEditing || !targetId) {
+	const save = () => {
+		if (!isEditing || !targetObjectId) {
 			return;
 		};
 
 		const object = getTarget();
 		const placeholder = Dataview.namePlaceholder(object.layout);
 		
-		let value = this.getValue();
+		let value = getValue();
 		if ([ object.name, object.pluralName ].includes(value)) {
 			return;
 		};
@@ -347,19 +271,51 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		const key = U.Object.isTypeLayout(object.layout) ? 'pluralName' : 'name';
-		C.ObjectListSetDetails([ targetId ], [ { key, value } ]);
+		C.ObjectListSetDetails([ targetObjectId ], [ { key, value } ]);
 
-		this.ref?.placeholderCheck();
+		editableRef.current?.placeholderCheck();
 	};
 
-	setRange (range: I.TextRange) {
-		this.ref?.setRange(range);
+	const setRange = (range: I.TextRange) => {
+		editableRef.current?.setRange(range);
 	};
 
-	setEditing (v: boolean) {
-		this.setState({ isEditing: v });
+	if (className) {
+		cn.push(className);
 	};
 
-});
+	if (isEditing) {
+		cn.push('isEditing');
+	};
 
-export default Head;
+	let icon = null;
+	if (targetObjectId && !isCollection) {
+		icon = <Icon id="head-source-select" className="source withBackground" onClick={onSource} />;
+	} else {
+		icon = <div id="head-source-select" />;
+	};
+
+	return (
+		<div 
+			id={`block-head-${block.id}`}
+			ref={nodeRef}
+			className={cn.join(' ')}
+		>
+			<Editable
+				ref={editableRef}
+				id="value"
+				readonly={readonly || !isEditing}
+				placeholder={placeholder}
+				onMouseDown={onTitle}
+				onBlur={onBlur}
+				onKeyDown={onKeyDown}
+				onKeyUp={onKeyUp}
+				onSelect={onSelect}
+			/>
+			{icon}
+		</div>
+	);
+
+}));
+
+export default BlockDataviewHead;

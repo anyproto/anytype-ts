@@ -18,5 +18,7 @@
 		}
 
 		.emptySearch { text-align: left; }
+
+		&.single { width: var(--menu-width-value); }
 	}
 }

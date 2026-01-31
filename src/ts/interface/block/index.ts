@@ -84,10 +84,10 @@ export interface BlockComponent {
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-	onPaste?(e: any, props: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onCopy?(e: any, cut: boolean): void;
+	onCopy?(e: any, mode: I.ClipboardMode): void;
+	onPaste?(e: any, props: any): void;
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
@@ -95,7 +95,6 @@ export interface BlockComponent {
 	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
 	renderLinks?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
 	renderEmoji?(node: any, param?: any): void;
-	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], range: I.TextRange, save: boolean };
 };
 
 export interface BlockStructure {
@@ -199,6 +198,7 @@ export interface Block {
 	isEmbedSketchfab?(): boolean;
 	isEmbedBilibili?(): boolean;
 	isEmbedDrawio?():boolean;
+	isEmbedExcalidraw?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

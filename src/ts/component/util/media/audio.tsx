@@ -38,9 +38,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const playIconRef = useRef(null);
 	const timeoutRef = useRef(0);
 	const frameRef = useRef(0);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
 	const { src, name }	= current || {};
 
@@ -78,19 +75,13 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const onPlayHandler = () => {
 		isPlaying.current = true;
 		$(playIconRef.current).addClass('active');
-
-		if (onPlay) {
-			onPlay();
-		};
+		onPlay?.();
 	};
 
 	const onPauseHandler = () => {
 		isPlaying.current = false;
 		$(playIconRef.current).removeClass('active');
-
-		if (onPause) {
-			onPause();
-		};
+		onPause?.();
 	};
 
 	const play = () => {
@@ -193,7 +184,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 		const { m, s } = getTime(isPlaying.current ? audio.currentTime : audio.duration);
 
-		$(timeTextRef.current).text(`${U.Common.sprintf('%02d', m)}:${U.Common.sprintf('%02d', s)}`);
+		$(timeTextRef.current).text(`${U.String.sprintf('%02d', m)}:${U.String.sprintf('%02d', s)}`);
 		ref.setValue(audio.currentTime / audio.duration);
 	};
 
@@ -209,6 +200,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		onVolume(1);
 
 		if (nodeRef.current) {
@@ -217,9 +212,11 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 		return () => {
 			unbind();
+			resizeObserver.disconnect();
 
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
+			const container = $(getScrollContainer?.());
+			if (container.length) {
+				container.off('scroll.audio');
 			};
 
 			if (frameRef.current) {

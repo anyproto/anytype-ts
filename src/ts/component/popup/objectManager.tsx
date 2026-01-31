@@ -1,13 +1,16 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Title, Button, ListObjectManager } from 'Component';
-import { C, I, keyboard, translate } from 'Lib';
+import $ from 'jquery';
+import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
+import { I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
+
+const ROW_HEIGHT = 30;
 
 const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param, getId, close } = props;
+	const { param, getId, close, position } = props;
 	const { data } = param;
-	const { collectionId, type } = data;
+	const { type, objects, keys, onConfirm } = data;
 	const subId = [ getId(), 'data' ].join('-');
 	const managerRef = useRef(null);
 
@@ -21,7 +24,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('enter, space', e, () => {
+		keyboard.shortcut('enter', e, () => {
 			e.stopPropagation();
 			onClick(e);
 		});
@@ -30,10 +33,23 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onClick = (e: any) => {
 		e.preventDefault();
 
+		onConfirm?.(managerRef.current.getSelected(), managerRef.current.getItemsCount());
 		close();
 	};
 
-	const onAfterLoad = (message: any) => {
+	const onUpdate = () => {
+		window.setTimeout(() => {
+			const wrap = $(`#${getId()}-innerWrap`);
+			const items = wrap.find('.items');
+			const height = wrap.outerHeight() - items.outerHeight() || 0;
+			const l = managerRef.current.getItemsCount();
+
+			if (l) {
+				wrap.css({ height: height + l * ROW_HEIGHT });
+			};
+
+			position();
+		}, 5);
 	};
 
 	useEffect(() => {
@@ -46,8 +62,15 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	}, []);
 
+	let ignoreArchived = false;
+	let textEmpty = translate('popupSettingsSpaceStorageEmptyLabel');
+	let icon: any = null;
 	let title = '';
+	let label = '';
 	let button = translate('commonDone');
+	let buttonColor = 'black';
+	let rowLength = 2;
+	let filters = [];
 
 	switch (type) {
 		case I.ObjectManagerPopup.Favorites: {
@@ -55,28 +78,54 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			button = translate('commonAddToFavorites');
 			break;
 		};
+
+		case I.ObjectManagerPopup.TypeArchive: {
+			if (objects.length == 1) {
+				const { name, pluralName } = objects[0];
+
+				icon = <IconObject size={56} iconSize={56} object={objects[0]} />;
+				title = U.String.sprintf(translate('popupObjectManagerArchiveTypeTitle'), pluralName ? pluralName : name);
+				label = translate('popupObjectManagerArchiveTypeText');
+			} else {
+				title = U.String.sprintf(translate('popupObjectManagerArchiveTypeTitlePlural'), objects.length);
+				label = translate('popupObjectManagerArchiveTypeTextPlural');
+			};
+
+			ignoreArchived = true;
+			textEmpty = translate('popupObjectManagerArchiveTypeEmptyText');
+			button = translate('commonMoveToBin');
+			buttonColor = 'red';
+			rowLength = 1;
+			filters = [
+				{ relationKey: 'type', condition: I.FilterCondition.In, value: objects.map(({ id }) => id) }
+			];
+		};
 	};
 
 	return (
 		<>
-			<Title text={title} />
+			<div className="textWrapper">
+				{icon}
+				<Title text={title} />
+				{label ? <Label text={label} /> : ''}
+			</div>
 
 			<ListObjectManager
 				ref={managerRef}
 				subId={subId}
-				rowLength={2}
-				ignoreArchived={false}
+				ignoreArchived={ignoreArchived}
 				buttons={[]}
-				iconSize={48}
-				collectionId={collectionId}
-				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
-				onAfterLoad={onAfterLoad}
+				filters={filters}
+				keys={keys || J.Relation.default}
+				textEmpty={textEmpty}
+				onUpdate={onUpdate}
 				disableHeight={false}
+				isCompact={true}
 				scrollElement={$(`#${getId()}-innerWrap .items`).get(0)}
 			/>
 
 			<div className="buttons">
-				<Button text={button} className="c36" onClick={onClick} />
+				<Button text={button} color={buttonColor} className="c36" onClick={onClick} />
 				<Button text={translate('commonCancel')} color="blank" className="c36" onClick={() => close()} />
 			</div>
 		</>

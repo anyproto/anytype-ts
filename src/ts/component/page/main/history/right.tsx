@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { I, C, S, U, translate, analytics, dispatcher } from 'Lib';
+import { I, C, S, U, translate, analytics, dispatcher, sidebar } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -13,191 +13,54 @@ interface Props {
 	setLoading: (v: boolean) => void;
 };
 
-interface State {
-	versions: I.HistoryVersion[];
-	version: I.HistoryVersion;
-	isLoading: boolean;
+interface Ref {
+	getNode: () => any;
 };
 
 const LIMIT_RECORDS = 1000;
 const LIMIT_AUTHORS = 5;
 
-const HistoryRight = observer(class HistoryRight extends React.Component<Props, State> {
+const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
-	node = null;
-	refScroll = null;
-	state = {
-		versions: [] as I.HistoryVersion[],
-		version: null,
-		isLoading: false,
+	const [ versions, setVersions ] = useState<I.HistoryVersion[]>([]);
+	const [ version, setVersion ] = useState<I.HistoryVersion>(null);
+	const [ isLoading, setIsLoading ] = useState(false);
+	const { rootId, isPopup, renderDiff } = props;
+	const { timeFormat, showRelativeDates } = S.Common;
+	const nodeRef = useRef(null);
+	const scrollRef = useRef(null);
+	const togglesRef = useRef<string[]>([]);
+	const lastIdRef = useRef('');
+	const topRef = useRef(0);
+	const originalLayoutRef = useRef<I.ObjectLayout>(null);
+	const year = U.Date.date('Y', U.Date.now());
+	const canWrite = U.Space.canMyParticipantWrite();
+	const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+	const cn = [];
+
+	const showButtons = (): boolean => {
+		if (!version || !versions.length) {
+			return false;
+		};
+
+		return version.id != versions[0].id;
 	};
-	top = 0;
-	lastId = '';
-	toggles = [];
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onRestore = this.onRestore.bind(this);
-		this.onClose = this.onClose.bind(this);
-		this.onScroll = this.onScroll.bind(this);
+	if (!data.isClosed) {
+		cn.push('withSidebar');
 	};
 
-	render () {
-		const { isPopup } = this.props;
-		const { timeFormat, showRelativeDates } = S.Common;
-		const groups = this.groupData();
-		const year = U.Date.date('Y', U.Date.now());
-		const canWrite = U.Space.canMyParticipantWrite();
-		const showButtons = this.showButtons();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const cn = [];
+	if (showButtons()) {
+		cn.push('withButtons');
+	};
 
-		if (rightSidebar.isOpen) {
-			cn.push('withSidebar');
-		};
-
-		if (showButtons) {
-			cn.push('withButtons');
-		};
-
-		const Section = (item: any) => {
-			const y = U.Date.date('Y', item.time);
-			const format = y == year ? 'M d' : 'M d, Y';
-			const day = showRelativeDates ? U.Date.dayString(item.time) : null;
-			const date = day ? day : U.Date.date(format, item.time);
-			const authors = U.Common.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
-
-			return (
-				<div id={`section-${item.hash}`} className="section">
-					<div className="head" onClick={e => this.toggleSection(e, item.id, item.hash)}>
-						<div className="date">{date}</div>
-						<div className="authors">
-							{authors.map((id: string, i: number) => (
-								<IconObject 
-									key={id} 
-									object={U.Space.getParticipant(id)} 
-									size={18} 
-									style={{ zIndex: (LIMIT_AUTHORS - i) }} 
-								/>
-							))}
-						</div>
-						<Icon className="arrow" />
-					</div>
-					<div className="items">
-						{item.list.map((item: any, i: number) => (
-							<Item key={item.id} {...item} />
-						))}
-					</div>
-				</div>
-			);
-		};
-
-		const Child = (item: any) => {
-			const withChildren = item.list && item.list.length;
-
-			let icon = null;
-			if (withChildren) {
-				icon = <Icon className="arrow" onClick={e => this.onArrow(e, item.id)} />;
-			} else {
-				icon = <Icon className="blank" />;
-			};
-
-			return (
-				<div id={`item-${item.id}`} className="child">
-					<div className="info" onClick={e => this.loadVersion(item.id)}>
-						{icon}
-						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
-					</div>
-
-					{withChildren ? (
-						<div id={`children-${item.id}`} className="children">
-							{item.list.map((child: any, i: number) => <Child key={`${item.id}-${child.id}`} {...child} />)}
-						</div>
-					) : ''}
-				</div>
-			);
-		};
-
-		const Item = (item: any) => {
-			const withChildren = item.list && item.list.length;
-			const author = U.Space.getParticipant(item.authorId);
-
-			return (
-				<div 
-					id={`item-${item.id}`} 
-					className="item" 
-				>
-					<div className="info" onClick={e => this.loadVersion(item.id)}>
-						<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
-
-						{author ? (
-							<div className="author">
-								<IconObject object={author} size={16} />
-								<ObjectName object={author} />
-							</div>
-						) : ''}
-					</div>
-
-					{withChildren ? (
-						<div id={`children-${item.id}`} className="children">
-							{item.list.map((child: any, i: number) => <Child key={`${item.id}-${child.id}`} {...child} />)}
-						</div>
-					) : ''}
-				</div>
-			);
-		};
+	const onClose = () => {
+		const object = S.Detail.get(rootId, rootId, []);
 		
-		return (
-			<div 
-				ref={ref => this.node = ref} 
-				id="historySideRight" 
-				className={cn.join(' ')}
-			>
-				<div className="head">
-					<div className="name">{translate('commonVersionHistory')}</div>
-					<Icon className="close withBackground" onClick={this.onClose} />
-				</div>
-
-				<div 
-					ref={ref => this.refScroll = ref} 
-					className="scrollWrap" 
-					onScroll={this.onScroll}
-				>
-					<div className="scroll">
-						{groups.map((item: any, i: number) => <Section key={i} {...item} />)}
-					</div>
-				</div>
-
-				{showButtons ? (
-					<div className="buttons">
-						<Button text={translate('commonCancel')} onClick={this.onClose} />
-						<Button text={translate('pageMainHistoryRestore')} className={!canWrite ? 'disabled' : ''} onClick={this.onRestore} />
-					</div>
-				) : ''}
-			</div>
-		);
+		U.Object.openAuto({ ...object, layout: originalLayoutRef.current ?? object.layout });
 	};
 
-	componentDidMount () {
-		this.loadList('');
-	};
-
-	componentDidUpdate () {
-		this.init();
-	};
-
-	componentWillUnmount(): void {
-		this.toggles = [];
-	};
-	
-	onClose () {
-		const { rootId } = this.props;
-
-		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
-	};
-
-	onRestore (e: any) {
+	const onRestore = (e: any) => {
 		e.persist();
 
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -205,8 +68,6 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			return;
 		};
 
-		const { version } = this.state;
-		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, []);
 
 		if (!version) {
@@ -219,31 +80,30 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		});
 	};
 
-	init () {
-		const { version } = this.state;
-		const node = $(this.node);
-		const groups = this.groupData();
-		const unwrapped = this.unwrapGroups('', groups);
+	const init = () => {
+		const node = $(nodeRef.current);
+		const groups = groupData();
+		const unwrapped = unwrapGroups('', groups);
 
 		node.find('.active').removeClass('active');
-		this.toggles.forEach(id => this.initToggle(id, unwrapped));
+		togglesRef.current.forEach(id => initToggle(id, unwrapped));
 
 		if (version) {
-			this.initToggle(version.id, unwrapped);
+			initToggle(version.id, unwrapped);
 			node.find(`#item-${version.id}`).addClass('active');
 		};
 
-		$(this.refScroll).scrollTop(this.top);
+		$(scrollRef.current).scrollTop(topRef.current);
 	};
 
-	initToggle (id: string, list: any[]) {
+	const initToggle = (id: string, list: any[]) => {
 		const version = list.find(it => it.id == id);
 		if (!version) {
 			return;
 		};
 
-		const node = $(this.node);
-		const groupId = this.getGroupId(version.time);
+		const node = $(nodeRef.current);
+		const groupId = getGroupId(version.time);
 		const hash = sha1(groupId);
 		const section = node.find(`#section-${hash}`);
 
@@ -275,23 +135,23 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 	};
 
-	toggleSection (e: any, id: string, hash: string) {
+	const toggleSection = (e: any, id: string, hash: string) => {
 		e.stopPropagation();
 
-		const section = $(this.node).find(`#section-${hash}`);
+		const section = $(nodeRef.current).find(`#section-${hash}`);
 
-		this.toggleChildren(id, section, section.find('.items'));
+		toggleChildren(id, section, section.find('.items'));
 	};
 
-	onArrow (e: any, id: string) {
+	const onArrow = (e: any, id: string) => {
 		e.stopPropagation();
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
-		this.toggleChildren(id, node.find(`#item-${id}`), node.find(`#children-${id}`));
+		toggleChildren(id, node.find(`#item-${id}`), node.find(`#children-${id}`));
 	};
 
-	toggleChildren (id: string, item: any, children: any) {
+	const toggleChildren = (id: string, item: any, children: any) => {
 		const isActive = item.hasClass('isExpanded');
 
 		let height = 0;
@@ -305,7 +165,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			window.setTimeout(() => children.css({ height: 0 }), 15);
 			window.setTimeout(() => children.hide(), 215);
 
-			this.toggles = this.toggles.filter(it => it != id);
+			togglesRef.current = togglesRef.current.filter(it => it != id);
 		} else {
 			item.addClass('isExpanded');
 
@@ -317,27 +177,27 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			window.setTimeout(() => children.css({ height: height }), 15);
 			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 215);
 
-			this.toggles.push(id);
+			togglesRef.current.push(id);
 		};
 	};
 
-	loadList (lastId: string) { 
-		const { versions, version, isLoading } = this.state;
-		const { rootId, setLoading } = this.props;
+	const loadList = (id: string) => {
 		const object = S.Detail.get(rootId, rootId);
-		
-		if (isLoading || (this.lastId && (lastId == this.lastId))) {
+
+		// Store original layout on initial load before any version overwrites it
+		if (!id && (originalLayoutRef.current === null)) {
+			originalLayoutRef.current = object.layout;
+		};
+
+		if (isLoading || (lastIdRef.current && (id == lastIdRef.current))) {
 			return;
 		};
 
-		this.setState({ isLoading: true });
-		this.lastId = lastId;
+		setIsLoading(true);
+		lastIdRef.current = id;
 
-		setLoading(true);
-
-		C.HistoryGetVersions(rootId, lastId, LIMIT_RECORDS, (message: any) => {
-			this.setState({ isLoading: false });
-			setLoading(false);
+		C.HistoryGetVersions(rootId, id, LIMIT_RECORDS, (message: any) => {
+			setIsLoading(false);
 
 			if (message.error.code) {
 				U.Object.openRoute({ id: rootId, layout: object.layout });
@@ -346,46 +206,42 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 			const list = U.Common.arrayUniqueObjects(versions.concat(message.versions || []), 'id');
 
-			this.setState({ versions: list });
+			setVersions(list);
 
-			if (!lastId && list.length) {
-				this.loadVersion(list[0].id);
+			if (!id && list.length) {
+				loadVersion(list[0].id);
 			};
 
-			this.checkScroll();
+			checkScroll();
 		});
 	};
 
-	loadVersion (id: string) {
-		const { rootId, setVersion } = this.props;
-
+	const loadVersion = (id: string) => {
 		C.HistoryShowVersion(rootId, id, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
 			if (!message.error.code) {
-				dispatcher.onObjectView(rootId, '', message.objectView);
+				dispatcher.onObjectView(rootId, '', message.objectView, false);
 				setVersion(message.version);
+				props.setVersion(message.version);
 			};
-
-			this.setState({ version: message.version }, () => this.loadDiff(id));
 
 			$(window).trigger('resize');
 			analytics.event('ScreenHistoryVersion');
 		});
 	};
 
-	loadDiff (id: string) {
-		const { rootId, renderDiff } = this.props;
-		const previousId = this.getPreviousVersionId(id);
+	const loadDiff = (id: string) => {
+		const previousId = getPreviousVersionId(id);
 
 		C.HistoryDiffVersions(rootId, S.Common.space, id, previousId, (message: any) => {
 			const { events } = message;
 
 			C.HistoryShowVersion(rootId, previousId, (message: any) => {
 				if (!message.error.code) {
-					dispatcher.onObjectView(rootId, previousId, message.objectView);
+					dispatcher.onObjectView(rootId, previousId, message.objectView, false);
 				};
 
 				renderDiff(previousId, events);
@@ -394,39 +250,40 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		});
 	};
 
-	onScroll () {
-		const scroll = $(this.refScroll);
+	const onScroll = () => {
+		const scroll = $(scrollRef.current);
 		const height = scroll.get(0).scrollHeight;
 
-		this.top = scroll.scrollTop();
+		topRef.current = scroll.scrollTop();
 
-		if (this.top >= height - scroll.height() - 12) {
-			this.loadMore();
+		if (topRef.current >= height - scroll.height() - 12) {
+			loadMore();
 		};
 	};
 
-	checkScroll () {
-		const node = $(this.node);
-		const wrap = $(this.refScroll);
+	const checkScroll = () => {
+		const node = $(nodeRef.current);
+		const wrap = $(scrollRef.current);
 		const scroll = node.find('.scroll');
 
 		if (scroll.height() < wrap.height()) {
-			this.loadMore();
+			loadMore();
 		};
 	};
 
-	loadMore () {
-		const { versions } = this.state;
-		const lastId = versions[versions.length - 1].id;
+	const loadMore = () => {
+		if (!versions.length) {
+			return;
+		};
 
-		if (this.lastId != lastId) {
-			this.loadList(lastId);
+		const id = versions[versions.length - 1].id;
+
+		if (id != lastIdRef.current) {
+			loadList(id);
 		};
 	};
 
-	getPreviousVersionId (id: string): string {
-		const { versions } = this.state;
-
+	const getPreviousVersionId = (id: string): string => {
 		if (!versions.length) {
 			return '';
 		};
@@ -441,10 +298,9 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		return prev ? prev.id : '';
 	};
 	
-	groupData () {
+	const groupData = () => {
 		const groups: any[] = [];
 		const groupByAuthor = [];
-		const versions = this.state.versions || [];
 		const timeFormat = 'd.m.Y H';
 
 		let id = '';
@@ -452,12 +308,12 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		for (let i = 0; i < versions.length; i++) {
 			const version = versions[i] as any;
 			const prev = versions[i - 1];
-			const cid = this.getGroupId(version.time);
+			const cid = getGroupId(version.time);
 
 			let add = true;
 
 			if (prev) {
-				const pid = this.getGroupId(prev.time);
+				const pid = getGroupId(prev.time);
 
 				if ((cid == pid) && (version.authorId == prev.authorId)) {
 					const item = groupByAuthor.find(it => it.id == id);
@@ -494,7 +350,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 
 		for (const version of groupByAuthor) {
-			const id = this.getGroupId(version.time);
+			const id = getGroupId(version.time);
 			const group = groups.find(it => it.id == id);
 
 			if (group) {
@@ -507,7 +363,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		return groups;
 	};
 
-	unwrapGroups (parentId: string, groups: any[]) {
+	const unwrapGroups = (parentId: string, groups: any[]) => {
 		let out = [];
 
 		for (const group of groups) {
@@ -515,7 +371,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 			out.push({ ...group, parentId });
 			if (list && (list.length > 0)) {
-				out = out.concat(this.unwrapGroups(group.id, list));
+				out = out.concat(unwrapGroups(group.id, list));
 			};
 
 			delete(group.list);
@@ -524,20 +380,147 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		return out;
 	};
 
-	getGroupId (time: number) {
+	const getGroupId = (time: number) => {
 		return U.Date.date('M d, Y', time);
 	};
 
-	showButtons (): boolean {
-		const { version, versions } = this.state;
+	const groups = groupData();
 
-		if (!version || !versions.length) {
-			return false;
-		};
+	const Section = (item: any) => {
+		const y = U.Date.date('Y', item.time);
+		const format = y == year ? 'M d' : 'M d, Y';
+		const day = showRelativeDates ? U.Date.dayString(item.time) : null;
+		const date = day ? day : U.Date.date(format, item.time);
+		const authors = U.Common.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
 
-		return version.id != versions[0].id;
+		return (
+			<div id={`section-${item.hash}`} className="section">
+				<div className="head" onClick={e => toggleSection(e, item.id, item.hash)}>
+					<div className="date">{date}</div>
+					<div className="authors">
+						{authors.map((id: string, i: number) => (
+							<IconObject 
+								key={id} 
+								object={U.Space.getParticipant(id)} 
+								size={18} 
+								style={{ zIndex: (LIMIT_AUTHORS - i) }} 
+							/>
+						))}
+					</div>
+					<Icon className="arrow" />
+				</div>
+				<div className="items">
+					{item.list.map((item: any, i: number) => (
+						<Item key={item.id} {...item} />
+					))}
+				</div>
+			</div>
+		);
 	};
 
-});
+	const Child = (item: any) => {
+		const withChildren = item.list && item.list.length;
+
+		let icon = null;
+		if (withChildren) {
+			icon = <Icon className="arrow" onClick={e => onArrow(e, item.id)} />;
+		} else {
+			icon = <Icon className="blank" />;
+		};
+
+		return (
+			<div id={`item-${item.id}`} className="child">
+				<div className="info" onClick={e => loadVersion(item.id)}>
+					{icon}
+					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time, true)}</div>
+				</div>
+
+				{withChildren ? (
+					<div id={`children-${item.id}`} className="children">
+						{item.list.map((child: any, i: number) => <Child key={`${item.id}-${child.id}`} {...child} />)}
+					</div>
+				) : ''}
+			</div>
+		);
+	};
+
+	const Item = (item: any) => {
+		const withChildren = item.list && item.list.length;
+		const author = U.Space.getParticipant(item.authorId);
+
+		return (
+			<div 
+				id={`item-${item.id}`} 
+				className="item" 
+			>
+				<div className="info" onClick={e => loadVersion(item.id)}>
+					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
+
+					{author ? (
+						<div className="author">
+							<IconObject object={author} size={16} />
+							<ObjectName object={author} />
+						</div>
+					) : ''}
+				</div>
+
+				{withChildren ? (
+					<div id={`children-${item.id}`} className="children">
+						{item.list.map((child: any, i: number) => <Child key={`${item.id}-${child.id}`} {...child} />)}
+					</div>
+				) : ''}
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		loadList('');
+	}, []);
+
+	useEffect(() => {
+		init();
+	});
+
+	useEffect(() => {
+		if (version) {
+			loadDiff(version.id);
+		};
+	}, [ version ]);
+
+	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef} 
+			id="historySideRight" 
+			className={cn.join(' ')}
+		>
+			<div className="head">
+				<div className="name">{translate('commonVersionHistory')}</div>
+				<Icon className="close withBackground" onClick={onClose} />
+			</div>
+
+			<div 
+				ref={scrollRef} 
+				className="scrollWrap" 
+				onScroll={onScroll}
+			>
+				<div className="scroll">
+					{groups.map((item: any, i: number) => <Section key={i} {...item} />)}
+				</div>
+			</div>
+
+			{showButtons() ? (
+				<div className="buttons">
+					<Button text={translate('commonCancel')} onClick={onClose} />
+					<Button text={translate('pageMainHistoryRestore')} className={!canWrite ? 'disabled' : ''} onClick={onRestore} />
+				</div>
+			) : ''}
+		</div>
+	);
+
+}));
 
 export default HistoryRight;

@@ -201,6 +201,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -219,6 +220,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -312,11 +314,12 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	request.setDroptargetid(targetId);
 	request.setPosition(position as number);
 	request.setLocalfilepathsList(paths);
+	request.setStyle(S.Common.fileStyle as number);
 
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, callBack?: (message: any) => void) => {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, imageKind: I.ImageKind, callBack?: (message: any) => void) => {
 	if (!url && !path && !preloadFileId) {
 		return;
 	};
@@ -330,6 +333,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setDetails(Encode.struct(details));
 	request.setPreloadfileid(preloadFileId);
 	request.setPreloadonly(preloadOnly);
+	request.setImagekind(imageKind as number);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -367,6 +371,15 @@ export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => 
 	request.setFileid(fileId);
 
 	dispatcher.request(FileDiscardPreload.name, request, callBack);
+};
+
+export const FileSetAutoDownload = (enabled: boolean, wifiOnly: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.SetAutoDownload.Request();
+
+	request.setEnabled(enabled);
+	request.setWifiOnly(wifiOnly);
+
+	dispatcher.request(FileSetAutoDownload.name, request, callBack);
 };
 
 // ---------------------- NAVIGATION ---------------------- //
@@ -466,6 +479,7 @@ export const BlockPreview = (html: string, url: string, callBack?: (message: any
 // ---------------------- BLOCK TEXT ---------------------- //
 
 export const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
+	text = text.replace(/&amp;/g, '&');
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
@@ -1257,11 +1271,7 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (callBack) {
-			callBack(message);
-		};
-	});
+	dispatcher.request(HistoryShowVersion.name, request, callBack);
 };
 
 export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1455,19 +1465,17 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
+
+			// Save last opened object
+			const object = S.Detail.get(objectId, objectId, []);
+
+			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+				Storage.setLastOpened({ id: object.id, layout: object.layout });
+			};
 		};
 
-		// Save last opened object
-		const object = S.Detail.get(objectId, objectId, []);
-
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-			Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
-		};
-
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1480,12 +1488,10 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1668,13 +1674,13 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 
 		op.setRelationkey(it.relationKey);
 
-		if (it.add) {
+		if (undefined !== it.add) {
 			op.setAdd(Encode.value(it.add));
 		};
-		if (it.set || (it.set === null)) {
+		if (undefined !== it.set) {
 			op.setSet(Encode.value(it.set));
 		};
-		if (it.remove) {
+		if (undefined !== it.remove) {
 			op.setRemove(Encode.value(it.remove));
 		};
 
@@ -1735,6 +1741,22 @@ export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I
 	request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
+};
+
+export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	const request = new Rpc.Object.CrossSpaceSearchSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setKeysList(U.Common.arrayUnique(keys));
+	request.setSourceList(sources);
+	request.setNodepsubscription(noDeps);
+	request.setCollectionid(collectionId);
+
+	dispatcher.request(ObjectCrossSpaceSearchSubscribe.name, request, callBack);
 };
 
 export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
@@ -2090,89 +2112,7 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
 
-// ---------------------- NAME SERVICE ---------------------- //
-
-export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveName.Request();
-
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(NameServiceResolveName.name, request, callBack);
-};
-
 // ---------------------- PAYMENTS ---------------------- //
-
-export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetStatus.Request();
-	
-	request.setNocache(noCache);
-
-	dispatcher.request(MembershipGetStatus.name, request, callBack);
-};
-
-export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetTiers.Request();
-
-	request.setNocache(noCache);
-	request.setLocale(locale);
-
-	dispatcher.request(MembershipGetTiers.name, request, callBack);
-};
-
-export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.IsNameValid.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipIsNameValid.name, request, callBack);
-};
-
-export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setPaymentmethod(method as number);
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
-};
-
-export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
-	const request = new Empty();
-	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
-};
-
-export const MembershipGetVerificationEmail = (email: string, subscribeNews: boolean, subscribeTips: boolean, isOnboardingList: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetVerificationEmail.Request();
-	
-	request.setEmail(email);
-	request.setSubscribetonewsletter(subscribeNews);
-	request.setInsidertipsandtutorials(subscribeTips);
-	request.setIsonboardinglist(isOnboardingList);
-	
-	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
-};
-
-export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.VerifyEmailCode.Request();
-	
-	request.setCode(code);
-	
-	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
-};
-
-export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.Finalize.Request();
-
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipFinalize.name, request, callBack);
-};
 
 export const MembershipCodeGetInfo = (code: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.CodeGetInfo.Request();
@@ -2190,6 +2130,63 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
+};
+
+// ---------------------- MEMBERSHIP V2 ---------------------- //
+
+export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetPortalLink.Request();
+
+	dispatcher.request(MembershipV2GetPortalLink.name, request, callBack);
+};
+
+export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.CartUpdate.Request();
+
+	request.setProductidsList(productIds);
+	request.setIsyearly(isYearly);
+
+	dispatcher.request(MembershipV2CartUpdate.name, request, callBack);
+};
+
+export const MembershipV2GetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetStatus.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetStatus.name, request, callBack);
+};
+
+export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetProducts.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetProducts.name, request, callBack);
+};
+
+export const MembershipV2AnyNameIsValid = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameIsValid.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameIsValid.name, request, callBack);
+};
+
+export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameAllocate.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameAllocate.name, request, callBack);
+};
+
+export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.SubscribeToUpdates.Request();
+	
+	request.setEmail(email);
+	
+	dispatcher.request(MembershipV2SubscribeToUpdates.name, request, callBack);
 };
 
 // ---------------------- SPACE ---------------------- //
@@ -2308,6 +2305,17 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};
+
+export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, callBack?: (message: any) => void) => {
+	// Note: Requires middleware branch GO-6168-change-ownership
+	const request = new (Rpc.Space as any).ChangeOwnership.Request();
+
+	request.setSpaceid(spaceId);
+	request.setNewowneridentity(newOwnerIdentity);
+	request.setOldownerpermissions(I.ParticipantPermissions.Writer as number);
+
+	dispatcher.request(SpaceChangeOwnership.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //
@@ -2441,6 +2449,19 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
 };
 
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.Search.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatid(chatId);
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setSortsList(sorts.map(Mapper.To.SearchSort));
+
+	dispatcher.request(ChatSearch.name, request, callBack);
+};
+
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Relation.ListWithValue.Request();
 
@@ -2506,4 +2527,23 @@ export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.Notificati
 	request.setMode(mode as number);
 
 	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
+};
+
+export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetForceModeIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+	request.setMode(mode as number);
+
+	dispatcher.request(PushNotificationSetForceModeIds.name, request, callBack);
+};
+
+export const PushNotificationResetIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.ResetIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+
+	dispatcher.request(PushNotificationResetIds.name, request, callBack);
 };

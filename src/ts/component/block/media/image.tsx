@@ -1,8 +1,8 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Loader, Icon, Error } from 'Component';
-import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
+import { InputWithFile, Icon, Error } from 'Component';
+import { I, C, S, J, U, translate, focus, Action, keyboard, analytics } from 'Lib';
 
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -65,7 +65,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });
 	};
@@ -79,17 +79,13 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const node = $(nodeRef.current);
 		const win = $(window);
 		const ox = wrap.offset().left;
-		const w = getWidth(checkMax, e.pageX - ox + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
 		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
 		keyboard.disableSelection(false);
 
 		C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { width: w } } ]);
-	};
-
-	const handleLoad = () => {
-		$(window).trigger('resize');
 	};
 
 	const handleError = () => {
@@ -101,7 +97,8 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const blocks = S.Block.getBlocks(rootId, (it: I.Block) => it.isFileImage() || it.isFileVideo());
+		const root = S.Block.wrapTree(rootId, rootId);
+		const blocks = S.Block.unwrapTree([ root ]).filter(it => it.isFileImage() || it.isFileVideo());
 		const gallery: any[] = [];
 
 		blocks.forEach(it => {
@@ -126,10 +123,17 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 			};
 
-			gallery.push({ object, src, type });
+			if (src) {
+				gallery.push({ id: it.id, object, src, type });
+			};
 		});
 
-		S.Popup.open('preview', { data: { initialIdx: gallery.findIndex(it => it.object.id == targetObjectId), gallery } });
+		S.Popup.open('preview', { 
+			data: { 
+				initialIdx: gallery.findIndex(it => it.id == block.id), 
+				gallery 
+			},
+		});
 	};
 
 	const handleDownload = () => {
@@ -145,12 +149,13 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 		
 		const ew = el.width();
-		const w = Math.min(ew, Math.max(60, checkMax ? width * ew : v));
+		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
 	const object = S.Detail.get(rootId, targetObjectId, []);
+	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
 
 	if (width) {
@@ -185,11 +190,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				break;
 			};
 
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>
@@ -198,7 +198,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
 							onDragStart={e => e.preventDefault()} 
 							onClick={handleClick} 
-							onLoad={handleLoad} 
 							onError={handleError} 
 						/>
 						<Icon className="download" onClick={handleDownload} />
@@ -215,7 +214,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	return (
 		<div 
 			ref={nodeRef} 
-			className={[ 'focusable', 'c' + block.id ].join(' ')} 
+			className={cn.join(' ')}
 			tabIndex={0} 
 			onKeyDown={handleKeyDown} 
 			onKeyUp={handleKeyUp} 

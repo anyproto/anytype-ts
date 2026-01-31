@@ -2,9 +2,9 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px 4px; }
+		.ReactVirtualized__List { padding: 8px; }
 
-		.innerWrap { width: 684px; height: 684px; max-height: calc(100% - 48px); overflow: hidden; }
+		.innerWrap { width: 684px; height: 706px; max-height: calc(100% - 48px); overflow: hidden; }
 
 		@media (max-width: 700px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
@@ -22,11 +22,11 @@
 			.iconObject { margin-right: 6px; }
 			
 			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.icon.search { background-image: url('~img/icon/popup/search/search.svg') !important; }
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
-				.inner { height: auto; }
+				.inner { height: auto; gap: 0px 8px; }
 				.input { 
 					padding: 0px; height: 54px; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
 				}
@@ -38,7 +38,6 @@
 		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
-			.row { padding: 0 4px; }
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
 
@@ -46,7 +45,7 @@
 
 			.item.isSmall { height: 38px; align-items: center; }
 			.item.isSmall {
-				.sides { align-items: center; }
+				.sides { align-items: center; flex-grow: 1; overflow: hidden; }
 			}
 
 			.item {
@@ -89,6 +88,24 @@
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
 				.icon.advanced { opacity: 1; }
+			}
+		}
+
+		.foot {
+			flex-shrink: 0; height: 40px; border-top: 1px solid var(--color-shape-secondary); display: flex;
+			align-items: center; padding: 0px 16px; gap: 0px 24px;
+		}
+		.foot {
+			.item { display: flex; align-items: center; gap: 0px 8px; }
+			.item {
+				.keys { display: flex; align-items: center; gap: 0px 4px; }
+				.keys {
+					.label {
+						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
+						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
+					}
+				}
+				.label { @include text-small; color: var(--color-text-secondary); }
 			}
 		}
 	}

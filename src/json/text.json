@@ -9,6 +9,7 @@
 	"commonCreate": "Create",
 	"commonSave": "Save",
 	"commonCancel": "Cancel",
+	"commonRestart": "Restart",
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
 	"commonDefault": "Default",
@@ -32,9 +33,8 @@
 	"commonRetry": "Retry",
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
+	"commonAuthentication": "Authentication",
 	"commonGraph": "Graph",
-	"commonChat": "Chat",
-	"commonChats": "Chats",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -47,6 +47,8 @@
 	"commonOlder": "Older",
 	"commonPhrase": "Key",
 	"commonCopy": "Copy",
+	"commonCut": "Cut",
+	"commonPaste": "Paste",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
@@ -136,10 +138,11 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Query of %s",
 	"commonClear": "Clear",
-	"commonNewSpace": "New Space",
+	"commonNewSpace": "New Channel",
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
 	"commonCopyDeeplink": "Copy Deeplink",
+	"commonDeeplink": "Deeplink",
 	"commonSidebar": "Sidebar",
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
@@ -174,14 +177,14 @@
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
 	"commonEditChat" : "Change Info",
-	"commonShare": "Share",
+	"commonPublish": "Publish",
 	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
 	"commonMedia": "Media",
 	"commonFile": "File",
 	"commonMembers": "Members",
 	"commonNothingFound": "Nothing found",
-	"commonEntrySpace": "My First Space",
+	"commonNothingHere": "Nothing here yet",
 	"commonSystem": "System",
 	"commonProgress": "Progress",
 	"commonMainChat": "Chat",
@@ -192,7 +195,6 @@
 	"commonRelations": "Properties",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
-	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
@@ -215,8 +217,8 @@
 	"commonAppSettings": "App Settings",
 	"commonAddPinned": "Add to Pinned",
 	"commonRemovePinned": "Remove from Pinned",
-	"commonCreateSpace": "Create space",
-	"commonCreateChat": "Create chat",
+	"commonCreateSpace": "Create Channel",
+	"commonCreateChat": "Create Chat",
 	"commonMute": "Mute",
 	"commonUnmute": "Unmute",
 	"commonDropFiles": "Drag and drop your files here",
@@ -226,12 +228,24 @@
 	"commonUpdateAvailable": "Update Available",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
+	"commonVault": "Vault",
 	"commonWidgets": "Widgets",
 	"commonLearnMore": "Learn more",
 	"commonSeeChanges": "See Changes",
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
+	"commonActivate": "Activate",
+	"commonNotifications": "Notifications",
+	"commonPersonalSpace": "Personal Space",
+	"commonUnlimited": "Unlimited",
+	"commonSaveAsFile": "Save as file",
+	"commonDownloadCode": "Download Code",
+	"commonCopyMedia": "Copy Media",
+	"commonImage": "Image",
+	"commonOptions": "Options",
+	"commonShare": "Share",
+	"commonOpenInNewTab": "Open in New Tab",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -317,7 +331,7 @@
 	"electronMenuZoomIn": "Zoom in",
 	"electronMenuZoomOut": "Zoom out",
 	"electronMenuZoomDefault": "Default zoom",
-	"electronMenuFullscreen": "Fullscreen",
+	"electronMenuFullScreen": "Fullscreen",
 	"electronMenuReload": "Reload",
 	"electronMenuHelp": "Help",
 	"electronMenuReleaseNotes": "What's new",
@@ -345,6 +359,10 @@
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
+	"electronMenuNewTab": "New Tab",
+	"electronMenuCloseTab": "Close Tab",
+	"electronMenuNextTab": "Next Tab",
+	"electronMenuPrevTab": "Previous Tab",
 
 	"month1": "January",
 	"month2": "February",
@@ -483,16 +501,6 @@
 	"authOnboardOptionsTeamWork": "Team work & shared docs",
 	"authOnboardOptionsOther": "Other",
 
-	"onboardingExperienceSubTitle": "Build your first space",
-	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
-	"onboardingExperiencePurposeTitle": "What Life Area Is This Space For?",
-	"onboardingExperienceUsecaseTitle": "Pick an Experience To Start",
-	"onboardingExperienceUsecaseButtonSelectExperience": "Select this Experience",
-
-	"onboardingExperienceUsecaseStartFromScratchTitle": "Start Without A Template",
-	"onboardingExperienceUsecaseStartFromScratchText": "Structure your space yourself. If you change your mind, you can always add an experience from our gallery later on.",
-	"onboardingExperienceUsecaseButtonStartFromScratch": "Start From Scratch",
-
 	"usecaseCategoryDashboard": "Dashboard",
 	"usecaseCategoryWork": "Work",
 	"usecaseCategoryEducation": "Education",
@@ -548,12 +556,6 @@
 
 	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
-	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
-	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupTryAgain": "Try again",
-	"pageAuthSetupEntering": "Entering your Vault",
-
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
 	"pageAuthMigrateInitButtonStartUpdate": "Start Update",
@@ -585,8 +587,8 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
-	"pageSettingsSpaceSyncedFiles": "Synced files",
-	"pageSettingsSpaceNotSyncedFiles": "Not synced files",
+	"pageSettingsSpaceSynced": "Synced",
+	"pageSettingsSpaceNotSynced": "Not Synced",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -598,14 +600,21 @@
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
-	"pageSettingsSpaceDeleteSpace": "Delete Space",
+	"pageSettingsSpaceDeleteSpace": "Delete Channel",
+	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
+
+	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
+	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
+	"pageSettingsSpaceNotificationsChatSpecificMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsChatSpecificMode2": "Muted",
+	"pageSettingsSpaceNotificationsChatSpecificMode3": "Custom settings",
 
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
 	"editorControlCover0": "Add cover",
 	"editorControlCover1": "Cover",
 	"editorControlLayout": "Settings",
-	"editorControlDescription0": "Add description",
+	"editorControlDescription0": "Show description",
 	"editorControlDescription1": "Hide description",
 
 	"editorPagePasteLink": "Paste as link",
@@ -744,6 +753,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedUnsupported": "Unsupported embed. Please update the app.",
 	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
@@ -779,13 +789,11 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyTitle": "Chat without the cloud",
 	"blockChatEmptyItem1": "Yours forever",
 	"blockChatEmptyItem2": "Messages, docs & files available offline",
 	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
-	"blockChatMessageExpand": "Show more",
-	"blockChatMessageCollapse": "Show less",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
@@ -797,14 +805,18 @@
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
-	"blockChatCopyText": "Copy text",
+	"blockChatCopyText": "Copy Text",
 	"blockChatMarkAsUnread": "Mark as unread",
+	"blockChatAddAttachment": "Add attachment",
+
+	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsAccountAnyIdTitle": "ANY ID",
 	"popupSettingsAccountDeleteTitle": "Delete Vault",
 	"popupSettingsEthereumIdentityTitle": "Ethereum Address",
 
@@ -825,16 +837,27 @@
 	"popupSettingsPersonalNavigationMenuContext": "Right click",
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
-	"popupSettingsPersonalLinkStyle": "Link to object style",
+	"popupSettingsPersonalLinkStyle": "Object link default style",
+	"popupSettingsPersonalFileStyle": "File block default style",
+	"popupSettingsPersonalVaultStyle": "Vault density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
+	"popupSettingsPersonalAlwaysShowTabbar": "Always show tab bar",
+	"popupSettingsPersonalHardwareAcceleration": "Hardware acceleration",
+	"popupConfirmHardwareAccelerationTitle": "Restart Required",
+	"popupConfirmHardwareAccelerationText": "Changing hardware acceleration requires restarting the app. Do you want to restart now?",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
+	"popupSettingsPersonalSectionChat": "Chat",
+	"popupSettingsPersonalChatSend": "Send message with",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
+	"popupSettingsVaultCompact": "Compact",
+	"popupSettingsVaultWithMessages": "Message previews",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -852,7 +875,7 @@
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
 
-	"popupSettingsApiEmpty": "You haven’t created any API keys yet",
+	"popupSettingsApiEmpty": "You haven't created any API keys yet",
 
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",
@@ -869,8 +892,8 @@
 	"popupSettingsPinSelectRepeat": "Repeat Pin Code",
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
-	"popupSettingsSpacesListTitle": "Spaces",
-	"popupSettingsSpacesListSpace": "Space",
+	"popupSettingsSpacesListTitle": "Channels",
+	"popupSettingsSpacesListSpace": "Channel",
 	"popupSettingsSpacesCancelRequest": "Cancel request",
 	"popupSettingsSpacesListAccess": "Access",
 	"popupSettingsSpacesListNetwork": "Network",
@@ -882,6 +905,8 @@
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",
 	"popupSettingsDataManagementOffloadFiles": "Offload files",
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
+	"popupSettingsDataOfflineAccess": "Offline Access",
+	"popupSettingsDataOfflineAccessDescription": "Auto sync files up to 20 MB for offline access",
 	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
@@ -889,7 +914,7 @@
 
 	"popupSettingsDataManagementDataPublishTitle": "My Sites",
 	"popupSettingsDataManagementDataPublishDate": "Published date",
-	"popupSettingsDataManagementDataPublishEmpty": "You haven’t published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
+	"popupSettingsDataManagementDataPublishEmpty": "You haven't published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
@@ -912,7 +937,7 @@
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
-	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. If you reach the limit, files will be stoped syncing and be stored only locally.",
+	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. Once you reach your limit, files will stop syncing and will only be stored locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -926,6 +951,7 @@
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
+	"popupSettingsSpaceIndexPushText3": "Custom notification settings",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
 	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",
@@ -942,8 +968,10 @@
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
 	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
+
+	"upsellBannerStorageNonOwnerIncentive": "Storage is full in this Space. ",
+	"upsellBannerStorageNonOwnerUpsell": "New files stay local. You can remove your files to free up space or ask the Space owner to upgrade storage. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
 	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
@@ -951,6 +979,10 @@
 	"upsellBannerMembersUsageText": "%s of %s editor seats are used. ",
 	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
 	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
+
+	"membershipUpsellAnyIdTitle": "This is your ANY ID",
+	"membershipUpsellAnyIdText": "Become a member to make your ID human-readable, so other members can easily find and connect with you.",
+	"membershipUpsellAnyIdExplorePlans": "Explore plans",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
@@ -1005,19 +1037,30 @@
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
+	"popupSettingsSpaceShareMakePrivate": "Make Private",
+	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
+	"popupSettingsSpaceShareTransferOwnership": "Transfer ownership",
+	"popupSettingsSpaceShareSelectNewOwner": "Select the new owner",
 
-	"popupSettingsMembershipTitle1": "Membership",
-	"popupSettingsMembershipTitle2": "Let's build together",
-	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+	"popupConfirmOwnershipTransferTitle": "Confirm ownership transfer",
+	"popupConfirmOwnershipTransferText": "You're transferring ownership of \"<b>%s</b>\" to <b>%s</b>. This action is immediate and cannot be undone.<br/><br/>After the transfer:<ul><li>%s will become the new owner</li><li>You'll become an Editor</li><li>Only the new owner can transfer it again</li><li>The new owner's membership limits will apply to this channel</li></ul>Type the channel name to confirm:",
 
-	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
-	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
-	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
-	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in spaces, and a unique identity on the Anytype Network.",
-	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
-	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
-	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
-	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
+	"toastOwnershipTransferred": "Ownership transferred successfully",
+
+	"popupConfirmOwnershipTransferringTitle": "Transferring ownership...",
+	"popupConfirmOwnershipTransferringText": "Reassigning channel permissions and roles.",
+	"popupConfirmOwnershipTransferredTitle": "Ownership passed successfully",
+	"popupConfirmOwnershipTransferredText": "You've transferred <b>%s</b> to <b>%s</b>.<br/>You now have Editor access to this channel.",
+	"popupConfirmOwnershipTransferredButton": "Back to Members",
+
+	"popupSettingsMembershipTitle": "Membership",
+	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
+	"popupSettingsMembershipSelectPlan": "Select plan",
+	"popupSettingsMembershipCurrentPlan": "Current plan",
+	"popupSettingsMembershipCurrentPricePeriod": "per seat / %s",
+
+	"popupSettingsMembershipSwitchMonthly": "Monthly",
+	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
@@ -1027,13 +1070,28 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
-	"popupSettingsMembershipRedeemCode": "I already have a code",
+	"popupSettingsMembershipActionsActivationTitle": "Activate Code",
+	"popupSettingsMembershipActionsActivationText": "If you bought a membership online or have an invitation, activate your code here",
+	"popupSettingsMembershipActionsContactTitle": "Have questions?",
+	"popupSettingsMembershipActionsContactText": "Use Anytype for education or didn’t find suitable plan? Reach us.",
+	"popupSettingsMembershipActionsContactReachUs": "Reach Us",
 
-	"popupSettingsMembershipLevelsDetails": "Membership plan details",
+	"popupSettingsMembershipFAQ": "FAQ",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
+	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
+	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
+	"popupSettingsMembershipManage": "Manage",
+	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
+	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
+
+	"popupSettingsMembershipLoaderText1": "Please wait, loading...",
+	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
+
+	"popupSettingsMembershipTeamMessage": "Contact your billing manager to change the membership",
+	"popupSettingsMembershipMarketMessage": "To manage your membership, please cancel your active subscription in %s and purchase a new one via Desktop app",
+	"popupSettingsMembershipCryptoMessage": "Contact care@anytype.io to manage your subscription",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -1044,7 +1102,6 @@
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
 	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
-
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
@@ -1138,51 +1195,15 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
-	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
-	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
-	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
-	"popupMembershipFreeEnterCode": "Enter code",
-
-	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
-	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
-
-	"popupMembershipPaidTitle": "Pick your unique name",
-
-	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
-	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
-	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
-
-	"popupMembershipPaidPlaceholder": "Enter your name",
-	"popupMembershipPayByCard": "Pay by Card",
-	"popupMembershipPayByCrypto": "Pay by Crypto",
-	"popupMembershipPaidBy": "Paid by %s",
-	"popupMembershipActivate": "Activate",
-
-	"popupMembershipResend": "Resend",
-	"popupMembershipCountdown": " in %s sec",
+	"popupMembershipFinalizationTitle": "Almost all set with %s!",
+	"popupMembershipFinalizationText1": "Before you take off, pick your .any name.",
+	"popupMembershipFinalizationText2": "It’s your identity on the Anytype network — people will use it to find you and confirm it’s really you. It also becomes your web publishing domain. Choose carefully — it can’t be changed later.",
+	"popupMembershipFinalizationPlaceholder": "Enter your name",
+	"popupMembershipFinalizationClaimName": "Claim Name",
 
 	"popupMembershipStatusWaitASecond": "Wait a second...",
 	"popupMembershipStatusNameAvailable": "This name is available!",
 	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
-	"popupMembershipCurrentStatus": "Current status",
-	"popupMembershipValidUntil": "Valid until",
-	"popupMembershipForever": "Forever",
-	"popupMembershipChangeEmail": "Change e-mail",
-	"popupMembershipManagePayment": "Manage payment",
-	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
-	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
-	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
-
-	"popupMembershipWhatsIncluded": "What's included",
-
-	"popupMembershipSuccessTitle": "Welcome to the network, %s",
-	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
-	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
-	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
-	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
@@ -1190,11 +1211,15 @@
 	"popupMembershipCode4": "Name is too long",
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
+	"popupMembershipCode8": "You are not logged in and not supposed to see this",
+	"popupMembershipCode9": "Payment node error",
+	"popupMembershipCode10": "Cache error",
+	"popupMembershipCode11": "Can not reserve",
+	"popupMembershipCode12": "Can not connect",
+	"popupMembershipCode13": "This name is already reserved by someone else",
 
-	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
-
-	"popupMembershipActivationTitle": "Activate Your Membership",
-	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
+	"popupMembershipActivationTitle": "Activate Your Code",
+	"popupMembershipActivationText": "Enter the code you received after purchase or from invatation. Your membership will be activated instantly.",
 	"popupMembershipActivationPlaceholder": "Paste activation code...",
 
 	"popupMembershipActivationError1": "Unknown error occured",
@@ -1229,7 +1254,6 @@
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Disable link",
 
-	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
@@ -1240,10 +1264,6 @@
 
 	"popupConfirmSpaceJoinError106Title": "This Space is full.",
 	"popupConfirmSpaceJoinError106Text": "The owner needs to increase the number of available editor seats or give you another link with view-only permissions.",
-
-	"popupConfirmJoinSpaceTitle": "Join %s",
-	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
-	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
@@ -1269,7 +1289,10 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+
+	"popupConfirmOpenExternalFileTitle": "Are you sure?",
+	"popupConfirmOpenExternalFileText": "You are trying to open a file that is potentially harmful. Are you sure you want to proceed?<br/>File: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
@@ -1290,9 +1313,9 @@
 	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
 
 	"popupConfirmAttachmentSyncError2Title": "Incompatible Version",
-	"popupConfirmAttachmentSyncError2Text": "This version doesn’t support sending files or images. Update the app to share media in chats.",
+	"popupConfirmAttachmentSyncError2Text": "This version doesn't support sending files or images. Update the app to share media in chats.",
 	"popupConfirmAttachmentSyncError3Title": "Network Error",
-	"popupConfirmAttachmentSyncError3Text": "We couldn’t connect right now. This may be due to no internet or a temporary sync issue. We’ll keep trying in the background.",
+	"popupConfirmAttachmentSyncError3Text": "We couldn't connect right now. This may be due to no internet or a temporary sync issue. We'll keep trying in the background.",
 	"popupConfirmAttachmentSyncError4Title": "File is too big for this space",
 	"popupConfirmAttachmentSyncError4Text": "...",
 
@@ -1304,23 +1327,39 @@
 	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
 	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
 
-	"popupConfirmStopSharingSpaceTitle": "The space is now private",
-	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
+	"popupConfirmStopSharingSpaceWarningTitle": "Make this space private?",
+	"popupConfirmStopSharingSpaceWarningText": "Making this space private will disable the current invite link, so it can no longer be used to join. When you re-enable sharing, a new link will be generated.",
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
-	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveText": "We've redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
 	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
-	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can't be undone.",
 
 	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
-	"popupInviteRequestTitle": "Join a space",
+	"popupConfirmMembershipSurveyTitle": "Welcome to the network,<br/>%s!",
+	"popupConfirmMembershipSurveyTitleNoName": "Welcome to the network!",
+	"popupConfirmMembershipSurveyText": "Your upgrade means a lot to us. Tell us what made you take the step and what do you think about Anytype. A tiny survey from you = a huge boost for us.",
+	"popupConfirmMembershipSurveyTakeSurvey": "Take Survey",
+
+	"popupObjectManagerArchiveTypeTitle": "Move “%s” to Bin?",
+	"popupObjectManagerArchiveTypeText": "Some objects use this type. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeTitlePlural": "Move %s types to Bin?",
+	"popupObjectManagerArchiveTypeTextPlural": "Some objects use these types. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeEmptyText": "There are no objects of this type",
+
+
+	"popupInviteRequestAccessTitle": "Access required",
+	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestAccessTextChat": "This chat requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestInviteTitle": "You've been invited",
+	"popupInviteRequestInviteTextData": "You'll join this space immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestInviteTextChat": "You'll join this chat immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestCreatedBy": "Created by",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
-	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
 	"popupInviteRequestRequestToJoin": "Request to join",
-	"popupInviteRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
 
 	"popupInviteInviteConfirmTitle": "Request sent",
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
@@ -1352,6 +1391,12 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
+	"popupSearchShortcutNavigate": "Navigate",
+	"popupSearchShortcutClose": "Close",
+	"popupSearchShortcutOpen": "Open",
+	"popupSearchShortcutCopyLink": "Copy link",
+	"popupSearchShortcutNewTab": "New tab",
+	"popupSearchShortcutSelect": "Select",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1408,7 +1453,7 @@
 	"popupShortcutMainBasics12": "Open in a modal window",
 	"popupShortcutMainBasics13": "Open in a new window",
 	"popupShortcutMainBasics14": "View shortcuts",
-	"popupShortcutMainBasics15": "Show / Hide Sidebar",
+	"popupShortcutMainBasics15": "Toggle Sidebar",
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
@@ -1422,6 +1467,9 @@
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
 	"popupShortcutMainBasics28": "Toggle Widget panel",
+	"popupShortcutMainBasics29": "New Tab",
+	"popupShortcutMainBasics30": "Next Tab",
+	"popupShortcutMainBasics31": "Previous Tab",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1484,6 +1532,7 @@
 	"popupShortcutEditorTurn7": "Turn block into a bulleted list",
 	"popupShortcutEditorTurn8": "Turn block into a numbered list",
 	"popupShortcutEditorTurn9": "Turn block into a toggle",
+	"popupShortcutEditorTableCellOptions": "Table cell options",
 
 	"popupShortcutNavigationMenu": "Menu, Search",
 	"popupShortcutNavigationMenu1": "Go to the next option",
@@ -1502,6 +1551,8 @@
 	"popupShortcutNavigationPage8": "Move selected block(s) up",
 	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	"popupShortcutNavigationPage11": "Move selected block(s) down",
+	"popupShortcutNavigationPrevBlock": "Jump to previous block",
+	"popupShortcutNavigationNextBlock": "Jump to next block",
 
 	"popupShortcutMarkdown": "Markdown",
 
@@ -1568,17 +1619,8 @@
 	"popupShortcutCommandOther2": "Dots divider",
 	"popupShortcutCommandOther3": "Code  snippet",
 
-	"popupMigrationOnboardingTitle": "Congratulations!",
-	"popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
-	"popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationOnboardingText3": "We're excited to hear your feedback about the new features.",
-	"popupMigrationImportTitle": "You're all set!",
-	"popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
-	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
-
 	"popupPhraseTitle1": "How the Key works",
-	"popupPhraseSubTitle1": "It’s your login and password",
+	"popupPhraseSubTitle1": "It's your login and password",
 	"popupPhraseLabel1": "Your key is represented by a recovery phrase — 12 random words that generate your vault on this device.",
 	"popupPhraseSubTitle2": "Whoever has the key, has access",
 	"popupPhraseLabel2": "Anyone who knows these words can access your vault. Right now, you are the only person in the world who knows them.",
@@ -1590,12 +1632,11 @@
 	"popupUsecaseUpdated": "Updated: %s",
 	"popupUsecaseInstall": "Install",
 	"popupUsecaseMenuLabel": "Install experience to",
-	"popupUsecaseSpaceCreate": "Create new space",
+	"popupUsecaseSpaceCreate": "Create new channel",
 	"popupUsecaseListTitle": "ANY Experience Gallery",
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBanner": "We're updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no Properties shown yet",
@@ -1635,15 +1676,17 @@
 	"menuBlockActionsExistingFile": "Use existing file",
 
 	"menuBlockAddNewRelation": "New Property",
-	"menuBlockAddSectionsText": "Text",
-	"menuBlockAddSectionsList": "List",
-	"menuBlockAddSectionsMedia": "Media",
-	"menuBlockAddSectionsEmbed": "Embeds",
-	"menuBlockAddSectionsOther": "Other",
-	"menuBlockAddSectionsObjects": "Objects",
-	"menuBlockAddSectionsRelations": "Properties",
-	"menuBlockAddSectionsTextColor": "Text color",
-	"menuBlockAddSectionsBackgroundColor": "Background color",
+	"menuBlockAddSectionText": "Text",
+	"menuBlockAddSectionList": "List",
+	"menuBlockAddSectionMedia": "Media",
+	"menuBlockAddSectionEmbed": "Embeds",
+	"menuBlockAddSectionOther": "Other",
+	"menuBlockAddSectionLink": "Links",
+	"menuBlockAddSectionType": "Types",
+	"menuBlockAddSectionObject": "Objects",
+	"menuBlockAddSectionRelations": "Properties",
+	"menuBlockAddSectionTextColor": "Text color",
+	"menuBlockAddSectionBackgroundColor": "Background color",
 
 	"menuBlockContextSwitchStyle": "Switch style",
 	"menuBlockContextMoreOptions": "More options",
@@ -1706,9 +1749,9 @@
 	"menuDataviewFilterNewFilter": "New filter",
 	"menuDataviewViewEditView": "Edit view",
 
-	"menuDataviewUrlActionGo7": "Open link",
-	"menuDataviewUrlActionGo8": "Mail to",
-	"menuDataviewUrlActionGo9": "Call to",
+	"menuDataviewUrlActionGo7": "Open in browser",
+	"menuDataviewUrlActionGo8": "Send email",
+	"menuDataviewUrlActionGo9": "Call",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
 	"menuDataviewCreateBookmarkContent": "Include page content",
@@ -1782,6 +1825,7 @@
 	"menuDataviewViewSort": "Sort",
 	"menuDataviewViewApplied": "%s applied",
 	"menuDataviewViewName": "View name",
+	"menuDataviewViewEditWrapContent": "Wrap content",
 
 	"menuDataviewViewListNoViewsFound": "No views found",
 	"menuDataviewViewListAddView": "Add a view",
@@ -1829,6 +1873,7 @@
 
 	"menuObjectPrint": "Print",
 	"menuObjectSearchOnPage": "Search in Object",
+	"menuObjectSearchInChat": "Search in Chat",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
 	"menuObjectUseAsTemplate": "Use as Template",
@@ -1837,6 +1882,8 @@
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
+	"menuObjectOpenInNewTab": "Open in New Tab",
+	"menuObjectOpenInNewWindow": "Open in New Window",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
@@ -1874,6 +1921,9 @@
 
 	"menuSyncStatusTitle": "Sync status",
 
+	"menuSyncStatusLabelAnyNetwork": "Any Network",
+	"menuSyncStatusLabelCustom": "Custom",
+
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
 	"menuSyncStatusP2PDevicesConnected": "%s %s connected",
@@ -1903,10 +1953,6 @@
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
 
-	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
-	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of storage. Please upgrade or clean up your storage.",
-	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
-
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties. Default limit is 10MB per object for free plans and 100MB for paid plans.",
 	"menuPublishLabelJoinSpace": "Join Space Button",
@@ -1917,6 +1963,17 @@
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
 	"menuPublishBecomeMemberText": "<b>Get a custom domain</b> and higher  limits by becoming a member",
+
+	"menuOnboardingCounter": "%s of %s",
+
+	"menuSpaceContextSpaceSettings": "Channel Settings",
+	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
+	"menuSpaceContextShowQRCode": "Show QR Code",
+
+	"menuVaultStyleCloseSidebar": "Close sidebar",
+	"menuParticipantConnect": "Connect",
+	"menuParticipantMessage": "Send Message",
+	"menuParticipantProfile": "Open Profile",
 
 	"previewEdit": "Edit Link",
 
@@ -1952,6 +2009,7 @@
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
 	"toastMovedToBin": "%s moved to Bin",
+	"toastMovedFromBin": "%s restored",
 	"toastMovedFrom": "%s moved from",
 	"toastAddedToCollection": "has been added to Collection",
 	"toastLinkedTo": "has been linked to",
@@ -1974,6 +2032,8 @@
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
 	"toastWidget": "Widget <b>%s</b> has been added",
 	"toastJoinSpace": "You have joined <b>%s</b>",
+
+	"toastSpaceIsPrivate": "This space is private now",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
@@ -2026,14 +2086,14 @@
 	"placeholderCell0": "Enter text",
 	"placeholderCell1": "Enter name",
 	"placeholderCell2": "Enter number",
-	"placeholderCell3": "Select status",
+	"placeholderCell3": "Select option",
 	"placeholderCell4": "Select date",
 	"placeholderCell5": "Select files",
 	"placeholderCell7": "Add link",
 	"placeholderCell8": "Add email",
 	"placeholderCell9": "Add phone",
 	"placeholderCell10": "Add emoji",
-	"placeholderCell11": "Select tags",
+	"placeholderCell11": "Select options",
 	"placeholderCell100": "Select objects",
 
 	"edgeType0": "Link",
@@ -2075,8 +2135,11 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
-	"widgetSectionPinned": "Pinned",
-	"widgetSectionType": "Objects",
+	"widgetSection0": "Pinned",
+	"widgetSection1": "Objects",
+	"widgetSection2": "Unread",
+	"widgetSection3": "Recently edited",
+	"widgetSection4": "Bin",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",
@@ -2094,6 +2157,13 @@
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
 	"widgetNoMessages": "No messages yet",
+
+	"widgetRecentModeTitle": "Edited by",
+	"widgetRecentEditMode0": "Anyone",
+	"widgetRecentEditMode1": "Only me",
+
+	"widgetManageSections": "Manage Sections",
+	"widgetHideSection": "Hide section",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2236,13 +2306,6 @@
 	"onboardingTemplateSelectTitle": "Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingBasicsTitle": "Widgets",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
-	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
-	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned’ Section</b> We’ve organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you’re ready.",
-	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It’s the new, unified place to see everything you’ve made.",
-
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
 	"onboardingMembershipButton": "Lovely!",
@@ -2257,11 +2320,8 @@
 	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",
 
-	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
-	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
-
-	"onboardingChatsTitle": "Ideas need conversations",
-	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
+	"onboardingChatsTitle": "Chat Where It Matters.<br/>Build Where It Belongs.",
+	"onboardingChatsDescription": "Keep all your conversations in Anytype — from work chats to private direct messages. Your communication and your work are finally connected.",
 
 	"onboardingChatsMockChatMessage0": "Good to have chat here now",
 	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
@@ -2270,13 +2330,15 @@
 	"onboardingChatsMockChatAttachmentTitle": "Project thoughts",
 	"onboardingChatsMockChatAttachmentType": "Page",
 
-	"onboardingChatsSlide0Title": "Your Vault just leveled up",
-	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
-	"onboardingChatsSlide1Title": "Chats work like Spaces",
-	"onboardingChatsSlide1Text": "A channel made for dialogue — where you can share, create, and<br/>edit together in real time.",
-	"onboardingChatsSlide2Title": "Everything in Its Right Place",
-	"onboardingChatsSlide2Text": "Objects, lists and files appear in the sidebar — structured,<br/>searchable, and always at hand.",
-	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+	"onboardingChatsSlide0Title": "One Space. Many Threads.",
+	"onboardingChatsSlide0Text": "Create multiple chats inside any Space — one for each idea, topic, or team. Your chats stay right next to your data",
+	"onboardingChatsSlide1Title": "Chats, Organized",
+	"onboardingChatsSlide1Text": "Group chats by projects, teams, or topics using tags and properties — just like you organize your knowledge",
+	"onboardingChatsSlide2Title": "Everything You Talk About",
+	"onboardingChatsSlide2Text": "Move smoothly between spaces, chats, and direct messages with a consistent and predictable layout",
+	"onboardingChatsSlide3Title": "Talk One-on-One",
+	"onboardingChatsSlide3Text": "Reach out people directly when you need a quick answer or a private space to talk.",
+	"onboardingChatsSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
 
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
@@ -2305,6 +2367,37 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
+	"onboardingCommonTitleVault": "This is your Vault",
+	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
+	"onboardingCommonTitleSpaces": "Create Channels",
+	"onboardingCommonTextSpaces": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTitleProfile": "Your profile & settings",
+	"onboardingCommonTextProfile": "Update your profile, access your Key, and adjust app settings here.",
+	"onboardingCommonTitleGallery": "Use Case Gallery",
+	"onboardingCommonTextGallery": "Explore templates made by Anytype and Community and boost up your workflow.",
+	"onboardingCommonTitleSpace": "This is your Get Started Space",
+	"onboardingCommonTextSpace": "It’s both a quick guide to Anytype and a sandbox where you can explore how Spaces are organized. You can return to it whenever you like.",
+	"onboardingCommonTitlePin": "Pin what matters most",
+	"onboardingCommonTextPin": "Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars.",
+	"onboardingCommonTitleTypes": "Organize with Types",
+	"onboardingCommonTextTypes": "Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingCommonTitleProperties": "Link with Properties",
+	"onboardingCommonTextProperties": "Each object has Properties defined by its Type. Some are plain values, others are objects too — relations that link everything in your graph.",
+	"onboardingCommonTextPropertiesImgCaption": "For example, Bauhaus Archive and Marlene Dietrich can be connected by City: Berlin.",
+	"onboardingCommonTitleSettings": "Open Settings to Invite People",
+	"onboardingCommonTextSettings": "Invite members and collaborate together in a private, fully encrypted, offline-first environment.",
+
+	"onboardingMainChatTitle1": "Meet the most powerful private chat.",
+	"onboardingCommonText1": "Fully encrypted, offline-first, and yours forever — even without Anytype.",
+	"onboardingMainChatTitle2": "More than just text messages",
+	"onboardingCommonText2": "Add pages, tasks, lists, or media directly into the chat and colalborate on them together.",
+	"onboardingMainChatTitle3": "Talk, and watch your chat growing",
+	"onboardingCommonText3": "Your messages can become notes, tasks, or links — a living knowledge base, private and yours.",
+
+	"onboardingProductHuntTitle": "Support us on Product Hunt!",
+	"onboardingProductHuntText": "Upvote the launch to help more people discover Anytype early",
+	"onboardingProductHuntUpvote": "Upvote",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
@@ -2359,52 +2452,6 @@
 	"errorAccountRecover109": "Vault has been deletesd",
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
-
-	"errorNameServiceResolveName3": "Please connect to the internet",
-
-	"errorMembershipGetStatus6": "Membership not found",
-	"errorMembershipGetStatus7": "Membership has wrong state",
-	"errorMembershipGetStatus8": "Please connect to the internet",
-
-	"errorMembershipIsNameValid3": "Name is too short",
-	"errorMembershipIsNameValid4": "Name is too long",
-	"errorMembershipIsNameValid5": "Name contains invalid characters",
-	"errorMembershipIsNameValid6": "This tier features no name",
-	"errorMembershipIsNameValid7": "Tier not found",
-	"errorMembershipIsNameValid8": "Not logged in",
-	"errorMembershipIsNameValid9": "Unable to connect to payment node",
-	"errorMembershipIsNameValid10": "Cache error",
-	"errorMembershipIsNameValid11": "Name cannot be taken",
-	"errorMembershipIsNameValid12": "Please connect to the internet",
-
-	"errorMembershipRegisterPaymentRequest4": "Unable to connect to payment node",
-	"errorMembershipRegisterPaymentRequest6": "Tier not found",
-	"errorMembershipRegisterPaymentRequest7": "Tier is invalid",
-	"errorMembershipRegisterPaymentRequest8": "Payment method is invalid",
-	"errorMembershipRegisterPaymentRequest9": "Bad Any name",
-	"errorMembershipRegisterPaymentRequest10": "Membership already exists",
-	"errorMembershipRegisterPaymentRequest11": "Please connect to the internet",
-
-	"errorMembershipFinalize6": "Membership not found",
-	"errorMembershipFinalize7": "Membership has wrong state",
-	"errorMembershipFinalize8": "Bad Any name",
-	"errorMembershipFinalize9": "Please connect to the internet",
-
-	"errorMembershipGetVerificationEmail6": "Email format is invalid",
-	"errorMembershipGetVerificationEmail7": "This email is already verified",
-	"errorMembershipGetVerificationEmail8": "Email has been already sent",
-	"errorMembershipGetVerificationEmail9": "Failed to send email",
-	"errorMembershipGetVerificationEmail10": "Membership already exists",
-
-	"errorMembershipVerifyEmailCode6": "This email is already verified",
-	"errorMembershipVerifyEmailCode7": "Code has expired",
-	"errorMembershipVerifyEmailCode8": "Wrong code",
-	"errorMembershipVerifyEmailCode9": "Membership not found",
-	"errorMembershipVerifyEmailCode10": "Membership is already active",
-
-	"errorMembershipGetTiers4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
@@ -2488,7 +2535,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %s. Please remove or slim them down and try again.",
 	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
@@ -2640,9 +2687,15 @@
 	"apiScope1": "API",
 	"apiScope2": "Full",
 
-	"notificationMode0": "Enable all",
+	"notificationMode0": "All messages",
 	"notificationMode1": "Mentions only",
 	"notificationMode2": "Disable all",
+	"notificationMode3": "Custom",
+
+	"filterTemplate0": "Value template",
+	"filterTemplate1": "Current User",
+	"filterTemplate2": "Current Object",
+	"filterTemplate3": "Space Member",
 
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
@@ -2664,5 +2717,26 @@
 	"aiOnboardingStatusDraftingTypes": "Drafting your custom types...",
 	"aiOnboardingStatusGenerating": "Generating your types and objects...",
 	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
-	"aiOnboardingStatusFinalTouches": "Final touches..."
+	"aiOnboardingStatusFinalTouches": "Final touches...",
+
+	"membershipFeatureStorageBytes": "%s of remote storage",
+	"membershipFeatureSpaceReaders": "Space readers",
+	"membershipFeatureSpaceWriters": "Space writers",
+	"membershipFeatureSharedSpaces": "%s shared spaces",
+	"membershipFeaturePrivateSpaces": "%s private spaces",
+	"membershipFeatureTeamSeats": "Team seats",
+	"membershipFeatureAnyNameCount": "Name available",
+	"membershipFeatureAnyNameMinLen": ".any name %s+ symbols",
+
+	"membershipPeriod0": "unlimited",
+	"membershipPeriod1": "monthly",
+	"membershipPeriod2": "annual",
+	"membershipPeriod3": "three years",
+
+	"paymentProvider0": "None",
+	"paymentProvider1": "Stripe",
+	"paymentProvider2": "Crypto",
+	"paymentProvider3": "Billing", 
+	"paymentProvider4": "App Store",
+	"paymentProvider5": "Google Play"
 }

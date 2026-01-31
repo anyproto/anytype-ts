@@ -1,21 +1,12 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, S, U, keyboard, focus, translate, sidebar } from 'Lib';
+import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 import Item from 'Component/page/main/navigation/item';
-
-interface State {
-	loading: boolean;
-	info: I.PageInfo;
-	pagesIn: I.PageInfo[];
-	pagesOut: I.PageInfo[];
-};
-
-const HEIGHT = 88;
 
 enum Panel { 
 	Left = 1, 
@@ -23,262 +14,41 @@ enum Panel {
 	Right = 3,
 };
 
-const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
-	
-	_isMounted = false;
-	node: any = null;
-	state = {
-		loading: false,
-		info: null,
-		pagesIn: [] as I.PageInfo[],
-		pagesOut: [] as I.PageInfo[],
-	};
-	id = '';
-	n = 0;
-	timeout = 0;
-	panel: Panel = Panel.Left;
-	cacheIn: any = {};
-	cacheOut: any = {};
-	focus = false;
-	select = false;
-	refHeader: any = null;
-	refList = { [ Panel.Left ]: null, [ Panel.Right ]: null };
-	
-	constructor (props: I.PageComponent) {
-		super (props);
+const HEIGHT = 88;
 
-		this.onConfirm = this.onConfirm.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onTab = this.onTab.bind(this);
-	};
-	
-	render () {
-		const { isPopup } = this.props;
-		const { info, pagesIn, pagesOut, loading } = this.state;
-		const rootId = this.getRootId();
+const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
-			const item: any = list[index];
+	const { isPopup } = props;
+	const [ dummy, setDummy ] = useState(0);
+	const dataRef = useRef({ 
+		[Panel.Center]: null, 
+		[Panel.Left]: [] as I.PageInfo[], 
+		[Panel.Right]: [] as I.PageInfo[],
+	});
+	const [ isLoading, setIsLoading ] = useState(false);
+	const nodeRef = useRef(null);
+	const headerRef = useRef(null);
+	const listRef = useRef({ [Panel.Left]: null, [Panel.Right]: null });
+	const nRef = useRef(0);
+	const panelRef = useRef(Panel.Left);
+	const timeoutRef = useRef(0);
+	const idRef = useRef('');
+	const cache = useRef({
+		[Panel.Left]: new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }),
+		[Panel.Right]: new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }),
+	});
 
-			item.index = index;
-			item.panel = panel;
-
-			return (
-				<CellMeasurer
-					key={key}
-					parent={parent}
-					cache={cache}
-					columnIndex={0}
-					rowIndex={index}
-				>
-					<div className="row" style={style}>
-						<Item 
-							item={item}
-							onClick={e => this.onClick(e, item)}
-							onMouseEnter={() => this.onOver(item)}
-							onMouseLeave={() => this.unsetActive()}
-						/>
-					</div>
-				</CellMeasurer>
-			);
-		};
-
-		const ItemEmpty = (item: any) => (
-			<div className="row">
-				<div className="item empty">
-					<div className="name">{item.name}</div>
-				</div>
-			</div>
-		);
-
-		const Selected = (item: any) => {
-			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
-			const isFile = U.Object.isInFileLayouts(layout);
-			const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
-			const iconSize = isFile ? 48 : null;
-
-			let description = null;
-			if (isFile) {
-				cn.push('isFile');
-				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
-			} else {
-				description = <ObjectDescription object={item} />;
-			};
-
-			return (
-				<div id={`item-${id}`} className={cn.join(' ')}>
-					<IconObject object={item} size={48} iconSize={iconSize} />
-					<ObjectName object={item} withPlural={true} />
-					{description}
-					
-					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-				
-					<div className="buttons">
-						<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => this.onConfirm(e, item)} />
-						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="wrapper"
-			>
-				<Header 
-					{...this.props} 
-					ref={ref => this.refHeader = ref} 
-					component="mainNavigation" 
-					rootId={rootId} 
-					tabs={U.Menu.getGraphTabs()} 
-					tab="navigation" 
-					onTab={this.onTab}
-					layout={I.ObjectLayout.Navigation}
-				/>
-
-				{loading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
-
-				<div key="sides" className="sides">
-					<div id={`panel-${Panel.Left}`} className="items left customScrollbar">
-						<div className="sideName">{translate('popupNavigationLinkTo')}</div>
-						{!pagesIn.length ? (
-							<ItemEmpty name={translate('popupNavigationEmptyTo')} />
-						) : (
-							<InfiniteLoader
-								rowCount={pagesIn.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => !!pagesIn[index]}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={ref => this.refList[Panel.Left] = ref}
-												width={width}
-												height={height - 35}
-												deferredMeasurmentCache={this.cacheIn}
-												rowCount={pagesIn.length}
-												rowHeight={HEIGHT}
-												rowRenderer={(param: any) => { 
-													param.panel = Panel.Left;
-													return rowRenderer(pagesIn, this.cacheIn, param); 
-												}}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						)}
-					</div>
-
-					<div id={`panel-${Panel.Center}`} className="items center">
-						{info ? <Selected {...info} /> : <ItemEmpty name={translate('pageMainNavigationItemEmptyTitle')} />}
-					</div>
-
-					<div id={`panel-${Panel.Right}`} className="items right customScrollbar">
-						<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
-						{!pagesOut.length ? (
-							<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
-						) : (
-							<InfiniteLoader
-								rowCount={pagesOut.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => !!pagesOut[index]}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={ref => this.refList[Panel.Right] = ref}
-												width={width}
-												height={height - 35}
-												deferredMeasurmentCache={this.cacheOut}
-												rowCount={pagesOut.length}
-												rowHeight={HEIGHT}
-												rowRenderer={(param: any) => { 
-													param.panel = Panel.Right;
-													return rowRenderer(pagesOut, this.cacheOut, param); 
-												}}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						)}
-					</div>
-				</div>
-
-				<Footer component="mainObject" />
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
-		this._isMounted = true;
-		this.loadPage(rootId);
-		this.resize();
-		this.rebind();
-
-		focus.clear(true);
-		keyboard.setFocus(true);
-	};
-	
-	componentDidUpdate () {
-		const rootId = this.getRootId();
-		const { pagesIn, pagesOut } = this.state;
-
-		this.loadPage(rootId);
-
-		this.cacheIn = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (pagesIn[i] || {}).id,
-		});
-
-		this.cacheOut = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (pagesOut[i] || {}).id,
-		});
-
-		this.resize();
-		this.setActive();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-
-		window.clearTimeout(this.timeout);
-		keyboard.setFocus(false);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.navigation', e => onKeyDown(e));
 	};
 
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.navigation', e => this.onKeyDown(e));
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.navigation');
 	};
 	
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { isPopup } = this.props;
-		const node = $(this.node);
+	const resize = () => {
+		const node = $(nodeRef.current);
 
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
@@ -295,12 +65,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		});
 	};
 	
-	onKeyDown (e: any) {
+	const onKeyDown = (e: any) => {
 		if (S.Popup.isOpen('search')) {
 			return;
 		};
 
-		const items = this.getItems();
+		const items = getItems();
 		const l = items.length;
 
 		keyboard.disableMouse(true);
@@ -308,75 +78,70 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			const dir = pressed == 'arrowup' ? -1 : 1;
 
-			this.n += dir;
-			if (this.n < 0) {
-				this.n = l - 1;
+			nRef.current += dir;
+			if (nRef.current < 0) {
+				nRef.current = l - 1;
 			};
-			if (this.n > l - 1) {
-				this.n = 0;
+			if (nRef.current > l - 1) {
+				nRef.current = 0;
 			};
 			
-			this.refList[this.panel]?.scrollToRow(this.n);
-			window.setTimeout(() => this.setActive(), 0);
+			listRef.current[panelRef.current]?.scrollToRow(nRef.current);
+			window.setTimeout(() => setActive(), 0);
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;
 
-			this.panel += dir;
+			panelRef.current += dir;
 
-			if (this.panel < Panel.Left) {
-				this.panel = Panel.Right;
+			if (panelRef.current < Panel.Left) {
+				panelRef.current = Panel.Right;
 			};
 
-			if ((this.panel == Panel.Left) && !this.getItems().length) {
-				this.panel = Panel.Right;
+			if ((panelRef.current == Panel.Left) && !getItems().length) {
+				panelRef.current = Panel.Right;
 			};
-			if ((this.panel == Panel.Right) && !this.getItems().length) {
-				this.panel = Panel.Center;
+			if ((panelRef.current == Panel.Right) && !getItems().length) {
+				panelRef.current = Panel.Center;
 			};
 
-			if (this.panel > Panel.Right) {
-				this.panel = Panel.Left;
+			if (panelRef.current > Panel.Right) {
+				panelRef.current = Panel.Left;
 			};
 			
-			if ((this.panel == Panel.Left) && !this.getItems().length) {
-				this.panel = Panel.Center;
+			if ((panelRef.current == Panel.Left) && !getItems().length) {
+				panelRef.current = Panel.Center;
 			};
-			if ((this.panel == Panel.Right) && !this.getItems().length) {
-				this.panel = Panel.Left;
+			if ((panelRef.current == Panel.Right) && !getItems().length) {
+				panelRef.current = Panel.Left;
 			};
 
-			this.setActive();
+			setActive();
 		});
 
 		keyboard.shortcut('enter, space', e, () => {
-			const item = items[this.n];
+			const item = items[nRef.current];
 			if (item) {
-				U.Object.openAuto({ ...item, layout: (this.panel == Panel.Center) ? item.layout : I.ObjectLayout.Navigation });
+				U.Object.openAuto({ ...item, layout: (panelRef.current == Panel.Center) ? item.layout : I.ObjectLayout.Navigation });
 			};
 		});
 	};
 
-	getItems () {
-		const { info, pagesIn, pagesOut } = this.state;
-
-		switch (this.panel) {
-			case Panel.Left:
-				return pagesIn;
+	const getItems = () => {
+		switch (panelRef.current) {
+			default:
+				return dataRef.current[panelRef.current];
 			
 			case Panel.Center:
-				return [ info ];
-
-			case Panel.Right:
-				return pagesOut;
+				return [ dataRef.current[Panel.Center] ];
 		};
 	};
 
-	setActive (item?: any) {
+	const setActive = (item?: any) => {
 		if (!item) {
-			const items = this.getItems();
-			item = items[this.n];
+			const items = getItems();
+			item = items[nRef.current];
 		};
 
 		if (!item) {
@@ -384,101 +149,284 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		if (item.panel) {
-			this.panel = item.panel;
+			panelRef.current = item.panel;
 		};
 
-		this.unsetActive();
-		
-		const node = $(this.node);
-		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
+		unsetActive();
+		$(nodeRef.current).find(`#panel-${panelRef.current} #item-${item.id}`).addClass('active');
 	};
 
-	unsetActive () {
-		const node = $(this.node);
-		node.find('.items .item.active').removeClass('active');
+	const unsetActive = () => {
+		$(nodeRef.current).find('.items .item.active').removeClass('active');
 	};
 
-	onOver (item: any) {
+	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.panel = item.panel;
-			this.n = item.index;
-			this.setActive();
+			panelRef.current = item.panel;
+			nRef.current = item.index;
+			setActive();
 		};
 	};
 
-	loadPage (id: string) {
-		const { loading } = this.state;
+	const loadPage = (id: string) => {
 		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!id || skipIds.includes(id as any)) {
 			return;
 		};
 
-		if ((this.id == id) || loading) {
+		if ((idRef.current == id) || isLoading) {
 			return;
 		};
 
-		this.id = id;
-		this.setState({ loading: true });
+		idRef.current = id;
+		setIsLoading(true);
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
+			setIsLoading(false);
+
 			if (message.error.code) {
-				this.setState({ loading: false });
 				return;
 			};
 
-			const pagesIn = S.Record.checkHiddenObjects(message.object.links.inbound.map(this.getPage)).filter(this.filterMapper);
-			const pagesOut = S.Record.checkHiddenObjects(message.object.links.outbound.map(this.getPage)).filter(this.filterMapper);
+			panelRef.current = Panel.Center;
 
-			this.panel = Panel.Center;
-
-			this.setState({ 
-				loading: false,
-				info: this.getPage(message.object.info),
-				pagesIn: pagesIn,
-				pagesOut: pagesOut,
-			});
+			dataRef.current = {
+				[Panel.Center]: getPage(message.object.info),
+				[Panel.Left]: S.Record.checkHiddenObjects(message.object.links.inbound.map(getPage)).filter(filterMapper),
+				[Panel.Right]: S.Record.checkHiddenObjects(message.object.links.outbound.map(getPage)).filter(filterMapper),
+			};
+			setDummy(dummy + 1);
 		});
 	};
 
-	filterMapper (it: any) {
+	const filterMapper = (it: any) => {
 		return it.id && !it.isDeleted;
 	};
 
-	getPage (item: any) {
+	const getPage = (item: any) => {
 		return { ...S.Detail.mapper(item.details) };
 	};
 
-	onClick (e: any, item: I.PageInfo) {
+	const onClick = (e: any, item: I.PageInfo) => {
 		e.stopPropagation();
 
 		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Navigation });
 	};
 
-	onConfirm (e: any, item: I.PageInfo) {
+	const onConfirm = (e: any, item: I.PageInfo) => {
 		if (e.persist) {
 			e.persist();
 		};
 
-		U.Object.openEvent(e, item);
+		U.Object.openConfig(e, item);
 	};
 
-	getRootId () {
-		let root = keyboard.getRootId(this.props.isPopup);
+	const getRootId = () => {
+		let root = keyboard.getRootId(isPopup);
 		if (root == I.HomePredefinedId.Graph) {
 			root = U.Space.getLastOpened()?.id;
 		};
 		return root;
 	};
 
-	onTab (id: string) {
+	const onTab = (id: string) => {
 		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
-			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
+			U.Object.openAuto({ id: getRootId(), layout: tab.layout });
 		};
 	};
 
-});
+	const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
+		const item: any = list[index];
+
+		item.index = index;
+		item.panel = panel;
+
+		return (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				<div className="row" style={style}>
+					<Item 
+						item={item}
+						onClick={e => onClick(e, item)}
+						onMouseEnter={() => onOver(item)}
+						onMouseLeave={unsetActive}
+					/>
+				</div>
+			</CellMeasurer>
+		);
+	};
+
+	const ItemEmpty = (item: any) => (
+		<div className="row">
+			<div className="item empty">
+				<div className="name">{item.name}</div>
+			</div>
+		</div>
+	);
+
+	const Selected = (item: any) => {
+		const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+		const isFile = U.Object.isInFileLayouts(layout);
+		const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
+		const iconSize = isFile ? 48 : null;
+
+		let description = null;
+		if (isFile) {
+			cn.push('isFile');
+			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+		} else {
+			description = <ObjectDescription object={item} />;
+		};
+
+		return (
+			<div id={`item-${id}`} className={cn.join(' ')}>
+				<IconObject object={item} size={48} iconSize={iconSize} />
+				<ObjectName object={item} withPlural={true} />
+				{description}
+				
+				{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+			
+				<div className="buttons">
+					<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => onConfirm(e, item)} />
+					{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
+				</div>
+			</div>
+		);
+	};
+
+	const info = dataRef.current[Panel.Center];
+	const pagesIn = dataRef.current[Panel.Left];
+	const pagesOut = dataRef.current[Panel.Right];
+	const rootId = getRootId();
+
+	useEffect(() => {
+		loadPage(rootId);
+		resize();
+		rebind();
+
+		focus.clear(true);
+		keyboard.setFocus(true);
+
+		return () => {
+			unbind();
+
+			window.clearTimeout(timeoutRef.current);
+			keyboard.setFocus(false);
+		};
+	}, []);
+	
+	useEffect(() => {
+		loadPage(rootId);
+		resize();
+		setActive();
+	}, [ rootId ]);
+	
+	return (
+		<div 
+			ref={nodeRef} 
+			className="wrapper"
+		>
+			<Header 
+				{...props} 
+				ref={headerRef} 
+				component="mainNavigation" 
+				rootId={rootId} 
+				tabs={U.Menu.getGraphTabs()} 
+				tab="navigation" 
+				onTab={onTab}
+				layout={I.ObjectLayout.Navigation}
+			/>
+
+			{isLoading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
+
+			<div key="sides" className="sides">
+				<div id={`panel-${Panel.Left}`} className="items left customScrollbar">
+					<div className="sideName">{translate('popupNavigationLinkTo')}</div>
+					{!pagesIn.length ? (
+						<ItemEmpty name={translate('popupNavigationEmptyTo')} />
+					) : (
+						<InfiniteLoader
+							rowCount={pagesIn.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => !!pagesIn[index]}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={ref => listRef.current[Panel.Left] = ref}
+											width={width}
+											height={height - 35}
+											deferredMeasurmentCache={cache.current[Panel.Left]}
+											rowCount={pagesIn.length}
+											rowHeight={HEIGHT}
+											rowRenderer={(param: any) => { 
+												param.panel = Panel.Left;
+												return rowRenderer(pagesIn, cache.current[Panel.Left], param); 
+											}}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
+				</div>
+
+				<div id={`panel-${Panel.Center}`} className="items center">
+					{info ? <Selected {...info} /> : <ItemEmpty name={translate('pageMainNavigationItemEmptyTitle')} />}
+				</div>
+
+				<div id={`panel-${Panel.Right}`} className="items right customScrollbar">
+					<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
+					{!pagesOut.length ? (
+						<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
+					) : (
+						<InfiniteLoader
+							rowCount={pagesOut.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => !!pagesOut[index]}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={ref => listRef.current[Panel.Right] = ref}
+											width={width}
+											height={height - 35}
+											deferredMeasurmentCache={cache.current[Panel.Right]}
+											rowCount={pagesOut.length}
+											rowHeight={HEIGHT}
+											rowRenderer={(param: any) => { 
+												param.panel = Panel.Right;
+												return rowRenderer(pagesOut, cache.current[Panel.Right], param); 
+											}}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
+				</div>
+			</div>
+
+			<Footer component="mainObject" />
+		</div>
+	);
+	
+}));
 
 export default PageMainNavigation;

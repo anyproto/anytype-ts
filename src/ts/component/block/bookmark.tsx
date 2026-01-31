@@ -1,198 +1,42 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import { I, C, S, U, focus, translate, analytics, Action, keyboard, Preview } from 'Lib';
 
-const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
+const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
+	const { rootId, block, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
+	const { state, targetObjectId } = block.content;
+	const nodeRef = React.useRef<HTMLDivElement>(null);
+	const innerRef = React.useRef<HTMLAnchorElement>(null);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'picture', 'source' ]);
+	const { iconImage, picture, isArchived, isDeleted } = object;
+	const url = object.source || block.content.url;
+	const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
 
-	constructor (props: I.BlockComponent) {
-		super(props);
-		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-	};
-
-	render () {
-		const { rootId, block, readonly } = this.props;
-		const { state, targetObjectId } = block.content;
-		const object = S.Detail.get(rootId, targetObjectId, [ 'picture' ]);
-		const { iconImage, picture, isArchived, isDeleted } = object;
-		const url = this.getUrl();
-		const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
-
-		let element = null;
-
-		if (isDeleted) {
-			element = (
-				<div className="deleted">
-					<Icon className="ghost" />
-					<div className="name">{translate('commonDeletedObject')}</div>
-				</div>
-			);
-		} else {
-			switch (state) {
-				default:
-				case I.BookmarkState.Error:
-				case I.BookmarkState.Empty: {
-					element = (
-						<>
-							{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
-							<InputWithFile 
-								block={block} 	
-								icon="bookmark" 
-								textFile={translate('inputWithFileTextUrl')} 
-								withFile={false} 
-								onChangeUrl={this.onChangeUrl} 
-								readonly={readonly} 
-							/>
-						</>
-					);
-					break;
-				};
-					
-				case I.BookmarkState.Fetching: {
-					element = <Loader />;
-					break;
-				};
-					
-				case I.BookmarkState.Done: {
-					const cni = [ 'inner' ];
-					const cnl = [ 'side', 'left' ];
-					
-					let archive = null;
-						
-					if (picture) {
-						cni.push('withImage');
-					};
-
-					if (isArchived) {
-						cni.push('isArchived');
-					};
-
-					if (block.bgColor) {
-						cni.push(`bgColor bgColor-${block.bgColor}`);
-					};
-
-					if (isArchived) {
-						archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
-					};
-
-					element = (
-						<a 
-							href={url}
-							className={cni.join(' ')} 
-							onClick={this.onClick} 
-							onMouseDown={this.onMouseDown}
-							{...U.Common.dataProps({ href: url })}
-						>
-							<div className={cnl.join(' ')}>
-								<div className="link">
-									{iconImage ? <img src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} className="fav" /> : ''}
-									{U.Common.shortUrl(url)}
-								</div>
-								<ObjectName object={object} />
-								<ObjectDescription object={object} />
-
-								{archive}
-							</div>
-							<div className="side right">
-								{picture ? <img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" /> : ''}
-							</div>
-						</a>
-					);
-					break;
-				};
-			};
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')} 
-				tabIndex={0} 
-				onKeyDown={this.onKeyDown} 
-				onKeyUp={this.onKeyUp} 
-				onFocus={this.onFocus}
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
-			>
-				{element}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(nodeRef.current).on('resizeInit resizeMove', e => resize());
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-		this.resize();
-		this.rebind();
+	const unbind = () => {
+		$(nodeRef.current).off('resizeInit resizeMove');
 	};
 	
-	componentDidUpdate () {
-		this.resize();
-		this.rebind();
+	const onKeyDownHandler = (e: any) => {
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
+	const onKeyUpHandler = (e: any) => {
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.unbind();
-		$(this.node).on('resizeInit resizeMove', e => this.resize());
-	};
-	
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		$(this.node).off('resizeInit resizeMove');
-	};
-	
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
-
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
-
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
+	const onFocus = () => {
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-	};
-
-	getUrl () {
-		const { rootId, block } = this.props;
-		const { url, targetObjectId } = block.content;
-		const object = S.Detail.get(rootId, targetObjectId, [ 'source' ], true);
-
-		return object.source || url;
-	};
-	
-	onClick (e: any) {
+	const onClick = (e: any) => {
 		if (e.button) {
 			return;
 		};
@@ -203,20 +47,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {
-			this.open();
+			open();
 		};
 	};
 
-	onMouseEnter (e: React.MouseEvent) {
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-
-		if (!targetObjectId) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, targetObjectId, []);
-		if (object._empty_ || object.isArchived || object.isDeleted) {
+	const onMouseEnter = (e: React.MouseEvent) => {
+		if (!targetObjectId || object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};
 
@@ -230,11 +66,11 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		});
 	};
 
-	onMouseLeave () {
+	const onMouseLeave = () => {
 		Preview.previewHide(true);
 	};
 
-	onMouseDown (e: any) {
+	const onMouseDown = (e: any) => {
 		e.persist();
 
 		if (keyboard.withCommand(e)) {
@@ -246,36 +82,143 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			e.preventDefault();
 			e.stopPropagation();
 
-			this.open();
+			open();
 		};
 	};
 
-	open () {
-		Action.openUrl(this.getUrl());
+	const open = () => {
+		Action.openUrl(url);
 		analytics.event('BlockBookmarkOpenUrl');
 	};
 	
-	onChangeUrl (e: any, url: string) {
-		const { rootId, block } = this.props;
+	const onChangeUrl = (e: any, url: string) => {
 		const bookmark = S.Record.getBookmarkType();
 
 		C.BlockBookmarkFetch(rootId, block.id, url, bookmark?.defaultTemplateId);
 	};
 	
-	resize () {
+	const resize = () => {
 		window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			const { getWrapperWidth } = this.props;
-			const node = $(this.node);
-			const inner = node.find('.inner');
-
+			const inner = $(innerRef.current);
 			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
 		});
 	};
 
-});
+	let element = null;
+
+	if (isDeleted) {
+		element = (
+			<div className="deleted">
+				<Icon className="ghost" />
+				<div className="name">{translate('commonDeletedObject')}</div>
+			</div>
+		);
+	} else {
+		switch (state) {
+			default:
+			case I.BookmarkState.Error:
+			case I.BookmarkState.Empty: {
+				element = (
+					<>
+						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
+						<InputWithFile 
+							block={block} 	
+							icon="bookmark" 
+							textFile={translate('inputWithFileTextUrl')} 
+							withFile={false} 
+							onChangeUrl={onChangeUrl} 
+							readonly={readonly} 
+						/>
+					</>
+				);
+				break;
+			};
+				
+			case I.BookmarkState.Fetching: {
+				element = <Loader />;
+				break;
+			};
+				
+			case I.BookmarkState.Done: {
+				const cni = [ 'inner' ];
+				const cnl = [ 'side', 'left' ];
+				
+				let archive = null;
+					
+				if (picture) {
+					cni.push('withImage');
+				};
+
+				if (isArchived) {
+					cni.push('isArchived');
+				};
+
+				if (block.bgColor) {
+					cni.push(`bgColor bgColor-${block.bgColor}`);
+				};
+
+				if (isArchived) {
+					archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
+				};
+
+				element = (
+					<a 
+						href={url}
+						ref={innerRef}
+						className={cni.join(' ')} 
+						onClick={onClick} 
+						onMouseDown={onMouseDown}
+						{...U.Common.dataProps({ href: url })}
+					>
+						<div className={cnl.join(' ')}>
+							<div className="link">
+								{iconImage ? <img src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} className="fav" /> : ''}
+								{U.String.shortUrl(url)}
+							</div>
+							<ObjectName object={object} />
+							<ObjectDescription object={object} />
+
+							{archive}
+						</div>
+						<div className="side right">
+							{picture ? <img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" /> : ''}
+						</div>
+					</a>
+				);
+				break;
+			};
+		};
+	};
+
+	useEffect(() => {
+		resize();
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		rebind();
+	});
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')} 
+			tabIndex={0} 
+			onKeyDown={onKeyDownHandler} 
+			onKeyUp={onKeyUpHandler} 
+			onFocus={onFocus}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+		>
+			{element}
+		</div>
+	);
+
+}));
 
 export default BlockBookmark;

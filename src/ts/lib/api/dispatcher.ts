@@ -10,13 +10,13 @@ import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 
-const SORT_IDS = [ 
-	'BlockAdd', 
-	'BlockDelete', 
-	'BlockSetChildrenIds', 
-	'ObjectDetailsSet', 
-	'ObjectDetailsAmend', 
-	'ObjectDetailsUnset', 
+const SORT_IDS = [
+	'BlockAdd',
+	'BlockDelete',
+	'BlockSetChildrenIds',
+	'ObjectDetailsSet',
+	'ObjectDetailsAmend',
+	'ObjectDetailsUnset',
 	'SubscriptionCounters',
 	'BlockDataviewRelationSet',
 	'BlockDataviewRelationDelete',
@@ -24,9 +24,22 @@ const SORT_IDS = [
 	'BlockDataviewViewUpdate',
 	'BlockDataviewViewDelete',
 ];
-const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
 
+const SKIP_IDS = [ 'BlockSetCarriage' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
+
+/**
+ * Dispatcher class handles all communication between the Electron frontend
+ * and the anytype-heart middleware via gRPC.
+ *
+ * This is the central hub for:
+ * - Sending commands to the middleware (request method)
+ * - Receiving and processing real-time events via streaming (event method)
+ * - Managing the gRPC connection lifecycle
+ *
+ * The dispatcher maintains a persistent stream connection for receiving
+ * events and provides request/response handling for commands.
+ */
 class Dispatcher {
 
 	service: Service.ClientCommandsClient = null;
@@ -35,6 +48,11 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects = 0;
 
+	/**
+	 * Initialize the gRPC client with the middleware server address.
+	 * Must be called before any other dispatcher operations.
+	 * @param address - The gRPC server address (e.g., 'http://localhost:31007')
+	 */
 	init (address: string) {
 		address = String(address || '');
 
@@ -49,6 +67,11 @@ class Dispatcher {
 		});
 	};
 
+	/**
+	 * Start the event stream connection to receive real-time updates from middleware.
+	 * Sets up listeners for data, status, and end events with automatic reconnection.
+	 * Requires authentication token to be set in S.Auth.token.
+	 */
 	startStream () {
 		if (!S.Auth.token) {
 			console.error('[Dispatcher.startStream] No token');
@@ -85,6 +108,10 @@ class Dispatcher {
 		});
 	};
 
+	/**
+	 * Stop the active event stream connection.
+	 * Cancels the stream and clears the reference.
+	 */
 	stopStream () {
 		if (this.stream) {
 			this.stream.cancel();
@@ -92,6 +119,11 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Attempt to reconnect the event stream with exponential backoff.
+	 * Reconnection intervals: 3s for first 20 attempts, 5s for next 20, then 60s.
+	 * Counter resets after 40 attempts.
+	 */
 	reconnect () {
 		let t = 3;
 		if (this.reconnects == 20) {
@@ -109,15 +141,23 @@ class Dispatcher {
 		}, t * 1000);
 	};
 
+	/**
+	 * Process an incoming event from the middleware.
+	 * Routes events to appropriate handlers based on event type and updates
+	 * the application state accordingly.
+	 *
+	 * @param event - The protobuf event object from middleware
+	 * @param isSync - Whether this is a synchronous event (from a command response)
+	 * @param skipDebug - Whether to skip debug logging for this event
+	 */
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
-		const { config, windowId, windowIsFocused } = S.Common;
+		const { config, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const isMainWindow = windowId == '1';
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
-		
+
 		if (traceId) {
 			ctx.push(traceId);
 		};
@@ -152,7 +192,7 @@ class Dispatcher {
 			};
 
 			const needLog = this.needEventLog(type) && !skipDebug;
-			const space = U.Space.getSpaceviewBySpaceId(spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -173,10 +213,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallenge': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('showChallenge', {
 						...mapped,
 						theme: S.Common.getThemeClass(),
@@ -186,10 +222,6 @@ class Dispatcher {
 				};
 
 				case 'AccountLinkChallengeHide': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					Renderer.send('hideChallenge', mapped);
 					break;
 				};
@@ -339,7 +371,7 @@ class Dispatcher {
 						Sentry.captureMessage('[Dispatcher] BlockSetText: focus');
 					};
 
-					const content: any = {};
+					const content: Partial<I.ContentText> = {};
 
 					if (text !== null) {
 						content.text = text;
@@ -646,7 +678,7 @@ class Dispatcher {
 
 							if (element.move) {
 								const { afterId, ids } = element.move;
-								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
+								const idx = afterId ? list.findIndex(it => it && (it[key.idField] == afterId)) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
 									const oidx = list.findIndex(it => it[key.idField] == id);
@@ -824,6 +856,10 @@ class Dispatcher {
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 
+					if (subIds.includes(J.Constant.subId.type)) {
+						U.Subscription.createTypeCheck();
+					};
+
 					updateMarkup = true;
 					break;
 				};
@@ -843,7 +879,9 @@ class Dispatcher {
 					// Subscriptions
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					S.Detail.delete(rootId, id, keys);
+					if (rootId) {
+						S.Detail.delete(rootId, id, keys);
+					};
 
 					updateMarkup = true;
 					break;
@@ -863,10 +901,6 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
-
-						if (subId == J.Constant.subId.type) {
-							S.Block.removeTypeWidget(id);
-						};
 					};
 					break;
 				};
@@ -906,8 +940,12 @@ class Dispatcher {
 
 					S.Notification.add(item);
 
-					if (isMainWindow && !windowIsFocused) {
-						U.Common.notification(item);
+					if (!windowIsFocused) {
+						Renderer.send('notification', {
+							id: item.id,
+							title: item.title,
+							text: item.text,
+						});
 					};
 					break;
 				};
@@ -918,37 +956,10 @@ class Dispatcher {
 				};
 
 				case 'PayloadBroadcast': {
-					if (!isMainWindow) {
-						break;
-					};
-
 					let payload: any = {};
 					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
 
-					switch (payload.type) {
-						case 'openObject': {
-							const { object } = payload;
-
-							U.Object.openAuto(object);
-							Renderer.send('focusWindow');
-
-							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
-							break;
-						};
-
-						case 'analyticsEvent': {
-							const { code, param } = payload;
-
-							analytics.event(code, param);
-							break;
-						};
-					};
-					break;
-				};
-
-				case 'MembershipUpdate': {
-					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
+					Renderer.send('payloadBroadcast', payload);
 					break;
 				};
 
@@ -965,16 +976,17 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage({ ...mapped.message, dependencies });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message);
+					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
+					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 
 					let showNotification = false;
 
-					if (space && space.chatId) {
-						if (space.notificationMode == I.NotificationMode.All) {
+					if (spaceview) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
-						if (space.notificationMode == I.NotificationMode.Mentions) {
+						if (notificationMode == I.NotificationMode.Mentions) {
 							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
@@ -991,13 +1003,26 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
-						U.Common.notification({ 
-							title: space.name, 
+					if (showNotification && notification && !windowIsFocused && (message.creator != account.id)) {
+						const title = [];
+
+						if (spaceview) {
+							title.push(U.String.shorten(spaceview.name, 32));
+						};
+
+						if (!spaceview.isChat && !spaceview.isOneToOne) {
+							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
+							if (!chat._empty_) {
+								title.push(U.String.shorten(chat.name, 32));
+							};
+						};
+
+						Renderer.send('notification', {
+							id: message.id,
+							title: title.join(' - '),
 							text: notification,
-						}, () => {
-							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
-							analytics.event('OpenChatFromNotification');
+							cmd: 'openChat',
+							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 						});
 					};
 
@@ -1017,9 +1042,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
-						S.Chat.setState(subId, mapped.state, true);
-					});
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 
@@ -1109,6 +1132,28 @@ class Dispatcher {
 					break;
 				};
 
+				case 'MembershipV2Update': {
+					S.Membership.dataUpdate(mapped.data);
+
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					if (!purchased || !product) {
+						break;
+					};
+
+					if (purchased.isFinalization) {
+						Action.finalizeMembership(product, analytics.route.settingsMembership);
+					};
+					break;
+				};
+
+				case 'MembershipV2ProductsUpdate': {
+					S.Membership.productsUpdate(mapped.products);
+					break;
+				};
+
 			};
 
 			if (needLog) {
@@ -1116,23 +1161,41 @@ class Dispatcher {
 			};
 		};
 
-		if (updateParents) {
-			S.Block.updateStructureParents(rootId);
-		};
+		window.setTimeout(() => {
+			if (updateParents) {
+				S.Block.updateStructureParents(rootId);
+			};
 
-		if (updateNumbers) {
-			S.Block.updateNumbers(rootId); 
-		};
+			if (updateNumbers) {
+				S.Block.updateNumbers(rootId);
+			};
 
-		if (updateMarkup) {
-			S.Block.updateMarkup(rootId);
-		};
+			if (updateMarkup) {
+				S.Block.updateMarkup(rootId);
+			};
+		});
 	};
 
+	/**
+	 * Extract unique subscription IDs by removing dependency suffixes.
+	 * Subscription IDs may contain '/dep' suffixes for dependency tracking.
+	 * @param subIds - Array of subscription IDs (may include '/dep' suffixes)
+	 * @returns Array of unique base subscription IDs
+	 */
 	getUniqueSubIds (subIds: string[]) {
 		return U.Common.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
+	/**
+	 * Update object details across all relevant subscription stores.
+	 * Handles special cases for space subscriptions and dashboard updates.
+	 *
+	 * @param details - Object containing detail key-value pairs to update
+	 * @param rootId - The root/context ID for the update
+	 * @param id - The object ID being updated
+	 * @param subIds - Array of subscription IDs that should receive the update
+	 * @param clear - If true, replace all details; if false, merge with existing
+	 */
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		subIds = this.getUniqueSubIds(subIds);
 		subIds.forEach(subId => S.Detail.update(subId, { id, details }, clear));
@@ -1154,10 +1217,6 @@ class Dispatcher {
 					U.Space.openFirstSpaceOrVoid(null, { replace: true });
 				};
 			};
-
-			if (subIds.includes(J.Constant.subId.type)) {
-				S.Block.addTypeWidget(id);
-			};
 		};
 
 		if (!rootId) {
@@ -1168,14 +1227,18 @@ class Dispatcher {
 
 		const root = S.Block.getLeaf(rootId, id);
 
-		if ((id == rootId) && root) {
-			if ((undefined !== details.layout) && (root.layout != details.layout)) {
-				S.Block.update(rootId, rootId, { layout: details.layout });
+		if (id == rootId) {
+			if (root) {
+				if ((undefined !== details.layout) && (root.layout != details.layout)) {
+					S.Block.update(rootId, rootId, { layout: details.layout });
+				};
+
+				if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
+					S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
+				};
 			};
 
-			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
-				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
-			};
+			keyboard.setWindowTitle();
 		};
 
 		if (undefined !== details.setOf) {
@@ -1183,11 +1246,20 @@ class Dispatcher {
 
 			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
+				$(window).trigger('updateDataviewData');
 			};
 		};
 	};
 
+	/**
+	 * Update the position of a record within a subscription's ordered list.
+	 * Used for maintaining correct sort order when items are added or moved.
+	 *
+	 * @param subId - Subscription ID containing the record list
+	 * @param id - ID of the record to position
+	 * @param afterId - ID of the record after which to place the item (empty for start)
+	 * @param isAdding - Whether this is a new addition (skip if already exists)
+	 */
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 		if (dep) {
@@ -1220,6 +1292,15 @@ class Dispatcher {
 		S.Record.recordsSet(sid, '', records);
 	};
 
+	/**
+	 * Comparator function for sorting events by their type priority.
+	 * Events in SORT_IDS are processed in array order to ensure
+	 * dependent operations (e.g., BlockAdd before BlockSetChildrenIds) work correctly.
+	 *
+	 * @param c1 - First event message
+	 * @param c2 - Second event message
+	 * @returns Negative if c1 should come first, positive if c2 should come first
+	 */
 	sort (c1: any, c2: any) {
 		const t1 = Mapper.Event.Type(c1.getValueCase());
 		const t2 = Mapper.Event.Type(c2.getValueCase());
@@ -1231,60 +1312,88 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any) {
+	/**
+	 * Process an ObjectView response and initialize block/detail stores.
+	 * Called when opening or showing an object to populate the UI state.
+	 *
+	 * @param rootId - Root object ID
+	 * @param traceId - Trace ID for the operation (used for context disambiguation)
+	 * @param objectView - The ObjectView data from middleware containing blocks and details
+	 * @param needCheck - Whether to check for existing popup structures to avoid duplicates
+	 */
+	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
-		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
+		const matchRoute = keyboard.getRouteMatch().params;
+		const matchPopup = keyboard.getPopupMatch().params;
+		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == matchRoute.id) && (matchRoute.action == matchPopup.action);
 
-		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext);
-		} else {
-			analytics.removeContext();
-		};
+		// Block structure already exists
+		if (!alreadyExists) {
+			const root = objectView.blocks.find(it => it.id == rootId);
 
-		S.Detail.set(contextId, details);
-		S.Block.restrictionsSet(contextId, restrictions);
-		S.Block.participantsSet(contextId, participants);
-
-		if (root) {
-			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
-
-			root.type = I.BlockType.Page;
-			root.layout = object.layout;
-		};
-
-		const blocks = objectView.blocks.map(it => {
-			if (it.type == I.BlockType.Dataview) {
-				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
-				S.Record.viewsSet(contextId, it.id, it.content.views);
+			if (root && root.fields.analyticsContext) {
+				analytics.setContext(root.fields.analyticsContext);
+			} else {
+				analytics.removeContext();
 			};
 
-			structure.push({ id: it.id, childrenIds: it.childrenIds });
-			return new M.Block(it);
-		});
+			S.Detail.set(contextId, details);
+			S.Block.restrictionsSet(contextId, restrictions);
+			S.Block.participantsSet(contextId, participants);
 
-		S.Block.set(contextId, blocks);
-		S.Block.setStructure(contextId, structure);
+			if (root) {
+				const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
+
+				root.type = I.BlockType.Page;
+				root.layout = object.layout;
+			};
+
+			const blocks = objectView.blocks.map(it => {
+				if (it.type == I.BlockType.Dataview) {
+					S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+					S.Record.viewsSet(contextId, it.id, it.content.views);
+				};
+
+				structure.push({ id: it.id, childrenIds: it.childrenIds });
+				return new M.Block(it);
+			});
+
+			S.Block.set(contextId, blocks);
+			S.Block.setStructure(contextId, structure);
+		};
+
 		S.Block.updateStructureParents(contextId);
-		S.Block.updateNumbers(contextId); 
+		S.Block.updateNumbers(contextId);
 		S.Block.updateMarkup(contextId);
 
 		keyboard.setWindowTitle();
+
+		$(window).trigger('objectView');
 	};
 
+	/**
+	 * Send a command request to the middleware and handle the response.
+	 * This is the main method for all command-based communication with anytype-heart.
+	 *
+	 * @param type - The command type name (e.g., 'ObjectOpen', 'BlockCreate')
+	 * @param data - The protobuf request object with command parameters
+	 * @param callBack - Optional callback invoked with the processed response
+	 */
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
 
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugJson = config.flagsMw.json;
-		const ct = U.Common.toCamelCase(type);
+		const ct = U.String.toCamelCase(type);
 		const t0 = performance.now();
 		const needLog = this.needRequestLog(type);
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
+			callBack?.({ error: { code: 0, description: 'Unknown command' } });
 			return;
 		};
 
@@ -1300,6 +1409,13 @@ class Dispatcher {
 
 		try {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+				if (error) {
+					console.error('GRPC Error', type, error);
+					Sentry.captureMessage(`${type}: msg: ${error.message}`);
+					callBack?.({ error: { code: error.code, description: error.message } });
+					return;
+				};
+
 				if (!response) {
 					return;
 				};
@@ -1324,9 +1440,9 @@ class Dispatcher {
 				message.error = { code, description };
 
 				if (message.error.code) {
-					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
+					if (!SKIP_ERRORS.includes(type)) {
+						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-					if (!SKIP_SENTRY_ERRORS.includes(type)) {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
@@ -1347,9 +1463,7 @@ class Dispatcher {
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				t2 = performance.now();
 				
@@ -1370,6 +1484,13 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Determine if a request should be logged based on debug configuration.
+	 * Respects separate flags for general requests vs subscription commands.
+	 *
+	 * @param type - The command type name
+	 * @returns True if the request should be logged
+	 */
 	needRequestLog (type: string) {
 		const { config } = S.Common;
 		const debugRequest = config.flagsMw.request;
@@ -1385,6 +1506,14 @@ class Dispatcher {
 		};
 	};
 
+	/**
+	 * Determine if an event should be logged based on debug configuration.
+	 * Events are categorized into: general events, sync events, file events, and subscribe events.
+	 * Each category has its own debug flag.
+	 *
+	 * @param type - The event type name
+	 * @returns True if the event should be logged
+	 */
 	needEventLog (type: string) {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;

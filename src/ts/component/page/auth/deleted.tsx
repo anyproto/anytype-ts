@@ -2,11 +2,11 @@ import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button } from 'Component';
-import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
+import { I, C, S, U, Action, Survey, analytics, translate, J } from 'Lib';
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
 
@@ -18,7 +18,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					S.Auth.logout(true, true);
-					U.Router.go('/', { replace: true });
+					U.Router.go('/auth/select', { replace: true });
 				},
 			},
 		});
@@ -44,7 +44,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	const onLogout = () => {
-		U.Router.go('/', { 
+		U.Router.go('/auth/select', { 
 			replace: true, 
 			animate: true,
 			onFadeIn: () => {
@@ -63,7 +63,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 	if (account) {
 		const duration = Math.max(0, account.status.date - U.Date.now());
 		
-		days = Math.max(1, Math.floor(duration / 86400));
+		days = Math.max(1, Math.floor(duration / J.Constant.day));
 		const dt = `${days} ${U.Common.plural(days, translate('pluralDay'))}`;
 
 		// Deletion Status
@@ -75,7 +75,7 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				title = U.Common.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
+				title = U.String.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
 				description = translate('authDeleteDescription');
 				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={onCancel} />;
 				break;

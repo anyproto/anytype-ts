@@ -1,54 +1,28 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
-class MenuTemplateContext extends React.Component<I.Menu> {
+const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	n = -1;
+	const { param, close, onKeyDown, setActive } = props;
+	const { data } = param;
+	const { template, isView, templateId, noToast, route, onDuplicate, onArchive, onSetDefault } = data;
+	const isDefault = template.id == templateId;
+	const n = useRef(-1);
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 
-	render () {
-		const items = this.getItems();
-
-		return (
-			<div>
-				{items.map((action: any, i: number) => (
-					<MenuItemVertical
-						key={i}
-						{...action}
-						onMouseEnter={e => this.onMouseEnter(e, action)}
-						onClick={e => this.onClick(e, action)}
-					/>
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.rebind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { template, isView, onSetDefault, templateId } = data;
-		const isDefault = template.id == templateId;
+	const getItems = () => {
 		const setDefaultName = isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault');
 		const unsetDefaultName = isView ? translate('menuDataviewTemplateUnsetDefaultForView') : translate('commonUnsetDefault');
 
@@ -61,11 +35,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		].filter(it => it);
 	};
 
-	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { template, onSetDefault, onArchive, onDuplicate, route, noToast } = data;
-
+	const onClick = (e: any, item: any) => {
 		switch (item.id) {
 			case 'setDefault': {
 				if (onSetDefault) {
@@ -89,7 +59,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'edit': {
-				U.Object.openConfig(template, {
+				U.Object.openConfig(null, template, {
 					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
 				});
 
@@ -119,24 +89,51 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		close();
 	};
 
-	onMouseEnter (e: any, item: any) {
-		this.onOver(e, item);
+	const onMouseEnter = (e: any, item: any) => {
+		onOver(e, item);
 	};
 
-	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onOver } = data;
-
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 
-		if (onOver) {
-			onOver();
-		};
+		data.onOver?.();
 	};
 
-};
+	const items = getItems();
 
-export default MenuTemplateContext;
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{items.map((action: any, i: number) => (
+				<MenuItemVertical
+					key={i}
+					{...action}
+					onMouseEnter={e => onMouseEnter(e, action)}
+					onClick={e => onClick(e, action)}
+				/>
+			))}
+		</div>
+	);
+
+}));
+
+export default MenuDataviewTemplateContext;

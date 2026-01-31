@@ -2,12 +2,18 @@
 
 .blocks {
 	.block.blockEmbed { padding: 6px 0px; }
-	.block.blockEmbed.isResizing * { cursor: nwse-resize; }
-	.block.blockEmbed.isResizing {
-		.dimmer { display: block; }
-	}
-
 	.block.blockEmbed { 
+		.focusable.isResizing {
+			* { cursor: nwse-resize; }
+			.dimmer { display: block; }
+
+			&::after {
+				content: ""; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; pointer-events: none; z-index: 99;
+				background-image: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.2) 0, rgba(255, 255, 255, 0.2) 1px, transparent 1px, transparent calc(100% / 12));
+				mix-blend-mode: difference;
+			}
+		}
+
 		> .wrapContent { border-radius: 8px; }
 		> .wrapContent {
 			.selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
@@ -27,6 +33,9 @@
 		.wrap.isEmpty {
 			.preview, .icon.source { display: none; }
 			.editableWrap { margin: 0px; }
+		}
+		.wrap.isUnsupported {
+			.preview.unsupported { display: flex; }
 		}
 
 		.empty { padding: 6px 8px; }
@@ -76,7 +85,19 @@
 		.preview.isSketchfab { background-image: url('~img/icon/block/embed/sketchfab.svg'); }
 		.preview.isDrawio { background-image: url('~img/icon/block/embed/drawio.svg'); }
 		.preview.isImage { background-image: url('~img/icon/block/embed/image.svg'); }
-		.preview.isSpotify { background-image: url('~img/icon/block/embed/spotify.svg');}
+		.preview.isSpotify { background-image: url('~img/icon/block/embed/spotify.svg'); }
+		.preview.isAppleMusic { background-image: url('~img/icon/block/embed/appleMusic.svg'); }
+
+		.preview.unsupported {
+			display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; background-image: none;
+		}
+		.preview.unsupported {
+			.iconEmbed {
+				width: 28px; height: 28px; background-size: contain; background-repeat: no-repeat; background-position: center;
+				background-image: url('~img/icon/block/embed/default.svg');
+			}
+			.label { position: static; color: var(--color-text-secondary); @include text-common; }
+		}
 
 		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }
@@ -143,6 +164,14 @@
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }
 		.katex .base { margin-top: 2px; margin-bottom: 2px; }
+	}
+
+	.block.blockEmbed.isExcalidraw {
+		.icon.source { display: none !important; }
+		.mediaExcalidraw { height: calc(100vh - 52px); }
+		.mediaExcalidraw {
+			.LaserToolOverlay { display: none !important; }
+		}
 	}
 }
 

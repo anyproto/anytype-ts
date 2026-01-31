@@ -1,158 +1,73 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Renderer } from 'Lib';
 
-interface State {
-	filter: string;
-};
+const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 
-class MenuBlockAction extends React.Component<I.Menu, State> {
+const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	_isMounted = false;
-	node: any = null;
-	n = -1;
-	refFilter: any = null;
-	state = {
-		filter: '',
-	};
+	const { param, setActive, onKeyDown, getId, getSize, close } = props;
+	const { data, className, classNameWrap } = param;
+	const { rootId, blockId, blockIds, blockRemove, range, filter } = data;
+	const { focused } = focus.state;
+	const n = useRef(-1);
+	const filterRef = useRef(null);
+	const block = S.Block.getLeaf(rootId, blockId);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			keyboard.setFocus(false);
+			S.Menu.closeAll(J.Menu.action);
+			S.Menu.clearTimeout();
+		};
+	}, []);
+
+	useEffect(() => {
+		n.current = 0;
+	}, [ filter ]);
 	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onFilterFocus = this.onFilterFocus.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-	};
-
-	render () {
-		const { filter } = this.state;
-		const sections = this.getSections();
-		
-		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						const icn: string[] = [ 'inner' ];
-						
-						if (action.isTextColor) {
-							icn.push('textColor textColor-' + (action.value || 'default'));
-						};
-
-						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + (action.value || 'default'));
-						};
-
-						if (action.isTextColor || action.isBgColor) {
-							action.icon = 'color';
-							action.inner = <div className={icn.join(' ')} />;
-						};
-
-						if (action.isObject) {
-							action.object = { ...action, layout: I.ObjectLayout.Type };
-						};
-
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								onMouseEnter={e => this.onMouseEnter(e, action)} 
-								onClick={e => this.onClick(e, action)} 
-							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-		
-		return (
-			<div
-				ref={node => this.node = node}
-			>
-				<Filter 
-					ref={ref => this.refFilter = ref}
-					className="outlined"
-					placeholderFocus={translate('menuBlockActionsFilterActions')}
-					value={filter}
-					onFocus={this.onFilterFocus} 
-					onChange={this.onFilterChange} 
-					focusOnMount={true}
-				/>
-				
-				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { getId } = this.props;
-		const menu = $(`#${getId()}`);
-		
-		this._isMounted = true;
-		this.rebind();
-
-		menu.off('mouseleave').on('mouseleave', () => S.Menu.clearTimeout());
-	};
-
-	componentDidUpdate () {
-		this.rebind();
-		this.props.position();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		keyboard.setFocus(false);
+	const onFilterFocus = (e: any) => {
 		S.Menu.closeAll(J.Menu.action);
-		S.Menu.clearTimeout();
-	};
-
-	onFilterFocus (e: any) {
-		S.Menu.closeAll(J.Menu.action);
-		this.props.setActive();
+		setActive();
 	};
 	
-	onFilterChange (v: string) {
-		this.n = 0;
-		this.setState({ filter: v });
+	const onFilterChange = (v: string) => {
+		S.Menu.updateData(props.id, { filter: v });
 	};
 	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onKeyDown (e: any) {
-		const { onKeyDown, param } = this.props;
-		const { data } = param;
-		const { rootId, blockIds, blockRemove, onCopy } = data;
-		const { filter } = this.state;
-		const { focused } = focus.state;
+	const onKeyDownHandler = (e: any) => {
 		const cmd = keyboard.cmdKey();
 
 		let ret = false;
 
-		if (!filter && blockRemove) {
+		if (!data.filter && blockRemove) {
 			keyboard.shortcut('backspace, delete', e, () => {
 				blockRemove();
 				ret = true;
 			});
 		};
 
-		if (onCopy) {
-			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-				onCopy(e, pressed.match('x') ? true : false);
+		for (const key in CB_KEYS) {
+			keyboard.shortcut(`${cmd}+${key}`, e, () => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				onClick(e, { itemId: CB_KEYS[key] });
+				ret = true;
 			});
 		};
 
@@ -161,7 +76,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});
-				this.refFilter?.blur();
+				filterRef.current?.blur();
 				ret = true;
 			});
 		};
@@ -171,20 +86,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		
+	const getSections = () => {
 		if (!block) {
 			return [];
 		};
 		
-		const { filter } = this.state;
 		const { hAlign, content, bgColor } = block;
 		const { color, style } = content;
-		const checkFlag = this.checkFlagByObject(block.getTargetObjectId());
+		const checkFlag = checkFlagByObject(block.getTargetObjectId());
 
 		let sections: any[] = [];
 		let hasText = true;
@@ -192,6 +101,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let hasBookmark = true;
 		let hasDataview = true;
 		let hasFile = true;
+		let hasCopyMedia = true;
 		let hasAction = true;
 		let hasAlign = true;
 		let hasTurnText = true;
@@ -215,6 +125,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			hasDataview = hasBookmark && block.isDataview() && checkFlag;
 			hasLink = hasLink && block.isLink() && checkFlag;
 			hasFile = hasFile && block.isFile() && checkFlag;
+			hasCopyMedia = hasCopyMedia && block.isFileImage() && checkFlag;
 			hasAlign = hasAlign && block.canHaveAlign();
 			hasColor = hasColor && block.canHaveColor();
 			hasBg = hasBg && block.canHaveBackground();
@@ -232,7 +143,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
+		const actionParam = { rootId, blockId, hasText, hasFile, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
 		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
@@ -272,7 +183,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		} else {
 			const turnText = { 
 				id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-				caption: (I.TextStyle[style] ? translate(U.Common.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
+				caption: (I.TextStyle[style] ? translate(U.String.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 			};
 
 			const c1 = hasTitle ? [] : U.Menu.getActions(actionParam);
@@ -293,11 +204,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		return U.Menu.sectionsMap(sections);
 	};
 
-	checkFlagByObject (id: string): boolean {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
+	const checkFlagByObject = (id: string): boolean => {
 		let flag = false;
 		if (id) {
 			const object = S.Detail.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
@@ -308,8 +215,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		return flag;
 	};
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -319,22 +226,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		return items;
 	};
 	
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.onOver(e, item);
+			onOver(e, item);
 		};
 	};
 	
-	onOver (e: any, item: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const { id, param, close, getId, setActive } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { blockId, blockIds, rootId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-
+	const onOver = (e: any, item: any) => {
 		if (!block) {
 			return;
 		};
@@ -350,20 +248,17 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(this.node);
-		const el = node.find(`#item-${item.id}`);
-		const offsetX = node.outerWidth();
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
-			offsetX: offsetX,
-			offsetY: node.offset().top - el.offset().top - 40,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
 			className,
 			classNameWrap, 
 			isSub: true,
 			noFlipX: true,
-			rebind: this.rebind,
-			parentId: id,
+			rebind,
+			parentId: props.id,
 			data: {
 				rootId,
 				blockId,
@@ -393,7 +288,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
 							C.BlockListTurnInto(rootId, ids, item.itemId, () => {
-								this.setFocus(ids[0]);
+								setFocus(ids[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
 									ids.forEach(id => S.Block.toggle(rootId, id, true));
@@ -402,11 +297,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						};
 
 						if (item.type == I.BlockType.Div) {
-							C.BlockDivListSetStyle(rootId, ids, item.itemId, () => this.setFocus(ids[0]));
+							C.BlockDivListSetStyle(rootId, ids, item.itemId, () => setFocus(ids[0]));
 						};
 
 						if (item.type == I.BlockType.File) {
-							C.BlockFileListSetStyle(rootId, ids, item.itemId, () => this.setFocus(ids[0]));
+							C.BlockFileListSetStyle(rootId, ids, item.itemId, () => setFocus(ids[0]));
 						};
 						
 						close();
@@ -425,7 +320,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						this.moveToPage(item.id);
+						moveToPage(item.id);
 						close();
 					},
 				});
@@ -477,8 +372,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					value: color,
 					onChange: (color: string) => {
 						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
-							this.setFocus(blockIds[0]);
-
+							setFocus(blockIds[0]);
 							analytics.event('ChangeBlockColor', { color, count: blockIds.length });
 						});
 
@@ -496,8 +390,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					value: bgColor,
 					onChange: (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
-							this.setFocus(blockIds[0]);
-
+							setFocus(blockIds[0]);
 							analytics.event('ChangeBlockBackground', { color, count: blockIds.length });
 						});
 
@@ -516,8 +409,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					value: hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
-							this.setFocus(blockIds[0]);
-
+							setFocus(blockIds[0]);
 							analytics.event('ChangeBlockAlign', { align, count: blockIds.length });
 						});
 
@@ -543,7 +435,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
-					name: U.Common.sprintf(translate('menuBlockActionsCreateNew'), name),
+					name: U.String.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
@@ -591,32 +483,49 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 	};
 
-	onClick (e: any, item: any) {
-		if (!this._isMounted || item.arrow) {
+	const onClick = (e: any, item: any) => {
+		if (item.arrow || !block) {
 			return;
 		};
 		
-		const { param, close } = this.props;
-		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-
-		if (!block) {
-			return;
-		};
-
 		const selection = S.Common.getRef('selectionProvider');
-		const ids = selection.getForClick(blockId, false, false);
+		const ids = selection.getForClick(blockId, true, false);
+		const idsWithChildren = selection.getForClick(blockId, true, false);
 		const targetObjectId = block.getTargetObjectId();
 
+		if (Object.values(CB_KEYS).includes(item.itemId) && range) {
+			focus.set(blockId, range);
+			focus.apply();
+		};
+
 		switch (item.itemId) {
+			case 'clipboardCopy': {
+				Action.copyBlocks(rootId, idsWithChildren, I.ClipboardMode.Copy);
+				break;
+			};
+
+			case 'clipboardCut': {
+				Action.copyBlocks(rootId, idsWithChildren, I.ClipboardMode.Cut);
+				break;
+			};
+
+			case 'clipboardPaste': {
+				close();
+				window.setTimeout(() => {
+					focus.set(blockId, range);
+					focus.apply();
+					window.setTimeout(() => Renderer.send('paste'), 50);
+				}, J.Constant.delay.menu);
+				return;
+			};
+
 			case 'download': {
 				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
 				break;
 			};
 
 			case 'openAsObject': {
-				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
+				U.Object.openConfig(null, S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {
@@ -629,6 +538,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
+				break;
+			};
+
+			case 'copyMedia': {
+				U.Common.clipboardCopyImageFromUrl(S.Common.imageUrl(targetObjectId, I.ImageSize.Large));
 				break;
 			};
 
@@ -648,7 +562,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				});
 				break;
 			};
-				
+
 			default: {
 				// Text colors
 				if (item.isTextColor) {
@@ -678,14 +592,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						C.BlockFileListSetStyle(rootId, blockIds, item.itemId);
 					} else {
 						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
-							this.setFocus(blockIds[0]);
+							setFocus(blockIds[0]);
 						});
 					};
 				} else
 
 				// Objects
 				if (item.isObject) {
-					this.moveToPage(item.objectTypeId);
+					moveToPage(item.objectTypeId);
 				};
 				break;
 			};
@@ -694,10 +608,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		close();
 	};
 
-	moveToPage (typeId: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
+	const moveToPage = (typeId: string) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
@@ -708,11 +619,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		U.Data.moveToPage(rootId, ids, typeId, analytics.route.turn);
 	};
 
-	setFocus (id: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
+	const setFocus = (id: string) => {
 		if (!id) {
 			return;
 		};
@@ -727,6 +634,75 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		focus.apply();
 	};
 
-};
+	const sections = getSections();
+	
+	const Section = (item: any) => (
+		<div className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => {
+					const icn: string[] = [ 'inner' ];
+					
+					if (action.isTextColor) {
+						icn.push(`textColor textColor-${action.value || 'default'}`);
+					};
+
+					if (action.isBgColor) {
+						icn.push(`bgColor bgColor-${action.value || 'default'}`);
+					};
+
+					if (action.isTextColor || action.isBgColor) {
+						action.icon = 'color';
+						action.inner = <div className={icn.join(' ')} />;
+					};
+
+					if (action.isObject) {
+						action.object = { ...action, layout: I.ObjectLayout.Type };
+					};
+
+					return (
+						<MenuItemVertical 
+							key={i} 
+							{...action} 
+							onMouseEnter={e => onMouseEnter(e, action)} 
+							onClick={e => onClick(e, action)} 
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => filterRef.current,
+		onClick,
+		onOver,
+	}), []);
+	
+	return (
+		<div>
+			<Filter 
+				ref={filterRef}
+				className="outlined"
+				placeholderFocus={translate('menuBlockActionsFilterActions')}
+				value={filter}
+				onFocus={onFilterFocus} 
+				onChange={onFilterChange} 
+				focusOnMount={true}
+			/>
+			
+			{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
+			{sections.map((item: any, i: number) => (
+				<Section key={i} {...item} />
+			))}
+		</div>
+	);
+	
+}));
 
 export default MenuBlockAction;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import { I, S, U, C, translate, Preview, Dataview } from 'Lib';
@@ -11,143 +11,37 @@ interface Props extends I.ViewComponent {
 	onCreate: (details: any) => void;
 };
 
+interface Ref {
+	load: () => void;
+};
+
 const LIMIT = 4;
 
-const Item = observer(class Item extends React.Component<Props> {
+const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 
-	node = null;
+	const { 
+		rootId, block, className, d, m, y, isToday, isCollection, readonly, getSubId, getView, onContext, getKeys, getTarget, getSearchIds, isAllowedObject,
+	} = props;
+	const view = getView();
+	const { hideIcon } = view;
+	const subId = [ getSubId(), y, m, d ].join('-');
+	const keys = getKeys(view.id);
+	const items = S.Record.getRecords(subId, keys);
+	const { total } = S.Record.getMeta(subId, '');
+	const cn = [ 'day' ];
+	const relation = S.Record.getRelationByKey(view.groupRelationKey);
+	const canDrag = relation && !relation.isReadonlyValue;
+	const nodeRef = useRef(null);
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onOpen = this.onOpen.bind(this);
-		this.onOpenDate = this.onOpenDate.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.onContext = this.onContext.bind(this);
-		this.canCreate = this.canCreate.bind(this);
-		this.onCreate = this.onCreate.bind(this);
-		this.onDragStart = this.onDragStart.bind(this);
-		this.onRecordDrop = this.onRecordDrop.bind(this);
-		this.load = this.load.bind(this);
-		this.loadData = this.loadData.bind(this);
+	if (className) {
+		cn.push(className);
 	};
 
-	render () {
-		const { rootId, className, d, m, y, getView, onContext, getKeys } = this.props;
-		const view = getView();
-		const { hideIcon } = view;
-		const subId = this.getSubId();
-		const keys = getKeys(view.id);
-		const items = S.Record.getRecords(subId, keys);
-		const { total } = S.Record.getMeta(subId, '');
-		const cn = [ 'day' ];
-		const canCreate = this.canCreate();
-		const relation = S.Record.getRelationByKey(view.groupRelationKey);
-		const canDrag = relation && !relation.isReadonlyValue;
-
-		if (className) {
-			cn.push(className);
-		};
-
-		let more = null;
-		if (total > LIMIT) {
-			more = (
-				<div className="record more" onClick={this.onMore}>
-					+{total - LIMIT} {translate('commonMore')} {U.Common.plural(total, translate('pluralObject')).toLowerCase()}
-				</div>
-			);
-		};
-
-		const Item = (item: any) => {
-			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && U.Object.isTaskLayout(item.layout);
-			const icon = hideIcon ? null : <IconObject id={`item-${item.id}-icon`} object={item} size={16} canEdit={canEdit} />;
-
-			let content = (
-				<>
-					{icon}
-					<ObjectName object={item} onClick={() => this.onOpen(item)} />
-				</>
-			);
-
-			if (canDrag) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={item.id} dropType={I.DropType.Record} viewType={view.type}>
-						{content}
-					</DropTarget>
-				);
-			};
-
-			return (
-				
-				<div 
-					id={`record-${item.id}`}
-					className="record" 
-					draggable={canDrag}
-					onContextMenu={e => onContext(e, item.id)}
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					onMouseLeave={this.onMouseLeave}
-					onDragStart={e => this.onDragStart(e, item)}
-				>
-					{content}
-				</div>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-				onContextMenu={this.onContext}
-				onDoubleClick={this.onCreate}
-			>
-				<div className="head">
-					{canCreate ? (
-						<Icon 
-							className="plus withBackground" 
-							tooltipParam={{ text: translate(`commonNewObject`) }} 
-							onClick={this.onCreate} 
-						/> 
-					) : ''}
-
-					<div className="number" onClick={this.onOpenDate}>
-						<div className="inner">{d}</div>
-					</div>
-				</div>
-
-				<div className="items">
-					{items.map(item => <Item key={[ y, m, d, item.id ].join('-')} {...item} />)}
-
-					{more}
-
-					<DropTarget {...this.props} rootId={rootId} id={[ 'empty', y, m, d ].join('-')} isTargetBottom={true} dropType={I.DropType.Record} viewType={view.type} />
-				</div>
-			</div>
-		);
+	const load = () => {
+		loadData(subId, LIMIT);
 	};
 
-	componentDidMount (): void {
-		this.load();
-	};
-
-	componentDidUpdate (): void {
-		this.load();
-	};
-
-	componentWillUnmount (): void {
-		U.Subscription.destroyList([ this.getSubId() ]);
-	};
-
-	getSubId(): string {
-		const { getSubId, d, m, y } = this.props;
-		return [ getSubId(), y, m, d ].join('-');
-	};
-
-	load () {
-		this.loadData(this.getSubId(), LIMIT);
-	};
-
-	loadData (subId: string, limit: number) {
-		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+	const loadData = (subId: string, limit: number) => {
 		const view = getView();
 
 		if (!view) {
@@ -191,35 +85,32 @@ const Item = observer(class Item extends React.Component<Props> {
 		U.Subscription.subscribe({
 			subId,
 			limit,
-			filters: filters.map(Dataview.filterMapper),
+			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
 	};
 
-	onOpen (record: any) {
-		U.Object.openConfig(record);
+	const onOpen = (record: any) => {
+		U.Object.openConfig(null, record);
 	};
 
-	onMouseEnter (e: any, item: any) {
-		const node = $(this.node);
+	const onMouseEnter = (e: any, item: any) => {
+		const node = $(nodeRef.current);
 		const element = node.find(`#record-${item.id}`);
-		const name = U.Common.shorten(item.name, 50);
+		const name = U.String.shorten(item.name, 50);
 
 		Preview.tooltipShow({ text: name, element });
 	};
 
-	onMouseLeave (e: any) {
+	const onMouseLeave = () => {
 		Preview.tooltipHide(false);
 	};
 
-	onMore () {
-		const { block, getView, readonly } = this.props;
-		const node = $(this.node);
+	const onMore = () => {
+		const node = $(nodeRef.current);
 		const view = getView();
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
@@ -231,26 +122,26 @@ const Item = observer(class Item extends React.Component<Props> {
 				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				data: {
-					...this.props,
-					subId: this.getSubId(),
-					load: this.loadData,
+					...props,
+					subId: getSubId(),
+					load: loadData,
 					blockId: block.id,
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,
 					readonly,
-					onCreate: this.onCreate,
+					onCreate: onCreate,
 				}
 			});
 		});
 	};
 
-	onContext (e: any) {
-		const node = $(this.node);
+	const onContextHandler = () => {
+		const node = $(nodeRef.current);
 		const options = [
 			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
 		] as I.Option[];
 
-		if (this.canCreate()) {
+		if (canCreateValue) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
 		};
 
@@ -265,22 +156,22 @@ const Item = observer(class Item extends React.Component<Props> {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'open': this.onOpenDate(); break;
-						case 'add': this.onCreate(e); break;
+						case 'open': onOpenDate(); break;
+						case 'add': onCreate(e); break;
 					};
 				},
 			}
 		});
 	};
 
-	onCreate (e: any) {
-		if (!this.canCreate()) {
+	const onCreate = (e: any) => {
+		if (!canCreateValue) {
 			return;
 		};
 
 		e?.stopPropagation();
 
-		const { d, m, y, getView, onCreate } = this.props;
+		const { d, m, y, getView, onCreate } = props;
 		const view = getView();
 		const details = {};
 
@@ -288,17 +179,14 @@ const Item = observer(class Item extends React.Component<Props> {
 		onCreate(details);
 	};
 
-	onOpenDate () {
-		const { d, m, y, getView } = this.props;
+	const onOpenDate = () => {
+		const { d, m, y, getView } = props;
 		const view = getView();
 
 		U.Object.openDateByTimestamp(view.groupRelationKey, U.Date.timestamp(y, m, d, 12, 0, 0), 'config');
 	};
 
-	canCreate (): boolean {
-		const { isToday, getView, isAllowedObject } = this.props;
-		const view = getView();
-
+	const canCreate = (): boolean => {
 		if (!view) {
 			return false;
 		};
@@ -307,16 +195,17 @@ const Item = observer(class Item extends React.Component<Props> {
 		return groupRelation && (!groupRelation.isReadonlyValue || isToday) && isAllowedObject();
 	};
 
-	onDragStart (e: any, item: any) {
-		const dragProvider = S.Common.getRef('dragProvider');
-
-		dragProvider?.onDragStart(e, I.DropType.Record, [ item.id ], this);
+	const onDragStart = (e: any, item: any) => {
+		S.Common.getRef('dragProvider')?.onDragStart(e, I.DropType.Record, [ item.id ], {
+			getNode: () => nodeRef.current,
+			onRecordDrop,
+		});
 	};
 
-	onRecordDrop (targetId: string, ids: [], position: I.BlockPosition) {
-		const { getSubId, getView } = this.props;
-		const subId = getSubId();
-		const view = getView();
+	const onRecordDrop = (targetId: string, ids: [], position: I.BlockPosition) => {
+		if (!view) {
+			return;
+		};
 
 		let value = 0;
 
@@ -339,6 +228,95 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 	};
 
-});
+	const canCreateValue = canCreate();
 
-export default Item;
+	let more = null;
+	if (total > LIMIT) {
+		more = (
+			<div className="record more" onClick={onMore}>
+				+{total - LIMIT} {translate('commonMore')} {U.Common.plural(total, translate('pluralObject')).toLowerCase()}
+			</div>
+		);
+	};
+
+	const Item = (item: any) => {
+		const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && U.Object.isTaskLayout(item.layout);
+		const icon = hideIcon ? null : <IconObject id={`item-${item.id}-icon`} object={item} size={16} canEdit={canEdit} />;
+
+		let content = (
+			<>
+				{icon}
+				<ObjectName object={item} onClick={() => onOpen(item)} />
+			</>
+		);
+
+		if (canDrag) {
+			content = (
+				<DropTarget {...props} rootId={rootId} id={item.id} dropType={I.DropType.Record} viewType={view.type}>
+					{content}
+				</DropTarget>
+			);
+		};
+
+		return (
+			
+			<div 
+				id={`record-${item.id}`}
+				className="record" 
+				draggable={canDrag}
+				onContextMenu={e => onContext(e, item.id)}
+				onMouseEnter={e => onMouseEnter(e, item)}
+				onMouseLeave={onMouseLeave}
+				onDragStart={e => onDragStart(e, item)}
+			>
+				{content}
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		load();
+
+		return () => {
+			U.Subscription.destroyList([ subId ]);
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		load,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+			onContextMenu={onContextHandler}
+			onDoubleClick={onCreate}
+		>
+			<div className="head">
+				{canCreateValue ? (
+					<Icon 
+						className="plus withBackground" 
+						tooltipParam={{ text: translate(`commonNewObject`) }} 
+						onClick={onCreate} 
+					/> 
+				) : ''}
+
+				<div className="number" onClick={onOpenDate}>
+					<div className="inner">{d}</div>
+				</div>
+			</div>
+
+			<div className="items">
+				{items.map(item => <Item key={[ y, m, d, item.id ].join('-')} {...item} />)}
+
+				{more}
+
+				<DropTarget {...props} rootId={rootId} id={[ 'empty', y, m, d ].join('-')} isTargetBottom={true} dropType={I.DropType.Record} viewType={view.type} />
+			</div>
+		</div>
+	);
+
+}));
+
+export default CalendarItem;

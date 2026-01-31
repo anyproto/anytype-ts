@@ -1,233 +1,83 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
 const LIMIT_HEIGHT = 6;
 
-const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Menu> {
+const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	filter = '';
-	index: any = null;
-	cache: any = {};
-	items: any[] = [];
-	n = -1;
-	top = 0;
-	offset = 0;
-	timeout = 0;
-	refList: any = null;
-	refFilter: any = null;
+	const { param, close, setActive, onKeyDown, getId, position } = props;
+	const { data } = param;
+	const { type, onChange, filter, onClear, skipIds } = data;
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const listRef = useRef(null);
+	const filterRef = useRef(null);
+	const n = useRef(-1);
+	const top = useRef(0);
+	const offset = useRef(0);
+	const itemsRef = useRef([]);
+	const timeout = useRef(0);
+	const [ dummy, setDummy ] = useState(0);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterClear = this.onFilterClear.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-
-		this.cache = new CellMeasurerCache({
-			defaultHeight: HEIGHT_ITEM,
-			fixedWidth: true,
-		});
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const items = this.getItems(true);
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			if (!item) {
-				return null;
-			};
-
-			const type = S.Record.getTypeById(item.type);
-			const cn = [];
-
-			let object = { ...item, id: item.itemId };
-			let content = null;
-
-			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
-			} else {
-				if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
-					cn.push(item.itemId);
-					object = null;
-				};
-
-				if (item.isHidden) {
-					cn.push('isHidden');
-				};
-				if (item.isBig) {
-					cn.push('isBig');
-				};
-
-				content = (
-					<MenuItemVertical 
-						id={item.id}
-						object={object}
-						icon={item.icon}
-						name={<ObjectName object={item} withPlural={true} />}
-						onMouseEnter={e => this.onOver(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						withDescription={item.isBig}
-						description={type ? type.name : undefined}
-						style={param.style}
-						iconSize={40}
-						isDiv={item.isDiv}
-						className={cn.join(' ')}
-						withPlural={true}
-					/>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		const list = (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={this.loadMoreRows}
-					isRowLoaded={({ index }) => !!this.items[index]}
-					threshold={LIMIT_HEIGHT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={({ index }) => this.getRowHeight(items[index])}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									onScroll={this.onScroll}
-									scrollToAlignment="center"
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
-		);
-
-		return (
-			<div className="wrap">
-				<Filter 
-					ref={ref => this.refFilter = ref} 
-					placeholder={translate('menuBlockLinkFilterPlaceholder')}
-					value={filter}
-					onChange={this.onFilterChange}
-					onClear={this.onFilterClear}
-				/>
-
-				{filter ? list : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-
+	useEffect(() => {
 		if (filter) {
-			this.refFilter.setRange({ from: 0, to: filter.length });
+			filterRef.current.setRange({ from: 0, to: filter.length });
 		};
 
-		this.rebind();
-		this.resize();
-		this.load(true);
-	};
+		rebind();
+		resize();
+		load(true);
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const items = this.getItems(false);
+		return () => {
+			window.clearTimeout(timeout.current);
+			unbind();
+		};
+	}, []);
 
-		if (this.filter != filter) {
-			this.filter = filter;
-			this.top = 0;
-			this.n = -1;
-			this.offset = 0;
-			this.load(true);
-			return;
+	useEffect(() => {
+		if (listRef.current && top.current) {
+			listRef.current.scrollToPosition(top.current);
 		};
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
+		resize();
+		setActive();
+	});
 
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.resize();
-		this.props.setActive();
+	useEffect(() => {
+		top.current = 0;
+		n.current = -1;
+		offset.current = 0;
+		load(true);
+	}, [ filter ]);
+	
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onFilterChange (e: any) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			S.Menu.updateData(this.props.id, { filter: this.refFilter.getValue() });
+	const onFilterChange = (e: any) => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
+			S.Menu.updateData(props.id, { filter: filterRef.current.getValue() });
 		}, J.Constant.delay.keyboard);
 	};
 
-	onFilterClear () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { type, onChange, filter, onClear } = data;
-
+	const onFilterClear = () => {
 		if (type !== null) {
-			if (onClear) {
-				onClear(filter);
-			};
-
-			if (onChange) {
-				onChange(type, '');
-			};
+			onClear?.(filter);
+			onChange?.(type, '');
 		};
 
 		close();
@@ -235,18 +85,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		Preview.previewHide();
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-
+	const getSections = () => {
 		if (!filter) {
 			return [];
 		};
 
-		const encoded = filter.replace(/\s/g, '%20');
-		const urls = U.Common.getUrlsFromText(encoded);
-		const items = [].concat(this.items);
+		const encoded = data.filter.replace(/\s/g, '%20');
+		const urls = U.String.getUrlsFromText(encoded);
+		const items = [].concat(itemsRef.current);
 		const sections: any[] = [];
 
 		if (urls.length) {
@@ -259,22 +105,22 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
 			] 
 		});
 
 		return U.Menu.sectionsMap(sections);
 	};
 
-	getItems (withSections: boolean) {
-		const sections = this.getSections();
+	const getItems = () => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
 			if (items.length && section.children.length) {
 				items.push({ isDiv: true });
 			};
-			if (withSections && section.name) {
+			if (section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
@@ -282,18 +128,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return items;
 	};
 	
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }: any) => {
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
+			offset.current += J.Constant.limit.menuRecords;
+			load(false, resolve);
 		});
 	};
 
-	load (clear: boolean, callBack?: (message: any) => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { skipIds, filter } = data;
-
+	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const filters: any[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
@@ -309,8 +151,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		};
 
 		if (!filter) {
-			this.items = [];
-			this.forceUpdate();
+			itemsRef.current = [];
+			setDummy(dummy + 1);
 			return;
 		};
 
@@ -318,96 +160,200 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			filters,
 			sorts,
 			fullText: filter,
-			offset: this.offset,
+			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			if (callBack) {
-				callBack(null);
-			};
+			callBack?.(null);
 
 			if (clear) {
-				this.items = [];
+				itemsRef.current = [];
 			};
 
-			this.items = this.items.concat(message.records || []);
-			this.forceUpdate();
+			itemsRef.current = itemsRef.current.concat(message.records || []);
+			setDummy(dummy + 1);
 		});
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (!item) {
-			this.props.close();
+			close();
 			return;
 		};
 
-		const { param, close } = this.props;
-		const { data } = param;
-		const { filter, onChange } = data;
-
 		if (item.itemId == 'link') {
-			if (item.url && onChange) {
-				onChange(I.MarkType.Link, item.url.value);
+			if (item.url) {
+				onChange?.(I.MarkType.Link, item.url.value);
 			};
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
-				if (onChange) {
-					onChange(I.MarkType.Object, message.targetId);
-				};
+				onChange?.(I.MarkType.Object, message.targetId);
 			});
 		} else {
-			if (onChange) {
-				onChange(I.MarkType.Object, item.itemId);
-			};
+			onChange?.(I.MarkType.Object, item.itemId);
 		};
 
 		close();
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }: any) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			top.current = scrollTop;
 		};
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		let h = HEIGHT_ITEM;
-		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
 
-	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const items = this.getItems(true);
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;
 		if (filter) {
-			height += items.reduce((res: number, item: any) => res + this.getRowHeight(item), offset);
+			height += items.reduce((res: number, item: any) => res + getRowHeight(item), offset);
 		};
 
 		obj.css({ height }).toggleClass('initial', !filter);
 		position();
 	};
+
+	const items = getItems();
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+		if (!item) {
+			return null;
+		};
+
+		const type = S.Record.getTypeById(item.type);
+		const cn = [];
+
+		let object = { ...item, id: item.itemId };
+		let content = null;
+
+		if (item.isSection) {
+			content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+		} else {
+			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
+				cn.push(item.itemId);
+				object = null;
+			};
+
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+			if (item.isBig) {
+				cn.push('isBig');
+			};
+
+			content = (
+				<MenuItemVertical 
+					id={item.id}
+					object={object}
+					icon={item.icon}
+					name={<ObjectName object={item} withPlural={true} />}
+					onMouseEnter={e => onOver(e, item)} 
+					onClick={e => onClick(e, item)}
+					withDescription={item.isBig}
+					description={type ? type.name : undefined}
+					style={param.style}
+					iconSize={40}
+					isDiv={item.isDiv}
+					className={cn.join(' ')}
+					withPlural={true}
+				/>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	const list = (
+		<div className="items">
+			<InfiniteLoader
+				rowCount={items.length}
+				loadMoreRows={loadMoreRows}
+				isRowLoaded={({ index }) => !!items[index]}
+				threshold={LIMIT_HEIGHT}
+			>
+				{({ onRowsRendered }) => (
+					<AutoSizer className="scrollArea">
+						{({ width, height }) => (
+							<List
+								ref={listRef}
+								width={width}
+								height={height}
+								deferredMeasurmentCache={cache.current}
+								rowCount={items.length}
+								rowHeight={({ index }) => getRowHeight(items[index])}
+								rowRenderer={rowRenderer}
+								onRowsRendered={onRowsRendered}
+								overscanRowCount={10}
+								onScroll={onScroll}
+								scrollToAlignment="center"
+							/>
+						)}
+					</AutoSizer>
+				)}
+			</InfiniteLoader>
+		</div>
+	);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div className="wrap">
+			<Filter 
+				ref={filterRef} 
+				placeholder={translate('menuBlockLinkFilterPlaceholder')}
+				value={filter}
+				onChange={onFilterChange}
+				onClear={onFilterClear}
+			/>
+
+			{filter ? list : ''}
+		</div>
+	);
 	
-});
+}));
 
 export default MenuBlockLink;

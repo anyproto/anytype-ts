@@ -17,9 +17,14 @@ const DEFAULT_SHORTCUTS = {
 	zoomIn: [ 'CmdOrCtrl', '=' ],
 	zoomOut: [ 'CmdOrCtrl', '-' ],
 	zoomReset: [ 'CmdOrCtrl', '0' ],
-	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
+	toggleFullScreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
 	shortcut: [ 'Ctrl', 'Space' ],
 	close: [ 'CmdOrCtrl', 'Q' ],
+	createSpace: [],
+	newTab: [ 'CmdOrCtrl', 'T' ],
+	closeTab: [ 'CmdOrCtrl', 'W' ],
+	nextTab: [ 'CmdOrCtrl', 'Alt', 'Right' ],
+	prevTab: [ 'CmdOrCtrl', 'Alt', 'Left' ],
 };
 
 class MenuManager {
@@ -46,24 +51,33 @@ class MenuManager {
 
 		keys = keys || [];
 
+		const arrowKeys = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
 		const ret = [];
 		for (const key of keys) {
-			if ((key == 'ctrl') || (key == 'cmd')) {
+			const keyLower = key.toLowerCase();
+			if ((keyLower == 'ctrl') || (keyLower == 'cmd')) {
 				ret.push('CmdOrCtrl');
 			} else
-			if (key == 'shift') {
+			if (keyLower == 'shift') {
 				ret.push('Shift');
 			} else
-			if (key == 'alt') {
+			if (keyLower == 'alt') {
 				ret.push('Alt');
-			} else 
+			} else
 			if (key == '+') {
 				ret.push('Plus');
+			} else
+			if (arrowKeys[keyLower]) {
+				ret.push(arrowKeys[keyLower]);
 			} else {
 				ret.push(key.toUpperCase());
 			};
 		};
 		return ret.join('+');
+	};
+
+	getView () {
+		return Util.getActiveView(this.win);
 	};
 
 	initMenu () {
@@ -99,14 +113,14 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
 				]
 			},
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
 					{ label: Util.translate('commonNewObject'), accelerator: this.getAccelerator('createObject'), click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
-					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
+					{ label: Util.translate('commonNewSpace'), accelerator: this.getAccelerator('createSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
 
@@ -151,7 +165,19 @@ class MenuManager {
 
 					Separator,
 
-					{ role: 'close', label: Util.translate('electronMenuClose') },
+					{
+						label: Util.translate('electronMenuCloseTab'),
+						accelerator: this.getAccelerator('closeTab'),
+						click: () => {
+							WindowManager.closeActiveTab(this.win);
+						},
+					},
+					{
+						label: Util.translate('electronMenuClose'),
+						click: () => {
+							Api.close(this.win);
+						},
+					},
 				]
 			},
 			{
@@ -161,7 +187,7 @@ class MenuManager {
 						label: Util.translate('electronMenuUndo'), accelerator: this.getAccelerator('undo'),
 						click: () => { 
 							if (this.win) {
-								this.win.webContents.undo();
+								this.getView().webContents.undo();
 								Util.send(this.win, 'commandGlobal', 'undo');
 							};
 						}
@@ -170,7 +196,7 @@ class MenuManager {
 						label: Util.translate('electronMenuRedo'), accelerator: this.getAccelerator('redo'),
 						click: () => {
 							if (this.win) {
-								this.win.webContents.redo();
+								this.getView().webContents.redo();
 								Util.send(this.win, 'commandGlobal', 'redo');
 							};
 						}
@@ -196,7 +222,7 @@ class MenuManager {
 						label: Util.translate('electronMenuSelectAll'), accelerator: this.getAccelerator('selectAll'),
 						click: () => {
 							if (this.win) {
-								this.win.webContents.selectAll();
+								this.getView().webContents.selectAll();
 								Util.send(this.win, 'commandEditor', 'selectAll');
 							};
 						}
@@ -212,18 +238,31 @@ class MenuManager {
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => {
+						const activeView = Util.getActiveView(this.win);
+
+						WindowManager.createTab(this.win, activeView?.data);
+					}
+				},
+					{ label: Util.translate('electronMenuPrevTab'), accelerator: this.getAccelerator('prevTab'), click: () => WindowManager.prevTab(this.win) },
+					{ label: Util.translate('electronMenuNextTab'), accelerator: this.getAccelerator('nextTab'), click: () => WindowManager.nextTab(this.win) },
 
 					Separator,
 
 					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
-					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
-					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.getView().webContents.getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.getView().webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
-						click: () => this.win.setFullScreen(!this.win.isFullScreen())
+						label: Util.translate('electronMenuFullScreen'), accelerator: this.getAccelerator('toggleFullScreen'), type: 'checkbox', checked: this.win.isFullScreen(),
+						click: () => Api.toggleFullScreen(this.win),
 					},
-					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
+					{ 
+						label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => {
+							this.win.reload();
+							this.getView().webContents.reload();
+						}, 
+					}
 				]
 			},
 			{
@@ -280,9 +319,10 @@ class MenuManager {
 				click: () => {
 					config.debug[i] = !config.debug[i];
 					Api.setConfig(this.win, { debug: config.debug });
-					
+
 					if ([ 'hiddenObject' ].includes(i)) {
 						this.win.reload();
+						this.getView().webContents.reload();
 					};
 				}
 			});
@@ -342,7 +382,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
+				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.getView().webContents.toggleDevTools() },
 			]
 		});
 
@@ -366,19 +406,10 @@ class MenuManager {
 
 				{
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
-					click: () => { 
+					click: () => {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
-					}
-				},
-
-				Separator,
-
-				{
-					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
-					click: () => {
-						Api.setConfig(this.win, { testPayment: !config.testPayment });
-						this.win.reload();
+						this.getView().webContents.reload();
 					}
 				},
 
@@ -395,7 +426,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: 'Relaunch', click: () => Api.exit(this.win, true) },
+				{ label: 'Relaunch', click: () => Api.exit(this.win, '', true) },
 			]
 		};
 
@@ -438,7 +469,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
@@ -481,7 +512,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuAccountSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings(''); 
+					this.openSettings('account'); 
 				}
 			},
 			{ 
@@ -540,8 +571,8 @@ class MenuManager {
 	openSettings (page) {
 		const Api = require('./api.js');
 
-		if (Api.isPinChecked) {
-			Util.send(this.win, 'route', '/main/settings/' + page);
+		if (!Api.hasPinSet || Api.isPinChecked) {
+			Util.send(this.win, 'route', `/main/settings/${page}`);
 		};
 	};
 
@@ -558,10 +589,10 @@ class MenuManager {
 		let icon = '';
 
 		if (is.windows) {
-			icon = path.join('icons', '32x32.png');
+			icon = path.join('icons', '256x256.ico');
 		} else 
 		if (is.linux) {
-			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;
+			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP || '';
 			const panelAlwaysDark = env.includes('GNOME') || (env == 'Unity'); // for GNOME shell env, including ubuntu -- the panel is always dark
 
             if (panelAlwaysDark) {

@@ -1,119 +1,51 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
 
-const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
+const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	node = null;
-	n = -1;
-	menuContext = null;
+	const { id, param, onKeyDown, setActive, getId, getSize } = props;
+	const { data, className, classNameWrap } = param;
+	const { storageKey } = data;
+	const { graphDepth } = J.Constant.limit;
+	const nodeRef = useRef(null);
+	const n = useRef(-1);
+	const menuContext = useRef(null);
+	const [ dummy, setDummy ] = useState(0);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
+	const snaps = [];
+
+	for (let i = 1; i <= graphDepth; i++) {
+		snaps.push(i / graphDepth);
 	};
 
-	render () {
-		const { graphDepth } = J.Constant.limit;
-		const values = this.getValues();
-		const sections = this.getSections();
-		const snaps = [];
+	const rebind = () => {
+		unbind();
 
-		for (let i = 1; i <= graphDepth; i++) {
-			snaps.push(i / graphDepth);
-		};
-
-		const Item = (item: any) => {
-			if (item.withDrag) {
-				return (
-					<div id={`item-${item.id}`} className="item withDrag">
-						<div className="flex">
-							<div className="name">{item.name}</div>
-							<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
-						</div>
-						<div className="drag">
-							<DragHorizontal 
-								value={values[item.id] / graphDepth} 
-								snaps={snaps}
-								strictSnap={true}
-								onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
-								onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
-							/>
-						</div>
-					</div>
-				);
-			} else {
-				return (
-					<MenuItemVertical 
-						{...item} 
-						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						onClick={e => this.onSwitch(item.id)} 
-					/>
-				);
-			};
-		};
-
-		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((item: any, i: number) => <Item key={i} {...item} />)}
-				</div>
-			</div>
-		);
-
-		return (
-			<div ref={ref => this.node = ref}>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.rebind();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-		S.Menu.closeAll(J.Menu.graphSettings);
-	};
-
-	rebind () {
-		this.unbind();
-
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item);
-			this.onOver(e, item);
+			setActive(item);
+			onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.graphSettings);
 			return;
 		};
 
-		const { param, id, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const options = this.getTypeOptions();
+		const options = getTypeOptions();
 		const width = getSize().width;
 
 		let menuId = '';
@@ -127,8 +59,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			offsetX: width,
 			className,
 			classNameWrap,
-			onOpen: context => this.menuContext = context,
-			rebind: this.rebind,
+			onOpen: context => menuContext.current = context,
+			rebind,
 			parentId: id,
 			data: {
 				...data,
@@ -153,44 +85,45 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		};
 	};
 
-	onDragMove (id: string, v: number) {
-		const node = $(this.node);
+	const onDragMove = (id: string, v: number) => {
+		const node = $(nodeRef.current);
 		const value = node.find(`#value-${id}`);
 
 		if (id == 'depth') {
-			v = this.getDepth(v);
+			v = getDepth(v);
 		};
 
 		value.text(v);	
 	};
 
-	onDragEnd (id: string, v: number) {
-		const values = this.getValues();
+	const onDragEnd = (id: string, v: number) => {
+		const values = getValues();
 
 		if (id == 'depth') {
-			values[id] = this.getDepth(v);
+			values[id] = getDepth(v);
 		} else {
 			values[id] = v;
 		};
 
 		analytics.event('GraphSettings', { id, count: values[id] });
-		this.save(values);
+		save(values);
 	};
 
-	getTypeOptions () {
+	const getTypeOptions = () => {
 		const layouts = U.Object.getGraphSkipLayouts();
-		const values = this.getValues();
+		const values = getValues();
 		const onSwitch = (id: string, v: boolean) => {
 			if (v) {
 				values.filterTypes = values.filterTypes.filter(it => it != id);
 			} else {
 				values.filterTypes.push(id);
 			};
-			this.save(values);
-			this.menuContext?.ref?.updateOptions(this.getTypeOptions());
+
+			save(values);
+			menuContext.current?.getChildRef()?.updateOptions(getTypeOptions());
 		};
 
-		return S.Record.checkHiddenObjects(S.Record.getTypes()).
+		return S.Record.getTypes().
 			filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey)).
 			map(it => ({ 
 				...it,
@@ -201,10 +134,10 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 			}));
 	};
 
-	onSwitch (id: string) {
-		const values = this.getValues();
+	const onSwitch = (id: string) => {
+		const values = getValues();
 		values[id] = !values[id];
-		this.save(values);
+		save(values);
 
 		analytics.event('GraphSettings', { id });
 
@@ -213,33 +146,33 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		};
 	};
 
-	save (values: I.GraphSettings) {
-		S.Common.graphSet(this.getKey(), values);
-		this.forceUpdate();
+	const save = (values: I.GraphSettings) => {
+		S.Common.graphSet(storageKey, values);
+		setDummy(dummy + 1);
 	};
 
-	getDepth (v: number) {
+	const getDepth = (v: number) => {
 		return Math.max(1, Math.floor(v * J.Constant.limit.graphDepth));
 	};
 
-	getKey () {
-		return String(this.props.param.data.storageKey);
+	const getKey = () => {
+		return String(props.param.data.storageKey);
 	};
 
-	getValues () {
-		const ret: any = S.Common.getGraph(this.getKey());
+	const getValues = () => {
+		const ret: any = S.Common.getGraph(getKey());
 
 		ret.filterTypes = ret.filterTypes || [];
 
 		return ret;
 	};
 
-	getSections (): any[] {
+	const getSections = (): any[] => {
 		const { config } = S.Common;
-		const { param } = this.props;
+		const { param } = props;
 		const { data } = param;
 		const { allowLocal } = data;
-		const values = this.getValues();
+		const values = getValues();
 
 		let sections: any[] = [
 			{ 
@@ -284,7 +217,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 				if (!c.arrow) {
 					c.withSwitch = true;
 					c.switchValue = values[c.id];
-					c.onSwitch = () => this.onSwitch(c.id);
+					c.onSwitch = () => onSwitch(c.id);
 				};
 				return c;
 			});
@@ -294,12 +227,10 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		return sections;
 	};
 
-	getItems (withSections: boolean) {
-		const sections = this.getSections();
-
+	const getItems = () => {
 		let items = [];
 		for (const section of sections) {
-			if (withSections) {
+			if (section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
@@ -308,6 +239,77 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		return items;
 	};
 
-});
+	const values = getValues();
+	const sections = getSections();
+
+	const Item = (item: any) => {
+		if (item.withDrag) {
+			return (
+				<div id={`item-${item.id}`} className="item withDrag">
+					<div className="flex">
+						<div className="name">{item.name}</div>
+						<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
+					</div>
+					<div className="drag">
+						<DragHorizontal 
+							value={values[item.id] / graphDepth} 
+							snaps={snaps}
+							strictSnap={true}
+							onMove={(e: any, v: number) => onDragMove(item.id, v)}
+							onEnd={(e: any, v: number) => onDragEnd(item.id, v)} 
+						/>
+					</div>
+				</div>
+			);
+		} else {
+			return (
+				<MenuItemVertical 
+					{...item} 
+					onMouseEnter={e => onMouseEnter(e, item)} 
+					onClick={e => onSwitch(item.id)} 
+				/>
+			);
+		};
+	};
+
+	const Section = (item: any) => (
+		<div className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((item: any, i: number) => <Item key={i} {...item} />)}
+			</div>
+		</div>
+	);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		setActive();
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onOver,
+	}), []);
+
+	return (
+		<div ref={nodeRef}>
+			{sections.map((item: any, i: number) => (
+				<Section key={i} {...item} />
+			))}
+		</div>
+	);
+
+}));
 
 export default MenuGraphSettings;

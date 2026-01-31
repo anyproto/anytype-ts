@@ -15,8 +15,8 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 			return;
 		};
 
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(Dataview.filterMapper);
 		const object = getObject();
+		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId: object.id }));
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 
@@ -25,8 +25,6 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 				edges: message.edges,
 				nodes: message.nodes.map(it => S.Detail.mapper(it))
 			});
-
-			graphRef.current?.init();
 		});
 	};
 
@@ -35,7 +33,12 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	};
 
 	useEffect(() => load(), []);
-	useEffect(() => resize(), [ data ]);
+
+	useEffect(() => {
+		resize();
+		graphRef.current?.init();
+	}, [ data ]);
+
 	useImperativeHandle(ref, () => ({}));
 
 	return (

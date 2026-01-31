@@ -2,6 +2,19 @@ import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';
 
+/**
+ * Focus manages the focus state and text selection within the application.
+ *
+ * Key responsibilities:
+ * - Tracking which block/element is currently focused
+ * - Managing text selection ranges within focusable elements
+ * - Applying focus state to the DOM
+ * - Scrolling focused elements into view
+ * - Backup/restore functionality for temporary focus changes
+ *
+ * The focus state includes both the focused element ID and the
+ * text selection range within that element.
+ */
 class Focus {
 	
 	state: I.FocusState = { 
@@ -38,6 +51,14 @@ class Focus {
 		return this;
 	};
 
+	setWithTimeout (id: string, range: I.TextRange, delay: number): Focus {
+		window.setTimeout(() => {
+			this.set(id, range);
+			this.apply();
+		}, delay);
+		return this;
+	};
+
 	/**
 	 * Restores the focus state from backup.
 	 */
@@ -60,7 +81,7 @@ class Focus {
 	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
-		const el = $('.focusable.c' + focused);
+		const el = $(`.focusable.c${focused}`);
 		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
@@ -86,7 +107,7 @@ class Focus {
 
 		$('.focusable.isFocused').removeClass('isFocused');
 
-		const node = $('.focusable.c' + focused);
+		const node = $(`.focusable.c${focused}`);
 		if (!node.length) {
 			return;
 		};
@@ -97,7 +118,15 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => (el as HTMLInputElement).setSelectionRange(range.from, range.to));
+			window.setTimeout(() => {
+				const input = el as HTMLInputElement;
+				input.setSelectionRange(range.from, range.to);
+
+				const style = window.getComputedStyle(input);
+				if (style.direction === 'rtl') {
+					input.scrollLeft = 0;
+				};
+			});
 		} else
 		if (node.hasClass('editable')) {
 			keyboard.setFocus(true);
@@ -121,21 +150,27 @@ class Focus {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ch = container.height();
-		const no = node.offset().top;
-		const hh = J.Size.header;
-		const o = J.Size.lastBlock + hh;
-		const st = container.scrollTop();
-		const y = no - container.offset().top + st;
-
-		if ((y >= st) && (y <= st + ch - o)) {
+		let rect = U.Common.getSelectionRect();
+		if (!rect) {
+			rect = node.get(0).getBoundingClientRect();
+		};
+		if (!rect) {
 			return;
 		};
 
-		container.scrollTop(Math.max(y, ch - o) - ch + o);
+		const container = U.Common.getScrollContainer(isPopup);
+		const ch = container.height();
+		const st = container.scrollTop();
+		const { header } = J.Size;
+		const y = rect.top + st - container.offset().top;
+		const top = st + header;
+		const bottom = st + ch;
+
+		if ((y < top) || (y > bottom)) {
+			container.scrollTop(Math.max(0, y - ch / 2));
+		};
 	};
 
 };
 
- export const focus: Focus = new Focus();
+export const focus: Focus = new Focus();

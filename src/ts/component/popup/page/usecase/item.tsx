@@ -49,12 +49,9 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	const getSpaceOptions = (): any[] => {
 		let list: any[] = [
-			{ name: translate('popupUsecaseMenuLabel'), isSection: true }
+			{ name: translate('popupUsecaseMenuLabel'), isSection: true },
+			{ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true }
 		];
-
-		if (U.Space.canCreateSpace()) {
-			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true });
-		};
 
 		list = list.concat(U.Space.getList()
 			.filter(it => U.Space.canMyParticipantWrite(it.targetSpaceId))
@@ -138,7 +135,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			<div className="titleWrap">
 				<div className="side left">
 					<Title text={object.title} />
-					<Label text={U.Common.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
+					<Label text={U.String.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
 				</div>
 				<div className="side right">
 					<Button ref={refButton} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={onMenu} />
@@ -184,7 +181,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 							<Tag key={i} text={name} />
 						))}
 					</div>
-					<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(S.Common.dateFormat, U.Date.now()))} />
+					<Label text={U.String.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(S.Common.dateFormat, U.Date.now()))} />
 					<Label text={U.File.size(object.size)} />
 				</div>
 			</div>

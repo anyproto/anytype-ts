@@ -34,12 +34,14 @@ interface EditableRefProps {
 	placeholderHide: () => void;
 	placeholderShow: () => void;
 	setFocus: () => void;
+	setBlur: () => void;
 	setValue: (html: string) => void;
 	getTextValue: () => string;
 	getHtmlValue: () => string;
 	getRange: () => I.TextRange;
 	setRange: (range: I.TextRange) => void;
 	getNode: () => JQuery;
+	isFocused: () => boolean;
 };
 
 const Editable = forwardRef<EditableRefProps, Props>(({
@@ -70,6 +72,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const nodeRef = useRef(null);
 	const placeholderRef = useRef(null);
 	const editableRef = useRef(null);
+	const isFocused = useRef(false);
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
@@ -98,8 +101,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		raf(() => setRangeHandler({ from: l, to: l }));
 	};
 
+	const setBlur = () => {
+		U.Common.clearSelection();
+	};
+
 	const setValue = (html: string) => {
-		editableRef.current.innerHTML = U.Common.sanitize(html, true);
+		editableRef.current.innerHTML = U.String.sanitize(html, true);
 	};
 
 	const getTextValue = (): string => {
@@ -123,7 +130,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setRangeHandler = (range: I.TextRange) => {
-		if (!range) {
+		if (!range || !editableRef.current) {
 			return;
 		};
 
@@ -185,6 +192,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const onFocusHandler = (e: any) => {
 		keyboard.setFocus(true);
+		isFocused.current = true;
 
 		if (onFocus) {
 			onFocus(e);
@@ -193,6 +201,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const onBlurHandler = (e: any) => {
 		keyboard.setFocus(false);
+		isFocused.current = false;
 
 		if (onBlur) {
 			onBlur(e);
@@ -268,12 +277,14 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		placeholderHide,
 		placeholderShow,
 		setFocus,
+		setBlur,
 		setValue,
 		getTextValue,
 		getHtmlValue,
 		getRange: getRangeHandler,
 		setRange: setRangeHandler,
 		getNode: () => $(nodeRef.current),
+		isFocused: () => isFocused.current,
 	}), []);
 
 	return (

@@ -25,6 +25,20 @@ const Pager: FC<Props> = ({
 	const pages = Math.ceil(total / limit);
 	const page = Math.ceil(offset / limit) + 1;
 	const cn = [ 'pager' ];
+	const cnl = [ 'arrow', 'left' ];
+	const cnel = [ 'arrow', 'left', 'end' ];
+	const cnr = [ 'arrow', 'right' ];
+	const cner = [ 'arrow', 'right', 'end' ];
+
+	if (page == 1) {
+		cnl.push('disabled');
+		cnel.push('disabled');
+	};
+
+	if (page == pages) {
+		cnr.push('disabled');
+		cner.push('disabled');
+	};
 
 	if (isShort) {
 		cn.push('isShort');
@@ -47,11 +61,19 @@ const Pager: FC<Props> = ({
 		items.push({ id: i });
 	};
 
-	const Item = (item) => (
-		<div className={'pageItem ' + (item.id == page ? 'active' : '')} onClick={() => onChangeHandler(item.id)}>
-			{item.id}
-		</div>
-	);
+	const Item = (item) => {
+		const cn = [ 'pageItem' ];
+
+		if (item.id == page) {
+			cn.push('active');
+		};
+
+		return (
+			<div className={cn.join(' ')} onClick={() => onChangeHandler(item.id)}>
+				{item.id}
+			</div>
+		);
+	};
 
 	const onChangeHandler = (page: number) => {
 		const pages = Math.ceil(total / limit);
@@ -92,39 +114,24 @@ const Pager: FC<Props> = ({
 		);
 	};
 	
-	if (items.length > 1) {
-		return (
-			<div className={cn.join(' ')}>
-				{isShort ? (
-					<Icon 
-						className={[ 'arrow', 'end', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} 
-						onClick={() => onChangeHandler(1)} 
-					/> 
-				) : ''}
-
-				<Icon 
-					className={[ 'arrow', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} 
-					onClick={() => onChangeHandler(page - 1)} 
-				/>
-				
-				{startPage}
-				{list}
-				{endPage}
-
-				<Icon 
-					className={[ 'arrow', 'right', (page == pages ? 'disabled' : '') ].join(' ')} 
-					onClick={() => onChangeHandler(page + 1)} 
-				/>
-
-				{isShort ? (
-					<Icon className={[ 'arrow', 'end', 'right', (page == pages ? 'disabled' : '') ].join(' ')} 
-					onClick={() => onChangeHandler(pages)} />
-				) : ''}
-			</div>
-		);
-	} else {
+	if (items.length <= 1) {
 		return null;
 	};
+
+	return (
+		<div className={cn.join(' ')}>
+			{isShort ? <Icon className={cnel.join(' ')} onClick={() => onChangeHandler(1)} /> : ''}
+			<Icon className={cnl.join(' ')} onClick={() => onChangeHandler(page - 1)} />
+			
+			{startPage}
+			{list}
+			{endPage}
+
+			<Icon className={cnr.join(' ')} onClick={() => onChangeHandler(page + 1)} />
+			{isShort ? <Icon className={cner.join(' ')} onClick={() => onChangeHandler(pages)} /> : ''}
+		</div>
+	);
+
 };
 
 export default Pager;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
@@ -8,139 +9,47 @@ import Card from './card';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
+	recordIdx?: number;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	recordIdx?: number;
 };
 
-const Column = observer(class Column extends React.Component<Props> {
+interface RefProps {
+	getItems: () => any[];
+};
 
-	node: any = null;
-	cache: any = {};
-	width = 0;
-	columnWidth = 0;
-	columnCount = 0;
-	offset = 0;
+const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	constructor (props: Props) {
-		super(props);
+	const { 
+		id, rootId, block, value, isCollection, getSubId, getView, getLimit, onDragStartColumn, getTarget, onRefRecord, applyObjectOrder, 
+		getSearchIds, getKeys, onRecordAdd,
+	} = props;
+	const view = getView();
+	const { coverRelationKey, hideIcon } = view;
+	const target = getTarget();
+	const subId = getSubId();
+	const { total } = S.Record.getMeta(subId, '');
+	const limit = getLimit();
+	const head = {};
+	const cn = [ 'column' ];
+	const cnbg = [];
+	const group = S.Record.getGroup(rootId, block.id, id);
+	const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
+	const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
+	const isAllowedObject = props.isAllowedObject();
+	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
+	const nodeRef = useRef(null);
+	const offset = useRef(0);
 
-		this.onLoadMore = this.onLoadMore.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.getCoverObject = this.getCoverObject.bind(this);
+	if (view.groupBackgroundColors) {
+		cn.push('withColor');
+		cnbg.push(`bgColor bgColor-${orderGroup.bgColor || group.bgColor || 'grey'}`);
 	};
 
-	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget, onRefRecord } = this.props;
-		const view = getView();
-		const { coverRelationKey, hideIcon } = view;
-		const target = getTarget();
-		const subId = getSubId();
-		const items = this.getItems();
-		const { total } = S.Record.getMeta(subId, '');
-		const limit = getLimit();
-		const head = {};
-		const cn = [ 'column' ];
-		const cnbg = [];
-		const group = S.Record.getGroup(rootId, block.id, id);
-		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
-		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
-		const isAllowedObject = this.props.isAllowedObject();
-		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
+	head[view.groupRelationKey] = value;
 
-		if (view.groupBackgroundColors) {
-			cn.push('withColor');
-			cnbg.push('bgColor bgColor-' + (orderGroup.bgColor || group.bgColor || 'grey'));
-		};
-
-		head[view.groupRelationKey] = value;
-
-		// Subscriptions
-		items.forEach((item: any) => {
-			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
-		});
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				id={`column-${id}`} 
-				className={cn.join(' ')}
-				{...U.Common.dataProps({ id })}
-			>
-				<div id={`column-${id}-head`} className="head">
-					<div className="sides">
-						<div 
-							className="side left"
-							draggable={true}
-							onDragStart={e => onDragStartColumn(e, id)}
-							onClick={this.onMore}
-						>
-							<Cell 
-								id={`board-head-${id}`} 
-								rootId={rootId}
-								subId={subId}
-								block={block}
-								relationKey={view.groupRelationKey} 
-								viewType={I.ViewType.Board}
-								getRecord={() => head}
-								readonly={true} 
-								arrayLimit={4}
-								withName={true}
-								placeholder={translate('commonUncategorized')}
-							/>
-						</div>
-
-						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={this.onMore} />
-							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => this.onAdd(e, -1)} /> : ''}
-						</div>
-					</div>
-
-					<div className={cnbg.join(' ')} />
-				</div>
-
-				<div className="body">
-					<div className="bg">
-						{items.map((item: any, i: number) => (
-							<Card
-								ref={ref => onRefRecord(ref, item.id)}
-								key={[ 'board', view.id, id, item.id ].join('-')}
-								{...this.props}
-								id={item.id}
-								groupId={id}
-								getRecord={() => item}
-								getCoverObject={this.getCoverObject}
-								recordIdx={i}
-							/>
-						))}
-
-						{limit + this.offset < total ? (
-							<LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} />
-						): ''}
-
-						{isAllowedObject ? (
-							<div id={`record-${id}-add`} className="card add" onClick={e => this.onAdd(e, 1)}>
-								<Icon className="plus" />
-							</div>
-						) : ''}
-
-						<div className={cnbg.join(' ')} />
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.load(true);
-	};
-
-	load (clear: boolean) {
-		const { id, block, isCollection, value, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
-		const object = getTarget();
-		const view = getView();
+	const load = (clear: boolean) => {
 		if (!view) {
 			return;
 		};
@@ -153,7 +62,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == id));
 		const objectIds = el ? el.objectIds || [] : [];
 		const subId = getSubId();
-		const limit = getLimit() + this.offset;
+		const limit = getLimit() + offset.current;
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
@@ -170,37 +79,30 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		if (clear) {
-			S.Record.recordsClear(subId, '');
+			S.Record.recordsSet(subId, '', []);
 		};
 
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(Dataview.filterMapper),
-				sorts: sorts.map(Dataview.filterMapper),
+				filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => Dataview.sortMapper(it)),
 				keys: getKeys(view.id),
-				sources: object.setOf || [],
+				sources: target.setOf || [],
 				limit,
-				ignoreHidden: true,
-				ignoreDeleted: true,
-				collectionId: (isCollection ? object.id : ''),
+				collectionId: (isCollection ? target.id : ''),
 			}, () => {
 				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
 			});
 		});
 	};
 
-	getItems () {
-		const { id, getSubId, applyObjectOrder } = this.props;
-
+	const getItems = () => {
 		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
-	getCoverObject (id: string): any {
-		const { getView, getKeys, getSubId } = this.props;
-		const view = getView();
-
-		if (!view.coverRelationKey) {
+	const getCoverObject = (id: string) => {
+		if (!view?.coverRelationKey) {
 			return null;
 		};
 
@@ -210,26 +112,23 @@ const Column = observer(class Column extends React.Component<Props> {
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
-	onLoadMore () {
-		const { getLimit } = this.props;
-
-		this.offset += getLimit();
-		this.load(false);
+	const onLoadMore = () => {
+		offset.current += getLimit();
+		load(false);
 	};
 
-	onAdd (e: any, dir: number) {
+	const onAdd = (e: any, dir: number) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.props.onRecordAdd(e, dir, this.props.id);
+		onRecordAdd(e, dir, id);
 	};
 
-	onMore (e: any) {
+	const onMore = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, id, getView } = this.props;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const element = `#button-${id}-more`;
 
 		S.Menu.open('dataviewGroupEdit', {
@@ -253,6 +152,99 @@ const Column = observer(class Column extends React.Component<Props> {
 		});
 	};
 
-});
+	const items = getItems();
 
-export default Column;
+	// Subscriptions
+	items.forEach((item: any) => {
+		const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
+	});
+
+	useEffect(() => {
+		load(true);
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		getItems,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef} 
+			id={`column-${id}`} 
+			className={cn.join(' ')}
+			{...U.Common.dataProps({ id })}
+		>
+			<AnimatePresence mode="popLayout">
+				<motion.div
+					id={`column-${id}-head`} 
+					className="head"
+					{...U.Common.animationProps({
+						transition: { duration: 0.2, delay: 0.1 },
+					})}
+				>
+					<div className="sides">
+						<div 
+							className="side left"
+							draggable={true}
+							onDragStart={e => onDragStartColumn(e, id)}
+							onClick={onMore}
+						>
+							<Cell 
+								id={`board-head-${id}`} 
+								rootId={rootId}
+								subId={subId}
+								block={block}
+								relationKey={view.groupRelationKey} 
+								viewType={I.ViewType.Board}
+								getRecord={() => head}
+								readonly={true} 
+								arrayLimit={4}
+								withName={true}
+								placeholder={translate('commonUncategorized')}
+							/>
+						</div>
+
+						<div className="side right">
+							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
+							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
+						</div>
+					</div>
+
+					<div className={cnbg.join(' ')} />
+				</motion.div>
+			</AnimatePresence>
+
+			<div className="body">
+				<div className="bg">
+					{items.map((item: any, i: number) => (
+						<Card
+							ref={ref => onRefRecord(ref, item.id)}
+							key={[ 'board', view.id, id, item.id ].join('-')}
+							{...props}
+							id={item.id}
+							groupId={id}
+							getRecord={() => item}
+							getCoverObject={getCoverObject}
+							recordIdx={i}
+						/>
+					))}
+
+					{limit + offset.current < total ? (
+						<LoadMore limit={limit} loaded={items.length} total={total} onClick={onLoadMore} />
+					): ''}
+
+					{isAllowedObject ? (
+						<div id={`record-${id}-add`} className="card add" onClick={e => onAdd(e, 1)}>
+							<Icon className="plus" />
+						</div>
+					) : ''}
+
+					<div className={cnbg.join(' ')} />
+				</div>
+			</div>
+		</div>
+	);
+
+}));
+
+export default BoardColumn;

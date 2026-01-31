@@ -1,14 +1,13 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Button, Filter } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
+import { Icon, Button, Filter, DropTarget } from 'Component';
+import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -20,13 +19,14 @@ interface ControlsRefProps {
 	toggleHoverArea: (v: boolean) => void,
 	resize: () => void,
 	getHeadRef: () => any,
+	getNode: () => any,
 };
 
 const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
-		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick,
 	} = props;
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
@@ -37,10 +37,10 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
-	const hasSources = (isCollection || getSources().length);
 	const isAllowedObject = props.isAllowedObject();
 	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
+	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || isCollection;
+
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -75,7 +75,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const object = getTarget();
 		const sources = getSources();
 
-		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
+		Dataview.duplicateView(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
 			onViewSwitch({ id: message.viewId, type: view.type });
 
 			analytics.event('DuplicateView', {
@@ -125,7 +125,18 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isFilter = component == 'dataviewFilterList';
 		const isSort = component == 'dataviewSort';
 
-		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
+		if (!readonly && isFilter) {
+			onFilterAddClick({
+				classNameWrap: 'fromBlock',
+				element,
+				horizontal: I.MenuDirection.Center,
+				offsetY: 10,
+				noFlipY: true,
+			});
+			return;
+		};
+
+		if (!readonly && (isSort && !view.sorts.length)) {
 			sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				onButton(element, component);
 			});
@@ -246,7 +257,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const view = getView();
 		const type = S.Record.getTypeById(object.type);
 		
-		let viewType = I.ViewType.List;
+		let viewType = I.ViewType.Grid;
 		if (type && (undefined !== type.defaultViewType)) {
 			viewType = type.defaultViewType;
 		};
@@ -368,7 +379,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea(true);
 
 		if (!isInline) {
-			filterRef.current.focus();
+			filterRef.current?.focus();
 		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
@@ -383,10 +394,12 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		win.off('keydown.filter').on('keydown.filter', (e: any) => {
 			e.stopPropagation();
 
-			keyboard.shortcut('escape', e, () => {
-				onFilterHide();
-				win.off('keydown.filter');
-			});
+			if (!isPopup && !keyboard.isPopup()) {
+				keyboard.shortcut('escape', e, () => {
+					onFilterHide();
+					win.off('keydown.filter');
+				});
+			};
 		});
 	};
 
@@ -415,6 +428,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
+			// Force synchronous reflow before measuring widths
+			void node[0]?.offsetWidth;
 		};
 
 		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
@@ -427,8 +442,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
+	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: showFilters },
 		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
 		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
@@ -441,10 +457,16 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			cn.push('on');
 		};
 
+		let inner = null;
+		if ((item.id == 'filter') && filterCnt) {
+			inner = <div className="bullet" />;
+		};
+
 		return (
 			<Icon
 				id={elementId} 
 				className={cn.join(' ')}
+				inner={inner}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>
@@ -471,18 +493,20 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		return (
-			<div 
-				id={elementId} 
-				className={cn.join(' ')} 
-				onClick={() => onViewSet(item)} 
-				onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-			>
-				{item.name || translate('defaultNamePage')}
-			</div>
+			<DropTarget {...props} rootId={rootId} id={item.id} dropType={I.DropType.View} canDropMiddle={true}>
+				<div 
+					id={elementId} 
+					className={cn.join(' ')} 
+					onClick={() => onViewSet(item)} 
+					onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
+					ref={setNodeRef}
+					{...attributes}
+					{...listeners}
+					style={style}
+				>
+					{item.name || translate('defaultNamePage')}
+				</div>
+			</DropTarget>
 		);
 	};
 
@@ -505,6 +529,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea,
 		resize,
 		getHeadRef: () => headRef.current,
+		getNode: () => nodeRef.current,
 	}));
 
 	return (

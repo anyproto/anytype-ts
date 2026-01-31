@@ -1,9 +1,8 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -12,51 +11,53 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const headerRef = useRef(null);
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
-	const chatRef = useRef<any>(null);
-	const match = keyboard.getMatch(isPopup);
+	const chatRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
-	const rootId = props.rootId ? props.rootId : match?.params?.id;
+	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
+
+	const unbind = () => {
+		const events = [ 'keydown', 'scrollToMessage' ];
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+	};
+
+	const rebind = () => {
+		const win = $(window);
+
+		unbind();
+		win.on(`keydown.${ns}`, e => onKeyDown(e));
+		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
+			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
+		});
+	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
-		close();
-
 		idRef.current = rootId;
-
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, [ 'analyticsChatId' ]);
 			if (object.isDeleted) {
 				return;
 			};
 
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
-			chatRef.current?.ref?.forceUpdate();
-			setDummy(dummy + 1);
+			chatRef.current?.getChildNode()?.forceUpdate();
 
-			resize();
+			Onboarding.startChat(isPopup);
+			setDummy(dummy + 1);
+			analytics.event('ScreenChat', { chatId: object.analyticsChatId });
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-
-		if (!id) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == id);
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const isReadonly = () => {
@@ -67,46 +68,43 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const onDragOver = (e: DragEvent) => {
-		chatRef.current?.ref?.onDragOver(e);
+		chatRef.current?.getChildNode()?.onDragOver(e);
 	};
 	
 	const onDragLeave = (e: DragEvent) => {
-		chatRef.current?.ref?.onDragLeave(e);
+		chatRef.current?.getChildNode()?.onDragLeave(e);
 	};
 	
 	const onDrop = (e: React.DragEvent) => {
-		chatRef.current?.ref?.onDrop(e);
+		chatRef.current?.getChildNode()?.onDrop(e);
 	};
 
-	const resize = () => {
-		raf(() => {
-			const node = $(nodeRef.current);
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const scrollWrapper = node.find('#scrollWrapper');
-			const formWrapper = node.find('#formWrapper');
-			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh;
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('chatObject', e, () => {
+			if (!S.Menu.isOpen('searchObject')) {
+				e.preventDefault();
 
-			scrollWrapper.css({ minHeight: mh });
-			chatRef.current?.ref?.resize();
+				chatRef.current?.getChildNode()?.getFormRef()?.onAttachment();
+			};
 		});
 	};
 
 	useEffect(() => {
 		open();
-		resize();
+		rebind();
 
-		return () => close();
+		return () => {
+			close();
+			unbind();
+		};
 	}, []);
 
 	useEffect(() => {
-		open();
-		resize();
-	});
-
-	useImperativeHandle(ref, () => ({
-		resize,
-	}));
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
+	}, [ rootId ]);
 
 	let content = null;
 

@@ -4,7 +4,7 @@
 
     /* Common */
 
-    .menu { background: var(--color-bg-primary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px var(--color-shape-primary) inset; }
+    .menu { box-shadow: 0px 4px 16px rgb(0,0,0,0.2), 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 
     .menu {
         .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg'); }
@@ -21,7 +21,19 @@
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 
         .icon.color {
-            .inner.bgColor-default { background: transparent; }
+			.inner {
+				&.bgColor-default { background: transparent; }
+				&.bgColor-grey { background: #3c3c3c !important; }
+				&.bgColor-yellow { background: #55500d !important; }
+				&.bgColor-orange { background: #5f430a !important; }
+				&.bgColor-red { background: #74321e !important; }
+				&.bgColor-pink { background: #712055 !important; }
+				&.bgColor-purple { background: #542663 !important; }
+				&.bgColor-blue { background: #2b3368 !important; }
+				&.bgColor-ice { background: #19465f !important; }
+				&.bgColor-teal { background: #16534e !important; }
+				&.bgColor-lime { background: #36551d !important; }
+			}
         }
 
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
@@ -64,25 +76,6 @@
 			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout1.svg'); }
         }
     }
-
-	/* BlockBackground */
-
-	.menu.menuBlockBackground.fromContext {
-		.icon.color {
-			.inner {
-				&.bgColor-grey { background: #3c3c3c !important; }
-				&.bgColor-yellow { background: #55500d !important; }
-				&.bgColor-orange { background: #5f430a !important; }
-				&.bgColor-red { background: #74321e !important; }
-				&.bgColor-pink { background: #712055 !important; }
-				&.bgColor-purple { background: #542663 !important; }
-				&.bgColor-blue { background: #2b3368 !important; }
-				&.bgColor-ice { background: #19465f !important; }
-				&.bgColor-teal { background: #16534e !important; }
-				&.bgColor-lime { background: #36551d !important; }
-			}
-		}
-	}
 
     /* Smile */
 
@@ -177,21 +170,11 @@
 
     /* Onboarding */
 
-	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary); background: var(--color-shape-tertiary); }
 	.menu.menuOnboarding {
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }
 
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
-
-        .bottom {
-            .round {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
-                .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
-            }
-
-            .category { color: #5c5a54; }
-        }
 	}
 
 	/* DataviewCreateBookmark */
@@ -267,8 +250,6 @@
             .iconWrapper.connected::before { background: #294b0e; }
             .iconWrapper.error::before { background: #581f0c; }
         }
-
-		.incentiveBanner { background: linear-gradient(180deg, #74321e 30%, #9c492f 100%); }
 
 		.items {
             .sides {

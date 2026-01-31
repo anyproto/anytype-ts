@@ -1,76 +1,51 @@
 @import "~scss/_mixins";
 
-.pageFlex { 
-	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	padding: 8px 8px 8px 0px;
-}
-.pageFlex {
-	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
-
-	&.withSidebarRight { padding-right: 0px; }
-	&.withSidebarRight {
-		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
-	}
-
-	&.sidebarAnimation { transition-property: padding; }
-}
-
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
-.sidebarHeadIcon
-.sidebarHeadIcon {
-	&.sidebarAnimation { transition-property: left; }
-	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
-}
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
-
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
-	position: fixed; z-index: 24; user-select: none; top: 0px; height: 100%; background-color: var(--color-shape-highlight-light-solid); 
+	position: fixed; z-index: 24; user-select: none; top: 0px; height: 100%;
 	display: flex; flex-direction: column;
-}
-.sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-
-.sidebar.left { left: 0px; flex-direction: row; }
-
-.sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; padding: 8px 8px 8px 0px; }
-.sidebar.right.anim { transition-property: right; }
-
-.sidebar.withPreview { z-index: 31; }
-
-.sidebar.right {
-	@import "./preview";
-
-	.sidebarPage { 
-		background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
-	}
 }
 
 .sidebar {
 	@import "./page/common";
 
-	.pageWrapper, .subPageWrapper { padding: 8px 0px; flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
-		&.isClosed { overflow: hidden; }
+		&.isClosed {
+			.sidebarPage { border: 0px; }
+		}
 	}
 
-	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper { padding: 0px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); height: 100%; }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
+		&.isClosed { padding-left: 0px; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; }
+	.subPageWrapper { width: 336px; display: flex; padding: 0px 0px 8px 0px; height: 100%; }
 	.subPageWrapper {
-		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
+		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
+		.sidebarPage {
+			> .head {
+				> .left { gap: 0px 8px; }
+			}
+		}
 
 		&.sidebarAnimation { transition-property: transform; }
+		&.isClosing,
+		&.isOpening { 
+			.sidebarPage {
+				> .head {
+					.icon { opacity: 0; }
+				}
+			}
+		}
 	}
 
-	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }
+	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; top: 0px; }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
@@ -92,12 +67,74 @@
 	}
 
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
-
 	.banner.update { position: absolute; bottom: 45px; z-index: 10; left: 12px; width: 312px; }
+
+	&.withPreview { z-index: 31; }
+	&.left { left: 0px; flex-direction: row; }
+	&.left {
+		.resize-h { right: -12px; }
+	}
+
+	.subPageWrapper.isClosed {
+		.resize-h { display: none; }
+	}
+
+	.subPageWrapper.withSidebarLeft {
+		.head {
+			> .side.left {
+				.icon.vaultToggle { display: none; }
+			}
+		}
+	}
+
+	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
+	&.right {
+		.resize-h { left: -12px; }
+		&.sidebarAnimation { transition-property: transform; }
+
+		@import "./preview";
+
+		.sidebarPage { 
+			background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px; 
+			margin-right: 4px;
+		}
+	}
 }
 
 html.platformWindows {
 	.sidebar {
-		> .containerWidget > .body { overflow-y: overlay; }
+		.sidebarPage > .body { overflow-y: overlay; }
 	}
 }	
+
+html.platformMac {
+	.sidebar {
+		.subPageWrapper.sidebarAnimation {
+			.sidebarPage {
+				> .head {
+					.side.left { transition: padding-left $transitionSidebarTime linear; }
+				}
+			}
+		}
+	}
+
+	&.isSingleTab {
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						> .left { padding-left: 72px; }
+					}
+				}
+			}
+		}
+	}
+}
+
+html:not(.platformMac) {
+	.sidebar.isMinimal {
+		.sidebarPage.pageVault {
+			> .head { display: none; }
+		}
+	}
+}

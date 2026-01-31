@@ -30,6 +30,10 @@ class Util {
 		return logger;
 	};
 
+	getPort () {
+		return process.env.SERVER_PORT || '8080';
+	};
+
 	log (method, text) {
 		if (!logger[method]) {
 			method = 'info';
@@ -68,8 +72,8 @@ class Util {
 		theme = String(theme || '');
 
 		const bg = {
-			'': '#f2f2f2',
-			dark: '#232323',
+			'': '#fff',
+			dark: '#171717',
 		};
 		return bg[theme];
 	};
@@ -115,13 +119,67 @@ class Util {
 		return path.join.apply(null, dataPath);
 	};
 
-	send () {
-		const args = [ ...arguments ];
-		const win = args[0];
+	send (win, ...args) {
+		if (!win || win.isDestroyed() || !win.webContents) {
+			return;
+		};
 
-		if (win && !win.isDestroyed() && win.webContents) {
-			args.shift();
-			win.webContents.send.apply(win.webContents, args);
+		win.webContents.send(...args);
+		this.sendToActiveTab(win, ...args);
+	};
+
+	sendToTab (win, tabId, ...args) {
+		if (!win || win.isDestroyed() || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(v => v.id == tabId);
+		if (view && view.webContents) {
+			view.webContents.send(...args);
+		};
+	};
+
+	getView (win, id) {
+		return win?.views?.find(v => v.id == id);
+	};
+
+	getActiveView (win) {
+		return this.getView(win, win?.activeTabId);
+	};
+
+	setNativeThemeSource () {
+		const { theme } = ConfigManager.config;
+		
+		switch (theme) {
+			case 'system':
+			case 'dark': {
+				nativeTheme.themeSource = theme;
+				break;
+			};
+
+			default: {
+				nativeTheme.themeSource = 'light';
+				break;
+			};
+		};
+	};
+
+	sendToActiveTab (win, ...args) {
+		const view = this.getActiveView(win);
+		if (view && view.webContents) {
+			view.webContents.send(...args);
+		};
+	};
+
+	sendToAllTabs (win, ...args) {
+		if (!win || win.isDestroyed() || !win.views) {
+			return;
+		};
+
+		for (const view of win.views) {
+			if (view && view.webContents) {
+				view.webContents.send(...args);
+			};
 		};
 	};
 
@@ -129,10 +187,12 @@ class Util {
 		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
+		const view = this.getActiveView(win);
+		const webContents = view?.webContents || win.webContents;
 
 		try { fs.mkdirSync(filesPath); } catch (e) {};
 
-		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
+		webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
 
 			// Replace files loaded by url and copy them in page folder
@@ -162,6 +222,7 @@ class Util {
 
 				let replaceJs = '';
 				let replaceCss = '';
+				
 				const replaceMeta = `
 					<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 				`;
@@ -204,13 +265,16 @@ class Util {
 	};
 
 	printPdf (win, exportPath, name, options) {
-		win.webContents.printToPDF(options).then(data => {
-			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
-				if (error) throw error;
+		const view = this.getActiveView(win);
+		const webContents = view?.webContents || win.webContents;
 
-				shell.openPath(exportPath).catch(err => {
-					this.log('info', err);
-				});
+		webContents.printToPDF(options).then(data => {
+			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
+				if (!error) {
+					shell.openPath(exportPath).catch(err => this.log('info', err));
+				} else {
+					this.log('info', error);
+				};
 
 				this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			});
@@ -244,6 +308,17 @@ class Util {
 
 	defaultUserDataPath () {
 		return path.join(app.getPath('appData'), app.getName());
+	};
+
+	isWayland () {
+		return is.linux && (process.env.XDG_SESSION_TYPE === 'wayland');
+	};
+
+	getCss () {
+		const cssPath = path.join(this.userPath(), 'custom.css');
+		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+
+		return String(css || '');
 	};
 
 };

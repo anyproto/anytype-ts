@@ -1,8 +1,35 @@
 import $ from 'jquery';
-import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U, Renderer } from 'Lib';
+import React from 'react';
 
+interface SpaceContextParam {
+	isSharePage?: boolean;
+	noManage?: boolean;
+	noMembers?: boolean;
+	withPin?: boolean;
+	withDelete?: boolean;
+	withOpenNewTab?: boolean;
+	withSearch?: boolean;
+	noShare?: boolean;
+	route: string;
+};
+
+/**
+ * UtilMenu provides utilities for generating menu items and handling menu operations.
+ *
+ * Key responsibilities:
+ * - Block menu items (text, list, media, embed, link, object blocks)
+ * - Turn/transform menu items (converting blocks between types)
+ * - Action menu items (copy, paste, delete, move)
+ * - Color and alignment options
+ * - Widget and dataview configuration menus
+ * - Space context menus and settings
+ * - Import/export format options
+ *
+ * Most methods return arrays of menu items with standardized structure
+ * including id, name, icon, and optional descriptions/callbacks.
+ */
 class UtilMenu {
 
 	menuContext = null;
@@ -115,20 +142,40 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
+			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
+			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
+			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
+			{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
-				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
-				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.Common.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			return it;
+		});
+	};
+
+	/**
+	 * Returns the list of link block types.
+	 * @returns {any[]} The list of object block types.
+	 */
+	getBlockLink () {
+		return [
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+		].map((it: any) => {
+			it = this.mapperBlock(it);
+
+			it.isAction = true;
+			it.skipOver = true;
 			return it;
 		});
 	};
@@ -138,12 +185,8 @@ class UtilMenu {
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
-		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
-		];
+		const items = U.Data.getObjectTypesForNewObject({ withLists: true, withChat: true });
+		const ret: any[] = [];
 
 		let i = 0;
 		for (const type of items) {
@@ -169,7 +212,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of other block types.
 	 */
 	getBlockOther () {
-		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
+		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
@@ -234,12 +277,16 @@ class UtilMenu {
 	 * @returns {any[]} The list of actions.
 	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
+			{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
+			{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
+			{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+			{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
+			{ isDiv: true },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
 
@@ -255,6 +302,10 @@ class UtilMenu {
 			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
 		};
 
+		if (hasCopyMedia) {
+			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyMedia') });
+		};
+
 		if (hasBookmark) {
 			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
 		};
@@ -263,7 +314,7 @@ class UtilMenu {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.Common.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
@@ -428,7 +479,7 @@ class UtilMenu {
 	};
 
 	getRelationTypes () {
-		return this.prepareForSelect([
+		return [
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
@@ -444,7 +495,7 @@ class UtilMenu {
 			it.name = translate(`relationName${it.id}`);
 			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
-		}));
+		});
 	};
 
 	getWidgetLimitOptions (layout: I.WidgetLayout) {
@@ -460,7 +511,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return this.prepareForSelect(options.map(id => ({ id, name: id })));
+		return options.map(id => ({ id, name: id }));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {
@@ -473,6 +524,9 @@ class UtilMenu {
 		];
 		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
@@ -510,6 +564,7 @@ class UtilMenu {
 	getCoverColors () {
 		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Color,
 			name: translate(`textColor-${id}`),
 		}));
@@ -518,33 +573,36 @@ class UtilMenu {
 	getCoverGradients () {
 		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Gradient,
 			name: translate(`gradientColor-${id}`),
 		}));
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = U.Common.regexEscape(filter);
-		const regS = new RegExp('^' + f, 'gi');
+		const f = U.String.regexEscape(filter);
+		const regS = new RegExp(`^${f}`, 'i');
 		const regC = new RegExp(f, 'gi');
+
 		const getWeight = (s: string) => {
 			let w = 0;
+			if (!s) {
+				return w;
+			};
+
 			if (s.toLowerCase() == f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
-				w = 1000;
+				w += 1000;
 			} else 
 			if (s.match(regC)) {
-				w = 100;
+				w += 100;
 			};
 			return w;
 		};
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(regC)) {
-				return true;
-			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 
@@ -561,39 +619,40 @@ class UtilMenu {
 					};
 				};
 
-				c._sortWeight_ = 0;
+				c._sortWeight_ = Number(c._sortWeight_) || 0;
 				if (c.skipFilter) {
 					ret = true;
 				};
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
-						if (alias.match(regC)) {
-							c._sortWeight_ = getWeight(alias);
+						if (alias.match(regC) || alias.match(regS)) {
+							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
 						};
 					};
 				};
 
-				if (!ret && c.name && c.name.match(regC)) {
+				if (!ret && c.name && (c.name.match(regC) || c.name.match(regS))) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.name);
+					c._sortWeight_ += getWeight(c.name);
 				};
 
-				if (!ret && c.description && c.description.match(regC)) {
+				/*
+				if (!ret && c.description && (c.description.match(regC) || c.description.match(regS))) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.description);
+					c._sortWeight_ += getWeight(c.description);
 				};
-				
-				s._sortWeight_ += c._sortWeight_;
+				*/
+
 				return ret; 
 			});
+
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -637,15 +696,15 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard({ replace: false });
+						U.Space.openDashboard();
 					};
 				});
 			});
 		};
 
 		let options = [];
-		if (spaceview.isChat) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate('commonChat') });
+		if (spaceview.isChat || spaceview.isOneToOne) {
+			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
 		} else {
 			options = [
 				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -781,119 +840,288 @@ class UtilMenu {
 		});
 	};
 
-	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: any) {
+	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
 		param = param || {};
 
-		const { targetSpaceId } = space;
-		const options: any[] = [];
-		const isLoading = space.isAccountLoading || space.isLocalLoading;
-
-		if (!param.noPin) {
-			if (space.orderId) {
-				options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
-			} else { 
-				options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
-			};
-		};
-
-		if (space.chatId) {
-			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
-			} else {
-				options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
-			};
-		};
-
-		if (options.length && !param.noDivider) {
-			options.push({ isDiv: true });
-		};
-
-		if (isLoading) {
-			options.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
-		} else {
-			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
-		};
+		const isOwner = U.Space.isMyOwner();
+		const options: I.Option[] = [
+			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+		];
 
 		S.Menu.open('select', {
 			...menuParam,
 			data: {
 				options,
-				onSelect: (e: any, element: any) => {
-					window.setTimeout(() => {
-						switch (element.id) {
-							case 'mute':
-							case 'unmute': {
-								const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
-
-								C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-								analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
-								break;
-							};
-
-							case 'pin': {
-								const items: any[] = this.getVaultItems().filter(it => it.isPinned);
-								const newItems = [ space ].concat(items);
-
-								U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
-									C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
-								});
-
-								analytics.event('PinSpace', { route: param.route });
-								break;
-							};
-
-							case 'unpin': {
-								C.SpaceUnsetOrder(space.id);
-								analytics.event('UnpinSpace', { route: param.route });
-								break;
-							};
-
-							case 'settings': {
-								const routeParam = { 
-									replace: true, 
-									onFadeIn: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
-								};
-		
-								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
-								break;
-							};
-
-							case 'remove': {
-								Action.removeSpace(space.targetSpaceId, param.route, true);
-								break;
-							};
-
+				onSelect: (e: React.MouseEvent, option: any) => {
+					switch (option.id) {
+						case 'spaceInfo': {
+							Action.spaceInfo();
+							break;
 						};
-
-					}, S.Menu.getTimeout());
-				},
-			},
-		});
-	};
-
-	inviteContext (param: any) {
-		const { containerId, cid, key } = param || {};
-		const options: any[] = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareQRCode') },
-		];
-
-		S.Menu.open('select', {
-			element: `#${containerId} #button-more-link`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'qr': {
-							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
-							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							analytics.event('ScreenQr', { route: analytics.route.inviteLink });
+						
+						case 'delete': {
+							Action.removeSpace(S.Common.space, param.route);
 							break;
 						};
 					};
 				},
 			}
 		});
+	};
+
+	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
+		param = param || {};
+
+		const { targetSpaceId, uxType } = space;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, withSearch, noShare, route } = param;
+		const isLoading = space.isAccountLoading || space.isLocalLoading;
+		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+
+		const onClick = (itemId: string, inviteLink: string) => {
+			switch (itemId) {
+				case 'mute':
+				case 'unmute': {
+					let mode = I.NotificationMode.Nothing;
+					if (itemId == 'unmute') {
+						mode = I.NotificationMode.All;
+					} else {
+						mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+					};
+
+					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					break;
+				};
+
+				case 'pin': {
+					const items: any[] = this.getVaultItems().filter(it => it.isPinned);
+					const newItems = [ space ].concat(items);
+
+					U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+						C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
+					});
+
+					analytics.event('PinSpace', { route });
+					break;
+				};
+
+				case 'unpin': {
+					C.SpaceUnsetOrder(space.id);
+					analytics.event('UnpinSpace', { route });
+					break;
+				};
+
+				case 'settings':
+				case 'members': {
+					let id = '';
+
+					switch (itemId) {
+						case 'settings': {
+							id = 'spaceIndex'; 
+							break;
+						};
+
+						case 'members': {
+							id = 'spaceShare'; 
+							break;
+						};
+					};
+
+					if (targetSpaceId == S.Common.space) {
+						Action.openSettings(id, route);
+					} else {
+						U.Router.switchSpace(targetSpaceId, '', false, { 
+							onFadeIn: () => Action.openSettings(id, route),
+						}, true);
+					};
+					break;
+				};
+
+				case 'remove': {
+					Action.removeSpace(space.targetSpaceId, param.route);
+					break;
+				};
+
+				case 'qr': {
+					S.Popup.open('inviteQr', { data: { link: inviteLink } });
+					analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+					analytics.event('ScreenQr', { route });
+					break;
+				};
+
+				case 'link': {
+					U.Common.copyToast('', inviteLink, translate('toastInviteCopy'));
+					analytics.event('ClickShareSpaceCopyLink', { route });
+					break;
+				};
+
+				case 'stopSharing': {
+					S.Popup.open('confirm', {
+						data: {
+							icon: 'noAccessRed',
+							title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
+							text: translate(`popupConfirmStopSharingSpaceWarningText`),
+							textConfirm: translate('commonConfirm'),
+							colorConfirm: 'red',
+							onConfirm: () => {
+								C.SpaceStopSharing(S.Common.space, (message) => {
+									if (!message.error.code) {
+										Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
+									};
+								});
+							},
+						},
+					});
+					break;
+				};
+
+				case 'manage': {
+					this.menuContext?.close(() => {
+						S.Menu.open('widgetSection', {
+							recalcRect: () => {
+								const { ww, wh } = U.Common.getWindowDimensions();
+								return { x: 0, y: 0, width: ww, height: wh };
+							},
+							classNameWrap: 'fixed',
+							visibleDimmer: true,
+							vertical: I.MenuDirection.Center,
+							horizontal: I.MenuDirection.Center,
+						});
+					});
+					break;
+				};
+
+				case 'openNewTab': {
+					const route = U.Router.build({ 
+						page: 'main', 
+						action: 'void', 
+						id: 'dashboard', 
+						spaceId: targetSpaceId,
+					});
+
+					Renderer.send('openTab', { route }, { setActive: false });
+					analytics.event('AddTab', { route, uxType });
+					break;
+				};
+
+				case 'searchChat': {
+					S.Menu.closeAll(null, () => {
+						keyboard.onSearchText('', route);
+					});
+					break;
+				};
+
+			};
+		};
+
+		const getOptions = (inviteLink: string) => {
+			const sections = {
+				search: [],
+				general: [],
+				share: [],
+				archive: [],
+				manage: [],
+				delete: [],
+			};
+
+			if (withSearch) {
+				sections.search.push({ id: 'searchChat', icon: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') });
+			};
+
+			if (!noShare && inviteLink) {
+				sections.share = [
+					{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
+					{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+				];
+			}
+
+			if (isSharePage) {
+				if (isOwner && space.isShared) {
+					const isDisabled = participants.length > 1;
+					sections.archive.push({
+						id: 'stopSharing',
+						name: translate('popupSettingsSpaceShareMakePrivate'),
+						disabled: isDisabled,
+						tooltipParam: { text: isDisabled ? translate('popupSettingsSpaceShareMakePrivateTooltip') : '' }
+					});
+				};
+			} else {
+				if (!isLoading) {
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+				};
+
+				if (withOpenNewTab) {
+					sections.general.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
+				};
+
+				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
+					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
+				};
+
+				if (withPin) {
+					if (space.orderId) {
+						sections.manage.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+					} else {
+						sections.manage.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+					};
+				};
+
+				if (!space.isPersonal) {
+					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+						sections.manage.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+					} else {
+						sections.manage.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+					};
+				};
+
+				if (!noManage) {
+					sections.manage.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
+				};
+
+				if (withDelete) {
+					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
+
+					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
+				};
+			};
+
+			let options: any[] = [];
+			Object.values(sections).forEach((section, idx) => {
+				if (!section.length) {
+					return;
+				};
+
+				if (options.length) {
+					options.push({ isDiv: true, id: `menu-divider-${idx}` });
+				};
+				options = options.concat(section);
+			});
+
+			return options;
+		};
+
+		const callBack = (cid?: string, key?: string) => {
+			const inviteLink: string = cid && key ? U.Space.getInviteLink(cid, key) : '';
+
+			S.Menu.open('select', {
+				...menuParam,
+				onOpen: context => this.setContext(context),
+				data: {
+					options: getOptions(inviteLink),
+					onSelect: (e: any, element: any) => {
+						window.setTimeout(() => onClick(element.id, inviteLink), S.Menu.getTimeout());
+					},
+				},
+			});
+		};
+
+		if (space.isShared) {
+			U.Space.getInvite(targetSpaceId, callBack);
+		} else {
+			callBack();
+		};
 	};
 
 	getVaultItems () {
@@ -904,10 +1132,9 @@ class UtilMenu {
 
 		const items = U.Common.objectCopy(U.Space.getList()).
 			map(it => {
-				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-
-				it.counter = counters.mentionCounter || counters.messageCounter;
-				it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
+				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
 				it.isPinned = !!it.orderId;
 				return it;
 			});
@@ -921,31 +1148,19 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
+			const d1 = c1.lastMessage?.createdAt || c1.spaceJoinDate;
+			const d2 = c2.lastMessage?.createdAt || c2.spaceJoinDate;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.counter && !c2.counter) return -1;
-			if (!c1.counter && c2.counter) return 1;
+			if (c1.hasCounter && !c2.hasCounter) return -1;
+			if (!c1.hasCounter && c2.hasCounter) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
-		/*
-		console.log(JSON.stringify(items.map(it => 
-			`${it.name} 
-			p: ${it.isPinned}
-			o: ${it.orderId}
-			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
-			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
-			c: ${it.counter} 
-			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
-		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
-		*/
 
 		return items;
 	};
@@ -1050,52 +1265,6 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getObjectContainerSortOptions (type: I.ObjectContainerType, sortId: I.SortId, sortType: I.SortType, withOrphans: boolean, isCompact: boolean): any[] {
-		const appearance = [
-			{ name: translate('commonAppearance'), isSection: true },
-			{ id: I.SortId.List, checkbox: !isCompact, name: translate('widget2Name') },
-			{ id: I.SortId.Compact, checkbox: isCompact, name: translate('widget3Name') },
-			{ isDiv: true },
-		];
-
-		let ret: any[] = [];
-		let sort = [];
-		let show = [];
-
-		if ([ I.ObjectContainerType.Type, I.ObjectContainerType.Relation ].includes(type)) {
-			sort = [
-				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
-				{ id: I.SortId.LastUsed, name: translate('sidebarObjectSortLastUsed'), relationKey: 'lastUsedDate', isSort: true, defaultType: I.SortType.Desc },
-			];
-		} else {
-			show = [
-				{ name: translate('sidebarObjectShow'), isSection: true },
-				{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
-				{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
-				{ isDiv: true },
-			];
-
-			sort = [
-				{ name: translate('sidebarObjectSort'), isSection: true },
-				{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate', isSort: true, defaultType: I.SortType.Desc },
-				{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate', isSort: true, defaultType: I.SortType.Desc },
-				{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name', isSort: true, defaultType: I.SortType.Asc },
-			];
-		};
-
-		ret = ret.concat(show).concat(appearance).concat(sort);
-
-		return ret.map(it => {
-			it.type = I.SortType.Asc;
-			if (it.id == sortId) {
-				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
-				it.sortArrow = sortType;
-			};
-			return it;
-		});
-	};
-
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
 		const sort: any[] = [
 			{ name: translate('sidebarObjectSort'), isSection: true },
@@ -1172,7 +1341,10 @@ class UtilMenu {
 	};
 
 	prepareForSelect (a: any[]) {
-		return a.map(it => ({ ...it, id: String(it.id) }));
+		return a.filter(it => it).map(it => {
+			const id = undefined !== it.id ? String(it.id) : '';
+			return { ...it, id };
+		});
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
@@ -1193,7 +1365,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			Action.openSettings('importIndex', route);
 		};
 
 		const getClipboardData = async () => {
@@ -1230,12 +1402,9 @@ class UtilMenu {
 					return;
 				};
 
-				const url = U.Common.matchUrl(text);
+				const url = U.String.matchUrl(text);
 				const cb = (object: any, time: number) => {
-					if (callBack) {
-						callBack(object);
-					};
-
+					callBack?.(object);
 					analytics.createObject(object.type, object.layout, route, time);
 				};
 
@@ -1322,7 +1491,7 @@ class UtilMenu {
 			if (!flags.noButtons) {
 				buttons.push({ 
 					id: 'add', icon: 'plus', onClick: () => {
-						U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
+						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
 						this.menuContext?.close();
 
 						if (param.data.onAdd) {
@@ -1361,9 +1530,7 @@ class UtilMenu {
 					],
 					onClick: (item: any) => {
 						const cb = (object: any, time: number) => {
-							if (callBack) {
-								callBack(object);
-							};
+							callBack?.(object);
 
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, route, time);
@@ -1374,12 +1541,18 @@ class UtilMenu {
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
+							const menuParam = {
+								horizontal: I.MenuDirection.Center,
+								...param,
+								data: { details },
+							};
+
 							window.setTimeout(() => {
 								if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-									this.onBookmarkMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onBookmarkMenu(menuParam, object => cb(object, 0));
 								} else
 								if (U.Object.isChatLayout(item.recommendedLayout)) {
-									this.onChatMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onChatMenu(menuParam, route, object => cb(object, 0));
 								};
 							}, S.Menu.getTimeout());
 						} else {
@@ -1405,7 +1578,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,
@@ -1414,7 +1586,7 @@ class UtilMenu {
 		});
 	};
 
-	onChatMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+	onChatMenu (param?: Partial<I.MenuParam>, route?: string, callBack?: (bookmark: any) => void) {
 		param = param || {};
 
 		const data = param.data || {};
@@ -1422,13 +1594,14 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('chatCreate', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,
 			},
 			...param,
 		});
+
+		analytics.event('ScreenChatInfo', { route });
 	};
 
 	setContext (context: any) {
@@ -1438,18 +1611,16 @@ class UtilMenu {
 	spaceCreate (param: I.MenuParam, route) {
 		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
-			const suffix = U.Common.toUpperCamelCase(id);
+			const suffix = U.String.toUpperCamelCase(id);
 
-			let name = '';
 			let icon = '';
 			let description = '';
 			let withDescription = false;
 
 			if (id != 'join') {
-				name = translate(`sidebarMenuSpaceCreateTitle${suffix}`);
+				icon = id;
 				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
 				withDescription = true;
-				icon = id;
 			};
 
 			return {
@@ -1497,12 +1668,192 @@ class UtilMenu {
 						};
 					};
 
-					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});
 
 		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
+	vaultStyle (param: I.MenuParam) {
+		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
+		const { vaultMessages } = S.Common;
+		const options =[
+			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
+			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
+		];
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					if (isClosed) {
+						sidebar.open(I.SidebarPanel.Left, '', );
+					};
+				},
+			},
+		});
+	};
+
+	uxTypeOptions (): I.Option[] {
+		return [
+			{ id: I.SpaceUxType.Data },
+			{ id: I.SpaceUxType.Chat },
+		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+	};
+
+	notificationModeOptions (): I.Option[] {
+		const spaceview = U.Space.getSpaceview();
+
+		let ret = [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+			{ id: I.NotificationMode.Nothing },
+		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
+
+		if (spaceview.isOneToOne) {
+			ret = ret.filter(it => it.id != I.NotificationMode.Mentions);
+		};
+
+		return ret;
+	};
+
+	recentModeOptions (): I.Option[] {
+		return [
+			{ id: I.RecentEditMode.All },
+			{ id: I.RecentEditMode.Me },
+		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
+	};
+
+	widgetSections (): I.Option[] {
+		const { widgetSections } = S.Common;
+
+		return [
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.RecentEdit },
+			{ id: I.WidgetSection.Type },
+			{ id: I.WidgetSection.Bin },
+		].sort((c1, c2) => {
+			const isUnread1 = c1.id == I.WidgetSection.Unread;
+			const isUnread2 = c2.id == I.WidgetSection.Unread;
+			
+			if (isUnread1 && !isUnread2) return -1;
+			if (!isUnread1 && isUnread2) return 1;
+			
+			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
+			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
+
+			return idx1 - idx2;
+		}).map(it => ({ ...it, name: translate(`widgetSection${it.id}`) }));
+	};
+
+	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
+		const { recentEditMode } = S.Common;
+		const spaceview = U.Space.getSpaceview();
+		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
+
+		let options: any[] = [];
+		let value = '';
+
+		if (spaceview.isShared && (sectionId == I.WidgetSection.RecentEdit)) {
+			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
+			options = options.concat(this.recentModeOptions());
+			options.push({ isDiv: true });
+
+			value = String(recentEditMode);
+		} else 
+		if (sectionId == I.WidgetSection.Bin) {
+			options = options.concat([
+				{ id: 'openBin', name: translate('commonOpen') },
+				{ id: 'emptyBin', name: translate('commonEmptyBin') },
+				{ isDiv: true },
+			]);
+		};
+
+		console.trace();
+
+		options.push(toggle);
+
+		S.Menu.open('select', {
+			...menuParam,
+			onOpen: context => {
+				this.setContext(context);
+				menuParam.onOpen?.(context);
+			},
+			data: {
+				options,
+				value,
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'hide': {
+							const { widgetSections } = S.Common;
+							const id = Number(sectionId);
+							const idx = widgetSections.findIndex(it => it.id == id);
+
+							if (idx < 0) {
+								return;
+							};
+
+							widgetSections[idx].isHidden = true;
+							S.Common.widgetSectionsSet([ ...widgetSections ]);
+							break;
+						};
+
+						case 'openBin': {
+							U.Object.openRoute({ layout: I.ObjectLayout.Archive });
+							break;
+						};
+
+						case 'emptyBin': {
+							Action.emptyBin(analytics.route.widget);
+							break;
+						};
+
+						default: {
+							S.Common.recentEditModeSet(Number(element.id));
+							break;
+						};
+					};
+				},
+			},
+		});
+	};
+
+	settingsSectionsMap () {
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		const types = U.Common.plural(10, translate('pluralObjectType'));
+		const relations = U.Common.plural(10, translate('pluralProperty'));
+
+		return {
+			exportIndex: translate('commonExport'),
+			importIndex: translate('commonImport'),
+			spaceIndex: translate('pageSettingsSpaceGeneral'),
+			spaceShare: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers'),
+			spaceNotifications: translate('commonNotifications'),
+			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
+			archive: translate('commonBin'),
+			types,
+			relations,
+			integrations: translate('pageSettingsSpaceIntegrations'),
+			index: translate('popupSettingsProfileTitle'),
+			account: translate('popupSettingsProfileTitle'),
+			personal: translate('popupSettingsPersonalTitle'),
+			language: translate('pageSettingsLanguageTitle'),
+			pinIndex: translate('popupSettingsPinTitle'),
+			phrase: translate('popupSettingsPhraseTitle'),
+			membership: translate('popupSettingsMembershipTitle'),
+			dataIndex: translate('popupSettingsLocalStorageTitle'),
+			spaceList: translate('popupSettingsSpacesListTitle'),
+			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
+			api: translate('popupSettingsApiTitle'),
+			set: types,
+			relation: relations,
+		};
 	};
 
 };

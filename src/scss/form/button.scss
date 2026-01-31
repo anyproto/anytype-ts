@@ -15,12 +15,12 @@
 	.txt, .icon { display: none; }
 }
 
-.button.accent { background: var(--color-system-accent-100); color: var(--color-bg-primary); }
+.button.accent { background: var(--color-system-accent-100); color: #fff; }
 .button.accent:not(.disabled):hover, .button.accent:not(.disabled).hover { background: var(--color-system-accent-125); }
 .button.accent {
 	.loaderWrapper {
 		.dots {
-			.dot { border-color: var(--color-bg-primary); animation-name: dots-accent; }
+			.dot { border-color: #fff; animation-name: dots-accent; }
 		}
 	}
 }

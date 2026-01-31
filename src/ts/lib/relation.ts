@@ -11,7 +11,7 @@ class Relation {
 	 * @returns {string} The type name.
 	 */
 	public typeName (v: I.RelationType): string {
-		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return U.String.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	/**
@@ -78,75 +78,73 @@ class Relation {
 	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
 	 */
 	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
-		let ret = [
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-		];
+		let ret: { id: I.FilterCondition, name: string }[] = [];
 
 		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
+			case I.RelationType.ShortText:
+			case I.RelationType.LongText:
+			case I.RelationType.Url:
+			case I.RelationType.Email:
 			case I.RelationType.Phone: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') },
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') },
 					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
 
-			case I.RelationType.File: 
-			case I.RelationType.Object: 
-			case I.RelationType.Select: 
+			case I.RelationType.File:
+			case I.RelationType.Object:
+			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
+				ret = [
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') },
+					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') },
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
-			
+
 			case I.RelationType.Number: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: '=' },
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
+					{ id: I.FilterCondition.Greater,		 name: '>' },
+					{ id: I.FilterCondition.Less,			 name: '<' },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' },
 					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
 
 			case I.RelationType.Date: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') },
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') },
 					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
 					{ id: I.FilterCondition.In,				 name: translate('filterConditionInDate') },
-					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') },
 					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
-				]);
+				];
 				break;
 			};
-			
+
 			case I.RelationType.Checkbox:
 			default: {
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+				ret = [
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') },
 					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
-				]);
+				];
 				break;
 			};
 
@@ -249,7 +247,7 @@ class Relation {
 			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
 		};
 
-		return U.Menu.prepareForSelect(ret);
+		return ret;
 	};
 
 	/**
@@ -257,11 +255,10 @@ class Relation {
 	 * @returns {Array<{id: I.FilterCondition, name: string}>} The filter conditions.
 	 */
 	public filterConditionsDictionary () {
-		return [ 
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+		return [
+			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') },
+			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') },
 			{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 		];
 	};
@@ -340,6 +337,29 @@ class Relation {
 		};
 
 		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
+	};
+
+	public filterTemplateOptions () {
+		const ret = [];
+		for (const i in I.FilterValueTemplate) {
+			const id = Number(i);
+
+			if (isNaN(id) || (id == I.FilterValueTemplate.None)) {
+				continue;
+			};
+
+			ret.push({ 
+				id: U.String.sprintf(`_filter_template_%d_`, i), 
+				name: translate(`filterTemplate${i}`),
+				icon: `filterTemplate-${I.FilterValueTemplate[i].toLowerCase()}`,
+				templateType: id as I.FilterValueTemplate,
+			});
+		};
+		return ret;
+	};
+
+	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
+		return this.filterTemplateOptions().find(it => it.id == id);
 	};
 
 	/**
@@ -441,6 +461,84 @@ class Relation {
 	};
 
 	/**
+	 * Checks if a filter is active (should affect search results).
+	 * A filter is inactive if:
+	 * - Condition is None, OR
+	 * - Condition requires a value but the value is empty
+	 * @param {I.Filter} filter - The filter to check.
+	 * @returns {boolean} True if the filter is active.
+	 */
+	public isFilterActive (filter: I.Filter): boolean {
+		if (!filter) {
+			return false;
+		};
+
+		const { condition, value, quickOption, relationKey } = filter;
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return false;
+		};
+
+		const { format } = relation;
+
+		// None condition is always inactive
+		if (condition == I.FilterCondition.None) {
+			return false;
+		};
+
+		// Empty/NotEmpty conditions don't require a value
+		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+			return true;
+		};
+
+
+		if (format == I.RelationType.Date) {
+			// Date condition In
+			if (condition == I.FilterCondition.In) {
+				return true;
+			};
+
+			// Date quick options
+			if (![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
+				return true;
+			};
+		}
+
+		// For all other conditions, check if value is present
+		return this.isFilterValueSet(value);
+	};
+
+	/**
+	 * Checks if a filter value is set (not empty).
+	 * @param {any} value - The value to check.
+	 * @returns {boolean} True if the value is set.
+	 */
+	public isFilterValueSet (value: any): boolean {
+		if (value === null || value === undefined) {
+			return false;
+		};
+
+		if (Array.isArray(value)) {
+			return value.length > 0;
+		};
+
+		if (typeof value === 'string') {
+			return value.length > 0;
+		};
+
+		if (typeof value === 'number') {
+			return true;
+		};
+
+		if (typeof value === 'boolean') {
+			return true;
+		};
+
+		return !!value;
+	};
+
+	/**
 	 * Maps a value for a relation key to a display value.
 	 * @param {any} relation - The relation object.
 	 * @param {any} value - The value to map.
@@ -507,7 +605,7 @@ class Relation {
 
 			ret.push({ 
 				id: relation.relationKey, 
-				icon: 'relation ' + this.className(relation.format),
+				icon: `relation ${this.className(relation.format)}`,
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -523,11 +621,11 @@ class Relation {
 	 * @returns {Array<{id: I.CardSize, name: string}>} The size options.
 	 */
 	public getSizeOptions () {
-		return U.Menu.prepareForSelect([
+		return [
 			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
 			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
 			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
-		]);
+		];
 	};
 
 	/**
@@ -550,7 +648,7 @@ class Relation {
 		}));
 
 		const ret = [
-			{ id: '', icon: '', name: translate('commonNone') },
+			{ id: 'none', icon: '', name: translate('commonNone') },
 			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		];
 
@@ -618,7 +716,7 @@ class Relation {
 
 		return U.Common.arrayUniqueObjects(options, 'relationKey').map(it => ({
 			id: it.relationKey, 
-			icon: 'relation ' + this.className(it.format),
+			icon: `relation ${this.className(it.format)}`,
 			name: it.name, 
 		}));
 	};
@@ -779,6 +877,15 @@ class Relation {
 	};
 
 	/**
+	 * Checks if a relation type is a object.
+	 * @param {I.RelationType} type - The relation type.
+	 * @returns {boolean} True if object.
+	 */
+	public isObject (type: I.RelationType) {
+		return type == I.RelationType.Object;
+	};
+
+	/**
 	 * Gets the URL scheme for a relation type.
 	 * @param {I.RelationType} type - The relation type.
 	 * @param {string} value - The value.
@@ -813,7 +920,7 @@ class Relation {
 			return '';
 		};
 		
-		const scheme = U.Common.getScheme(value);
+		const scheme = U.String.urlScheme(value);
 		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
@@ -859,11 +966,12 @@ class Relation {
 	 * @returns {number} The timestamp.
 	 */
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+		const { day } = J.Constant;
 		const time = U.Date.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
-				value = time - 86400;
+				value = time - day;
 				break;
 			};
 
@@ -875,37 +983,37 @@ class Relation {
 			};
 
 			case I.FilterQuickOption.Tomorrow: {
-				value = time + 86400;
+				value = time + day;
 				break;
 			};
 
 			case I.FilterQuickOption.LastWeek: {
-				value = time - 86400 * 7;
+				value = time - day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.LastMonth: {
-				value = time - 86400 * 30;
+				value = time - day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NextWeek: {
-				value = time + 86400 * 7;
+				value = time + day * 7;
 				break;
 			};
 
 			case I.FilterQuickOption.NextMonth: {
-				value = time + 86400 * 30;
+				value = time + day * 30;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysAgo: {
-				value = time - 86400 * value;
+				value = time - day * value;
 				break;
 			};
 
 			case I.FilterQuickOption.NumberOfDaysNow: {
-				value = time + 86400 * value;
+				value = time + day * value;
 				break;
 			};
 		};
@@ -1003,6 +1111,10 @@ class Relation {
 	 */
 	isArrayType (format: I.RelationType): boolean {
 		return this.arrayTypes().includes(format);
+	};
+
+	isObjectType (format: I.RelationType): boolean {
+		return [ I.RelationType.Object, I.RelationType.File ].includes(format);
 	};
 	
 };

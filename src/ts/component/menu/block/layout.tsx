@@ -1,75 +1,27 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
-class MenuBlockLayout extends React.Component<I.Menu> {
-	
-	n = -1;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onResize = this.onResize.bind(this);
-	};
+const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-		const sections = this.getSections();
+	const { id, param, getId, getSize, close, onKeyDown, setActive } = props;
+	const { data } = param;
+	const { rootId, value, isPopup } = data;
+	const n = useRef(-1);
 
-		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							icon={action.icon || action.id}
-							checkbox={action.id == value}
-							onMouseEnter={e => this.onMouseEnter(e, action)} 
-							onClick={e => this.onClick(e, action)} 
-						/>
-					))}
-				</div>
-			</div>
-		);
-		
-		return (
-			<div>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentWillUnmount (): void {
-		S.Menu.closeAll(J.Menu.layout);
-	};
-	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+	const getSections = () => {
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId);
 		const hasConflict = U.Object.hasLayoutConflict(object);
@@ -101,31 +53,26 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		return sections;
 	};
 	
-	getItems () {
-		const sections = this.getSections();
-		
+	const getItems = () => {
 		let items: any[] = [];
 		for (const section of sections) {
 			items = items.concat(section.children);
 		};
-		
 		return items;
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
+			setActive(item, false);
+			onOver(e, item);
 		};
 	};
 	
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.layout);
 			return;
 		};
-
-		const { id, param, getId, getSize, close } = this.props;
 
 		if (S.Menu.isAnimating(id)) {
 			return;
@@ -143,7 +90,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			isSub: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
-			rebind: this.rebind,
+			rebind,
 			parentId: id,
 			data: {
 				rootId: rootId,
@@ -176,11 +123,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { close, param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
+	const onClick = (e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
@@ -195,14 +138,14 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			};
 
 			case 'resize': {
-				this.onResize(e);
+				onResize(e);
 				break;
 			};
 		};
 	};
 
-	onResize (e: any) {
-		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
+	const onResize = (e: any) => {
+		const container = U.Common.getPageFlexContainer(isPopup);
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');
@@ -216,7 +159,53 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		analytics.event('SetLayoutWidth');
 	};
+
+	const sections = getSections();
+
+	const Section = (item: any) => (
+		<div id={`section-${item.id}`} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical 
+						key={i} 
+						{...action} 
+						icon={action.icon || action.id}
+						checkbox={action.id == value}
+						onMouseEnter={e => onMouseEnter(e, action)} 
+						onClick={e => onClick(e, action)} 
+					/>
+				))}
+			</div>
+		</div>
+	);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
 	
-};
+	return (
+		<div>
+			{sections.map((item: any, i: number) => (
+				<Section key={i} index={i} {...item} />
+			))}
+		</div>
+	);
+	
+}));
 
 export default MenuBlockLayout;

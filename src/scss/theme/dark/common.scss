@@ -6,7 +6,7 @@ html.themeDark {
 	/* Text */
 
 	--color-text-primary: #f8f8f8;
-	--color-text-secondary: #9a9a9a;
+	--color-text-secondary: #ababab;
 	--color-text-tertiary: #656565;
 	--color-text-inversion: #171717;
 
@@ -84,34 +84,6 @@ html.themeDark {
 
 	.cover.type2.black { background-color: #000 !important; }
 
-	::selection { background-color: var(--color-system-selection); }
-
-	.bgColor-grey { background: var(--color-bg-grey) !important; }
-	.bgColor-yellow { background: var(--color-bg-yellow) !important; }
-	.bgColor-orange { background: var(--color-bg-orange) !important; }
-	.bgColor-red { background: var(--color-bg-red) !important; }
-	.bgColor-pink { background: var(--color-bg-pink) !important; }
-	.bgColor-purple { background: var(--color-bg-purple) !important; }
-	.bgColor-blue { background: var(--color-bg-blue) !important; }
-	.bgColor-ice { background: var(--color-bg-ice) !important; }
-	.bgColor-teal { background: var(--color-bg-teal) !important; }
-	.bgColor-lime { background: var(--color-bg-lime) !important; }
-
-	.isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-bg-tag-grey) !important; }
-	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: var(--color-bg-tag-yellow) !important; }
-	.isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: var(--color-bg-tag-orange) !important; }
-	.isMultiSelect.tagColor-red { color: var(--color-red) !important; background: var(--color-bg-tag-red) !important; }
-	.isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: var(--color-bg-tag-pink) !important; }
-	.isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: var(--color-bg-tag-purple) !important; }
-	.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: var(--color-bg-tag-blue) !important; }
-	.isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: var(--color-bg-tag-ice) !important; }
-	.isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: var(--color-bg-tag-teal) !important; }
-	.isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: var(--color-bg-tag-lime) !important; }
-
-	.selectionTarget.isSelectionSelected::after, 
-	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
-	{ background-color: var(--color-system-selection); }
-
 	.brokenMedia {
 		img:before { background: var(--color-bg-secondary); }
 	}
@@ -153,8 +125,7 @@ html.themeDark {
 	markupsearch { color: var(--color-bg-primary) !important; }
 	markuphighlight { background: #044062 !important; }
 
-	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
-	.onboardingElement:not(.onboardingCollectionNewButton) { background-color: #000 !important; }
+	.onboardingDimmer { background-color: rgba(0, 0, 0, 0.30); opacity: 0.6; }
 
 	/* Components */
 
@@ -187,6 +158,7 @@ html.themeDark {
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
+	.button.black.disabled { color: var(--color-text-primary); background: var(--color-shape-tertiary); }
 
 	.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
 	.button.blank:not(.disabled):hover,
@@ -300,6 +272,7 @@ html.themeDark {
 	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
 	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
+	.icon.settings-notifications { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
 
 	.icon.settings-ux1 { background-image: url('#{$themePath}/icon/settings/space/space.svg'); }
 	.icon.settings-ux3 { background-image: url('#{$themePath}/icon/settings/space/chat.svg'); }
@@ -350,12 +323,6 @@ html.themeDark {
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
 	}
 
-	.header.mainSettings {
-		.identity {
-			.icon.anyName { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
-		}
-	}
-
 	/* Vault */
 
 	.vault { background-color: #393939; }
@@ -384,8 +351,6 @@ html.themeDark {
 
 	/* Sidebar */
 
-	.sidebar { box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
-	.sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
 	.sidebar {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
@@ -453,18 +418,11 @@ html.themeDark {
 							&:hover {
 								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
 							}
-						}						
-					}
-				}
-			}
-
-			.spaceHeader {
-				.buttons {
-					.item {
-						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
-						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
-						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
+						}		
+						
+						.icon.more {
+							&:hover, &.hover { background-image: url('#{$themePath}/icon/widget/sectionMore1.svg'); }
+						}
 					}
 				}
 			}
@@ -508,13 +466,6 @@ html.themeDark {
 
 	.emptyState {
 		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
-	}
-
-	#menuBar {
-		.icon.window-menu { background-image: url('#{$themePath}/icon/window/menu.svg') !important; }
-		.icon.window-min { background-image: url('#{$themePath}/icon/window/min.svg') !important; }
-		.icon.window-max { background-image: url('#{$themePath}/icon/window/max.svg') !important; }
-		.icon.window-close { background-image: url('#{$themePath}/icon/window/close.svg') !important; }
 	}
 
 	/* Key Phrase */

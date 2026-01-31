@@ -1,112 +1,95 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Phrase, QR, Button } from 'Component';
-import { I, C, S, U, translate, analytics, Storage, Renderer } from 'Lib';
+import { I, C, S, U, translate, analytics, Renderer } from 'Lib';
 
-interface State {
-	entropy: string;
-	showCode: boolean;
-};
+const PageMainSettingsPhrase = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-const PageMainSettingsPhrase = observer(class PageMainSettingsPhrase extends React.Component<I.PageSettingsComponent, State> {
+	const { onPage } = props;
+	const [ entropy, setEntropy ] = useState('');
+	const [ showCode, setShowCode ] = useState(false);
+	const isLocal = U.Data.isLocalNetwork();
+	const phraseRef = useRef<any>(null);
+	const { account } = S.Auth;
+	const { pin } = S.Common;
 
-	node: any = null;
-	refPhrase: any = null;
-	state = {
-		entropy: '',
-		showCode: false,
-	};
-
-	constructor (props: I.PageSettingsComponent) {
-		super(props);
-
-		this.onCode = this.onCode.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-	};
-
-	render () {
-		const { entropy, showCode } = this.state;
-		const { onPage } = this.props;
-		const isLocal = U.Data.isLocalNetwork();
-
-		return (
-			<div
-				ref={node => this.node = node}
-			>
-				<Title text={translate('popupSettingsPhraseTitle')} />
-				<Label className="description" text={translate('popupSettingsPhraseText')} />
-				
-				<div className="inputs" onClick={this.onCopy}>
-					<Phrase
-						ref={ref => this.refPhrase = ref}
-						readonly={true}
-						isHidden={true}
-						checkPin={true}
-						onToggle={this.onToggle}
-					/>
-				</div>
-
-				<Title className="sub" text={translate('popupSettingsMobileQRSubTitle')} />
-				<Label className="description" text={translate('popupSettingsMobileQRText')} />
-
-				<div className="qrWrap" onClick={this.onCode}>
-					<div className={!showCode ? 'isBlurred' : ''}>
-						<QR value={showCode ? entropy : translate('popupSettingsCodeStub')} />
-					</div>
-				</div>
-
-				{!isLocal ? (
-					<>
-						<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
-						<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-						<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-					</>
-				) : ''}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { account } = S.Auth;
-
-		if (!account) {
-			return;
-		};
-
-		Renderer.send('keytarGet', account.id).then((value: string) => {
-			C.WalletConvert(value, '', (message: any) => {
-				if (!message.error.code) {
-					this.refPhrase?.setValue(value);
-					this.setState({ entropy: message.entropy });
-				};
-			});
-		});
-
-		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });
-	};
-
-	onToggle (isHidden: boolean): void {
+	const onToggle = (isHidden: boolean): void => {
 		if (!isHidden) {
-			U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+			U.Common.copyToast(translate('commonPhrase'), phraseRef.current?.getValue());
 			analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 		};
 	};
 
-	onCopy () {
-		this.refPhrase.onToggle();
+	const onCopy = () => {
+		phraseRef.current?.onToggle();
 	};
 
-	onCode () {
-		const { showCode } = this.state;
-		const { pin } = S.Common;
+	const onCode = () => {
 		const onSuccess = () => {
-			this.setState({ showCode: !showCode });
+			setShowCode(!showCode);
 		};
 
 		pin && !showCode ? S.Popup.open('pin', { data: { onSuccess } }) : onSuccess();
 	};
 
-});
+	useEffect(() => {
+		if (!account) {
+			return;
+		};
+
+		Renderer.send('keytarGet', account.id).then((value: string) => {
+			if (!value) {
+				console.warn('[Phrase] Failed to retrieve phrase from keychain');
+				return;
+			};
+
+			C.WalletConvert(value, '', (message: any) => {
+				if (!message.error.code) {
+					phraseRef.current?.setValue(value);
+					setEntropy(message.entropy);
+				};
+			});
+		}).catch((err: any) => {
+			console.error('[Phrase] Error retrieving phrase from keychain:', err);
+		});
+
+		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });
+	}, []);
+
+	return (
+		<>
+			<Title text={translate('popupSettingsPhraseTitle')} />
+			<Label className="description" text={translate('popupSettingsPhraseText')} />
+			
+			<div className="inputs" onClick={onCopy}>
+				<Phrase
+					ref={phraseRef}
+					readonly={true}
+					isHidden={true}
+					checkPin={true}
+					onToggle={onToggle}
+				/>
+			</div>
+
+			<Title className="sub" text={translate('popupSettingsMobileQRSubTitle')} />
+			<Label className="description" text={translate('popupSettingsMobileQRText')} />
+
+			<div className="qrWrap" onClick={onCode}>
+				<div className={!showCode ? 'isBlurred' : ''}>
+					<QR value={showCode ? entropy : translate('popupSettingsCodeStub')} />
+				</div>
+			</div>
+
+			{!isLocal ? (
+				<>
+					<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
+					<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
+					<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+				</>
+			) : ''}
+		</>
+	);
+
+}));
 
 export default PageMainSettingsPhrase;

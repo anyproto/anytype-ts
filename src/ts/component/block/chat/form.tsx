@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -13,6 +13,7 @@ import Attachment from './attachment';
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;
+	analyticsChatId?: string;
 	isEmpty?: boolean;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
@@ -35,24 +36,25 @@ interface RefProps {
 	onDrop: (e: DragEvent) => void;
 	getAttachments: () => any[];
 	getMarks: () => I.Mark[];
+	onAttachment: () => void;
 };
 
-const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
-		highlightMessage,
+		highlightMessage, analyticsChatId,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
-	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
 	const loaderRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -67,11 +69,15 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
+	const namespace = U.Common.getEventNamespace(isPopup);
+	const attachmentsSubId = subId + namespace;
+	const spaceview = U.Space.getSpaceview();
+	const electron = U.Common.getElectron();
 	
-	let attachments = S.Chat.getAttachments(subId);
+	let attachments = S.Chat.getAttachments(attachmentsSubId);
 
 	const setAttachments = (list: any[]) => {
-		S.Chat.setAttachments(subId, list);
+		S.Chat.setAttachments(attachmentsSubId, list);
 	};
 
 	const checkSendButton = () => {
@@ -147,15 +153,43 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		saveState(attachments);
 	};
 
+	const insert = (text: string, value: string) => {
+		text = String(text || '');
+		const length = text.length;
+
+		marks.current = Mark.adjust(marks.current, range.current.from, length);
+		value = U.String.insert(value, text, range.current.from, range.current.from);
+		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
+	};
+
 	const onKeyDownInput = (e: any) => {
+		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
 
-		let value = editableRef.current?.getTextValue();
+		let value = getTextValue();
 
-		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
-			e.preventDefault();
-			onSend();
-		});
+		if (chatCmdSend) {
+			keyboard.shortcut(`${cmd}+enter`, e, () => {
+				e.preventDefault();
+				onSend();
+			});
+		} else {
+			keyboard.shortcut(`enter`, e, () => {
+				e.preventDefault();
+				onSend();
+			});
+
+			keyboard.shortcut(`${cmd}+enter`, e, () => {
+				e.preventDefault();
+
+				if (!value.match(/\r?\n$/)) {
+					value += '\n';
+				};
+
+				insert('\n', value);
+				scrollToBottom();
+			});
+		};
 
 		keyboard.shortcut('arrowup', e, () => {
 			if (range.current.to || value || attachments.length || editingId.current) {
@@ -172,7 +206,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			const parsed = checkMarkOnBackspace(value, range.current, marks.current);
+			const parsed = Mark.checkMarkOnBackspace(value, range.current, marks.current);
 
 			if (!parsed.save) {
 				return;
@@ -180,18 +214,13 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			e.preventDefault();
 
-			value = parsed.value;
+			value = parsed.text;
 			setMarks(parsed.marks);
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
-		});
 
-		keyboard.shortcut('chatObject', e, () => {
-			if (!S.Menu.isOpen('searchObject')) {
-				e.preventDefault();
-				onAttachment();
-			};
+			$(window).trigger('resize');
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -216,8 +245,13 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onCopy();
 		});
 
-		keyboard.shortcut(`shift+enter`, e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			scrollToBottom();
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			e.preventDefault();
+			insert('\t', value);
 		});
 
 		// Mark-up
@@ -237,7 +271,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
-
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -250,14 +283,15 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const oneSymbolBefore = range.current ? value[range.current.from - 1] : '';
 		const twoSymbolBefore = range.current ? value[range.current.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
+		const canOpenMenuMention = !spaceview.isOneToOne && !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
 
 		setMarks(parsed.marks);
 
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			updateMarkup(parsed.text, { from: to, to });
+			const diff = value.length - parsed.text.length;
+			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
 		};
 
 		if (canOpenMenuMention) {
@@ -292,7 +326,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			scrollToBottom();
 		});
 
-		if (!keyboard.isSpecial(e)) {
+		keyboard.shortcut('space', e, () => {
 			for (let i = 0; i < marks.current.length; ++i) {
 				const mark = marks.current[i];
 
@@ -303,7 +337,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					adjustMarks = true;
 				};
 			};
-		};
+		});
 
 		if (!value && !attachments.length && editingId.current) {
 			onDelete(editingId.current);
@@ -322,14 +356,12 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateCounter();
 
 		window.clearTimeout(timeoutHistory.current);
-		timeoutHistory.current = window.setTimeout(() => {
-			historySaveState();
-		}, J.Constant.delay.chatHistory);
+		timeoutHistory.current = window.setTimeout(() => historySaveState(), J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
 		const value = getTextValue();
-		const checkRtl = U.Common.checkRtl(value);
+		const checkRtl = U.String.checkRtl(value);
 
 		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
 	};
@@ -360,20 +392,34 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
 		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
 		const html = String(clipboard.getData('text/html') || '');
-		const text = U.Common.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
+		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
+
+		// If pasted content is a pure URL and there's a selection, create a link mark
+		const urls = U.String.getUrlsFromText(text);
+		if (urls.length && (urls[0].value == text) && (from != to)) {
+			const url = urls[0].value;
+			const currentMark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
+
+			if (!currentMark) {
+				marks.current.push({ type: I.MarkType.Link, range: { from, to }, param: url });
+				setMarks(marks.current);
+				updateMarkup(current, range.current);
+				return;
+			};
+		};
 
 		let newText = '';
 		let newMarks: I.Mark[] = [];
 
 		const parseBlocks = (blocks: I.Block[]) => {
 			const targetIds = [];
+			const textBlocksCnt = blocks.filter(it => it.isText()).length;
 
 			blocks.forEach((block: I.Block, index: number) => {
 				if (block.isText()) {
@@ -387,7 +433,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 					newText += text;
 
-					if (index < blocks.length - 1) {
+					if ((index < blocks.length - 1) && (textBlocksCnt > 1)) {
 						newText += '\n';
 					};
 
@@ -415,20 +461,25 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				newText = newText.substring(0, limit);
 			};
 
-			newText = U.Common.stringInsert(current, newText, from, to);
+			const res = U.String.insert(current, newText, from, to);
+			const skipMarks = [ I.MarkType.Color, I.MarkType.BgColor ];
+
+			newMarks = Mark.adjust(newMarks, 0, to);
+
 			marks.current = Mark.adjust(marks.current, from, newText.length);
 			marks.current = marks.current.concat(newMarks);
+			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
 
 			setMarks(marks.current);
 
 			const rt = to + newText.length;
 			range.current = { from: rt, to: rt };
-			updateMarkup(newText, range.current);
+			updateMarkup(res, range.current);
+			checkUrls();
 		};
 
 		if (json && json.blocks && json.blocks.length) {
 			parseBlocks(json.blocks.map(it => new M.Block(it)));
-			newMarks = Mark.adjust(newMarks, 0, current.length);
 			parseText();
 		} else 
 		if (html) {
@@ -450,13 +501,13 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files));
 		};
 
-		checkUrls();
 		updateCounter();
 	};
 
 	const checkUrls = () => {
 		const text = getTextValue();
-		const urls = U.Common.getUrlsFromText(text);
+		const urls = U.String.getUrlsFromText(text);
+
 		if (!urls.length) {
 			return;
 		};
@@ -464,21 +515,33 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		removeBookmarks();
 
 		for (const url of urls) {
-			const { from, to, isLocal, isUrl, value } = url;
+			const { from, to, isLocal, isUrl } = url;
 
 			if (isLocal) {
 				continue;
+			};
+
+			let value = U.String.urlFix(url.value || '');
+			let type = I.MarkType.Link;
+
+			const route = U.Common.getRouteFromUrl(value);
+			if (route) {
+				const routeParam = U.Router.getParam(route);
+
+				if ((routeParam.action == 'object') && (routeParam.spaceId == space)) {
+					value = `${J.Constant.protocol}://${route}`;
+					type = I.MarkType.Object;
+				};
 			};
 
 			if (Mark.getInRange(marks.current, I.MarkType.Link, { from, to })) {
 				continue;
 			};
 
-			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
-				type: I.MarkType.Link, 
+				type, 
 				range: { from, to }, 
-				param: U.Common.urlFix(value),
+				param: value,
 			});
 
 			setMarks(marks.current);
@@ -496,6 +559,10 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onDragOver = (e: any) => {
+		if (!canDrop(e)) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -520,7 +587,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const electron = U.Common.getElectron();
 		const list = Array.from(e.dataTransfer.files).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
@@ -578,13 +644,28 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(subId)) });
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(attachmentsSubId)) });
 
-					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					analytics.event('AttachItemChat', { type: 'Create', count: 1, chatId: analyticsChatId });
 					context?.close();
 				});
 				break;
 			};
+		};
+	};
+
+	const onFileInputChange = (e: any) => {
+		const files = Array.from(e.target.files || []) as File[];
+		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => !electron.isDirectory(it.path));
+
+		if (list.length) {
+			addAttachments(list);
+			analytics.event('AttachItemChat', { type: 'Upload', count: list.length, chatId: analyticsChatId });
+		};
+
+		// Reset input so the same file can be selected again
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
 		};
 	};
 
@@ -620,7 +701,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 										skipIds: attachments.map(it => it.id),
 										onObjectSelect: item => {
 											addAttachments([ item ]);
-											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1, chatId: analyticsChatId } );
 										},
 									},
 								});
@@ -628,13 +709,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 							};
 
 							case 'upload': {
-								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
-									addAttachments(paths.map(path => getObjectFromPath(path)));
-
-									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
-								});
-
-								analytics.event('ClickChatAttach', { type: 'Upload' });
+								fileInputRef.current?.click();
+								analytics.event('ClickChatAttach', { type: 'Upload', chatId: analyticsChatId });
 								break;
 							};
 						};
@@ -654,36 +730,51 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
 				icon: 'notice',
-				text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
+				text: U.String.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
 			});
 			return;
 		};
 
-		list.forEach(item => {
-			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
-				preloadFile(item);
-			};
-		});
-
 		saveState([ ...list, ...attachments ]);
 		historySaveState();
-	};
 
-	const preloadFile = (item: any) => {
-		if (preloading.has(item.id)) {
-			return;
+		/*
+		let cnt = 0;
+
+		const preloadIds = new Map<string, string>();
+		const cb = () => {
+			cnt++;
+			if (cnt == list.length) {
+				preloadIds.forEach((preloadId, itemId) => {
+					const item = list.find(it => it.id == itemId);
+
+					if (item) {
+						item.preloadId = preloadId;
+					};
+				});
+
+				saveState([ ...list, ...attachments ]);
+				historySaveState();
+			};
 		};
 
-		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (message.preloadFileId) {
-				preloading.set(item.id, message.preloadFileId);
-				setPreloading(preloading);
+		list.forEach(item => {
+			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
+				preloadFile(item, (preloadId: string) => {
+					if (preloadId) {
+						preloadIds.set(item.id, preloadId);
+					};
+					cb();
+				});
+			} else {
+				cb()
 			};
 		});
+		*/
+	};
+
+	const preloadFile = (item: any, callBack: (preloadId: string) => void) => {
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', 0, (message: any) => callBack(message.preloadFileId));
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -702,28 +793,9 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			addAttachments([ item ]);
 		};
 
-		const scheme = U.Common.getScheme(url);
-		const isInside = scheme == J.Constant.protocol;
+		const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
 
 		if (isInside) {
-			const route = '/' + url.split('://')[1];
-			const search = url.split('?')[1];
-
-			let target = '';
-			let spaceId = '';
-
-			if (search) {
-				const searchParam = U.Common.searchParam(search);
-
-				target = searchParam.objectId;
-				spaceId = searchParam.spaceId;
-			} else {
-				const routeParam = U.Router.getParam(route);
-
-				target = routeParam.id;
-				spaceId = routeParam.spaceId;
-			};
-
 			U.Object.getById(target, { spaceId }, object => {
 				if (object) {
 					addAttachments([ object ]);
@@ -763,13 +835,13 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onSend = () => {
-		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')){
+		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')) {
 			return;
 		};
 
 		const send = $(sendRef.current);
 		const loader = $(loaderRef.current);
-		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
+		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
@@ -829,11 +901,11 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, (message: any) => {
-					scrollToMessage(message.messageId, true);
+				C.ChatAddMessage(rootId, message, () => {
+					scrollToBottom();
 					clear();
 
-					analytics.event('SentMessage', { type: messageType });
+					analytics.event('SentMessage', { type: messageType, chatId: analyticsChatId});
 				});
 			};
 		};
@@ -846,7 +918,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, preloading.get(item.id), (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -901,7 +973,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setAttachments(attachments);
 		historySaveState();
 
-		analytics.event('ClickMessageMenuEdit');
+		analytics.event('ClickMessageMenuEdit', { chatId: analyticsChatId });
 	};
 
 	const clear = () => {
@@ -929,7 +1001,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		clearCounter();
 		checkSendButton();
 		saveState([]);
-		setPreloading(new Map());
 		checkTextMenu();
 	};
 
@@ -946,7 +1017,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 		setReplyingId(message.id);
 
-		analytics.event('ClickMessageMenuReply');
+		analytics.event('ClickMessageMenuReply', { chatId: analyticsChatId });
 	};
 
 	const onReplyClear = () => {
@@ -977,7 +1048,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 							scrollToBottom();
 						};
 
-						analytics.event('DeleteMessage');
+						analytics.event('DeleteMessage', { chatId: analyticsChatId });
 					});
 				},
 				onCancel: () => {
@@ -988,7 +1059,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			}
 		});
 
-		analytics.event('ClickMessageMenuDelete');
+		analytics.event('ClickMessageMenuDelete', { chatId: analyticsChatId });
 	};
 
 	const onHistory = (e, dir) => {
@@ -1068,18 +1139,18 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onAttachmentRemove = (id: string) => {
 		const value = getTextValue();
-		const list = (attachments || []).filter(it => it.id != id);
+		const item = attachments.find(it => it.id == id);
+		const list = attachments.filter(it => it.id != id);
 
-		if (preloading.has(id)) {
-			C.FileDiscardPreload(preloading.get(id));
-			preloading.delete(id);
+		if (item.preloadId) {
+			C.FileDiscardPreload(item.preloadId);
 		};
 
 		if (editingId.current && !value && !attachments.length) {
 			onDelete(editingId.current);
 		} else {
 			saveState(list);
-			analytics.event('DetachItemChat');
+			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
 		$(window).trigger('resize');
@@ -1090,7 +1161,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			case I.ChatReadType.Message: {
 				onScrollToBottomClick();
 
-				analytics.event('ClickScrollToBottom');
+				analytics.event('ClickScrollToBottom', { chatId: analyticsChatId });
 				break;
 			};
 
@@ -1106,7 +1177,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					});
 				};
 
-				analytics.event('ClickScrollToMention');
+				analytics.event('ClickScrollToMention', { chatId: analyticsChatId });
 				break;
 			};
 		};
@@ -1131,7 +1202,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					range: { from: range.current.from, to },
 				});
 
-				value = U.Common.stringInsert(value, ' ', range.current.from, range.current.from);
+				value = U.String.insert(value, ' ', range.current.from, range.current.from);
 
 				updateMarkup(value, { from: to, to });
 				break;
@@ -1178,16 +1249,24 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const getObjectFromFile = (file: File) => {
-		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
-		const mime = electron.fileMime(path);
+		const mime = file.type || electron.fileMime(path);
 		const ext = electron.fileExt(path);
 		const type = S.Record.getFileType();
 
+		let layout = I.ObjectLayout.File;
+
+		if (mime) {
+			const [ t1, t2 ] = mime.split('/');
+			if ((t1 == 'image') && J.Constant.fileExtension.image.includes(t2)) {
+				layout = I.ObjectLayout.Image;
+			};
+		};
+
 		return {
-			id: sha1(path),
+			id: sha1(path + file.lastModified + file.size),
 			name: file.name,
-			layout: I.ObjectLayout.File,
+			layout,
 			type: type?.id,
 			sizeInBytes: file.size,
 			fileExt: ext,
@@ -1195,27 +1274,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			mime,
 			path,
 			file,
-		};
-	};
-
-	const getObjectFromPath = (path: string) => {
-		const electron = U.Common.getElectron();
-		const name = electron.fileName(path);
-		const mime = electron.fileMime(path);
-		const ext = electron.fileExt(path);
-		const size = electron.fileSize(path);
-		const type = S.Record.getFileType();
-
-		return {
-			id: sha1(path),
-			name,
-			path,
-			fileExt: ext,
-			sizeInBytes: size,
-			mime,
-			layout: I.ObjectLayout.File,
-			type: type?.id,
-			isTmp: true,
 		};
 	};
 
@@ -1228,16 +1286,19 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let from = range.current.from;
 
 		if (fromKeyboard) {
-			value = U.Common.stringCut(value, from - 1, from);
+			value = U.String.cut(value, from - 1, from);
 			from--;
 		};
 
 		S.Common.filterSet(from, '');
 
+		const param = caretMenuParam();
+
 		raf(() => {
 			S.Menu.open('blockMention', {
 				element: `#button-${block.id}-${I.ChatButton.Mention}`,
-				...caretMenuParam(),
+				...param,
+				className: [ 'single', param.className ].join(' '),
 				data: {
 					rootId,
 					blockId: block.id,
@@ -1255,10 +1316,10 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						setMarks(newMarks);
-						value = U.Common.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						updateMarkup(value, { from: to, to });
-						analytics.event('Mention');
+						analytics.event('Mention', { chatId: analyticsChatId });
 					},
 				},
 			});
@@ -1531,6 +1592,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-attachment`}
 					className="plus"
 					onClick={onAttachment}
+					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}
 				/>
 
 				<div className="form customScrollbar">
@@ -1566,7 +1628,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 											object={item}
 											onRemove={onAttachmentRemove}
 											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(subId))}
+											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
 										/>
 									</SwiperSlide>
 								))}
@@ -1598,6 +1660,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-emoji`}
 					className="emoji"
 					onClick={onEmoji}
+					tooltipParam={{ text: translate('menuSmileGallery') }}
 				/>
 			</>
 		);
@@ -1608,6 +1671,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
+			window.clearTimeout(timeoutHistory.current);
+			window.clearTimeout(timeoutDrag.current);
 			keyboard.disableSelection(false);
 		};
 	}, []);
@@ -1642,17 +1707,19 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onDragLeave,
 		onDrop,
 		getAttachments: () => attachments,
+		onAttachment,
 		getMarks: () => marks.current,
 	}));
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id="formWrapper" 
+			id="formWrapper"
 			className="formWrapper"
 			onDragOver={onDragOver}
 			onDragLeave={onDragLeave}
 		>
+			<input ref={fileInputRef} type="file" multiple={true} className="dn" onChange={onFileInputChange} />
 			<div className="grad" />
 			<div className="bg" />
 
@@ -1666,7 +1733,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="inner">
 				{!isEmpty ? (
 					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>
 				) : ''}
@@ -1678,6 +1745,4 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 }));
 
-const ChatForm = memo(ChatFormBase);
-
-export default ChatForm;
+export default memo(ChatForm);

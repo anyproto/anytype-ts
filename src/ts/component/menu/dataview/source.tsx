@@ -1,111 +1,47 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
+import menu from 'json/menu';
 
-const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
+const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
+	const { param, getId, getSize, close, onKeyDown, setActive } = props;
+	const { data, className, classNameWrap } = param;
+	const { readonly, rootId, objectId } = data;
+	const n = useRef(-1);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.save = this.save.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-	};
-	
-	render () {
-		const items = this.getItems();
-		
-		const Item = (item: any) => {
-			if (item.isSection) {
-				return <Label className="item isSection" text={item.text || ''} />;
-			};
-
-			const canDelete = ![ 'type', 'relation' ].includes(item.id);
-
-			let icon = null;
-			if (item.customIcon) {
-				icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
-			} else {
-				icon = <IconObject size={40} object={item} />;
-			};
-
-			return (
-				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => this.onOver(e, item)}>
-					{icon}
-					<div className="txt" onClick={e => this.onClick(e, item)}>
-						<div className="name">{item.name}</div>
-						<div className="value">{item.value}</div>
-					</div>
-					<div className="buttons">
-						{canDelete ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
-					</div>
-				</form>
-			);
-		};
-		
-		return (
-			<div className="items">
-				<div className="scrollWrap">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-
-					{!items.length ? (
-						<div className="item empty">
-							<div className="inner">{translate('menuDataviewSourceSelectOneOrMoreSources')}</div>
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onRemove (e: any, item: any) {
+	const onRemove = (e: any, item: any) => {
 		if (item) {
-			this.save(this.getValueIds().filter(it => it != item.id));
+			save(getValueIds().filter(it => it != item.id));
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	onClick (e: any, item: any) {
-		const { param, getId, getSize, close } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { readonly } = data;
-		const value = this.getValue();
+	const onClick = (e: any, item: any) => {
+		const value = getValue();
 
 		if ((![ 'type', 'relation' ].includes(item.itemId)) || readonly) {
 			return;
 		};
+
+		let menuContext = null;
 
 		const menuParam = {
 			className,
@@ -113,6 +49,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
+			onOpen: context => menuContext = context,
 			data: {},
 		};
 
@@ -124,10 +61,11 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				menuParam.data = {
 					canAdd: true,
 					onClick: (item: any) => {
-						this.save([ item.id ]);
+						save([ item.id ]);
 
 						analytics.event('SetSelectQuery', { type: 'type' });
 						close();
+						menuContext?.close();
 					},
 				};
 				break;
@@ -139,13 +77,14 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					menuIdEdit: 'blockRelationEdit',
 					skipCreate: true,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
-						this.save([ relation.id ]);
+						save([ relation.id ]);
 
 						if (!value.length) {
 							analytics.event('SetSelectQuery', { type: 'relation' });
 						};
 
 						close();
+						menuContext?.close();
 					},
 				};
 				break;
@@ -155,36 +94,24 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		S.Menu.open(menuId, menuParam);
 	};
 
-	save (value: string[], callBack?: () => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { objectId } = data;
-
+	const save = (value: string[], callBack?: () => void) => {
 		C.ObjectSetSource(objectId, value, () => {
-			if (callBack) {
-				callBack();
-			};
-
-			this.forceUpdate();
+			callBack?.();
 		});
 	};
 
-	getValue () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, objectId } = data;
-
+	const getValue = () => {
 		return [].
 			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type)).
 			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation));
 	};
 
-	getValueIds () {
-		return this.getValue().map(it => it.id);
+	const getValueIds = () => {
+		return getValue().map(it => it.id);
 	};
 
-	getItems () {
-		const value = this.getValue();
+	const getItems = () => {
+		const value = getValue();
 
 		let items = [];
 
@@ -229,6 +156,78 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		return items;
 	};
 
-});
+	const items = getItems();
+	
+	const Item = (item: any) => {
+		if (item.isSection) {
+			return <Label className="item isSection" text={item.text || ''} />;
+		};
 
-export default MenuSource;
+		const canDelete = ![ 'type', 'relation' ].includes(item.id);
+
+		let icon = null;
+		if (item.customIcon) {
+			icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
+		} else {
+			icon = <IconObject size={40} object={item} />;
+		};
+
+		return (
+			<div 
+				id={`item-${item.itemId}`} 
+				className="item" 
+				onMouseEnter={e => onOver(e, item)}
+			>
+				{icon}
+				<div className="txt" onClick={e => onClick(e, item)}>
+					<div className="name">{item.name}</div>
+					<div className="value">{item.value}</div>
+				</div>
+				<div className="buttons">
+					{canDelete ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+				</div>
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		setActive();
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+	
+	return (
+		<div className="items">
+			<div className="scrollWrap">
+				{items.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
+
+				{!items.length ? (
+					<div className="item empty">
+						<div className="inner">{translate('menuDataviewSourceSelectOneOrMoreSources')}</div>
+					</div>
+				) : ''}
+			</div>
+		</div>
+	);
+
+}));
+
+export default MenuDataviewSource;

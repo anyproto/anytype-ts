@@ -54,6 +54,7 @@
 	.item:hover, .item.active {
 		.clickable { width: calc(100% - 66px); }
 		.buttons { display: flex; }
+		.chatCounter { display: none; }
 	}
 	.item.active {
 		.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
@@ -69,7 +70,6 @@
 }
 
 .widget.widgetTree.isPreview {
-	.head { padding-top: 12px; }
 	.ReactVirtualized__List { padding: 8px; }
 }
 

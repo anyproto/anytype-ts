@@ -1,3 +1,5 @@
+import storage from 'Lib/storage';
+
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
 	amplitude:			 '1ba981d1a9afb8af8c81847ef3383a20',
@@ -5,10 +7,14 @@ export default {
 	protocol:			 'anytype',
 	appName:			 'Anytype',
 	anytypeProfileId:	 '_anytype_profile',
+	missingObjectId:	 '_missing_object',
+	blankId:			 '_blank_',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
 	namespace:			 { 0: '.any' },
+
+	day:				 86400,
 
 	allowedSchemes:		 [ 'http', 'https', 'mailto', 'tel' ],
 
@@ -38,7 +44,6 @@ export default {
 		tableOfContents:	 			 50,
 
 		space: {
-			count:						 50,
 			name:						 50,
 			description:				 200,
 			nameThreshold:				 10,
@@ -51,7 +56,7 @@ export default {
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,
-			text:						 2000,
+			text:						 4000,
 			reactions: {
 				self:					 3,
 				all:					 12,
@@ -59,7 +64,11 @@ export default {
 		},
 
 		relation: {
-			option: 4,
+			option:						 4,
+		},
+
+		string: {
+			mention:					 300,
 		},
 	},
 
@@ -87,7 +96,7 @@ export default {
 	},
 
 	fileExtension: {
-		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ],
+		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'heic', 'heif' ],
 		video:			 [ 'mp4', 'm4v', 'mov' ],
 		cover:			 [ 'jpg', 'jpeg', 'png', 'gif', 'webp' ],
 		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav' ],
@@ -128,6 +137,10 @@ export default {
 		fileManagerSynced: 		'fileManagerSynced',
 		fileManagerNotSynced: 	'fileManagerNotSynced',
 		chatPreview:	 		'chatPreview',
+		chat:			 		'chat',
+		chatGlobal:	 			'chatGlobal',
+		recentEditMe:	 		'recentEditMe',
+		recentEditAll:	 		'recentEditAll',
 	},
 
 	typeKey: {
@@ -176,6 +189,9 @@ export default {
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
+		space:			 'space',
+		unread:			 'unread',
+		type:			 'type',
 		bin:			 'bin',
 		chat:			 'chat',
 	},
@@ -202,11 +218,19 @@ export default {
 					"command": "npx",
 					"args": ["-y", "@anyproto/anytype-mcp"],
 					"env": {
-						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-05-20\\"}"
+						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-11-08\\"}"
 					}
 				}
 			}
 		}
 	`,
 
+	currencySymbol: {
+		USD: '$',
+		EUR: '€',
+	},
+
+	storageKey: {
+		sidebarData: 'sidebarData',
+	},
 };

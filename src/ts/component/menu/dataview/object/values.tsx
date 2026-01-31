@@ -68,7 +68,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		if (item.id == 'add') {
 			onAdd();
 		} else {
-			U.Object.openEvent(e, item);
+			U.Object.openConfig(e, item);
 		};
 	};
 
@@ -90,7 +90,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			noAnimation: true,
 			className,
 			classNameWrap,
-			rebind: rebind,
+			rebind,
 			parentId: id,
 			data: {
 				...data,
@@ -187,7 +187,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		return (
 			<div 
-				id={'item-' + item.id} 
+				id={`item-${item.id}`} 
 				className={cn.join(' ')} 
 				onMouseEnter={e => onOver(e, item)}
 				ref={setNodeRef}
@@ -285,6 +285,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onSortEnd,
 	}), []);
 
 	return (

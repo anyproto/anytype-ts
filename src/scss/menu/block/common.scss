@@ -7,7 +7,7 @@
 
 	.menu.menuBlockAction { width: var(--menu-width-icon); }
 	.menu.menuBlockAction {
-		.content { padding-top: 12px; }
+		.content { padding-top: 12px; max-height: 450px; }
 	}
 
 	.menu.menuObject { width: var(--menu-width-icon); }

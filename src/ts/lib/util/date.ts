@@ -205,7 +205,8 @@ class UtilDate {
 			let ret = null;
 			if (t != s) {
 				ret = s;
-			} else if (f[s]) {
+			} else 
+			if (f[s]) {
 				ret = f[s]();
 			} else {
 				ret = s;
@@ -251,12 +252,13 @@ class UtilDate {
 	 * @param {I.TimeFormat} v - The time format enum value.
 	 * @returns {string} The format string.
 	 */
-	timeFormat (v: I.TimeFormat): string {
+	timeFormat (v: I.TimeFormat, withSeconds?: boolean): string {
 		let f = '';
+		const s = withSeconds ? ':s' : '';
 		switch (v) {
 			default:
-			case I.TimeFormat.H12:	 f = 'g:i A'; break;
-			case I.TimeFormat.H24:	 f = 'H:i'; break;
+			case I.TimeFormat.H12:	 f = `g:i${s} A`; break;
+			case I.TimeFormat.H24:	 f = `H:i${s}`; break;
 		};
 		return f;
 	};
@@ -267,8 +269,8 @@ class UtilDate {
 	 * @param {number} t - The Unix timestamp.
 	 * @returns {string} The formatted time string.
 	 */
-	timeWithFormat (f: I.TimeFormat, t: number): string {
-		return this.date(this.timeFormat(f), t);
+	timeWithFormat (f: I.TimeFormat, t: number, withSeconds?: boolean): string {
+		return this.date(this.timeFormat(f, withSeconds), t);
 	};
 
 	/**
@@ -281,15 +283,16 @@ class UtilDate {
 
 		const ct = this.date('d.m.Y', t);
 		const time = this.now();
+		const { day } = J.Constant;
 
 		let ret = '';
 		if (ct == this.date('d.m.Y', time)) {
 			ret = translate('commonToday');
 		} else
-		if (ct == this.date('d.m.Y', time + 86400)) {
+		if (ct == this.date('d.m.Y', time + day)) {
 			ret = translate('commonTomorrow');
 		} else
-		if (ct == this.date('d.m.Y', time - 86400)) {
+		if (ct == this.date('d.m.Y', time - day)) {
 			ret = translate('commonYesterday');
 		};
 		return ret;
@@ -361,14 +364,14 @@ class UtilDate {
 			return '';
 		};
 
-		const DAY_IN_SECONDS = 86400;
-		const y = Math.floor(t / (DAY_IN_SECONDS * 365));
+		const { day } = J.Constant;
+		const y = Math.floor(t / (day * 365));
 
-		t -= y * (DAY_IN_SECONDS * 365);
+		t -= y * (day * 365);
 
-		const d = Math.floor(t / DAY_IN_SECONDS);
+		const d = Math.floor(t / day);
 
-		t -= d * DAY_IN_SECONDS;
+		t -= d * day;
 		const h = Math.floor(t / 3600);
 
 		t -= h * 3600;
@@ -379,19 +382,19 @@ class UtilDate {
 
 		let ret = '';
 		if (y > 0) {
-			ret = U.Common.sprintf('%dy', y);
+			ret = U.String.sprintf('%dy', y);
 		} else
 		if (d > 0) {
-			ret = U.Common.sprintf('%dd', d);
+			ret = U.String.sprintf('%dd', d);
 		} else
 		if (h > 0) {
-			ret = U.Common.sprintf('%dh', h);
+			ret = U.String.sprintf('%dh', h);
 		} else
 		if (m > 0) {
-			ret = U.Common.sprintf('%dmin', m);
+			ret = U.String.sprintf('%dmin', m);
 		} else
 		if (s > 0) {
-			ret = U.Common.sprintf('%ds', s);
+			ret = U.String.sprintf('%ds', s);
 		};
 		return ret;
 	};

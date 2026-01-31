@@ -12,6 +12,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ editingId, setEditingId ] = useState('');
 	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
+	const filterRef = useRef(null);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
@@ -46,12 +47,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 						case 'reset': {
 							Storage.resetShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
 
 						case 'remove': {
 							Storage.removeShortcut(item.id);
+							Renderer.send('initMenu');
 							setDummy(dummy + 1);
 							break;
 						};
@@ -201,7 +204,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (errorId == item.id) {
 				cn.push('hasError');
-				alert = <Icon className="alert" />
+				alert = <Icon className="alert" />;
 			};
 
 			onClickHandler = () => onClick(item);
@@ -277,6 +280,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
+		window.setTimeout(() => {
+			filterRef.current?.setRange({ from: 0, to: 0 });
+		}, 50);
+
 		return () => {
 			clear();
 			$(window).off('keyup.shortcut keydown.shortcut');
@@ -302,14 +309,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 					const item = J.Shortcut.getItems()[editingId];
 
-					let menuLabel = U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
+					let menuLabel = U.String.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
 					let options = [
 						{ id: 'override', name: translate('popupShortcutOverride') },
 						{ id: 'reset', name: translate('commonRemove') },
 					];
 
 					if (!conflict.id || conflict.noEdit) {
-						menuLabel = U.Common.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
+						menuLabel = U.String.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
 						options = [ 
 							{ id: 'reset', name: translate('commonOkay') },
 						];
@@ -414,8 +421,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					};
 				};
 
-				if (!parsedCode) {
-					pressed.push(key);
+				if (!parsedCode && code) {
+					pressed.push(code);
 				};
 			};
 
@@ -432,7 +439,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	}, [ page ]);
 
 	if (filter) {
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 		section.children = section.children.filter((s: any) => {
 			s.children = s.children.filter((c: any) => {
@@ -469,7 +476,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 							value={page} 
 							onChange={id => {
 								setPage(id);
-								analytics.event(U.Common.toUpperCamelCase(`ScreenShortcut-${id}`));
+								analytics.event(U.String.toUpperCamelCase(`ScreenShortcut-${id}`));
 							}}
 						/>
 						<Label text={translate('popupShortcutDescription')} />
@@ -480,7 +487,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					</div>
 				</div>
 				<div className="filterWrap">
-					<Filter className="outlined" onChange={onFilterChange} />
+					<Filter 
+						ref={filterRef}
+						className="outlined" 
+						onChange={onFilterChange} 
+						focusOnMount={true}
+					/>
 				</div>
 			</div>
 

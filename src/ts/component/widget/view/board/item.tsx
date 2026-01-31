@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, MouseEvent, SyntheticEvent } from 'react';
 import $ from 'jquery';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
@@ -22,7 +23,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-	const hasMore = U.Space.canMyParticipantWrite();
+	const hasMore = false;//U.Space.canMyParticipantWrite();
 
 	const onClick = (e: MouseEvent) => {
 		if (e.button) {
@@ -48,9 +49,12 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 			element, 
 			withElement, 
 			subId, 
-			objectId: id, 
+			objectId: id,
 			data: {
 				relationKeys: J.Relation.default.concat(view.groupRelationKey),
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
 			},
 		});
 	};
@@ -113,14 +117,19 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<div
-			ref={nodeRef}
-			className="item"
-			key={object.id}
-			onContextMenu={e => onContextHandler(e, false)}
-		>
-			{inner}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef}
+				className="item"
+				key={object.id}
+				onContextMenu={e => onContextHandler(e, false)}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{inner}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

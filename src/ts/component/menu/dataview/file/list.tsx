@@ -1,217 +1,62 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, EmptySearch, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
-
-interface State {
-	isLoading: boolean;
-};
+import { set } from 'lodash';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT = 20;
 
-const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<I.Menu, State> {
+const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	state = {
-		isLoading: false,
-	};
+	const { param, getId, setHover, setActive, close, onKeyDown, position } = props;
+	const { data } = param;
+	const { onChange, maxCount } = data;
+	const [ dummy, setDummy ] = useState(0);
+	const n = useRef(-1);
+	const listRef = useRef(null);
+	const itemsRef = useRef([]);
+	const filterInputRef = useRef(null);
+	const timeoutRef = useRef(0);
+	const offsetRef = useRef(0);
+	const topRef = useRef(0);
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
-	filter = '';
-	cache: any = {};
-	offset = 0;
-	items: any[] = [];
-	refFilter: any = null;
-	refList: any = null;
-	timeoutFilter = 0;
-	top = 0;
-	n = -1;
+	const filter = String(data.filter || '');
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onScroll = this.onScroll.bind(this);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { param, setHover } = this.props;
-		const { isLoading } = this.state;
-		const { data } = param;
-		const { filter } = data;
-		const items = this.getItems();
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			
-			if (!item) {
-				return null;
-			};
-
-			const type = S.Record.getTypeById(item.type);
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<MenuItemVertical 
-						{...item}
-						object={item}
-						name={<ObjectName object={item} />}
-						onMouseEnter={e => this.onOver(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						caption={<ObjectType object={type} />}
-						style={param.style}
-					/>
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div className="wrap">
-				<Filter
-					ref={ref => this.refFilter = ref}
-					className="outlined"
-					placeholderFocus={translate('commonFilterObjects')}
-					value={filter}
-					onChange={this.onFilterChange} 
-					focusOnMount={true}
-				/>
-
-				{isLoading ? <Loader /> : ''}
-
-				{!items.length && !isLoading ? (
-					<EmptySearch filter={filter} />
-				) : ''}
-
-				{this.cache && items.length && !isLoading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length + 1}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-											onScroll={this.onScroll}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-
-				<div className="bottom">
-					<div className="line" />
-					<MenuItemVertical 
-						id="upload" 
-						icon="plus" 
-						name={translate('commonUpload')} 
-						onClick={this.onUpload}
-						onMouseEnter={() => setHover({ id: 'upload' })}
-						onMouseLeave={() => setHover()}
-					/>
-				</div>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this.rebind();
-		this.resize();
-		this.load(true);
-	};
-
-	componentDidUpdate () {
-		const items = this.getItems();
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-
-		if (filter != this.filter) {
-			this.filter = filter;
-			this.reload();
-			return;
-		};
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i]),
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.resize();
-		this.props.setActive();
-	};
-	
-	componentWillUnmount () {
-		window.clearTimeout(this.timeoutFilter);
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
+	const getItems = () => {
 		const value = Relation.getArrayValue(data.value);
 
-		return U.Common.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+		return U.Common.objectCopy(itemsRef.current).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 
-	reload () {
-		this.n = -1;
-		this.offset = 0;
-		this.load(true);
+	const reload = () => {
+		n.current = -1;
+		offsetRef.current = 0;
+		load(true);
 	};
 	
-	load (clear: boolean, callBack?: (message: any) => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
+	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -223,61 +68,48 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			filters = Object.assign(data.filters);
 		};
 
-		if (clear) {
-			this.setState({ isLoading: true });
-		};
-
 		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,
-			offset: this.offset,
+			offset: offsetRef.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ isLoading: false });
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
-				this.items = [];
+				itemsRef.current = [];
 			};
-
-			this.items = this.items.concat(message.records || []);
-
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
-			};
+			itemsRef.current = itemsRef.current.concat(message.records || []);
+			setDummy(dummy + 1);
 		});
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
+			offsetRef.current += J.Constant.limit.menuRecords;
+			load(false, resolve);
 		});
 	};
 
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeoutRef.current);
+		timeoutRef.current = window.setTimeout(() => {
+			data.filter = v;
+		}, J.Constant.delay.keyboard);
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { close } = this.props;
-
+	const onClick = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -286,53 +118,176 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			return;
 		};
 
-		this.onChange(item.id);
+		onChangeHandler(item.id);
 	};
 
-	onUpload () {
+	const onUpload = () => {
 		Action.openFileDialog({}, paths => {
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, false, '', (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, false, '', 0, (message: any) => {
 				if (!message.error.code) {
-					this.onChange(message.objectId);
-					this.reload();
+					onChangeHandler(message.objectId);
+					reload();
 				};
 			});
 		});
 	};
 
-	onChange (id) {
-		const { param, position } = this.props;
-		const { data } = param;
-		const { onChange, maxCount } = data;
-
+	const onChangeHandler = (id) => {
 		let value = U.Common.arrayUnique(Relation.getArrayValue(data.value).concat(id));
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
 		};
 
 		onChange(value, () => {
-			S.Menu.updateData(this.props.id, { value });
+			S.Menu.updateData(props.id, { value });
 			S.Menu.updateData(MENU_ID, { value });
 			position();
 		});
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
+	const resize = () => {
 		const obj = $(`#${getId()} .content`);
-		const offset = 120;
-		const itemsHeight = items.reduce((res: number, current: any) => res + this.getRowHeight(current), offset);
+		const offset = 100;
+		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
 		obj.css({ height: (items.length ? height : '') });
 		position();
 	};
 
-});
+	const items = getItems();
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+		
+		if (!item) {
+			return null;
+		};
+
+		const type = S.Record.getTypeById(item.type);
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<MenuItemVertical 
+					{...item}
+					object={item}
+					name={<ObjectName object={item} />}
+					onMouseEnter={e => onOver(e, item)} 
+					onClick={e => onClick(e, item)}
+					caption={<ObjectType object={type} />}
+					style={param.style}
+				/>
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		rebind();
+		resize();
+		load(true);
+
+		return () => {
+			window.clearTimeout(timeoutRef.current);
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		if (listRef.current && topRef.current) {
+			listRef.current.scrollToPosition(topRef.current);
+		};
+
+		resize();
+		setActive();
+	});
+
+	useEffect(() => {
+		topRef.current = 0;
+		reload();
+	}, [ filter ]);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => filterInputRef.current,
+		getListRef: () => listRef.current,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div className="wrap">
+			<Filter
+				ref={filterInputRef}
+				className="outlined"
+				placeholderFocus={translate('commonFilterObjects')}
+				value={filter}
+				onChange={onFilterChange} 
+				focusOnMount={true}
+			/>
+
+			{!items.length ? (
+				<EmptySearch filter={filter} />
+			) : ''}
+
+			{cache.current && items.length ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										onScroll={onScroll}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+
+			<div className="bottom">
+				<div className="line" />
+				<MenuItemVertical 
+					id="upload" 
+					icon="plus" 
+					name={translate('commonUpload')} 
+					onClick={onUpload}
+					onMouseEnter={() => setHover({ id: 'upload' })}
+					onMouseLeave={() => setHover()}
+				/>
+			</div>
+		</div>
+	);
+	
+}));
 
 export default MenuDataviewFileList;

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Menu } from 'Component';
 import { observer } from 'mobx-react';
 import { I, S } from 'Lib';

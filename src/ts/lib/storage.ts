@@ -8,31 +8,38 @@ const ACCOUNT_KEYS = [
 
 const SPACE_KEYS = [
 	'toggle',
-	'lastOpenedObject',
+	'lastOpenedSimple',
 	'scroll',
 	'defaultType',
-	'pinnedTypes',
 	'chat',
 	'popupSearch',
 	'focus',
 	'openUrl',
-	'redirectInvite',
+	'graphData',
+	'recentEditMode',
+	'widgetSections',
 ];
 
 const LOCAL_KEYS = [
 	'toggle',
 	'scroll',
 	'focus',
-	'sidebar',
+	'graphData',
+	'progress',
+	'updateBanner',
+	'lastOpenedSimple',
+	'sidebarData',
 ];
 
 const Api = {
 	get: (key: string, isLocal: boolean) => {
+		let ret = {};
 		if (electron.storeGet && !isLocal) {
-			return electron.storeGet(key);
+			ret = electron.storeGet(key);
 		} else {
-			return Api.parse(localStorage.getItem(key));
+			ret = Api.parse(localStorage.getItem(key));
 		};
+		return ret;
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
@@ -57,7 +64,11 @@ const Api = {
 		};
 
 		let ret = '';
-		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		try { 
+			ret = JSON.parse(s); 
+		} catch (e) { 
+			console.error(e); 
+		};
 		return ret;
 	},
 };
@@ -206,7 +217,6 @@ class Storage {
 		const obj = this.getSpace(isLocal, spaceId);
 
 		delete(obj[spaceId][key]);
-
 		this.setSpace(obj, isLocal);
 	};
 
@@ -252,10 +262,9 @@ class Storage {
 	 */
 	clearDeletedSpaces (isLocal: boolean) {
 		const keys = Object.keys(this.getSpace(isLocal));
-
 		keys.forEach(key => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(key);
-			if (!spaceview) {
+			if (spaceview?.isAccountDeleted) {
 				this.deleteSpace(key, isLocal);
 			};
 		});
@@ -358,63 +367,15 @@ class Storage {
 	 * @returns {any} The last opened objects.
 	 */
 	getLastOpened () {
-		return this.get('lastOpenedObject', this.isLocal('lastOpenedObject')) || {};
+		return this.get('lastOpenedSimple', this.isLocal('lastOpenedSimple')) || {};
 	};
 
 	/**
 	 * Sets the last opened object for a window.
-	 * @param {string} windowId - The window ID.
 	 * @param {any} param - The parameters to set.
 	 */
-	setLastOpened (windowId: string, param: any) {
-		const obj = this.getLastOpened();
-
-		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
-	};
-
-	/**
-	 * Deletes last opened objects by object IDs.
-	 * @param {string[]} ids - The object IDs to delete.
-	 */
-	deleteLastOpenedByObjectId (ids: string[]) {
-		ids = ids || [];
-
-		const obj = this.getLastOpened();
-		const windowIds = [];
-
-		for (const windowId in obj) {
-			if (!obj[windowId] || ids.includes(obj[windowId].id)) {
-				windowIds.push(windowId);
-			};
-		};
-
-		this.deleteLastOpenedByWindowId(windowIds);
-	};
-
-	/**
-	 * Deletes last opened objects by window IDs.
-	 * @param {string[]} ids - The window IDs to delete.
-	 */
-	deleteLastOpenedByWindowId (ids: string[]) {
-		if (!ids.length) {
-			return;
-		};
-
-		const obj = this.getLastOpened();
-
-		ids.forEach(ids => delete(obj[ids]));
-		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
-	};
-
-	/**
-	 * Gets the last opened object by window ID.
-	 * @param {string} id - The window ID.
-	 * @returns {any} The last opened object.
-	 */
-	getLastOpenedByWindowId (id: string) {
-		const obj = this.getLastOpened();
-		return obj[id] || obj[1] || null;
+	setLastOpened (param: any) {
+		this.set('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'));
 	};
 
 	/**
@@ -719,6 +680,32 @@ class Storage {
 	resetShortcuts () {
 		this.delete('shortcuts', this.isLocal('shortcuts'));
 		keyboard.initShortcuts();
+	};
+
+	setGraphData (data: any) {
+		const isLocal = this.isLocal('graphData');
+		const obj = this.get('graphData', isLocal) || {};
+
+		this.set('graphData', Object.assign(obj, data), isLocal);
+	};
+
+	getGraphData () {
+		const obj = this.get('graphData', this.isLocal('graphData')) || {};
+
+		obj.zoom = obj.zoom || {};
+		obj.zoom.k = Number(obj.zoom.k) || 1;
+		obj.zoom.x = Number(obj.zoom.x) || 0;
+		obj.zoom.y = Number(obj.zoom.y) || 0;
+
+		return obj;
+	};
+
+	clearOldKeys () {
+		const spaces = U.Space.getList();
+
+		spaces.forEach(space => {
+			this.deleteSpaceKey('lastOpenedObject', false, space.targetSpaceId);
+		});
 	};
 	
 };

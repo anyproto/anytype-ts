@@ -1,222 +1,76 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview, Action } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 
-const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
+const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	node: any = null;
-	format: I.RelationType = null;
-	objectTypes: string[] = [];
-	includeTime: boolean = false;
-	ref = null;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onRelationType = this.onRelationType.bind(this);
-		this.onObjectType = this.onObjectType.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.menuClose = this.menuClose.bind(this);
-		this.rebind = this.rebind.bind(this);
-	};
+	const { id, getId, getSize, param, close } = props;
+	const { className, classNameWrap, data } = param;
+	const { 
+		rootId, blockId, extendedOptions, readonly, noUnlink, getView, filter, relationId, addParam, addCommand, onChange, 
+		loadData, unlinkCommand,
+	} = data;
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
-		const relation = this.getRelation();
-		const isDate = this.format == I.RelationType.Date;
-		const isObject = this.format == I.RelationType.Object;
-		const isReadonly = this.isReadonly();
-		const sections = this.getSections();
-		const ccn = [ 'item' ];
-		
-		if (relation) {
-			ccn.push('disabled');
-		};
+	const filterRef = useRef(null);
+	const buttonRef = useRef(null);
+	const [ format, setFormat ] = useState<I.RelationType>(null);
+	const [ objectTypes, setObjectTypes ] = useState<string[]>([]);
+	const [ includeTime, setIncludeTime ] = useState<boolean>(false);
 
-		let opts = null;
-		let name = '';
+	useEffect(() => {
+		const relation = getRelation();
 
 		if (relation) {
-			name = relation.name;
-		};
-
-		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
-			const length = this.objectTypes.length;
-			const typeId = length ? this.objectTypes[0] : '';
-			const type = S.Record.getTypeById(typeId);
-			const typeProps: any = { 
-				name: translate('menuDataviewRelationEditSelectObjectType'),
-				caption: (length > 1 ? '+' + (length - 1) : ''),
-			};
-
-			if (type) {
-				typeProps.name = type.name;
-				typeProps.object = type;
-			};
-
-			opts = (
-				<div className="section noLine">
-					<div className="name">{translate('menuDataviewRelationEditLimitObjectTypes')}</div>
-					<MenuItemVertical
-						id="object-type"
-						onMouseEnter={this.onObjectType}
-						onClick={this.onObjectType}
-						arrow={!isReadonly}
-						{...typeProps}
-					/>
-				</div>
-			);
-		};
-
-		if (isDate && relation) {
-			opts = (
-				<div className="section">
-					<MenuItemVertical 
-						id="includeTime" 
-						icon="clock" 
-						name={translate('commonIncludeTime')}
-						onMouseEnter={this.menuClose}
-						readonly={readonly}
-						withSwitch={true}
-						switchValue={this.includeTime}
-						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
-					/>
-				</div>
-			);
-		};
-
-		return (
-			<form 
-				ref={node => this.node = node}
-				className="form" 
-				onSubmit={this.onSubmit} 
-				onMouseDown={this.menuClose}
-			>
-				<div className="section">
-					<div className="name">{translate('menuDataviewRelationEditRelationName')}</div>
-					{!isReadonly ? (
-						<div className="inputWrap">
-							<Input 
-								ref={ref => this.ref = ref} 
-								value={name} 
-								onChange={this.onChange}
-								onMouseEnter={this.menuClose}
-							/>
-						</div>
-					) : (
-						<div className="item isReadonly">
-							<Icon className="lock" />
-							{relation ? relation.name : ''}
-						</div>
-					)}
-				</div>
-
-				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
-					<div className="name">{translate('menuDataviewRelationEditRelationType')}</div>
-					<MenuItemVertical 
-						id="relation-type" 
-						icon={this.format === null ? undefined : `relation ${Relation.className(this.format)}`} 
-						name={this.format === null ? translate('menuDataviewRelationEditSelectRelationType') : translate('relationName' + this.format)}
-						onMouseEnter={this.onRelationType} 
-						readonly={isReadonly}
-						arrow={!relation}
-					/>
-				</div>
-				
-				{opts}
-
-				{!isReadonly ? (
-					<div className="section" onMouseEnter={this.menuClose}>
-						<div className="inputWrap">
-							<Button id="button" type="input" text={translate(relation ? 'commonSave' : 'commonCreate')} color="blank" className="c28" />
-						</div>
-					</div>
-				) : ''}
-
-				{sections.map((section: any, i: number) => (
-					<div key={i} className="section">
-						{section.children.map((action: any, c: number) => (
-							<MenuItemVertical 
-								key={c}
-								{...action}
-								onClick={e => this.onClick(e, action)} 
-								onMouseEnter={e => this.onMouseEnter(e, action)}
-							/>
-						))}
-					</div>
-				))}
-			</form>
-		);
-	};
-
-	componentDidMount() {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const relation = this.getRelation();
-
-		if (relation) {
-			this.format = relation.format;
-			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
-			this.includeTime = relation.includeTime;
-			this.forceUpdate();
+			setFormat(relation.format);
+			setObjectTypes(Relation.getArrayValue(relation.objectTypes));
+			setIncludeTime(relation.includeTime);
 		};
 
 		if (filter) {
-			this.ref?.setValue(filter);
+			filterRef.current?.setValue(filter);
 		};
 
-		this.focus();
-		this.checkButton();
-		this.rebind();
-	};
+		focus();
+		checkButton();
+		rebind();
 
-	componentDidUpdate () {
-		this.focus();
-		this.checkButton();
-		this.props.position();
-	};
+		return () => {
+			menuClose();
+			unbind();
+		};
 
-	componentWillUnmount () {
-		this.menuClose();
-		this.unbind();
-	};
+	}, []);
 
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	useEffect(() => {
+		focus();
+		checkButton();
+		props.position();
+	});
+
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
 	};
 	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	focus () {
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+	const focus = () => {
+		window.setTimeout(() => filterRef.current?.focus(), 15);
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, extendedOptions, readonly, noUnlink } = data;
-		const relation = this.getRelation();
+	const getSections = () => {
+		const relation = getRelation();
 
 		if (!relation) {
 			return [];
 		};
 
-		const viewRelation = this.getViewRelation();
+		const viewRelation = getViewRelation();
 		const object = S.Detail.get(rootId, rootId);
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const isName = relation && (relation.relationKey == 'name');
@@ -261,6 +115,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 		} else {
 			canOpen = false;
+			canUnlink = false;
 		};
 
 		if (!relation || !relation.id || readonly) {
@@ -309,39 +164,25 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		return sections;
 	};
 
-	getItems () {
-		const sections = this.getSections();
-
-		let items: any[] = [];
-		for (const section of sections) {
-			items = items.concat(section.children);
-		};
-
-		return items;
-	};
-
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.onOver(e, item);
+			onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!item.arrow) {
-			this.menuClose();
+			menuClose();
 			return;
 		};
 
-		const { id, getId, getSize, param, close } = this.props;
-		const { className, classNameWrap, data } = param;
-		const { rootId } = data;
-		const relation = this.getRelation();
+		const relation = getRelation();
 
 		if (!relation) {
 			return;
 		};
 
-		const viewRelation = this.getViewRelation();
+		const viewRelation = getViewRelation();
 		const object = S.Detail.get(rootId, rootId);
 
 		let menuContext = null;
@@ -356,7 +197,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			className,
 			classNameWrap,
 			onOpen: context => menuContext = context,
-			rebind: this.rebind,
+			rebind: rebind,
 			parentId: id,
 			data: {},
 		};
@@ -369,7 +210,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					value: viewRelation?.align,
 					restricted: [ I.BlockHAlign.Justify ],
 					onSelect: (align: I.BlockHAlign) => {
-						this.saveViewRelation('align', align);
+						saveViewRelation('align', align);
 						close();
 					}
 				});
@@ -380,7 +221,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				const save = (id: any) => {
 					id = Number(id) || 0;
 
-					this.saveViewRelation('formulaType', id);
+					saveViewRelation('formulaType', id);
 					analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
 				};
 
@@ -405,14 +246,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 								isSub: true,
 								className,
 								classNameWrap,
-								rebind: menuContext.ref?.rebind,
+								rebind: menuContext.getChildRef()?.rebind,
 								parentId: menuContext.props.id,
 								data: {
 									rootId,
 									options,
 									onSelect: (e: any, item: any) => {
 										save(item.id);
-										menuContext.close();
+										menuContext?.close();
 									},
 								}
 							});
@@ -433,15 +274,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView, loadData, unlinkCommand } = data;
 		const view = getView();
-		const relation = this.getRelation();
+		const relation = getRelation();
 
 		if (!relation) {
 			return;
@@ -451,16 +289,16 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const idx = view.relations.findIndex(it => it && (it.relationKey == relation.relationKey));
 
-		let close = true;
+		let needClose = true;
 
 		switch (item.id) {
 			case 'open': {
-				U.Object.openConfig(relation);
+				U.Object.openConfig(null, relation);
 				break;
 			};
 
 			case 'copy': {
-				this.add({ 
+				add({ 
 					name: relation.name, 
 					relationFormat: relation.format,
 					relationFormatObjectTypes: relation.objectTypes || [],
@@ -471,16 +309,16 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			case 'unlink': {
 				if (unlinkCommand) {
-					unlinkCommand(rootId, blockId, relation, () => this.props.close());
+					unlinkCommand(rootId, blockId, relation, () => close());
 				} else {
-					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
+					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => close());
 				};
 				break;
 			};
 
 			case 'remove': {
 				Action.archive([ relation.id ], '', () => {
-					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => this.props.close());
+					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => close());
 				});
 				break;
 			};
@@ -489,7 +327,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				const conditions = Relation.filterConditionsByType(relation.format);
 				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				const filter = {
-					
 					relationKey: relation.relationKey,
 					condition: condition as I.FilterCondition,
 					value: Relation.formatValue(relation, null, false),
@@ -540,12 +377,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							const index = Math.max(0, idx + item.dir);
 
 							const cb = (message: any) => {
-								S.Menu.closeAll([ this.props.id, 'relationSuggest' ]);
+								S.Menu.closeAll([ id, 'relationSuggest' ]);
 								loadData(view.id, 0);
-
-								if (onChange) {
-									onChange(message);
-								};
+								onChange?.(message);
 							};
 
 							Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, index, cb);
@@ -553,70 +387,61 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					}
 				});
 
-				close = false;
+				needClose = false;
 				break;
 			};
 
 			case 'hide': {
-				this.saveViewRelation('isVisible', false);
+				saveViewRelation('isVisible', false);
 				break;
 			};
 		};
 
-		if (close) {
-			this.props.close();
+		if (needClose) {
+			close();
 		};
 
 	};
 
-	onRelationType (e: any) {
+	const onRelationType = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, param, getId } = this.props;
-		const { data } = param;
-		const relation = this.getViewRelation();
+		const relation = getViewRelation();
 		
 		if (relation || S.Menu.isAnimating(id)) {
 			return;
 		};
 
-		this.menuOpen('select', { 
+		menuOpen('select', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
 				filter: '',
-				value: this.format,
+				value: format,
 				options: U.Menu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
-					this.format = item.id;
-					this.forceUpdate();
+					setFormat(item.id);
 				},
 			}
 		});
 	};
 
-	onObjectType (e: any) {
+	const onObjectType = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, param, getSize } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
-		if (this.isReadonly() || S.Menu.isAnimating(id)) {
+		if (isReadonlyHandler() || S.Menu.isAnimating(id)) {
 			return;
 		};
 
-		const { getId } = this.props;
-		
-		let relation: any = this.getRelation();
+		let relation: any = getRelation();
 		if (!relation) {
-			relation = { format: this.format };
+			relation = { format };
 		};
 
-		this.menuOpen('dataviewObjectValues', { 
+		menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
 			width: getSize().width,
@@ -626,7 +451,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				nameCreate: translate('commonCreateObjectTypeWithName'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				canEdit: true,
-				value: this.objectTypes, 
+				value: objectTypes, 
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
@@ -635,117 +460,94 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					this.objectTypes = Relation.getArrayValue(value);
-					this.forceUpdate();
+					setObjectTypes(Relation.getArrayValue(value));
 
 					if (relation.id) {
-						this.save();
+						save();
 					};
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});
 	};
 
-	menuOpen (id: string, options: I.MenuParam) {
-		const { getSize, param } = this.props;
-		const { classNameWrap } = param;
-
+	const menuOpen = (id: string, options: I.MenuParam) => {
 		options = Object.assign(options, {
 			isSub: true,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap,
-			rebind: this.rebind,
-			parentId: this.props.id,
+			rebind,
+			parentId: props.id,
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(J.Menu.relationEdit, () => {
-				S.Menu.open(id, options);
-			});
+			S.Menu.closeAll(J.Menu.relationEdit, () => S.Menu.open(id, options));
 		};
 	};
 
-	menuClose () {
+	const menuClose = () => {
 		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
-	onChangeTime (v: boolean) {
-		const relation = this.getRelation();
+	const onChangeTime = (v: boolean) => {
+		const relation = getRelation();
 
-		this.includeTime = v;
+		setIncludeTime(v);
 
 		if (relation && relation.id) {
-			this.save();
+			save();
 		};
 	};
 
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		const node = $(this.node);
-		const button = node.find('#button');
-
-		if (button.hasClass('blank')) {
+		if (buttonRef.current?.getColor() == 'blank') {
 			return;
 		};
 
-		this.save();
-		this.props.close();
+		save();
+		close();
 	};
 
-	onChange () {
-		this.checkButton();
+	const onChangeHandler = () => {
+		checkButton();
 	};
 
-	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			this.onSubmit(e);
-		});
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
 
-	checkButton () {
-		const node = $(this.node);
-		const name = this.ref ? this.ref.getValue() : '';
-		const button = node.find('#button');
-		const canSave = name.length && (this.format !== null) && !this.isReadonly();
+	const checkButton = () => {
+		const name = String(filterRef.current?.getValue() || '');
+		const canSave = name.length && (format !== null) && !isReadonlyHandler();
 
-		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
+		buttonRef.current?.setColor(canSave ? 'accent' : 'blank');
 	};
 
-	isAllowed () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const relation = this.getRelation();
-
-		let ret = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
-		if (ret) {
-			ret = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+	const isReadonlyHandler = () => {
+		if (readonly) {
+			return true;
 		};
 
-		return ret;
+		const relation = getRelation();
+
+		let isAllowed = true;
+
+		if (relation) {
+			isAllowed = S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]);
+		};
+		if (isAllowed) {
+			isAllowed = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		};
+
+		return !isAllowed || (relation && relation.isReadonlyRelation);
 	};
 
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
-		const relation = this.getRelation();
-		const isAllowed = this.isAllowed();
-
-		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
-	};
-
-	saveViewRelation (k: string, v: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const relation = this.getViewRelation();
+	const saveViewRelation = (k: string, v: any) => {
+		const relation = getViewRelation();
 		const view = getView();
 
 		if (view && relation) {
@@ -753,26 +555,23 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 	};
 
-	save () {
-		const name = this.ref ? this.ref.getValue() : '';
-		const relation = this.getRelation();
+	const save = () => {
+		const name = String(filterRef.current?.getValue() || '');
+		const relation = getRelation();
 		const item: any = { 
-			relationFormat: this.format,
-			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
-			relationFormatIncludeTime: this.includeTime,
+			relationFormat: format,
+			relationFormatObjectTypes: Relation.isObject(format) ? Relation.getArrayValue(objectTypes) : [],
+			relationFormatIncludeTime: includeTime,
 		};
 
 		if (name) {
 			item.name = name;
 		};
 
-		relation && relation.id ? this.update(item) : this.add(item);
+		relation && relation.id ? update(item) : add(item);
 	};
 
-	add (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, addCommand, onChange, ref } = data;
+	const add = (item: any) => {
 		const object = S.Detail.get(rootId, rootId);
 
 		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
@@ -784,20 +583,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			
 			data.relationId = details.id;
 			S.Detail.update(J.Constant.subId.relation, { id: details.id, details }, false);
+			addCommand?.(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 
-			if (addCommand) {
-				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
-			};
-
-			Preview.toastShow({ text: U.Common.sprintf(translate('menuDataviewRelationEditToastOnCreate'), details.name) });
+			Preview.toastShow({ text: U.String.sprintf(translate('menuDataviewRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
 
-	update (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationId } = data;
+	const update = (item: any) => {
 		const details: any[] = [];
 
 		for (const k in item) {
@@ -807,11 +600,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		C.ObjectListSetDetails([ relationId ], details);
 	};
 
-	getRelation (): any {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationId, addParam } = data;
-
+	const getRelation = (): any => {
 		let ret: any = null;
 
 		if (relationId) {
@@ -825,19 +614,150 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		return ret;
 	};
 
-	getViewRelation (): I.ViewRelation {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const relation = this.getRelation();
-
+	const getViewRelation = (): I.ViewRelation => {
 		if (!getView) {
 			return null;
 		};
 
-		return relation ? getView()?.getRelation(relation.relationKey) : null;
+		const relation = getRelation();
+		if (!relation) {
+			return null;
+		};
+
+		return getView()?.getRelation(relation.relationKey);
 	};
 
-});
+	const relation = getRelation();
+	const isDate = Relation.isDate(format);
+	const isObject = Relation.isObject(format);
+	const isReadonly = isReadonlyHandler();
+	const sections = getSections();
+	const ccn = [ 'item' ];
+	
+	if (relation) {
+		ccn.push('disabled');
+	};
 
-export default MenuRelationEdit;
+	let opts = null;
+	let name = '';
+
+	if (relation) {
+		name = relation.name;
+	};
+
+	if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
+		const length = objectTypes.length;
+		const typeId = length ? objectTypes[0] : '';
+		const type = S.Record.getTypeById(typeId);
+		const typeProps: any = { 
+			name: translate('menuDataviewRelationEditSelectObjectType'),
+			caption: (length > 1 ? '+' + (length - 1) : ''),
+		};
+
+		if (type) {
+			typeProps.name = type.name;
+			typeProps.object = type;
+		};
+
+		opts = (
+			<div className="section noLine">
+				<div className="name">{translate('menuDataviewRelationEditLimitObjectTypes')}</div>
+				<MenuItemVertical
+					id="object-type"
+					onMouseEnter={onObjectType}
+					onClick={onObjectType}
+					arrow={!isReadonly}
+					{...typeProps}
+				/>
+			</div>
+		);
+	};
+
+	if (isDate && relation) {
+		opts = (
+			<div className="section">
+				<MenuItemVertical 
+					id="includeTime" 
+					icon="clock" 
+					name={translate('commonIncludeTime')}
+					onMouseEnter={menuClose}
+					readonly={readonly}
+					withSwitch={true}
+					switchValue={includeTime}
+					onSwitch={(e: any, v: boolean) => onChangeTime(v)}
+				/>
+			</div>
+		);
+	};
+
+	return (
+		<form 
+			className="form" 
+			onSubmit={onSubmit} 
+			onMouseDown={menuClose}
+		>
+			<div className="section">
+				<div className="name">{translate('menuDataviewRelationEditRelationName')}</div>
+				{!isReadonly ? (
+					<div className="inputWrap">
+						<Input 
+							ref={filterRef} 
+							value={name} 
+							onChange={onChangeHandler}
+							onMouseEnter={menuClose}
+						/>
+					</div>
+				) : (
+					<div className="item isReadonly">
+						<Icon className="lock" />
+						{relation ? relation.name : ''}
+					</div>
+				)}
+			</div>
+
+			<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
+				<div className="name">{translate('menuDataviewRelationEditRelationType')}</div>
+				<MenuItemVertical 
+					id="relation-type" 
+					icon={format === null ? undefined : `relation ${Relation.className(format)}`} 
+					name={format === null ? translate('menuDataviewRelationEditSelectRelationType') : translate(`relationName${format}`)}
+					onMouseEnter={onRelationType} 
+					readonly={isReadonly}
+					arrow={!relation}
+				/>
+			</div>
+			
+			{opts}
+
+			{!isReadonly ? (
+				<div className="section" onMouseEnter={menuClose}>
+					<div className="inputWrap">
+						<Button 
+							ref={buttonRef} 
+							type="input" 
+							text={translate(relation ? 'commonSave' : 'commonCreate')} 
+							color="blank" 
+							className="c28"
+						/>
+					</div>
+				</div>
+			) : ''}
+
+			{sections.map((section: any, i: number) => (
+				<div key={i} className="section">
+					{section.children.map((action: any, c: number) => (
+						<MenuItemVertical 
+							key={c}
+							{...action}
+							onClick={e => onClick(e, action)} 
+							onMouseEnter={e => onMouseEnter(e, action)}
+						/>
+					))}
+				</div>
+			))}
+		</form>
+	);
+
+}));
+
+export default MenuDataviewRelationEdit;

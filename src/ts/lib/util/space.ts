@@ -1,5 +1,19 @@
-import { I, C, S, U, J, Storage, translate } from 'Lib';
+import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
 
+/**
+ * UtilSpace provides utilities for working with Anytype spaces.
+ *
+ * Key responsibilities:
+ * - Dashboard and home page management
+ * - Space list and space view retrieval
+ * - Participant management (permissions, ownership, listing)
+ * - Space sharing (invites, links, permissions)
+ * - Publishing functionality
+ *
+ * A "space" in Anytype is a collaborative workspace that can contain
+ * objects, types, and relations. Users can have different permissions
+ * (owner, writer, reader) in different spaces.
+ */
 class UtilSpace {
 
 	/**
@@ -8,10 +22,6 @@ class UtilSpace {
 	 */
 	openDashboard (param?: any) {
 		param = param || {};
-
-		if (undefined === param.replace) {
-			param.replace = true;
-		};
 
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
@@ -23,19 +33,22 @@ class UtilSpace {
 		};
 
 		U.Object.openRoute(home, param);
+		S.Common.setLeftSidebarState('vault', 'widget');
+		sidebar.leftPanelSubPageOpen('widget', false, false);
 	};
 
-	openDashboardOrVoid (param?: any) {
+	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
 		param = param || {};
 
 		if (undefined === param.replace) {
 			param.replace = true;
 		};
-		
+
 		if (S.Common.space) {
 			U.Space.openDashboard(param);
 		} else {
 			U.Router.go('/main/void/select', param);
+			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};
 
@@ -47,7 +60,7 @@ class UtilSpace {
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
 		param = param || {};
 
-		let spaces = this.getList();
+		let spaces = U.Menu.getVaultItems();
 
 		if (filter) {
 			spaces = spaces.filter(filter);
@@ -57,7 +70,80 @@ class UtilSpace {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
 			U.Router.go('/main/void/error', param);
+			sidebar.leftPanelSubPageClose(false, false);
 		};
+	};
+
+	oneToOneLink (id: string, key: string, type: 'deeplink' | 'web'): string {
+		key = encodeURIComponent(String(key || ''));
+
+		let ret = '';
+		switch (type) {
+			case 'deeplink': {
+				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${key}`;
+				break;
+			};
+
+			case 'web': {
+				ret = `https://hi.any.coop/${id}#${key}`;
+				break;
+			};
+		};
+		return ret;
+	}
+
+	/**
+	 * Opens or creates one-to-one space with given identity.
+	 * @param {string} [id] - target user identity.
+	 * @param {() => void} [callBack] - Optional callback fn.
+	 */
+	openOneToOne (id: string, key: string, route: string, callBack?: (message?: any) => void) {
+		const { account } = S.Auth;
+		if (id == account.id) {
+			this.openDashboard();
+			callBack?.();
+			return;
+		};
+
+		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
+
+		if (spaceExists) {
+			U.Router.switchSpace(spaceExists.targetSpaceId, '', true, { onRouteChange: callBack }, false);
+			return;
+		};
+
+		const details: any = {
+			oneToOneIdentity: id,
+			spaceUxType: I.SpaceUxType.OneToOne,
+			spaceAccessType: I.SpaceType.Shared,
+			spaceDashboardId: I.HomePredefinedId.Chat,
+			oneToOneRequestMetadataKey: key,
+		};
+
+		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
+			if (message.error.code) {
+				callBack?.(message);
+				return;
+			};
+
+			const objectId = message.objectId;
+
+			C.WorkspaceSetInfo(objectId, details, (message: any) => {
+				if (message.error.code) {
+					callBack?.(message);
+					return;
+				};
+
+				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
+			});
+
+			analytics.event('CreateSpace', { 
+				usecase: I.Usecase.ChatSpace,
+				middleTime: message.middleTime, 
+				uxType: I.SpaceUxType.OneToOne,
+				route,
+			});
+		});
 	};
 
 	/**
@@ -66,7 +152,7 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
-		if (space.isChat) {
+		if (space.isChat || space.isOneToOne) {
 			return this.getChat();
 		};
 
@@ -142,7 +228,7 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpenedByWindowId(S.Common.windowId);
+		let home = Storage.getLastOpened();
 
 		// Invalid data protection
 		if (!home || !home.id) {
@@ -163,7 +249,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate('commonChat'),
+			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};
@@ -227,6 +313,10 @@ class UtilSpace {
 	getParticipantId (spaceId: string, accountId: string) {
 		spaceId = String(spaceId || '').replace('.', '_');
 		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getCurrentParticipantId () {
+		return this.getParticipantId(S.Common.space, S.Auth.account.id);
 	};
 
 	/**
@@ -367,29 +457,7 @@ class UtilSpace {
 	 * @returns {string} The invite link.
 	 */
 	getInviteLink (cid: string, key: string) {
-		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
-	};
-
-	/**
-	 * Checks if the user can create a new space.
-	 * @returns {boolean} True if the user can create a space, false otherwise.
-	 */
-	canCreateSpace (): boolean {
-		const { config } = S.Common;
-
-		if (config.sudo) {
-			return true;
-		};
-
-		const { account } = S.Auth;
-		if (!account) {
-			return false;
-		};
-
-		const items = U.Common.objectCopy(this.getList().filter(it => it.creator == this.getParticipantId(it.targetSpaceId, account.id)));
-		const length = items.length;
-
-		return length < J.Constant.limit.space.count;
+		return U.Data.isAnytypeNetwork() ? U.String.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 	/**
@@ -411,10 +479,10 @@ class UtilSpace {
 		const participant = this.getMyParticipant();
 
 		let domain = '';
-		if (participant.globalName) {
-			domain = U.Common.sprintf(J.Url.publishDomain, participant.globalName);
+		if (participant?.globalName) {
+			domain = U.String.sprintf(J.Url.publishDomain, participant.globalName);
 		} else {
-			domain = U.Common.sprintf(J.Url.publish, participant.identity);
+			domain = U.String.sprintf(J.Url.publish, participant.identity);
 		};
 
 		return domain;
@@ -426,7 +494,24 @@ class UtilSpace {
 	 * @returns {string} The publish URL.
 	 */
 	getPublishUrl (slug: string): string {
-		return 'https://' + [ this.getPublishDomain(), slug ].join('/');
+		return [ 'https:/', this.getPublishDomain(), slug ].join('/');
+	};
+
+	/**
+	 * Checks if the current user can transfer ownership in the current space.
+	 * @returns {boolean} True if the user can transfer ownership, false otherwise.
+	 */
+	canTransferOwnership (): boolean {
+		const spaceview = this.getSpaceview();
+
+		if (!spaceview.isShared || spaceview.isOneToOne || !this.isMyOwner()) {
+			return false;
+		};
+
+		const members = this.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const participant = this.getParticipant();
+		
+		return !!members.filter(it => it.id !== participant?.id).length;
 	};
 
 };

@@ -32,7 +32,7 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 			return;
 		};
 		
-		const scheme = U.Common.getScheme(url);
+		const scheme = U.String.urlScheme(url);
 
 		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
 			return;
@@ -66,7 +66,7 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 			{isLoading ? <Loader /> : (
 				<>
 					<div className="info">
-						<div className="link">{U.Common.shortUrl(url)}</div>
+						<div className="link">{U.String.shortUrl(url)}</div>
 						{title ? <div className="name">{title}</div> : ''}
 						{description ? <div className="descr">{description}</div> : ''}
 					</div>

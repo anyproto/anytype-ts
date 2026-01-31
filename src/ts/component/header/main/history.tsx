@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Label } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics, sidebar } from 'Lib';
 
 interface HeaderMainHistoryRefProps {
@@ -47,7 +47,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	};
 
 	const onRelation = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 
 	const onShare = () => {
@@ -76,13 +76,13 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 
 			<div className="side right">
 				{showShare ? (
-					<Icon 
-						id="button-header-share" 
-						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'share', 'withBackground' ].join(' ')}
-						onClick={onShare} 
+					<Label
+						id="button-header-share"
+						text={translate('commonShare')}
+						className="share"
+						onClick={onShare}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 
 				{showRelations ? (

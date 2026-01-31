@@ -61,7 +61,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			const list = message.list || [];
 
 			S.Common.gallery = { categories, list };
-			Onboarding.start('collaboration', true, false);
 			setIsLoading(false);
 		});
 	};
@@ -81,7 +80,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		};
 
 		if (filter) {
-			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 			items = items.filter(it => reg.test(it.title) || reg.test(it.description));
 		};
 
@@ -112,7 +111,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	};
 
 	const categoryName = (id: string) => {
-		return translate(U.Common.toCamelCase(`usecaseCategory-${id}`));
+		return translate(U.String.toCamelCase(`usecaseCategory-${id}`));
 	};
 
 	useEffect(() => {
@@ -145,10 +144,10 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	let textEmpty = '';
 	if (filter) {
-		textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
+		textEmpty = U.String.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
 	} else
 	if (category) {
-		textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
+		textEmpty = U.String.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
 	};
 
 	const Category = (item: any) => {
@@ -178,7 +177,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<div className="info">
 					<div className="name">{item.title}</div>
 					<div className="author" onClick={() => onAuthor(item.author)}>
-						{U.Common.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}
+						{U.String.sprintf(translate('popupUsecaseAuthorShort'), getAuthor(item.author))}
 					</div>
 				</div>					
 				<div className="pictureWrapper">
@@ -228,8 +227,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 					))}
 				</Swiper>
 			</div>
-
-			<Label className="banner" text={translate('popupUsecaseBanner')} onClick={() => U.Common.showWhatsNew()} />
 
 			<div className="mid">
 				<Title text={translate('popupUsecaseListTitle')} />

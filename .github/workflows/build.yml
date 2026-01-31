@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-13
+          - macos-15
           - ubuntu-22.04
           - windows-latest
 
@@ -48,17 +48,61 @@ jobs:
         run:
           sudo apt-get install libsecret-1-dev
 
+      - name: Setup .NET 9
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
       - name: Install AzureSignTool
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: dotnet tool install --global AzureSignTool
+        run: dotnet tool install --global AzureSignTool --version 6.0.1
 
       - name: Check out Git repository
         uses: actions/checkout@v1
 
+      - name: Fail if middleware.version contains nightly
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pkg="package.json"
+          mw="middleware.version"
+
+          if [[ ! -f "$pkg" ]]; then
+            echo "package.json not found"
+            exit 1
+          fi
+
+          if [[ ! -f "$mw" ]]; then
+            echo "middleware.version not found"
+            exit 1
+          fi
+
+          pkg_version="$(grep -E '"version"\s*:' "$pkg" | head -n1 | sed -E 's/.*"version"\s*:\s*"([^"]+)".*/\1/')"
+
+          if [[ -z "$pkg_version" ]]; then
+            echo "failed to extract version from package.json"
+            exit 1
+          fi
+
+          echo "package.json version: $pkg_version"
+
+          if [[ "$pkg_version" =~ alpha ]]; then
+            echo "alpha version detected, nightly check skipped"
+            exit 0
+          fi
+
+          if grep -Eq '.*-nightly.*' "$mw"; then
+            echo "::error file=$mw::nightly version is not allowed for non-alpha package"
+            cat "$mw"
+            exit 1
+          fi
+
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: 22.17.0
+          node-version: 25.2.1
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps
@@ -135,6 +179,13 @@ jobs:
         run: |
           mkdir -p artifacts
 
+      - name: Generate Release Notes
+        if: ${{ startsWith(matrix.os, 'ubuntu-') && startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          npm run release:notes -- --to ${{ github.ref_name }} --output RELEASE_NOTES.md
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+
       - name: Cleanup artifacts
         if: ${{ !startsWith(matrix.os, 'windows-') }}
         run: |
@@ -148,10 +199,11 @@ jobs:
           mv dist/*.exe artifacts
 
       - name: Release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "artifacts/**"
+          body_path: RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 

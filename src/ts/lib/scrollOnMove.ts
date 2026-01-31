@@ -1,6 +1,6 @@
-const BORDER = 100;
+const BORDER = 20;
 const MAX_STEP = 10;
-const SPEED_DIV = 30; // bigger → slower overall
+const SPEED_DIV = 100; // bigger → slower overall
 
 interface Param {
 	speed?: number;
@@ -22,6 +22,8 @@ class ScrollOnMove {
 	timeoutScroll = 0;
 	timeoutUp = 0;
 	isScrolling = false;
+	ox = 0;
+	oy = 0;
 	
 	onMouseDown (param: Param) {
 		this.param = param || {};
@@ -33,11 +35,14 @@ class ScrollOnMove {
 			};
 
 			const el = container.get(0);
+			const rect = el.getBoundingClientRect();
 
-			this.viewportWidth = container.width();
-			this.viewportHeight = container.height();
+			this.viewportWidth = rect.width;
+			this.viewportHeight = rect.height;
 			this.documentWidth = el.scrollWidth;
 			this.documentHeight = el.scrollHeight;
+			this.ox = rect.left;
+			this.oy = rect.top;
 		} else {
 			const element = document.documentElement;
 			const body = document.body;
@@ -46,6 +51,8 @@ class ScrollOnMove {
 			this.viewportHeight = element.clientHeight;
 			this.documentWidth = Math.max(body.scrollWidth, element.scrollWidth);
 			this.documentHeight = Math.max(body.scrollHeight, element.scrollHeight);
+			this.ox = 0;
+			this.oy = 0;
 		};
 
 		this.isScrolling = true;
@@ -58,7 +65,7 @@ class ScrollOnMove {
 		this.y = y;
 
 		if (this.isScrolling) {
-			this.timeoutScroll = window.setTimeout(this.loop, 50);
+			this.loop();
 		};
 
 		// Hack to fix events not being triggered on mouseup
@@ -90,21 +97,21 @@ class ScrollOnMove {
 		const step = Number(this.param.step) || MAX_STEP;
 		const speed = Number(this.param.speed) || SPEED_DIV;
 
-		// Current pointer
+		// Current pointer (client coordinates)
 		const x = this.x;
 		const y = this.y;
 
-		// Edge thresholds inside the viewport
-		const edgeTop = BORDER;
-		const edgeLeft = BORDER;
-		const edgeBottom = this.viewportHeight - BORDER;
-		const edgeRight = this.viewportWidth - BORDER;
+		// Edge thresholds in client coordinates
+		const edgeTop = this.oy + BORDER;
+		const edgeLeft = this.ox + BORDER;
+		const edgeBottom = this.oy + this.viewportHeight - BORDER;
+		const edgeRight = this.ox + this.viewportWidth - BORDER;
 
 		// Is the pointer in one of the scroll zones?
-		const inLeftEdge = x > 0 && x < edgeLeft;
-		const inRightEdge = x > edgeRight && x < this.viewportWidth;
-		const inTopEdge = y > 0 && y < edgeTop;
-		const inBottomEdge = y > edgeBottom && y < this.viewportHeight;
+		const inLeftEdge = (x >= this.ox) && x < edgeLeft;
+		const inRightEdge = (x > edgeRight) && (x <= this.ox + this.viewportWidth);
+		const inTopEdge = (y >= this.oy) && (y < edgeTop);
+		const inBottomEdge = (y > edgeBottom) && (y <= this.oy + this.viewportHeight);
 
 		// If we’re not in any edge, there’s nothing to do
 		if (!(inLeftEdge || inRightEdge || inTopEdge || inBottomEdge)) {

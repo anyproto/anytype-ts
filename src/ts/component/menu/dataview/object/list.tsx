@@ -1,222 +1,80 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
 
-interface State {
-	isLoading: boolean;
-};
-
-const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
 const LIMIT_TYPE = 2;
-const HEIGHT_SECTION = 28;
+
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<I.Menu, State> {
+const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	state = {
-		isLoading: false,
-	};
+	const { param, setActive, onKeyDown, close, position, getId } = props;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const { data } = param;
+	const {
+		filter, noFilter, cellRef, canEdit, onChange, maxCount, canAdd, nameCreate, dataChange,
+		placeholderFocus = translate('commonFilterObjects'),
+	} = data;
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
+	const filterRef = useRef(null);
+	const listRef = useRef(null);
+	const topRef = useRef(0);
+	const itemsRef = useRef<any[]>([]);
+	const offsetRef = useRef(0);
+	const n = useRef(-1);
 
-	filter = '';
-	cache: any = {};
-	offset = 0;
-	items: any[] = [];
-	refFilter: any = null;
-	refList: any = null;
-	top = 0;
-	n = -1;
+	useEffect(() => {
+		rebind();
+		resize();
+		focus();
+		load(true);
+	}, []);
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { isLoading } = this.state;
-		const { data } = param;
-		const { filter, noFilter } = data;
-		const items = this.getItems();
-		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
+	useEffect(() => {
+		topRef.current = 0;
+		offsetRef.current = 0;
+		n.current = -1;
+		load(true);
+	}, [ filter ]);
 
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			if (!item) {
-				return null;
-			};
+	useEffect(() => {
+		const items = getItems();
 
-			const type = S.Record.getTypeById(item.type);
-			const name = <ObjectName object={item} />;
-
-			let content = null;
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
-			} else
-			if (item.isSection) {
-				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-			} else
-			if (item.id == 'add') {
-				content = (
-					<div id="item-add" className="item add" onMouseEnter={e => this.onOver(e, item)} onClick={e => this.onClick(e, item)} style={param.style}>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else {
-				content = (
-					<MenuItemVertical 
-						id={item.id}
-						object={item}
-						name={<ObjectName object={item} />}
-						onMouseEnter={e => this.onOver(e, item)} 
-						onClick={e => this.onClick(e, item)}
-						caption={<ObjectType object={type} />}
-						style={param.style}
-					/>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
+		if (listRef.current && topRef.current) {
+			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		return (
-			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
-				{!noFilter ? (
-					<Filter
-						className="outlined"
-						icon="search"
-						ref={ref => this.refFilter = ref} 
-						placeholderFocus={placeholderFocus}
-						value={filter}
-						onChange={this.onFilterChange} 
-					/>
-				) : ''}
+		resize();
+		focus();
+		setActive(items[n.current], false);
+	});
+	
+	const focus = () => {
+		window.setTimeout(() => filterRef.current?.focus(), 15);
+	};
 
-				{isLoading ? <Loader /> : ''}
-
-				{this.cache && items.length && !isLoading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length + 1}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT_HEIGHT}
-											onScroll={this.onScroll}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-		this.resize();
-		this.focus();
-		this.load(true);
-	};
-
-	componentDidUpdate () {
-		const items = this.getItems();
-		const { param, setActive } = this.props;
-		const { data } = param;
-		const { filter } = data;
-
-		if (filter != this.filter) {
-			this.top = 0;
-			this.offset = 0;
-			this.filter = filter;
-			this.n = -1;
-			this.load(true);
-			return;
-		};
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-		this.resize();
-		this.focus();
-
-		setActive(items[this.n], false);
-	};
-	
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onKeyDown (e: any) {
-		// Chinese IME is open
+	const onKeyDownHandler = (e: any) => {
 		if (keyboard.isComposition) {
 			return;
 		};
-
-		const { param, onKeyDown } = this.props;
-		const { data } = param;
-		const { cellRef } = data;
 
 		keyboard.shortcut('arrowup, arrowdown', e, () => {
 			if (cellRef) {
@@ -227,23 +85,18 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		onKeyDown(e);
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	load (clear: boolean, callBack?: (message: any) => void) {
-		const { isLoading } = this.state;
-
+	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		if (isLoading) {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, canEdit } = data;
-		const types = this.getTypes();
+		const types = getTypes();
 		const value = Relation.getArrayValue(data.value);
 
 		const filters: I.Filter[] = [
@@ -259,7 +112,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (clear) {
-			this.setState({ isLoading: true });
+			setIsLoading(true);
 		};
 
 		let limit = J.Constant.limit.menuRecords;
@@ -273,40 +126,36 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			filters,
 			sorts,
 			fullText: filter,
-			offset: this.offset,
+			offset: offsetRef.current,
 			limit,
 		}, (message: any) => {
+			setIsLoading(false);
+
 			if (message.error.code) {
-				this.setState({ isLoading: false });
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
-				this.items = [];
+				itemsRef.current = [];
 			};
 
-			this.items = this.items.concat(message.records || []);
-
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
-			};
+			itemsRef.current = itemsRef.current.concat(message.records || []);
+			setDummy(dummy + 1);
 		});
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { canAdd, canEdit, nameCreate } = data;
+	const getItems = () => {
 		const value = Relation.getArrayValue(data.value);
-		const typeNames = this.getTypeNames();
+		const typeNames = getTypeNames();
 
-		let ret = U.Common.objectCopy(this.items);
+		let ret = U.Common.objectCopy(itemsRef.current);
+
+		if (dataChange) {
+			ret = dataChange(this, ret);
+		};
+
 		if (canEdit) {
 			ret = ret.filter(it => !value.includes(it.id));
 		};
@@ -318,21 +167,18 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: U.Common.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', name: U.String.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;
 	};
 
-	getTypes () {
-		const { param } = this.props;
-		const { data } = param;
-
+	const getTypes = () => {
 		return (data.types || []).map(id => S.Record.getTypeById(id)).filter(it => it);
 	};
 
-	getTypeNames (): string {
-		const types = this.getTypes();
+	const getTypeNames = (): string => {
+		const types = getTypes();
 
 		if (!types || !types.length) {
 			return '';
@@ -351,27 +197,24 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, resolve);
+			offsetRef.current += J.Constant.limit.menuRecords;
+			load(false, resolve);
 		});
 	};
 
-	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
+	const onFilterChange = (v: string) => {
+		data.filter = v;
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { param, close, position } = this.props;
-		const { data } = param;
-		const { onChange, maxCount, filter, cellRef, canEdit } = data;
+	const onClick = (e: any, item: any) => {
 		const relation = data.relation.get();
 		const addParam = data.addParam || {};
 
@@ -384,13 +227,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (!canEdit) {
-			U.Object.openConfig(item);
+			U.Object.openConfig(e, item);
 			return;
 		};
 
-		if (cellRef) {
-			cellRef.clear();
-		};
+		cellRef?.clear();
 
 		const cb = (id: string) => {
 			if (!id) {
@@ -403,8 +244,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			onChange(value, () => {
-				S.Menu.updateData(this.props.id, { value });
-				S.Menu.updateData(MENU_ID, { value });
+				S.Menu.updateData(props.id, { value });
+				S.Menu.updateData('dataviewObjectValues', { value });
 
 				position();
 			});
@@ -423,20 +264,16 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		let h = HEIGHT_ITEM;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
-		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isEmpty) h = HEIGHT_EMPTY;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
 
-	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { noFilter } = data;
-		const items = this.getItems();
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 
 		let offset = 16;
@@ -448,13 +285,120 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			offset += HEIGHT_EMPTY;
 		};
 
-		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
+		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
 		obj.css({ height });
 		position();
 	};
 
-});
+	const items = getItems();
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+		if (!item) {
+			return null;
+		};
+
+		const type = item.type ? S.Record.getTypeById(item.type) : null;
+
+		let content = null;
+		if (item.isDiv) {
+			content = (
+				<div className="separator" style={param.style}>
+					<div className="inner" />
+				</div>
+			);
+		} else
+		if (item.isSection) {
+			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+		} else {
+			content = (
+				<MenuItemVertical 
+					id={item.id}
+					object={item.isSystem ? null : item}
+					icon={item.icon}
+					name={<ObjectName object={item} />}
+					onMouseEnter={e => onOver(e, item)} 
+					onClick={e => onClick(e, item)}
+					caption={type ? <ObjectType object={type} /> : ''}
+					style={param.style}
+				/>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		getListRef: () => listRef.current,
+		getFilterRef: () => filterRef.current,
+	}), []);
+
+	return (
+		<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
+			{!noFilter ? (
+				<Filter
+					className="outlined"
+					icon="search"
+					ref={filterRef} 
+					placeholderFocus={placeholderFocus}
+					value={filter}
+					onChange={onFilterChange} 
+				/>
+			) : ''}
+
+			{isLoading ? <Loader /> : ''}
+
+			{cache.current && items.length && !isLoading ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT_HEIGHT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurementCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT_HEIGHT}
+										onScroll={onScroll}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+		</div>
+	);
+	
+}));
 
 export default MenuDataviewObjectList;

@@ -1,4 +1,4 @@
-import { S, U, J, C, dispatcher } from 'Lib';
+import { S, U, C, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html';
@@ -52,17 +52,13 @@ class Util {
 		S.Auth.appKeySet(appKey);
 		U.Data.createSession('', appKey, '', (message: any) => {
 			if (message.error.code) {
-				if (onError) {
-					onError(message.error);
-				};
+				onError?.(message.error);
 				return;
 			};
 
 			C.AccountSelect(message.accountId, '', 0, '', (message: any) => {
 				if (message.error.code) {
-					if (onError) {
-						onError(message.error);
-					};
+					onError?.(message.error);
 					return;
 				};
 
@@ -70,10 +66,7 @@ class Util {
 				S.Common.configSet(message.account.config, false);
 
 				U.Data.onInfo(message.account.info);
-
-				if (onSuccess) {
-					onSuccess();
-				};
+				onSuccess?.();
 			});
 		});
 	};

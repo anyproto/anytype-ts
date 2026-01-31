@@ -1,41 +1,16 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef } from 'react';
 import { Title, Label, Pin, Error } from 'Component';
 import { I, S, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
+const PageMainSettingsPinConfirm = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm extends React.Component<I.PageSettingsComponent, State> {
+	const { pin } = S.Common;
+	const { onPage, setConfirmPin, onConfirmPin } = props;
+	const [ error, setError ] = useState<string>('');
+	const pinRef = useRef(null);
 
-	state = {
-		error: '',
-	};
-	ref = null;
-
-	render () {
-		const { pin } = S.Common;
-		const { error } = this.state;
-
-		return (
-			<>
-				<Title text={translate('popupSettingsPinTitle')} />
-				<Label className="description" text={translate('popupSettingsPinVerify')} />
-				<Pin 
-					ref={ref => this.ref = ref} 
-					expectedPin={pin} 
-					onSuccess={this.onCheckPin} 
-					onError={this.onError} 
-				/>
-				<Error text={error} />
-			</>
-		);
-	};
-
-	onCheckPin = () => {
-		const { onPage, setConfirmPin, onConfirmPin } = this.props;
-
+	const onCheckPin = () => {
 		onPage('pinSelect');
 
 		if (onConfirmPin) {
@@ -43,14 +18,28 @@ const PageMainSettingsPinConfirm = observer(class PageMainSettingsPinConfirm ext
 			setConfirmPin(null);
 		};
 
-		this.setState({ error: '' });
+		setError('');
 	};
 
-	onError = () => {
-		this.ref.reset();
-		this.setState({ error: translate('popupSettingsPinError') });
+	const onError = () => {
+		pinRef.current?.reset();
+		setError(translate('popupSettingsPinError'));
 	};
 
-});
+	return (
+		<>
+			<Title text={translate('popupSettingsPinTitle')} />
+			<Label className="description" text={translate('popupSettingsPinVerify')} />
+			<Pin 
+				ref={pinRef} 
+				expectedPin={pin} 
+				onSuccess={onCheckPin} 
+				onError={onError} 
+			/>
+			<Error text={error} />
+		</>
+	);
+
+}));
 
 export default PageMainSettingsPinConfirm;

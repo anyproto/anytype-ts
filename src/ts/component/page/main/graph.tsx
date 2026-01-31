@@ -15,7 +15,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const key = J.Constant.graphId.global;
 
 	const unbind = () => {
-		const events = [ 'keydown', 'updateGraphRoot', 'removeGraphNode', 'sidebarResize' ];
+		const events = [ 'keydown', 'updateGraphRoot', 'sidebarResize' ];
 		$(window).off(events.map(it => `${it}.${key}`).join(' '));
 	};
 
@@ -38,16 +38,16 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const settings = S.Common.getGraph(key);
 
 		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.typeEdges, (message: any) => {
+			setLoading(false);
+
 			if (message.error.code) {
 				return;
 			};
 
 			setData({
 				edges: message.edges,
-				nodes: message.nodes.map(it => S.Detail.mapper(it))
+				nodes: message.nodes.map(it => S.Detail.mapper(it)),
 			});
-
-			graphRef.current?.init();
 		});
 	};
 
@@ -105,13 +105,14 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		rebind();
 		load();
 		initRootId(getRootId());
+		sidebar.rightPanelClose(isPopup, false);
 
 		return () => unbind();
 	}, []);
 
 	useEffect(() => {
 		resize();
-		setLoading(false);
+		graphRef.current?.init();
 	}, [ data ]);
 
 	useEffect(() => resize());

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Icon, Label, Select } from 'Component';
+import { Icon, Select } from 'Component';
 import { observer } from 'mobx-react';
 import { Action, Animation, I, S, U, J } from 'Lib';
 
@@ -10,8 +10,6 @@ interface Props extends I.HeaderComponent {
 const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { onBack } = props;
-	const pathname = U.Router.getRoute();
-	const { action } = U.Router.getParam(pathname);
 	const { interfaceLang } = S.Common;
 	const interfaceLanguages = U.Menu.getInterfaceLanguages();
 	const refLang = useRef(null);
@@ -23,7 +21,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 	};
 
 	useEffect(() => {

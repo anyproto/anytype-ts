@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, U, keyboard, translate } from 'Lib';
@@ -7,60 +7,63 @@ interface Props extends I.ViewComponent {
 	multiSelectAction?: (id: string) => void;
 };
 
-const Selection = observer(class Selection extends React.Component<Props> {
+interface Ref {
+	setIds: (ids: string[]) => void;
+	getNode: () => any;
+};
 
-	ids: string[] = [];
+const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 
-	render () {
-		const { className, isInline, isCollection, multiSelectAction } = this.props;
-		const cn = [ 'dataviewControls', 'dataviewSelection' ];
+	const { className, isInline, isCollection, multiSelectAction } = props;
+	const [ ids, setIds ] = useState<string[]>([]);
+	const nodeRef = useRef(null);
+	const cn = [ 'dataviewControls', 'dataviewSelection' ];
 
-		if (className) {
-			cn.push(className);
-		};
+	if (className) {
+		cn.push(className);
+	};
 
-		if (isInline) {
-			cn.push('isInline');
-		};
+	if (isInline) {
+		cn.push('isInline');
+	};
 
-		const buttons: any[] = [
-			{ id: 'archive', text: translate('commonMoveToBin') },
-			{ id: 'done', text: translate('commonDeselectAll') },
-		];
+	const buttons: any[] = [
+		{ id: 'archive', text: translate('commonMoveToBin') },
+		{ id: 'done', text: translate('commonDeselectAll') },
+	];
 
-		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: translate('commonUnlink') });
-		};
+	if (isCollection) {
+		buttons.unshift({ id: 'unlink', text: translate('commonUnlink') });
+	};
 
-		return (
-			<div id="dataviewSelection" className={cn.join(' ')}>
-				<div className="sides">
-					<div id="sideLeft" className="side left">{U.Common.sprintf(translate('blockDataviewSelectionSelected'), this.ids.length)}</div>
+	useImperativeHandle(ref, () => ({
+		setIds,
+		getNode: () => nodeRef.current,
+	}));
 
-					<div id="sideRight" className="side right">
-						{buttons.map((item: any, i: number) => (
-							<div
-								key={i}
-								className="element"
-								onClick={() => multiSelectAction(item.id)}
-								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-							>
-								<Icon className={item.id} />
-								{item.text}
-							</div>
-						))}
-					</div>
+	return (
+		<div ref={nodeRef} id="dataviewSelection" className={cn.join(' ')}>
+			<div className="sides">
+				<div id="sideLeft" className="side left">{U.String.sprintf(translate('blockDataviewSelectionSelected'), ids.length)}</div>
+
+				<div id="sideRight" className="side right">
+					{buttons.map((item: any, i: number) => (
+						<div
+							key={i}
+							className="element"
+							onClick={() => multiSelectAction(item.id)}
+							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
+						>
+							<Icon className={item.id} />
+							{item.text}
+						</div>
+					))}
 				</div>
 			</div>
-		);
-	};
+		</div>
+	);
 
-	setIds (ids: string[]): void {
-		this.ids = ids || [];
-		this.forceUpdate();
-	};
+}));
 
-});
-
-export default Selection;
+export default BlockDataviewSelection;

@@ -1,14 +1,14 @@
 @import "~scss/_vars";
-@mixin cnt-2 { width: 260px; }
-@mixin cnt-3 { width: 172px; }
-@mixin cnt-4 { width: 128px; }
+@mixin cnt-2 { width: calc((100% - 4px) / 2); }
+@mixin cnt-3 { width: calc((100% - 8px) / 3); }
+@mixin cnt-4 { width: calc((100% - 12px) / 4); }
 
 .blocks {
 	.block.blockChat { @include text-common; }
 	.block.blockChat {
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { display: flex; flex-direction: column; min-height: 206px; justify-content: flex-end; }
+		.scrollWrapper { display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 0px 0px 0px; }
 		.scrollWrapper {
 			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px 0px; padding: 0px 0px 16px 0px; }
 		}
@@ -32,15 +32,12 @@
 			.buttons { display: flex; justify-content: center; margin-top: 8px; }
 		}
 
-		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; opacity: 0; }
+		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; }
 		.sectionDate {
 			.label { 
 				@include text-small; padding: 3px 10px; background: var(--color-bg-primary-90); border-radius: 13px; color: var(--color-text-secondary); 
 				font-weight: 500; backdrop-filter: blur(5px);
 			}
-
-			&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-			&.show { opacity: 1; }
 		}
 
 		markupmention.withImage {
@@ -50,5 +47,17 @@
 		@import "./chat/attachment";
 		@import "./chat/message";
 		@import "./chat/form";
+	}
+}
+
+.pageMainChat.spaceOneToOne {
+	.blocks {
+		.block.blockChat {
+			.message {
+				.author,
+				.reply .name,
+				> .flex > .side.left { display: none; }
+			}
+		}
 	}
 }

@@ -53,7 +53,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 			) : (
 				<>
 					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
+						<Item key={item.id} {...item} />
 					))}
 				</>
 			)}

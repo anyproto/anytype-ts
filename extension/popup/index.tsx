@@ -14,10 +14,7 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			Util.sendMessage({ type: 'checkPorts' }, response => {
 				if (!response.ports || !response.ports.length) {
 					setError('Automatic pairing failed, please open the app');
-
-					if (onError) {
-						onError();
-					};
+					onError?.();
 					return;
 				};
 

@@ -37,13 +37,6 @@
         .loaderWrapper { border: 0px; }
     }
 
-	/* BlockLink */
-
-	/*
-	.block.blockLink.card {
-		.side::after { background: rgba(255,255,255,0.03); }
-	}
-	*/
 
     /* BlockDataview */
 
@@ -56,8 +49,9 @@
 			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
 		}
 
-		.icon.edit { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
+		.icon.expand:hover { background-image: url('#{$themePath}/icon/dataview/button/expand1.svg'); }
+
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
@@ -70,14 +64,6 @@
 		}
 
         .dataviewControls {
-			> .sides {
-				> .side.right {
-					.buttonWrap.withSelect {
-						.button.select { border-left-color: rgba(23,23,23,0.1); }
-						.button.select:after { background-image:  url('#{$themePath}/arrow/button/black.svg'); }
-					}
-				}
-			}
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
@@ -108,20 +94,6 @@
 
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
-
-		/*
-        .viewContent.viewGallery,
-		.viewContent.viewBoard {
-			.card::after { background: rgba(255,255,255,0.03); }
-        }
-		*/
-
-		.viewContent.viewGallery,
-		.viewContent.viewBoard,
-		.viewContent.viewList {
-			.icon.editMode { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
-			.icon.editMode:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
-		}
 
         .viewContent.viewBoard {
             .cardContent { background: var(--color-bg-secondary); }
@@ -167,6 +139,7 @@
 		.preview.isDrawio { background-image: url('#{$themePath}/icon/block/embed/drawio.svg'); }
 		.preview.isImage { background-image: url('#{$themePath}/icon/block/embed/image.svg'); }
 		.preview.isSpotify { background-image: url('#{$themePath}/icon/block/embed/spotify.svg'); }
+		.preview.isAppleMusic { background-image: url('#{$themePath}/icon/block/embed/appleMusic.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
 		#value svg { background: none; }

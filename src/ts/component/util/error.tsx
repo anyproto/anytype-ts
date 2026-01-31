@@ -25,7 +25,7 @@ const Error: FC<Props> = ({
 		<div 
 			id={id}
 			className={cn.join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
+			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} 
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>
 	);

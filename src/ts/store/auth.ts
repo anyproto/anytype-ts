@@ -14,20 +14,16 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
-	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
-			membershipData: observable,
-			membership: computed,
 			accounts: computed,
 			account: computed,
 			accountAdd: action,
 			accountSet: action,
-			membershipSet: action,
 			clearAll: action,
 			logout: action,
 		});
@@ -54,17 +50,13 @@ class AuthStore {
 		};
 	};
 
-	get membership (): I.Membership {
-		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
-	};
-
 	/**
 	 * Sets the authentication token.
 	 * @param {string} v - The token value.
 	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
-		Renderer.send('setToken', this.token);
+		Renderer.send('updateTab', U.Common.getElectron().tabId(), { token: this.token });
 	};
 
 	/**
@@ -89,22 +81,6 @@ class AuthStore {
 	 */
 	appKeySet (v: string) {
 		this.appKey = String(v || '');
-	};
-
-	/**
-	 * Sets the membership data.
-	 * @param {I.Membership} v - The membership data.
-	 */
-	membershipSet (v: I.Membership) {
-		this.membershipData = v;
-	};
-
-	/**
-	 * Updates the membership data.
-	 * @param {I.Membership} v - The membership data.
-	 */
-	membershipUpdate (v: I.Membership) {
-		set(this.membershipData, v);
 	};
 
 	/**
@@ -261,7 +237,6 @@ class AuthStore {
 		this.accountItem = null;
 
 		this.accountListClear();
-		this.membershipSet({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
 		this.syncStatusMap.clear();
 	};
 
@@ -271,6 +246,8 @@ class AuthStore {
 	 * @param {boolean} removeData - Whether to remove data.
 	 */
 	logout (mainWindow: boolean, removeData: boolean) {
+		Storage.clearOldKeys();
+
 		U.Subscription.destroyAll(() => {
 			if (mainWindow) {
 				if (S.Auth.token) {
@@ -294,11 +271,13 @@ class AuthStore {
 			S.Menu.closeAllForced();
 			S.Notification.clear();
 			S.Chat.clearAll();
+			S.Membership.clearAll();
 
 			this.clearAll();
 			Storage.logout();
 
 			Renderer.send('setBadge', '');
+			Renderer.send('closeOtherTabs', S.Common.tabId);
 		});
 	};
 

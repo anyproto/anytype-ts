@@ -1,6 +1,23 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import { S, Decode, Mapper } from 'Lib';
 
+/**
+ * Response handlers for gRPC command responses.
+ *
+ * Each exported function corresponds to a middleware command and transforms
+ * the protobuf response into a plain JavaScript object for use in the application.
+ *
+ * Naming convention: Function names match the command names exactly
+ * (e.g., ObjectCreate handles Rpc.Object.Create.Response)
+ *
+ * These functions are called by the Dispatcher when processing command responses.
+ */
+
+/**
+ * Helper to extract and decode details from a response object.
+ * @param o - Response object with getDetails() method
+ * @returns Decoded details object or empty object if none
+ */
 const details = (o: any) => {
 	return o ? S.Detail.mapper(Decode.struct(o.getDetails())) : {};
 };
@@ -247,6 +264,19 @@ export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Respo
 };
 
 export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Response) => {
+	const counters = response.getCounters();
+	return {
+		counters: {
+			total: counters.getTotal(),
+			nextCount: counters.getNextcount(),
+			prevCount: counters.getPrevcount(),
+		},
+		records: (response.getRecordsList() || []).map(Decode.struct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+	};
+};
+
+export const ObjectCrossSpaceSearchSubscribe = (response: Rpc.Object.CrossSpaceSearchSubscribe.Response) => {
 	const counters = response.getCounters();
 	return {
 		counters: {
@@ -558,44 +588,27 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	};
 };
 
-export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
-	return {
-		available: response.getAvailable(),
-		ownerScwEthAddress: response.getOwnerscwethaddress(),
-		ownerEtherAddress: response.getOwnerethaddress(),
-		ownerAnyAddress: response.getOwneranyaddress(),
-		spaceId: response.getSpaceid(),
-		nameExpires: response.getNameexpires(),
-	};
-};
-
-export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
-	return {
-		membership: Mapper.From.Membership(response.getData()),
-	};
-};
-
-export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
-	return {
-		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
-	};
-};
-
-export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
-	return {
-		url: response.getPaymenturl(),
-	};
-};
-
-export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
-	return { 
-		url: response.getPortalurl(),
-	};
-};
-
 export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
 	return {
 		tier: response.getRequestedtier(),
+	};
+};
+
+export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
+	return {
+		url: response.getUrl(),
+	};
+};
+
+export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.Response) => {
+	return {
+		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
+	};
+};
+
+export const MembershipV2GetStatus = (response: Rpc.MembershipV2.GetStatus.Response) => {
+	return {
+		data: Mapper.From.MembershipData(response.getData()),
 	};
 };
 
@@ -617,10 +630,14 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 
 export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 	return {
-		spaceName: response.getSpacename(),
-		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		spaceName: response.getSpacename(),
+		iconImage: response.getSpaceiconcid(),
+		creatorName: response.getCreatorname(),
+		creatorIcon: response.getCreatoriconcid(),
 		inviteType: response.getInvitetype(),
+		iconOption: response.getSpaceiconoption(),
+		uxType: response.getSpaceuxtype(),
 	};
 };
 
@@ -665,6 +682,12 @@ export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 export const ChatSubscribeToMessagePreviews = (response: Rpc.Chat.SubscribeToMessagePreviews.Response) => {
 	return {
 		previews: (response.getPreviewsList() || []).map(Mapper.From.ChatPreview),
+	};
+};
+
+export const ChatSearch = (response: Rpc.Chat.Search.Response) => {
+	return {
+		list: (response.getResultsList() || []).map(Mapper.From.ChatSearchResult),
 	};
 };
 

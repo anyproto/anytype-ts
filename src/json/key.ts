@@ -55,4 +55,6 @@ export default {
 	slash:		 191,
 	'/':		 191,
 	dead:		 192,
+	numpadAdd:	 107,
+	numpadSubtract: 109,
 };

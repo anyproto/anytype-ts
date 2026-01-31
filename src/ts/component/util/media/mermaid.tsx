@@ -1,8 +1,11 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import mermaid from 'mermaid';
+import elkLayouts from '@mermaid-js/layout-elk';
 import { observer } from 'mobx-react';
 import { J, S, U } from 'Lib';
+
+mermaid.registerLayoutLoaders(elkLayouts);
 
 interface Props {
 	id?: string;
@@ -19,7 +22,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	const errorRef = useRef(null);
 	const themeClass = S.Common.getThemeClass();
 
-	const init = () => {
+	const init = async () => {
 		const obj = $(chartRef.current);
 		const themeVariables = (J.Theme[themeClass] || {}).mermaid || {};
 
@@ -34,13 +37,16 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 
 		try {
 			mermaid.initialize({ theme: 'base', themeVariables });
-			mermaid.run({ 
+			
+			await mermaid.run({ 
 				querySelector: `#${id} .mermaid`,
 				postRenderCallback: () => {
 					U.Common.renderLinks($(chartRef.current));
 				}, 
 			});
-		} catch (e) { /**/ };
+		} catch (e) {
+			console.error(e);
+		};
 	};
 
 	useEffect(() => {

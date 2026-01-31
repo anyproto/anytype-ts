@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
@@ -6,102 +6,40 @@ import { GraphProvider } from 'Component';
 
 const PADDING = 46;
 
-const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
+const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	data: any = {
-		nodes: [],
-		edges: [],
-	};
-	ids: string[] = [];
-	refGraph: any = null;
-	rootId = '';
+	const { rootId, block, className, isCollection, isPopup, isInline, getView, getSearchIds, getTarget } = props;
+	const cn = [ 'viewContent', className ];
+	const nodeRef = useRef(null);
+	const graphRef = useRef(null);
+	const [ data, setData ] = useState({ nodes: [], edges: [] });
 
-	constructor (props: I.ViewComponent) {
-		super(props);
-
-		this.load = this.load.bind(this);
-		this.resize = this.resize.bind(this);
-	};
-
-	render () {
-		const { block, className } = this.props;
-		const cn = [ 'viewContent', className ];
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="wrap"
-			>
-				<div className={cn.join(' ')}>
-					<GraphProvider 
-						key="graph"
-						{...this.props} 
-						ref={ref => this.refGraph = ref} 
-						id={block.id}
-						rootId="" 
-						data={this.data}
-						storageKey={J.Constant.graphId.dataview}
-						load={this.load}
-					/>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-
-		this.resize();
-		this.load();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
-	load () {
-		const { getView, getSearchIds, getTarget, isCollection } = this.props;
+	const load = () => {
 		const view = getView();
 		if (!view) {
 			return;
 		};
 
 		const searchIds = getSearchIds();
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(Dataview.filterMapper);
+		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId }));
+		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 		const target = getTarget();
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
-
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, settings.typeEdges, (message: any) => {
-			if (!this._isMounted || message.error.code) {
-				return;
-			};
-
-			this.data.edges = message.edges;
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-			this.forceUpdate();
-
-			if (this.refGraph) {
-				this.refGraph.init();
+			if (!message.error.code) {
+				setData({ nodes: message.nodes.map(it => S.Detail.mapper(it)), edges: message.edges });
 			};
 		});
 	};
 
-	resize () {
-		const { isPopup, isInline } = this.props;
-		const node = $(this.node);
+	const resize = () => {
+		const node = $(nodeRef.current);
 
-		if (!node || !node.length) {
+		if (!node.length) {
 			return;
 		};
 
@@ -118,11 +56,41 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
 		};
 
-		if (this.refGraph) {
-			this.refGraph.resize();
-		};
+		graphRef.current?.resize();
 	};
 
-});
+	useEffect(() => resize());
+
+	useImperativeHandle(ref, () => ({
+		load,
+		resize,
+	}));
+
+	useEffect(() => {
+		graphRef.current?.init();
+		resize();
+	}, [ data ]);
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className="wrap"
+		>
+			<div className={cn.join(' ')}>
+				<GraphProvider 
+					key="graph"
+					{...props} 
+					ref={graphRef} 
+					id={block.id}
+					rootId="" 
+					data={data}
+					storageKey={J.Constant.graphId.dataview}
+					load={load}
+				/>
+			</div>
+		</div>
+	);
+
+}));
 
 export default ViewGraph;

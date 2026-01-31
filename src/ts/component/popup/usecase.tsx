@@ -67,7 +67,7 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 	return (
 		<div 
 			ref={nodeRef}
-			className={[ 'page', U.Common.toCamelCase(`page-${page}`) ].join(' ')}
+			className={[ 'page', U.String.toCamelCase(`page-${page}`) ].join(' ')}
 		>
 			{content}
 		</div>

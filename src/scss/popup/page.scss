@@ -2,8 +2,7 @@
 
 .popups {
 	.popup.popupPage {
-		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 0px; }
-
+		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 0px; overflow: hidden; }
 		#sidebarRight { position: sticky; margin-top: 0px; height: 100%; }
 
 		@media (max-width: 1128px) {
@@ -11,15 +10,22 @@
 		}
 
 		.deleteWrapper { position: absolute; }
-		.content { min-height: 100%; }
-		#wrap { height: 100%; }
+		.innerWrap {
+			> .content { height: 100%; }
+			> .content {
+				> #wrap { height: 100%; }
+			}
+		}
 
-		.pageFlex { padding: 0px; }
-		.page { padding: 0px; }
+		.pageFlex { padding: 0px; height: 100%; }
+		.page { padding: 0px; height: 100%; }
 
 		.header {
 			.side.left { padding-left: 12px !important; }
-			.icon.toggle { display: none; }
+			.icon.toggle, 
+			.icon.widgetPanel,
+			.icon.vaultToggle { display: none; }
+			.icon.expand { display: block; }
 		}
 		.footer { display: none; }
 
@@ -66,7 +72,7 @@ html.platformMac {
 	.popups {
 		.popup.popupPage {
 			.pageMainEdit {
-				.block.blockCover { top: 52px; }
+				.block.blockCover { top: 44px; }
 			}	
 		}
 	}

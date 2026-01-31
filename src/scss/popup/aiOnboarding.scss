@@ -351,7 +351,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 			// Custom scrollbar - hidden by default, only shows when scrolling
 			&::-webkit-scrollbar {
-				width: 6px;
+				width: 10px;
 				transition: opacity 0.3s ease;
 			}
 
@@ -361,7 +361,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 			&::-webkit-scrollbar-thumb {
 				background: rgba($lavender-cool, 0);
-				border-radius: 100px;
+				border-radius: 5px;
 				transition: background 0.3s ease;
 			}
 			

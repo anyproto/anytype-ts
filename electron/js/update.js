@@ -38,17 +38,17 @@ class UpdateManager {
 		autoUpdater.on('update-available', (info) => {
 			this.clearTimeout();
 
-			Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
+			Util.log('info', `Update available: ${JSON.stringify(info, null, 3)}`);
 			this.download();
 		});
 
 		autoUpdater.on('update-not-available', (info) => {
-			Util.log('info', 'Update not available: ' + JSON.stringify(info, null, 3));
+			Util.log('info', `Update not available: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 		
 		autoUpdater.on('error', (err) => { 
-			Util.log('Error: ' + err);
+			Util.log(`Error: ${err}`);
 			Util.send(this.win, 'update-error', err, this.autoUpdate);
 		});
 		
@@ -69,7 +69,7 @@ class UpdateManager {
 		autoUpdater.on('update-downloaded', info => {
 			this.isUpdating = false;
 
-			Util.log('info', 'Update downloaded: ' + JSON.stringify(info, null, 3));
+			Util.log('info', `Update downloaded: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-downloaded', info);
 		});
 	};

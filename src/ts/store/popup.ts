@@ -10,7 +10,6 @@ const NO_DIMMER_IDS = [
 	'page',
 	'export',
 	'phrase',
-	'objectManager',
 	'relation',
 	'inviteQr',
 ];
@@ -69,6 +68,7 @@ class PopupStore {
 			this.popupList.push({ id, param });
 		};
 
+		window.setTimeout(() => U.Data.updateTabsDimmer(), 50);
 		Preview.previewHide(true);
 	};
 
@@ -106,6 +106,10 @@ class PopupStore {
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
 			this.update(id, item.param);
+
+			window.setTimeout(() => {
+				$(window).trigger('resize');
+			});
 		};
 	};
 
@@ -161,9 +165,7 @@ class PopupStore {
 	close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 		
@@ -176,23 +178,22 @@ class PopupStore {
 		if (force) {
 			this.popupList = filtered;
 		
-			if (callBack) {
-				callBack();
-			};
+			U.Data.updateTabsDimmer();
+			callBack?.();
 		} else {
-			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
+			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
 
-			if (el.length) {
-				raf(() => { el.removeClass('show'); });
-			};
+			raf(() => {
+				if (el.length) {
+					el.removeClass('show');
+				};
+				U.Data.updateTabsDimmer(filtered);
+			});
 
 			window.setTimeout(() => {
 				this.popupList = filtered;
 
-				if (callBack) {
-					callBack();
-				};
-
+				callBack?.();
 				$(window).trigger('resize');
 			}, J.Constant.delay.popup);
 		};
@@ -211,7 +212,7 @@ class PopupStore {
 
 		this.clearTimeout();
 		if (callBack) {
-			this.timeout = window.setTimeout(() => callBack(), timeout);
+			this.timeout = window.setTimeout(callBack, timeout);
 		};
 	};
 
@@ -280,7 +281,12 @@ class PopupStore {
 	 * @param {I.PopupParam} param - The popup parameters.
 	 */
 	replace (oldId: string, newId: string, param: I.PopupParam) {
-		this.close(oldId, () => this.open(newId, param));
+		this.close(oldId, () => {
+			window.setTimeout(() => {
+				this.open(newId, param);
+				$(window).trigger('resize');
+			});
+		});
 	};
 
 };

@@ -53,7 +53,7 @@
 		}
 		
 		.focusable { border-radius: inherit; }
-		
+
 		.emptyToggle { 
 			display: none; margin-left: 28px; color: var(--color-control-active); position: relative; z-index: 2;
 			@include text-overflow-nw;
@@ -99,7 +99,7 @@
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
-	.block.isToggled > .wrapContent > .selectionTarget > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
+	.block.isToggled > .wrapContent > .selectionTarget > .dropTarget > .flex > .markers > .markerToggle { transform: rotateZ(90deg); }
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }

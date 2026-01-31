@@ -11,13 +11,10 @@ const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
 const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param, close, getId } = props;
+	const { param, close } = props;
 	const { data } = param;
 	const { readonly, view } = data;
-
 	const [ error, setError ] = useState('');
-
-	const checkboxRef = useRef(null);
 	const cellRefs = useRef(new Map());
 	const initialRef = useRef({});
 	const detailsRef = useRef({});
@@ -156,24 +153,22 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
 	const onCellChange = (id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
+		const cellId = Relation.cellId(ID_PREFIX, relationKey, '');
 		const relation = S.Record.getRelationByKey(relationKey);
+
 		if (!relation) {
 			return;
 		};
 
 		detailsRef.current[relationKey] = Relation.formatValue(relation, value, true);
 		loadDeps();
-
-		if (callBack) {
-			callBack({ error: { code: 0 } });
-		};
+		cellRefs.current.get(cellId)?.forceUpdate?.();
+		callBack?.({ error: { code: 0 } });
 	};
 
 	const onCellClick = (e: any, id: string) => {
@@ -255,6 +250,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			S.Menu.closeAll(J.Menu.cell);
 			U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
+			cellRefs.current.clear();
 		};
 	}, [ loadObjects, initValues ]);
 
@@ -306,7 +302,10 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							onCellChange={onCellChange}
 							getView={view ? (() => view): null}
 							pageContainer={U.Common.getCellContainer('popupRelation')}
-							menuParam={{ classNameWrap: 'fromPopup' }}
+							menuParam={{ 
+								className: 'fromBlockRelation', 
+								classNameWrap: 'fromPopup',
+							}}
 						/>
 					</div>
 				</div>
@@ -316,7 +315,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	return (
 		<div>
-			<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
+			<Label text={U.String.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
 
 			{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
 				<div className="blocks">

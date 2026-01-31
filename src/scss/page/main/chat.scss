@@ -1,6 +1,16 @@
 @import "~scss/_vars";
 
-
+.pageMainChat { display: flex; flex-direction: column; }
 .pageMainChat {
+	.wrapper, 
+	.editorWrapper, 
+	.blocks, 
+	.selectionTarget,
+	.wrapContent,
+	.dropTarget { flex-grow: 1; display: flex; flex-direction: column; }
+	.scrollWrapper { flex-grow: 1; }
+
+	.selectionTarget > .dropTarget > .wrap { flex-grow: 1; display: flex; flex-direction: column; }
+
 	> #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
 }

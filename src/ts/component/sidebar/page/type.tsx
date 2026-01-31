@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
@@ -6,119 +6,46 @@ import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
 
-const SidebarPageType = observer(class SidebarPageType extends React.Component<I.SidebarPageComponent> {
+const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	
-	object: any = {};
-	update: any = {};
-	sectionRefs: Map<string, any> = new Map();
-	previewRef: any = null;
-	buttonSaveRef: any = null;
-	backup: any = {};
+	const { rootId, isPopup, page, previous, noPreview } = props;
+	const { space } = S.Common;
+	const buttonSaveRef = useRef(null);
+	const previewRef = useRef(null);
+	const sectionRefs = useRef(new Map());
+	const objectRef = useRef<any>({});
+	const updateRef = useRef<any>({});
+	const backupRef = useRef<any>({});
 
-	constructor (props: I.SidebarPageComponent) {
-		super(props);
-
-		this.onChange = this.onChange.bind(this);
-		this.onSave = this.onSave.bind(this);
-		this.onCancel = this.onCancel.bind(this);
-		this.disableButton = this.disableButton.bind(this);
-	};
-
-    render () {
-		const { noPreview } = this.props;
-		const type = this.getObject();
-		const sections = this.getSections();
-		const readonly = this.props.readonly || !S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
-
-		return (
-			<>
-				<div id="head" className="head">
-					<div className="side left">
-						<Label text={translate('sidebarTypeTitle')} />
-					</div>
-
-					<div className="side right">
-						<Button 
-							color="blank" 
-							text={translate('commonCancel')}
-							className="c28"
-							onClick={this.onCancel}
-						/>
-
-						<Button 
-							ref={ref => this.buttonSaveRef = ref} 
-							text={type ? translate('commonSave') : translate('commonApply')}
-							className="c28 disabled"
-							onClick={this.onSave}
-						/>
-					</div>
-				</div>
-
-				<div id="body" className="body">
-					{sections.map((item, i) => (
-						<Section 
-							{...this.props} 
-							ref={ref => this.sectionRefs.set(item.id, ref)}
-							key={item.id} 
-							id={item.id}
-							component={item.component}
-							object={this.object} 
-							withState={true}
-							onChange={this.onChange}
-							disableButton={this.disableButton}
-							readonly={readonly}
-						/>
-					))}
-				</div>
-
-				{!noPreview ? <SidebarLayoutPreview {...this.props} ref={ref => this.previewRef = ref} /> : ''}
-			</>
-		);
-	};
-
-	componentDidMount (): void {
-		const { noPreview } = this.props;
-
-		this.init();
-		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
-
-		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
-	};
-
-	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
-		if ((this.props.rootId != prevProps.rootId) || !U.Common.objectCompare(this.props.details, prevProps.details)) {
-			this.init();
-		};
-	};
-
-	init () {
-		const type = this.getObject();
-
-		const details: any = this.props.details || {};
+	const getObject = () => {
+		const type = getType();
+		const details: any = props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
 			layoutAlign: I.BlockHAlign.Left,
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultViewType: I.ViewType.List,
+			defaultViewType: I.ViewType.Grid,
 		}, details);
 
-		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
-		this.backup = U.Common.objectCopy(this.object);
-
-		this.updateSections();
-		this.disableButton(true);
+		return U.Common.objectCopy(details.isNew ? newType : type || newType);
 	};
 
-	disableButton (v: boolean) {
-		if (this.buttonSaveRef) {
-			$(this.buttonSaveRef.getNode()).toggleClass('disabled', v);
-		};
+	const init = () => {
+		objectRef.current = getObject();
+		backupRef.current = U.Common.objectCopy(objectRef.current);
+
+		updateSections();
+		disableButton(true);
 	};
 
-	getObject () {
-		const type = S.Record.getTypeById(this.props.rootId);
+	const disableButton = (v: boolean) => {
+		$(buttonSaveRef.current?.getNode()).toggleClass('disabled', v);
+	};
+
+	const getType = () => {
+		const type = S.Record.getTypeById(rootId);
 		if (!type) {
 			return null;
 		};
@@ -128,8 +55,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		return Object.assign(type, { layoutFormat: isList ? I.LayoutFormat.List : I.LayoutFormat.Page });
 	};
 
-	getSections () {
-		const { rootId } = this.props;
+	const getSections = () => {
 		const type = S.Record.getTypeById(rootId);
 		
 		let isFile = false;
@@ -151,7 +77,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		].filter(it => it);
 	};
 
-	onChange (update: any) {
+	const onChange = (update: any) => {
 		const skipFormat = [ 'defaultTypeId', 'iconImage' ];
 
 		for (const relationKey in update) {
@@ -173,34 +99,38 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			};
 		};
 
-		this.object = Object.assign(this.object, update);
-		this.update = Object.assign(this.update, update);
+		objectRef.current = Object.assign(objectRef.current, update);
+		updateRef.current = Object.assign(updateRef.current, update);
 
-		S.Detail.update(J.Constant.subId.type, { id: this.object.id, details: update }, false);
+		const { recommendedLayout, layoutAlign } = updateRef.current;
 
-		if ((undefined !== update.recommendedLayout) && !U.Object.isTypeLayout(this.object.layout)) {
-			this.updateLayout(update.recommendedLayout);
+		S.Detail.update(J.Constant.subId.type, { id: objectRef.current.id, details: updateRef.current }, false);
+
+		if ((undefined !== recommendedLayout) && !U.Object.isTypeLayout(objectRef.current.layout)) {
+			updateLayout(recommendedLayout);
 		};
 
-		this.updateSections();
-		this.disableButton(!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName));
+		updateSections();
+		disableButton(!U.Common.objectLength(updateRef.current) || (!objectRef.current.name && !objectRef.current.pluralName));
 
-		C.BlockDataviewRelationSet(this.object.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(this.object.id)));
+		if (objectRef.current.id) {
+			C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
+		};
 
-		// analytics
 		let eventId = '';
-		if (update.recommendedLayout) {
+		if (undefined !== recommendedLayout) {
 			eventId = 'ChangeRecommendedLayout';
 		} else
-		if (update.layoutAlign) {
+		if (undefined !== layoutAlign) {
 			eventId = 'SetLayoutAlign';
 		};
-
-		analytics.stackAdd(eventId, { route: analytics.route.type });
+		if (eventId) {
+			analytics.stackAdd(eventId, { route: analytics.route.type });
+		};
 	};
 
-	updateLayout (layout: I.ObjectLayout) {
-		const details = this.props.details || {};
+	const updateLayout = (layout: I.ObjectLayout) => {
+		const details = props.details || {};
 
 		if (details.isNew) {
 			return;
@@ -216,25 +146,23 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
-	onSave () {
-		const { space } = S.Common;
-		const { rootId, isPopup, previous } = this.props;
-		const details: any = this.props.details || {};
+	const onSave = () => {
+		const details: any = props.details || {};
 		const type = S.Record.getTypeType();
 
-		if (!type || !U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
+		if (!type || !U.Common.objectLength(updateRef.current) || (!objectRef.current.name && !objectRef.current.pluralName)) {
 			return;
 		};
 
 		if (rootId) {
 			const update = [];
 
-			for (const key in this.update) {
+			for (const key in updateRef.current) {
 				if ([ 'layoutFormat', 'isNew', 'data' ].includes(key)) {
 					continue;
 				};
 
-				const value = Relation.formatValue(S.Record.getRelationByKey(key), this.update[key], true);
+				const value = Relation.formatValue(S.Record.getRelationByKey(key), updateRef.current[key], true);
 				update.push({ key, value });
 			};
 
@@ -244,16 +172,16 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				});
 
 				if (previous && previous.page) {
-					sidebar.rightPanelSetState(isPopup, previous);
+					S.Common.setRightSidebarState(isPopup, previous);
 				} else {
-					this.close();
+					close();
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
+			C.ObjectCreate(objectRef.current, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {
 					const route = details.data && details.data.route ? details.data.route : '';
-					const format = I.LayoutFormat[this.object.layoutFormat];
+					const format = I.LayoutFormat[objectRef.current.layoutFormat];
 
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.getComponentRef()?.refFilter?.setValue('');
@@ -262,54 +190,124 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				};
 			});
 
-			this.close();
+			close();
 		};
 
-		this.update = {};
+		updateRef.current = {};
 
 		analytics.event('ClickSaveEditType', { objectType: rootId });
 		analytics.stackSend();
 	};
 
-	onCancel () {
-		const { isPopup, previous } = this.props;
-		const rootId = keyboard.getRootId();
-
-		if (U.Common.objectLength(this.update)) {
-			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
-
-			if ((rootId != this.backup.id) && !U.Object.isTypeLayout(this.backup.layout)) {
-				this.updateLayout(this.backup.recommendedLayout);
-			};
-		};
+	const onCancel = () => {
+		restore();
 
 		if (previous && previous.page) {
-			sidebar.rightPanelSetState(isPopup, previous);
+			S.Common.setRightSidebarState(isPopup, previous);
 		} else {
-			this.close();
+			close();
 		};
 	};
 
-	close () {
-		const { isPopup, page, noPreview } = this.props;
+	const restore = () => {
+		if (!U.Common.objectLength(updateRef.current)) {
+			return;
+		};
 
+		const rootId = keyboard.getRootId();
+
+		S.Detail.update(J.Constant.subId.type, { id: backupRef.current.id, details: backupRef.current }, false);
+
+		if ((rootId != backupRef.current.id) && !U.Object.isTypeLayout(backupRef.current.layout)) {
+			updateLayout(backupRef.current.recommendedLayout);
+		};
+	};
+
+	const close = () => {
 		if (!noPreview) {
-			this.previewRef?.show(false);
+			previewRef.current?.show(false);
 		};
-		sidebar.rightPanelToggle(true, isPopup, page);
+
+		sidebar.rightPanelToggle(isPopup, { page });
 	};
 
-	updateSections () {
-		const sections = this.getSections();
+	const updateSections = () => {
+		const sections = getSections();
 
 		sections.forEach(it => {
-			this.sectionRefs.get(it.id)?.setObject(this.object);
+			sectionRefs.current.get(it.id)?.setObject(objectRef.current);
 		});
 
-		this.forceUpdate();
-		this.previewRef?.update(this.object);
+		previewRef.current?.update(objectRef.current);
 	};
 
-});
+	const type = getType();
+	const sections = getSections();
+	const readonly = props.readonly || !S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
+
+	useEffect(() => {
+		init();
+
+		window.setTimeout(() => previewRef.current?.show(true), J.Constant.delay.sidebar);
+		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
+
+		return () => {
+			restore();
+			analytics.stackClear();
+		};
+
+	}, []);
+
+	useEffect(() => {
+		init();
+	}, [ rootId ]);
+
+	return (
+		<>
+			<div id="head" className="head">
+				<div className="side left" />
+				<div className="side center">
+					<Label text={translate('sidebarTypeTitle')} />
+				</div>
+
+				<div className="side right">
+					<Button 
+						color="blank" 
+						text={translate('commonCancel')}
+						className="c28"
+						onClick={onCancel}
+					/>
+
+					<Button 
+						ref={buttonSaveRef} 
+						text={type ? translate('commonSave') : translate('commonCreate')}
+						className="c28 disabled"
+						onClick={onSave}
+					/>
+				</div>
+			</div>
+
+			<div id="body" className="body">
+				{sections.map((item, i) => (
+					<Section 
+						{...props} 
+						ref={ref => sectionRefs.current.set(item.id, ref)}
+						key={item.id} 
+						id={item.id}
+						component={item.component}
+						object={getObject()} 
+						withState={true}
+						onChange={onChange}
+						disableButton={disableButton}
+						readonly={readonly}
+					/>
+				))}
+			</div>
+
+			{!noPreview ? <SidebarLayoutPreview {...props} ref={previewRef} /> : ''}
+		</>
+	);
+
+}));
 
 export default SidebarPageType;

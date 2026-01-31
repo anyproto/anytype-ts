@@ -1,131 +1,27 @@
-import * as React from 'react';
-import $ from 'jquery';
+import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { Icon, LoadMore } from 'Component';
-import { I, S, U, translate } from 'Lib';
-import Row from './list/row';
+import { LoadMore } from 'Component';
+import { I, S, U } from 'Lib';
+import BodyRow from './list/row';
+import AddRow from './grid/body/add';
 
 const HEIGHT = 32;
 
-const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
+const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	node: any = null;
-	ref = null;
+	const { className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmptyView, getRecords, onRefRecord, loadData } = props;
+	const view = getView();
+	const records = getRecords();
+	const subId = getSubId();
+	const { offset, total } = S.Record.getMeta(subId, '');
+	const limit = getLimit();
+	const length = records.length;
+	const isAllowedObject = props.isAllowedObject();
+	const cn = [ 'viewContent', className ];
 
-	constructor (props: I.ViewComponent) {
-		super (props);
-
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-	};
-
-	render () {
-		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmptyView, getRecords, onRefRecord } = this.props;
-		const view = getView();
-		const records = getRecords();
-		const subId = getSubId();
-		const { offset, total } = S.Record.getMeta(subId, '');
-		const limit = getLimit();
-		const length = records.length;
-		const isAllowedObject = this.props.isAllowedObject();
-		const cn = [ 'viewContent', className ];
-
-		if (!length) {
-			return getEmptyView(I.ViewType.List);
-		};
-
-		let content = null;
-
-		if (isInline) {
-			content = (
-				<div>
-					{records.map((id: string, index: number) => (
-						<Row
-							ref={ref => onRefRecord(ref, id)}
-							key={'grid-row-' + view.id + index}
-							{...this.props}
-							recordId={id}
-							readonly={!isAllowedObject}
-						/>
-					))}
-				</div>
-			);
-		} else {
-			content = (
-				<InfiniteLoader
-					isRowLoaded={({ index }) => !!records[index]}
-					loadMoreRows={this.loadMoreRows}
-					rowCount={total}
-					threshold={10}
-				>
-					{({ onRowsRendered }) => (
-						<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
-							{({ height, isScrolling, scrollTop }) => (
-								<AutoSizer disableHeight={true}>
-									{({ width }) => (
-										<List
-											ref={ref => this.ref = ref}
-											autoHeight={true}
-											height={Number(height) || 0}
-											width={Number(width) || 0}
-											isScrolling={isScrolling}
-											rowCount={records.length}
-											rowHeight={HEIGHT}
-											onRowsRendered={onRowsRendered}
-											rowRenderer={({ key, index, style }) => (
-												<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
-													<Row
-														ref={ref => onRefRecord(ref, records[index])}
-														{...this.props} 
-														recordId={records[index]}
-														recordIdx={index}
-													/>
-												</div>
-											)}
-											scrollTop={scrollTop}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</WindowScroller>
-					)}
-				</InfiniteLoader>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className="wrap"
-			>
-				<div id="scroll" className="scroll">
-					<div id="scrollWrap" className="scrollWrap">
-						<div className={cn.join(' ')}>
-							{content}
-
-							{isAllowedObject ? (
-								<div className="row add">
-									<div className="cell add">
-										<div className="btn" onClick={e => onRecordAdd(e, 1)}>
-											<Icon className="plus" />
-											<div className="name">{translate('commonNewObject')}</div>
-										</div>
-									</div>
-								</div>
-							) : null}
-
-							{isInline && (limit + offset < total) ? (
-								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
-							) : ''}
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidUpdate () {
-		U.Common.triggerResizeEditor(this.props.isPopup);
+	useEffect(() => {
+		U.Common.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -133,10 +29,13 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		if (ids.length) {
 			selection?.renderSelection();
 		};
+	});
+
+	if (!length) {
+		return getEmptyView(view.type);
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
-		const { loadData, getView, getLimit, getSubId } = this.props;
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		const subId = getSubId();
 		const view = getView();
 
@@ -149,6 +48,84 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		});
 	};
 
-});
+	let content = null;
+
+	if (isInline) {
+		content = (
+			<div>
+				{records.map((id: string) => (
+					<BodyRow
+						ref={ref => onRefRecord(ref, id)}
+						key={`grid-row-${view.id}-${id}`}
+						{...props}
+						recordId={id}
+						readonly={!isAllowedObject}
+					/>
+				))}
+			</div>
+		);
+	} else {
+		content = (
+			<InfiniteLoader
+				isRowLoaded={({ index }) => !!records[index]}
+				loadMoreRows={loadMoreRows}
+				rowCount={total}
+				threshold={10}
+			>
+				{({ onRowsRendered }) => (
+					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+						{({ height, isScrolling, scrollTop }) => (
+							<AutoSizer disableHeight={true}>
+								{({ width }) => (
+									<List
+										autoHeight={true}
+										height={Number(height) || 0}
+										width={Number(width) || 0}
+										isScrolling={isScrolling}
+										rowCount={records.length}
+										rowHeight={HEIGHT}
+										onRowsRendered={onRowsRendered}
+										rowRenderer={({ key, index, style }) => {
+											const id = records[index];
+											return (
+												<BodyRow
+													ref={ref => onRefRecord(ref, id)}
+													key={`grid-row-${view.id}-${id}`}
+													{...props} 
+													recordId={id}
+													recordIdx={index}
+													style={style}
+												/>
+											);
+										}}
+										scrollTop={scrollTop}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</WindowScroller>
+				)}
+			</InfiniteLoader>
+		);
+	};
+
+	return (
+		<div className="wrap">
+			<div id="scroll" className="scroll">
+				<div id="scrollWrap" className="scrollWrap">
+					<div className={cn.join(' ')}>
+						{content}
+						{isAllowedObject ? <AddRow onClick={e => onRecordAdd(e, 1)} /> : ''}
+
+						{isInline && (limit + offset < total) ? (
+							<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={loadMoreRows} />
+						) : ''}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+
+}));
 
 export default ViewList;

@@ -6,17 +6,14 @@ GITHUB="api.github.com"
 
 platform=${1:-ubuntu-latest};
 arch=$2;
-folder="build";
+folder="dist";
 
 if [ "$platform" = "ubuntu-latest" ] || [ "$platform" = "ubuntu-22.04" ]; then
   arch="linux-$arch";
-  folder="$arch";
-elif [ "$platform" = "macos-13" ] || [ "$platform" = "macos-latest" ]; then
+elif [ "$platform" = "macos-15" ] || [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
-  folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
-  folder="dist";
   FILE="addon.zip"
 fi;
 
@@ -61,8 +58,6 @@ else
   printf "Done\n"
 
   echo "Moving... "
-  rm -rf "$folder"
-  mkdir -p "$folder"
   mv -fv grpc-server "$folder/anytypeHelper"
 fi;
 

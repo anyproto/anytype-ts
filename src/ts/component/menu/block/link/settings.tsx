@@ -1,83 +1,38 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
 
-const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
+const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
-	timeout = 0;
+	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
+	const { data, className, classNameWrap } = param;
+	const { rootId, blockId, blockIds } = data;
+	const n = useRef(-1);
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.rebind = this.rebind.bind(this);
-	};
-
-	render () {
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i}
-							{...action}
-							onClick={e => this.onClick(e, action)}
-							onMouseEnter={e => this.onOver(e, action)} 
-						/>
-					))}
-				</div>
-			</div>
-		);
-
-		return (
-			<div>
-				{sections.map((section: any, i: number) => (
-					<Section key={i} {...section} />
-				))}
-			</div>
-		);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.props.setActive();
-		this.props.position();
-	};
-
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.withSwitch) {
-			item.onSwitch(e, !this.hasRelationKey(item.itemId));
+			item.onSwitch(e, !hasRelationKey(item.itemId));
 		} else 
 		if (item.arrow) {
-			this.onOver(e, item);
+			onOver(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 
 		if (!item.arrow) {
@@ -85,9 +40,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return;
 		};
 
-		const { id, getId, getSize, param } = this.props;
-		const { className, classNameWrap } = param;
-		const content = this.getContent();
+		const content = getContent();
 		const menuId = 'select';
 
 		const menuParam: any = {
@@ -96,7 +49,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			rebind: this.rebind,
+			rebind: rebind,
 			parentId: id,
 			className,
 			classNameWrap,
@@ -104,7 +57,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 				value: String(content[item.itemId]),
 				options: [],
 				onSelect: (e: any, el: any) => {
-					this.save(item.itemId, el.id);
+					save(item.itemId, el.id);
 				},
 			},
 		};
@@ -113,23 +66,18 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		switch (item.itemId) {
 			case 'iconSize':
-				options = this.getIcons();
+				options = getIcons();
 				break;
 
 			case 'cardStyle':
-				options = this.getStyles();
-				break;
-
-			case 'cover': 
-				options = this.getCovers();
+				options = getStyles();
 				break;
 
 			case 'description':
-				options = this.getDescriptions();
+				options = getDescriptions();
 				break;
 		};
 
-		options = U.Menu.prepareForSelect(options);
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!S.Menu.isOpen(menuId, item.id)) {
@@ -139,14 +87,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 	};
 
-	getContent (): any {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
+	const getContent = (): I.ContentLink => {
 		const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
-			return {};
+			return {} as I.ContentLink;
 		};
 
 		const object = S.Detail.get(rootId, block.getTargetObjectId());
@@ -154,17 +99,17 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		return U.Data.checkLinkSettings(block.content, object.layout);
 	};
 
-	getStyles () {
+	const getStyles = () => {
 		return [
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
 		].map((it: any) => {
-			it.icon = 'linkStyle' + it.id;
+			it.icon = `linkStyle${it.id}`;
 			return it;
 		});
 	};
 
-	getIcons () {
+	const getIcons = () => {
 		return [
 			{ id: I.LinkIconSize.None, name: translate('commonNone') },
 			{ id: I.LinkIconSize.Small, name: translate('menuBlockLinkSettingsSizeSmall') },
@@ -172,11 +117,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		];
 	};
 
-	getCovers () {
-		return [];
-	};
-
-	getDescriptions () {
+	const getDescriptions = () => {
 		return [
 			{ id: I.LinkDescription.None, name: translate('commonNone') },
 			{ id: I.LinkDescription.Added, name: translate('menuBlockLinkSettingsDescriptionRelationDescription') },
@@ -184,10 +125,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		];
 	};
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
+	const getSections = () => {
 		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -195,7 +133,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		const object = S.Detail.get(rootId, block.getTargetObjectId());
-		const content = this.getContent();
+		const content = getContent();
 		const isCard = content.cardStyle == I.LinkCardStyle.Card;
 		const isText = content.cardStyle == I.LinkCardStyle.Text;
 		const isTask = U.Object.isTaskLayout(object.layout);
@@ -207,7 +145,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const canCover = !isNote && isCard;
 		const canDescription = !isNote;
 
-		const styles = this.getStyles();
+		const styles = getStyles();
 		const style = styles.find(it => it.id == content.cardStyle) || styles[0];
 
 		let icon: any = {};
@@ -217,25 +155,25 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		let descriptions: any[] = [];
 
 		if (canIcon) {
-			icons = this.getIcons();
+			icons = getIcons();
 			icon = icons.find(it => it.id == content.iconSize) || icons[0];
 		};
 
 		if (canDescription) {
-			descriptions = this.getDescriptions();
+			descriptions = getDescriptions();
 			description = descriptions.find(it => it.id == content.description) || descriptions[0];
 		};
 
 		const itemStyle = { id: 'cardStyle', name: translate('menuBlockLinkSettingsPreviewLayout'), caption: style.name, arrow: true };
 		const itemIconSize = canIconSize ? { id: 'iconSize', name: translate('commonIcon'), caption: icon.name, arrow: true } : null;
 		const itemIconSwitch = canIconSwitch ? { id: 'iconSwitch', name: translate('commonIcon'), withSwitch: true, switchValue: (icon.id != I.LinkIconSize.None) } : null;
-		const itemCover = canCover ? { id: 'cover', name: translate('menuBlockLinkSettingsCover'), withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
+		const itemCover = canCover ? { id: 'cover', name: translate('menuBlockLinkSettingsCover'), withSwitch: true, switchValue: hasRelationKey('cover') } : null;
+		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: `relation ${Relation.className(I.RelationType.ShortText)}` };
 		const itemDescription = canDescription ? { 
-			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: 'relation ' + Relation.className(I.RelationType.LongText),
+			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: `relation ${Relation.className(I.RelationType.LongText)}`,
 			caption: description.name, arrow: true
 		} : null;
-		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
+		const itemType = { id: 'type', name: translate('commonObjectType'), icon: `relation ${Relation.className(I.RelationType.Object)}`, withSwitch: true, switchValue: hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },
@@ -262,7 +200,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 							key = 'relations';
 						};
 
-						this.save(key, content[key]);
+						save(key, content[key]);
 					};
 				};
 				return child;
@@ -273,9 +211,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		return sections;
 	};
 
-	getItems () {
-		const sections = this.getSections();
-		
+	const getItems = () => {
 		let items: any[] = [];
 		for (const section of sections) {
 			items = items.concat(section.children);
@@ -284,27 +220,66 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		return items;
 	};
 
-	save (id: string, v: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, blockIds } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
-		
-		if (!block) {
-			return;
-		};
-
-		const content = U.Common.objectCopy(block.content || {});
+	const save = (id: string, v: any) => {
+		const content = getContent();
 
 		content[id] = v;
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
 	};
 
-	hasRelationKey (key: string) {
-		const content = this.getContent();
-		return content.relations.includes(key);
+	const hasRelationKey = (key: string) => {
+		return (getContent().relations || []).includes(key);
 	};
 
-});
+	const sections = getSections();
+
+	const Section = (item: any) => (
+		<div className="section">
+			<div className="name">{item.name}</div>
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical 
+						key={i}
+						{...action}
+						onClick={e => onClick(e, action)}
+						onMouseEnter={e => onOver(e, action)} 
+					/>
+				))}
+			</div>
+		</div>
+	);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		setActive();
+		position();
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{sections.map((section: any, i: number) => (
+				<Section key={i} {...section} />
+			))}
+		</div>
+	);
+	
+}));
 
 export default MenuBlockLinkSettings;

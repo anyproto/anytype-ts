@@ -2,9 +2,10 @@
 	/* Text */
 
 	--color-text-primary: #252525;
-	--color-text-secondary: #949494;
+	--color-text-secondary: #828282;
 	--color-text-tertiary: #bfbfbf;
 	--color-text-inversion: #fff;
+	--color-text-white60: rgba(255,255,255,0.6);
 	--color-text-primary-inversion: #ebebeb;
 	--color-text-secondary-inversion: #9a9a9a;
 	--color-text-tertiary-inversion: #656565;
@@ -147,4 +148,6 @@
 	--menu-width-set: 360px;
 	--menu-width-large: 408px;
 	--menu-width-add: 480px;
+
+	--editor-width: 704px;
 }

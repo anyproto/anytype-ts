@@ -1,0 +1,161 @@
+:root {
+	--color-text-primary: #252525;
+	--color-text-secondary: #828282;
+	--color-bg-primary: #fff;
+	--color-shape-primary: #e3e3e3;
+	--color-shape-tertiary: #f2f2f2;
+	--color-shape-highlight-dark: rgba(0, 0, 0, 0.11);
+	--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
+}
+
+html.themeDark {
+	--color-text-primary: #f8f8f8;
+	--color-text-secondary: #ababab;
+	--color-bg-primary: #171717;
+	--color-shape-primary: #313131;
+	--color-shape-tertiary: #232323;
+	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
+	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
+}
+
+@font-face {
+	font-family: 'Inter'; font-style: normal; font-weight: 500; src: url('../font/inter/medium.woff2') format('woff2');
+}
+
+* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
+
+body {
+	font-family: 'Inter', sans-serif; font-size: 14px; color: var(--color-text-primary); background: var(--color-bg-primary);
+	font-weight: 500; line-height: 22px; letter-spacing: -0.12px; -webkit-app-region: drag;
+	overflow: hidden;
+}
+body.tabsHidden, body.tabsHidden #tabsWrapper, body.tabsHidden #tabs { -webkit-app-region: no-drag; }
+
+body::after {
+	content: ''; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0);
+	pointer-events: none; transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1); z-index: 100;
+}
+body.showDimmer::after { background: rgba(0, 0, 0, 0.25); }
+
+body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
+body.platform-win32.showMenuBar {
+	#menuBar { display: flex; }
+}
+
+/* Menu Bar - Windows only */
+#menuBar {
+	display: none; height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000;
+	align-items: center; flex-direction: row; -webkit-app-region: drag;
+}
+#menuBar {
+	.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; font-size: 12px; font-weight: 500; }
+	.side.left { justify-content: flex-start; gap: 0px 2px; }
+	.side.right { justify-content: flex-end; }
+	.name { line-height: 28px; }
+
+	.icon {
+		width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important;
+		-webkit-app-region: no-drag; transition: background-color 0.1s ease-in-out; background-position: center; background-repeat: no-repeat;
+	}
+
+	.icon:hover { background-color: var(--color-shape-highlight-medium); }
+	.icon.window-menu { background-image: url('../img/icon/window/menu.svg'); }
+	.icon.window-min { background-image: url('../img/icon/window/min.svg'); }
+	.icon.window-max { background-image: url('../img/icon/window/max.svg'); }
+	.icon.window-close { background-image: url('../img/icon/window/close.svg'); }
+}
+
+.container { padding: 8px; }
+
+#tabsWrapper { position: relative; transition: opacity 0.15s ease-in-out; width: 100%; }
+#tabsWrapper.isHidden { opacity: 0; pointer-events: none; -webkit-app-region: no-drag; }
+
+#tabs {
+	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
+	overflow-y: hidden;
+}
+#tabs::-webkit-scrollbar { display: none; }
+#tabs {
+	.tab {
+		padding: 8px 8px 8px 12px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+		color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
+		transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
+	}
+	
+	.tab.noClose {
+		.icon.close { display: none !important; }
+	}
+
+	.tab.active { color: var(--color-text-primary); }
+	.tab.active .div { display: none; }
+	.tab.hideDiv .div { display: none; }
+
+	.tab.isAdd { flex: 0 0 auto; min-width: 32px; padding: 4px 8px; }
+	.tab.isAdd {
+		.icon { 
+			width: 28px; height: 28px; background-size: 20px; background-image: url('../img/icon/plus.svg'); 
+			border-radius: 50%;
+		}
+	}
+
+	.tab {
+		.clickable {
+			display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; -webkit-app-region: no-drag;
+		}
+
+		.name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
+
+		.icon { flex-shrink: 0; }
+		.icon.close { background-image: url('../img/icon/close.svg'); opacity: 0; }
+		.icon.object { width: 18px; height: 18px; background-size: cover; }
+		.icon.object.layout1,
+		.icon.object.layout10.uxType3.isImage,
+		.icon.object.layout10.uxType4.isImage,
+		.icon.object.layout18.uxType3.isImage,
+		.icon.object.layout18.uxType4.isImage,
+		.icon.object.layout22.isImage { border-radius: 50% };
+
+		.iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+		.div {
+			position: absolute; width: 1px; top: 50%; margin-top: -10px; height: 20px; background: var(--color-shape-highlight-dark);
+			z-index: 0; right: 0px;
+		}
+	}
+	.tab:hover {
+		.icon.close { opacity: 1; }
+	}
+
+	.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }
+}
+
+#marker {
+	width: 200px; height: calc(100% - 4px); background: var(--color-bg-primary); left: 2px; top: 2px; position: absolute;
+	border-radius: 16px; z-index: 1; pointer-events: none; -webkit-app-region: no-drag;
+}
+#marker.anim { transition: width, left 0.1s ease-in-out; }
+
+.icon { 
+	width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: default; -webkit-app-region: no-drag; 
+	transition: all 0.1s ease-in-out;
+}
+.icon.withBackground { border-radius: 10px; }
+.icon.withBackground:hover { background-color: var(--color-shape-highlight-medium); }
+
+html.themeDark {
+	#menuBar {
+		.icon.window-menu { background-image: url('../img/theme/dark/icon/window/menu.svg'); }
+		.icon.window-min { background-image: url('../img/theme/dark/icon/window/min.svg'); }
+		.icon.window-max { background-image: url('../img/theme/dark/icon/window/max.svg'); }
+		.icon.window-close { background-image: url('../img/theme/dark/icon/window/close.svg'); }
+	}
+}
+
+/* Tab drag outside window visual feedback */
+body.draggingOutside {
+	#tabs { opacity: 0.6; }
+	#marker { opacity: 0.6; }
+}
+
+/* Drop target highlight for receiving window */
+#tabs.dropTarget { outline: 2px dashed var(--color-shape-primary); outline-offset: -2px; }

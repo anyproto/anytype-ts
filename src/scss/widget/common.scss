@@ -1,11 +1,11 @@
 @import "~scss/_mixins";
 
-.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; opacity: 0; }
+.widget { background: var(--color-shape-highlight-light); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { padding: 8px; }
 	.head {
-		.sides { width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 2px 4px 2px 8px; }
+		.sides { width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 0px 4px 0px 8px; }
 		.side.left { flex-grow: 1; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; overflow: hidden; height: 28px; }
 		.side.right { flex-shrink: 0; }	
 
@@ -15,10 +15,7 @@
 		}
 		.sides:hover::after { opacity: 1; }
 
-		.clickable { 
-			@include text-paragraph; font-weight: 600; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; position: relative; 
-			overflow: hidden;
-		}
+		.clickable { font-weight: 600; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; position: relative; overflow: hidden; }
 		.clickable {
 			.iconObject, .icon { flex-shrink: 0; }
 			.icon { width: 20px; height: 20px; }
@@ -65,25 +62,23 @@
 	&.withButtons {
 		&.active, &:hover {
 			.head {
-				.counters { display: none; }
+				.counters, .chatCounter { display: none; }
 				.buttons { display: flex; }
 			}
 		}
 	}
 
-	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-	&.show { opacity: 1; }
-
-	#button-show-all { padding: 0px 8px; }
-	#button-show-all {
-		.button { display: flex; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; }
-		.button:after { content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); margin: 0px -12px 0px 4px; }
+	#button-show-all { 
+		padding: 0px 8px; display: none; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; 
+		border-radius: 6px; margin: 0px 8px;
+	}
+	#button-show-all:after { 
+		content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); 
+		margin: 0px -12px 0px 4px; 
 	}
 
-	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
-
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
-	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; justify-content: center; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
 
 	.emptyWrap { padding: 0px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {
@@ -125,7 +120,7 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
-.widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
+.widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; background: none; }
 .widget.isPreview {
 	.head { padding: 0px 16px; }
 	.body { overflow: visible; }
@@ -149,10 +144,11 @@
 
 .widget.widgetLink {
 	.headerIcon { opacity: 1 !important; }
-	.iconWrap.collapse { opacity: 0 !important; }
+	.iconWrap.collapse { opacity: 0 !important; pointer-events: none; }
 }
 
 @import "./space";
+@import "./object";
 @import "./tree";
 @import "./view/common";
 

@@ -36,9 +36,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const onStepChange = (idx: number, callBack?: () => void) => {
 		setStep(idx);
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 
 		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 1 });
 	};
@@ -137,7 +135,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 							<div className={[ 'slide', `slide${idx}` ].join(' ')}>
 								<img
 									onClick={() => swiperControl.slideNext()}
-									src={`./img/help/onboarding/primitives/${theme ? 'dark/' : ''}${idx}.png`}
+									src={`${U.Common.helpMediaPath()}/onboarding/primitives/${idx}.png`}
 								/>
 							</div>
 						</SwiperSlide>

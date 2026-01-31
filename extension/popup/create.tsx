@@ -191,11 +191,11 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const onKeyDown = (e: any) => {
 		const entry = $(entryRef.current);
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
 			const range = getRange(entry.get(0));
-			if (range.start || range.end) {
+			if (range?.start || range?.end) {
 				return;
 			};
 
@@ -241,7 +241,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				maxCount: relation.maxCount,
 				noFilter: true,
 				relation: observable.box(relation),
-				maxHeight: 120,
+				maxHeight: 240,
 				onChange: (value: string[]) => {
 					setValue(value);
 				}
@@ -385,7 +385,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 							onChange={onSpaceChange}
 							menuParam={{
 								horizontal: I.MenuDirection.Center,
-								data: { maxHeight: 180 }
+								data: { maxHeight: 240 }
 							}}
 						/>
 					</div>
@@ -401,7 +401,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 							onChange={onTypeChange}
 							menuParam={{
 								horizontal: I.MenuDirection.Center,
-								data: { maxHeight: 180 }
+								data: { maxHeight: 240 }
 							}}
 						/>
 					</div>

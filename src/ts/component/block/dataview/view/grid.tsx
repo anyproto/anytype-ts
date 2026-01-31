@@ -1,183 +1,54 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Icon, LoadMore } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
+import { LoadMore, StickyScrollbar } from 'Component';
+import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
 
 const PADDING = 46;
 const HEIGHT = 48;
 
-const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
+const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	node: any = null;
-	cache: any = null;
-	ox = 0;
+	const { 
+		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords, 
+		getLimit, getVisibleRelations, getSubId, isAllowedObject,
+	} = props;
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const stickyScrollbarRef = useRef(null);
+	const isSyncingScroll = useRef(false);
+	const scrollRef = useRef(null);
+	const scrollWrapRef = useRef(null);
+	const view = getView();
+	const relations = getVisibleRelations();
 
-	constructor (props: I.ViewComponent) {
-		super (props);
+	useEffect(() => {
+		resize();
+		rebind();
 
-		this.cellPosition = this.cellPosition.bind(this);
-		this.onCellAdd = this.onCellAdd.bind(this);
-		this.onResizeStart = this.onResizeStart.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.getColumnWidths = this.getColumnWidths.bind(this);
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-		});
-	};
-
-	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmptyView, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
-		const view = getView();
-		const relations = getVisibleRelations();
-		const records = getRecords();
-		const { offset, total } = S.Record.getMeta(getSubId(), '');
-		const limit = getLimit();
-		const length = records.length;
-		const isAllowedObject = this.props.isAllowedObject();
-		const cn = [ 'viewContent', className ];
-
-		const rowRenderer = ({ key, index, parent, style }) => (
-			<CellMeasurer
-				key={key}
-				parent={parent}
-				cache={this.cache}
-				columnIndex={0}
-				rowIndex={index}
-				hasFixedWidth={() => {}}
-			>
-				<BodyRow 
-					key={`grid-row-${view.id + index}`} 
-					{...this.props} 
-					recordId={records[index]}
-					recordIdx={index}
-					style={{ ...style, top: style.top + 2 }}
-					cellPosition={this.cellPosition}
-					getColumnWidths={this.getColumnWidths}
-				/>
-			</CellMeasurer>
-		);
-
-		let content = null;
-		if (!length) {
-			content = getEmptyView(I.ViewType.Grid);
-		} else
-		if (isInline) {
-			content = (
-				<div>
-					{records.map((id: string, index: number) => (
-						<BodyRow 
-							key={'grid-row-' + view.id + index} 
-							{...this.props} 
-							recordId={records[index]}
-							cellPosition={this.cellPosition}
-							getColumnWidths={this.getColumnWidths}
-						/>
-					))}
-				</div>
-			);
-		} else {
-			content = (
-				<InfiniteLoader
-					loadMoreRows={this.loadMoreRows}
-					isRowLoaded={({ index }) => !!records[index]}
-					rowCount={total}
-					threshold={10}
-				>
-					{({ onRowsRendered }) => (
-						<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
-							{({ height, isScrolling, registerChild, scrollTop }) => (
-								<AutoSizer disableHeight={true}>
-									{({ width }) => (
-										<div ref={registerChild}>
-											<List
-												autoHeight={true}
-												height={Number(height) || 0}
-												width={Number(width) || 0}
-												isScrolling={isScrolling}
-												rowCount={length}
-												rowHeight={this.getRowHeight()}
-												onRowsRendered={onRowsRendered}
-												deferredMeasurmentCache={this.cache}
-												rowRenderer={rowRenderer}
-												scrollTop={scrollTop}
-											/>
-										</div>
-									)}
-								</AutoSizer>
-							)}
-						</WindowScroller>
-					)}
-				</InfiniteLoader>
-			);
+		return () => {
+			unbind();
 		};
+	}, []);
 
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				<div id="scroll" className="scroll">
-					<div id="scrollWrap" className="scrollWrap">
-						<div className={cn.join(' ')}>
-							<HeadRow 
-								{...this.props} 
-								onCellAdd={this.onCellAdd} 
-								onSortStart={this.onSortStart} 
-								onSortEnd={this.onSortEnd} 
-								onResizeStart={this.onResizeStart}
-								getColumnWidths={this.getColumnWidths}
-							/>
+	useEffect(() => {
+		cache.current.clearAll();
+		listRef.current?.recomputeRowHeights(0);
+	}, [ view.wrapContent, relations.length ]);
 
-							{content}
-
-							{isAllowedObject ? (
-								<div className="row add">
-									<div className="cell add">
-										<div className="btn" onClick={e => onRecordAdd(e, 1)}>
-											<Icon className="plus" />
-											<div className="name">{translate('commonNewObject')}</div>
-										</div>
-									</div>
-								</div>
-							) : null}
-
-							<FootRow
-								{...this.props} 
-								getColumnWidths={this.getColumnWidths}
-							/>
-
-							{isInline && (limit + offset < total) ? (
-								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
-							) : ''}
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.resize();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.rebind();
-		this.resize();
-		this.onScrollHorizontal();
-		this.onScrollVertical();
+	useEffect(() => {
+		rebind();
+		resize();
+		onScrollHorizontal();
+		onScrollVertical();
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -186,70 +57,70 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			selection?.renderSelection();
 		};
 
-		U.Common.triggerResizeEditor(this.props.isPopup);
+		U.Common.triggerResizeEditor(isPopup);
+	});
+
+	if (!view) {
+		return null;
 	};
 
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		const { isPopup, block } = this.props;
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
+	const rebind = () => {
+		const scroll = $(scrollRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
 
-		this.unbind();
+		unbind();
 
-		scroll.on('scroll', () => this.onScrollHorizontal());
-		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => this.onScrollVertical()));
+		scroll.on('scroll', () => onScrollHorizontal());
+		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => onScrollVertical()));
+
+		if (!isInline) {
+			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
+		};
 	};
 
-	unbind () {
-		const { isPopup, block } = this.props;
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
+	const unbind = () => {
+		const scroll = $(scrollRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
 		container.off(`scroll.${block.id}`);
+		stickyScrollbarRef.current?.unbind();
 	};
 
-	onScrollHorizontal () {
+	const onScrollHorizontal = () => {
 		S.Menu.resizeAll();
-		this.resizeColumns('', 0);
-
-		const { isInline } = this.props;
+		resizeColumns('', 0);
 
 		if (isInline) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
+		const scroll = $(scrollRef.current);
 		const clone = node.find('#rowHeadClone');
 
 		if (clone.length) {
-			const scroll = node.find('#scroll');
-
 			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
+		};
+
+		if (stickyScrollbarRef) {
+			isSyncingScroll.current = stickyScrollbarRef.current?.sync(scroll, isSyncingScroll.current);
 		};
 	};
 
-	onScrollVertical () {
-		const { isPopup, isInline } = this.props;
-
+	const onScrollVertical = () => {
 		if (isInline || isPopup) {
 			return;
 		};
-
-		const node = $(this.node);
+		
+		const node = $(nodeRef.current);
 		const rowHead = node.find('#rowHead');
 
 		if (!rowHead.length) {
 			return;
 		};
 
-		const scroll = node.find('#scroll');
+		const scroll = $(scrollRef.current);
 		const { left, top } = rowHead.offset();
 		const sx = scroll.scrollLeft();
 		
@@ -260,16 +131,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 			node.append(clone);
 
-			ReactDOM.render((
-				<HeadRow 
-					{...this.props} 
-					onCellAdd={this.onCellAdd} 
-					onSortStart={this.onSortStart} 
-					onSortEnd={this.onSortEnd} 
-					onResizeStart={this.onResizeStart}
-					getColumnWidths={this.getColumnWidths}
+			const root = createRoot(clone.get(0));
+
+			root.render((
+				<HeadRow
+					{...props}
+					onCellAdd={onCellAdd}
+					onSortStart={onSortStart}
+					onSortEnd={onSortEnd}
+					onResizeStart={onResizeStart}
+					getColumnWidths={getColumnWidths}
 				/>
-			), clone.get(0));
+			));
 
 			clone.find('.rowHead').attr({ id: '' });
 		};
@@ -288,19 +161,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		rowHead.toggleClass('fixed', top <= J.Size.header);
 	};
 
-	resizeColumns (relationKey: string, width: number) {
-		const { getVisibleRelations } = this.props;
-		const node = $(this.node);
-		const relations = getVisibleRelations();
-		const size = J.Size.dataview.cell;
-		const widths = this.getColumnWidths(relationKey, width);
+	const resizeColumns = (relationKey: string, width: number) => {
+		const node = $(nodeRef.current);
+		const widths = getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const size = J.Size.dataview.cell;
 
 		relations.forEach(it => {
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			el.toggleClass('small', width <= size.icon);
+			el.toggleClass('small', width <= size.small);
+			el.toggleClass('medium', (width > size.small) && (width <= size.medium));
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
@@ -308,34 +180,28 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 
-	getColumnWidths (relationKey: string, width: number): any {
-		const { getVisibleRelations } = this.props;
-		const relations = getVisibleRelations();
+	const getColumnWidths = (relationKey: string, width: number): any => {
 		const columns: any = {};
 		
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
-
-			columns[it.relationKey] = Relation.width(w, relation.format);
+			columns[it.relationKey] = Relation.width(w, it.relation.format);
 		});
 
 		return columns;
 	};
 
-	getRowHeight () {
-		return this.props.isInline ? 40 : 48;
+	const getRowHeight = () => {
+		return props.isInline ? 40 : 48;
 	};
 
-	cellPosition (cellId: string) {
+	const cellPosition = (cellId: string) => {
 		const cell = $(`#${cellId}`);
 		if (!cell.hasClass('isEditing')) {
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
+		const scroll = $(scrollRef.current);
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
 		const width = content.outerWidth();
@@ -352,39 +218,34 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 	};
 
-	onResizeStart (e: any, relationKey: string) {
+	const onResizeStart = (e: any, relationKey: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const win = $(window);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
-		const offset = el.offset();
-
-		this.ox = offset.left;
+		const { left } = el.offset();
 
 		$('body').addClass('colResize');
 		win.off('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', e => this.onResizeMove(e, relationKey));
-		win.on('mouseup.cell', e => this.onResizeEnd(e, relationKey));
+		win.on('mousemove.cell', e => onResizeMove(e, relationKey, left));
+		win.on('mouseup.cell', e => onResizeEnd(e, relationKey, left));
 
 		el.addClass('isResizing');
 		keyboard.setResize(true);
 	};
 
-	onResizeMove (e: any, relationKey: string) {
+	const onResizeMove = (e: any, relationKey: string, ox: number) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.resizeColumns(relationKey, this.checkWidth(e.pageX - this.ox));
+		resizeColumns(relationKey, checkWidth(e.pageX - ox));
 	};
 
-	onResizeEnd (e: any, relationKey: string) {
-		const { rootId, block, getView, getVisibleRelations } = this.props;
-		const view = getView();
-		const node = $(this.node);
-		const relations = getVisibleRelations();
-		const width = this.checkWidth(e.pageX - this.ox);
+	const onResizeEnd = (e: any, relationKey: string, ox: number) => {
+		const node = $(nodeRef.current);
+		const width = checkWidth(e.pageX - ox);
 
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
@@ -392,27 +253,28 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		node.find('.cellKeyHover').removeClass('cellKeyHover');
 
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			if (it.relationKey == relationKey) {
-				it.width = Relation.width(width, relation.format);
+				it.width = Relation.width(width, it.relation.format);
 			};
 		});
 
-		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, { 
-			...view.getRelation(relationKey), 
-			width: this.checkWidth(e.pageX - this.ox),
+		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, {
+			...view.getRelation(relationKey),
+			width,
 		});
+
+		cache.current.clearAll();
+		listRef.current?.recomputeRowHeights(0);
 
 		window.setTimeout(() => keyboard.setResize(false), 50);
 	};
 
-	checkWidth (width: number): number {
+	const checkWidth = (width: number): number => {
 		const { min, max } = J.Size.dataview.cell;
 		return Math.min(max, Math.max(min, Math.floor(width)));
 	};
 
-	onCellAdd (e: any) {
-		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
+	const onCellAdd = (e: any) => {
 		const blockEl = `#block-${block.id}`;
 		const rowHead = $(`${blockEl} #rowHead`);
 		const isFixed = rowHead.hasClass('fixed');
@@ -441,21 +303,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
+	const onSortEnd = (result: any) => {
 		const { active, over } = result;
 
 		if (!active || !over) {
 			return;
 		};
 
-		const { rootId, block, getView, getVisibleRelations } = this.props;
-		const view = getView();
-		const relations = getVisibleRelations();
 		const ids = relations.map(it => it.relationKey);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
@@ -467,8 +326,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		keyboard.disableSelection(false);
 	};
 
-	loadMoreRows () {
-		const { loadData, getView, getLimit, getSubId } = this.props;
+	const loadMoreRows = () => {
 		const subId = getSubId();
 		const view = getView();
 		const limit = getLimit();
@@ -483,18 +341,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 	};
 
-	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId } = this.props;
+	const resize = () => {
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-		const wrap = node.find('#scrollWrap');
-		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const scroll = $(scrollRef.current);
+		const wrap = $(scrollWrapRef.current);
 		const container = U.Common.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
-		const length = S.Record.getRecordIds(getSubId(), '').length;
+		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const cw = container.width();
-		const rh = this.getRowHeight();
+		const ch = container.height();
 
 		if (isInline) {
 			if (parent) {
@@ -520,14 +374,160 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const margin = (cw - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-			wrap.css({ width: vw, paddingRight: pr });
-		};
+			scroll.css({ 
+				width: cw - 4, 
+				marginLeft: -margin - 2, 
+				paddingLeft: margin, 
+				minHeight: (ch - scroll.offset()?.top),
+			});
 
-		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
-		this.resizeColumns('', 0);
+			wrap.css({ width: vw, paddingRight: pr });
+
+			stickyScrollbarRef.current?.resize({
+				width: mw,
+				left: margin,
+				paddingLeft: margin,
+				display: vw <= mw ? 'none' : '',
+				trackWidth: vw,
+			});
+		};
+		
+		resizeColumns('', 0);
 	};
-	
-});
+
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const records = getRecords();
+	const { offset, total } = S.Record.getMeta(getSubId(), '');
+	const limit = getLimit();
+	const length = records.length;
+	const cn = [ 'viewContent', className ];
+
+	if (view.wrapContent) {
+		cn.push('wrapContent');
+	};
+
+	const rowRenderer = ({ key, index, parent, style }) => (
+		<CellMeasurer
+			key={key}
+			parent={parent}
+			cache={cache.current}
+			columnIndex={0}
+			rowIndex={index}
+			hasFixedWidth={() => {}}
+		>
+			{({ registerChild, measure }) => (
+				<div 
+					ref={registerChild} 
+					style={style}
+				>
+					<BodyRow 
+						key={`grid-row-${view.id + index}`} 
+						{...props} 
+						recordId={records[index]}
+						recordIdx={index}
+						cellPosition={cellPosition}
+						getColumnWidths={getColumnWidths}
+						onUpdate={view.wrapContent ? measure : undefined}
+					/>
+				</div>
+			)}
+		</CellMeasurer>
+	);
+
+	let content = null;
+	if (!length) {
+		content = getEmptyView(I.ViewType.Grid);
+	} else
+	if (isInline) {
+		content = (
+			<div>
+				{records.map((id: string, index: number) => (
+					<BodyRow 
+						key={`grid-row-${view.id}${index}`} 
+						{...props} 
+						recordId={records[index]}
+						cellPosition={cellPosition}
+						getColumnWidths={getColumnWidths}
+					/>
+				))}
+			</div>
+		);
+	} else {
+		content = (
+			<InfiniteLoader
+				loadMoreRows={loadMoreRows}
+				isRowLoaded={({ index }) => !!records[index]}
+				rowCount={total}
+				threshold={10}
+			>
+				{({ onRowsRendered }) => (
+					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+						{({ height, isScrolling, registerChild, scrollTop }) => (
+							<AutoSizer disableHeight={true}>
+								{({ width }) => (
+									<div ref={registerChild}>
+										<List
+											ref={listRef}
+											autoHeight={true}
+											height={Number(height) || 0}
+											width={Number(width) || 0}
+											isScrolling={isScrolling}
+											rowCount={length}
+											rowHeight={param => Math.max(cache.current.rowHeight(param), getRowHeight())}
+											onRowsRendered={onRowsRendered}
+											deferredMeasurementCache={cache.current}
+											rowRenderer={rowRenderer}
+											scrollTop={scrollTop}
+										/>
+									</div>
+								)}
+							</AutoSizer>
+						)}
+					</WindowScroller>
+				)}
+			</InfiniteLoader>
+		);
+	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
+
+	return (
+		<div
+			ref={nodeRef}
+			className="wrap"
+		>
+			<div ref={scrollRef} id="scroll" className="scroll">
+				<div ref={scrollWrapRef} id="scrollWrap" className="scrollWrap">
+					<div className={cn.join(' ')}>
+						<HeadRow
+							{...props}
+							onCellAdd={onCellAdd}
+							onSortStart={onSortStart}
+							onSortEnd={onSortEnd}
+							onResizeStart={onResizeStart}
+							getColumnWidths={getColumnWidths}
+						/>
+
+						{content}
+						{isAllowedObject() ? <AddRow onClick={e => onRecordAdd(e, 1)} /> : ''}
+
+						<FootRow
+							{...props}
+							getColumnWidths={getColumnWidths}
+						/>
+
+						{isInline && (limit + offset < total) ? (
+							<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={loadMoreRows} />
+						) : ''}
+					</div>
+				</div>
+			</div>
+			{!isInline ? <StickyScrollbar ref={stickyScrollbarRef} /> : ''}
+		</div>
+	);
+
+}));
 
 export default ViewGrid;

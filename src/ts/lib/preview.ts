@@ -36,13 +36,13 @@ class Preview {
 		if (undefined !== param.delay) {
 			delay = param.delay;
 		};
-		
+
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
 
 		let text = String(param.text || '').replace(/\\n/g, '\n');
-		text = U.Common.lbBr(U.Common.sanitize(text));
+		text = U.String.lbBr(U.String.sanitize(text));
 
 		this.delayTooltip = Number(delay) || 0;
 
@@ -162,7 +162,7 @@ class Preview {
 	tooltipCaption (text: string, caption: string): string {
 		const t = [];
 		if (text) {
-			t.push(text);
+			t.push(`<span class="common">${text}</span>`);
 		};
 		if (caption) {
 			t.push(`<span class="caption">${caption}</span>`);
@@ -244,9 +244,8 @@ class Preview {
 		const cb = () => {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
-
+			
 			S.Common.previewClear();
-			$('#graphPreview').remove();
 		};
 
 		window.clearTimeout(this.timeout.preview);

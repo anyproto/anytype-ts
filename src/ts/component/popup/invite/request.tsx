@@ -1,24 +1,60 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { Title, Icon, Label, Button, Error } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { Title, Label, Button, Error, IconObject } from 'Component';
+import { I, C, S, U, translate, analytics, Preview , Action} from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
+	const { account } = S.Auth;
 	const { data } = param;
-	const { route } = data;
+	const { route, cid, key } = data;
 	const [ error, setError ] = useState('');
 	const invite = data.invite || {};
 	const refButton = useRef(null);
-	const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
-	const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
+	const spaceName = U.String.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+	const creatorName = U.String.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
+
+	let title = '';
+	let text = '';
+	let button = '';
+
+	switch (invite.inviteType) {
+		case I.InviteType.WithApprove: {
+			title = translate('popupInviteRequestAccessTitle');
+			button = translate('popupInviteRequestRequestToJoin');
+
+			switch (invite.uxType) {
+				default: {
+					text = translate('popupInviteRequestAccessTextData');
+					break;
+				};
+
+				case I.SpaceUxType.Chat:
+					text = translate('popupInviteRequestAccessTextChat');
+					break;
+			};
+			break;
+		};
+
+		case I.InviteType.WithoutApprove:
+			title = translate('popupInviteRequestInviteTitle');
+			button = translate('commonJoin');
+
+			switch (invite.uxType) {
+				default: {
+					text = translate('popupInviteRequestInviteTextData');
+					break;
+				};
+
+				case I.SpaceUxType.Chat:
+					text = translate('popupInviteRequestInviteTextChat');
+					break;
+			};
+			break;
+	};
 
 	const onRequest = () => {
-		const { account } = S.Auth;
-		const { data } = param;
-		const { invite, cid, key } = data;
-
 		if (!account || refButton.current?.isLoading()) {
 			return;
 		};
@@ -33,32 +69,60 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			close(() => {
-				U.Common.onInviteRequest();
-				analytics.event('ScreenRequestSent');
-			});
+			if (invite.inviteType === I.InviteType.WithApprove) {
+				close(() => Action.inviteRequest());
+			};
+
+			if (invite.inviteType === I.InviteType.WithoutApprove) {
+				close(() => {
+					Preview.toastShow({ text: U.String.sprintf(translate('toastJoinSpace'), spaceName) });
+					analytics.event('ClickJoinSpaceWithoutApproval');
+				});
+			};
 		});
 	};
 
 	useEffect(() => {
-		analytics.event('ScreenInviteRequest', { route, type: I.InviteType.WithApprove });
+		analytics.event('ScreenInviteRequest', { route, type: invite.inviteType });
 	}, []);
 
 	return (
 		<>
-			<Title text={translate('popupInviteRequestTitle')} />
+			<Label className="top" text={title} />
 			
 			<div className="iconWrapper">
-				<Icon className="join" />
+				<IconObject 
+					object={{ 
+						layout: I.ObjectLayout.SpaceView, 
+						name: spaceName, 
+						iconImage: invite.iconImage,
+						iconOption: invite.iconOption || 1,
+						uxType: invite.uxType || I.SpaceUxType.Data,
+					}}
+					size={96} 
+				/>
 			</div>
 
-			<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
+			<Title text={spaceName} />
+			<div className="label creator">
+				{translate('popupInviteRequestCreatedBy')}
+				<b>
+					<IconObject 
+						object={{ 
+							layout: I.ObjectLayout.Participant, 
+							iconImage: invite.creatorIcon, 
+							name: creatorName,
+						}}
+					/>
+					{creatorName}
+				</b>
+			</div>
+			<Label className="text" text={text} />
 
 			<div className="buttons">
-				<Button ref={refButton} onClick={onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
+				<Button ref={refButton} onClick={onRequest} text={button} color="accent" />
+				<Button onClick={() => close()} text={translate('commonCancel')} color="blank" />
 			</div>
-
-			<div className="note">{translate('popupInviteRequestNote')}</div>
 
 			<Error text={error} />
 		</>

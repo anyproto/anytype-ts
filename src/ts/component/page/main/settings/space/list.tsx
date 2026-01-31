@@ -1,50 +1,14 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, U, J, translate, analytics } from 'Lib';
 
-const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList extends React.Component<I.PageSettingsComponent> {
+const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	render () {
-		const spaces = this.getItems();
+	const { getId } = props;
 
-		const Row = (space: any) => {
-			const participant = U.Space.getMyParticipant(space.targetSpaceId);
-
-			return (
-				<div className="row">
-					<div className="col colObject" onClick={() => this.onClick(space)}>
-						<IconObject object={space} size={40} />
-						<ObjectName object={space} />
-					</div>
-					<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
-					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
-					<div className="col colMore">
-						<Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => this.onMore(space)} />
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<>
-				<Title text={translate('popupSettingsSpacesListTitle')} />
-
-				<div className="items">
-					<div className="row isHead">
-						<div className="col colSpace">{translate('popupSettingsSpacesListSpace')}</div>
-						<div className="col">{translate('popupSettingsSpacesListAccess')}</div>
-						<div className="col">{translate('popupSettingsSpacesListNetwork')}</div>
-						<div className="col colMore" />
-					</div>
-					{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
-				</div>
-			</>
-		);
-	};
-
-	getItems () {
+	const getItems = () => {
 		const items = S.Record.getRecords(J.Constant.subId.space);
 
 		return items.filter(it => it.isAccountActive).map(it => {
@@ -76,25 +40,66 @@ const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList ext
 		});
 	};
 
-	onClick (space: any) {
+	const onClick = (space: any) => {
 		if (space.isAccountActive) {
 			U.Router.switchSpace(space.targetSpaceId, '', true, {}, false);
 		};
 	};
 
-	onMore (space: any) {
-		const { getId } = this.props;
-		const element = $(`#${getId()} #icon-more-${space.id}`);
+	const onMore = (space: any) => {
+		const element = `#${getId()} #icon-more-${space.id}`;
 
 		U.Menu.spaceContext(space, {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
-		}, { route: analytics.route.settings });
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+		}, { 
+			withPin: true,
+			withDelete: true,
+			noMembers: true, 
+			noManage: true,
+			route: analytics.route.settings,
+		});
 	};
 
-});
+	const Row = (space: any) => {
+		const participant = U.Space.getMyParticipant(space.targetSpaceId);
+
+		return (
+			<div className="row">
+				<div className="col colObject" onClick={() => onClick(space)}>
+					<IconObject object={space} size={40} />
+					<ObjectName object={space} />
+				</div>
+				<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
+				<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
+				<div className="col colMore">
+					<Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => onMore(space)} />
+				</div>
+			</div>
+		);
+	};
+
+	const spaces = getItems();
+
+	return (
+		<>
+			<Title text={translate('popupSettingsSpacesListTitle')} />
+
+			<div className="items">
+				<div className="row isHead">
+					<div className="col colSpace">{translate('popupSettingsSpacesListSpace')}</div>
+					<div className="col">{translate('popupSettingsSpacesListAccess')}</div>
+					<div className="col">{translate('popupSettingsSpacesListNetwork')}</div>
+					<div className="col colMore" />
+				</div>
+				{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
+			</div>
+		</>
+	);
+
+}));
 
 export default PageMainSettingsSpacesList;

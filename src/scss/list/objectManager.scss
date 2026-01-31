@@ -50,7 +50,7 @@
 
     .items { height: 100%; }
     .items {
-        .row { display: grid !important; grid-column-gap: 32px; border-bottom: 0; }
+        .row { display: grid !important; grid-column-gap: 32px; border-bottom: 0; padding: 0px; }
 
         .item { display: flex; flex-direction: row; align-items: center; gap: 0px; margin: 0px 0px 16px 0px; }
         .item {
@@ -76,4 +76,20 @@
 	}
 
     .controls + .managerEmpty { border-top: 0; }
+
+    &.isCompact {
+        .controls { padding-bottom: 8px; }
+        .emptySearch { height: 60px; border-bottom: 0px; }
+
+        .items {
+            .row { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+            .item { gap: 0px 8px; }
+            .item {
+                .iconObject { flex-shrink: 0; flex-basis: 20px; background-color: transparent; }
+                .objectClickArea { width: calc(100% - 30px); gap: 0px 8px; }
+                .name { @include text-overflow-nw; width: 100%; }
+                .descr { display: none; }
+            }
+        }
+    }
 }

@@ -89,6 +89,13 @@ export enum FilterQuickOption {
 	NextYear		 = 14,
 };
 
+export enum FilterValueTemplate {
+	None			 = 0,
+	User			 = 1,
+	Object			 = 2,
+	Participant		 = 3,
+};
+
 export enum FormulaType {
 	None				 = 0,
 	Count				 = 1,
@@ -141,6 +148,16 @@ export interface ViewRelation {
 	includeTime?: boolean;
 	formulaType?: I.FormulaType;
 	align?: I.BlockHAlign;
+	relation?: any;
+};
+
+export interface ViewRef {
+	load?(): void;
+	resize?(): void;
+};
+
+export interface RowRef {
+	setIsEditing: (v: boolean) => void;
 };
 
 export interface ViewComponent {
@@ -152,7 +169,6 @@ export interface ViewComponent {
 	isInline?: boolean;
 	isCollection?: boolean;
 	className?: string;
-	refCells?: any;
 	recordId?: string;
 	recordIdx?: number;
 	getRecord?(id: string): any;
@@ -177,6 +193,7 @@ export interface ViewComponent {
 	onTemplateAdd?: () => void;
 	onSortAdd?: (item: any, callBack?: () => void) => void;
 	onFilterAdd?: (item: any, callBack?: () => void) => void;
+	onFilterAddClick?: (menuParam: I.MenuParam, noToggle?: boolean) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string, record?: any): void;
 	onContext?(e: any, id: string, subId?: string): void;
@@ -216,6 +233,7 @@ export interface View {
 	coverRelationKey: string;
 	groupRelationKey: string;
 	endRelationKey: string;
+	wrapContent: boolean;
 	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;
@@ -229,6 +247,7 @@ export interface View {
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
+	getFilter?: (id: string) => I.Filter;
 	isGrid?(): boolean;
 	isList?(): boolean;
 	isGallery?(): boolean;
@@ -281,6 +300,7 @@ export interface CellRef {
 	isEditing?(): boolean;
 	onChange?(value: any): void;
 	getValue?(): any;
+	forceUpdate?(): void;
 	canEdit?(): boolean;
 };
 

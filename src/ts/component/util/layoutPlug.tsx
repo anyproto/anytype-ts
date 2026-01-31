@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I, J, keyboard, Relation, S, translate, U, sidebar } from 'Lib';
-import $ from 'jquery';
+import { I, J, Relation, S, translate, U, sidebar } from 'Lib';
 import { EmptyNodes, Title } from 'Component';
 
 interface Props {
@@ -17,7 +16,7 @@ const LayoutPlug = forwardRef<{}, Props>(({
 	layoutFormat = I.LayoutFormat.Page,
 	recommendedLayout = I.ObjectLayout.Page,
 	recommendedFileRelations = [],
-	viewType= I.ViewType.Grid,
+	viewType = I.ViewType.Grid,
 	layoutWidth = 0,
 	isPopup = false,
 	onClick,
@@ -25,10 +24,9 @@ const LayoutPlug = forwardRef<{}, Props>(({
 
 	const getNodeWidth = (): number => {
 		const container = U.Common.getPageFlexContainer(isPopup);
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const right = rightSidebar.isOpen ? J.Size.sidebar.right : 0;
+		const sidebarRight = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
-		return container.width() - right - sidebar.getDummyWidth();
+		return container.width() - (sidebarRight.isClosed ? 0 : sidebarRight.width) - sidebar.getDummyWidth();
 	};
 
 	const getWidth = () => {
@@ -45,12 +43,6 @@ const LayoutPlug = forwardRef<{}, Props>(({
 		};
 
 		return Math.max(300, width);
-	};
-
-	const onClickHandler = (e: any) => {
-		if (onClick) {
-			onClick(e);
-		};
 	};
 
 	const cn = [ 'layoutPlug' ];
@@ -119,7 +111,7 @@ const LayoutPlug = forwardRef<{}, Props>(({
 	return (
 		<div
 			className={cn.join(' ')}
-			onClick={onClickHandler}
+			onClick={onClick}
 		>
 			{content}
 		</div>

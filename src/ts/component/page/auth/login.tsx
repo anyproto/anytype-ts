@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
-const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
+const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const nodeRef = useRef(null);
 	const phraseRef = useRef(null);
@@ -82,9 +82,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			const spaceId = Storage.get('spaceId');
 			const routeParam = { 
 				replace: true, 
-				onFadeIn: () => {
-					Action.checkDiskSpace();
-				},
+				onFadeIn: () => Action.checkDiskSpace(),
 			};
 
 			if (spaceId) {
@@ -97,7 +95,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(true);
+			U.Data.onAuthOnce();
 
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
