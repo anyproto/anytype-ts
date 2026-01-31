@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, H, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
@@ -50,9 +50,15 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
 	const object = S.Detail.get(rootId, rootId, []);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const center = node.find('.side.center');
+
+		node.toggleClass('isSmall', center.outerWidth() <= 200);
+	};
+	const onResize = H.useDebounceCallback(resize, 200);
+	
+	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	if (![ 'authIndex' ].includes(component)) {
 		cn.push('isCommon');
@@ -203,27 +209,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
-
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
-
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
-	};
-
-	useEffect(() => {
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
-		};
-
-		resize();
-
-		return () => {
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
-		};
-	}, []);
 
 	useLayoutEffect(() => {
 		raf(() => sidebar.resizePage(isPopup, null, null, false));

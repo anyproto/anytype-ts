@@ -2,9 +2,9 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { motion, AnimatePresence, animate } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
+import { I, S, U, C, J, H, Mark, translate, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
@@ -30,19 +30,18 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const bubble = $(bubbleRef.current);
+
+		node.find('.attachment.isBookmark').toggleClass('isWide', bubble.outerWidth() > 360);
+	};
+	const onResize = H.useDebounceCallback(resize, 200);
+
+	H.useResizeObserver({ ref: nodeRef, onResize });
+
 	useEffect(() => {
-		const resizeObserver = new ResizeObserver(() => {
-			raf(() => resize());
-		});
-
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
-		};
-
-		resize();
-
 		return () => {
-			resizeObserver.disconnect();
 			attachmentRefs.current.clear();
 		};
 	}, []);
@@ -80,8 +79,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
-
-		resize();
 	};
 
 	const onReactionAdd = () => {
@@ -208,14 +205,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 		node.addClass('highlight');
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
-	};
-
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const bubble = $(bubbleRef.current);
-		const width = bubble.outerWidth();
-
-		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
 	if (!message) {

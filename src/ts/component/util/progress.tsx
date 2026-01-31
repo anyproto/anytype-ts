@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, Label, Error } from 'Component';
-import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
+import { I, S, U, C, J, H, Storage, keyboard, translate } from 'Lib';
 
 const STORAGE_KEY = 'progress';
 
@@ -21,6 +21,22 @@ const Progress: FC = observer(() => {
 	const width = useRef(0);
 	const height = useRef(0);
 	const cn = [ 'progress' ];
+
+	const resize = () => {
+		const obj = $(innerRef.current);
+		const coords = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
+
+		height.current = obj.outerHeight();
+		width.current = obj.outerWidth();
+
+		if (coords) {
+			setStyle(coords.x, coords.y);
+		};
+	};
+
+	const onResize = H.useDebounceCallback(resize, 200);
+	
+	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const Item = (item: any) => {
 		const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
@@ -98,18 +114,6 @@ const Progress: FC = observer(() => {
 		return { x, y };
 	};
 
-	const resize = () => {
-		const obj = $(innerRef.current);
-		const coords = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
-
-		height.current = obj.outerHeight();
-		width.current = obj.outerWidth();
-
-		if (coords) {
-			setStyle(coords.x, coords.y);
-		};
-	};
-
 	const setStyle = (x: number, y: number) => {
 		const coords = checkCoords(x, y);
 
@@ -117,18 +121,7 @@ const Progress: FC = observer(() => {
 	};
 
 	useEffect(() => {
-		const resizeObserver = new ResizeObserver(() => {
-			raf(() => resize());
-		});
-
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
-		};
-
-		resize();
-
 		return () => {
-			resizeObserver.disconnect();
 			$(window).off('mousemove.progress mouseup.progress');
 		};
 	}, []);
