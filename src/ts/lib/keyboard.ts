@@ -1,6 +1,5 @@
 import $ from 'jquery';
-import raf from 'raf';
-import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
+import { I, C, S, U, J, H, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
 
