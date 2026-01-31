@@ -37,10 +37,6 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => onCopy());
 	};
 
-	const onClose = () => {
-		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
-	};
-
 	const onCopy = () => {
 		const { focused } = focus.state;
 
@@ -344,14 +340,15 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		weight = Number(weight) || 0;
 
 		const sideLeft = $(leftRef.current?.getNode());
-
 		const cw = sideLeft.width();
+
 		let width = 0;
 
 		if (isSetOrCollection()) {
 			width = cw - 192;
 		} else {
-			width = Math.min(cw - 96, (1 + weight) * J.Size.editor);
+			const mw = cw - 96;
+			width = Math.min(mw, J.Size.editor + (mw - J.Size.editor) * weight);
 		};
 
 		return Math.max(300, width);
