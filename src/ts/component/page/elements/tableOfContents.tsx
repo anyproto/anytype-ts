@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, use
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard } from 'Lib';
+import { I, S, U, J, H, keyboard } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -23,15 +23,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const ns = `tableOfContents${U.Common.getEventNamespace(isPopup)}`;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
-
-	const rebind = () => {
-		unbind();
-		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
-	};
-
-	const unbind = () => {
-		$(window).off(`resize.${ns} sidebarResize.${ns}`);
-	};
 
 	const setBlock = (id: string) => {
 		const node = $(nodeRef.current);
@@ -144,8 +135,11 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		});
 	};
 
+	const onResize = H.useDebounceCallback(resize, 50);
+
+	H.useResizeObserver({ ref: nodeRef, onResize });
+
 	useEffect(() => {
-		rebind();
 		resize();
 
 		if (isPopup) {
@@ -153,7 +147,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		};
 
 		return () => {
-			unbind();
 			raf.cancel(frame.current);
 		};
 	}, []);
