@@ -146,21 +146,18 @@ class Sidebar {
 			return;
 		};
 
-		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-		const newWidth = dataSubLeft.isClosed ? 0 : dataSubLeft.width;
-
 		if (animate) {
-			pageWrapperLeft.addClass('anim');
+			pageWrapperLeft.addClass('sidebarAnimation');
 		};
+
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+
+		pageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
+		pageWrapperLeft.find('.sidebarPage').css({ opacity: 0 });
 
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0, isClosed: true });
-		this.resizePage(false, newWidth, null, animate);
-
-		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => {
-			pageWrapperLeft.removeClass('anim').addClass('isClosed');
-		}, animate ? J.Constant.delay.sidebar : 0);
+		this.resizePage(false, dataSubLeft.isClosed ? 0 : dataSubLeft.width, null, animate);
 
 		analytics.event('CollapseVault');
 	};
@@ -182,23 +179,18 @@ class Sidebar {
 			return;
 		};
 
-		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-		const newWidth = width + (dataSubLeft.isClosed ? 0 : dataSubLeft.width);
-
 		if (animate) {
-			pageWrapperLeft.addClass('anim');
+			pageWrapperLeft.addClass('sidebarAnimation');
 		};
 
-		pageWrapperLeft.removeClass('isClosed');
+		pageWrapperLeft.css({ transform: 'translate3d(0px,0px,0px)' });
+		pageWrapperLeft.find('.sidebarPage').css({ opacity: 1 });
+
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 
 		this.setStyle(I.SidebarPanel.Left, false, { width, isClosed: false });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, save);
-		this.resizePage(false, newWidth, null, animate);
-
-		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => {
-			pageWrapperLeft.removeClass('anim');
-		}, animate ? J.Constant.delay.sidebar : 0);
+		this.resizePage(false, width + (dataSubLeft.isClosed ? 0 : dataSubLeft.width), null, animate);
 
 		analytics.event('ExpandVault');
 	};
@@ -261,7 +253,6 @@ class Sidebar {
 		if (this.isAnimating || !isClosed) {
 			return;
 		};
-
 
 		const obj = this.rightPanelGetNode(isPopup);
 
@@ -330,6 +321,7 @@ class Sidebar {
 		const dummyLeft = $('#sidebarDummyLeft');
 
 		subPageWrapperLeft.addClass('sidebarAnimation isClosing').css({ transform: 'translate3d(-100%,0px,0px)' });
+
 		objLeft.addClass('sidebarAnimation').css({ width });
 		dummyLeft.addClass('sidebarAnimation').css({ width });
 
@@ -375,12 +367,14 @@ class Sidebar {
 		subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
 		objLeft.css({ width });
 		dummyLeft.css({ width });
+
 		this.resizePage(false, newWidth, null, animate);
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, save);
-		this.setStyle(I.SidebarPanel.SubLeft, false, { isClosed: false });
+		this.setStyle(I.SidebarPanel.SubLeft, false, { width: dataSubLeft.width, isClosed: false });
 
 		raf(() => {
 			subPageWrapperLeft.addClass('sidebarAnimation isOpening').css({ transform: 'translate3d(0px,0px,0px)' });
+
 			objLeft.addClass('sidebarAnimation').css({ width: newWidth });
 			dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
 
@@ -530,6 +524,7 @@ class Sidebar {
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
 		const objLeft = this.leftPanelGetNode();
 		const objRight = this.rightPanelGetNode(isPopup);
+		const pageWrapperLeft = objLeft.find('#pageWrapper');
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
 		const dummyLeft = $('#sidebarDummyLeft');
 		const isLeftClosed = dataLeft.isClosed || isAuth;
@@ -594,6 +589,8 @@ class Sidebar {
 			header.toggleClass('withSidebarLeft', !isLeftClosed);
 			header.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
+			pageWrapperLeft.toggleClass('sidebarAnimation', animate);
+
 			subPageWrapperLeft.toggleClass('sidebarAnimation', animate);
 			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 		} else {
@@ -650,9 +647,6 @@ class Sidebar {
 		if (undefined !== v.isClosed) {
 			obj.toggleClass('isClosed', v.isClosed);
 		};
-
-		console.log('SET STYLE', panel, isPopup, v);
-		console.trace();
 	};
 
 	/**

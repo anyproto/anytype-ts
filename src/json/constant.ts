@@ -89,7 +89,7 @@ export default {
 		notification:	 200,
 		widget:			 400,
 		widgetItem:		 200,
-		sidebar:		 200,
+		sidebar:		 300,
 		highlight:  	 1000,
 		chatHistory:	 500,
 		chatMessage:	 200,

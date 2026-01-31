@@ -1,4 +1,4 @@
-$transitionSettings: all 0.25s $easeInQuint;
+$transitionSettings: all 0.25s ease-in-out;
 
 .sidebarPage {
 	> .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }

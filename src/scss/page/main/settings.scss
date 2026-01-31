@@ -964,7 +964,7 @@
             .icon { width: 56px; height: 56px; background: url('~img/icon/membership/spinner.svg'); animation: rotate 0.8s infinite linear; }
             .label { @include text-common; color: var(--color-text-secondary); }
 
-            .label.wait { opacity: 0; transition: opacity $easeInQuint 0.5s; }
+            .label.wait { opacity: 0; transition: opacity ease-in-out 0.5s; }
             &.longWait {
                 .label.wait { opacity: 1; }
             }
@@ -998,7 +998,7 @@
 
                 &:before {
                     content: ''; position: absolute; z-index: 0; width: 50%; height: 100%; left: 50%; top: 0px; border-radius: 12px;
-                    background-color: var(--color-bg-primary); transition: left $easeInQuint 0.15s;
+                    background-color: var(--color-bg-primary); transition: left ease-in-out 0.15s;
                 }
                 &.isMonthly:before { left: 0%; }
             }

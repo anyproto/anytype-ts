@@ -77,8 +77,8 @@
 		margin: 0px -12px 0px 4px; 
 	}
 
-	.contentWrapper { transition: height 0.4s $easeInQuint; }
-	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
+	.contentWrapper { transition: height 0.4s ease-in-out; }
+	.innerWrap { transition: opacity 0.4s ease-in-out; flex-direction: column; }
 
 	.emptyWrap { padding: 0px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {

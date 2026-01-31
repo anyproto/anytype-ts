@@ -38,7 +38,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuth, .pageIndex {
-	.frame { text-align: center; background: none !important; transition: opacity $easeInQuint 0.2s; z-index: 21; }
+	.frame { text-align: center; background: none !important; transition: opacity ease-in-out 0.2s; z-index: 21; }
 	.frame.invisible { opacity: 0; }
 	.input { height: 40px; text-align: center; }
 

@@ -14,6 +14,10 @@
 
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
+		&.sidebarAnimation {
+			.sidebarPage { transition: opacity $transitionSidebarTime ease-in-out; }
+		}
+
 		&.isClosed {
 			.sidebarPage { border: 0px; }
 		}
@@ -21,7 +25,7 @@
 
 	.pageWrapper { padding: 0px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); height: 100%; }
 	.pageWrapper {
-		&.anim { transition: width $transitionSidebarTime linear; }
+		&.sidebarAnimation { transition-property: width, transform; }
 		&.isClosed { padding-left: 0px; }
 	}
 

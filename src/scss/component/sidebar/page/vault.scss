@@ -143,7 +143,7 @@
 				.inner { width: 24px; height: 1px; background: var(--color-shape-highlight-dark); }
 			}
 		}
-		> .bottom { height: 56px; display: flex; align-items: flex-end; transition: height $easeInQuint 0.15s; }
+		> .bottom { height: 56px; display: flex; align-items: flex-end; transition: height ease-in-out 0.15s; }
 		> .bottom {
 			.grad { bottom: 100%; }
 			.sides { flex-direction: column-reverse; gap: 12px; overflow: hidden; height: 100%; }

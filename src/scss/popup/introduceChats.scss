@@ -17,7 +17,7 @@ $elementsTransition: opacity 0.2s linear;
                 .chat {
                     position: absolute; z-index: 0; left: 50%; margin-left: -164px; width: 328px; height: 312px; top: 44px;
                     background: url('~img/icon/onboarding/chats/feed.png'); background-size: 328px 312px;
-                    transition: top 2s $easeInQuint;
+                    transition: top 2s ease-in-out;
                 }
 
                 .text { position: absolute; z-index: 2; width: 100%; bottom: 44px; display: flex; flex-direction: column; align-items: center; }
@@ -27,7 +27,7 @@ $elementsTransition: opacity 0.2s linear;
 
                     .title,
                     .label,
-                    .button { transition: opacity 1s $easeInQuint; }
+                    .button { transition: opacity 1s ease-in-out; }
 
                     .button { width: 164px; }
                 }
@@ -93,12 +93,12 @@ $elementsTransition: opacity 0.2s linear;
                     100% { background-position-x: 284px; }
                 };
 
-                @mixin animate($animationName) { animation: $animationName 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards; };
+                @mixin animate($animationName) { animation: $animationName 1s ease-in-out; animation-delay: 0.8s; animation-fill-mode: forwards; };
 
                 .intro { position: relative; z-index: 1; width: 100%; height: 100%; }
                 .intro {
                     .img {
-                        position: absolute; transition: all $easeInQuint 0.8s; width: 1440px; height: 900px;
+                        position: absolute; transition: all ease-in-out 0.8s; width: 1440px; height: 900px;
                         background: var(--color-shape-primary) url('~img/icon/onboarding/chats/intro.png') 0 0 / 1440px 900px no-repeat;
                         overflow: hidden; border-radius: 20px;
                     }
@@ -138,12 +138,12 @@ $elementsTransition: opacity 0.2s linear;
                         .sidebar {
                             position: absolute; left: 0px; top: 0px; width: 284px;
                             background: url('~img/icon/onboarding/chats/sidebar.png') 0 0 / 284px 900px no-repeat; opacity: 0;
-                            height: 100%;  animation: introSidebar 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards;
+                            height: 100%;  animation: introSidebar 1s ease-in-out; animation-delay: 0.8s; animation-fill-mode: forwards;
                         }
                         .oneToOne {
                             position: absolute; z-index: 300; left: 0px; top: 0px; width: 100%; height: 100%;
                             background-image: url('~img/icon/onboarding/chats/oneToOne.png');
-                            transition: background-size $easeInQuint 0.8s;
+                            transition: background-size ease-in-out 0.8s;
                         }
                     }
                     .img.slide2 {
@@ -157,7 +157,7 @@ $elementsTransition: opacity 0.2s linear;
                 }
 
                 .swiper { width: 100%; height: 100%; z-index: 2; overflow: visible; position: absolute; left: 0px; top: 0px; }
-                .swiper-wrapper { transition-timing-function: $easeInQuint; }
+                .swiper-wrapper { transition-timing-function: ease-in-out; }
                 .swiper-slide { width: 100%; transition: opacity 0.3s linear; }
                 .swiper-button-prev,
                 .swiper-button-next,
