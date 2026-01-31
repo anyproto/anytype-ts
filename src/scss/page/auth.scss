@@ -38,7 +38,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuth, .pageIndex {
-	.frame { text-align: center; background: none !important; transition: opacity ease-in-out 0.2s; z-index: 21; }
+	.frame { text-align: center; background: none !important; transition: opacity $easeInQuint 0.2s; z-index: 21; }
 	.frame.invisible { opacity: 0; }
 	.input { height: 40px; text-align: center; }
 
@@ -73,14 +73,14 @@ html.bodyAuthDeleted {
 		display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all $easingBubbleWrapper 1s;
 	}
 	.bubbleWrapper {
-		.bubble { animation: bubble ease-in-out infinite 3.2s; border-radius: 50%; width: 100%; height: 100%; background-color: transparent; }
+		.bubble { animation: bubble $easeInQuint infinite 3.2s; border-radius: 50%; width: 100%; height: 100%; background-color: transparent; }
 		.bubble {
 			.img { width: 100%; height: 100%; background-size: 100%; background-image: url('~img/icon/bubble.svg'); transition: opacity $easingBubbleWrapper 1s; }
 		}
 	}
 	.bubbleWrapper.inflate { transform: scale3d(10,10,1); }
 	.bubbleWrapper.inflate {
-		.bubble { transition: background-color ease-in-out 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
+		.bubble { transition: background-color $easeInQuint 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
 		.bubble {
 			.img { opacity: 0; }
 		}
@@ -142,7 +142,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthSetup {
-	.wrapper { transition: opacity 0.5s ease-in-out; }
+	.wrapper { transition: opacity 0.5s $easeInQuint; }
 	.frame { width: 480px; }
 	.title.fromBackup { margin: 0px 0px 12px 0px; }
 	.title:not(.fromBackup) { @include text-header3; }

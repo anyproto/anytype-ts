@@ -20,7 +20,7 @@ $elementsTransition: opacity 0.2s linear;
                 .types {
                     .type {
                         display: flex; align-items: center; gap: 8px; height: 52px; padding: 0px 16px 0px 15px; transform: scale3d(1, 1, 1);
-                        background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; transition: all 0.5s ease-in-out;
+                        background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; transition: all 0.5s $easeInQuint;
                     }
                     .type {
                         .icon { width: 20px; height: 20px;  }
@@ -35,7 +35,7 @@ $elementsTransition: opacity 0.2s linear;
 
                 .title,
                 > .label,
-                .button { transition: opacity 1s ease-in-out; }
+                .button { transition: opacity 1s $easeInQuint; }
             }
 
             .step1 { height: 600px; width: 768px; flex-shrink: 0; position: relative; overflow: hidden; }

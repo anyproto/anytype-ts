@@ -1,6 +1,6 @@
 .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; flex-grow: 1; overflow: hidden; }
 .sidebarPage {
-	&.anim { transition: opacity 0.1s ease-in-out; }
+	&.anim { transition: opacity 0.1s $easeInQuint; }
 
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
@@ -88,7 +88,7 @@
 
 				&.withToggle { padding-bottom: 0px; }
 				&.withToggle { 
-					.side.right { opacity: 0; transition: opacity 0.2s ease-in-out; }
+					.side.right { opacity: 0; transition: opacity 0.2s $easeInQuint; }
 					.label { font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					
 					.label::before { 
@@ -106,7 +106,7 @@
 
 			> .list { display: flex; flex-direction: column; gap: 8px 0px; }
 			> .list {
-				&.anim { transition: height 0.2s ease-in-out; }
+				&.anim { transition: height 0.2s $easeInQuint; }
 				&.withToggle { overflow: hidden; height: 0px; }
 
 				> .empty { padding: 13px 4px; color: var(--color-text-tertiary); }

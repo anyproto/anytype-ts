@@ -44,7 +44,7 @@
 
 	.bubble { 
 		border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column;
-		transition: background-color ease-in-out 0.2s; 
+		transition: background-color $easeInQuint 0.2s; 
 	}
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 6px 12px; }

@@ -81,8 +81,8 @@ export default {
 	},
 
 	delay: {
-		menu:			 150,
-		popup:			 150,
+		menu:			 200,
+		popup:			 200,
 		toast:			 2500,
 		route:			 200,
 		keyboard:		 500,

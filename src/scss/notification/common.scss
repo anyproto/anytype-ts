@@ -18,7 +18,7 @@
 
 	.notification {
 		width: 100%; min-height: 70px; background: var(--color-bg-primary); border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
-    	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
+    	transform-origin: 50% 0%; transition-timing-function: $easeInQuint; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
 		opacity: 1; user-select: none; @include shadow;
 	}
 

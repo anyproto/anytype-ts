@@ -53,7 +53,7 @@
 
 		> .items { display: flex; flex-direction: column; overflow: hidden; height: 0px; gap: 8px 0px; }
 		> .items {
-			&.anim { transition: height 0.2s ease-in-out; }
+			&.anim { transition: height 0.2s $easeInQuint; }
 		}
 
 		&.isOpen {

@@ -15,7 +15,7 @@
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
 		&.sidebarAnimation {
-			.sidebarPage { transition: opacity $transitionSidebarTime ease-in-out; }
+			.sidebarPage { transition: opacity $transitionSidebarTime $easeInQuint; }
 		}
 
 		&.isClosed {

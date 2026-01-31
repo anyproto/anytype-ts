@@ -36,7 +36,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			background-clip: text;
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
-			animation: waveAnimation 2s ease-in-out infinite;
+			animation: waveAnimation 2s $easeInQuint infinite;
 		}
 	}
 	
@@ -144,7 +144,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				
 				// Simple node animations
 				.nodeCircle {
-					animation: nodePulse 4s ease-in-out infinite;
+					animation: nodePulse 4s $easeInQuint infinite;
 				}
 				
 				// Stagger animation delays for visual interest

@@ -254,6 +254,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 			rebindPrevious();
 			raf.cancel(framePosition.current);
+			isAnimating.current = false;
 		};
 	}, []);
 
@@ -267,7 +268,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		setClass();
 
-		menu.addClass('show').css({ transform: 'none' });
+		menu.addClass('show');
 		position();
 	});
 

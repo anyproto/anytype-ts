@@ -11,9 +11,9 @@
 			.tooltipItem {
 				.icon.arrow { 
 					width: 16px; height: 16px; border-radius: 4px; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; 
-					transition: all 0.2s ease-in-out; transform: scale3d(0.5, 0.5, 1);
+					transition: all 0.2s $easeInQuint; transform: scale3d(0.5, 0.5, 1);
 				}
-				.name { @include text-overflow-nw; width: 0px; transition: width 0.2s ease-in-out; }
+				.name { @include text-overflow-nw; width: 0px; transition: width 0.2s $easeInQuint; }
 
 				&.isLeft, &.isRight { opacity: 1; }
 				&.isLeft, &.isRight {
