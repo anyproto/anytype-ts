@@ -145,6 +145,8 @@ const App: FC = () => {
 	};
 
 	const registerIpcEvents = () => {
+		unregisterIpcEvents();
+
 		Renderer.on('init', onInit);
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
@@ -194,6 +196,31 @@ const App: FC = () => {
 		Renderer.on('power-event', (e: any, state: string) => {
 			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
 		});
+	};
+	
+	const unregisterIpcEvents = () => {
+		Renderer.remove('init');
+		Renderer.remove('route');
+		Renderer.remove('popup');
+		Renderer.remove('update-not-available');
+		Renderer.remove('update-downloaded');
+		Renderer.remove('update-error');
+		Renderer.remove('download-progress');
+		Renderer.remove('spellcheck');
+		Renderer.remove('pin-set');
+		Renderer.remove('pin-remove');
+		Renderer.remove('enter-full-screen');
+		Renderer.remove('leave-full-screen');
+		Renderer.remove('config');
+		Renderer.remove('logout');
+		Renderer.remove('data-path');
+		Renderer.remove('will-close-window');
+		Renderer.remove('shutdownStart');
+		Renderer.remove('zoom');
+		Renderer.remove('native-theme');
+		Renderer.remove('pin-check');
+		Renderer.remove('reload');
+		Renderer.remove('power-event');
 	};
 
 	const onInit = (e: any, data: any) => {
@@ -479,7 +506,13 @@ const App: FC = () => {
 		});
 	};
 
-	useEffect(() => init(), []);
+	useEffect(() => {
+		init();
+
+		return () => {
+			unregisterIpcEvents();
+		};
+	}, []);
 
 	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	
