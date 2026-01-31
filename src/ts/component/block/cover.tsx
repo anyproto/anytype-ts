@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
+import { I, C, S, U, J, H, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
 const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
@@ -33,11 +33,6 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		if (nodeRef.current) {
 			U.Common.renderLinks($(nodeRef.current));
-		};
-		$(window).off('resize.cover').on('resize.cover', () => resize());
-
-		return () => {
-			$(window).off('resize.cover');
 		};
 	}, []);
 	
@@ -194,7 +189,11 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			el.src = S.Common.imageUrl(coverId, I.ImageSize.Large);
 		};
 	};
-	
+
+	const onResize = H.useDebounceCallback(resize, 50);
+
+	H.useResizeObserver({ ref: nodeRef, onResize });
+
 	const onDragStart = (e: any) => {
 		e.preventDefault();
 		

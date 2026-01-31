@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
+import { I, S, U, J, H, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -317,18 +317,16 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		const container = U.Common.getScrollContainer(keyboard.isPopup());
 
 		unbind();
-		$(window).on(`resize.${id} sidebarResize.${id}`, () => position());
 		container.on(`scroll.${id}`, () => {
 			raf.cancel(framePosition.current);
 			framePosition.current = raf(() => position());
 		});
 	};
-	
+
 	const unbind = () => {
 		const id = getId();
 		const container = U.Common.getScrollContainer(keyboard.isPopup());
 
-		$(window).off(`resize.${id} sidebarResize.${id}`);
 		container.off(`scroll.${id}`);
 	};
 	
@@ -607,6 +605,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			};
 		});
 	};
+
+	const onResize = H.useDebounceCallback(position, 50);
+
+	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const close = (callBack?: () => void) => {
 		S.Menu.close(props.id, () => {
