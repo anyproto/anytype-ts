@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, H, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
+import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -38,6 +38,15 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	const check = U.Data.checkDetails(rootId);
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
+
+	const rebind = () => {
+		unbind();
+		$(window).on('resize.controlButtons', () => resize());
+	};
+
+	const unbind = () => {
+		$(window).off('resize.controlButtons');
+	};
 
 	const onIconHandler = (e: any) => {
 		e.preventDefault();
@@ -185,15 +194,17 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		$(nodeRef.current).toggleClass('small', ww <= 900);
 	};
 
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
-
 	const { allowedIcon, allowedLayout, allowedCover, allowedDescription } = getAllowedButtons();
 
 	useEffect(() => {
 		if (allowedDescription) {
 			Onboarding.start('objectDescriptionButton', keyboard.isPopup());
+		};
+
+		rebind();
+
+		return () => {
+			unbind();
 		};
 	}, []);
 

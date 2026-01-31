@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import raf from 'raf';
-import { I, U, H } from 'Lib';
+import { I, U } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -19,18 +19,9 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef(null);
-	const resize = () => {
-		if (!fitToContainer) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		$(nodeRef.current).css({ height: container.height() });
-	};
-
-	const onResize = H.useDebounceCallback(resize, 200);
-	
-	H.useResizeObserver({ ref: nodeRef, onResize });
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 
 	let content = null;
 	switch (type) {
@@ -51,6 +42,29 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 			break;
 		};
 	};
+
+	const resize = () => {
+		if (!fitToContainer) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		$(nodeRef.current).css({ height: container.height() });
+	};
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
 
 	return (
 		<div ref={nodeRef} id={id} className={[ 'loaderWrapper', className ].join(' ')}>

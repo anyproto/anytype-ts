@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, DragHorizontal, DragVertical, Label } from 'Component';
-import { U, H } from 'Lib';
+import { U } from 'Lib';
 
 interface PlaylistItem {
 	name: string;
@@ -40,13 +40,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const frameRef = useRef(0);
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
 	const { src, name }	= current || {};
-	const resize = () => {
-		timeRef.current?.resize();
-	};
-
-	const onResize = H.useDebounceCallback(resize, 200);
-		
-	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const isPlaying = useRef(false);
 	const volume = useRef(1);
@@ -65,6 +58,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const unbind = () => {
 		$(audioRef.current).off('canplay timeupdate play ended pause');
+	};
+
+	const resize = () => {
+		timeRef.current?.resize();
 	};
 
 	const onPlayClick = (e: React.MouseEvent) => {
@@ -203,10 +200,19 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		onVolume(1);
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
 			unbind();
+			resizeObserver.disconnect();
 
 			const container = $(getScrollContainer?.());
 			if (container.length) {
@@ -250,10 +256,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				<Label text={name} tooltipParam={{ text: name }} className="name" />
 
 				<div className="controls">
-					<Icon 
-						ref={playIconRef} 
-						className="play" 
-						onMouseDown={onPlayClick} 
+					<Icon
+						ref={playIconRef}
+						className="play"
+						onMouseDown={onPlayClick}
 						onClick={e => e.stopPropagation()}
 					/>
 
@@ -274,7 +280,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 					<div className="volumeWrap" onMouseLeave={onVolumeLeave}>
 						<Icon
-							ref={volumeIconRef} 
+							ref={volumeIconRef}
 							className="volume"
 							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}

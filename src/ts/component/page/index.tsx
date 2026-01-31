@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, J, H, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -69,7 +69,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { account } = S.Auth;
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Common.getEventNamespace(isPopup);
-	const pageFlexRef = useRef(null);
 	const childRef = useRef(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
@@ -126,10 +125,27 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			keyboard.setBodyClass();
 		};
 
+		rebind();
 		Onboarding.start(U.String.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 
 		analytics.event('page', { params: match.params });
+	};
+
+	const rebind = () => {
+		const { history } = U.Router;
+		const ns = U.Common.getEventNamespace(isPopup);
+		const key = String(history?.location?.key || '');
+
+		unbind();
+		$(window).on(`resize.page${ns}${key}`, () => resize());
+	};
+
+	const unbind = () => {
+		const { history } = U.Router;
+		const key = String(history?.location?.key || '');
+
+		$(window).off(`resize.page${ns}${key}`);
 	};
 
 	const resize = () => {
@@ -137,15 +153,13 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		sidebar.resizePage(isPopup, null, null, false);
 	};
 
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: pageFlexRef, onResize });
-
 	useEffect(() => {
 		init();
 		resize();
 
 		return () => {
+			unbind();
+
 			if (!isPopup) {
 				S.Popup.closeAll();
 			};
@@ -167,9 +181,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	return (
-		<div
-			ref={pageFlexRef}
-			id="pageFlex"
+		<div 
+			id="pageFlex" 
 			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}

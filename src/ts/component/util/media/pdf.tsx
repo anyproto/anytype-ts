@@ -3,8 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { U, H } from 'Lib';
+import { U } from 'Lib';
 
+//pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
 pdfjs.GlobalWorkerOptions.workerSrc = './workers/pdf.worker.mjs';
 
 interface Props {
@@ -31,7 +32,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	const nodeRef = useRef(null);
 	const frame = useRef(0);
 	const options = useMemo(() => ({
-		isEvalSupported: false, 
+		isEvalSupported: false,
 		cMapUrl: U.Common.fixAsarPath('./cmaps/'),
 	}), []);
 
@@ -47,20 +48,29 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 		});
 	};
 
-	const onResize = H.useDebounceCallback(resize, 200);
-	
-	H.useResizeObserver({ ref: nodeRef, onResize });
-
 	const onPageRenderHandler = () => {
 		onPageRender();
 		resize();
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
 		return () => {
 			raf.cancel(frame.current);
+			resizeObserver.disconnect();
 		};
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<div ref={nodeRef} className="mediaPdf">
@@ -72,8 +82,8 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 				onClick={onClick}
 				options={options}
 			>
-				<Page 
-					pageNumber={page} 
+				<Page
+					pageNumber={page}
 					loading={<Loader />}
 					width={width}
 					onRenderSuccess={onPageRenderHandler}

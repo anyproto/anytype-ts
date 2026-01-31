@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, S, U, J, H, keyboard, focus, Mark, Action, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Mark, Action, translate } from 'Lib';
 import Row from './table/row';
 
 const PADDING = 46;
@@ -51,13 +51,17 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		$(scrollRef.current).scrollLeft(scrollX.current);
 	});
-
+	
 	const unbind = () => {
+		$(window).off(`resize.${block.id}`);
 		$(nodeRef.current).off('resizeInit resizeMove');
 	};
 
 	const rebind = () => {
+		const win = $(window);
+
 		unbind();
+		win.on(`resize.${block.id}`, () => raf(() => resize()));
 		$(nodeRef.current).on('resizeInit resizeMove', e => resize());
 	};
 
@@ -1381,10 +1385,6 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 		});
 	};
-
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const buttons = [
 		{ id: 'v', className: 'vertical', onClick: onPlusV },

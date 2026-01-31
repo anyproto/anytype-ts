@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, H, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
@@ -33,13 +33,13 @@ const Components = {
 
 const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { 
-		component, 
-		className = '', 
-		withBanner = false, 
-		rootId = '', 
-		tab = '', 
-		tabs = [], 
+	const {
+		component,
+		className = '',
+		withBanner = false,
+		rootId = '',
+		tab = '',
+		tabs = [],
 		layout = I.ObjectLayout.Page,
 		isPopup = false,
 		onTab,
@@ -50,15 +50,9 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
 	const object = S.Detail.get(rootId, rootId, []);
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
-
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
-	};
-	const onResize = H.useDebounceCallback(resize, 200);
-	
-	H.useResizeObserver({ ref: nodeRef, onResize });
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 
 	if (![ 'authIndex' ].includes(component)) {
 		cn.push('isCommon');
@@ -95,42 +89,42 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 						typeY: I.MenuDirection.Bottom,
 					}}
 				/>
-				<Icon 
-					className="widgetPanel withBackground" 
+				<Icon
+					className="widgetPanel withBackground"
 					onClick={() => sidebar.leftPanelSubPageToggle('widget')}
 					inner={bullet}
-					tooltipParam={{ 
-						text: translate('commonWidgets'), 
-						caption: keyboard.getCaption('widget'), 
+					tooltipParam={{
+						text: translate('commonWidgets'),
+						caption: keyboard.getCaption('widget'),
 						typeY: I.MenuDirection.Bottom,
 					}}
 				/>
-				<Icon 
-					className="expand withBackground" 
+				<Icon
+					className="expand withBackground"
 					onClick={onOpen || onExpand}
-					tooltipParam={{ 
-						text: translate('commonOpenObject'), 
+					tooltipParam={{
+						text: translate('commonOpenObject'),
 						typeY: I.MenuDirection.Bottom,
 					}}
 				/>
 
 				{withNavigation ? (
 					<div className="arrowWrapper">
-						<Icon 
-							className={cnb.join(' ')} 
+						<Icon
+							className={cnb.join(' ')}
 							onClick={() => keyboard.onBack(isPopup)}
-							tooltipParam={{ 
-								text: translate('commonBack'), 
-								caption: keyboard.getCaption('back'), 
+							tooltipParam={{
+								text: translate('commonBack'),
+								caption: keyboard.getCaption('back'),
 								typeY: I.MenuDirection.Bottom,
 							}}
 						/>
-						<Icon 
-							className={cnf.join(' ')} 
+						<Icon
+							className={cnf.join(' ')}
 							onClick={() => keyboard.onForward(isPopup)}
-							tooltipParam={{ 
-								text: translate('commonForward'), 
-								caption: keyboard.getCaption('forward'), 
+							tooltipParam={{
+								text: translate('commonForward'),
+								caption: keyboard.getCaption('forward'),
 								typeY: I.MenuDirection.Bottom,
 							}}
 						/>
@@ -138,12 +132,12 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 				) : ''}
 
 				{withGraph ? (
-					<Icon 
-						className="graph withBackground" 
+					<Icon
+						className="graph withBackground"
 						onClick={onGraph}
-						tooltipParam={{ 
-							text: translate('commonGraph'), 
-							caption: keyboard.getCaption('graph'), 
+						tooltipParam={{
+							text: translate('commonGraph'),
+							caption: keyboard.getCaption('graph'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
@@ -156,11 +150,11 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		return (
 			<div id="tabs" className="tabs">
 				{tabs.map((item: any, i: number) => (
-					<div 
+					<div
 						key={i}
-						className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+						className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')}
 						onClick={() => onTab(item.id)}
-						onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
+						onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)}
 						onMouseOut={onTooltipHide}
 					>
 						{item.name}
@@ -210,6 +204,27 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const center = node.find('.side.center');
+
+		node.toggleClass('isSmall', center.outerWidth() <= 200);
+	};
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
+
 	useLayoutEffect(() => {
 		raf(() => sidebar.resizePage(isPopup, null, null, false));
 	}, [ object ]);
@@ -229,16 +244,16 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			id="header" 
+		<div
+			id="header"
 			ref={nodeRef}
 			className={cn.join(' ')}
 			onDoubleClick={onDoubleClick}
 		>
 			{Component ? (
-				<Component 
-					ref={childRef} 
-					{...props} 
+				<Component
+					ref={childRef}
+					{...props}
 					onSearch={onSearch}
 					onTooltipShow={onTooltipShow}
 					onTooltipHide={onTooltipHide}

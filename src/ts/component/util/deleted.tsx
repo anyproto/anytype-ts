@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, H, translate, Action } from 'Lib';
+import { I, S, U, translate, Action } from 'Lib';
 
 interface Props {
 	className?: string;
@@ -40,6 +40,14 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	};
 	const textButton = isPopup ? translate('commonClose') : translate('utilDeletedBackToDashboard');
 
+	const unbind = () => {
+		$(window).off('resize.deleted');
+	};
+
+	const rebind = () => {
+		$(window).on('resize.deleted', () => resize());
+	};
+
 	const resize = () => {
 		const node = $(nodeRef.current);
 		const container = isPopup ? $('#popupPage-innerWrap') : $(window);
@@ -47,12 +55,11 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 		node.css({ height: container.height() });
 	};
 
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
-
 	useEffect(() => {
+		rebind();
 		resize();
+
+		return () => unbind();
 	});
 
 	useLayoutEffect(() => resize());

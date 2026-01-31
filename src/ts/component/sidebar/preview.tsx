@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
-import { I, S, U, J, H, Relation, translate, sidebar } from 'Lib';
+import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
 
 interface RefProps {
 	update: (object: any) => void;
@@ -110,9 +110,22 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		};
 	};
 
-	const onResize = H.useDebounceCallback(resize, 50);
+	const unbind = () => {
+		$(window).off(`resize.${ns} sidebarResize.${ns}`);
+	};
 
-	H.useResizeObserver({ ref: nodeRef, onResize });
+	const rebind = () => {
+		unbind();
+		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+	};
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
 
 	useEffect(() => {
 		resize();	

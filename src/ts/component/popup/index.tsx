@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, H, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
@@ -74,6 +74,18 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const rebind = () => {
+		unbind();
+
+		if (!param.preventResize) {
+			$(window).on(`resize.popup${id}`, () => position());
+		};
+	};
+
+	const unbind = () => {
+		$(window).off(`resize.popup${id}`);
+	};
+
 	const animate = () => {
 		window.setTimeout(() => {
 			if (isAnimatingRef.current) {
@@ -112,14 +124,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	const onResize = H.useDebounceCallback(() => {
-		if (!param.preventResize) {
-			position();
-		};
-	}, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
-
 	const getContext = () => ({
 		getChildRef: () => childRef.current,
 		close,
@@ -132,10 +136,15 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			position();
 		};
 
+		rebind();
 		animate();
 		onOpen?.(getContext());
 
 		analytics.event('popup', { params: { id } });
+
+		return () => {
+			unbind();
+		};
 	}, []);
 
 	const { className } = param;

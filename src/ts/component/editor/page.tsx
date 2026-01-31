@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Deleted, DropTarget, EditorControls } from 'Component';
-import { I, C, S, U, J, H, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
+import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
@@ -226,7 +226,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const unbind = () => {
 		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
 		const container = U.Common.getScrollContainer(isPopup);
-		const events = [ 'keydown', 'mousemove', 'paste', 'focus' ];
+		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 		const selection = S.Common.getRef('selectionProvider');
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -271,6 +271,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		});
 
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => resizePage());
 		container.on(`scroll.${ns}`, () => onScroll());
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => onCommand(cmd, arg));
@@ -2389,10 +2390,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			callBack?.();
 		});
 	};
-
-	const onResize = H.useDebounceCallback(() => resizePage(), 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const focusSet = (id: string, from: number, to: number, scroll: boolean) => {
 		window.setTimeout(() => {

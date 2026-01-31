@@ -6,7 +6,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug } from 'Component';
-import { I, C, S, U, J, H, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
+import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -133,7 +133,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const unbind = () => {
-		const events = [ 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -145,6 +145,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		unbind();
 
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => resize());
 		win.on(`updateDataviewData.${ns}`, () => loadData(getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
 		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => onSelectEnd());
@@ -1461,10 +1462,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		});
 	};
-
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	const getPageContainer = () => {
 		return U.Common.getCellContainer(isPopup ? 'popup' : 'page');

@@ -7,7 +7,7 @@ import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid, MediaExcalidraw } from 'Component';
-import { I, C, S, U, J, H, keyboard, focus, Action, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
@@ -108,13 +108,15 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			container.on(`scroll.${block.id}`, () => onScroll());
 		};
 
+		win.on(`resize.${block.id}`, () => resize());
+
 		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
 		node.on('edit', e => onEdit(e));
 	};
 
 	const unbind = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline' ];
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 		container.off(`scroll.${block.id}`);
@@ -746,10 +748,6 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const resize = () => {
 		onScroll();
 	};
-
-	const onResize = H.useDebounceCallback(resize, 50);
-
-	H.useResizeObserver({ ref: nodeRef, onResize });
 
 	let select = null;
 	let source = null;
