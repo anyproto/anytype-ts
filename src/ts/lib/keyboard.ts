@@ -87,13 +87,7 @@ class Keyboard {
 
 	onResize () {
 		const { ww } = U.Common.getWindowDimensions();
-		const key = J.Constant.storageKey.sidebarData;
-		const stored = Storage.get(key, Storage.isLocal(key));
-		const data = stored?.[I.SidebarPanel.Left] || {};
-
-		if (data.isClosed) {
-			return;
-		};
+		const data = sidebar.getData(I.SidebarPanel.Left, this.isPopup());
 
 		if (ww <= 900) {
 			sidebar.leftPanelClose(false, false);
