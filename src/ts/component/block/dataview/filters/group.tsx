@@ -225,7 +225,9 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 								parentPath={path}
 								operator={filter.operator}
 								getView={getView}
+								getTarget={getTarget}
 								isInline={isInline}
+								loadData={loadData}
 								readonly={readonly}
 								onRemove={onRuleRemove}
 								onUpdate={onRuleUpdate}

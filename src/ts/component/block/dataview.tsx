@@ -1091,12 +1091,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		console.log('FILTER ADD: ', item)
-
 		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, (message: any) => {
 			callBack?.();
-
-			console.log('RES: ', message)
 
 			analytics.event('AddFilter', {
 				condition: item.condition,

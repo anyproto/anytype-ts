@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
-import { Icon, Select, Input, IconObject, Label } from 'Component';
+import { Icon, Select, Input, IconObject, Label, Tag } from 'Component';
+import ItemObject from 'Component/cell/item/object';
 
 interface Props {
 	rootId: string;
@@ -12,7 +13,9 @@ interface Props {
 	parentPath: string;
 	operator: I.FilterOperator;
 	getView: () => any;
+	getTarget: () => any;
 	isInline: boolean;
+	loadData: (viewId: string, offset: number, clear?: boolean) => void;
 	readonly?: boolean;
 	onRemove: (index: number) => void;
 	onUpdate: (index: number, data: Partial<I.Filter>) => void;
@@ -22,7 +25,10 @@ interface Props {
 
 const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, blockId, rule, index, depth, parentPath, operator, getView, isInline, readonly, onRemove, onUpdate, onOperatorChange, onTurnIntoGroup } = props;
+	const {
+		rootId, blockId, rule, index, depth, parentPath, operator, getView, getTarget, isInline, loadData,
+		readonly, onRemove, onUpdate, onOperatorChange, onTurnIntoGroup
+	} = props;
 	const nodeId = `rule-${parentPath}-${index}`;
 	const { relationKey, condition, value } = rule;
 	const operatorRef = useRef(null);
@@ -37,6 +43,146 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	];
 	const operatorOption: any = operatorOptions.find(it => it.id == String(operator)) || {};
 	const operatorName = operatorOption.name || '';
+
+	const getValue = () => {
+		if (!relation) {
+			return null;
+		};
+
+		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+			return null;
+		};
+
+		const TextInput = ({ readonly }) => (
+			<Input
+				ref={inputRef}
+				value={value}
+				placeholder={translate(`placeholderCell${relation.format}`)}
+				onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
+				readonly={readonly}
+			/>
+		);
+
+		switch (relation.format) {
+			case I.RelationType.Date: {
+				const quickOptions = Relation.filterQuickOptions(relation.format, condition);
+				return (
+					<Select
+						id={`${nodeId}-quick`}
+						value={String(rule.quickOption || I.FilterQuickOption.ExactDate)}
+						options={quickOptions}
+						onChange={v => onUpdate(index, { quickOption: Number(v) as I.FilterQuickOption })}
+						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+						readonly={readonly}
+					/>
+				);
+			};
+
+			case I.RelationType.Checkbox: {
+				const checkboxOptions = [
+					{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
+					{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
+				];
+				return (
+					<Select
+						id={`${nodeId}-checkbox`}
+						value={value ? '1' : '0'}
+						options={checkboxOptions}
+						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
+						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+						readonly={readonly}
+					/>
+				);
+			};
+
+			case I.RelationType.ShortText:
+			case I.RelationType.Number:
+			case I.RelationType.Url:
+			case I.RelationType.Phone:
+			case I.RelationType.Email: {
+				return <TextInput readonly={readonly} />;
+			};
+
+			case I.RelationType.Object:
+			case I.RelationType.File: {
+				const items = Relation.getArrayValue(value)
+					.map(id => S.Detail.get(rootId, id, []))
+					.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+
+				if (!items.length) {
+					return <TextInput readonly={true} />;
+				};
+
+				return (
+					<span className="over">
+						{items.map((item: any) => (
+							<ItemObject
+								key={item.id}
+								cellId={nodeId}
+								getObject={() => item}
+								relation={relation}
+								canEdit={false}
+							/>
+						))}
+					</span>
+				);
+			};
+
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect: {
+				const items = Relation.getOptions(value)
+					.filter(it => !it.isArchived && !it.isDeleted && !it._empty_);
+
+				if (!items.length) {
+					return <TextInput readonly={true} />;
+				};
+
+				return (
+					<span className="over">
+						{items.map((item: any) => (
+							<Tag
+								key={item.id}
+								text={item.name}
+								color={item.color}
+								className={Relation.selectClassName(relation.format)}
+							/>
+						))}
+					</span>
+				);
+			};
+
+			default: {
+				return null;
+			};
+		};
+	};
+
+	const onValueClick = () => {
+		const view = getView();
+		if (!view || readonly) {
+			return;
+		};
+
+		S.Menu.open('dataviewFilterValues', {
+			element: `#${nodeId} .valueSelect`,
+			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				rootId,
+				blockId,
+				isInline,
+				getView,
+				getTarget,
+				readonly,
+				filter: rule,
+				hideHead: true,
+				save: () => {
+					onUpdate(index, { value: rule.value });
+				},
+			}
+		});
+	};
 
 	const onRelationClick = (e: any) => {
 		e.stopPropagation();
@@ -93,10 +239,16 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
+	const valueContent = getValue();
 	const cn = [ 'rule' ];
+	const vscn = [ 'valueSelect', `is${I.RelationType[relation.format]}` ];
 
 	if (readonly) {
 		cn.push('isReadonly');
+	};
+
+	if (!valueContent) {
+		vscn.push('isEmpty');
 	};
 
 	return (
@@ -141,14 +293,8 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					readonly={readonly}
 				/>
 
-				<div className="valueSelect">
-					<Input
-						ref={inputRef}
-						value={value}
-						placeholder={translate(`placeholderCell${relation?.format || 0}`)}
-						onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
-						readonly={readonly}
-					/>
+				<div className={vscn.join(' ')} onClick={onValueClick}>
+					{valueContent}
 				</div>
 
 				{!readonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
