@@ -229,7 +229,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	}, []);
 
 	useEffect(() => {
-		resize();
 		rebind();
 		setCurrent(playlist[0]);
 	});
