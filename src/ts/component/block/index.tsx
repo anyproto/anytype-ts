@@ -250,8 +250,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		
 		win.on('mousemove.block', e => onResize(e, index, offset));
 		win.on('mouseup.block', e => onResizeEnd(e, index, offset));
-		
-		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};
 
 	const onResize = (e: any, index: number, offset: number) => {
@@ -281,8 +279,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		
 		prevNode.css({ width: w1 * 100 + '%' });
 		currentNode.css({ width: w2 * 100 + '%' });
-		
-		node.find('.resizable').trigger('resizeMove', [ e ]);
 	};
 
 	const onResizeEnd = (e: any, index: number, offset: number) => {
@@ -307,8 +303,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 				{ blockId: currentBlockId, fields: { width: (1 - res.percent) * res.sum } },
 			]);
 		};
-		
-		node.find('.resizable').trigger('resizeEnd', [ e ]);
 	};
 	
 	const calcWidth = (x: number, index: number) => {

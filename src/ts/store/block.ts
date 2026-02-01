@@ -899,7 +899,6 @@ class BlockStore {
 		Storage.setToggle(rootId, blockId, v);
 
 		U.Common.triggerResizeEditor(keyboard.isPopup());
-		element.find('.resizable').trigger('resizeInit');
 	};
 
 

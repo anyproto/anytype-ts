@@ -334,7 +334,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				selection?.renderSelection();
 				raf(() => {
 					win.trigger('resize');
-					$('.resizable').trigger('resizeInit');
 				});
 			};
 

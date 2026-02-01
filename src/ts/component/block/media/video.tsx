@@ -65,14 +65,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		Action.upload(I.FileType.Video, rootId, id, '', path);
 	};
 
-	const onResizeInit = () => {
-		const wrap = $(wrapRef.current);
-		
-		if (wrap.length) {
-			wrap.css({ width: (getWidth(true, 0) * 100) + '%' });
-		};
-	};
-
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -81,15 +73,15 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });
-		win.off('mousemove.media mouseup.media');
-		
 		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		$(nodeRef.current).addClass('isResizing');
-		win.on('mousemove.media', e => onResizeMove(e, checkMax));
-		win.on('mouseup.media', e => onResizeEnd(e, checkMax));
+
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
+		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
+		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
 	};
 	
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -117,7 +109,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
-		win.off('mousemove.media mouseup.media');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		$(nodeRef.current).removeClass('isResizing');
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
@@ -126,45 +118,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{ blockId: id, fields: { width: w } },
 		]);
 	};
-
-	const initVideo = () => {
-		const node = $(nodeRef.current);
-		const video = node.find('video');
-
-		if (!video.length) {
-			return;
-		};
-
-		onResizeInit();
-		video.on('canplay', (e: any) => onResizeInit());
-	};
-	
-	const rebind = () => {
-		unbind();
-		
-		const node = $(nodeRef.current);
-		node.on('resizeStart', (e: any, oe: any) => onResizeStart(oe, true));
-		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
-		node.on('resizeEnd', (e: any, oe: any) => onResizeEnd(oe, true));
-		node.on('resizeInit', (e: any, oe: any) => onResizeInit());
-	};
-	
-	const unbind = () => {
-		const node = $(nodeRef.current);
-		const video = node.find('video');
-		
-		node.off('resizeInit resizeStart resizeMove resizeEnd');
-		video.off('canplay');
-	};
-
-	useEffect(() => {
-		rebind();
-		initVideo();
-
-		return () => {
-			unbind();
-		};
-	}, [ state, targetObjectId ]);
 
 	useImperativeHandle(ref, () => ({}));
 
@@ -200,7 +153,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				
 			case I.FileState.Done: {
 				element = (
-					<div ref={wrapRef} className="wrap resizable" style={css}>
+					<div ref={wrapRef} className="wrap" style={css}>
 						<MediaVideo
 							src={S.Common.fileUrl(targetObjectId)}
 							onPlay={onPlay}

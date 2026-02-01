@@ -90,8 +90,10 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	};
 	
 	const resize = () => {
-		const inner = $(innerRef.current);
-		inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
+		window.setTimeout(() => {
+			const inner = $(innerRef.current);
+			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
+		}, 0);
 	};
 
 	let element = null;

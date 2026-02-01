@@ -108,9 +108,6 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			container.on(`scroll.${block.id}`, () => onScroll());
 		};
 
-		win.on(`resize.${block.id}`, () => resize());
-
-		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
 		node.on('edit', e => onEdit(e));
 	};
 
@@ -796,11 +793,21 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		resize();
 		init();
 
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
 		return () => {
 			unbind();
 
 			window.clearTimeout(timeoutScrollRef.current);
 			window.clearTimeout(timeoutSaveRef.current);
+
+			resizeObserver.disconnect();
 		};
 	}, []);
 
@@ -842,7 +849,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		>
 			{source}
 
-			<div id="valueWrap" className="valueWrap resizable" style={css}>
+			<div id="valueWrap" className="valueWrap" style={css}>
 				{select ? <div className="selectWrap">{select}</div> : ''}
 
 				{isUnsupported ? (

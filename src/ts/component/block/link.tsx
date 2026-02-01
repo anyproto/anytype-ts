@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
 import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
@@ -15,7 +16,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const cardRef = useRef<HTMLDivElement>(null);
 	const type = S.Record.getTypeById(object.type);
-	const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
+	const cn = [ 'focusable', `c${block.id}` ];
 	const canDescription = !U.Object.isNoteLayout(object.layout);
 	const withIcon = content.iconSize != I.LinkIconSize.None;
 	const withType = relations.includes('type');
@@ -29,15 +30,6 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		cn.push('isArchived');
 	};
 
-	const rebind = () => {
-		unbind();
-		$(nodeRef.current).on('resizeInit resizeMove', e => resize());
-	};
-	
-	const unbind = () => {
-		$(nodeRef.current).off('resizeInit resizeMove');
-	};
-	
 	const onKeyDownHandler = (e: any) => {
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
@@ -257,17 +249,19 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 
 	useEffect(() => {
 		resize();
-		rebind();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
-			unbind();
+			resizeObserver.disconnect();
 		};
 	}, []);
-
-	useEffect(() => {
-		resize();
-		rebind();
-	});
 
 	return (
 		<div 

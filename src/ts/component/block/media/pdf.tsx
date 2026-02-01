@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { InputWithFile, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
@@ -84,16 +85,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		};
 	};
 
-	const onResizeInit = () => {
-		const wrap = $(wrapRef.current);
-		
-		if (wrap.length) {
-			wrap.css({ width: (getWidth(true, 0) * 100) + '%' });
-		};
-
-		mediaRef.current?.resize();
-	};
-
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -102,15 +93,16 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });
-		win.off('mousemove.media mouseup.media');
 		selection?.hide();
 
 		$(nodeRef.current).addClass('isResizing');
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
-		win.on('mousemove.media', e => onResizeMove(e, checkMax));
-		win.on('mouseup.media', e => onResizeEnd(e, checkMax));
+
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
+		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
+		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
 	};
 	
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -143,7 +135,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		
 		$(nodeRef.current).removeClass('isResizing');
 
-		win.off('mousemove.media mouseup.media');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 		
@@ -154,35 +146,25 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		]);
 	};
 
-	const rebind = () => {
-		const node = $(nodeRef.current);
-		
-		unbind();
-		node.on('resizeStart', (e: any, oe: any) => onResizeStart(oe, true));
-		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
-		node.on('resizeEnd', (e: any, oe: any) => onResizeEnd(oe, true));
-		node.on('resizeInit', (e: any, oe: any) => onResizeInit());
-	};
-
-	const unbind = () => {
-		const node = $(nodeRef.current);
-		const video = node.find('video');
-		
-		node.off('resizeInit resizeStart resizeMove resizeEnd');
-		video.off('canplay');
+	const resize = () => {
+		mediaRef.current?.resize();
 	};
 
 	useEffect(() => {
-		rebind();
+		resize();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
-			unbind();
+			resizeObserver.disconnect();
 		};
-	}, [ rebind, unbind ]);
-
-	useEffect(() => {
-		rebind();
-	});
+	}, []);
 
 	useImperativeHandle(ref, () => ({}));
 

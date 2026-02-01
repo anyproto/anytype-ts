@@ -69,8 +69,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const resizable = node.find('.resizable');
 		const top = Storage.getScroll('editor', rootId, isPopup);
 
 		checkDeleted();
@@ -85,10 +83,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
 	});
 
 	const initNodes = () => {
@@ -2426,12 +2420,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		node.css({ width });
 		elements.css({ width, marginLeft: -width / 2 });
 
-		if (headerRef.current && headerRef.current.refDrag) {
-			headerRef.current.refDrag.setValue(v);
-			headerRef.current.setPercent(v);
-		};
-
-		$('.resizable').trigger('resizeInit');
+		headerRef.current?.refDrag?.setValue(v);
+		headerRef.current?.setPercent(v);
 	};
 
 	const getWidth = (weight: number) => {

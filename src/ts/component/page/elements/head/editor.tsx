@@ -57,9 +57,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...root.fields, width: v } },
-		], () => {
-			$('.resizable').trigger('resizeInit');
-		});
+		]);
 	};
 
 	const setPercent = (v: number) => {

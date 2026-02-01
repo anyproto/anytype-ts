@@ -28,7 +28,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const frames = useRef<any[]>([]);
 	const rowRef = useRef('');
 	const cellRef = useRef('');
-	const cn = [ 'wrap', 'focusable', `c${block.id}`, 'resizable' ];
+	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 
 	// Subscriptions
 	columns.forEach((column: I.Block) => {
@@ -37,34 +37,25 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	useEffect(() => {
 		initSize();
-		resize();
-		rebind();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
-			unbind();
+			resizeObserver.disconnect();
 		};
 	}, []);
 
 	useEffect(() => {
 		initSize();
-		resize();
-
 		$(scrollRef.current).scrollLeft(scrollX.current);
 	});
 	
-	const unbind = () => {
-		$(window).off(`resize.${block.id}`);
-		$(nodeRef.current).off('resizeInit resizeMove');
-	};
-
-	const rebind = () => {
-		const win = $(window);
-
-		unbind();
-		win.on(`resize.${block.id}`, () => raf(() => resize()));
-		$(nodeRef.current).on('resizeInit resizeMove', e => resize());
-	};
-
 	const onHandleColumn = (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => {
 		e.persist();
 		e.preventDefault();
@@ -707,9 +698,9 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		focus.clear(true);
 
 		body.addClass('colResize');
-		win.off('mousemove.table mouseup.table');
-		win.on('mousemove.table', throttle(e => onResizeMove(e, id), 40));
-		win.on('mouseup.table', e => onResizeEnd(e, id));
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
+		win.on(`mousemove.${block.id}`, throttle(e => onResizeMove(e, id), 40));
+		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, id));
 
 		keyboard.setResize(true);
 	};
@@ -734,7 +725,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{ blockId: id, fields: { width } },
 		]);
 
-		$(window).off('mousemove.table mouseup.table');
+		$(window).off(`mousemove.${block.id} mouseup.${block.id}`);
 		$('body').removeClass('colResize');
 		keyboard.setResize(false);
 	};
@@ -1035,6 +1026,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const widths = columns.map(it => checkWidth(it.fields?.width ?? J.Size.table.default));
 
 		setColumnWidths(widths);
+		resize();
 	};
 
 	const checkWidth = (w: number) => {

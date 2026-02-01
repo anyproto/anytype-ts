@@ -174,12 +174,6 @@ const App: FC = () => {
 		});
 
 		Renderer.on('zoom', () => {
-			const resizable = $('.resizable');
-
-			if (resizable.length) {
-				resizable.trigger('resizeInit');
-			};
-
 			sidebar.resizePage(false, null, null, false);
 			sidebar.resizePage(true, null, null, false);
 		});
