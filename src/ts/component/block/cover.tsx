@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
@@ -195,49 +195,49 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	};
 	
-	const onDragStart = (e: DragEvent) => {
+	const onDragStart = (e: MouseEvent<HTMLDivElement>) => {
 		e.preventDefault();
-		
+
 		if (!isEditing) {
 			return false;
 		};
-		
+
 		const win = $(window);
 		const node = $(nodeRef.current);
-		
+
 		x.current = e.pageX - rectRef.current.x - x.current;
 		y.current = e.pageY - rectRef.current.y - y.current;
-		onDragMove(e);
+		onDragMove(e.pageX, e.pageY);
 
 		keyboard.disableSelection(true);
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', e => onDragMove(e));
-		win.on('mouseup.cover', e => onDragEnd(e));
+		win.on('mousemove.cover', e => onDragMove(e.pageX, e.pageY));
+		win.on('mouseup.cover', e => onDragEnd(e.pageX, e.pageY));
 	};
-	
-	const onDragMove = (e: DragEvent) => {
+
+	const onDragMove = (pageX: number, pageY: number) => {
 		if (!rectRef.current) {
 			return false;
 		};
-		
-		const { x: newX, y: newY } = setTransform(e.pageX - rectRef.current.x - x.current, e.pageY - rectRef.current.y - y.current);
+
+		const { x: newX, y: newY } = setTransform(pageX - rectRef.current.x - x.current, pageY - rectRef.current.y - y.current);
 		cx.current = newX;
 		cy.current = newY;
 	};
-	
-	const onDragEnd = (e: DragEvent) => {
+
+	const onDragEnd = (pageX: number, pageY: number) => {
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const rect = rectRef.current;
-		
+
 		keyboard.disableSelection(false);
 		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
-		
-		x.current = e.pageX - rect.x - x.current;
-		y.current = e.pageY - rect.y - y.current;
+
+		x.current = pageX - rect.x - x.current;
+		y.current = pageY - rect.y - y.current;
 
 		coords.current = { x: cx.current / rect.cw, y: cy.current / rect.ch };
 	};

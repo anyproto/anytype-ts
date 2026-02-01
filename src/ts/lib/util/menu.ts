@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U, Renderer } from 'Lib';
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -853,7 +853,7 @@ class UtilMenu {
 			...menuParam,
 			data: {
 				options,
-				onSelect: (e: React.MouseEvent, option: any) => {
+				onSelect: (e: MouseEvent, option: any) => {
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
