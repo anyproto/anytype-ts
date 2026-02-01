@@ -859,7 +859,6 @@
 			],
 			"desktop": {
 				"entry": {
-					"Name": "Anytype",
 					"Categories": "Utility;Office;Calendar;ProjectManagement;",
 					"Keywords": "project management;",
 					"StartupWMClass": "anytype"
