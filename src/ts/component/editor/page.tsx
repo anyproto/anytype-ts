@@ -31,7 +31,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutMove = useRef(0);
 	const timeoutScroll = useRef(0);
 	const frameMove = useRef(0);
-	const frameScroll = useRef(0);
 	const frameResize = useRef(0);
 	const hoverId = useRef('');
 	const hoverPosition = useRef(I.BlockPosition.None);
@@ -49,7 +48,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.clear(false);
 
 			raf.cancel(frameMove.current);
-			raf.cancel(frameScroll.current);
 			raf.cancel(frameResize.current);
 
 			window.clearTimeout(timeoutMove.current);
@@ -1822,10 +1820,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const top = container.scrollTop();
 
 		Storage.setScroll('editor', rootId, top, isPopup);
-
-		raf.cancel(frameScroll.current);
-		frameScroll.current = raf(() => tocRef.current?.onScroll());
-
+		tocRef.current?.onScroll();
 		Preview.previewHide(false);
 	};
 	
@@ -2383,6 +2378,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				last.css({ height });
 			};
 
+			tocRef.current?.resize?.();
 			callBack?.();
 		});
 	};

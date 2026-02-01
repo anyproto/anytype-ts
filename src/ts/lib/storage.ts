@@ -32,6 +32,8 @@ const LOCAL_KEYS = [
 
 const Api = {
 	get: (key: string, isLocal: boolean) => {
+		console.log('Api.get', key, isLocal);
+
 		let ret = {};
 		if (electron.storeGet && !isLocal) {
 			ret = electron.storeGet(key);
@@ -42,6 +44,8 @@ const Api = {
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
+		console.log('Api.set', key, isLocal);
+
 		if (electron.storeSet && !isLocal) {
 			electron.storeSet(key, obj);
 		} else {
@@ -82,7 +86,7 @@ class Storage {
 	isLocal (key: string): boolean {
 		return LOCAL_KEYS.includes(key);
 	};
-	
+
 	/**
 	 * Gets a value from storage by key, handling space and account keys.
 	 * @param {string} key - The storage key.
@@ -95,41 +99,13 @@ class Storage {
 			return;
 		};
 
-		let o = Api.get(key, isLocal);
-
-		// Migration: if local storage is empty, check electron store as fallback
-		if ((undefined === o) && isLocal && electron.storeGet) {
-			o = electron.storeGet(key);
-
-			// If found in electron store, migrate to localStorage
-			if (o !== undefined) {
-				Api.set(key, o, true);
-				electron.storeDelete(key);
-			};
-		};
-
-		if (undefined === o) {
-			o = Api.parse(String(localStorage.getItem(key) || ''));
-		};
-
 		if (this.isSpaceKey(key)) {
-			if (o) {
-				localStorage.removeItem(key);
-				Api.delete(key, isLocal);
-				this.set(key, o, isLocal);
-			};
-
 			return this.getSpaceKey(key, isLocal);
 		} else 
 		if (this.isAccountKey(key)) {
-			if (o) {
-				localStorage.removeItem(key);
-				this.set(key, o, isLocal);
-			};
-
 			return this.getAccountKey(key, isLocal);
 		} else {
-			return o;
+			return Api.get(key, isLocal);
 		};
 	};
 

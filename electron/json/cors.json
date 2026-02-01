@@ -166,8 +166,8 @@
 		"https://*.onetrust.com",
 		"https://mirostatic.com",
 		"wss://miro.com",
-		"https://*.figma.com/",
-		"wss://*.figma.com/",
+		"https://*.figma.com",
+		"wss://*.figma.com",
 		"https://*.twitter.com",
 		"https://*.twimg.com",
 		"https://*.reddit.com",
@@ -197,7 +197,8 @@
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
 		"https://*.google-analytics.com",
-		"http://*.openstreetmap.fr/"
+		"http://*.openstreetmap.fr",
+		"https://*.gstatic.com"
 	],
 
 	"script-src-elem": [

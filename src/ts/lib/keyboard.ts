@@ -107,7 +107,19 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common resize.common');
+		const events = [
+			'keyup',
+			'keydown',
+			'mousedown',
+			'scroll',
+			'mousemove',
+			'blur',
+			'online',
+			'offline',
+			'resize',
+		];
+
+		$(window).off(events.map(it => `${it}.common`).join(' '));
 	};
 
 	/**
