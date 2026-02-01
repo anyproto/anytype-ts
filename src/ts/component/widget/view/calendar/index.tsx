@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, S, U, J, translate, Dataview, Relation } from 'Lib';
@@ -66,7 +66,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		setValue(U.Date.timestamp(y, m, 1));
 	};
 
-	const onClick = (e: any, d: number, m: number, y: number) => {
+	const onClick = (e: MouseEvent, d: number, m: number, y: number) => {
 		const element = `#${getElementId(d, m, y)}`;
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
