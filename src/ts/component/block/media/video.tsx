@@ -93,7 +93,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 		
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
@@ -106,7 +106,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 		
 		const win = $(window);
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);

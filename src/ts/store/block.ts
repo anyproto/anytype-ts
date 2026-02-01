@@ -901,7 +901,6 @@ class BlockStore {
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 	};
 
-
 	/**
 	 * Updates the markup for all text blocks in a root.
 	 * @param {string} rootId - The root ID.

@@ -971,7 +971,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const getPosition = (): DOMRect => {
 		const obj = $(`#${getId()}`);
-		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
+		return obj.length ? U.Common.getElementRect(obj.get(0)) : null;
 	};
 
 	const getArrowDirection = (): I.MenuDirection => {

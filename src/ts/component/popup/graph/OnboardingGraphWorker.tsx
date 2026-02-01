@@ -99,7 +99,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -129,7 +129,7 @@ const OnboardingGraphWorker = observer(({
 
 		lastMouseMoveRef.current = now;
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -146,7 +146,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};

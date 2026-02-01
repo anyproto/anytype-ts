@@ -364,7 +364,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				continue;
 			};
 
-			const rect = obj.get(0).getBoundingClientRect() as DOMRect;
+			const rect = U.Common.getElementRect(obj.get(0));
 
 			rect.y += st;
 
@@ -402,7 +402,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = (container.current.get(0) as Element).getBoundingClientRect() as DOMRect;
+			rectContainer = U.Common.getElementRect(container.current.get(0));
 
 			if (
 				(pageX >= x) && 
@@ -1189,7 +1189,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					continue;
 				};
 
-				const rect = node.get(0).getBoundingClientRect();
+				const rect = U.Common.getElementRect(node.get(0));
 				const blockY = rect.top + rect.height / 2;
 				const distance = Math.abs(blockY - targetY);
 
@@ -1263,10 +1263,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		let sRect = U.Common.getSelectionRect();
 		let vRect: any = {};
 		if (value && value.length) {
-			vRect = value.get(0).getBoundingClientRect();
+			vRect = U.Common.getElementRect(value.get(0));
 		} else 
 		if (element && element.length) {
-			vRect = element.get(0).getBoundingClientRect();
+			vRect = U.Common.getElementRect(element.get(0));
 		};
 
 		if (!sRect) {

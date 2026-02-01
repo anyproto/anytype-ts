@@ -19,7 +19,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 			return;
 		};
 
-		const rect = componentNode.getBoundingClientRect();
+		const rect = U.Common.getElementRect(componentNode);
 		const node = $(nodeRef.current);
 		const inner = node.find('#inner').html('');
 		const container = U.Common.getPageFlexContainer(keyboard.isPopup());

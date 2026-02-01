@@ -340,7 +340,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const offset = node.obj.offset();
-		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(node.obj.get(0));
 		const { x, y } = recalcCoords(offset.left, offset.top);
 
 		cache = { x, y, width: rect.width, height: rect.height };

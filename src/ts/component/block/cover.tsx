@@ -169,7 +169,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const cb = () => {
 			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 
-			rectRef.current = (node.get(0) as Element).getBoundingClientRect();
+			rectRef.current = U.Common.getElementRect(node.get(0));
 			onScaleMove($.Event('resize'), object.coverScale);
 			cover.css({ opacity: 1 });
 			dragRef.current?.setValue(object.coverScale);
@@ -263,7 +263,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = el.getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(el);
 
 		rectRef.current.cw = rect.width;
 		rectRef.current.ch = rect.height;

@@ -2,7 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
-import { I, J, keyboard, focus, translate, Action } from 'Lib';
+import { I, J, U, keyboard, focus, translate, Action } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -87,7 +87,7 @@ const InputWithFile: FC<Props> = ({
 				return;
 			};
 
-			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
+			const rect = U.Common.getElementRect(node.get(0));
 
 			let s = Size.Icon;
 			if (rect.width >= Sizes[Size.Small]) {

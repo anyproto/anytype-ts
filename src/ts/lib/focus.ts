@@ -152,7 +152,7 @@ class Focus {
 
 		let rect = U.Common.getSelectionRect();
 		if (!rect) {
-			rect = node.get(0).getBoundingClientRect();
+			rect = U.Common.getElementRect(node.get(0));
 		};
 		if (!rect) {
 			return;

@@ -348,7 +348,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = S.Block.getChildren(rootId, block.id);
-		const rect = (node.get(0) as Element).getBoundingClientRect();
+		const rect = U.Common.getElementRect(node.get(0));
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
 

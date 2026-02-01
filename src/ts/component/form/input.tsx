@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, keyboard } from 'Lib';
+import { I, U, keyboard } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -269,7 +269,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 
 		clone.text(value.substring(0, selectionRange.to));
-		const rect = clone.get(0).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(clone.get(0));
 
 		clone.remove();
 		return rect;

@@ -1,6 +1,6 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { Label } from 'Component';
-import { I, S, U, J, focus, translate } from 'Lib';
+import { I, S, U, focus, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
@@ -9,15 +9,11 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: KeyboardEvent) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {

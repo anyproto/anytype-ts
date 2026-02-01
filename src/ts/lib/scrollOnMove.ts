@@ -1,3 +1,5 @@
+import { U } from 'Lib';
+
 const BORDER = 20;
 const MAX_STEP = 10;
 const SPEED_DIV = 100; // bigger → slower overall
@@ -35,7 +37,7 @@ class ScrollOnMove {
 			};
 
 			const el = container.get(0);
-			const rect = el.getBoundingClientRect();
+			const rect = U.Common.getElementRect(el);
 
 			this.viewportWidth = rect.width;
 			this.viewportHeight = rect.height;
