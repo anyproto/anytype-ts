@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
@@ -1281,7 +1281,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		return Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records);
 	};
 
-	const onSelectToggle = (e: React.MouseEvent, id: string) => {
+	const onSelectToggle = (e: MouseEvent, id: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 

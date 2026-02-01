@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Icon } from 'Component';
@@ -158,13 +158,13 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return items;
 	};
 
-	const onMouseEnter = (e: React.MouseEvent, item): void => {
+	const onMouseEnter = (e: MouseEvent, item): void => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
 		};
 	};
 
-	const onOptionClick = (e: React.MouseEvent, option: any, section: any) => {
+	const onOptionClick = (e: MouseEvent, option: any, section: any) => {
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {
@@ -204,7 +204,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const onClick = (e: React.MouseEvent, item) => {
+	const onClick = (e: MouseEvent, item) => {
 		if (item.arrow) {
 			return;
 		};

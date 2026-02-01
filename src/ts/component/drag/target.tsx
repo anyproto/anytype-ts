@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { I, U } from 'Lib';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 	isTargetBottom?: boolean;
 	isTargetColumn?: boolean;
 	isReversed?: boolean;
-	children?: React.ReactNode;
+	children?: ReactNode;
 	onClick?(e: any): void;
 	onContextMenu?(e: any): void;
 };

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Action } from 'Lib';
@@ -74,7 +74,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return items;
 	};
 
-	const onOver = (e: React.MouseEvent, item: any) => {
+	const onOver = (e: MouseEvent, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.dataviewNew);
 			return;
@@ -166,14 +166,14 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const onMouseEnter = (e: React.MouseEvent, item: any) => {
+	const onMouseEnter = (e: MouseEvent, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
 			onOver(e, item);
 		};
 	};
 
-	const onMouseLeave = (e: React.MouseEvent, item: any) => {
+	const onMouseLeave = (e: MouseEvent, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setHover(null, false);
 		};

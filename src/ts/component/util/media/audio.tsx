@@ -64,7 +64,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		timeRef.current?.resize();
 	};
 
-	const onPlayClick = (e: React.MouseEvent) => {
+	const onPlayClick = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 

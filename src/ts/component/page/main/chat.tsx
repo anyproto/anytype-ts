@@ -75,7 +75,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.getChildNode()?.onDragLeave(e);
 	};
 	
-	const onDrop = (e: React.DragEvent) => {
+	const onDrop = (e: DragEvent) => {
 		chatRef.current?.getChildNode()?.onDrop(e);
 	};
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
@@ -89,7 +89,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		};
 	};
 
-	const onCellClickHandler = (e: React.MouseEvent, vr: I.ViewRelation) => {
+	const onCellClickHandler = (e: MouseEvent, vr: I.ViewRelation) => {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 
 		if (!relation) {

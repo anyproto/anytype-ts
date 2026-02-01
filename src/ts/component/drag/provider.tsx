@@ -1,13 +1,12 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode } from 'react';
 import $, { get } from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
 import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
-import { init } from 'emoji-mart';
 
 interface Props {
-	children?: React.ReactNode;
+	children?: ReactNode;
 };
 
 const OFFSET = 100;

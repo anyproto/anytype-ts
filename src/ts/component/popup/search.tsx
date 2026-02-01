@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -210,7 +210,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SearchInput', { route });
 	};
 
-	const onBacklink = (e: React.MouseEvent, item: any) => {
+	const onBacklink = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 

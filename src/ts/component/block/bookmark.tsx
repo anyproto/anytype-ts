@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
@@ -8,8 +8,8 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const { state, targetObjectId } = block.content;
-	const nodeRef = React.useRef<HTMLDivElement>(null);
-	const innerRef = React.useRef<HTMLAnchorElement>(null);
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const innerRef = useRef<HTMLAnchorElement>(null);
 	const object = S.Detail.get(rootId, targetObjectId, [ 'picture', 'source' ]);
 	const { iconImage, picture, isArchived, isDeleted } = object;
 	const url = object.source || block.content.url;
@@ -51,7 +51,7 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 		};
 	};
 
-	const onMouseEnter = (e: React.MouseEvent) => {
+	const onMouseEnter = (e: MouseEvent) => {
 		if (!targetObjectId || object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};

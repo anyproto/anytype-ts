@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { I, S, U, translate } from 'Lib';
 import { CalendarSelect } from 'Component';
 import { CalendarSelectRefProps, CalendarDay } from 'Component/util/menu/calendarSelect';
@@ -32,7 +32,7 @@ const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		close();
 	};
 
-	const onDayContextMenu = (e: React.MouseEvent, item: CalendarDay): void => {
+	const onDayContextMenu = (e: MouseEvent, item: CalendarDay): void => {
 		e.preventDefault();
 
 		S.Menu.open('select', {

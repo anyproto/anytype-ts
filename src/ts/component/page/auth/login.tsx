@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
@@ -124,7 +124,7 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		return U.Common.checkErrorCommon(code);
 	};
 
-	const onKeyDownPhrase = (e: React.KeyboardEvent) => {
+	const onKeyDownPhrase = (e: KeyboardEvent) => {
 		if (error) {
 			phraseRef.current?.setError(false);
 			setError('');

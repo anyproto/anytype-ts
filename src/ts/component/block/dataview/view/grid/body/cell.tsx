@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, MouseEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, S, J, U, Relation, translate } from 'Lib';
@@ -42,7 +42,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	const isName = relationKey == 'name';
 	const cellRef = useRef(null);
 
-	const onEdit = (e: React.MouseEvent) => {
+	const onEdit = (e: MouseEvent) => {
 		e.stopPropagation();
 		cellRef.current.onClick(e);
 	};

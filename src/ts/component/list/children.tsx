@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, Fragment } from 'react';
 import { Block } from 'Component';
 import { observer } from 'mobx-react';
 import { DropTarget } from 'Component';
@@ -97,7 +97,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 				};
 
 				return (
-					<React.Fragment key={`block-child-${item.id}`}>
+					<Fragment key={`block-child-${item.id}`}>
 						{(i > 0) && isRow ? <ColResize index={i} /> : ''}
 						<Block 
 							key={`block-${item.id}`} 
@@ -107,7 +107,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 							className={cn.join(' ')} 
 							index={[ index, i ].join('-')} 
 						/>
-					</React.Fragment>
+					</Fragment>
 				);
 			})}
 		</div>

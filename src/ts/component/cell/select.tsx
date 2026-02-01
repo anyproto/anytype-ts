@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
@@ -145,7 +145,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		setValue([]);
 	};
 
-	const onContextMenu = (e: React.MouseEvent, item: any) => {
+	const onContextMenu = (e: MouseEvent, item: any) => {
 		if (!canEdit) {
 			return;
 		};

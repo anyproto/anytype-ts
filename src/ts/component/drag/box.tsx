@@ -1,8 +1,8 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, ReactNode, Children, cloneElement } from 'react';
 import { U } from 'Lib';
 
 interface Props {
-	children?: React.ReactNode;
+	children?: ReactNode;
 	onDragEnd(oldIndex: number, newIndex: number): void;
 };
 
@@ -114,7 +114,7 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 		newIndex.current = -1;
 	};
 
-	const children = React.Children.map(initialChildren, (child: any) => React.cloneElement(child, { onDragStart }));
+	const children = Children.map(initialChildren, (child: any) => cloneElement(child, { onDragStart }));
 
 	return (
 		<span 

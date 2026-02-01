@@ -126,7 +126,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
-	const onDragOver = (e: React.DragEvent, block: I.Block) => {
+	const onDragOver = (e: DragEvent, block: I.Block) => {
 		if (!isDraggingRef.current) {
 			return;
 		};
@@ -158,7 +158,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		});
 	};
 
-	const onDrop = (e: React.DragEvent): void => {
+	const onDrop = (e: DragEvent): void => {
 		if (!isDraggingRef.current) {
 			return;
 		};

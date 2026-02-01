@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
 import { I, S, translate, sidebar } from 'Lib';

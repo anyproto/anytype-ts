@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, C, translate, analytics, Relation } from 'Lib';
@@ -273,7 +273,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		onChange('value', null);
 	};
 
-	const onValueHover = (e: React.MouseEvent) => {
+	const onValueHover = (e: MouseEvent) => {
 		e.persist();
 
 		S.Menu.closeAll([ 'select' ], () => {
@@ -286,7 +286,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		setHover();
 	};
 
-	const onConditionClick = (e: React.MouseEvent) => {
+	const onConditionClick = (e: MouseEvent) => {
 		e.stopPropagation();
 
 		if (S.Menu.isOpen('select')) {
@@ -296,7 +296,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 	};
 
-	const onMore = (e: React.MouseEvent) => {
+	const onMore = (e: MouseEvent) => {
 		e.stopPropagation();
 
 		const view = getView();

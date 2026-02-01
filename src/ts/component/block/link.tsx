@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
@@ -69,7 +69,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		U.Object.openEvent(e, object);
 	};
 	
-	const onMouseEnter = (e: React.MouseEvent) => {
+	const onMouseEnter = (e: MouseEvent) => {
 		if (!targetBlockId || (cardStyle != I.LinkCardStyle.Text)) {
 			return;
 		};

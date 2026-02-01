@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
@@ -47,7 +47,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	const onSlideClick = (e: React.MouseEvent) => {
+	const onSlideClick = (e: MouseEvent) => {
 		const target = e.target as HTMLElement;
 
 		// Only close if clicked outside the media container and loader (empty area)
