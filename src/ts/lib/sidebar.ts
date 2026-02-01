@@ -55,6 +55,10 @@ class Sidebar {
 
 			this.setData(panel, isPopup, { width, isClosed }, false);
 			this.setStyle(panel, isPopup, { width, isClosed });
+
+			if ((panel == I.SidebarPanel.Left) && !isPopup) {
+				S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
+			};
 		};
 
 		this.resizePage(isPopup, null, null, false);

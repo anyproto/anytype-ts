@@ -277,6 +277,8 @@ class UtilData {
 
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');
+			U.Space.openDashboard(routeParam);
+			callBack?.();
 			return;
 		};
 

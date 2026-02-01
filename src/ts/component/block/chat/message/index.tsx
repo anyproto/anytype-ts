@@ -335,10 +335,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({
-					initial: { y: 20 },
-					animate: { y: 0 },
-					exit: { y: -20 },
-					transition: { duration: 0.3, delay: 0.1 },
+					transition: { duration: 0.2, delay: 0.1 },
 				})}
 			>
 				{isNew ? (

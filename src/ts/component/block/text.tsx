@@ -108,6 +108,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	});
 
 	const setValue = (v: string, restoreRange?: I.TextRange) => {
+		const { focused } = focus.state;
+		
 		let text = String(v || '');
 		if (text == '\n') {
 			text = '';
