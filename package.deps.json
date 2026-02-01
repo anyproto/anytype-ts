@@ -58,6 +58,22 @@
 		"from": "node_modules/p-try",
 		"to": "node_modules/p-try"
     },
+	{
+		"from": "node_modules/yocto-queue",
+		"to": "node_modules/yocto-queue"
+    },
+	{
+		"from": "node_modules/uri-js",
+		"to": "node_modules/uri-js"
+    },
+	{
+		"from": "node_modules/fast-json-stable-stringify",
+		"to": "node_modules/fast-json-stable-stringify"
+    },
+	{
+		"from": "node_modules/ajv/dist/compile/codegen",
+		"to": "node_modules/ajv/dist/compile/codegen"
+    },
     {
 		"from": "node_modules/p-finally",
 		"to": "node_modules/p-finally"

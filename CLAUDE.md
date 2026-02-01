@@ -18,8 +18,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Distribution
 - `npm run dist:mac` - Build macOS distribution
-- `npm run dist:win` - Build Windows distribution  
+- `npm run dist:win` - Build Windows distribution
 - `npm run dist:linux` - Build Linux distribution
+
+### Testing Builds
+To test a build on macOS without code signing:
+```bash
+ELECTRON_SKIP_NOTARIZE=1 npm run dist:mac
+```
+
+The build output is in `dist/mac-arm64` (or `dist/mac` for x64). You can run the app directly from terminal:
+```bash
+./dist/mac-arm64/Anytype.app/Contents/MacOS/Anytype
+```
+
+### Build Dependencies
+Dependencies included in the packaged app are whitelisted. The `npm run build:deps` script auto-detects required dependencies, but if some are missing at runtime, explicitly add them to `package.deps.json`.
 
 ### Development Setup
 Before development, you need the anytype-heart middleware:

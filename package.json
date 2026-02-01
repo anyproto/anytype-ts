@@ -73,6 +73,7 @@
 		"@types/react": "^18.3.26",
 		"@types/react-dom": "^18.3.7",
 		"@types/react-router-dom": "^5.3.3",
+		"ajv": "^7.2.4",
 		"cross-env": "^10.1.0",
 		"css-loader": "^7.1.2",
 		"electron": "^39.2.7",
@@ -118,7 +119,7 @@
 		"date-fns": "^4.1.0",
 		"diff": "^5.2.0",
 		"dompurify": "^3.3.0",
-		"electron-dl": "^4.0.0",
+		"electron-dl": "^3.5.2",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^5.2.0",
 		"electron-store": "^8.2.0",
@@ -176,6 +177,7 @@
 	"overrides": {
 		"async": "^3.2.5",
 		"getos": "^3.2.1",
+		"jsonfile": "^6.1.0",
 		"lodash-es": "^4.17.23",
 		"micromatch": "^4.0.8",
 		"tar": "^7.5.7",
@@ -301,6 +303,22 @@
 			{
 				"from": "node_modules/p-try",
 				"to": "node_modules/p-try"
+			},
+			{
+				"from": "node_modules/yocto-queue",
+				"to": "node_modules/yocto-queue"
+			},
+			{
+				"from": "node_modules/uri-js",
+				"to": "node_modules/uri-js"
+			},
+			{
+				"from": "node_modules/fast-json-stable-stringify",
+				"to": "node_modules/fast-json-stable-stringify"
+			},
+			{
+				"from": "node_modules/ajv/dist/compile/codegen",
+				"to": "node_modules/ajv/dist/compile/codegen"
 			},
 			{
 				"from": "node_modules/p-finally",
@@ -437,10 +455,6 @@
 			{
 				"from": "node_modules/escape-goat",
 				"to": "node_modules/escape-goat"
-			},
-			{
-				"from": "node_modules/escape-string-regexp",
-				"to": "node_modules/escape-string-regexp"
 			},
 			{
 				"from": "node_modules/execa",
@@ -597,6 +611,10 @@
 			{
 				"from": "node_modules/mkdirp",
 				"to": "node_modules/mkdirp"
+			},
+			{
+				"from": "node_modules/modify-filename",
+				"to": "node_modules/modify-filename"
 			},
 			{
 				"from": "node_modules/ms",
