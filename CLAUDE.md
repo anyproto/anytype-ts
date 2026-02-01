@@ -185,5 +185,3 @@ Use the Figma MCP tools to fetch design context and screenshots from Figma files
 For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
 - `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
 - `nodeId`: `12769:19003`
-
-test
