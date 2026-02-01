@@ -17,10 +17,12 @@ interface Props {
 	onChangeFile? (e: any, path: string): void;
 };
 
-const SMALL_WIDTH = 248;
-const ICON_WIDTH = 60;
-
 enum Size { Icon = 0, Small = 1, Full = 2 };
+
+const Sizes = {
+	[Size.Icon]: 60,
+	[Size.Small]: 260,
+};
 
 const InputWithFile: FC<Props> = ({
 	icon = '',
@@ -36,7 +38,7 @@ const InputWithFile: FC<Props> = ({
 }) => {
 
 	const [ isFocused, setIsFocused ] = useState(false);
-	const [ size, setSize ] = useState(Size.Full);
+	const [ size, setSize ] = useState(null);
 	const nodeRef = useRef(null);
 	const urlRef = useRef(null);
 	const fileWrapRef = useRef(null);
@@ -87,12 +89,12 @@ const InputWithFile: FC<Props> = ({
 
 			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
 
-			let s = Size.Full;
-			if (rect.width <= SMALL_WIDTH) {
+			let s = Size.Icon;
+			if (rect.width >= Sizes[Size.Small]) {
+				s = Size.Full;
+			} else
+			if (rect.width >= Sizes[Size.Icon]) {
 				s = Size.Small;
-			};
-			if (rect.width <= ICON_WIDTH) {
-				s = Size.Icon;
 			};
 
 			if (s != size) {

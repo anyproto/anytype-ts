@@ -200,11 +200,12 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		onVolume(1);
+		resize();
+
 		const resizeObserver = new ResizeObserver(() => {
 			raf(() => resize());
 		});
-
-		onVolume(1);
 
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
@@ -248,7 +249,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	return (
 		<div
 			ref={nodeRef}
-			className="wrap resizable audio mediaAudio"
+			className="wrap audio mediaAudio"
 		>
 			<audio ref={audioRef} preload="auto" src={src} />
 
