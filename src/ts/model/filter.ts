@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 /**
  * Filter represents a condition for filtering objects in Sets/Collections.
@@ -47,7 +47,7 @@ class Filter implements I.Filter {
 			nestedFilters: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

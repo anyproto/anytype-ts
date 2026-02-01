@@ -67,7 +67,7 @@ class DetailStore {
 	};
 
 	/**
-	 * Creates a detail list item with observables and intercepts.
+	 * Creates a detail list item with observables.
 	 * @private
 	 * @param {string} k - The relation key.
 	 * @param {any} v - The value.

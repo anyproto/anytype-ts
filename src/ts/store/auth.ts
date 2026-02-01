@@ -1,4 +1,4 @@
-import { observable, action, computed, set, makeObservable, intercept } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, S, U, Storage, analytics, Renderer, keyboard } from 'Lib';
 
 interface NetworkConfig {
@@ -102,8 +102,6 @@ class AuthStore {
 				devicesCounter: observable,
 				notSyncedCounter: observable,
 			});
-
-			intercept(obj as any, change => U.Common.intercept(obj, change));
 		} else {
 			set(obj, v);
 		};

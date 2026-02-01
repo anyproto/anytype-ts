@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 /**
  * Sort represents a sorting rule for ordering objects in Sets/Collections.
@@ -37,7 +37,7 @@ class Sort implements I.Sort {
 			customOrder: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

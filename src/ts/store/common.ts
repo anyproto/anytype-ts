@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
+import { action, computed, makeObservable, observable, set } from 'mobx';
 import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 
 interface Filter {
@@ -205,8 +205,6 @@ class CommonStore {
 			singleTabSet: action,
 			autoDownloadSet: action,
 		});
-
-		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
 	};
 
 	get config (): any {

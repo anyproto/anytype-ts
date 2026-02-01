@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 class BlockContentBookmark implements I.ContentBookmark {
 	
@@ -18,7 +18,7 @@ class BlockContentBookmark implements I.ContentBookmark {
 			url: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

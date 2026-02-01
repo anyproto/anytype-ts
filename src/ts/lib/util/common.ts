@@ -582,16 +582,6 @@ class UtilCommon {
 	};
 
 	/**
-	 * Compares an object's property to a new value and returns the change if different.
-	 * @param {any} obj - The object.
-	 * @param {any} change - The change object with newValue and name.
-	 * @returns {any|null} The change if different, otherwise null.
-	 */
-	intercept (obj: any, change: any) {
-		return this.compareJSON(change.newValue, obj[change.name]) ? null : change;
-	};
-
-	/**
 	 * Returns the scroll container jQuery object depending on popup state.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @returns {JQuery<HTMLElement>} The scroll container.

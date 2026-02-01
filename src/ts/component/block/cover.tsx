@@ -195,7 +195,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	};
 	
-	const onDragStart = (e: any) => {
+	const onDragStart = (e: DragEvent) => {
 		e.preventDefault();
 		
 		if (!isEditing) {
@@ -217,7 +217,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		win.on('mouseup.cover', e => onDragEnd(e));
 	};
 	
-	const onDragMove = (e: any) => {
+	const onDragMove = (e: DragEvent) => {
 		if (!rectRef.current) {
 			return false;
 		};
@@ -227,7 +227,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		cy.current = newY;
 	};
 	
-	const onDragEnd = (e: any) => {
+	const onDragEnd = (e: DragEvent) => {
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const rect = rectRef.current;

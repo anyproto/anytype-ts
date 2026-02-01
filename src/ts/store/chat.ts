@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, set, intercept } from 'mobx';
+import { observable, action, makeObservable, set } from 'mobx';
 import { J, I, U, M, S, Renderer, Mark } from 'Lib';
 
 class ChatStore {
@@ -144,7 +144,7 @@ class ChatStore {
 	};
 
 	/**
-	 * Creates a chat state object with observables and intercepts.
+	 * Creates a chat state object with observables.
 	 * @private
 	 * @param {I.ChatState} state - The chat state input.
 	 * @returns {ChatState} The created chat state object.
@@ -169,9 +169,6 @@ class ChatStore {
 			order: observable,
 		});
 
-		intercept(el as any, (change: any) => {
-			return (change.newValue === el[change.name] ? null : change);
-		});
 		return el;
 	};
 

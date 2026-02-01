@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 class BlockContentLink implements I.ContentLink {
 	
@@ -24,7 +24,7 @@ class BlockContentLink implements I.ContentLink {
 			relations: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

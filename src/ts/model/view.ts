@@ -1,5 +1,5 @@
-import { I, M, S, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I, M, S } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 /**
  * View represents a saved configuration for displaying objects in a Set/Collection.
@@ -88,7 +88,7 @@ class View implements I.View {
 			relations: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 	isGrid () {

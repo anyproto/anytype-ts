@@ -1,5 +1,5 @@
-import { I, U, M, S } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I, S } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 
@@ -29,7 +29,7 @@ class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 			status: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 	get isNone (): boolean {
@@ -84,7 +84,7 @@ class MembershipData implements I.MembershipData {
 			paymentProvider: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 	getTopProduct (): I.MembershipProduct | null {

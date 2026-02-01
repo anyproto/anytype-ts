@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable, isObservableMap } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 import { Mark } from './content/text';
 
 class ChatMessageContent implements I.ChatMessageContent {
@@ -22,7 +22,7 @@ class ChatMessageContent implements I.ChatMessageContent {
 			marks: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };
@@ -42,7 +42,7 @@ class ChatMessageAttachment implements I.ChatMessageAttachment {
 			type: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };
@@ -115,7 +115,7 @@ class ChatMessage implements I.ChatMessage {
 			isSynced: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };
