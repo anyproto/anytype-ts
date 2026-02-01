@@ -2,11 +2,11 @@ import { I, S, U, keyboard } from 'Lib';
 
 const electron = U.Common.getElectron();
 
-const ACCOUNT_KEYS = [
+const ACCOUNT_KEYS = new Set([
 	'spaceId',
-];
+]);
 
-const SPACE_KEYS = [
+const SPACE_KEYS = new Set([
 	'toggle',
 	'lastOpenedSimple',
 	'scroll',
@@ -18,9 +18,9 @@ const SPACE_KEYS = [
 	'graphData',
 	'recentEditMode',
 	'widgetSections',
-];
+]);
 
-const LOCAL_KEYS = [
+const LOCAL_KEYS = new Set([
 	'toggle',
 	'scroll',
 	'focus',
@@ -28,12 +28,10 @@ const LOCAL_KEYS = [
 	'progress',
 	'updateBanner',
 	'lastOpenedSimple',
-];
+]);
 
 const Api = {
 	get: (key: string, isLocal: boolean) => {
-		console.log('Api.get', key, isLocal);
-
 		let ret = {};
 		if (electron.storeGet && !isLocal) {
 			ret = electron.storeGet(key);
@@ -44,8 +42,6 @@ const Api = {
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
-		console.log('Api.set', key, isLocal);
-
 		if (electron.storeSet && !isLocal) {
 			electron.storeSet(key, obj);
 		} else {
@@ -84,7 +80,7 @@ class Storage {
 	 * @returns {boolean} True if the key is a local key.
 	 */
 	isLocal (key: string): boolean {
-		return LOCAL_KEYS.includes(key);
+		return LOCAL_KEYS.has(key);
 	};
 
 	/**
@@ -146,7 +142,6 @@ class Storage {
 			this.deleteAccountKey(key, isLocal);
 		} else {
 			Api.delete(key, isLocal);
-			localStorage.removeItem(key);
 		};
 	};
 
@@ -156,7 +151,7 @@ class Storage {
 	 * @returns {boolean} True if the key is a space key.
 	 */
 	isSpaceKey (key: string): boolean {
-		return SPACE_KEYS.includes(key);
+		return SPACE_KEYS.has(key);
 	};
 
 	/**
@@ -187,10 +182,13 @@ class Storage {
 	 */
 	getSpaceKey (key: string, isLocal: boolean, spaceId?: string) {
 		spaceId = spaceId || S.Common.space;
+		if (!spaceId) {
+			return;
+		};
 
 		const obj = this.getSpace(isLocal, spaceId);
 
-		return obj[spaceId][key];
+		return obj[spaceId]?.[key];
 	};
 
 	/**
@@ -263,7 +261,7 @@ class Storage {
 	 * @returns {boolean} True if the key is an account key.
 	 */
 	isAccountKey (key: string): boolean {
-		return ACCOUNT_KEYS.includes(key);
+		return ACCOUNT_KEYS.has(key);
 	};
 
 	/**
@@ -288,10 +286,14 @@ class Storage {
 	 * @returns {any} The value for the account key.
 	 */
 	getAccountKey (key: string, isLocal: boolean) {
-		const obj = this.getAccount(isLocal);
 		const accountId = this.getAccountId();
+		if (!accountId) {
+			return;
+		};
 
-		return obj[accountId][key];
+		const obj = this.getAccount(isLocal);
+
+		return obj[accountId]?.[key];
 	};
 
 	/**
@@ -602,7 +604,7 @@ class Storage {
 		const map = this.get('chat', this.isLocal('chat')) || {};
 
 		map[id] = Object.assign(map[id] || {}, obj);
-		this.set('chat', map, false);
+		this.set('chat', map, this.isLocal('chat'));
 	};
 
 	/**
