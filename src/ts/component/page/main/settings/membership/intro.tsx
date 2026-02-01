@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
@@ -19,16 +19,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	if (current) {
 		products.unshift(current);
-	};
-
-	const rebind = () => {
-		unbind();
-		resize();
-		$(window).on('resize.membershipIntro sidebarResize.membershipIntro', resize);
-	};
-
-	const unbind = () => {
-		$(window).off('resize.membershipIntro sidebarResize.membershipIntro');
 	};
 
 	const onSwitch = () => {
@@ -187,10 +177,9 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		};
 	};
 
-	useEffect(() => {
-		rebind();
-		return () => unbind();
-	}, []);
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<div ref={nodeRef} className="membershipIntro">

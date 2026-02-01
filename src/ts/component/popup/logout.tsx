@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Icon, Label, Button, Phrase } from 'Component';
 import { I, keyboard, translate, Storage, S, Renderer, C, analytics, U, sidebar } from 'Lib';
 
-const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
+const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { account } = S.Auth;
 	const buttonsRef = useRef(null);
@@ -106,10 +106,10 @@ const PopupLogout = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	useEffect(() => {
 		init();
-		$(window).on('keydown.logout', e => onKeyDown(e));
+		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
 
 		return () => {
-			$(window).off('keydown.logout');
+			$(window).off(`keydown.${props.id}`);
 		};
 	}, []);
 

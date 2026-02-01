@@ -40,7 +40,7 @@ const Frame = forwardRef<FrameRefProps, Props>(({
 			const node = $(nodeRef.current);
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
-				marginLeft: -node.outerWidth() / 2
+				marginLeft: -node.outerWidth() / 2,
 			});
 		});
 	};

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
@@ -162,6 +162,14 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 	};
 
 	useEffect(() => init(), [ id ]);
+
+	const resize = () => {
+		childRef.current?.resize?.();
+	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	if (!Components[id]) {
 		return null;

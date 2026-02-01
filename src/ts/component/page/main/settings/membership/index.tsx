@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Title } from 'Component';
 import { I, S, translate, U } from 'Lib';
@@ -11,6 +11,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 
 	const { data } = S.Membership;
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
+	const childRef = useRef(null);
 
 	let content: any = null;
 
@@ -19,11 +20,19 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 	} else {
 		const product = data.getTopProduct();
 		if (!product || product.isIntro) {
-			content = <Intro {...props} />;
+			content = <Intro ref={childRef} {...props} />;
 		} else {
-			content = <Purchased {...props} />;
+			content = <Purchased ref={childRef} {...props} />;
 		};
 	};
+
+	const resize = () => {
+		childRef.current?.resize?.();
+	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<>
