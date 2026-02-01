@@ -41,7 +41,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const fields = block.fields || {};
 	const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 	const { theme } = S.Common;
-	const { focused } = focus.state;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
@@ -63,6 +62,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		renderLatex();
 
 		return () => {
+			const { focused } = focus.state;
+
 			S.Common.clearTimeout('blockContext');
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
@@ -74,6 +75,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
+		const { focused } = focus.state;
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
@@ -853,6 +855,22 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		// Calculate correct caret position accounting for rendered LaTeX elements
 		window.setTimeout(() => {
+			// If focus was already programmatically set to this block (e.g., after merge),
+			// trust that range instead of reading from browser (which may be stale)
+			if (focus.state.focused === block.id && focus.state.range) {
+				// Only restore source text if there's rendered LaTeX that needs converting back for editing
+				const html = getHtmlValue();
+				if (html.includes('<markuplatex')) {
+					const currentBlock = S.Block.getLeaf(rootId, id);
+					if (currentBlock) {
+						setValue(currentBlock.getText());
+					};
+				};
+
+				focus.apply();
+				return;
+			};
+
 			const selection = window.getSelection();
 
 			let range = getRange();

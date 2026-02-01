@@ -909,9 +909,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Backspace
 			keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
-				if (!readonly) {
-					onBackspaceBlock(e, range, pressed, length, props);
-				};
+				onBackspaceBlock(e, range, pressed, length, props);
 			});
 
 			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
@@ -1396,6 +1394,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	// Backspace / Delete
 	const onBackspaceBlock = (e: any, range: I.TextRange, pressed: string, length: number, props: any) => {
+		if (readonly) {
+			return;
+		};
+
 		const { isInsideTable } = props;
 		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
@@ -2179,7 +2181,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			if (next) {
-				focusSet(blockId, to, to, true);
+				focusSet(next.id, to, to, true);
 			};
 
 			analytics.event('DeleteBlock', { count: 1 });
@@ -2392,8 +2394,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const focusSet = (id: string, from: number, to: number, scroll: boolean) => {
+		// Set focus state immediately so onFocusHandler can detect programmatic focus
+		focus.set(id, { from, to });
+
+		// Delay applying to DOM to allow React to finish rendering
 		window.setTimeout(() => {
-			focus.set(id, { from, to });
 			focus.apply();
 
 			if (scroll) {
