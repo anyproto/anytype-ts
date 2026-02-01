@@ -41,7 +41,7 @@ const InputWithFile: FC<Props> = ({
 	const urlRef = useRef(null);
 	const fileWrapRef = useRef(null);
 	const timeout = useRef(0);
-	const cn = [ 'inputWithFile', 'resizable' ];
+	const cn = [ 'inputWithFile' ];
 	const or = ` ${translate('commonOr')} `;
 	const isSmall = size == Size.Small;
 	const isIcon = size == Size.Icon;
@@ -74,24 +74,6 @@ const InputWithFile: FC<Props> = ({
 		placeholder += or + (!isSmall ? textFile : '');
 	};
 
-	const rebind = () => {
-		unbind();
-
-		if (canResize) {
-			$(nodeRef.current).on('resizeMove', () => resize());
-		};
-
-		$(fileWrapRef.current).on('mousedown', e => onClickFile(e));
-	};
-	
-	const unbind = () => {
-		if (canResize) {
-			$(nodeRef.current).off('resizeMove');
-		};
-
-		$(fileWrapRef.current).off('mousedown');
-	};
-	
 	const resize = () => {
 		if (!canResize) {
 			return;
@@ -179,30 +161,33 @@ const InputWithFile: FC<Props> = ({
 
 	useEffect(() => {
 		resize();
-		rebind();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
 			const { focused } = focus.state;
 
-			unbind();
-
 			if (focused == block.id) {
 				keyboard.setFocus(false);
 			};
+
+			resizeObserver.disconnect();
 		};
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
-
 		if (isFocused) {
 			keyboard.setFocus(true);
 			urlRef.current?.focus();
 			focus.set(block.id, { from: 0, to: 0 });
 		};
-
-	}, [ isFocused, size ]);
+	}, [ isFocused ]);
 	
 	return (
 		<div 
@@ -232,7 +217,7 @@ const InputWithFile: FC<Props> = ({
 				</form>
 
 				{withFile ? (
-					<span ref={fileWrapRef} className="fileWrap">
+					<span ref={fileWrapRef} className="fileWrap" onMouseDown={onClickFile}>
 						{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
 						<span className="border">{textFile}</span>
 					</span>

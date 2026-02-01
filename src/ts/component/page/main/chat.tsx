@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
@@ -89,6 +89,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		});
 	};
 
+	const resize = () => {
+		chatRef.current?.getChildNode()?.resize();
+	};
+
 	useEffect(() => {
 		open();
 		rebind();
@@ -105,6 +109,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			open();
 		};
 	}, [ rootId ]);
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	let content = null;
 
