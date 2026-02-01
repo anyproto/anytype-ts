@@ -1,3 +1,5 @@
+import { DragEvent } from 'react';
+
 export enum SidebarDirection {
 	Left	 = 'left',
 	Right	 = 'right',
@@ -40,7 +42,7 @@ export interface SidebarSectionComponent extends SidebarPageComponent {
 	readonly?: boolean;
 	onChange?(update: any): void;
 	disableButton?(v: boolean): void;
-	onDragStart?: (e: React.DragEvent) => void;
+	onDragStart?: (e: DragEvent) => void;
 };
 
 export interface SidebarSectionRef {
