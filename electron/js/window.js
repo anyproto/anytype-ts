@@ -212,13 +212,16 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
+		console.log('[WindowManager] createChallenge called', options);
 		// Check if challenge window already exists
 		for (const win of this.list) {
 			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
+				console.log('[WindowManager] Challenge window already exists');
 				return win;
 			};
 		};
 
+		console.log('[WindowManager] Creating new challenge window');
 		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
@@ -239,7 +242,7 @@ class WindowManager {
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
 		win.webContents.once('did-finish-load', () => {
-			win.webContents.postMessage('challenge', options);
+			win.webContents.send('challenge', options);
 		});
 
 		setTimeout(() => this.closeChallenge(options), 30000);

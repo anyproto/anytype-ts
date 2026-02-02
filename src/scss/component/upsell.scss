@@ -4,7 +4,7 @@
     display: flex; justify-content: space-between; align-items: center; background: var(--color-system-selection);
     padding: 16px; border-radius: 8px; gap: 0px 8px;
 }
-.upsellBanner.isRed { background: linear-gradient(90deg, var(--color-bg-red) 0%, #fff6f3 100%)}
+.upsellBanner.isRed { background: linear-gradient(90deg, var(--color-very-light-red) 0%, #fff6f3 100%)}
 
 .upsellBanner {
     .label { margin-bottom: 0px; display: inline; }
