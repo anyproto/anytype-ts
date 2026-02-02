@@ -36,7 +36,6 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	const inputRef = useRef(null);
 	const relation: any = relationKey ? S.Record.getRelationByKey(relationKey) : null;
 	const conditionOptions = relation ? Relation.filterConditionsByType(relation.format) : [];
-	const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
 	const operatorOptions = [
 		{ id: String(I.FilterOperator.And), name: translate('commonAnd') },
 		{ id: String(I.FilterOperator.Or), name: translate('commonOr') },
@@ -133,7 +132,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 									horizontal: I.MenuDirection.Center,
 									offsetY: 4,
 									data: {
-										value: value || U.Date.now(),
+										value: rule.value || U.Date.now(),
 										canEdit: true,
 										canClear: true,
 										onChange: (v: number) => {
