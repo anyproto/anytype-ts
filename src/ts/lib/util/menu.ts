@@ -16,8 +16,8 @@ interface SpaceContextParam {
 };
 
 interface ActionMenuParam {
-	rootId: string; 
-	blockId: string; 
+	rootId?: string; 
+	blockId?: string; 
 	hasText?: boolean; 
 	hasFile?: boolean; 
 	hasCommon?: boolean;
