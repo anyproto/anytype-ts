@@ -37,7 +37,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		return () => {
 			unbind();
 		};
-	}, []);
+	}, [ relations.length ]);
 
 	useEffect(() => {
 		cache.current.clearAll();

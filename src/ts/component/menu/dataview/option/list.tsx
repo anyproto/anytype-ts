@@ -10,7 +10,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const { id, param, close, position, setActive, getId, onKeyDown, getSize } = props;
 	const { data, className, classNameWrap } = param;
-	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds } = data;
+	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds, filter, selectFirst } = data;
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
 	const optionSelectRef = useRef<OptionSelectRefProps>(null);
@@ -40,7 +40,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 		keyboard.shortcut('arrowright', e, () => {
 			const item = items[currentIndex];
-			if (item && item.id != 'add') {
+			if (item && (item.id != 'add')) {
 				optionSelectRef.current?.onOver(e, item);
 			};
 			ret = true;
@@ -67,6 +67,28 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			unbind();
 		};
 	}, []);
+
+	useEffect(() => {
+		optionSelectRef.current?.setFilter(filter);
+	}, [ filter ]);
+
+	useEffect(() => {
+		if (!selectFirst) {
+			return;
+		};
+
+		S.Menu.updateData(id, { selectFirst: false });
+		optionSelectRef.current?.setFilter(filter);
+
+		window.setTimeout(() => {
+			const items = optionSelectRef.current?.getItems() || [];
+			const item = items[0];
+
+			if (item) {
+				optionSelectRef.current?.onClick({ stopPropagation: () => {} }, item);
+			};
+		});
+	}, [ selectFirst ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
