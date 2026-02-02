@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, CSSProperties, MouseEvent, ReactElement } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
@@ -7,7 +8,6 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
-import $ from 'jquery';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -99,6 +99,7 @@ export interface OptionSelectRefProps {
 	onOver: (e: MouseEvent, item: SelectItem) => void;
 	onClick: (e: MouseEvent | { stopPropagation: () => void }, item: SelectItem) => void;
 	onSortEnd?: (result: any) => void;
+	setFilter: (filter: string) => void;
 };
 
 const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, ref) => {
@@ -797,6 +798,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		setIndex: (i: number) => n.current = i,
 		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
+		setFilter,
 		onOver,
 		onClick,
 		onSortEnd,

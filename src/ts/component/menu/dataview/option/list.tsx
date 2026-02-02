@@ -10,7 +10,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const { id, param, close, position, setActive, getId, onKeyDown, getSize } = props;
 	const { data, className, classNameWrap } = param;
-	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds } = data;
+	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds, filter } = data;
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
 	const optionSelectRef = useRef<OptionSelectRefProps>(null);
@@ -67,6 +67,10 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			unbind();
 		};
 	}, []);
+
+	useEffect(() => {
+		optionSelectRef.current?.setFilter(filter);
+	}, [ filter ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
