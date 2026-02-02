@@ -65,7 +65,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		keyboard.shortcut('prevSpace, nextSpace', e, pressed => {
 			checkKeyUp.current = true;
-			onArrow(pressed == 'prevSpace' ? -1 : 1);
 
 			if (sidebar.isAnimating) {
 				return;
@@ -74,6 +73,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			if (isClosed) {
 				closeSidebar.current = true;
 				sidebar.leftPanelOpen(width, false, false);
+
+				// Wait for sidebar to open and list to render before navigating
+				requestAnimationFrame(() => {
+					onArrow(pressed == 'prevSpace' ? -1 : 1);
+				});
+			} else {
+				onArrow(pressed == 'prevSpace' ? -1 : 1);
 			};
 		});
 	};
