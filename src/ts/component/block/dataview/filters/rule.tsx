@@ -84,14 +84,17 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			case I.RelationType.Date: {
 				const quickOptions = Relation.filterQuickOptions(relation.format, condition);
 				return (
-					<Select
-						id={`${nodeId}-quick`}
-						value={String(rule.quickOption || I.FilterQuickOption.ExactDate)}
-						options={quickOptions}
-						onChange={v => onUpdate(index, { quickOption: Number(v) as I.FilterQuickOption })}
-						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
-						readonly={readonly}
-					/>
+					<div className="a">
+						<Select
+							key={`${nodeId}-quick-${relationKey}`}
+							id={`${nodeId}-quick`}
+							value={String(rule.quickOption || I.FilterQuickOption.ExactDate)}
+							options={quickOptions}
+							onChange={v => onUpdate(index, { quickOption: Number(v) as I.FilterQuickOption })}
+							menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+							readonly={readonly}
+						/>
+					</div>
 				);
 			};
 
@@ -101,14 +104,17 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 				];
 				return (
-					<Select
-						id={`${nodeId}-checkbox`}
-						value={value ? '1' : '0'}
-						options={checkboxOptions}
-						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
-						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
-						readonly={readonly}
-					/>
+					<div className="b">
+						<Select
+							key={`${nodeId}-checkbox-${relationKey}`}
+							id={`${nodeId}-checkbox`}
+							value={value ? '1' : '0'}
+							options={checkboxOptions}
+							onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
+							menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+							readonly={readonly}
+						/>
+					</div>
 				);
 			};
 
