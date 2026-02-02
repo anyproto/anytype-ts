@@ -15,6 +15,20 @@ interface SpaceContextParam {
 	route: string;
 };
 
+interface ActionMenuParam {
+	rootId: string; 
+	blockId: string; 
+	hasText?: boolean; 
+	hasFile?: boolean; 
+	hasCommon?: boolean;
+	hasCopyMedia?: boolean; 
+	hasBookmark?: boolean; 
+	hasDataview?: boolean; 
+	hasTurnObject?: boolean; 
+	hasClipboard?: boolean; 
+	count?: number;
+};
+
 /**
  * UtilMenu provides utilities for generating menu items and handling menu operations.
  *
@@ -276,19 +290,35 @@ class UtilMenu {
 	 * @param {any} param - The action menu parameters.
 	 * @returns {any[]} The list of actions.
 	 */
-	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, count } = param;
+
+	getActions (param: ActionMenuParam) {
+		const { rootId, blockId, hasText, hasFile, hasCommon, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, hasClipboard, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
-		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
-			{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
-			{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
-			{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
-			{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
-			{ isDiv: true },
-			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-		];
+
+		let items: any[] = [];
+
+		if (hasCommon) {
+			items = items.concat([
+				{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+				{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
+			]);
+		};
+
+		if (hasClipboard) {
+			items = items.concat([
+				{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
+				{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
+				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+			]);
+		};
+
+		if (hasCommon) {
+			items = items.concat([
+				{ isDiv: true },
+				{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+			]);
+		};
 
 		if (hasTurnObject) {
 			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
