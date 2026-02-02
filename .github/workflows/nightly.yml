@@ -303,7 +303,7 @@ jobs:
             .build.win.publish[0].bucket = "${{ env.S3_BUCKET }}" |
             .build.win.publish[0].region = "${{ secrets.NIGHTLY_AWS_REGION }}" |
             .build.linux.description = "Anytype Nightly" |
-            .build.linux.desktop.Name = "Anytype Nightly" |
+            .build.linux.desktop.entry.Name = "Anytype Nightly" |
             .build.linux.publish |= map(del(.url)) |
             .build.linux.publish[0].provider = "s3" |
             .build.linux.publish[0].bucket = "${{ env.S3_BUCKET }}" |
