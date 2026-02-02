@@ -12,10 +12,10 @@
 
 	/* Shape */
 
-	--color-shape-primary: #e3e3e3;
+	--color-shape-primary: var(--color-light-grey);
 	--color-shape-secondary: #ebebeb;
 	--color-shape-secondary-inversion: #292929;
-	--color-shape-tertiary: #f2f2f2;
+	--color-shape-tertiary: var(--color-very-light-grey);
 
 	--color-shape-highlight-dark: rgba(0, 0, 0, 0.11);
 	--color-shape-highlight-medium: rgba(0, 0, 0, 0.05);
@@ -40,16 +40,6 @@
 	--color-bg-primary-90: rgba(255,255,255,0.9);
 	--color-bg-primary-inversion: #171717;
 	--color-bg-loader: rgba(255,255,255,0.7);
-	--color-bg-yellow: #fcf8d6;
-	--color-bg-orange: #fff2d7;
-	--color-bg-red: #fee7e0;
-	--color-bg-pink: #fbdff2;
-	--color-bg-purple: #f3e7f8;
-	--color-bg-blue: #e4e8fc;
-	--color-bg-ice: #ddf1fc;
-	--color-bg-teal: #d9f6f4;
-	--color-bg-lime: #e5f8d6;
-
 	/* System */
 
 	--color-system-accent-125: #105aef;
@@ -61,15 +51,55 @@
 
 	/* Color */
 
+	--color-very-light-yellow: #fcf8d6;
+	--color-light-yellow: #f4eb91;
 	--color-yellow: #ecd91b;
+	--color-dark-yellow: #afa100;
+
+	--color-very-light-orange: #fff2d7;
+	--color-light-orange: #fcdc9c;
 	--color-orange: #ffb522;
+	--color-dark-orange: #c38400;
+
+	--color-very-light-red: #fee7e0;
+	--color-light-red: #fcd1c3;
 	--color-red: #f55522;
+	--color-dark-red: #e9410b;
+
+	--color-very-light-pink: #fbdff2;
+	--color-light-pink: #f8c2e5;
 	--color-pink: #e51ca0;
+	--color-dark-pink: #d20d8f;
+
+	--color-very-light-purple: #f3e7f8;
+	--color-light-purple: #e8d0f1;
 	--color-purple: #ab50cc;
+	--color-dark-purple: #9f43c1;
+
+	--color-very-light-blue: #e4e8fc;
+	--color-light-blue: #cbd2fa;
 	--color-blue: #3e58eb;
+	--color-dark-blue: #3e58eb;
+
+	--color-very-light-ice: #ddf1fc;
+	--color-light-ice: #b2dff9;
 	--color-ice: #2aa7ee;
+	--color-dark-ice: #188dcf;
+
+	--color-very-light-teal: #d9f6f4;
+	--color-light-teal: #a9ebe6;
 	--color-teal: #0fc8ba;
+	--color-dark-teal: #0ba599;
+
+	--color-very-light-lime: #e5f8d6;
+	--color-light-lime: #c5efa3;
 	--color-lime: #5dd400;
+	--color-dark-lime: #4dae00;
+
+	--color-very-light-grey: #f2f2f2;
+	--color-light-grey: #e3e3e3;
+	--color-grey: #949494;
+	--color-dark-grey: #949494;
 
 	/* Tag */
 
@@ -79,21 +109,10 @@
 	--color-tag-red: #e2400c;
 	--color-tag-pink: #ca1b8e;
 	--color-tag-purple: #9e30c4;
-	--color-tag-blue: #3e58eb;
+	--color-tag-blue: var(--color-blue);
 	--color-tag-ice: #1c8bca;
 	--color-tag-teal: #0caaa3;
 	--color-tag-lime: #64b90f;
-
-	--color-bg-tag-grey: #e3e3e3;
-	--color-bg-tag-yellow: #f4eb91;
-	--color-bg-tag-orange: #fcdc9c;
-	--color-bg-tag-red: #fcd1c3;
-	--color-bg-tag-pink: #f8c2e5;
-	--color-bg-tag-purple: #e8d0f1;
-	--color-bg-tag-blue: #cbd2fa;
-	--color-bg-tag-ice: #b2dff9;
-	--color-bg-tag-teal: #a9ebe6;
-	--color-bg-tag-lime: #c5efa3;
 
 	/* Font */
 

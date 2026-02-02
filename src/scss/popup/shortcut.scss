@@ -39,16 +39,16 @@
 				.item.canEdit:not(.isEditing) {
 					&:hover, &.hover {
 						.symbols {
-							.label { background-color: var(--color-bg-blue); }
+							.label { background-color: var(--color-very-light-blue); }
 						}
 
 						.label.grey { color: var(--color-blue); }
 					}
 				}
-				.item.hasError { background: var(--color-bg-red); }
+				.item.hasError { background: var(--color-very-light-red); }
 				.item.hasError {
 					.symbols {
-						.label { background-color: var(--color-bg-tag-red); }
+						.label { background-color: var(--color-light-red); }
 					}
 				}
 

@@ -25,6 +25,12 @@ window.Electron = {
 	currentWindow: () => ({}),
 	Api: () => {},
 	platform: '',
+	tabId: () => null,
+	winId: () => 0,
+	on: () => {},
+	removeAllListeners: () => {},
+	send: () => {},
+	getTheme: () => '',
 };
 
 window.Anytype = {
@@ -39,7 +45,7 @@ window.AnytypeGlobalConfig = {
 	emojiUrl: J.Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
 	menuBorderBottom: 16,
-	flagsMw: { request: false },
+	flagsMw: { request: true, event: true },
 };
 
 let rootId = '';
