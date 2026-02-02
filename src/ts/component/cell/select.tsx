@@ -56,10 +56,17 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			};
 
 			e.preventDefault();
-			
+
 			const value = getValue();
 			value.existing.pop();
 			setValue(value.existing);
+		});
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			S.Menu.updateData('dataviewOptionList', { filter: getValue().new, selectFirst: true });
 		});
 
 		placeholderCheck();

@@ -2,6 +2,9 @@
 
 .menus {
 	.menu.menuDataviewOptionList { width: var(--menu-width-value); }
+	.menu.menuDataviewOptionList {
+		.content { padding: 0px; }
+	}
 
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
