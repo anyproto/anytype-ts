@@ -20,14 +20,17 @@
 				.inner { display: flex; align-items: center; gap: 0px 8px; }
 				.inner {
 					.relationSelect,
-					.conditionSelect {
+					.conditionSelect,
+					.valueSelect .select {
 						border: 1px solid var(--color-shape-secondary); border-radius: 6px;  flex-shrink: 0; padding: 6px 24px 6px 10px;
 						height: 36px;
 					}
 					.relationSelect:hover,
 					.relationSelect.hover,
 					.conditionSelect:hover,
-					.conditionSelect.hover { background-color: var(--color-shape-tertiary); }
+					.conditionSelect.hover,
+					.valueSelect .select:hover,
+					.valueSelect .select.hover { background-color: var(--color-shape-tertiary); }
 
 					.relationSelect,
 					.conditionSelect {
@@ -80,12 +83,15 @@
 				.rule {
 					.inner {
 						.relationSelect,
-						.conditionSelect { background-color: var(--color-bg-primary); }
+						.conditionSelect,
+						.valueSelect .select { background-color: var(--color-bg-primary); }
 
 						.relationSelect:hover,
 						.relationSelect.hover,
 						.conditionSelect:hover,
-						.conditionSelect.hover { background-color: var(--color-shape-tertiary); }
+						.conditionSelect.hover,
+						.valueSelect .select:hover,
+						.valueSelect .select.hover { background-color: var(--color-shape-tertiary); }
 					}
 				}
 			}

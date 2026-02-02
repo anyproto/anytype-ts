@@ -10,7 +10,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
-	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead } = data;
+	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead, onFilterPropChange } = data;
 	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const conditionRef = useRef(null);
@@ -57,28 +57,28 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		init();
 
-		const item = view.getFilter(itemId);
-		if (!item) {
+		const it = filterProp || view.getFilter(itemId);
+		if (!it) {
 			return;
 		};
 
-		const relation = S.Record.getRelationByKey(item.relationKey);
+		const rel = S.Record.getRelationByKey(it.relationKey);
 
-		if (!relation || !inputRef.current) {
+		if (!rel || !inputRef.current) {
 			return;
 		};
 
-		const isDate = Relation.isDate(relation.format);
-		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format);
+		const isDate = Relation.isDate(rel.format);
+		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(rel.format);
 
 		if (inputRef.current.setValue && !withFilter) {
 			if (isDate) {
 				// NumberOfDaysAgo/NumberOfDaysNow use input, ExactDate uses CalendarSelect
-				if (item.quickOption != I.FilterQuickOption.ExactDate) {
-					inputRef.current.setValue(item.value);
+				if (it.quickOption != I.FilterQuickOption.ExactDate) {
+					inputRef.current.setValue(it.value);
 				};
 			} else {
-				inputRef.current.setValue(item.value);
+				inputRef.current.setValue(it.value);
 			};
 		};
 
@@ -103,9 +103,9 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			return;
 		};
 
-		const item = view.getFilter(itemId);
-		if (item) {
-			checkClear(item.value);
+		const it = filterProp || view.getFilter(itemId);
+		if (it) {
+			checkClear(it.value);
 		};
 	};
 
@@ -181,9 +181,11 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	};
 
 	const onChange = (k: string, v: any, withTimeout?: boolean) => {
-		if (filterProp) {
-			filterProp[k] = k == 'value' ? Relation.formatValue(relation, v, false) : v;
-			save();
+		if (filterProp && onFilterPropChange) {
+			const formatted = (k == 'value') ? Relation.formatValue(relation, v, false) : v;
+
+			onFilterPropChange(k, formatted);
+			S.Menu.updateData(props.id, { filter: { ...filterProp, value: v } });
 			setDummy(dummy + 1);
 			return;
 		};

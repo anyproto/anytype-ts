@@ -53,7 +53,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			return null;
 		};
 
-		const TextInput = ({ readonly }) => (
+		const TextInput = (props: any) => (
 			<Input
 				ref={inputRef}
 				value={value}
@@ -159,7 +159,14 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onValueClick = () => {
 		const view = getView();
-		if (!view || readonly) {
+		const withMenu = [
+			I.RelationType.Object,
+			I.RelationType.File,
+			I.RelationType.Select,
+			I.RelationType.MultiSelect
+		].includes(relation.format);
+
+		if (!view || readonly || !withMenu) {
 			return;
 		};
 
@@ -177,8 +184,8 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				readonly,
 				filter: rule,
 				hideHead: true,
-				save: () => {
-					onUpdate(index, { value: rule.value });
+				onFilterPropChange: (k: string, v: any) => {
+					onUpdate(index, { [k]: v });
 				},
 			}
 		});
@@ -256,7 +263,11 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			id={nodeId}
 			className={cn.join(' ')}
 		>
-			{index == 0 ? '' : index == 1 ? (
+			{index == 0 ? (
+				<div className="head">
+					<Label text={translate('commonWhere')} />
+				</div>
+			) : index == 1 ? (
 				<div className="head">
 					<Select
 						ref={operatorRef}

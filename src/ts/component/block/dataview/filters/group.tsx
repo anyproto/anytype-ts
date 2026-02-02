@@ -56,6 +56,7 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		view.setFilter(updated);
 		C.BlockDataviewFilterReplace(rootId, blockId, view.id, filter.id, updated, () => {
 			loadData(view.id, 0, false);
 		});
