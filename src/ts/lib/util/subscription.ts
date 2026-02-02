@@ -710,6 +710,11 @@ class UtilSubscription {
 		};
 	};
 
+	destroyTypeCheck (callBack?: () => void) {
+		const ids = S.Record.getTypes().map(type => this.typeCheckSubId(type.uniqueKey));
+		this.destroyList(ids, true, callBack);
+	};
+
 	/**
 	 * Destroys all active subscriptions and optionally clears state.
 	 * @param {() => void} [callBack] - Optional callback after destruction.

@@ -242,6 +242,7 @@ class UtilRouter {
 		};
 
 		this.isOpening = true;
+		U.Subscription.destroyTypeCheck();
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
