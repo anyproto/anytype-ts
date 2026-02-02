@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Select, Input, IconObject, Label, Tag } from 'Component';
@@ -43,6 +43,33 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	];
 	const operatorOption: any = operatorOptions.find(it => it.id == String(operator)) || {};
 	const operatorName = operatorOption.name || '';
+	const subId = `advancedFilter-${nodeId}`;
+
+	useEffect(() => {
+		if (!relation) {
+			return;
+		};
+
+		if (![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
+			return;
+		};
+
+		const ids = Relation.getArrayValue(value).filter(it => it);
+
+		if (!ids.length) {
+			return;
+		};
+
+		U.Subscription.subscribeIds({
+			subId,
+			ids,
+			noDeps: true,
+		});
+
+		return () => {
+			U.Subscription.destroyList([ subId ]);
+		};
+	}, [ relationKey, value ]);
 
 	const getValue = () => {
 		if (!relation) {
@@ -52,16 +79,6 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			return null;
 		};
-
-		const TextInput = (props: any) => (
-			<Input
-				ref={inputRef}
-				value={value}
-				placeholder={translate(`placeholderCell${relation.format}`)}
-				onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
-				readonly={readonly}
-			/>
-		);
 
 		switch (relation.format) {
 			case I.RelationType.Date: {
@@ -100,21 +117,29 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			case I.RelationType.Url:
 			case I.RelationType.Phone:
 			case I.RelationType.Email: {
-				return <TextInput readonly={readonly} />;
+				return (
+					<Input
+						ref={inputRef}
+						value={value}
+						placeholder={translate(`placeholderCell${relation.format}`)}
+						onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
+						readonly={readonly}
+					/>
+				);
 			};
 
 			case I.RelationType.Object:
 			case I.RelationType.File: {
 				const items = Relation.getArrayValue(value)
-					.map(id => S.Detail.get(rootId, id, []))
+					.map(id => S.Detail.get(subId, id, []))
 					.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 
 				if (!items.length) {
-					return <TextInput readonly={true} />;
+					return null;
 				};
 
 				return (
-					<span className="over">
+					<div className="objectsList">
 						{items.map((item: any) => (
 							<ItemObject
 								key={item.id}
@@ -124,7 +149,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 								canEdit={false}
 							/>
 						))}
-					</span>
+					</div>
 				);
 			};
 
@@ -134,11 +159,11 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					.filter(it => !it.isArchived && !it.isDeleted && !it._empty_);
 
 				if (!items.length) {
-					return <TextInput readonly={true} />;
+					return null;
 				};
 
 				return (
-					<span className="over">
+					<div className="optionsList">
 						{items.map((item: any) => (
 							<Tag
 								key={item.id}
@@ -147,7 +172,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 								className={Relation.selectClassName(relation.format)}
 							/>
 						))}
-					</span>
+					</div>
 				);
 			};
 

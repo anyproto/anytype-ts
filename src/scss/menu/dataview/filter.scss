@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFilterList { width: var(--menu-width-add); }
+	.menu.menuDataviewFilterList { width: var(--menu-width-advanced); }
 	.menu.menuDataviewFilterList {
 		.content { padding-top: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }

@@ -50,19 +50,24 @@
 
 					.valueSelect { flex-grow: 1; min-width: 0; }
 					.valueSelect {
-						&.isEmpty {
-							&.isSelect,
-							&.isMultiSelect,
-							&.isObject,
-							&.isFile {
-								height: 36px; border-radius: 18px; border: 1px solid var(--color-shape-secondary); background-color: var(--color-shape-highlight-light);
-							}
+						&.isSelect,
+						&.isMultiSelect,
+						&.isObject,
+						&.isFile {
+							height: 36px; border-radius: 6px; padding: 6px 10px; border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary);
 						}
+
 						.input {
 							padding: 6px 12px 8px 12px; border-radius: 18px; border: 1px solid var(--color-shape-secondary);
 							background-color: var(--color-shape-highlight-light); height: 36px;
 						}
 						.input.isFocused { border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
+
+						.optionsList,
+						.objectsList { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; height: 100%; align-items: center; }
+						.objectsList {
+							.flex { gap: 6px; }
+						}
 					}
 
 					.icon.more { flex-shrink: 0; }
