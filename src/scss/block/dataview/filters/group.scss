@@ -68,6 +68,11 @@
 						.objectsList {
 							.flex { gap: 6px; }
 						}
+
+						.dateWrapper {display: flex; flex-wrap: nowrap; gap: 6px; }
+						.dateWrapper {
+							.dateInput { flex-grow: 1; }
+						}
 					}
 
 					.icon.more { flex-shrink: 0; }

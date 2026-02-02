@@ -82,18 +82,86 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 		switch (relation.format) {
 			case I.RelationType.Date: {
+				const quickOption = rule.quickOption || I.FilterQuickOption.ExactDate;
 				const quickOptions = Relation.filterQuickOptions(relation.format, condition);
+
+				let dateValue = null;
+
+				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
+					dateValue = (
+						<Input
+							key={`${nodeId}-days-${quickOption}`}
+							ref={inputRef}
+							value={value}
+							placeholder={translate(`placeholderCell${I.RelationType.Number}`)}
+							onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
+							readonly={readonly}
+						/>
+					);
+				} else
+				if (quickOption == I.FilterQuickOption.ExactDate) {
+					const mask = [];
+					const ph = [];
+					const { dateFormat } = S.Common;
+
+					switch (dateFormat) {
+						case I.DateFormat.ISO: { mask.push('9999.99.99'); ph.push('yyyy.mm.dd'); break; };
+						case I.DateFormat.ShortUS: { mask.push('99.99.9999'); ph.push('mm.dd.yyyy'); break; };
+						default: { mask.push('99.99.9999'); ph.push('dd.mm.yyyy'); break; };
+					};
+
+					dateValue = (
+						<Input
+							key={`${nodeId}-date-${quickOption}`}
+							ref={inputRef}
+							value={value ? U.Date.date('d.m.Y', value) : ''}
+							placeholder={ph.join(' ')}
+							maskOptions={{
+								mask: mask.join(' '),
+								separator: '.',
+								alias: 'datetime',
+							}}
+							readonly={readonly}
+							onClick={() => {
+								if (readonly) {
+									return;
+								};
+
+								S.Menu.open('calendar', {
+									element: `#${nodeId} .dateInput`,
+									classNameWrap: 'fromBlock',
+									horizontal: I.MenuDirection.Center,
+									offsetY: 4,
+									data: {
+										value: value || U.Date.now(),
+										canEdit: true,
+										canClear: true,
+										onChange: (v: number) => {
+											onUpdate(index, { value: v });
+											inputRef.current?.setValue(v ? U.Date.date('d.m.Y', v) : '');
+										},
+									},
+								});
+							}}
+						/>
+					);
+				};
+
 				return (
-					<div className="a">
+					<div className="dateWrapper">
 						<Select
-							key={`${nodeId}-quick-${relationKey}`}
+							key={`${nodeId}-quick-${relationKey}-${condition}`}
 							id={`${nodeId}-quick`}
-							value={String(rule.quickOption || I.FilterQuickOption.ExactDate)}
+							value={String(quickOption)}
 							options={quickOptions}
-							onChange={v => onUpdate(index, { quickOption: Number(v) as I.FilterQuickOption })}
+							onChange={v => onUpdate(index, {
+								quickOption: Number(v) as I.FilterQuickOption,
+								value: Relation.formatValue(relation, null, false),
+							})}
 							menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
 							readonly={readonly}
 						/>
+						{dateValue ? <div className="dateInput">{dateValue}</div> : ''}
 					</div>
 				);
 			};
@@ -104,17 +172,15 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 				];
 				return (
-					<div className="b">
-						<Select
-							key={`${nodeId}-checkbox-${relationKey}`}
-							id={`${nodeId}-checkbox`}
-							value={value ? '1' : '0'}
-							options={checkboxOptions}
-							onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
-							menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
-							readonly={readonly}
-						/>
-					</div>
+					<Select
+						key={`${nodeId}-checkbox-${relationKey}`}
+						id={`${nodeId}-checkbox`}
+						value={value ? '1' : '0'}
+						options={checkboxOptions}
+						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
+						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+						readonly={readonly}
+					/>
 				);
 			};
 
@@ -330,7 +396,25 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					id={`${nodeId}-condition`}
 					value={String(condition)}
 					options={conditionOptions}
-					onChange={v => onUpdate(index, { condition: Number(v) as I.FilterCondition })}
+					onChange={v => {
+						const newCondition = Number(v) as I.FilterCondition;
+						const data: Partial<I.Filter> = { condition: newCondition };
+
+						if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(newCondition)) {
+							data.value = Relation.formatValue(relation, null, false);
+						};
+
+						if (relation.format == I.RelationType.Date) {
+							const qo = Relation.filterQuickOptions(relation.format, newCondition);
+							const currentQo = qo.find(it => it.id == rule.quickOption);
+
+							if (!currentQo && qo.length) {
+								data.quickOption = qo[0].id as I.FilterQuickOption;
+							};
+						};
+
+						onUpdate(index, data);
+					}}
 					menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
 					readonly={readonly}
 				/>
