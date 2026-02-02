@@ -473,9 +473,14 @@ class Relation {
 			return false;
 		};
 
-		const { condition, value, quickOption, relationKey } = filter;
-		const relation = S.Record.getRelationByKey(relationKey);
+		const { condition, value, quickOption, relationKey, operator } = filter;
+		const isAdvanced = ((relationKey == '') && [ I.FilterOperator.And, I.FilterOperator.Or ].includes(operator));
 
+		if (isAdvanced) {
+			return (filter.nestedFilters || []).some(it => this.isFilterActive(it));
+		};
+
+		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
 			return false;
 		};

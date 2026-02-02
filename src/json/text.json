@@ -1,6 +1,8 @@
 {
 	"commonError": "Error",
-	"commonOr": "or",
+	"commonOr": "Or",
+	"commonAnd": "And",
+	"commonWhere": "Where",
 	"commonMore": "more",
 	"commonOf": "of",
 	"commonTo": "to",
@@ -1728,6 +1730,9 @@
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
 	"menuDataviewFilterNewFilter": "New filter",
 	"menuDataviewFilterAdvancedAdd": "Add advanced filter",
+	"menuDataviewFilterAddRule": "Add rule",
+	"menuDataviewFilterDeleteFilter": "Delete filter",
+	"menuDataviewFilterTurnIntoGroup": "Turn into group",
 	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open in browser",

@@ -10,7 +10,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
-	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget } = data;
+	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead, onFilterPropChange } = data;
 	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const conditionRef = useRef(null);
@@ -22,7 +22,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const [ dummy, setDummy ] = useState(0);
 
 	const view = getView();
-	const item = view?.getFilter(itemId);
+	const item = filterProp || view?.getFilter(itemId);
 	const relation: any = item ? S.Record.getRelationByKey(item.relationKey) : null;
 	const isInlineRelation = relation && [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Object, I.RelationType.File ].includes(relation.format);
 
@@ -57,28 +57,28 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		init();
 
-		const item = view.getFilter(itemId);
-		if (!item) {
+		const it = filterProp || view.getFilter(itemId);
+		if (!it) {
 			return;
 		};
 
-		const relation = S.Record.getRelationByKey(item.relationKey);
+		const rel = S.Record.getRelationByKey(it.relationKey);
 
-		if (!relation || !inputRef.current) {
+		if (!rel || !inputRef.current) {
 			return;
 		};
 
-		const isDate = Relation.isDate(relation.format);
-		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format);
+		const isDate = Relation.isDate(rel.format);
+		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(rel.format);
 
 		if (inputRef.current.setValue && !withFilter) {
 			if (isDate) {
 				// NumberOfDaysAgo/NumberOfDaysNow use input, ExactDate uses CalendarSelect
-				if (item.quickOption != I.FilterQuickOption.ExactDate) {
-					inputRef.current.setValue(item.value);
+				if (it.quickOption != I.FilterQuickOption.ExactDate) {
+					inputRef.current.setValue(it.value);
 				};
 			} else {
-				inputRef.current.setValue(item.value);
+				inputRef.current.setValue(it.value);
 			};
 		};
 
@@ -103,13 +103,17 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			return;
 		};
 
-		const item = view.getFilter(itemId);
-		if (item) {
-			checkClear(item.value);
+		const it = filterProp || view.getFilter(itemId);
+		if (it) {
+			checkClear(it.value);
 		};
 	};
 
 	const getQuickOptions = () => {
+		if (hideHead) {
+			return [];
+		};
+
 		const view = getView();
 		if (!view) {
 			return [];
@@ -177,20 +181,29 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	};
 
 	const onChange = (k: string, v: any, withTimeout?: boolean) => {
+		if (filterProp && onFilterPropChange) {
+			const formatted = (k == 'value') ? Relation.formatValue(relation, v, false) : v;
+
+			onFilterPropChange(k, formatted);
+			S.Menu.updateData(props.id, { filter: { ...filterProp, value: v } });
+			setDummy(dummy + 1);
+			return;
+		};
+
 		const view = getView();
 		const object = getTarget();
 
 		if (!view) {
 			return;
 		};
-		
+
 		let item = view.getFilter(itemId);
 		if (!item) {
 			return;
 		};
 
-		const relation = S.Record.getRelationByKey(item.relationKey);
-		if (!relation) {
+		const rel = S.Record.getRelationByKey(item.relationKey);
+		if (!rel) {
 			return;
 		};
 
@@ -203,10 +216,10 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(v)) {
-					item.value = Relation.formatValue(relation, null, false);
+					item.value = Relation.formatValue(rel, null, false);
 				};
 
-				const quickOptions = Relation.filterQuickOptions(relation.format, item.condition);
+				const quickOptions = Relation.filterQuickOptions(rel.format, item.condition);
 				const filterOption = quickOptions.find(it => it.id == item.quickOption);
 
 				if (!filterOption) {
@@ -215,12 +228,12 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			};
 
 			if (k == 'quickOption') {
-				item.value = Relation.formatValue(relation, null, false);
+				item.value = Relation.formatValue(rel, null, false);
 				item[k] = Number(v);
 			};
 
 			if (k == 'value') {
-				item[k] = Relation.formatValue(relation, item[k], false);
+				item[k] = Relation.formatValue(rel, item[k], false);
 			};
 
 			view.setFilter(item);
@@ -544,22 +557,24 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 	return (
 		<div ref={nodeRef} className="inner">
-			<div className="head menuHead">
-				<div className="conditionSelect" onClickCapture={onConditionClick}>
-					<Label text={relationOption.name} />
-					<Select
-						ref={conditionRef}
-						id={`filter-condition-${item.id}`}
-						value={String(item.condition)}
-						element={`#${getId()} .conditionSelect`}
-						options={conditionOptions}
-						onChange={v => onChange('condition', Number(v))}
-						menuParam={Object.assign(selectParam, { width: 224, offsetY: 4 })}
-						readonly={isReadonly}
-					/>
+			{!hideHead ? (
+				<div className="head menuHead">
+					<div className="conditionSelect" onClickCapture={onConditionClick}>
+						<Label text={relationOption.name} />
+						<Select
+							ref={conditionRef}
+							id={`filter-condition-${item.id}`}
+							value={String(item.condition)}
+							element={`#${getId()} .conditionSelect`}
+							options={conditionOptions}
+							onChange={v => onChange('condition', Number(v))}
+							menuParam={Object.assign(selectParam, { width: 224, offsetY: 4 })}
+							readonly={isReadonly}
+						/>
+					</div>
+					{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
 				</div>
-				{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
-			</div>
+			) : ''}
 
 			{items.length ? (
 				<div className="section">

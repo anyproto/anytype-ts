@@ -1066,10 +1066,17 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					Storage.setToggle(rootId, filtersId, true);
 
 					onFilterAdd({
-						relationKey: 'name',
-						condition: I.FilterCondition.In,
-						value: '',
 						operator: I.FilterOperator.And,
+						condition: I.FilterCondition.None,
+						relationKey: '',
+						value: '',
+						nestedFilters: [
+							{
+								relationKey: 'name',
+								condition: I.FilterCondition.In,
+								value: '',
+							}
+						],
 					});
 				},
 			});
@@ -1084,7 +1091,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
+		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, (message: any) => {
 			callBack?.();
 
 			analytics.event('AddFilter', {

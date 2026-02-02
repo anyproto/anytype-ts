@@ -1,9 +1,9 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFilterList { width: var(--menu-width-set); }
+	.menu.menuDataviewFilterList { width: var(--menu-width-advanced); }
 	.menu.menuDataviewFilterList {
-		.content { overflow: visible !important; padding: 0px; }
+		.content { padding-top: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 
@@ -62,9 +62,10 @@
 			.icon.dnd { margin-top: 0px; }
 		}
 
-		.bottom {  padding: 0px 0px 8px 0px; flex-shrink: 0; }
+		.bottom {  padding: 0px; flex-shrink: 0; margin: 0px 8px; }
 		.bottom {
-			.line { margin-top: 0px; }
+			.item { padding: 4px 8px; }
+			.item::before { width: 100%; left: 0px; }
 		}
 	}
 
@@ -89,7 +90,7 @@
 				.label { @include text-common; color: var(--color-text-primary); font-weight: 500; padding: 0px; margin: 0px; }
 				.select {
 					display: flex; border: 0px; padding: 0px; flex-shrink: 0;
-					background-color: var(--color-bg-primary); color: var(--color-text-secondary);
+					background: none; color: var(--color-text-secondary);
 				}
 				.select {
 					.icon.arrow { position: static !important; margin: 0px !important; }
@@ -105,6 +106,12 @@
 					.select.checkboxValue {
 						.item { @include text-common; }
 						.icon.arrow { right: -8px !important; }
+					}
+				}
+
+				.item.isSelected {
+					> .clickable {
+						> .name { padding-right: 16px; }
 					}
 				}
 

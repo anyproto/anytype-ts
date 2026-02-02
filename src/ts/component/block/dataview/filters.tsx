@@ -20,15 +20,19 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	if (!view) {
 		return null;
 	};
+	
+	const isAdvancedFilter = (filter: I.Filter): boolean => {
+		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+	};
 
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
-	}).filter(it => it.relation).sort((a, b) => {
-		const aAdvanced = a.operator === I.FilterOperator.And;
-		const bAdvanced = b.operator === I.FilterOperator.And;
+	}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
+		const aAdvanced = isAdvancedFilter(a);
+		const bAdvanced = isAdvancedFilter(b);
 
 		if (aAdvanced !== bAdvanced) {
 			return aAdvanced ? -1 : 1;
@@ -172,9 +176,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="sides">
 				<div id="sideLeft" className="side left">
 					{items.map((item: any) => {
-						const isAdvanced = item.operator === I.FilterOperator.And;
-
-						if (isAdvanced) {
+						if (isAdvancedFilter(item)) {
 							return (
 								<AdvancedItem
 									{...props}
