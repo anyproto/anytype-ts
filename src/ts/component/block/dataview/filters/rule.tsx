@@ -56,7 +56,9 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		const ids = Relation.getArrayValue(value).filter(it => it);
 
 		if (!ids.length) {
-			return;
+			return () => {
+				U.Subscription.destroyList([ subId ]);
+			};
 		};
 
 		U.Subscription.subscribeIds({
@@ -81,7 +83,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 		switch (relation.format) {
 			case I.RelationType.Date: {
-				const quickOption = rule.quickOption || I.FilterQuickOption.ExactDate;
+				const quickOption = rule.quickOption ?? I.FilterQuickOption.ExactDate;
 				const quickOptions = Relation.filterQuickOptions(relation.format, condition);
 
 				let dateValue = null;
@@ -99,14 +101,14 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					);
 				} else
 				if (quickOption == I.FilterQuickOption.ExactDate) {
-					const mask = [];
-					const ph = [];
+					let mask = '';
+					let ph = '';
 					const { dateFormat } = S.Common;
 
 					switch (dateFormat) {
-						case I.DateFormat.ISO: { mask.push('9999.99.99'); ph.push('yyyy.mm.dd'); break; };
-						case I.DateFormat.ShortUS: { mask.push('99.99.9999'); ph.push('mm.dd.yyyy'); break; };
-						default: { mask.push('99.99.9999'); ph.push('dd.mm.yyyy'); break; };
+						case I.DateFormat.ISO: { mask = '9999.99.99'; ph = 'yyyy.mm.dd'; break; };
+						case I.DateFormat.ShortUS: { mask = '99.99.9999'; ph = 'mm.dd.yyyy'; break; };
+						default: { mask = '99.99.9999'; ph = 'dd.mm.yyyy'; break; };
 					};
 
 					dateValue = (
@@ -114,9 +116,9 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							key={`${nodeId}-date-${quickOption}`}
 							ref={inputRef}
 							value={value ? U.Date.date('d.m.Y', value) : ''}
-							placeholder={ph.join(' ')}
+							placeholder={ph}
 							maskOptions={{
-								mask: mask.join(' '),
+								mask,
 								separator: '.',
 								alias: 'datetime',
 							}}
@@ -340,6 +342,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				},
 			}
 		});
+	};
+
+	if (!relation) {
+		return null;
 	};
 
 	const valueContent = getValue();
