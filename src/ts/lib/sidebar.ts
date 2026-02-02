@@ -57,7 +57,7 @@ class Sidebar {
 			this.setStyle(panel, isPopup, { width, isClosed });
 
 			if ((panel == I.SidebarPanel.Left) && !isPopup) {
-				S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
+				S.Common.vaultIsMinimalSet(width <= J.Size.sidebar.left.threshold.minimal);
 			};
 		};
 
@@ -413,7 +413,7 @@ class Sidebar {
 		width = this.limitWidth(panel, width);
 
 		if (panel == I.SidebarPanel.Left) {
-			S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
+			S.Common.vaultIsMinimalSet(width <= J.Size.sidebar.left.threshold.minimal);
 		};
 
 		this.setData(panel, isPopup, { width }, save);
