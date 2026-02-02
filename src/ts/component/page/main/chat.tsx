@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
@@ -75,7 +75,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.getChildNode()?.onDragLeave(e);
 	};
 	
-	const onDrop = (e: React.DragEvent) => {
+	const onDrop = (e: DragEvent) => {
 		chatRef.current?.getChildNode()?.onDrop(e);
 	};
 
@@ -87,6 +87,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				chatRef.current?.getChildNode()?.getFormRef()?.onAttachment();
 			};
 		});
+	};
+
+	const resize = () => {
+		chatRef.current?.getChildNode()?.resize();
 	};
 
 	useEffect(() => {
@@ -105,6 +109,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			open();
 		};
 	}, [ rootId ]);
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	let content = null;
 

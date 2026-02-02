@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, U, J, translate, keyboard } from 'Lib';
@@ -28,7 +28,7 @@ interface Props {
 	showFooter?: boolean;
 	getDotMap?: (start: number, end: number, cb: (map: Map<string, boolean>) => void) => void;
 	onDayClick?: (item: CalendarDay, ts: number) => boolean | void;
-	onDayContextMenu?: (e: React.MouseEvent, item: CalendarDay) => void;
+	onDayContextMenu?: (e: MouseEvent, item: CalendarDay) => void;
 	rebind?: () => void;
 	unbind?: () => void;
 };

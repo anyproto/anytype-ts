@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
@@ -56,10 +56,17 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			};
 
 			e.preventDefault();
-			
+
 			const value = getValue();
 			value.existing.pop();
 			setValue(value.existing);
+		});
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			S.Menu.updateData('dataviewOptionList', { filter: getValue().new, selectFirst: true });
 		});
 
 		placeholderCheck();
@@ -145,7 +152,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		setValue([]);
 	};
 
-	const onContextMenu = (e: React.MouseEvent, item: any) => {
+	const onContextMenu = (e: MouseEvent, item: any) => {
 		if (!canEdit) {
 			return;
 		};

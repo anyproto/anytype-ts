@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { S, U, J } from 'Lib';
@@ -94,12 +94,12 @@ const OnboardingGraphWorker = observer(({
 	};
 
 	// Handle mouse events
-	const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	const handleMouseDown = (e: MouseEvent<HTMLCanvasElement>) => {
 		if (!workerRef.current) {
 			return;
 		};
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -116,7 +116,7 @@ const OnboardingGraphWorker = observer(({
 	// Throttle mouse move events to reduce message overhead
 	const lastMouseMoveRef = useRef<number>(0);
 	
-	const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	const handleMouseMove = (e: MouseEvent<HTMLCanvasElement>) => {
 		if (!workerRef.current) {
 			return;
 		};
@@ -129,7 +129,7 @@ const OnboardingGraphWorker = observer(({
 
 		lastMouseMoveRef.current = now;
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -141,12 +141,12 @@ const OnboardingGraphWorker = observer(({
 		});
 	};
 
-	const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	const handleMouseUp = (e: MouseEvent<HTMLCanvasElement>) => {
 		if (!workerRef.current) {
 			return;
 		};
 		
-		const rect = canvasRef.current?.getBoundingClientRect();
+		const rect = U.Common.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -160,7 +160,7 @@ const OnboardingGraphWorker = observer(({
 		});
 	};
 
-	const handleMouseLeave = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	const handleMouseLeave = (e: MouseEvent<HTMLCanvasElement>) => {
 		// When mouse leaves canvas (e.g., goes over popup), release any dragged node
 		if (!workerRef.current || !isDragging) {
 			return;

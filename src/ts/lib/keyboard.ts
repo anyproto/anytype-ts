@@ -1,6 +1,5 @@
 import $ from 'jquery';
-import raf from 'raf';
-import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
+import { I, C, S, U, J, H, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
 
@@ -38,6 +37,7 @@ class Keyboard {
 	init () {
 		this.unbind();
 		this.initShortcuts();
+		this.onResize();
 		
 		const win = $(window);
 
@@ -87,15 +87,9 @@ class Keyboard {
 
 	onResize () {
 		const { ww } = U.Common.getWindowDimensions();
-		const key = J.Constant.storageKey.sidebarData;
-		const stored = Storage.get(key, Storage.isLocal(key));
-		const data = stored?.[I.SidebarPanel.Left] || {};
+		const data = sidebar.getData(I.SidebarPanel.Left, this.isPopup());
 
-		if (data.isClosed) {
-			return;
-		};
-
-		if (ww <= 800) {
+		if (ww <= 900) {
 			sidebar.leftPanelClose(false, false);
 		} else {
 			sidebar.leftPanelOpen(data.width, false, false);
@@ -113,7 +107,19 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common resize.common');
+		const events = [
+			'keyup',
+			'keydown',
+			'mousedown',
+			'scroll',
+			'mousemove',
+			'blur',
+			'online',
+			'offline',
+			'resize',
+		];
+
+		$(window).off(events.map(it => `${it}.common`).join(' '));
 	};
 
 	/**
@@ -276,13 +282,6 @@ class Keyboard {
 				};
 
 				this.onSearchPopup(route);
-			});
-
-			// Text search
-			this.shortcut('searchText', e, () => {
-				if (!this.isFocused) {
-					this.onSearchText('', route);
-				};
 			});
 
 			// Navigation links
@@ -1253,6 +1252,7 @@ class Keyboard {
 				isPopup,
 				rootId,
 				chatId,
+				route,
 				scrollToMessage: (id: string) => {
 					$(window).trigger('scrollToMessage', { id });
 				},
@@ -1349,6 +1349,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const { action, id } = match.params;
 		const titles = {
+			auth: translate('commonAuthentication'),
 			void: translate('electronMenuNewTab'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
@@ -1987,6 +1988,9 @@ class Keyboard {
 			};
 			if (key == 'comma') {
 				return ',';
+			};
+			if (key == Key.escape) {
+				return 'Esc';
 			};
 			return U.String.ucFirst(key);
 		});

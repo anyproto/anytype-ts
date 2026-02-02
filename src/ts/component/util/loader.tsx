@@ -19,9 +19,6 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef(null);
-	const resizeObserver = new ResizeObserver(() => {
-		raf(() => resize());
-	});
 
 	let content = null;
 	switch (type) {
@@ -53,6 +50,10 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	useEffect(() => {
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
 		};
@@ -60,9 +61,7 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 		resize();
 
 		return () => {
-			if (nodeRef.current) {
-				resizeObserver.disconnect();
-			};
+			resizeObserver.disconnect();
 		};
 	}, []);
 

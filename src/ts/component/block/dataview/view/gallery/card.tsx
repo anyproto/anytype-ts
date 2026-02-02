@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -76,7 +76,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		};
 	};
 
-	const onCellClickHandler = (e: React.MouseEvent, vr: I.ViewRelation) => {
+	const onCellClickHandler = (e: MouseEvent, vr: I.ViewRelation) => {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		if (!relation) {
 			return;

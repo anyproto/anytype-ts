@@ -1,4 +1,5 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, CSSProperties, MouseEvent, ReactElement } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
@@ -7,7 +8,6 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
-import $ from 'jquery';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -21,7 +21,7 @@ interface SelectItem {
 	isDeleted?: boolean;
 	_empty_?: boolean;
 	restrictions?: any[];
-	style?: React.CSSProperties;
+	style?: CSSProperties;
 };
 
 interface SearchParam {
@@ -96,9 +96,10 @@ export interface OptionSelectRefProps {
 	setIndex: (i: number) => void;
 	getFilterRef: () => any;
 	getListRef: () => any;
-	onOver: (e: React.MouseEvent, item: SelectItem) => void;
-	onClick: (e: React.MouseEvent | { stopPropagation: () => void }, item: SelectItem) => void;
+	onOver: (e: MouseEvent, item: SelectItem) => void;
+	onClick: (e: MouseEvent | { stopPropagation: () => void }, item: SelectItem) => void;
 	onSortEnd?: (result: any) => void;
+	setFilter: (filter: string) => void;
 };
 
 const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, ref) => {
@@ -277,7 +278,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		setFilter(v);
 	};
 
-	const onClick = (e: React.MouseEvent | { stopPropagation: () => void }, item: SelectItem): void => {
+	const onClick = (e: MouseEvent | { stopPropagation: () => void }, item: SelectItem): void => {
 		e.stopPropagation();
 
 		if (cellRef) {
@@ -424,7 +425,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onEdit = (e: React.MouseEvent, item: SelectItem): void => {
+	const onEdit = (e: MouseEvent, item: SelectItem): void => {
 		e.stopPropagation();
 
 		if (!item || item.id == 'add' || !canEdit || !menuId) {
@@ -456,7 +457,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onOver = (e: React.MouseEvent, item: SelectItem): void => {
+	const onOver = (e: MouseEvent, item: SelectItem): void => {
 		if (setActive) {
 			setActive(item, false);
 		};
@@ -467,7 +468,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		});
 	};
 
-	const onMouseEnter = (e: React.MouseEvent, item: SelectItem): void => {
+	const onMouseEnter = (e: MouseEvent, item: SelectItem): void => {
 		if (!keyboard.isMouseDisabled && setActive) {
 			setActive(item, false);
 		};
@@ -537,7 +538,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly && !noFilter ? 36 : 8;
+		const offset = !isReadonly && !noFilter ? 44 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
@@ -565,7 +566,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		empty = translate('placeholderCellCommon');
 	};
 
-	const Item = (item: SelectItem): React.ReactElement | null => {
+	const Item = (item: SelectItem): ReactElement | null => {
 		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
 		const isSelected = value.includes(item.id);
@@ -657,7 +658,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		);
 	};
 
-	const DragOverlayContent = ({ item }: { item: SelectItem | undefined }): React.ReactElement | null => {
+	const DragOverlayContent = ({ item }: { item: SelectItem | undefined }): ReactElement | null => {
 		if (!item || item.id == 'add' || item.isSection) {
 			return null;
 		};
@@ -717,7 +718,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		);
 	};
 
-	const renderList = (): React.ReactElement => {
+	const renderList = (): ReactElement => {
 		if (!items.length) {
 			return <div className="item empty">{empty}</div>;
 		};
@@ -797,6 +798,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		setIndex: (i: number) => n.current = i,
 		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
+		setFilter,
 		onOver,
 		onClick,
 		onSortEnd,

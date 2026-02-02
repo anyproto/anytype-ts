@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
+import { Icon, ObjectName, DropTarget, IconObject, ChatCounter } from 'Component';
+import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetObject from './object';
@@ -103,8 +103,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		unbind();
 
-		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData && childRef.current?.updateData());
-		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews && childRef.current?.updateViews());
+		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData?.());
+		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews?.());
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U, Renderer } from 'Lib';
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -13,6 +13,20 @@ interface SpaceContextParam {
 	withSearch?: boolean;
 	noShare?: boolean;
 	route: string;
+};
+
+interface ActionMenuParam {
+	rootId?: string; 
+	blockId?: string; 
+	hasText?: boolean; 
+	hasFile?: boolean; 
+	hasCommon?: boolean;
+	hasCopyMedia?: boolean; 
+	hasBookmark?: boolean; 
+	hasDataview?: boolean; 
+	hasTurnObject?: boolean; 
+	hasClipboard?: boolean; 
+	count?: number;
 };
 
 /**
@@ -276,19 +290,35 @@ class UtilMenu {
 	 * @param {any} param - The action menu parameters.
 	 * @returns {any[]} The list of actions.
 	 */
-	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, count } = param;
+
+	getActions (param: ActionMenuParam) {
+		const { rootId, blockId, hasText, hasFile, hasCommon, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, hasClipboard, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
-		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
-			{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
-			{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
-			{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
-			{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
-			{ isDiv: true },
-			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-		];
+
+		let items: any[] = [];
+
+		if (hasCommon) {
+			items = items.concat([
+				{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+				{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
+			]);
+		};
+
+		if (hasClipboard) {
+			items = items.concat([
+				{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
+				{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
+				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+			]);
+		};
+
+		if (hasCommon) {
+			items = items.concat([
+				{ isDiv: true },
+				{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+			]);
+		};
 
 		if (hasTurnObject) {
 			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
@@ -853,7 +883,7 @@ class UtilMenu {
 			...menuParam,
 			data: {
 				options,
-				onSelect: (e: React.MouseEvent, option: any) => {
+				onSelect: (e: MouseEvent, option: any) => {
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
@@ -978,16 +1008,18 @@ class UtilMenu {
 				};
 
 				case 'manage': {
-					this.menuContext?.close(() => S.Menu.open('widgetSection', {
-						recalcRect: () => {
-							const { ww, wh } = U.Common.getWindowDimensions();
-							return { x: 0, y: 0, width: ww, height: wh };
-						},
-						classNameWrap: 'fixed',
-						visibleDimmer: true,
-						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Center,
-					}));
+					this.menuContext?.close(() => {
+						S.Menu.open('widgetSection', {
+							recalcRect: () => {
+								const { ww, wh } = U.Common.getWindowDimensions();
+								return { x: 0, y: 0, width: ww, height: wh };
+							},
+							classNameWrap: 'fixed',
+							visibleDimmer: true,
+							vertical: I.MenuDirection.Center,
+							horizontal: I.MenuDirection.Center,
+						});
+					});
 					break;
 				};
 
@@ -1000,15 +1032,14 @@ class UtilMenu {
 					});
 
 					Renderer.send('openTab', { route }, { setActive: false });
-					analytics.event('AddTab', { route: analytics.route.vault, uxType });
+					analytics.event('AddTab', { route, uxType });
 					break;
 				};
 
 				case 'searchChat': {
 					S.Menu.closeAll(null, () => {
-						$(window).trigger('openSearchChat');
+						keyboard.onSearchText('', route);
 					});
-					
 					break;
 				};
 
@@ -1784,8 +1815,6 @@ class UtilMenu {
 				{ isDiv: true },
 			]);
 		};
-
-		console.trace();
 
 		options.push(toggle);
 

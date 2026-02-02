@@ -1,6 +1,9 @@
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
-$transitionCommon: 0.15s ease-in-out;
+$transitionCommon: 0.15s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
+
+$transitionMenuTime: 0.2s;
+$transitionPopupTime: 0.2s;
 $transitionSidebarTime: 0.2s;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }

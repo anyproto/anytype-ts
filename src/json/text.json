@@ -35,6 +35,7 @@
 	"commonRetry": "Retry",
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
+	"commonAuthentication": "Authentication",
 	"commonGraph": "Graph",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
@@ -755,6 +756,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedUnsupported": "Unsupported embed. Please update the app.",
 	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
@@ -1040,6 +1042,19 @@
 	"popupSettingsSpaceShareQRCode": "QR code",
 	"popupSettingsSpaceShareMakePrivate": "Make Private",
 	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
+	"popupSettingsSpaceShareTransferOwnership": "Transfer ownership",
+	"popupSettingsSpaceShareSelectNewOwner": "Select the new owner",
+
+	"popupConfirmOwnershipTransferTitle": "Confirm ownership transfer",
+	"popupConfirmOwnershipTransferText": "You're transferring ownership of \"<b>%s</b>\" to <b>%s</b>. This action is immediate and cannot be undone.<br/><br/>After the transfer:<ul><li>%s will become the new owner</li><li>You'll become an Editor</li><li>Only the new owner can transfer it again</li><li>The new owner's membership limits will apply to this channel</li></ul>Type the channel name to confirm:",
+
+	"toastOwnershipTransferred": "Ownership transferred successfully",
+
+	"popupConfirmOwnershipTransferringTitle": "Transferring ownership...",
+	"popupConfirmOwnershipTransferringText": "Reassigning channel permissions and roles.",
+	"popupConfirmOwnershipTransferredTitle": "Ownership passed successfully",
+	"popupConfirmOwnershipTransferredText": "You've transferred <b>%s</b> to <b>%s</b>.<br/>You now have Editor access to this channel.",
+	"popupConfirmOwnershipTransferredButton": "Back to Members",
 
 	"popupSettingsMembershipTitle": "Membership",
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
@@ -1379,6 +1394,12 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
+	"popupSearchShortcutNavigate": "Navigate",
+	"popupSearchShortcutClose": "Close",
+	"popupSearchShortcutOpen": "Open",
+	"popupSearchShortcutCopyLink": "Copy link",
+	"popupSearchShortcutNewTab": "New tab",
+	"popupSearchShortcutSelect": "Select",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -2438,17 +2459,6 @@
 	"errorAccountRecover109": "Vault has been deletesd",
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
-
-	"errorMembershipFinalize6": "Membership not found",
-	"errorMembershipFinalize7": "Membership has wrong state",
-	"errorMembershipFinalize8": "Bad Any name",
-	"errorMembershipFinalize9": "Please connect to the internet",
-
-	"errorMembershipGetVerificationEmail6": "Email format is invalid",
-	"errorMembershipGetVerificationEmail7": "This email is already verified",
-	"errorMembershipGetVerificationEmail8": "Email has been already sent",
-	"errorMembershipGetVerificationEmail9": "Failed to send email",
-	"errorMembershipGetVerificationEmail10": "Membership already exists",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",

@@ -84,6 +84,7 @@ import MenuOneToOne from './oneToOne';
 
 import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
+import MenuChangeOwner from './changeOwner';
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
@@ -171,6 +172,7 @@ const Components: any = {
 
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
+	changeOwner:			 MenuChangeOwner,
 };
 
 interface RefProps extends I.MenuRef {
@@ -252,6 +254,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 			rebindPrevious();
 			raf.cancel(framePosition.current);
+			isAnimating.current = false;
 		};
 	}, []);
 
@@ -265,7 +268,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		setClass();
 
-		menu.addClass('show').css({ transform: 'none' });
+		menu.addClass('show');
 		position();
 	});
 
@@ -968,7 +971,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const getPosition = (): DOMRect => {
 		const obj = $(`#${getId()}`);
-		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
+		return obj.length ? U.Common.getElementRect(obj.get(0)) : null;
 	};
 
 	const getArrowDirection = (): I.MenuDirection => {

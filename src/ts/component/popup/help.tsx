@@ -27,11 +27,11 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.help', e => onKeyDown(e));
+		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.help');
+		$(window).off(`keydown.${props.id}`);
 	};
 
 	const onKeyDown = (e: any) => {

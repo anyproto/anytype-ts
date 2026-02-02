@@ -535,7 +535,7 @@
         .upsellBanner { margin-bottom: 8px; }
         .upsellBanner:last-child { margin-bottom: 44px; }
 
-        .titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; }
+        .titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
         .titleWrapper {
             .title { margin-bottom: 0px; }
 
@@ -605,13 +605,15 @@
             }
         }
 
-        .section.sectionMembers { min-height: 236px; }
+        .section.sectionMembers { min-height: 236px; display: flex; flex-direction: column; }
         .section.sectionMembers {
             .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; padding: 7px 0px; }
             .membersTitle {
                 .title { margin-bottom: 0px; }
                 .label { color: var(--color-text-secondary); @include text-paragraph; }
             }
+
+            .rows { flex-grow: 1; }
 
             .row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
             .row.payment { grid-template-columns: 1fr auto; @include text-small; margin: 0px 0px 14px 0px; }

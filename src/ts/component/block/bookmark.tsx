@@ -1,5 +1,6 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import { I, C, S, U, focus, translate, analytics, Action, keyboard, Preview } from 'Lib';
@@ -8,22 +9,13 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const { state, targetObjectId } = block.content;
-	const nodeRef = React.useRef<HTMLDivElement>(null);
-	const innerRef = React.useRef<HTMLAnchorElement>(null);
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const innerRef = useRef<HTMLAnchorElement>(null);
 	const object = S.Detail.get(rootId, targetObjectId, [ 'picture', 'source' ]);
 	const { iconImage, picture, isArchived, isDeleted } = object;
 	const url = object.source || block.content.url;
-	const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
+	const cn = [ 'focusable', `c${block.id}` ];
 
-	const rebind = () => {
-		unbind();
-		$(nodeRef.current).on('resizeInit resizeMove', e => resize());
-	};
-	
-	const unbind = () => {
-		$(nodeRef.current).off('resizeInit resizeMove');
-	};
-	
 	const onKeyDownHandler = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
@@ -51,7 +43,7 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 		};
 	};
 
-	const onMouseEnter = (e: React.MouseEvent) => {
+	const onMouseEnter = (e: MouseEvent) => {
 		if (!targetObjectId || object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};
@@ -101,7 +93,7 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 		window.setTimeout(() => {
 			const inner = $(innerRef.current);
 			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
-		});
+		}, 0);
 	};
 
 	let element = null;
@@ -192,17 +184,19 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 
 	useEffect(() => {
 		resize();
-		rebind();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
-			unbind();
+			resizeObserver.disconnect();
 		};
 	}, []);
-
-	useEffect(() => {
-		resize();
-		rebind();
-	});
 
 	return (
 		<div 

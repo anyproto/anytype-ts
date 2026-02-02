@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -113,6 +113,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
+		keyboard.shortcut(`${cmd}+l`, e, () => {
+			e.preventDefault();
+
+			const item = items[nRef.current];
+			if (item && item.isObject) {
+				U.Object.copyLink(item, S.Common.space, 'web', route);
+			};
+		});
+
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
@@ -201,7 +210,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SearchInput', { route });
 	};
 
-	const onBacklink = (e: React.MouseEvent, item: any) => {
+	const onBacklink = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -789,6 +798,46 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
+	const Footer = (props: { items: any[]; n: number }) => {
+		const { items, n } = props;
+		const item = items[n];
+		const cmd = keyboard.cmdKey();
+
+		const isObject = item && item.isObject;
+		const isAction = item && (item.isSettings || item.isImport || item.id == 'add' || item.id == 'graph' || item.id == 'navigation');
+
+		const Shortcut = (props: { keys: string[]; label: string }) => {
+			const symbols = keyboard.getSymbolsFromKeys(props.keys);
+			return (
+				<div className="item">
+					<div className="keys">
+						{symbols.map((s, i) => (
+							<Label key={i} text={s} />
+						))}
+					</div>
+					<div className="label">{props.label}</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className="foot">
+				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
+				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
+				{isObject ? (
+					<>
+						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
+						<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+						<Shortcut keys={[ cmd, 'enter' ]} label={translate('popupSearchShortcutNewTab')} />
+					</>
+				) : ''}
+				{isAction ? (
+					<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutSelect')} />
+				) : ''}
+			</div>
+		);
+	};
+
 	return (
 		<div
 			ref={nodeRef}
@@ -843,6 +892,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					</InfiniteLoader>
 				</div>
 			) : ''}
+
+			<Footer items={items} n={nRef.current} />
 		</div>
 	);
 

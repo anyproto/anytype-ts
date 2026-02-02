@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 import BlockContentLayout from './content/layout';
 import BlockContentLink from './content/link';
@@ -75,7 +75,6 @@ class Block implements I.Block {
 
 		makeObservable(this, {
 			layout: observable,
-			//type: observable,
 			hAlign: observable,
 			vAlign: observable,
 			bgColor: observable,
@@ -83,7 +82,6 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 

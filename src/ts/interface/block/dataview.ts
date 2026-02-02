@@ -1,4 +1,5 @@
 import { I } from 'Lib';
+import { MouseEvent } from 'react';
 
 export enum CardSize {
 	Small			 = 0,
@@ -199,7 +200,7 @@ export interface ViewComponent {
 	onContext?(e: any, id: string, subId?: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;
-	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
+	onSelectToggle?: (e: MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	isAllowedDefaultType?: () => boolean;

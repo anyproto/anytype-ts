@@ -183,16 +183,19 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				onMouseEnter={() => setHover(null, false)}
 			>
 				{isSingleLine ? (
-					<Input 
-						ref={inputRef}
-						id="input"
-						placeholder={placeholder}
-						readonly={!canEdit}
-						onInput={onInput}
-						onPaste={onInput}
-						onFocus={onFocus}
-						onBlur={onBlur}
-					/>
+					<>
+						<Input 
+							ref={inputRef}
+							id="input"
+							placeholder={placeholder}
+							readonly={!canEdit}
+							onInput={onInput}
+							onPaste={onInput}
+							onFocus={onFocus}
+							onBlur={onBlur}
+						/>
+						<Icon className="clear withBackground" onClick={onClear} />
+					</>
 				) : (
 					<Editable
 						ref={inputRef}
@@ -205,7 +208,6 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						onBlur={onBlur}
 					/>
 				)}
-				<Icon className="clear withBackground" onClick={onClear} />
 			</div>
 			{menuItems}
 		</div>

@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, MouseEvent } from 'react';
+import React, { forwardRef, ReactNode, MouseEvent, CSSProperties } from 'react';
 import { I, S } from 'Lib';
 
 interface Props {
@@ -32,7 +32,7 @@ const Cover = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const cn = [ 'cover', `type${type}`, id, className ];
-	const style: React.CSSProperties = {};
+	const style: CSSProperties = {};
 	
 	if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
 		style.backgroundImage = `url("${S.Common.imageUrl(image, I.ImageSize.Large)}")`;

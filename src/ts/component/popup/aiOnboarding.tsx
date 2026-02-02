@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode, UIEvent } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, J, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
@@ -153,7 +153,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	
 	// Handle scroll events to show/hide scrollbar
 	const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-	const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+	const handleScroll = useCallback((e: UIEvent<HTMLDivElement>) => {
 		const wrapper = e.currentTarget;
 		
 		// Add scrolling class
@@ -179,7 +179,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		};
 	}, []);
 
-	const addMessage = (type: 'ai' | 'user' | 'typing', content: React.ReactNode, replaceTyping = false) => {
+	const addMessage = (type: 'ai' | 'user' | 'typing', content: ReactNode, replaceTyping = false) => {
 		setMessages(prev => {
 			let newMessages = [ ...prev ];
 			

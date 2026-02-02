@@ -32,7 +32,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	const nodeRef = useRef(null);
 	const frame = useRef(0);
 	const options = useMemo(() => ({
-		isEvalSupported: false, 
+		isEvalSupported: false,
 		cMapUrl: U.Common.fixAsarPath('./cmaps/'),
 	}), []);
 
@@ -82,8 +82,8 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 				onClick={onClick}
 				options={options}
 			>
-				<Page 
-					pageNumber={page} 
+				<Page
+					pageNumber={page}
 					loading={<Loader />}
 					width={width}
 					onRenderSuccess={onPageRenderHandler}

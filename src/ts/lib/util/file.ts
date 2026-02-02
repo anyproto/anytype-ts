@@ -1,5 +1,6 @@
 import loadImage from 'blueimp-load-image';
 import { I, S, U, J, Relation } from 'Lib';
+import { DragEvent } from 'react';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -252,7 +253,7 @@ class UtilFile {
 	 * @param {React.DragEvent} e - The drag event.
 	 * @returns {boolean} True if files are present, false otherwise.
 	 */
-	checkDropFiles (e: React.DragEvent): boolean {
+	checkDropFiles (e: DragEvent): boolean {
 		return (e.dataTransfer.files && e.dataTransfer.files.length) ? true : false;
 	};
 

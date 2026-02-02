@@ -60,8 +60,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let searchText = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
-		let searchChat = { id: 'searchChat', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') };
+		let searchText = { id: 'searchText', icon: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let searchChat = { id: 'searchChat', icon: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
@@ -376,6 +376,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
+		let shouldClose = true;
+
 		focus.clear(false);
 		
 		switch (item.id) {
@@ -392,13 +394,10 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 			
-			case 'search': {
+			case 'searchChat':
+			case 'searchText': {
 				keyboard.onSearchText('', route);
-				break;
-			};
-
-			case 'searchChat': {
-				keyboard.onSearchText('', route);
+				shouldClose = false;
 				break;
 			};
 
@@ -519,7 +518,9 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 		
-		close();
+		if (shouldClose) {
+			close();
+		};
 	};
 
 	const sections = getSections();

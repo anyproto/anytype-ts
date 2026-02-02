@@ -64,7 +64,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		timeRef.current?.resize();
 	};
 
-	const onPlayClick = (e: React.MouseEvent) => {
+	const onPlayClick = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -200,11 +200,12 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	useEffect(() => {
+		onVolume(1);
+		resize();
+
 		const resizeObserver = new ResizeObserver(() => {
 			raf(() => resize());
 		});
-
-		onVolume(1);
 
 		if (nodeRef.current) {
 			resizeObserver.observe(nodeRef.current);
@@ -228,7 +229,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	}, []);
 
 	useEffect(() => {
-		resize();
 		rebind();
 		setCurrent(playlist[0]);
 	});
@@ -248,7 +248,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	return (
 		<div
 			ref={nodeRef}
-			className="wrap resizable audio mediaAudio"
+			className="wrap audio mediaAudio"
 		>
 			<audio ref={audioRef} preload="auto" src={src} />
 
@@ -256,10 +256,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				<Label text={name} tooltipParam={{ text: name }} className="name" />
 
 				<div className="controls">
-					<Icon 
-						ref={playIconRef} 
-						className="play" 
-						onMouseDown={onPlayClick} 
+					<Icon
+						ref={playIconRef}
+						className="play"
+						onMouseDown={onPlayClick}
 						onClick={e => e.stopPropagation()}
 					/>
 
@@ -280,7 +280,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 					<div className="volumeWrap" onMouseLeave={onVolumeLeave}>
 						<Icon
-							ref={volumeIconRef} 
+							ref={volumeIconRef}
 							className="volume"
 							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}

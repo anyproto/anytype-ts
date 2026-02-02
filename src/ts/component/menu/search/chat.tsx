@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, analytics } from 'Lib';
 
 const LIMIT = 16;
 const HEIGHT = 56;
@@ -22,11 +22,12 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, close, storageGet, storageSet } = props;
 	const { data } = param;
-	const { chatId, scrollToMessage } = data;
+	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ currentIndex, setCurrentIndex ] = useState(-1);
 	const [ dummy, setDummy ] = useState(0);
+	const [ isDropdownOpen, setIsDropdownOpen ] = useState(true);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
@@ -35,15 +36,21 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(0);
 	const offset = useRef(0);
 	const filter = useRef('');
+	const cnu = [ 'arrow', 'up' ];
+	const cnd = [ 'arrow', 'down' ];
 
 	useEffect(() => {
 		rebind();
 		focus();
 		beforePosition();
-		restoreState();
+
+		analytics.event('ScreenChatSearch', { route });
+
+		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
 			window.clearTimeout(timeout.current);
+			storageSet?.({ filter: '', currentIndex: -1, chatId: '' });
 		};
 	}, []);
 
@@ -81,6 +88,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		offset.current = 0;
 		setCurrentIndex(-1);
+		setIsDropdownOpen(true);
 		load(true);
 	};
 
@@ -145,6 +153,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			saveState(filter.current, index);
 		};
 
+		analytics.event('ClickChatSearchResult');
+
 		scrollToMessage?.(item.id);
 		close();
 	};
@@ -155,6 +165,10 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			filter.current = filterRef.current?.getValue() || '';
 			saveState(filter.current, -1);
 			reload();
+
+			if (filter.current) {
+				analytics.event('ChatSearchInput');
+			};
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -164,6 +178,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
+		// Close dropdown when navigation buttons are clicked
+		if (isDropdownOpen) {
+			setIsDropdownOpen(false);
+		};
+
 		const newIndex = currentIndex + dir;
 		if (newIndex < 0 || newIndex >= items.length) {
 			return;
@@ -171,6 +190,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		setCurrentIndex(newIndex);
 		saveState(filter.current, newIndex);
+
+		analytics.event('ClickChatSearchNavigation', { type: dir > 0 ? 'Up' : 'Down' });
 
 		const item = items[newIndex];
 		if (item) {
@@ -214,6 +235,9 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const width = Math.min(header.width(), J.Size.editor);
 
 		let height = 0;
+		if (!isDropdownOpen) {
+			height = 46;
+		} else
 		if (!items.length) {
 			height = filter.current ? 160 : 46;
 		} else {
@@ -324,6 +348,12 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const items = getItems();
+	if ((currentIndex >= items.length - 1) || (currentIndex < 0)) {
+		cnu.push('disabled');
+	};
+	if (currentIndex <= 0) {
+		cnd.push('disabled');
+	};
 
 	useImperativeHandle(ref, () => ({
 		rebind,
@@ -352,16 +382,16 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon className={[ 'arrow', 'up', (currentIndex >= items.length - 1 || currentIndex < 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(1)} />
-					<Icon className={[ 'arrow', 'down', (currentIndex <= 0 ? 'disabled' : '') ].join(' ')} onClick={() => onArrow(-1)} />
+					<Icon className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 
-			{!items.length && !isLoading && filter.current ? (
+			{!items.length && !isLoading && filter.current && isDropdownOpen ? (
 				<EmptySearch filter={filter.current} />
 			) : ''}
 
-			{items.length && !isLoading ? (
+			{items.length && !isLoading && isDropdownOpen ? (
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}

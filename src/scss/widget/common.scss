@@ -32,7 +32,7 @@
 
 		.iconAnimationWrapper { position: relative; width: 20px; height: 20px; flex-shrink: 0; }
 		.iconWrap.collapse, .headerIcon { 
-			transition: opacity 0.1s ease-in-out; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px);
+			transition: opacity 0.1s $easeInQuint; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px);
 		}
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }

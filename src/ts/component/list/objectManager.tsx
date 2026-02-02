@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
@@ -164,7 +164,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		$(filterWrapperRef.current).addClass('active');
 	};
 
-	const onClick = (e: React.MouseEvent, item: any) => {
+	const onClick = (e: MouseEvent, item: any) => {
 		e.stopPropagation();
 
 		let ids = selected.current;

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
@@ -100,7 +100,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		C.WorkspaceSetInfo(space, { iconImage: objectId });
 	};
 
-	const onClick = (e: React.MouseEvent, item: any) => {
+	const onClick = (e: MouseEvent, item: any) => {
 		if (item.isDisabled) {
 			return;
 		};

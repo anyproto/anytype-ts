@@ -37,7 +37,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		return () => {
 			unbind();
 		};
-	}, []);
+	}, [ relations.length ]);
 
 	useEffect(() => {
 		cache.current.clearAll();
@@ -45,7 +45,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	}, [ view.wrapContent, relations.length ]);
 
 	useEffect(() => {
-		rebind();
 		resize();
 		onScrollHorizontal();
 		onScrollVertical();
@@ -58,7 +57,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		};
 
 		U.Common.triggerResizeEditor(isPopup);
-	});
+	}, [ relations.length, view?.id ]);
 
 	if (!view) {
 		return null;
@@ -228,9 +227,9 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const { left } = el.offset();
 
 		$('body').addClass('colResize');
-		win.off('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', e => onResizeMove(e, relationKey, left));
-		win.on('mouseup.cell', e => onResizeEnd(e, relationKey, left));
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
+		win.on(`mousemove.${block.id}`, e => onResizeMove(e, relationKey, left));
+		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, relationKey, left));
 
 		el.addClass('isResizing');
 		keyboard.setResize(true);
@@ -247,7 +246,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const node = $(nodeRef.current);
 		const width = checkWidth(e.pageX - ox);
 
-		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
+		$(window).off(`mousemove.${block.id} mouseup.${block.id}`).trigger('resize');
 		$('body').removeClass('colResize');
 		node.find('.cellHead.isResizing').removeClass('isResizing');
 		node.find('.cellKeyHover').removeClass('cellKeyHover');

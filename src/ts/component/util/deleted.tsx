@@ -49,10 +49,9 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const container = isPopup ? $('#popupPage-innerWrap') : $(window);
+		const container = U.Common.getPageContainer(isPopup);
 
-		node.css({ height: container.height() });
+		$(nodeRef.current).css({ height: container.height() });
 	};
 
 	useEffect(() => {

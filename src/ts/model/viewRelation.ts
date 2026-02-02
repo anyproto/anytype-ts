@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 class ViewRelation implements I.ViewRelation {
 
@@ -22,7 +22,7 @@ class ViewRelation implements I.ViewRelation {
 			formulaType: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

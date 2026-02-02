@@ -31,7 +31,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutMove = useRef(0);
 	const timeoutScroll = useRef(0);
 	const frameMove = useRef(0);
-	const frameScroll = useRef(0);
 	const frameResize = useRef(0);
 	const hoverId = useRef('');
 	const hoverPosition = useRef(I.BlockPosition.None);
@@ -49,7 +48,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.clear(false);
 
 			raf.cancel(frameMove.current);
-			raf.cancel(frameScroll.current);
 			raf.cancel(frameResize.current);
 
 			window.clearTimeout(timeoutMove.current);
@@ -69,8 +67,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const resizable = node.find('.resizable');
 		const top = Storage.getScroll('editor', rootId, isPopup);
 
 		checkDeleted();
@@ -85,10 +81,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
 	});
 
 	const initNodes = () => {
@@ -370,7 +362,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				continue;
 			};
 
-			const rect = obj.get(0).getBoundingClientRect() as DOMRect;
+			const rect = U.Common.getElementRect(obj.get(0));
 
 			rect.y += st;
 
@@ -408,7 +400,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = (container.current.get(0) as Element).getBoundingClientRect() as DOMRect;
+			rectContainer = U.Common.getElementRect(container.current.get(0));
 
 			if (
 				(pageX >= x) && 
@@ -909,9 +901,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Backspace
 			keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
-				if (!readonly) {
-					onBackspaceBlock(e, range, pressed, length, props);
-				};
+				onBackspaceBlock(e, range, pressed, length, props);
 			});
 
 			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
@@ -1197,7 +1187,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					continue;
 				};
 
-				const rect = node.get(0).getBoundingClientRect();
+				const rect = U.Common.getElementRect(node.get(0));
 				const blockY = rect.top + rect.height / 2;
 				const distance = Math.abs(blockY - targetY);
 
@@ -1271,10 +1261,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		let sRect = U.Common.getSelectionRect();
 		let vRect: any = {};
 		if (value && value.length) {
-			vRect = value.get(0).getBoundingClientRect();
+			vRect = U.Common.getElementRect(value.get(0));
 		} else 
 		if (element && element.length) {
-			vRect = element.get(0).getBoundingClientRect();
+			vRect = U.Common.getElementRect(element.get(0));
 		};
 
 		if (!sRect) {
@@ -1396,6 +1386,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	// Backspace / Delete
 	const onBackspaceBlock = (e: any, range: I.TextRange, pressed: string, length: number, props: any) => {
+		if (readonly) {
+			return;
+		};
+
 		const { isInsideTable } = props;
 		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
@@ -1826,10 +1820,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const top = container.scrollTop();
 
 		Storage.setScroll('editor', rootId, top, isPopup);
-
-		raf.cancel(frameScroll.current);
-		frameScroll.current = raf(() => tocRef.current?.onScroll());
-
+		tocRef.current?.onScroll();
 		Preview.previewHide(false);
 	};
 	
@@ -2179,7 +2170,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			if (next) {
-				focusSet(blockId, to, to, true);
+				focusSet(next.id, to, to, true);
 			};
 
 			analytics.event('DeleteBlock', { count: 1 });
@@ -2387,13 +2378,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				last.css({ height });
 			};
 
+			tocRef.current?.resize?.();
 			callBack?.();
 		});
 	};
 
 	const focusSet = (id: string, from: number, to: number, scroll: boolean) => {
+		// Set focus state immediately so onFocusHandler can detect programmatic focus
+		focus.set(id, { from, to });
+
+		// Delay applying to DOM to allow React to finish rendering
 		window.setTimeout(() => {
-			focus.set(id, { from, to });
 			focus.apply();
 
 			if (scroll) {
@@ -2419,21 +2414,18 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const elements = node.find('#elements');
 
 		node.css({ width });
-		elements.css({ width, marginLeft: width / 2 });
+		elements.css({ width, marginLeft: -width / 2 });
 
-		if (headerRef.current && headerRef.current.refDrag) {
-			headerRef.current.refDrag.setValue(v);
-			headerRef.current.setPercent(v);
-		};
-
-		$('.resizable').trigger('resizeInit');
+		headerRef.current?.refDrag?.setValue(v);
+		headerRef.current?.setPercent(v);
 	};
 
 	const getWidth = (weight: number) => {
 		weight = Number(weight) || 0;
 
 		const container = U.Common.getPageContainer(isPopup);
-		const width = Math.min(container.width() - 96, (1 + weight) * J.Size.editor);
+		const mw = container.width() - 96;
+		const width = Math.min(mw, J.Size.editor + (mw - J.Size.editor) * weight);
 
 		return Math.max(300, width);
 	};

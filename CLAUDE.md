@@ -18,8 +18,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Distribution
 - `npm run dist:mac` - Build macOS distribution
-- `npm run dist:win` - Build Windows distribution  
+- `npm run dist:win` - Build Windows distribution
 - `npm run dist:linux` - Build Linux distribution
+
+### Testing Builds
+To test a build on macOS without code signing:
+```bash
+ELECTRON_SKIP_NOTARIZE=1 npm run dist:mac
+```
+
+The build output is in `dist/mac-arm64` (or `dist/mac` for x64). You can run the app directly from terminal:
+```bash
+./dist/mac-arm64/Anytype.app/Contents/MacOS/Anytype
+```
+
+### Build Dependencies
+Dependencies included in the packaged app are whitelisted. The `npm run build:deps` script auto-detects required dependencies, but if some are missing at runtime, explicitly add them to `package.deps.json`.
 
 ### Development Setup
 Before development, you need the anytype-heart middleware:
@@ -129,6 +143,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
+- Translation keys are defined in `src/json/text.json`
 - Block operations should go through the command system
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
@@ -151,3 +166,22 @@ curl -s -X POST "https://api.linear.app/graphql" \
 ```
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
+
+## Figma MCP Integration
+
+Use the Figma MCP tools to fetch design context and screenshots from Figma files.
+
+**Available tools:**
+- `mcp__figma__get_design_context` - Get UI code/design context for a Figma node (preferred)
+- `mcp__figma__get_screenshot` - Get a screenshot of a Figma node
+- `mcp__figma__get_metadata` - Get metadata/structure of a Figma node
+
+**Extract parameters from Figma URLs:**
+- URL format: `https://www.figma.com/design/:fileKey/:fileName?node-id=:nodeId`
+- `fileKey` is the ID after `/design/`
+- `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
+
+**Example usage:**
+For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
+- `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
+- `nodeId`: `12769:19003`

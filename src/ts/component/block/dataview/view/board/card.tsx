@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, keyboard } from 'Lib';
@@ -61,7 +61,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		};
 	};
 
-	const onCellClickHandler = (e: React.MouseEvent, vr: I.ViewRelation) => {
+	const onCellClickHandler = (e: MouseEvent, vr: I.ViewRelation) => {
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const relation = S.Record.getRelationByKey(vr.relationKey);

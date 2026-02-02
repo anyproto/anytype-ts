@@ -1,10 +1,10 @@
-import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle, ReactNode } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { U } from 'Lib';
 
 interface Props {
-	children?: React.ReactNode;
+	children?: ReactNode;
 	className?: string;
 	dataset?: any;
 };
@@ -40,7 +40,7 @@ const Frame = forwardRef<FrameRefProps, Props>(({
 			const node = $(nodeRef.current);
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
-				marginLeft: -node.outerWidth() / 2
+				marginLeft: -node.outerWidth() / 2,
 			});
 		});
 	};

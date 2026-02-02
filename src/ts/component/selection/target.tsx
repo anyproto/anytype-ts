@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { I, U } from 'Lib';
 
 interface Props {
 	id: string;
 	type: I.SelectType;
-	children?: React.ReactNode;
+	children?: ReactNode;
 	style?: any;
 	className?: string;
 	onContextMenu?(e: any): void;

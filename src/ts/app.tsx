@@ -144,6 +144,8 @@ const App: FC = () => {
 	};
 
 	const registerIpcEvents = () => {
+		unregisterIpcEvents();
+
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
 		Renderer.on('update-not-available', onUpdateUnavailable);
@@ -172,12 +174,6 @@ const App: FC = () => {
 		});
 
 		Renderer.on('zoom', () => {
-			const resizable = $('.resizable');
-
-			if (resizable.length) {
-				resizable.trigger('resizeInit');
-			};
-
 			sidebar.resizePage(false, null, null, false);
 			sidebar.resizePage(true, null, null, false);
 		});
@@ -207,6 +203,31 @@ const App: FC = () => {
 		Renderer.on('power-event', (e: any, state: string) => {
 			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
 		});
+	};
+	
+	const unregisterIpcEvents = () => {
+		Renderer.remove('init');
+		Renderer.remove('route');
+		Renderer.remove('popup');
+		Renderer.remove('update-not-available');
+		Renderer.remove('update-downloaded');
+		Renderer.remove('update-error');
+		Renderer.remove('download-progress');
+		Renderer.remove('spellcheck');
+		Renderer.remove('pin-set');
+		Renderer.remove('pin-remove');
+		Renderer.remove('enter-full-screen');
+		Renderer.remove('leave-full-screen');
+		Renderer.remove('config');
+		Renderer.remove('logout');
+		Renderer.remove('data-path');
+		Renderer.remove('will-close-window');
+		Renderer.remove('shutdownStart');
+		Renderer.remove('zoom');
+		Renderer.remove('native-theme');
+		Renderer.remove('pin-check');
+		Renderer.remove('reload');
+		Renderer.remove('power-event');
 	};
 
 	const onInit = (data: any) => {
@@ -310,9 +331,10 @@ const App: FC = () => {
 				U.Data.onAuthOnce();
 
 				const param = route ? U.Router.getParam(route) : {};
+				const spaceId = param.spaceId || Storage.get('spaceId');
 
-				if (param.spaceId) {
-					U.Router.switchSpace(param.spaceId, '', false, routeParam, true);
+				if (spaceId) {
+					U.Router.switchSpace(spaceId, '', false, routeParam, true);
 				} else {
 					U.Router.go('/main/void/select', routeParam);
 				};
@@ -611,7 +633,13 @@ const App: FC = () => {
 		});
 	};
 
-	useEffect(() => init(), []);
+	useEffect(() => {
+		init();
+
+		return () => {
+			unregisterIpcEvents();
+		};
+	}, []);
 
 	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	

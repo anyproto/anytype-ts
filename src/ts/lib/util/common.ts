@@ -426,10 +426,12 @@ class UtilCommon {
 	 */
 	getSelectionRect () {
 		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
+		
 		const range = this.getSelectionRange();
 		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
+		
 		rect = this.objectCopy(rect);
 
 		if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -437,6 +439,10 @@ class UtilCommon {
 		};
 
 		return rect;
+	};
+
+	getElementRect (element: any): DOMRect | null {
+		return element ? (element.getBoundingClientRect() as DOMRect) : null;
 	};
 
 	/**
@@ -579,16 +585,6 @@ class UtilCommon {
 				},
 			},
 		});
-	};
-
-	/**
-	 * Compares an object's property to a new value and returns the change if different.
-	 * @param {any} obj - The object.
-	 * @param {any} change - The change object with newValue and name.
-	 * @returns {any|null} The change if different, otherwise null.
-	 */
-	intercept (obj: any, change: any) {
-		return this.compareJSON(change.newValue, obj[change.name]) ? null : change;
 	};
 
 	/**
@@ -886,7 +882,7 @@ class UtilCommon {
 	 * Pauses all audio and video elements on the page.
 	 */
 	pauseMedia () {
-		$('audio, video').each((i: number, item: any) => { item.pause(); });
+		$('audio, video').each((i: number, item: any) => item.pause());
 	};
 
 	/**

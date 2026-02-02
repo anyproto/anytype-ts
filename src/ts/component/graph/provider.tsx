@@ -674,6 +674,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			onPreviewHide();
 
 			if (worker.current) {
+				worker.current.removeEventListener('message', onMessage);
 				worker.current.terminate();
 			};
 		};

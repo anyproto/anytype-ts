@@ -111,8 +111,8 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let hasTurnFile = true;
 		let hasColor = true;
 		let hasBg = true;
-
-		let hasTitle = false;
+		let hasCommon = true;
+		let hasClipboard = true;
 		let hasQuote = false;
 		
 		for (const id of blockIds) {
@@ -137,13 +137,17 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			hasText = hasText && block.isText();
 			hasQuote = hasQuote && block.isTextQuote();
 
-			if (block.isTextTitle() || block.isTextDescription() || block.isFeatured())	{
+			if (block.isTextTitle() || block.isTextDescription()) {
+				hasCommon = false;
+				hasText = false;
+			};
+
+			if (block.isFeatured()) {
 				hasAction = false;
-				hasTitle = true;
 			};
 		};
 
-		const actionParam = { rootId, blockId, hasText, hasFile, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
+		const actionParam = { rootId, blockId, hasText, hasFile, hasCommon, hasClipboard, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
 		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
@@ -186,7 +190,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				caption: (I.TextStyle[style] ? translate(U.String.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 			};
 
-			const c1 = hasTitle ? [] : U.Menu.getActions(actionParam);
+			const c1 = hasAction ? U.Menu.getActions(actionParam) : [];
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,

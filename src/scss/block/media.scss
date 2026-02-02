@@ -7,8 +7,8 @@
 	.block.blockMedia {
 		.focusable { line-height: 0px; }
 		.focusable.isFocused { background: none; }
-		.focusable.isFocused::before { 
-			content: ""; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; z-index: 1; 
+		.focusable.isFocused::before {
+			content: ""; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; z-index: 1;
 			pointer-events: none; border-radius: 6px;
 		}
 		.focusable.isResizing {

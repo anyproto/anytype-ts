@@ -18,7 +18,7 @@ interface ChatMessageRefProps {
 
 const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
-	const { 
+	const {
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
 		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
 	} = props;
@@ -90,7 +90,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 		let menuContext = null;
 
-		S.Menu.open('smile', { 
+		S.Menu.open('smile', {
 			element: node.find('#reaction-add'),
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
@@ -237,6 +237,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
 	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
+	const cns = [ 'status', 'syncing' ];
 
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);
@@ -245,10 +246,9 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	let userpicNode = null;
 	let authorNode = null;
-	let statusIcon = <Icon className="status syncing" />;
 
 	if (isSynced || !isSelf) {
-		statusIcon = null;
+		cns.push('isHidden');
 	};
 
 	if (!readonly) {
@@ -334,11 +334,8 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				onContextMenu={onContextMenu}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
-				{...U.Common.animationProps({ 
-					initial: { y: 20 }, 
-					animate: { y: 0 }, 
-					exit: { y: -20 },
-					transition: { duration: 0.3, delay: 0.1 },
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
 				})}
 			>
 				{isNew ? (
@@ -366,7 +363,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											className="text"
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
-										<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
+										<div className="time">
+											<Icon className={cns.join(' ')} />
+											{editedLabel} {U.Date.date('H:i', createdAt)}
+										</div>
 									</div>
 
 									{hasAttachments ? (

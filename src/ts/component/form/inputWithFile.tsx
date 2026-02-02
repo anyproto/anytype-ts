@@ -2,7 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
-import { I, J, keyboard, focus, translate, Action } from 'Lib';
+import { I, J, U, keyboard, focus, translate, Action } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -17,10 +17,12 @@ interface Props {
 	onChangeFile? (e: any, path: string): void;
 };
 
-const SMALL_WIDTH = 248;
-const ICON_WIDTH = 60;
-
 enum Size { Icon = 0, Small = 1, Full = 2 };
+
+const Sizes = {
+	[Size.Icon]: 60,
+	[Size.Small]: 260,
+};
 
 const InputWithFile: FC<Props> = ({
 	icon = '',
@@ -36,12 +38,12 @@ const InputWithFile: FC<Props> = ({
 }) => {
 
 	const [ isFocused, setIsFocused ] = useState(false);
-	const [ size, setSize ] = useState(Size.Full);
+	const [ size, setSize ] = useState(null);
 	const nodeRef = useRef(null);
 	const urlRef = useRef(null);
 	const fileWrapRef = useRef(null);
 	const timeout = useRef(0);
-	const cn = [ 'inputWithFile', 'resizable' ];
+	const cn = [ 'inputWithFile' ];
 	const or = ` ${String(translate('commonOr')).toLowerCase()} `;
 	const isSmall = size == Size.Small;
 	const isIcon = size == Size.Icon;
@@ -74,24 +76,6 @@ const InputWithFile: FC<Props> = ({
 		placeholder += or + (!isSmall ? textFile : '');
 	};
 
-	const rebind = () => {
-		unbind();
-
-		if (canResize) {
-			$(nodeRef.current).on('resizeMove', () => resize());
-		};
-
-		$(fileWrapRef.current).on('mousedown', e => onClickFile(e));
-	};
-	
-	const unbind = () => {
-		if (canResize) {
-			$(nodeRef.current).off('resizeMove');
-		};
-
-		$(fileWrapRef.current).off('mousedown');
-	};
-	
 	const resize = () => {
 		if (!canResize) {
 			return;
@@ -103,14 +87,14 @@ const InputWithFile: FC<Props> = ({
 				return;
 			};
 
-			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
+			const rect = U.Common.getElementRect(node.get(0));
 
-			let s = Size.Full;
-			if (rect.width <= SMALL_WIDTH) {
+			let s = Size.Icon;
+			if (rect.width >= Sizes[Size.Small]) {
+				s = Size.Full;
+			} else
+			if (rect.width >= Sizes[Size.Icon]) {
 				s = Size.Small;
-			};
-			if (rect.width <= ICON_WIDTH) {
-				s = Size.Icon;
 			};
 
 			if (s != size) {
@@ -179,30 +163,33 @@ const InputWithFile: FC<Props> = ({
 
 	useEffect(() => {
 		resize();
-		rebind();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
 			const { focused } = focus.state;
 
-			unbind();
-
 			if (focused == block.id) {
 				keyboard.setFocus(false);
 			};
+
+			resizeObserver.disconnect();
 		};
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
-
 		if (isFocused) {
 			keyboard.setFocus(true);
 			urlRef.current?.focus();
 			focus.set(block.id, { from: 0, to: 0 });
 		};
-
-	}, [ isFocused, size ]);
+	}, [ isFocused ]);
 	
 	return (
 		<div 

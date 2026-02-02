@@ -30,7 +30,7 @@
                 .back { width: 100%; height: 4px; background: var(--color-shape-secondary); transform: translateY(-50%); margin-top: 0px; }
             }
 
-			.input-drag-vertical { display: none; transition: opacity 0.2s ease-in-out; position: fixed; z-index: 1000; opacity: 0; }
+			.input-drag-vertical { display: none; transition: opacity 0.2s $easeInQuint; position: fixed; z-index: 1000; opacity: 0; }
 			.input-drag-vertical.active { opacity: 1; }
 
 			.volumeWrap { display: flex; align-items: center; }

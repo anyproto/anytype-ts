@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
 import { C, U, I, S, J, Action, translate, analytics, Preview } from 'Lib';
@@ -134,7 +134,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const showInfo = (e: React.MouseEvent) => {
+	const showInfo = (e: MouseEvent) => {
 		Preview.tooltipShow({
 			text: translate('menuPublishInfoTooltip'),
 			className: 'big',

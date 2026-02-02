@@ -219,8 +219,8 @@
 		.dataviewFilters {
 			> .sides { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; }
 			> .sides {
-				> .side.left { flex-grow: 1; padding-left: 16px; max-width: 100%; display: flex; gap: 4px; flex-wrap: wrap; }
-				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; padding-right: 2px; align-items: flex-start; }
+				> .side.left { flex-grow: 1; padding-left: 14px; max-width: 100%; display: flex; gap: 4px; flex-wrap: wrap; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; align-items: flex-start; }
 
 				.filterItem {
 					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 32px; align-items: center; padding: 0px 10px 0px 8px;
@@ -319,6 +319,10 @@
 		.dataviewEmpty { 
 			height: auto; padding: 48px 0px; border-top: 1px solid var(--color-shape-secondary); 
 			border-bottom: 1px solid var(--color-shape-secondary); 
+		}
+
+		.dataviewFilters {
+			.side.left { padding-left: 0px; }
 		}
 
 		.dataviewControls { margin: 0px 0px 8px 0px; }

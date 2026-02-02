@@ -64,19 +64,7 @@
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
-		@keyframes shake1 {
-			0% { transform: rotate(-0.5deg); }
-			100% { transform: rotate(0.5deg); }
-		}
-
-		@keyframes shake2 {
-			0% { transform: rotate(0.5deg); }
-			100% { transform: rotate(-0.5deg); }
-		}
-
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
-
-		#widget-chat { margin: 0px 0px 8px 0px; }
 
 		.widget.isEditable.isOver::before { 
 			content: ""; position: absolute; background: var(--color-control-accent); height: 2px; width: calc(100% - 24px); border-radius: 2px; 

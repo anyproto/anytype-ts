@@ -158,7 +158,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		const rect = element.get(0).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(element.get(0));
 		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };

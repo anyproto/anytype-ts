@@ -1,7 +1,7 @@
-import React, { useRef, forwardRef, useEffect, useState } from 'react';
+import React, { useRef, forwardRef, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, translate, analytics, Action, keyboard } from 'Lib';
+import { I, U, S, translate, analytics, keyboard } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
@@ -43,18 +43,18 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
-	const onButtonClick = (e: any, item: any) => {
+	const onButtonClick = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		switch (item.id) {
 			case 'search': {
-				keyboard.onSearchPopup(analytics.route.widget);
+				keyboard.onSearchPopup(route);
 				break;
 			};
 
 			case 'create': {
-				keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+				keyboard.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
@@ -65,7 +65,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		};
 	};
 
-	const onArrow = (e: any) => {
+	const onArrow = (e: MouseEvent) => {
 		e.stopPropagation();
 
 		U.Menu.typeSuggest({ 
@@ -87,7 +87,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-		}, { route: analytics.route.widget });
+		}, { route });
 	};
 
 	let content = null;
@@ -100,7 +100,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<Icon className="arrow" />
 				</div>
 
-				<MemberCnt route={analytics.route.widget} />
+				<MemberCnt route={route} />
 			</div>
 		);
 	} else {

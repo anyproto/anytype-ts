@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px; }
+		.ReactVirtualized__List { padding: 8px; }
 
 		.innerWrap { width: 684px; height: 706px; max-height: calc(100% - 48px); overflow: hidden; }
 
@@ -22,7 +22,7 @@
 			.iconObject { margin-right: 6px; }
 			
 			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.icon.search { background-image: url('~img/icon/popup/search/search.svg') !important; }
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
@@ -35,7 +35,7 @@
 			}
 		}
 
-		.items { height: 100%; flex-grow: 1; padding: 0px 8px; }
+		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
 
@@ -88,6 +88,24 @@
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
 				.icon.advanced { opacity: 1; }
+			}
+		}
+
+		.foot {
+			flex-shrink: 0; height: 40px; border-top: 1px solid var(--color-shape-secondary); display: flex;
+			align-items: center; padding: 0px 16px; gap: 0px 24px;
+		}
+		.foot {
+			.item { display: flex; align-items: center; gap: 0px 8px; }
+			.item {
+				.keys { display: flex; align-items: center; gap: 0px 4px; }
+				.keys {
+					.label {
+						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
+						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
+					}
+				}
+				.label { @include text-small; color: var(--color-text-secondary); }
 			}
 		}
 	}

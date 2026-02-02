@@ -291,8 +291,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						menuParam.data.onSelect();
-
+						menuParam.data.onSelect?.();
 						moveToPage(item.id);
 						close();
 					},
@@ -338,7 +337,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const rect = $(`#${getId()}`).get(0).getBoundingClientRect();
+		const rect = U.Common.getElementRect($(`#${getId()}`).get(0));
 		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			rect,

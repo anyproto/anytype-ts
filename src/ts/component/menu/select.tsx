@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -155,7 +155,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		props.param.data.filter = v;
 	};
 
-	const onFilterKeyUp = (e: React.KeyboardEvent, v: string) => {
+	const onFilterKeyUp = (e: KeyboardEvent, v: string) => {
 		const { param } = props;
 		const { data } = param;
 		const { onFilterKeyUp } = data;

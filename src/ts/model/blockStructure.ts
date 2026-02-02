@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 /**
  * BlockStructure represents the parent-child relationships in the block tree.
@@ -28,7 +28,7 @@ class BlockStructure implements I.BlockStructure {
 			childrenIds: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
+import { action, computed, makeObservable, observable, set } from 'mobx';
 import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 
 interface Filter {
@@ -205,18 +205,17 @@ class CommonStore {
 			singleTabSet: action,
 			autoDownloadSet: action,
 		});
-
-		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
 	};
 
 	get config (): any {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
-		config.languages = config.languages || [];
-		config.debug = config.debug || {};
-		config.flagsMw = config.flagsMw || {};
-
-		return config;
+		return {
+			...config,
+			languages: config.languages || [],
+			debug: config.debug || {},
+			flagsMw: config.flagsMw || {},
+		};
 	};
 
 	get preview (): I.Preview {

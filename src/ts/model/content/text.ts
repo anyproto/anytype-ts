@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { I } from 'Lib';
+import { observable, makeObservable } from 'mobx';
 
 export class Mark implements I.Mark {
 	
@@ -18,7 +18,7 @@ export class Mark implements I.Mark {
 			range: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };
@@ -52,7 +52,7 @@ export class BlockContentText implements I.ContentText {
 			marks: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 };

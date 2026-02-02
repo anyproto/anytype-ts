@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import { I, U, keyboard, translate, S, Relation, C } from 'Lib';
@@ -126,7 +126,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	const onContextMenu = (e: React.MouseEvent, item: any) => {
+	const onContextMenu = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 
 		if (isReadonly) {

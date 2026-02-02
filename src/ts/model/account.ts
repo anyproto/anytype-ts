@@ -1,5 +1,5 @@
 import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
 	
@@ -45,7 +45,6 @@ class AccountInfo implements I.AccountInfo {
 			metadataKey: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 
@@ -73,7 +72,6 @@ class AccountStatus implements I.AccountStatus {
 			date: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 
@@ -97,7 +95,6 @@ class Account implements I.Account {
 			status: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 

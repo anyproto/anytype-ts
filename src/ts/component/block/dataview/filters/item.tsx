@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, Label } from 'Component';
@@ -14,7 +14,7 @@ interface Props {
 	onOver?: (e: any) => void;
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
-	onContextMenu?: (e: React.MouseEvent) => void;
+	onContextMenu?: (e: MouseEvent) => void;
 };
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {

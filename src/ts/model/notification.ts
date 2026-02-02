@@ -1,5 +1,5 @@
 import { I, U, J, translate } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 
 class Notification implements I.Notification {
 
@@ -26,7 +26,7 @@ class Notification implements I.Notification {
 			status: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 	fillContent () {

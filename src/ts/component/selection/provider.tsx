@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -6,10 +6,10 @@ import { getRange } from 'selection-ranges';
 import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
 
 interface Props {
-	children?: React.ReactNode;
+	children?: ReactNode;
 };
 
-type ContextMenuHandler = (e: React.MouseEvent, ids: string[]) => void;
+type ContextMenuHandler = (e: MouseEvent, ids: string[]) => void;
 
 interface SelectionRefProps {
 	get(type: I.SelectType): string[];
@@ -340,7 +340,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const offset = node.obj.offset();
-		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
+		const rect = U.Common.getElementRect(node.obj.get(0));
 		const { x, y } = recalcCoords(offset.left, offset.top);
 
 		cache = { x, y, width: rect.width, height: rect.height };
@@ -650,7 +650,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		$('html').toggleClass('isSelecting', v);
 	};
 
-	const handleContextMenu = (e: React.MouseEvent) => {
+	const handleContextMenu = (e: MouseEvent) => {
 		const handler = contextMenuHandler.current;
 
 		if (!handler) {

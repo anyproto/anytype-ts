@@ -1223,14 +1223,12 @@ export const Mapper = {
 		},
 
 		SearchSort : (obj: any): any => {
-			/*
 			const item = new Model.Search.Message.Sort();
 
 			item.setKey(obj.key);
 			item.setType(obj.type as number);
 
 			return item;
-			*/
 		},
 
 	},

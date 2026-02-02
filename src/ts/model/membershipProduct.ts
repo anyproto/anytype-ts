@@ -1,4 +1,4 @@
-import { makeObservable, observable, intercept } from 'mobx';
+import { makeObservable, observable } from 'mobx';
 import { I, U } from 'Lib';
 
 const COLORS = [
@@ -75,7 +75,7 @@ class MembershipProduct implements I.MembershipProduct {
 			features: observable,
 		});
 
-		intercept(this as any, change => U.Common.intercept(this, change));
+		return this;
 	};
 
 	get featuresList (): { key: string; value: number; }[] {

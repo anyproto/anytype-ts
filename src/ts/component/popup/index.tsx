@@ -37,8 +37,9 @@ import PopupIntroduceChats from './introduceChats';
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { id, param } = props;
+	const { onOpen } = param;
 	const nodeRef = useRef(null);
-	const componentRef = useRef(null);
+	const childRef = useRef(null);
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
@@ -99,9 +100,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const position = () => {
-		if (componentRef.current && componentRef.current.beforePosition) {
-			componentRef.current.beforePosition();
-		};
+		childRef.current?.beforePosition?.();
 
 		raf(() => {
 			const node = $(nodeRef.current);
@@ -125,6 +124,13 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	const getContext = () => ({
+		getChildRef: () => childRef.current,
+		close,
+		getId,
+		props,
+	});
+
 	useEffect(() => {
 		if (!param.preventResize) {
 			position();
@@ -132,6 +138,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		rebind();
 		animate();
+		onOpen?.(getContext());
 
 		analytics.event('popup', { params: { id } });
 
@@ -205,7 +212,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="content">
 					<Component 
 						{...props}
-						ref={componentRef}
+						ref={childRef}
 						position={position} 
 						close={close}
 						storageGet={storageGet}

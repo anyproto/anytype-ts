@@ -224,10 +224,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const close = () => {
-		if (!noPreview) {
-			previewRef.current?.show(false);
-		};
-
 		sidebar.rightPanelToggle(isPopup, { page });
 	};
 
@@ -247,8 +243,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	useEffect(() => {
 		init();
-
-		window.setTimeout(() => previewRef.current?.show(true), J.Constant.delay.sidebar);
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 
 		return () => {

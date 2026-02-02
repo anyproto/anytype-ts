@@ -314,6 +314,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	request.setDroptargetid(targetId);
 	request.setPosition(position as number);
 	request.setLocalfilepathsList(paths);
+	request.setStyle(S.Common.fileStyle as number);
 
 	dispatcher.request(FileDrop.name, request, callBack);
 };
@@ -2113,31 +2114,6 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 
 // ---------------------- PAYMENTS ---------------------- //
 
-export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
-	const request = new Empty();
-	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
-};
-
-export const MembershipGetVerificationEmail = (email: string, subscribeNews: boolean, subscribeTips: boolean, isOnboardingList: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetVerificationEmail.Request();
-	
-	request.setEmail(email);
-	request.setSubscribetonewsletter(subscribeNews);
-	request.setInsidertipsandtutorials(subscribeTips);
-	request.setIsonboardinglist(isOnboardingList);
-	
-	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
-};
-
-export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.Finalize.Request();
-
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipFinalize.name, request, callBack);
-};
-
 export const MembershipCodeGetInfo = (code: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.CodeGetInfo.Request();
 
@@ -2203,6 +2179,14 @@ export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message
 	request.setNsname(anyName);
 
 	dispatcher.request(MembershipV2AnyNameAllocate.name, request, callBack);
+};
+
+export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.SubscribeToUpdates.Request();
+	
+	request.setEmail(email);
+	
+	dispatcher.request(MembershipV2SubscribeToUpdates.name, request, callBack);
 };
 
 // ---------------------- SPACE ---------------------- //
@@ -2321,6 +2305,17 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};
+
+export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, callBack?: (message: any) => void) => {
+	// Note: Requires middleware branch GO-6168-change-ownership
+	const request = new (Rpc.Space as any).ChangeOwnership.Request();
+
+	request.setSpaceid(spaceId);
+	request.setNewowneridentity(newOwnerIdentity);
+	request.setOldownerpermissions(I.ParticipantPermissions.Writer as number);
+
+	dispatcher.request(SpaceChangeOwnership.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //
@@ -2455,7 +2450,6 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 };
 
 export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
-	/*
 	const request = new Rpc.Chat.Search.Request();
 
 	request.setSpaceid(spaceId);
@@ -2466,7 +2460,6 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 	request.setSortsList(sorts.map(Mapper.To.SearchSort));
 
 	dispatcher.request(ChatSearch.name, request, callBack);
-	*/
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {

@@ -14,6 +14,10 @@
 
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
+		&.sidebarAnimation {
+			.sidebarPage { transition: opacity $transitionSidebarTime $easeInQuint; }
+		}
+
 		&.isClosed {
 			.sidebarPage { border: 0px; }
 		}
@@ -21,7 +25,7 @@
 
 	.pageWrapper { padding: 0px 0px 8px 8px; z-index: 2; display: flex; background: var(--color-bg-primary); height: 100%; }
 	.pageWrapper {
-		&.anim { transition: width $transitionSidebarTime linear; }
+		&.sidebarAnimation { transition-property: width, transform; }
 		&.isClosed { padding-left: 0px; }
 	}
 
@@ -69,7 +73,7 @@
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 	.banner.update { position: absolute; bottom: 45px; z-index: 10; left: 12px; width: 312px; }
 
-	&.withPreview { z-index: 31; }
+	&.withPreview { z-index: 20; }
 	&.left { left: 0px; flex-direction: row; }
 	&.left {
 		.resize-h { right: -12px; }
@@ -87,7 +91,7 @@
 		}
 	}
 
-	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
+	&.right { right: 0px; flex-shrink: 0; }
 	&.right {
 		.resize-h { left: -12px; }
 		&.sidebarAnimation { transition-property: transform; }

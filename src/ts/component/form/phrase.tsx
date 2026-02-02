@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, KeyboardEvent } from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
@@ -12,7 +12,7 @@ interface Props {
 	checkPin?: boolean;
 	placeholder?: string;
 	tooltipCopy?: string;
-	onKeyDown?: (e: React.KeyboardEvent) => void;
+	onKeyDown?: (e: KeyboardEvent) => void;
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
 	onCopy?: () => void;
@@ -69,7 +69,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 		};
 	};
 
-	const onKeyDownHandler = (e: React.KeyboardEvent) => {
+	const onKeyDownHandler = (e: KeyboardEvent) => {
 		const entry = $(entryRef.current);
 
 		keyboard.shortcut('space, enter', e, () => {
@@ -98,7 +98,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 		};
 	};
 
-	const onKeyUp = (e: React.KeyboardEvent) => {
+	const onKeyUp = (e: KeyboardEvent) => {
 		placeholderCheck();
 	};
 

@@ -136,8 +136,8 @@ const Progress: FC = observer(() => {
 	useEffect(() => resize(), [ list.length ]);
 
 	return show && list.length ? (
-		<div 
-			ref={nodeRef} 
+		<div
+			ref={nodeRef}
 			className={cn.join(' ')}
 		>
 			<div ref={innerRef} className="inner" onMouseDown={onDragStart}>

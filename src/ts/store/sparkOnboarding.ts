@@ -254,8 +254,10 @@ class SparkOnboardingStore {
 		// Clear all animation timeouts
 		this.animationTimeouts.forEach(id => clearTimeout(id));
 		this.animationTimeouts = [];
-		
+
 		if (this.service) {
+			// Remove all event listeners before disconnecting
+			this.service.removeAllListeners();
 			this.service.disconnect();
 			this.isConnected = false;
 		};
@@ -562,8 +564,8 @@ class SparkOnboardingStore {
 			data.suggestedTypes.forEach((type, index) => {
 				// Add delay for staged animation (base 1000ms + random 0-1000ms)
 				const typeDelay = 1000 + (index * 1000) + (Math.random() * 1000);
-				
-				setTimeout(() => {
+
+				const typeTimeoutId = window.setTimeout(() => {
 					let x, y;
 					
 					// Get popup boundaries
@@ -627,23 +629,23 @@ class SparkOnboardingStore {
 						exampleTitles.forEach((title: string, objIndex: number) => {
 							// Objects appear 1 second after their type, one by one
 							const objectDelay = 1000 + (objIndex * 1000) + (Math.random() * 1000);
-							
-							setTimeout(() => {
+
+							const objectTimeoutId = window.setTimeout(() => {
 								const objectId = `${nodeId}-object-${objIndex}`;
-								
+
 								// Position objects around their type node in a much wider circle
 								const angle = (Math.PI * 2 * objIndex) / exampleTitles.length - Math.PI / 2; // Start from top
 								const radius = 220 + (Math.random() * 40); // Good separation
-								
+
 								// Calculate position and keep within bounds
 								let objX = (x || 100) + radius * Math.cos(angle);
 								let objY = (y || 100) + radius * Math.sin(angle);
-								
+
 								// Ensure objects stay within canvas bounds
 								const margin = 50;
 								objX = Math.max(margin, Math.min(window.innerWidth - margin, objX));
 								objY = Math.max(margin, Math.min(window.innerHeight - margin, objY));
-								
+
 								const objectNode: I.GraphNode = {
 									id: objectId,
 									type: 'object' as const,
@@ -652,9 +654,9 @@ class SparkOnboardingStore {
 									y: objY,
 									opacity: 0.8
 								};
-								
+
 								this.addGraphNode(objectNode);
-								
+
 								// Add link from type to object
 								this.addGraphLink({
 									source: nodeId,
@@ -662,9 +664,11 @@ class SparkOnboardingStore {
 									opacity: 0.4
 								});
 							}, objectDelay);
+							this.animationTimeouts.push(objectTimeoutId);
 						});
 					}
 				}, typeDelay);
+				this.animationTimeouts.push(typeTimeoutId);
 			});
 		});
 

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
 import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
@@ -7,7 +8,7 @@ import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
 const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
-	const refPlayerRef = useRef<any>(null);
+	const playerRef = useRef<any>(null);
 
 	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
@@ -38,7 +39,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			e.preventDefault();
 			e.stopPropagation();
 
-			refPlayerRef.current?.onPlay();
+			playerRef.current?.onPlay();
 			ret = true;
 		});
 
@@ -65,27 +66,30 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
 	};
 
-	const rebind = () => {
-		$(nodeRef.current).on('resize', () => {
-			refPlayerRef.current?.resize();
-		});
-	};
-
-	const unbind = () => {
-		$(nodeRef.current).off('resize');
+	const resize = () => {
+		playerRef.current?.resize?.();
 	};
 
 	useEffect(() => {
-		rebind();
+		resize();
+
+		resize();
+
+		const resizeObserver = new ResizeObserver(() => {
+			raf(() => resize());
+		});
+
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
 
 		return () => {
-			unbind();
+			resizeObserver.disconnect();
 		};
-	}, [ rebind, unbind ]);
+	}, []);
 
 	useEffect(() => {
-		rebind();
-		refPlayerRef.current?.updatePlaylist(getPlaylist());
+		playerRef.current?.updatePlaylist(getPlaylist());
 	});
 
 	useImperativeHandle(ref, () => ({}));
@@ -124,7 +128,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			case I.FileState.Done: {
 				element = (
 					<MediaAudio
-						ref={refPlayerRef}
+						ref={playerRef}
 						playlist={getPlaylist()}
 						onPlay={onPlay}
 						onPause={onPause}

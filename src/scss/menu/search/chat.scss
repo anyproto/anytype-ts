@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSearchChat { 
-		width: var(--editor-width); box-shadow: 0px 0px; border-radius: 0px; background: unset; 
+		width: var(--editor-width); box-shadow: 0px 0px !important; border-radius: 0px; background: unset; 
 		transition-property: opacity; transform: none !important;
 	}
 	.menu.menuSearchChat * { -webkit-app-region: no-drag; }

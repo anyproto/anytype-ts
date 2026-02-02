@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSearchText { 
-		width: var(--menu-width-large); padding: 0px; position: fixed; top: 42px; box-shadow: 0px 0px; 
+		width: var(--menu-width-large); padding: 0px; position: fixed; top: 42px; box-shadow: 0px 0px !important; 
 		border-radius: 0px; background: unset; transition-property: opacity; transform: none !important;
 	}
 	.menu.menuSearchText * { -webkit-app-region: no-drag; }

@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, MouseEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, S, J, U, Relation, translate } from 'Lib';
@@ -42,10 +42,11 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	const isName = relationKey == 'name';
 	const cellRef = useRef(null);
 
-	const onEdit = (e: React.MouseEvent) => {
+	const onEdit = (e: MouseEvent) => {
 		e.stopPropagation();
 		cellRef.current.onClick(e);
 	};
+
 
 	if (isName) {
 		cn.push('isName');
@@ -67,7 +68,10 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	};
 
 	let button = null;
-	let onClick = e => onCellClick(e, relationKey, record.id);
+	let onClick = e => {
+		e.stopPropagation();
+		onCellClick(e, relationKey, record.id);
+	};
 
 	if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
 		onClick = onEdit;
@@ -77,7 +81,10 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				icon="expand"
 				className="expand c32"
 				text={translate('commonOpen')}
-				onClick={e => onCellClick(e, relationKey, record.id)}
+				onClick={e => {
+					e.stopPropagation();
+					onCellClick(e, relationKey, record.id);
+				}}
 			/>
 		);
 	};

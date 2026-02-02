@@ -8,8 +8,8 @@ interface Props extends I.WidgetTreeItem {
 	treeKey: string;
 	style?: any;
 	isSection?: boolean;
-	onClick?(e: React.MouseEvent, props): void;
-	onToggle?(e: React.MouseEvent, props): void;
+	onClick?(e: MouseEvent, props): void;
+	onToggle?(e: MouseEvent, props): void;
 	setActive?(id: string): void;
 	getSubId?(id: string): string;
 	getSubKey?(): string;

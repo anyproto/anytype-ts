@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -109,7 +109,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onSortNameClick = (e: React.MouseEvent, item: any) => {
+	const onSortNameClick = (e: MouseEvent, item: any) => {
 		if (isReadonly()) {
 			return;
 		};
