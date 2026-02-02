@@ -687,7 +687,7 @@ class UtilObject {
 		};
 
 		const width = (root?.fields || {}).width;
-		return !width || (width == type.layoutWidth);
+		return width === undefined;
 	};
 
 	hasEqualFeaturedRelations (object: any, type: any): boolean {

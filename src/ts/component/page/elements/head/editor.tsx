@@ -22,8 +22,6 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const header = S.Block.getLeaf(rootId, 'header');
 	const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
 	const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: check.layoutAlign, childrenIds: [], fields: {}, content: {} });
-	const root = S.Block.getLeaf(rootId, rootId);
-	const width = Number(root?.fields?.width) || 0;
 
 	if (U.Object.isInHumanLayouts(check.layout)) {
 		icon.type = I.BlockType.IconUser;
@@ -69,9 +67,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	});
 
 	useEffect(() => {
-		dragRef.current?.setValue(width);
-		setPercent(width);
-	}, [ width ]);
+		dragRef.current?.setValue(check.layoutWidth);
+		setPercent(check.layoutWidth);
+	}, [ check.layoutWidth ]);
 
 	useImperativeHandle(ref, () => ({
 		getDrag: () => dragRef.current,
