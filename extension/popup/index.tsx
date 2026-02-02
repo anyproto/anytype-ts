@@ -27,7 +27,7 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const login = () => {
-		const appKey = Storage.get('appKey');
+		const appKey = String(Storage.get('appKey') || '');
 
 		if (appKey) {
 			Util.authorize(appKey, () => {

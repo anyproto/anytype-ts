@@ -2042,6 +2042,11 @@ class Keyboard {
 	};
 
 	setBodyClass () {
+		// Extension manages its own html classes
+		if (window.isExtension) {
+			return;
+		};
+
 		const { config, singleTab, isFullScreen, vaultIsMinimal } = S.Common;
 		const { alwaysShowTabs, debug } = config;
 		const platform = U.Common.getPlatform();

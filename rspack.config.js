@@ -190,15 +190,109 @@ module.exports = (env, argv) => {
 		},
 	};
 
-	// Extension config: same code, but Excalidraw is stubbed
+	// Extension config: same code, but heavy dependencies are stubbed and code is split into chunks
 	const extensionConfig = {
 		name: 'extension',
 		...base,
 
 		entry: {
-			extension: {
-				import: './extension/entry.tsx',
-				filename: 'extension/js/main.js',
+			main: './extension/entry.tsx',
+		},
+
+		output: {
+			...base.output,
+			path: path.resolve(__dirname, 'dist'),
+			filename: 'extension/js/chunks/[name].js',
+			chunkFilename: 'extension/js/chunks/[name].js',
+			cssFilename: 'extension/css/chunks/[name].css',
+			cssChunkFilename: 'extension/css/chunks/[name].css',
+		},
+
+		// Override CSS rules to use CSS extraction instead of style-loader
+		module: {
+			...base.module,
+			rules: [
+				...base.module.rules.filter(rule => !rule.test?.toString().includes('css')),
+				{
+					test: /\.s?css$/,
+					use: [
+						rspack.CssExtractRspackPlugin.loader,
+						{ loader: 'css-loader' },
+						{ loader: 'sass-loader' }
+					]
+				}
+			]
+		},
+
+		optimization: {
+			...base.optimization,
+			minimize: true,
+			minimizer: [
+				new rspack.SwcJsMinimizerRspackPlugin({
+					minimizerOptions: {
+						mangle: false, // Don't mangle names - preserves gRPC service method names
+						compress: true,
+					},
+				}),
+			],
+			splitChunks: {
+				chunks: 'all',
+				maxSize: 3 * 1024 * 1024, // 3MB max per chunk (safety margin for 5MB limit)
+				minSize: 10000, // Allow smaller chunks to enable more splitting
+				cacheGroups: {
+					// Force CSS/SCSS modules into smaller chunks
+					styles: {
+						test: /\.s?css$/,
+						name: 'styles',
+						chunks: 'all',
+						priority: 40,
+						maxSize: 2 * 1024 * 1024, // 2MB max for CSS chunks
+						enforce: true,
+					},
+					// Split protobuf commands (largest file ~8MB) into smaller chunks
+					protobufCommands: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]protos[\\/]commands_pb\.js$/,
+						name: 'pb-commands',
+						chunks: 'all',
+						priority: 35,
+						maxSize: 2 * 1024 * 1024, // Force 2MB chunks for this file
+					},
+					// Separate protobuf events
+					protobufEvents: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]protos[\\/]events_pb\.js$/,
+						name: 'pb-events',
+						chunks: 'all',
+						priority: 34,
+					},
+					// Separate protobuf models
+					protobufModels: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]protos[\\/]models_pb\.js$/,
+						name: 'pb-models',
+						chunks: 'all',
+						priority: 33,
+					},
+					// Other protobuf files
+					protobuf: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]/,
+						name: 'protobuf',
+						chunks: 'all',
+						priority: 30,
+					},
+					// MobX and React
+					react: {
+						test: /[\\/]node_modules[\\/](react|react-dom|mobx|mobx-react)[\\/]/,
+						name: 'react',
+						chunks: 'all',
+						priority: 25,
+					},
+					// Separate vendor libs
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendor',
+						chunks: 'all',
+						priority: 20,
+					},
+				},
 			},
 		},
 
@@ -206,17 +300,56 @@ module.exports = (env, argv) => {
 			...base.resolve,
 			alias: {
 				...base.resolve.alias,
+				// Existing stubs
 				'@excalidraw/excalidraw': path.resolve(__dirname, 'src/stubs/excalidraw.js'),
 				'@viz-js/viz': path.resolve(__dirname, 'src/stubs/viz.js'),
 				'mermaid': path.resolve(__dirname, 'src/stubs/mermaid.js'),
+				// Additional stubs for heavy dependencies
+				'amplitude-js': path.resolve(__dirname, 'src/stubs/amplitude.js'),
+				'@sentry/browser': path.resolve(__dirname, 'src/stubs/sentry.js'),
+				'd3': path.resolve(__dirname, 'src/stubs/d3.js'),
+				'react-pdf': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
+				'pdfjs-dist': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
+				'katex': path.resolve(__dirname, 'src/stubs/katex.js'),
+				'pako': path.resolve(__dirname, 'src/stubs/pako.js'),
+				'prismjs': path.resolve(__dirname, 'src/stubs/prismjs.js'),
 			},
 		},
 
 		plugins: [
-			...base.plugins,
+			// Filter out LimitChunkCountPlugin to allow code splitting
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
+			new rspack.CssExtractRspackPlugin({
+				filename: 'extension/css/chunks/[name].css',
+				chunkFilename: 'extension/css/chunks/[name].css',
+			}),
 			new rspack.DefinePlugin({
 				__IS_EXTENSION__: 'true',
-			})
+			}),
+			// Generate manifest for chunk loading
+			{
+				apply(compiler) {
+					compiler.hooks.emit.tapAsync('ExtensionManifestPlugin', (compilation, callback) => {
+						const entrypoint = compilation.entrypoints.get('main');
+						if (entrypoint) {
+							const jsChunks = [];
+							const cssChunks = [];
+							for (const chunk of entrypoint.chunks) {
+								for (const file of chunk.files) {
+									if (file.endsWith('.js')) {
+										jsChunks.push(file.replace('extension/js/chunks/', ''));
+									} else if (file.endsWith('.css')) {
+										cssChunks.push(file.replace('extension/css/chunks/', ''));
+									}
+								}
+							}
+							const manifest = `window.__EXTENSION_CHUNKS__ = ${JSON.stringify(jsChunks)};\nwindow.__EXTENSION_CSS__ = ${JSON.stringify(cssChunks)};`;
+							compilation.emitAsset('extension/js/chunks/manifest.js', new rspack.sources.RawSource(manifest));
+						}
+						callback();
+					});
+				}
+			},
 		],
 	};
 
