@@ -291,8 +291,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						menuParam.data.onSelect();
-
+						menuParam.data.onSelect?.();
 						moveToPage(item.id);
 						close();
 					},
