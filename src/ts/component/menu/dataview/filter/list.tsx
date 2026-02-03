@@ -11,7 +11,7 @@ const LIMIT = 20;
 
 const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getSize, position, close, onKeyDown, setActive, setHover } = props;
+	const { param, getId, position, onKeyDown, setActive } = props;
 	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly } = data;
 	const nodeRef = useRef(null);
@@ -76,7 +76,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getItems = () => {
 		const filterItems = getFilterItems();
-		const items: any[] = [].concat(filterItems);
+		const items: any[] = [ ...filterItems ];
 
 		if (!isReadonly) {
 			items.push({ isDiv: true });
@@ -100,7 +100,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return '';
 		};
 
-		const { relation, condition, quickOption } = item;
+		const { relation, condition } = item;
 
 		if (!relation) {
 			return '';
@@ -108,10 +108,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
-
-		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
-			return conditionOption.name || '';
-		};
 
 		return conditionOption.name || '';
 	};
@@ -140,7 +136,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.open('dataviewFilterAdvanced', {
 				element: `#${getId()} #item-${item.id}`,
 				classNameWrap: 'fromBlock',
-				horizontal: I.MenuDirection.Left,
+				horizontal: I.MenuDirection.Right,
 				offsetY: 4,
 				noFlipY: true,
 				data: {
