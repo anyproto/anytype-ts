@@ -35,8 +35,8 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const operatorOptions = [
-		{ id: String(I.FilterOperator.And), name: translate('commonAnd') },
-		{ id: String(I.FilterOperator.Or), name: translate('commonOr') },
+		{ id: String(I.FilterOperator.And), name: translate('filterOperatorAnd') },
+		{ id: String(I.FilterOperator.Or), name: translate('filterOperatorOr') },
 	];
 	const operatorOption: any = operatorOptions.find(it => it.id == String(parentOperator)) || {};
 	const operatorName = operatorOption.name || '';

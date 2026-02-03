@@ -36,7 +36,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
 		if (aAdvanced !== bAdvanced) {
 			return aAdvanced ? -1 : 1;
-		}
+		};
 
 		const aActive = Relation.isFilterActive(a);
 		const bActive = Relation.isFilterActive(b);

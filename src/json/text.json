@@ -1,7 +1,6 @@
 {
 	"commonError": "Error",
-	"commonOr": "Or",
-	"commonAnd": "And",
+	"commonOr": "or",
 	"commonWhere": "Where",
 	"commonMore": "more",
 	"commonOf": "of",
@@ -2005,6 +2004,9 @@
 	"filterConditionAllIn": "Has all of",
 	"filterConditionInArray": "Has any of",
 	"filterConditionNotInArray": "Has none of",
+
+	"filterOperatorOr": "Or",
+	"filterOperatorAnd": "And",
 
 	"inputWithFileTextUrl": "Paste a link",
 

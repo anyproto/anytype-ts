@@ -38,8 +38,8 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	const relation: any = relationKey ? S.Record.getRelationByKey(relationKey) : null;
 	const conditionOptions = relation ? Relation.filterConditionsByType(relation.format) : [];
 	const operatorOptions = [
-		{ id: String(I.FilterOperator.And), name: translate('commonAnd') },
-		{ id: String(I.FilterOperator.Or), name: translate('commonOr') },
+		{ id: String(I.FilterOperator.And), name: translate('filterOperatorAnd') },
+		{ id: String(I.FilterOperator.Or), name: translate('filterOperatorOr') },
 	];
 	const operatorOption: any = operatorOptions.find(it => it.id == String(operator)) || {};
 	const operatorName = operatorOption.name || '';
