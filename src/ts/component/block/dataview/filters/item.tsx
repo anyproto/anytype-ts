@@ -20,18 +20,18 @@ interface Props {
 const getFilterRelationIcon = (format: I.RelationType): string => {
 	switch (format) {
 		case I.RelationType.LongText:
-		case I.RelationType.ShortText:	return 'text';
-		case I.RelationType.Number:		return 'number';
-		case I.RelationType.Select:		return 'select';
-		case I.RelationType.Date:		return 'date';
-		case I.RelationType.File:		return 'attachment';
-		case I.RelationType.Checkbox:	return 'checkbox';
-		case I.RelationType.Url:		return 'url';
-		case I.RelationType.Email:		return 'email';
-		case I.RelationType.Phone:		return 'phone';
-		case I.RelationType.MultiSelect:return 'multiselect';
-		case I.RelationType.Object:		return 'object';
-		default:						return 'object';
+		case I.RelationType.ShortText:	return 'isText';
+		case I.RelationType.Number:		return 'isNumber';
+		case I.RelationType.Select:		return 'isSelect';
+		case I.RelationType.Date:		return 'isDate';
+		case I.RelationType.File:		return 'isAttachment';
+		case I.RelationType.Checkbox:	return 'isCheckbox';
+		case I.RelationType.Url:		return 'isUrl';
+		case I.RelationType.Email:		return 'isEmail';
+		case I.RelationType.Phone:		return 'isPhone';
+		case I.RelationType.MultiSelect:return 'isMultiselect';
+		case I.RelationType.Object:		return 'isObject';
+		default:						return 'isObject';
 	};
 };
 
