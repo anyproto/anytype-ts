@@ -553,7 +553,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly && !noFilter ? 44 : 16;
+		const offset = !isReadonly && !noFilter ? 36 : 16;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
