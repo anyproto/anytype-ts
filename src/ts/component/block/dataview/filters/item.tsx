@@ -19,6 +19,7 @@ interface Props {
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
+	const { config } = S.Common;
 	const { subId, filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
 
@@ -149,7 +150,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 				) : ''}
 			</div>
 
-			<Icon className="delete" onClick={onRemove} />
+			{config.experimental ? <Icon className="delete" onClick={onRemove} /> : ''}
 		</div>
 	);
 

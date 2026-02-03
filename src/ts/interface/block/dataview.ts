@@ -48,8 +48,8 @@ export enum EmptyType {
 
 export enum FilterOperator { 
 	None			 = 0,
-	And				 = 1,
-	Or				 = 2,
+	Or				 = 1,
+	And				 = 2,
 };
 
 export enum FilterCondition { 

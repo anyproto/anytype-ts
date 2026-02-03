@@ -62,6 +62,7 @@ import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFileList from './dataview/file/list';
 import MenuDataviewFileValues from './dataview/file/values';
 import MenuDataviewFilterList from './dataview/filter/list';
+import MenuDataviewFilterAdvanced from './dataview/filter/advanced';
 import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
@@ -152,6 +153,7 @@ const Components: any = {
 	dataviewOptionList:		 MenuDataviewOptionList,
 	dataviewOptionEdit:		 MenuDataviewOptionEdit,
 	dataviewFilterList:		 MenuDataviewFilterList,
+	dataviewFilterAdvanced:	 MenuDataviewFilterAdvanced,
 	dataviewFilterValues:	 MenuDataviewFilterValues,
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,

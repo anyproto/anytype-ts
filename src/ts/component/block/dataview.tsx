@@ -1033,8 +1033,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
-		const { filters } = view;
-		const items = filters.filter(it => S.Record.getRelationByKey(it.relationKey));
+		const items = U.Common.getViewFilters(view);
 		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
 
 		if (items.length && !noToggle) {
@@ -1062,6 +1061,23 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						quickOption,
 					});
 				},
+				onAdvancedFilterAdd: () => {
+					Storage.setToggle(rootId, filtersId, true);
+
+					onFilterAdd({
+						operator: I.FilterOperator.And,
+						condition: I.FilterCondition.None,
+						relationKey: '',
+						value: '',
+						nestedFilters: [
+							{
+								relationKey: 'name',
+								condition: I.FilterCondition.In,
+								value: '',
+							}
+						],
+					});
+				},
 			});
 		};
 	};
@@ -1074,7 +1090,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
+		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, (message: any) => {
 			callBack?.();
 
 			analytics.event('AddFilter', {

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import { I, U, keyboard, translate, S, Relation, C } from 'Lib';
 import Item from './filters/item';
+import AdvancedItem from './filters/advanced';
 
 interface Props extends I.ViewComponent {
 	onClear?: () => void;
@@ -19,13 +20,24 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	if (!view) {
 		return null;
 	};
+	
+	const isAdvancedFilter = (filter: I.Filter): boolean => {
+		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+	};
 
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
-	}).filter(it => it.relation).sort((a, b) => {
+	}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
+		const aAdvanced = isAdvancedFilter(a);
+		const bAdvanced = isAdvancedFilter(b);
+
+		if (aAdvanced !== bAdvanced) {
+			return aAdvanced ? -1 : 1;
+		};
+
 		const aActive = Relation.isFilterActive(a);
 		const bActive = Relation.isFilterActive(b);
 
@@ -140,22 +152,58 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
+	const onAdvancedClick = (e: any, item: any) => {
+		S.Menu.open('dataviewFilterAdvanced', {
+			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
+			noFlipY: true,
+			data: {
+				rootId,
+				blockId,
+				isInline,
+				getView,
+				getTarget,
+				readonly: isReadonly,
+				loadData,
+			}
+		});
+	};
+
 	return (
 		<div ref={nodeRef} id="dataviewFilters" className={cn.join(' ')}>
 			<div className="sides">
 				<div id="sideLeft" className="side left">
-					{items.map((item: any) => (
-						<Item
-							{...props}
-							key={item.id}
-							filter={item}
-							subId={rootId}
-							onRemove={e => onRemove(e, item)}
-							onClick={e => onClick(e, item)}
-							onContextMenu={e => onContextMenu(e, item)}
-							readonly={isReadonly}
-						/>
-					))}
+					{items.map((item: any) => {
+						if (isAdvancedFilter(item)) {
+							return (
+								<AdvancedItem
+									{...props}
+									key={item.id}
+									filter={item}
+									subId={rootId}
+									onRemove={e => onRemove(e, item)}
+									onClick={e => onAdvancedClick(e, item)}
+									onContextMenu={e => onContextMenu(e, item)}
+									readonly={isReadonly}
+								/>
+							);
+						}
+
+						return (
+							<Item
+								{...props}
+								key={item.id}
+								filter={item}
+								subId={rootId}
+								onRemove={e => onRemove(e, item)}
+								onClick={e => onClick(e, item)}
+								onContextMenu={e => onContextMenu(e, item)}
+								readonly={isReadonly}
+							/>
+						);
+					})}
 					<Icon id="item-add" className="plus" onClick={onAdd} />
 				</div>
 

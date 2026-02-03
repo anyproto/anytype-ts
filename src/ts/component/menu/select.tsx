@@ -109,10 +109,13 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			items.push({ id: 'empty', name: translate('menuSelectEmpty'), className: 'empty', isEmpty: true });
 		};
 
-		if (withAdd) {
+		const { bottomItems } = data;
+
+		if (withAdd || bottomItems?.length) {
 			items = items.concat([
 				{ isDiv: true },
-				{ id: 'add', name: translate('commonAddRelation') }
+				...(bottomItems || []),
+				...(withAdd ? [{ id: 'add', name: translate('commonAddRelation') }] : [])
 			]);
 		};
 

@@ -1,122 +1,176 @@
-import React, { forwardRef, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { Icon } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, Relation, translate } from 'Lib';
-import Item from 'Component/menu/item/filter';
+import { I, C, S, U, Relation, keyboard, translate, analytics, Storage } from 'Lib';
+import { MenuItemVertical } from 'Component';
 
-const HEIGHT = 48;
+const HEIGHT_ITEM = 28;
+const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
 const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { id, param, getId, getSize, setHover, onKeyDown, setActive, position } = props;
-	const { data, className, classNameWrap } = param;
+	const { param, getId, position, onKeyDown, setActive } = props;
+	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly } = data;
-	const view = getView();
 	const nodeRef = useRef(null);
-	const listRef = useRef(null);
 	const n = useRef(-1);
-	const top = useRef(0);
-	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-	const sensors = useSensors(
-		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
-		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-	);
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		setActive();
+	});
 
 	const rebind = () => {
-		const obj = $(`#${getId()} .content`);
-
-		obj.off('click').on('click', () => S.Menu.closeAll(J.Menu.cell));
-
 		unbind();
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	const onAdd = (e: MouseEvent) => {
-		const { data } = param;
-		const { onFilterAdd, onFilterOrSortAdd } = data;
-		const relationOptions = getRelationOptions();
-
-		if (!relationOptions.length) {
-			return;
-		};
-
-		if (onFilterOrSortAdd) {
-			onFilterOrSortAdd(getId(), param.component || id, getSize().width);
-			return;
-		};
-
-		const obj = $(`#${getId()} .content`);
-		const first = relationOptions[0];
-		const conditions = Relation.filterConditionsByType(first.format);
-		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-		const quickOptions = Relation.filterQuickOptions(first.format, condition);
-		const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
-		const newItem = { 
-			relationKey: first.id, 
-			condition: condition as I.FilterCondition,
-			value: Relation.formatValue(first, null, false),
-			quickOption,
-		};
-
-		onFilterAdd(newItem, () => {
-			obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-		});
+	const isAdvancedFilter = (filter: I.Filter): boolean => {
+		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
 	};
 
-	const onRemove = (e: any, item: any) => {
+	const getFilterItems = () => {
 		const view = getView();
 
 		if (!view) {
-			return;
+			return [];
 		};
 
-		const object = getTarget();
+		return U.Common.objectCopy(view.filters).map((it: any) => {
+			return {
+				...it,
+				relation: S.Record.getRelationByKey(it.relationKey),
+			};
+		}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
+			const aAdvanced = isAdvancedFilter(a);
+			const bAdvanced = isAdvancedFilter(b);
 
-		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => loadData(view.id, 0));
+			if (aAdvanced !== bAdvanced) {
+				return aAdvanced ? -1 : 1;
+			};
 
-		S.Menu.close('select');
-		analytics.event('RemoveFilter', {
-			objectType: object.type,
-			embedType: analytics.embedType(isInline)
+			const aActive = Relation.isFilterActive(a);
+			const bActive = Relation.isFilterActive(b);
+
+			if (aActive === bActive) return 0;
+			return aActive ? -1 : 1;
 		});
 	};
 
-	const onOver = (e: MouseEvent, item: any) => {
-		if (!keyboard.isMouseDisabled) {
-			setActive(item, false);
+	const getItems = () => {
+		const filterItems = getFilterItems();
+		const items: any[] = [ ...filterItems ];
+
+		if (!isReadonly) {
+			items.push({ isDiv: true });
+			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), icon: 'plus' });
+
+			if (filterItems.length) {
+				items.push({ id: 'clear', name: translate('commonClear'), icon: 'remove' });
+			};
 		};
+
+		return items;
 	};
 
-	const onClick = (e: MouseEvent, item: any) => {
-		const view = getView();
+	const getRowHeight = (item: any) => {
+		if (item.isDiv) return HEIGHT_DIV;
+		return HEIGHT_ITEM;
+	};
 
-		if (!view) {
+	const getCaption = (item: any): string => {
+		if (isAdvancedFilter(item)) {
+			return '';
+		};
+
+		const { relation, condition } = item;
+
+		if (!relation) {
+			return '';
+		};
+
+		const conditionOptions = Relation.filterConditionsByType(relation.format);
+		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
+
+		return conditionOption.name || '';
+	};
+
+	const getName = (item: any): string => {
+		if (isAdvancedFilter(item)) {
+			const ruleCount = item.nestedFilters?.length || 1;
+			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
+		};
+
+		return item.relation?.name || '';
+	};
+
+	const onClick = (e: any, item: any) => {
+		if (item.id == 'add') {
+			onAdd();
 			return;
 		};
+
+		if (item.id == 'clear') {
+			onClear();
+			return;
+		};
+
+		if (isAdvancedFilter(item)) {
+			S.Menu.open('dataviewFilterAdvanced', {
+				element: `#${getId()} #item-${item.id}`,
+				classNameWrap: 'fromBlock',
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+				noFlipY: true,
+				data: {
+					rootId,
+					blockId,
+					isInline,
+					getView,
+					getTarget,
+					readonly: isReadonly,
+					loadData,
+				}
+			});
+			return;
+		};
+
+		const view = getView();
+		const filter: I.Filter = view.getFilter(item.id);
 
 		S.Menu.open('dataviewFilterValues', {
-			className,
-			classNameWrap,
 			element: `#${getId()} #item-${item.id}`,
-			horizontal: I.MenuDirection.Center,
+			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			noFlipY: true,
 			data: {
-				...data,
+				rootId,
+				blockId,
+				isInline,
+				getView,
+				getTarget,
+				readonly: isReadonly,
 				save: () => {
-					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
-						loadData(view.id, 0);
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+						loadData(view.id, 0, false);
 					});
 				},
 				itemId: item.id,
@@ -124,82 +178,185 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onSortStart = () => {
-		keyboard.disableSelection(true);
-	};
-	
-	const onSortEnd = (result: any) => {
+	const onRemoveFilter = (item: any) => {
 		const view = getView();
-		if (!view) {
-			return;
-		};
-
 		const object = getTarget();
-		const { active, over } = result;
-		if (!active || !over) {
-			return;
-		};
 
-		const ids = items.map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
+			loadData(view.id, 0, false);
+		});
 
-		n.current = newIndex;
-		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
-		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => loadData(view.id, 0));
-
-		keyboard.disableSelection(false);
-
-		analytics.event('RepositionFilter', {
+		analytics.event('RemoveFilter', {
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
 		});
 	};
 
-	const getItems = () => {
+	const onClearFilter = (item: any) => {
 		const view = getView();
+		const filter = view.getFilter(item.id);
+		const relation = S.Record.getRelationByKey(filter.relationKey);
 
-		if (!view) {
-			return [];
+		if (!relation) {
+			return;
 		};
 
-		return U.Common.objectCopy(view.filters || []).map((it: any) => {
-			return { 
-				...it, 
-				relation: S.Record.getRelationByKey(it.relationKey),
-			};
-		}).filter(it => it.relation);
+		const conditions = Relation.filterConditionsByType(relation.format);
+
+		filter.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+		filter.value = Relation.formatValue(relation, null, false);
+
+		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+			loadData(view.id, 0, false);
+		});
 	};
 
-	const getRelationOptions = () => {
-		return Relation.getFilterOptions(rootId, blockId, getView());
+	const onMore = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: `#${getId()} #item-${item.id} .icon.more`,
+			classNameWrap: 'fromBlock',
+			offsetY: 4,
+			data: {
+				options: [
+					{ id: 'clear', name: translate('commonClear') },
+					{ id: 'delete', name: translate('commonDelete') },
+				],
+				onSelect: (e: any, option: any) => {
+					switch (option.id) {
+						case 'clear': onClearFilter(item); break;
+						case 'delete': onRemoveFilter(item); break;
+					};
+				},
+			}
+		});
 	};
 
-	const onScroll = ({ scrollTop }) => {
-		if (scrollTop) {
-			top.current = scrollTop;
+	const onClear = () => {
+		const view = getView();
+		const filterItems = getFilterItems();
+		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
+
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, filterItems.map(it => it.id), () => {
+			Storage.setToggle(rootId, filtersId, false);
+			loadData(view.id, 0, false);
+		});
+	};
+
+	const onAdd = () => {
+		const view = getView();
+		const object = getTarget();
+
+		U.Menu.sortOrFilterRelationSelect({
+			element: `#${getId()} #item-add`,
+			classNameWrap: 'fromBlock',
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
+		}, {
+			rootId,
+			blockId,
+			getView,
+			onSelect: (item: any) => {
+				const conditions = Relation.filterConditionsByType(item.format);
+				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+				const quickOptions = Relation.filterQuickOptions(item.format, condition);
+				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+
+				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
+					relationKey: item.relationKey ? item.relationKey : item.id,
+					condition: condition as I.FilterCondition,
+					value: Relation.formatValue(item, null, false),
+					quickOption,
+				}, () => {
+					loadData(view.id, 0, false);
+
+					analytics.event('AddFilter', {
+						condition,
+						objectType: object.type,
+						embedType: analytics.embedType(isInline),
+					});
+				});
+			},
+			onAdvancedFilterAdd: () => {
+				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
+					operator: I.FilterOperator.And,
+					condition: I.FilterCondition.None,
+					relationKey: '',
+					value: '',
+					nestedFilters: [
+						{
+							relationKey: 'name',
+							condition: I.FilterCondition.In,
+							value: '',
+						}
+					],
+				}, () => {
+					loadData(view.id, 0, false);
+
+					analytics.event('AddFilter', {
+						condition: I.FilterCondition.None,
+						objectType: object.type,
+						embedType: analytics.embedType(isInline),
+					});
+				});
+			},
+		});
+	};
+
+	const onMouseEnter = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
 		};
-	};
-
-	const resize = () => {
-		const items = getItems();
-		const obj = $(`#${getId()} .content`);
-		const offset = !isReadonly ? 62 : 16;
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
-
-		obj.css({ height });
-		position();
-	};
-
-	const filterCnt = view?.filters.length;
-	const items = getItems();
-
-	for (const filter of items) {
-		const { relationKey, condition, value } = filter;
 	};
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
+
+		if (!item) {
+			return null;
+		};
+
+		let content = null;
+
+		if (item.isDiv) {
+			content = (
+				<div className="separator" style={param.style}>
+					<div className="inner" />
+				</div>
+			);
+		} else
+		if (item.id == 'add' || item.id == 'clear') {
+			content = (
+				<MenuItemVertical
+					id={item.id}
+					icon={item.icon}
+					name={item.name}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
+					style={param.style}
+				/>
+			);
+		} else {
+			const isAdvanced = isAdvancedFilter(item);
+
+			content = (
+				<MenuItemVertical
+					id={item.id}
+					icon={isAdvanced ? 'advancedFilter' : undefined}
+					object={!isAdvanced && item.relation ? { relationFormat: item.relation.format, layout: I.ObjectLayout.Relation, name: item.relation.name } : undefined}
+					name={isAdvanced ? getName(item) : undefined}
+					caption={getCaption(item)}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
+					withMore={!isReadonly}
+					onMore={e => onMore(e, item)}
+					style={param.style}
+				/>
+			);
+		};
 
 		return (
 			<CellMeasurer
@@ -209,49 +366,20 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<Item 
-					{...props}
-					key={item.id} 
-					{...item} 
-					subId={rootId}
-					index={param.index} 
-					style={param.style} 
-					readonly={isReadonly}
-					onOver={e => onOver(e, item)}
-					onClick={e => onClick(e, item)}
-					onRemove={e => onRemove(e, item)}
-				/>
+				{content}
 			</CellMeasurer>
 		);
 	};
-	
-	useEffect(() => {
+
+	const resize = () => {
+		const obj = $(`#${getId()} .content`);
 		const items = getItems();
+		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
+		const height = Math.max(HEIGHT_ITEM + 24, Math.min(400, itemsHeight + 24));
 
-		resize();
-		rebind();
-
-		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		return () => {
-			unbind();
-			S.Menu.closeAll(J.Menu.cell);
-		};
-	}, []);
-
-	useEffect(() => {
-		resize();
-
-		if (listRef.current && top.current) {
-			listRef.current.scrollToPosition(top.current);
-		};
-
-		setActive();
-	});
+		obj.css({ height });
+		position();
+	};
 
 	useImperativeHandle(ref, () => ({
 		rebind,
@@ -260,76 +388,38 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
-		getListRef: () => listRef.current,
-		onSortEnd,
 	}), []);
-	
-	return (
-		<div 
-			ref={nodeRef}
-			className="wrap"
-		>
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={onSortStart}
-				onDragEnd={onSortEnd}
-				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-			>
-				<SortableContext
-					items={items.map((item) => item.id)}
-					strategy={verticalListSortingStrategy}
-				>
-					<div className="items">
-						{!items.length ? (
-							<div className="item empty">
-								<div className="inner">{translate('menuDataviewFilterListEmpty')}</div>
-							</div>
-						) : (
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={LIMIT}
-												onScroll={onScroll}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						)}
-					</div>
-				</SortableContext>
-			</DndContext>
 
-			{!isReadonly ? (
-				<div className="bottom">
-					<div className="line" />
-					<div 
-						id="item-add" 
-						className="item add" 
-						onClick={onAdd}
-						onMouseEnter={() => setHover({ id: 'add' })} 
-						onMouseLeave={() => setHover()}
+	const items = getItems();
+
+	return (
+		<div ref={nodeRef} className="wrap">
+			{items.length ? (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => true}
+						threshold={LIMIT}
 					>
-						<Icon className="plus" />
-						<div className="name">{translate('menuDataviewFilterNewFilter')}</div>
-					</div>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										width={width}
+										height={height}
+										deferredMeasurementCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
 				</div>
 			) : ''}
 		</div>

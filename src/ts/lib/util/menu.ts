@@ -1205,8 +1205,14 @@ class UtilMenu {
 	};
 
 	sortOrFilterRelationSelect (menuParam: Partial<I.MenuParam>, param: any) {
-		const { rootId, blockId, getView, onSelect } = param;
-		const options = Relation.getFilterOptions(rootId, blockId, getView());
+		const { rootId, blockId, getView, onSelect, onAdvancedFilterAdd } = param;
+		const view = getView();
+		const options = Relation.getFilterOptions(rootId, blockId, view);
+
+		const hasAdvancedFilter = view?.filters?.some(f => f.operator === I.FilterOperator.And);
+		const bottomItems = hasAdvancedFilter ? [] : [
+			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), icon: 'advancedFilter' }
+		];
 
 		const callBack = (item: any) => {
 			onSelect(item);
@@ -1236,6 +1242,7 @@ class UtilMenu {
 			...menuParam,
 			data: {
 				options,
+				bottomItems,
 				withFilter: true,
 				maxHeight: 378,
 				noClose: true,
@@ -1243,6 +1250,10 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
 						this.sortOrFilterRelationAdd(this.menuContext, param, menuParam, relation => callBack(relation));
+					} else
+					if (item.id == 'advancedFilter') {
+						onAdvancedFilterAdd?.();
+						this.menuContext?.close();
 					} else {
 						callBack(item);
 					};

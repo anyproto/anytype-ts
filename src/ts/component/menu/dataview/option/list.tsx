@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, keyboard, Relation } from 'Lib';
-import OptionSelect, { OptionSelectRefProps } from 'Component/util/menu/optionSelect';
+import { OptionSelect } from 'Component';
 
 const SUB_ID = 'dataviewOptionList';
 
@@ -13,7 +13,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds, filter, selectFirst } = data;
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
-	const optionSelectRef = useRef<OptionSelectRefProps>(null);
+	const optionSelectRef = useRef(null);
 	const n = useRef(-1);
 
 	const rebind = () => {

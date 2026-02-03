@@ -219,7 +219,7 @@ const InputWithFile: FC<Props> = ({
 				</form>
 
 				{withFile ? (
-					<span ref={fileWrapRef} className="fileWrap" onMouseDown={onClickFile}>
+					<span ref={fileWrapRef} className="fileWrap">
 						{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
 						<span className="border">{textFile}</span>
 					</span>

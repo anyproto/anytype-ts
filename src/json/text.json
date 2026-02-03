@@ -1,6 +1,7 @@
 {
 	"commonError": "Error",
 	"commonOr": "or",
+	"commonWhere": "Where",
 	"commonMore": "more",
 	"commonOf": "of",
 	"commonTo": "to",
@@ -275,6 +276,7 @@
 	"pluralPdf": "Pdf|Pdfs",
 	"pluralBookmark": "Bookmark|Bookmarks",
 	"pluralAttachment": "Attachment|Attachments",
+	"pluralRule": "rule|rules",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1749,6 +1751,10 @@
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
 	"menuDataviewFilterNewFilter": "New filter",
+	"menuDataviewFilterAdvancedAdd": "Add advanced filter",
+	"menuDataviewFilterAddRule": "Add rule",
+	"menuDataviewFilterDeleteFilter": "Delete filter",
+	"menuDataviewFilterTurnIntoGroup": "Turn into group",
 	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open in browser",
@@ -2000,6 +2006,9 @@
 	"filterConditionAllIn": "Has all of",
 	"filterConditionInArray": "Has any of",
 	"filterConditionNotInArray": "Has none of",
+
+	"filterOperatorOr": "Or",
+	"filterOperatorAnd": "And",
 
 	"inputWithFileTextUrl": "Paste a link",
 
