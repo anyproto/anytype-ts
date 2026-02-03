@@ -545,8 +545,8 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
-	"pageMainVoidErrorTitle": "You're all out of spaces",
-	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidErrorTitle": "You're all out of channels",
+	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new channel to get things rolling!",
 	"pageMainVoidSelectText": "No channels opened. Select one on the left panel or create new.",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
@@ -854,6 +854,8 @@
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionChat": "Chat",
 	"popupSettingsPersonalChatSend": "Send message with",
+	"popupSettingsPersonalSectionLists": "Lists",
+	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",

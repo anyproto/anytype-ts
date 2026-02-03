@@ -2169,9 +2169,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			if (next) {
-				focusSet(next.id, to, to, true);
-			};
+			// For backspace (dir < 0): previous block survives (next), focus on it
+			// For delete (dir > 0): current block survives (focused), focus on it
+			const focusBlockId = dir < 0 ? next.id : focused.id;
+			focusSet(focusBlockId, to, to, true);
 
 			analytics.event('DeleteBlock', { count: 1 });
 		};

@@ -21,12 +21,11 @@
 
 		.buttons { display: flex; gap: 0px 8px; margin: 24px 0px 0px 0px; justify-content: center; }
 		.buttons:empty { display: none; }
-		.button { width: 176px; }
 
 		&.voidError {
 			.iconWrapper { width: 72px; height: 72px; margin: 0px auto 10px; }
 			.iconWrapper {
-				.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+				.icon { background-image: url('~img/icon/void/error.svg'); }
 			}
 		}
 

@@ -34,7 +34,15 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		case 'error': {
 			title = translate('pageMainVoidErrorTitle');
 			text = translate('pageMainVoidErrorText');
-			button = <Button id="void-button-create-space" onClick={onClick} className="c36" text={translate('commonCreateSpace')} />;
+			button = (
+				<Button 
+					id="void-button-create-space" 
+					onClick={onClick} 
+					color="accent" 
+					className="c36" 
+					text={translate('commonCreateSpace')}
+				/>
+			);
 			break;
 		};
 	};

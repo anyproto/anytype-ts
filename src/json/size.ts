@@ -11,10 +11,14 @@ export default {
 
 	sidebar: {
 		default: { min: 240, max: 480, default: 336, threshold: 72 },
-		left: { min: 72, max: 480, default: 284 }
+		left: { 
+			min: 72, max: 480, default: 284, 
+			threshold: {
+				minimal: 160, 
+				close: 480,
+			},
+		},
 	},
-
-	vaultStripeMaxWidth: 160,
 
 	table: {
 		min: 50,

@@ -111,12 +111,13 @@
 				.icon.drag { opacity: 1; }
 				
 				.cell.isName.canEdit {
-					.button.expand { display: flex; }
+					.button.expand, .icon.edit { display: flex; }
 					.chatCounter { display: none;}
 				}
 			}
 
 			.icon.checkbox { vertical-align: top; }
+			.icon.edit { position: absolute; right: 8px; top: 10px; }
 			.button.expand { position: absolute; right: 8px; top: 8px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }

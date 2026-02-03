@@ -1,8 +1,7 @@
 import React, { FC, useRef, MouseEvent } from 'react';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, S, J, U, Relation, translate } from 'Lib';
-import { Cell, Button } from 'Component';
+import { Cell, Button, Icon } from 'Component';
 
 interface Props {
 	rootId?: string;
@@ -74,19 +73,28 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	};
 
 	if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
-		onClick = onEdit;
-		button = (
-			<Button
-				color="blank"
-				icon="expand"
-				className="expand c32"
-				text={translate('commonOpen')}
-				onClick={e => {
-					e.stopPropagation();
-					onCellClick(e, relationKey, record.id);
-				}}
-			/>
-		);
+		if (S.Common.gridTitleClick) {
+			onClick = onEdit;
+			button = (
+				<Button
+					color="blank"
+					icon="expand"
+					className="expand c32"
+					text={translate('commonOpen')}
+					onClick={e => {
+						e.stopPropagation();
+						onCellClick(e, relationKey, record.id);
+					}}
+				/>
+			);
+		} else {
+			button = (
+				<Icon
+					className="edit"
+					onClick={onEdit}
+				/>
+			);
+		};
 	};
 
 	return (
