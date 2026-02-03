@@ -71,6 +71,8 @@
 
 	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
+		.content { padding: 0px; }
+
 		.inner {
 			> .head { display: flex; align-items: center; justify-content: space-between; gap: 0px 4px; padding: 0px 10px; }
 			> .head {
