@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, translate } from 'Lib';
+import { I, U, translate, S } from 'Lib';
 import { Icon, Label } from 'Component';
 
 interface FilterWithRelation extends I.Filter {
@@ -19,9 +19,9 @@ interface Props {
 
 const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 
+	const { config } = S.Common;
 	const { filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
 	const { id } = filter;
-
 	const ruleCount = filter.nestedFilters?.length || 1;
 	const cn = [ 'filterItem', 'isAdvanced', 'withValue' ];
 
@@ -43,6 +43,7 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="content">
 				<Label className="name" text={label} />
 			</div>
+			{config.experimental ? <Icon className="delete" onClick={onRemove} /> : ''}
 		</div>
 	);
 
