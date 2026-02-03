@@ -9,6 +9,7 @@ interface Props {
 	layout?: I.ObjectLayout;
 	object?: any;
 	className?: string;
+	color?: string;
 	canEdit?: boolean;
 	native?: boolean;
 	asImage?: boolean;
