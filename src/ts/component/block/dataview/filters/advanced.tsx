@@ -43,7 +43,6 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="content">
 				<Label className="name" text={label} />
 			</div>
-			<Icon className="delete" onClick={onRemove} />
 		</div>
 	);
 
