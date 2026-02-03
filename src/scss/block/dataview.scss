@@ -230,10 +230,37 @@
 					border-radius: 16px; color: var(--color-text-secondary); font-weight: 500;
 				}
 				.filterItem {
+					.icon.filterIcon { width: 20px; height: 20px; }
+					.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
+					.icon.text { background-image: url('~img/icon/dataview/filters/relation/text0.svg'); }
+					.icon.number { background-image: url('~img/icon/dataview/filters/relation/number0.svg'); }
+					.icon.select { background-image: url('~img/icon/dataview/filters/relation/select0.svg'); }
+					.icon.date { background-image: url('~img/icon/dataview/filters/relation/date0.svg'); }
+					.icon.attachment { background-image: url('~img/icon/dataview/filters/relation/attachment0.svg'); }
+					.icon.checkbox { background-image: url('~img/icon/dataview/filters/relation/checkbox0.svg'); }
+					.icon.url { background-image: url('~img/icon/dataview/filters/relation/url0.svg'); }
+					.icon.email { background-image: url('~img/icon/dataview/filters/relation/email0.svg'); }
+					.icon.phone { background-image: url('~img/icon/dataview/filters/relation/phone0.svg'); }
+					.icon.multiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect0.svg'); }
+					.icon.object { background-image: url('~img/icon/dataview/filters/relation/object0.svg'); }
+
 					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
 					&.isActive {
 						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
 						.name { font-weight: 600; }
+
+						.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
+						.icon.text { background-image: url('~img/icon/dataview/filters/relation/text1.svg'); }
+						.icon.number { background-image: url('~img/icon/dataview/filters/relation/number1.svg'); }
+						.icon.select { background-image: url('~img/icon/dataview/filters/relation/select1.svg'); }
+						.icon.date { background-image: url('~img/icon/dataview/filters/relation/date1.svg'); }
+						.icon.attachment { background-image: url('~img/icon/dataview/filters/relation/attachment1.svg'); }
+						.icon.checkbox { background-image: url('~img/icon/dataview/filters/relation/checkbox1.svg'); }
+						.icon.url { background-image: url('~img/icon/dataview/filters/relation/url1.svg'); }
+						.icon.email { background-image: url('~img/icon/dataview/filters/relation/email1.svg'); }
+						.icon.phone { background-image: url('~img/icon/dataview/filters/relation/phone1.svg'); }
+						.icon.multiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect1.svg'); }
+						.icon.object { background-image: url('~img/icon/dataview/filters/relation/object1.svg'); }
 					}
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
 
@@ -249,10 +276,6 @@
 					.icon.delete:hover { background-color: var(--color-shape-secondary); }
 					&:hover {
 						.icon.delete { display: block; }
-					}
-
-					&.isAdvanced {
-						.icon.advanced { width: 20px; height: 20px; background-image: url('~img/icon/dataview/filters/advanced.svg'); }
 					}
 				}
 

@@ -1,7 +1,7 @@
 import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
-import { Icon, Tag, IconObject, Label } from 'Component';
+import { Icon, Label, IconObject } from 'Component';
 
 interface FilterWithRelation extends I.Filter {
 	relation: any;
@@ -15,6 +15,24 @@ interface Props {
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
 	onContextMenu?: (e: MouseEvent) => void;
+};
+
+const getFilterRelationIcon = (format: I.RelationType): string => {
+	switch (format) {
+		case I.RelationType.LongText:
+		case I.RelationType.ShortText:	return 'text';
+		case I.RelationType.Number:		return 'number';
+		case I.RelationType.Select:		return 'select';
+		case I.RelationType.Date:		return 'date';
+		case I.RelationType.File:		return 'attachment';
+		case I.RelationType.Checkbox:	return 'checkbox';
+		case I.RelationType.Url:		return 'url';
+		case I.RelationType.Email:		return 'email';
+		case I.RelationType.Phone:		return 'phone';
+		case I.RelationType.MultiSelect:return 'multiselect';
+		case I.RelationType.Object:		return 'object';
+		default:						return 'object';
+	};
 };
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
@@ -137,7 +155,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick={onClick}
 			onContextMenu={onContextMenu}
 		>
-			<IconObject size={20} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
+			<Icon className={`filterIcon ${getFilterRelationIcon(relation.format)}`} />
 
 			<div className="content">
 				<Label className="name" text={name} />
