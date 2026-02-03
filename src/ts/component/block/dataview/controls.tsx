@@ -456,17 +456,14 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			cn.push('on');
 		};
 
-		let inner = null;
 		if ((item.id == 'filter') && filterCnt) {
 			cn.push('hasFilter');
-			inner = <div className="bullet" />;
 		};
 
 		return (
 			<Icon
 				id={elementId} 
 				className={cn.join(' ')}
-				inner={inner}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>
