@@ -104,6 +104,47 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 - Renderer process handles UI
 - IPC communication for file operations, updates, etc.
 
+### Graph Visualization Architecture
+
+The graph view uses a Web Worker with PixiJS WebGL rendering for performance:
+
+**Files:**
+- `src/ts/component/graph/provider.tsx` - React component, D3 zoom/drag, image loading
+- `dist/workers/graph.pixi.js` - Web Worker with D3 force simulation + PixiJS WebGL rendering
+- `dist/workers/lib/pixi.min.js` - Bundled PixiJS for worker (built from `rspack.pixi.config.js`)
+- `dist/workers/lib/util.js` - Canvas drawing utilities (legacy, still used for some helpers)
+
+**Architecture:**
+- OffscreenCanvas transferred to worker for off-main-thread rendering
+- PixiJS 8 with WebWorkerAdapter for GPU-accelerated WebGL rendering
+- D3.js force simulation for physics (center, charge, link, collision, cluster forces)
+- Communication via postMessage between provider and worker
+
+**Rendering Structure (PixiJS):**
+- Stage → edgesGraphics (PIXI.Graphics for all edges)
+- Stage → nodesContainer (PIXI.Container with Sprites for nodes)
+- Stage → labelsContainer (PIXI.Container with Text for labels)
+- Stage → selectBoxGraphics (PIXI.Graphics for drag selection)
+
+**GraphProvider API:**
+- Props: `id`, `rootId`, `data: { nodes, edges }`, `storageKey`, `load`
+- Ref methods: `init()`, `resize()`, `addNewNode()`, `forceUpdate()`
+- Window events: `updateGraphSettings.{id}`, `updateGraphRoot.{id}`, `updateGraphData.{id}`
+
+**Usage locations:**
+- `src/ts/component/page/main/graph.tsx` - Global graph page
+- `src/ts/component/block/dataview/view/graph.tsx` - Dataview graph
+- `src/ts/component/widget/view/graph/index.tsx` - Widget graph
+
+**Worker message protocol:**
+- Provider → Worker: `init`, `updateSettings`, `image`, `onZoom`, `onClick`, `onSelect`, `onMouseMove`, `onDragStart/Move/End`, `setRootId`, `resize`, `updateTheme`
+- Worker → Provider: `onClick`, `onSelect`, `onMouseMove`, `onContextMenu`, `onTransform`, `setRootId`
+
+**Building the PixiJS worker bundle:**
+```bash
+npx rspack --config rspack.pixi.config.js
+```
+
 ## Development Workflow
 
 ### Making Changes

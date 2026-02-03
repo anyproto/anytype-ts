@@ -141,7 +141,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		const transfer = canvas.current.transferControlToOffscreen();
 
-		worker.current = new Worker('workers/graph.js');
+		worker.current = new Worker('workers/graph.pixi.js');
 		worker.current.onerror = (e: any) => console.log(e);
 		worker.current.addEventListener('message', onMessage);
 
