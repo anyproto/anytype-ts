@@ -784,9 +784,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const onScrollToBottomClick = () => {
 		if (jumpIds.current.length) {
 			const idx = jumpIds.current.length - 1;
+			const id = jumpIds.current[idx];
+			const ref = messageRefs.current[id];
+			const container = U.Common.getScrollContainer(isPopup);
+			const threshold = container.outerHeight() / 2;
 
-			scrollToMessage(jumpIds.current[idx], true, true);
 			jumpIds.current.splice(idx, 1);
+			if (ref && (getMessageScrollOffset(id) < threshold)) {
+				onScrollToBottomClick();
+			} else {
+				scrollToMessage(id, true, true);
+			};
 		} else {
 			loadMessages(1, true, () => scrollToBottom(true));
 		};
