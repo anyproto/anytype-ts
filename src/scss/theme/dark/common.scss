@@ -166,14 +166,6 @@ html.themeDark {
 	.button.blank:not(.disabled):hover,
 	.button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
-	.button.red,
-	.button.red.blank { background: none; }
-
-	.button.red:not(.disabled):hover,
-	.button.red:not(.disabled).hover,
-	.button.red.blank:not(.disabled):hover,
-	.button.red.blank:not(.disabled).hover { border-color: #581f0c; background: #311107; }
-
 	.filter {
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
