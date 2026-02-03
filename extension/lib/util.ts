@@ -49,6 +49,8 @@ class Util {
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
+		appKey = String(appKey || '');
+
 		S.Auth.appKeySet(appKey);
 		U.Data.createSession('', appKey, '', (message: any) => {
 			if (message.error.code) {

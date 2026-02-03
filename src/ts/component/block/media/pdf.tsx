@@ -44,15 +44,11 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	};
 
 	const onKeyDownHandler = (e: any) => {
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: any) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {
@@ -214,8 +210,13 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 					);
 				};
 
+				const cn = [ 'wrap', 'pdfWrapper' ];
+				if (pager) {
+					cn.push('withPager');
+				};
+
 				element = (
-					<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
+					<div ref={wrapRef} className={cn.join(' ')} style={css}>
 						<div className="info" onMouseDown={onOpenObject}>
 							<ObjectName object={object} />
 							<span className="size">{U.File.size(object.sizeInBytes)}</span>

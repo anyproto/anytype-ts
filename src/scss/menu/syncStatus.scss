@@ -35,13 +35,13 @@
 				.icon.p2p { background: url('~img/icon/sync/p2p/connected.svg'); }
 			}
 			.iconWrapper.connectedSlow {
-				.iconBg { background: var(--color-bg-orange); }
+				.iconBg { background: var(--color-very-light-orange); }
 				.label { color: var(--color-orange); }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/upgrade.svg'); }
 			}
 			.iconWrapper.error {
-				.iconBg { background: var(--color-bg-red); }
+				.iconBg { background: var(--color-very-light-red); }
 				.label { color: var(--color-red); }
 				.icon.network,
 				.icon.self { background: url('~img/icon/sync/error.svg'); }
