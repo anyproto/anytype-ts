@@ -126,7 +126,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let withValue = false;
 	if (Relation.isFilterActive(filter)) {
 		withValue = true;
-		cn.push('withValue');
+		cn.push('isActive');
 	};
 
 	return (

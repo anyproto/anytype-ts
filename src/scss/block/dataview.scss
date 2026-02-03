@@ -227,14 +227,17 @@
 
 				.filterItem {
 					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 32px; align-items: center; padding: 0px 10px 0px 8px;
-					border-radius: 16px; border: 1px solid var(--color-shape-highlight-medium); color: var(--color-text-secondary);
+					border-radius: 16px; color: var(--color-text-secondary); font-weight: 500;
 				}
 				.filterItem {
-					&.withValue { color: var(--color-text-primary); }
+					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
+					&.isActive {
+						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
+						.name { font-weight: 600; }
+					}
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
 
 					.content { display: flex; gap: 4px; @include text-overflow-nw; max-width: 256px; }
- 					.name { font-weight: 500; }
 					.value { @include text-overflow-nw; }
 
 					.label.condition { text-transform: lowercase; }

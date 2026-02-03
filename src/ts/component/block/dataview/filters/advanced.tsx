@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, translate, S } from 'Lib';
+import { I, U, translate, S, Relation } from 'Lib';
 import { Icon, Label } from 'Component';
 
 interface FilterWithRelation extends I.Filter {
@@ -24,6 +24,10 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 	const { id } = filter;
 	const ruleCount = filter.nestedFilters?.length || 1;
 	const cn = [ 'filterItem', 'isAdvanced', 'withValue' ];
+
+	if (Relation.isFilterActive(filter)) {
+		cn.push('isActive');
+	};
 
 	if (readonly) {
 		cn.push('isReadonly');
