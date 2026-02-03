@@ -333,7 +333,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				};
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {
-					S.Menu.open('dataviewFilterList', { 
+					S.Menu.open('dataviewFilterAdvanced', { 
 						element: `#button-${blockId}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,

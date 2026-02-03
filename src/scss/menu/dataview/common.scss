@@ -8,6 +8,7 @@
 	.menu.menuDataviewObjectValues,
 	.menu.menuDataviewOptionList,
 	.menu.menuDataviewFilterList,
+	.menu.menuDataviewFilterAdvanced,
 	.menu.menuDataviewFilterValues,
 	.menu.menuDataviewSort
 	{
@@ -22,7 +23,7 @@
 		.label { color: var(--color-control-active); @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
     }
 
-    .menu.menuDataviewFilterList,
+    .menu.menuDataviewFilterAdvanced,
     .menu.menuDataviewSort {
 		.item {
             .icon.dnd { vertical-align: top; height: 40px; background-size: 20px; margin: 0px; }

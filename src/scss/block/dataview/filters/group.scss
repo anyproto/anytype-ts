@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFilterList {
+	.menu.menuDataviewFilterAdvanced {
 		.group { padding: 0px 0px 8px; }
 		.group {
 			.head { padding: 0px 0px 6px 0px; @include text-common; color: var(--color-text-primary); }

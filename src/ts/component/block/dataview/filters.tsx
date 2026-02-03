@@ -153,7 +153,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onAdvancedClick = (e: any, item: any) => {
-		S.Menu.open('dataviewFilterList', {
+		S.Menu.open('dataviewFilterAdvanced', {
 			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Left,
