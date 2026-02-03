@@ -20,11 +20,10 @@ interface ChatSearchResult {
 
 const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId, close, storageGet, storageSet } = props;
+	const { param, onKeyDown, setActive, getId, close } = props;
 	const { data } = param;
 	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
-	const [ isLoading, setIsLoading ] = useState(false);
 	const [ currentIndex, setCurrentIndex ] = useState(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const [ isDropdownOpen, setIsDropdownOpen ] = useState(true);
@@ -43,14 +42,10 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		beforePosition();
-
-		analytics.event('ScreenChatSearch', { route });
-
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
 			window.clearTimeout(timeout.current);
-			storageSet?.({ filter: '', currentIndex: -1, chatId: '' });
 		};
 	}, []);
 
@@ -93,10 +88,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
-		if (isLoading) {
-			return;
-		};
-
 		const text = filter.current;
 		const sorts = [
 			{ key: I.SearchSortKey.CreatedAt, type: I.SortType.Desc },
@@ -109,13 +100,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (clear) {
-			setIsLoading(true);
-		};
-
 		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
-			setIsLoading(false);
-
 			if (message.error.code) {
 				callBack?.(message);
 				return;
@@ -128,9 +113,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(message.list);
 
 			// Only reset index for new searches, not when restoring state
-			if (clear && itemsRef.current.length > 0 && !callBack) {
+			if (clear && (itemsRef.current.length > 0) && !callBack) {
 				setCurrentIndex(0);
-				saveState(text, 0);
 			};
 
 			setDummy(prev => prev + 1);
@@ -147,23 +131,16 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		const items = getItems();
-		const index = items.findIndex(it => it.id === item.id);
-		if (index >= 0) {
-			saveState(filter.current, index);
-		};
-
-		analytics.event('ClickChatSearchResult');
-
 		scrollToMessage?.(item.id);
 		close();
+
+		analytics.event('ClickChatSearchResult');
 	};
 
 	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
 			filter.current = filterRef.current?.getValue() || '';
-			saveState(filter.current, -1);
 			reload();
 
 			if (filter.current) {
@@ -184,45 +161,17 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const newIndex = currentIndex + dir;
-		if (newIndex < 0 || newIndex >= items.length) {
+		if ((newIndex < 0) || (newIndex >= items.length)) {
 			return;
 		};
 
 		setCurrentIndex(newIndex);
-		saveState(filter.current, newIndex);
-
 		analytics.event('ClickChatSearchNavigation', { type: dir > 0 ? 'Up' : 'Down' });
 
 		const item = items[newIndex];
 		if (item) {
 			setActive(item, true);
 			scrollToMessage?.(item.id);
-		};
-	};
-
-	const saveState = (filterValue: string, index: number) => {
-		storageSet?.({ filter: filterValue, currentIndex: index, chatId });
-	};
-
-	const restoreState = () => {
-		const storage = storageGet?.() || {};
-		const { filter: savedFilter, currentIndex: savedIndex, chatId: savedChatId } = storage;
-
-		// Clear state if switching to a different chat
-		if (savedChatId && savedChatId !== chatId) {
-			storageSet?.({ filter: '', currentIndex: -1, chatId });
-			return;
-		};
-
-		if (savedFilter) {
-			filter.current = savedFilter;
-			filterRef.current?.setValue(savedFilter);
-
-			load(true, () => {
-				if ((typeof(savedIndex) == 'number') && savedIndex) {
-					setCurrentIndex(savedIndex);
-				};
-			});
 		};
 	};
 
@@ -387,11 +336,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			</div>
 
-			{!items.length && !isLoading && filter.current && isDropdownOpen ? (
+			{!items.length && filter.current && isDropdownOpen ? (
 				<EmptySearch filter={filter.current} />
 			) : ''}
 
-			{items.length && !isLoading && isDropdownOpen ? (
+			{items.length && isDropdownOpen ? (
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
