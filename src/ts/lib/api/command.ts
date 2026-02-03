@@ -2185,6 +2185,8 @@ export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (messag
 	const request = new Rpc.MembershipV2.SubscribeToUpdates.Request();
 	
 	request.setEmail(email);
+	request.setPlatform(Model.MembershipV2.Platform.DESKTOP);
+    request.setSubscribe(true);
 	
 	dispatcher.request(MembershipV2SubscribeToUpdates.name, request, callBack);
 };
