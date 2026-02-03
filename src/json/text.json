@@ -852,6 +852,8 @@
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionChat": "Chat",
 	"popupSettingsPersonalChatSend": "Send message with",
+	"popupSettingsPersonalSectionLists": "Lists",
+	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",
