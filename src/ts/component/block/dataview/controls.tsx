@@ -32,8 +32,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
 	const sortCnt = view.sorts.length;
-	const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
-	const filterCnt = filters.length;
+	const filterCnt = U.Common.getViewFilters(view).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -459,6 +458,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		let inner = null;
 		if ((item.id == 'filter') && filterCnt) {
+			cn.push('hasFilter');
 			inner = <div className="bullet" />;
 		};
 

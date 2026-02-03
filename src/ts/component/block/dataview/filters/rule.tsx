@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, translate } from 'Lib';
+import { I, S, U, Relation, translate, Preview } from 'Lib';
 import { Icon, Select, Input, IconObject, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
 
@@ -211,17 +212,51 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					return null;
 				};
 
+				const isFile = relation.format == I.RelationType.File;
+				const visible = items.slice(0, 1);
+				const rest = items.slice(1);
+
+				const restId = `${nodeId}-rest`;
+
 				return (
 					<div className="objectsList">
-						{items.map((item: any) => (
-							<ItemObject
-								key={item.id}
-								cellId={nodeId}
-								getObject={() => item}
-								relation={relation}
-								canEdit={false}
-							/>
-						))}
+						{visible.map((item: any) => {
+							const tooltipId = `${nodeId}-${item.id}`;
+							const el = (
+								<ItemObject
+									key={item.id}
+									cellId={nodeId}
+									getObject={() => isFile ? { ...item, name: U.String.shortMask(item.name, 5) } : item}
+									relation={relation}
+									canEdit={false}
+								/>
+							);
+
+							if (isFile && item.name.length > 13) {
+								return (
+									<span
+										key={item.id}
+										id={tooltipId}
+										onMouseEnter={() => Preview.tooltipShow({ text: item.name, element: $(`#${tooltipId}`) })}
+										onMouseLeave={() => Preview.tooltipHide(false)}
+									>
+										{el}
+									</span>
+								);
+							};
+
+							return el;
+						})}
+						{rest.length ? (
+							<div
+								id={restId}
+								className="rest"
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseLeave={() => Preview.tooltipHide(false)}
+							>
+								+{rest.length}
+							</div>
+						) : ''}
 					</div>
 				);
 			};
@@ -235,9 +270,13 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					return null;
 				};
 
+				const visible = items.slice(0, 2);
+				const rest = items.slice(2);
+				const restId = `${nodeId}-rest`;
+
 				return (
 					<div className="optionsList">
-						{items.map((item: any) => (
+						{visible.map((item: any) => (
 							<Tag
 								key={item.id}
 								text={item.name}
@@ -245,6 +284,16 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 								className={Relation.selectClassName(relation.format)}
 							/>
 						))}
+						{rest.length ? (
+							<div
+								id={restId}
+								className="rest"
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseLeave={() => Preview.tooltipHide(false)}
+							>
+								+{rest.length}
+							</div>
+						) : ''}
 					</div>
 				);
 			};

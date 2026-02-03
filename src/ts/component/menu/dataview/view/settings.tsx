@@ -126,8 +126,7 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const view = data.view.get();
 		const isBoard = view.type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
-		const filterCnt = filters.length;
+		const filterCnt = U.Common.getViewFilters(view).length;
 		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
 
