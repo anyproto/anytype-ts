@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, C, S, U, Relation, keyboard, translate, analytics } from 'Lib';
+import { I, C, S, U, Relation, keyboard, translate, analytics, Storage } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const HEIGHT_ITEM = 28;
@@ -237,8 +237,10 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClear = () => {
 		const view = getView();
 		const filterItems = getFilterItems();
+		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, filterItems.map(it => it.id), () => {
+			Storage.setToggle(rootId, filtersId, false);
 			loadData(view.id, 0, false);
 		});
 	};
