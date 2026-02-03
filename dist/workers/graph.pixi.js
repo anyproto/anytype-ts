@@ -101,9 +101,11 @@ let app = null;
 let edgesGraphics = null;
 let nodesContainer = null;
 let labelsContainer = null;
+let edgeLabelsContainer = null;
 let selectBoxGraphics = null;
 let nodeSprites = new Map();
 let nodeLabels = new Map();
+let edgeLabels = new Map();
 let circleTexture = null;
 let initialized = false;
 
@@ -122,27 +124,43 @@ init = async (param) => {
 	canvas = data.canvas;
 	settings = data.settings;
 	rootId = data.rootId;
-	edges = util.objectCopy(data.edges);
-	nodes = util.objectCopy(data.nodes);
 	zoom = data.zoom;
 	width = data.width;
 	height = data.height;
 	density = data.density;
 
+	// Shallow copy with object spread - faster than deep copy for initial load
+	edges = data.edges.map(d => ({ ...d }));
+	nodes = data.nodes.map(d => ({ ...d }));
+
 	initTheme(data.theme);
 	recalcConstants();
+
+	transform = d3.zoomIdentity.translate(zoom.x, zoom.y).scale(zoom.k);
+
+	// Initialize simulation with fast convergence settings
+	simulation = d3.forceSimulation(nodes);
+	simulation.alpha(1);
+	simulation.alphaDecay(0.05);
+	simulation.alphaMin(0.01); // Stop earlier - good enough layout
+
+	// Initialize forces
+	initForcesOnly();
+
+	// Run simulation to completion - no animation, show final state immediately
+	const maxIterations = 300; // Safety limit
+	let iterations = 0;
+	while (simulation.alpha() > simulation.alphaMin() && iterations < maxIterations) {
+		simulation.tick();
+		iterations++;
+	};
+	simulation.stop();
 
 	// Initialize PixiJS
 	await initPixi();
 
-	transform = d3.zoomIdentity.translate(zoom.x, zoom.y).scale(zoom.k);
-	simulation = d3.forceSimulation(nodes);
-	simulation.alpha(1);
-	simulation.alphaDecay(0.05);
-
-	initForces();
+	// Set up tick handler for future interactions (drag, settings changes)
 	simulation.on('tick', () => redraw());
-	simulation.tick(100);
 
 	root = getNodeById(rootId);
 
@@ -150,6 +168,13 @@ init = async (param) => {
 	const y = root ? root.y : height / 2;
 
 	transform = Object.assign(transform, getCenter(x, y));
+
+	// Build node sprites after PixiJS is ready
+	updateNodeSprites();
+
+	// Draw the settled graph
+	redraw();
+
 	send('onTransform', { ...transform });
 };
 
@@ -172,15 +197,26 @@ initPixi = async () => {
 		resolution: 1,
 		autoDensity: false,
 		preference: 'webgl',
+		powerPreference: 'high-performance',
+		hello: false, // Disable console hello message
 	});
 
-	// Create render containers
+	// Create render containers with optimized settings
 	edgesGraphics = new PIXI.Graphics();
+	edgeLabelsContainer = new PIXI.Container();
 	nodesContainer = new PIXI.Container();
 	labelsContainer = new PIXI.Container();
 	selectBoxGraphics = new PIXI.Graphics();
 
+	// Disable interactivity - we handle events manually via D3
+	edgesGraphics.eventMode = 'none';
+	edgeLabelsContainer.eventMode = 'none';
+	nodesContainer.eventMode = 'none';
+	labelsContainer.eventMode = 'none';
+	selectBoxGraphics.eventMode = 'none';
+
 	app.stage.addChild(edgesGraphics);
+	app.stage.addChild(edgeLabelsContainer);
 	app.stage.addChild(nodesContainer);
 	app.stage.addChild(labelsContainer);
 	app.stage.addChild(selectBoxGraphics);
@@ -231,6 +267,55 @@ image = ({ src, bitmap }) => {
 			images[src + '_texture'] = texture;
 		};
 	};
+};
+
+/**
+ * Initializes D3 forces for the simulation (without triggering updateForces/redraw).
+ * Used during initial setup to avoid redundant work.
+ */
+initForcesOnly = () => {
+	const { center, charge, link, forceX, forceY } = forceProps;
+
+	updateOrphans();
+
+	simulation
+	.force('link', d3.forceLink().id(d => d.id))
+	.force('charge', d3.forceManyBody())
+	.force('center', d3.forceCenter())
+	.force('forceX', d3.forceX(nodes))
+	.force('forceY', d3.forceY(nodes));
+
+	simulation.force('center')
+	.x(width * center.x)
+	.y(height * center.y);
+
+	simulation.force('charge')
+	.strength(charge.strength)
+	.distanceMax(charge.distanceMax);
+
+	simulation.force('link')
+	.links(edges)
+	.distance(link.distance)
+	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
+
+	simulation.force('forceX')
+	.strength(d => !d.isOrphan ? forceX.strength : 0)
+	.x(width * forceX.x);
+
+	simulation.force('forceY')
+	.strength(d => !d.isOrphan ? forceY.strength : 0)
+	.y(height * forceY.y);
+
+	// Build edgeMap and nodeMap
+	const tmpEdgeMap = getEdgeMap();
+	edgeMap.clear();
+	nodes.forEach(d => {
+		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
+	});
+	nodeMap = getNodeMap();
+
+	// Set up clusters if enabled
+	updateClusters();
 };
 
 /**
@@ -287,8 +372,9 @@ updateForces = () => {
 		types.push(EdgeType.Relation);
 	};
 
-	edges = util.objectCopy(data.edges);
-	nodes = util.objectCopy(data.nodes);
+	// Use shallow copy instead of deep copy - sufficient for filtering
+	edges = data.edges.map(d => ({ ...d }));
+	nodes = data.nodes.map(d => ({ ...d }));
 
 	updateOrphans();
 
@@ -527,6 +613,36 @@ updateNodeSprites = () => {
 			nodeLabels.delete(id);
 		};
 	};
+
+	// Pre-create sprites and labels for new nodes
+	// This avoids expensive object creation during the render loop
+	for (const d of nodes) {
+		// Pre-create sprite if needed
+		if (!nodeSprites.has(d.id)) {
+			const sprite = new PIXI.Sprite(circleTexture);
+			sprite.anchor.set(0.5);
+			sprite.visible = false;
+			nodesContainer.addChild(sprite);
+			nodeSprites.set(d.id, sprite);
+		};
+
+		// Pre-create label if needed (labels are expensive to create)
+		if (!nodeLabels.has(d.id)) {
+			const label = new PIXI.Text({
+				text: d.shortName || '',
+				style: new PIXI.TextStyle({
+					fontFamily: fontFamily,
+					fontSize: 12,
+					fill: parseColor(data.colors?.text || '#000000'),
+					align: 'center',
+				}),
+			});
+			label.anchor.set(0.5, 0);
+			label.visible = false;
+			labelsContainer.addChild(label);
+			nodeLabels.set(d.id, label);
+		};
+	};
 };
 
 /**
@@ -549,6 +665,12 @@ draw = (t) => {
 
 	// Clear and redraw edges
 	edgesGraphics.clear();
+
+	// Clear any edge labels
+	if (edgeLabelsContainer) {
+		edgeLabelsContainer.removeChildren();
+		edgeLabels.clear();
+	};
 
 	const radius = 5.7 / transform.k;
 
@@ -639,26 +761,11 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let tw = 0;
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
-	// Relation name label
+	// Relation name label - disabled for now, needs canvas-style text rendering
 	if (showName && transform.k >= transformThreshold) {
 		const fontSize = 12 / transform.k;
 		tw = d.name.length * fontSize * 0.5;
 		offset = arrowHeight / 2;
-
-		// Draw label background
-		const bgPadding = k;
-		const bgWidth = tw + bgPadding * 2;
-		const bgHeight = fontSize + bgPadding * 2;
-
-		edgesGraphics.roundRect(
-			mx - bgWidth / 2,
-			my - bgHeight / 2,
-			bgWidth,
-			bgHeight,
-			borderRadius
-		);
-		edgesGraphics.fill({ color: parseColor(data.colors.bg) });
-		edgesGraphics.stroke({ width: lineWidth3, color: colorLink });
 	};
 
 	// Arrow heads
@@ -808,8 +915,16 @@ drawNode = (d) => {
 
 	// Draw outline if needed
 	if (lw > 0) {
-		edgesGraphics.circle(d.x, d.y, radius + lw);
-		edgesGraphics.stroke({ width: lw, color: colorLine });
+		if (showIcon) {
+			// Rounded rectangle outline for all icons (matching canvas behavior)
+			const size = diameter + lw * 4;
+			edgesGraphics.roundRect(d.x - size / 2, d.y - size / 2, size, size, borderRadius);
+			edgesGraphics.stroke({ width: lw, color: colorLine });
+		} else {
+			// Circle outline for non-icon nodes
+			edgesGraphics.circle(d.x, d.y, radius + lw);
+			edgesGraphics.stroke({ width: lw, color: colorLine });
+		};
 	};
 
 	// Node label
