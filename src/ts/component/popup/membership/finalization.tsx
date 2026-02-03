@@ -84,7 +84,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	useEffect(() => {
 		buttonRef.current?.setDisabled(true);
-		analytics.event('ScreenMembershipFinalization', route);
+		analytics.event('ScreenMembershipFinalization', { route });
 	}, []);
 
 	return (

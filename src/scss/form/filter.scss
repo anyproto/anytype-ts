@@ -39,6 +39,9 @@
 		&.c32 {
 			.inner { height: 32px; border-radius: 16px; }
 		}
+		&.c36 {
+			.inner { height: 36px; border-radius: 18px; }
+		}
 	}
 }
 .filter.outlined.isFocused {

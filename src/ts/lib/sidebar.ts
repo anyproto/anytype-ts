@@ -57,7 +57,7 @@ class Sidebar {
 			this.setStyle(panel, isPopup, { width, isClosed });
 
 			if ((panel == I.SidebarPanel.Left) && !isPopup) {
-				S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
+				S.Common.vaultIsMinimalSet(width <= J.Size.sidebar.left.threshold.minimal);
 			};
 		};
 
@@ -154,10 +154,7 @@ class Sidebar {
 
 		if (animate) {
 			pageWrapperLeft.addClass('sidebarAnimation');
-			pageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
 		};
-
-		pageWrapperLeft.find('.sidebarPage').css({ opacity: 0 });
 
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0, isClosed: true });
@@ -185,10 +182,7 @@ class Sidebar {
 
 		if (animate) {
 			pageWrapperLeft.addClass('sidebarAnimation');
-			pageWrapperLeft.css({ transform: 'translate3d(0px,0px,0px)' });
 		};
-
-		pageWrapperLeft.find('.sidebarPage').css({ opacity: 1 });
 
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 
@@ -413,7 +407,7 @@ class Sidebar {
 		width = this.limitWidth(panel, width);
 
 		if (panel == I.SidebarPanel.Left) {
-			S.Common.vaultIsMinimalSet(width <= J.Size.vaultStripeMaxWidth);
+			S.Common.vaultIsMinimalSet(width <= J.Size.sidebar.left.threshold.minimal);
 		};
 
 		this.setData(panel, isPopup, { width }, save);

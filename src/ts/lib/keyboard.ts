@@ -86,12 +86,16 @@ class Keyboard {
 	};
 
 	onResize () {
-		const { ww } = U.Common.getWindowDimensions();
-		const data = sidebar.getData(I.SidebarPanel.Left, this.isPopup());
+		const isPopup = this.isPopup();
+		const container = U.Common.getPageContainer(isPopup);
+		const cw = container.width();
+		const data = sidebar.getData(I.SidebarPanel.Left, isPopup);
+		const threshold = J.Size.sidebar.left.threshold.close;
 
-		if (ww <= 900) {
+		if (!data.isClosed && (cw <= threshold)) {
 			sidebar.leftPanelClose(false, false);
-		} else {
+		} else
+		if (data.isClosed && (cw > threshold + data.width)) {
 			sidebar.leftPanelOpen(data.width, false, false);
 		};
 	};

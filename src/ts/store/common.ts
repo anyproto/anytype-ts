@@ -46,6 +46,7 @@ class CommonStore {
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
+	public gridTitleClickValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -153,6 +154,7 @@ class CommonStore {
 			updateVersionValue: observable,
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
+			gridTitleClickValue: observable,
 			widgetSectionsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
@@ -171,6 +173,7 @@ class CommonStore {
 			firstDay: computed,
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
+			gridTitleClick: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			singleTab: computed,
@@ -199,6 +202,7 @@ class CommonStore {
 			firstDaySet: action,
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
+			gridTitleClickSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -409,6 +413,17 @@ class CommonStore {
 
 	get vaultIsMinimal (): any {
 		return this.boolGet('vaultIsMinimal');
+	};
+
+	get gridTitleClick (): boolean {
+		let ret = this.gridTitleClickValue;
+		if (ret === null) {
+			ret = Storage.get('gridTitleClick');
+		};
+		if (ret === undefined) {
+			ret = true;
+		};
+		return ret;
 	};
 
 	/**
@@ -921,6 +936,10 @@ class CommonStore {
 	 */
 	vaultIsMinimalSet (v: boolean) {
 		this.boolSet('vaultIsMinimal', v);
+	};
+
+	gridTitleClickSet (v: boolean) {
+		this.boolSet('gridTitleClick', v);
 	};
 
 	/**

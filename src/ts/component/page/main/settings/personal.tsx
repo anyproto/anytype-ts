@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -150,6 +150,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						options={chatKeys}
 						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
 						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionLists')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalGridTitleClick')} />
+					<Switch
+						className="big"
+						value={gridTitleClick}
+						onChange={(e: any, v: boolean) => S.Common.gridTitleClickSet(v)}
 					/>
 				</div>
 			</div>
