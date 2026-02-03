@@ -377,8 +377,10 @@ class ChatStore {
 			return ret;
 		};
 
+		const deletedIds = S.Record.getRecordIds(J.Constant.subId.deleted, '');
+
 		for (const [ chatId, state ] of spaceMap) {
-			if (chatId) {
+			if (chatId && !deletedIds.includes(chatId)) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
@@ -409,8 +411,13 @@ class ChatStore {
 	 * @returns {Counter} The counters for the chat.
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
-		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };
+
+		if (!spaceId || !chatId || U.Data.checkIsDeleted(chatId)) {
+			return ret;
+		};
+
+		const spaceMap = this.stateMap.get(spaceId);
 
 		if (spaceMap) {
 			const state = spaceMap.get(chatId);
