@@ -1577,6 +1577,12 @@ class UtilCommon {
 		return ret.join('/');
 	};
 
+	getViewFilters (view: any): any[] {
+		return (view.filters || []).filter(it => {
+			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
+		});
+	};
+
 };
 
 export default new UtilCommon();
