@@ -39,7 +39,7 @@
 	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
 	.filterWrapper { padding: 0px 12px 8px 12px; overflow: hidden; }
 
-	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; border-radius: 12px; -webkit-app-region: no-drag; }
+	.item { display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 12px; -webkit-app-region: no-drag; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.iconWrap {
