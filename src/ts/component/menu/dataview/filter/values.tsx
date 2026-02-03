@@ -8,6 +8,7 @@ const SUB_ID_PREFIX = 'filterOptionList';
 
 const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
+	const { config } = S.Common;
 	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead, onFilterPropChange } = data;
@@ -422,6 +423,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			value = (
 				<OptionSelect
 					ref={optionSelectRef}
+					menuClassNameWrap="fromBlock"
 					subId={getSubId()}
 					relationKey={item.relationKey}
 					value={selectedIds}
@@ -432,7 +434,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					canEdit={true}
 					position={position}
 					menuId={getId()}
-					menuClassNameWrap="fromBlock"
 				/>
 			);
 			break;
