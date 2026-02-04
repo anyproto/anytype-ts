@@ -324,12 +324,9 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			};
 
 			case 'filter': {
-				const conditions = Relation.filterConditionsByType(relation.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				const filter = {
 					relationKey: relation.relationKey,
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(relation, null, false),
+					...Dataview.getDefaultFilterValues(relation),
 				};
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {

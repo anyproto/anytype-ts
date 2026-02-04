@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, C, S, U, Relation, keyboard, translate, analytics, Storage } from 'Lib';
+import { I, C, S, U, Relation, keyboard, translate, analytics, Storage, Dataview } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const HEIGHT_ITEM = 28;
@@ -260,21 +260,16 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			blockId,
 			getView,
 			onSelect: (item: any) => {
-				const conditions = Relation.filterConditionsByType(item.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				const quickOptions = Relation.filterQuickOptions(item.format, condition);
-				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
+				const filterValues = Dataview.getDefaultFilterValues(item);
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
-					relationKey: item.relationKey ? item.relationKey : item.id,
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(item, null, false),
-					quickOption,
+					relationKey: item.relationKey || item.id,
+					...filterValues,
 				}, () => {
 					loadData(view.id, 0, false);
 
 					analytics.event('AddFilter', {
-						condition,
+						condition: filterValues.condition,
 						objectType: object.type,
 						embedType: analytics.embedType(isInline),
 					});

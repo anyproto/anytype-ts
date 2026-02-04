@@ -989,12 +989,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onViewDrop = (targetId: string, ids: string[]) => {
+		console.log('onViewDrop', targetId, ids);
+
 		if (!targetId || !ids.length) {
 			return;
 		};
 
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
+
+		console.log('details', details);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1047,18 +1051,11 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				blockId: block.id,
 				getView,
 				onSelect: item => {
-					const conditions = Relation.filterConditionsByType(item.format);
-					const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-					const quickOptions = Relation.filterQuickOptions(item.format, condition);
-					const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
-
 					Storage.setToggle(rootId, filtersId, true);
 
 					onFilterAdd({
-						relationKey: item.relationKey ? item.relationKey : item.id,
-						condition: condition as I.FilterCondition,
-						value: Relation.formatValue(item, null, false),
-						quickOption,
+						relationKey: item.relationKey || item.id,
+						...Dataview.getDefaultFilterValues(item),
 					});
 				},
 				onAdvancedFilterAdd: () => {

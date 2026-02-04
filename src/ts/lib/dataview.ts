@@ -647,17 +647,30 @@ class Dataview {
 			};
 		};
 
+		console.log('getDetails', hasGroupValue, details);
+
 		for (const filter of view.filters) {
 			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
 
-			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation) {
+				continue;
+			};
+
+			let value = filter.value;
+			if (Relation.isDate(relation.type)) {
+				value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			};
+			
 			if (!value) {
 				continue;
 			};
 
-			const relation = S.Record.getRelationByKey(filter.relationKey);
+			console.log('VALUE', filter.value, 'QUICK OPTION', filter.quickOption, value);
+
+			
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
@@ -1037,6 +1050,24 @@ class Dataview {
 		};
 
 		return ret;
+	};
+
+	/**
+	 * Creates default filter values from a relation item.
+	 * @param {any} item - The relation item (must have format).
+	 * @returns {object} The default filter values with condition, value, and quickOption.
+	 */
+	getDefaultFilterValues (item: any): { condition: I.FilterCondition; value: any; quickOption: I.FilterQuickOption } {
+		const conditions = Relation.filterConditionsByType(item.format);
+		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+		const quickOptions = Relation.filterQuickOptions(item.format, condition);
+		const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
+
+		return {
+			condition: condition as I.FilterCondition,
+			value: Relation.formatValue(item, null, false),
+			quickOption,
+		};
 	};
 
 	/**

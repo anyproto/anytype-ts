@@ -231,16 +231,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			};
 
 			case 'dataviewFilterList': {
-				const conditions = Relation.filterConditionsByType(item.format);
-				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				const quickOptions = Relation.filterQuickOptions(item.format, condition);
-				const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.Today;
-
-				newItem = Object.assign(newItem, {
-					condition: condition as I.FilterCondition,
-					value: Relation.formatValue(item, null, false),
-					quickOption,
-				});
+				newItem = Object.assign(newItem, Dataview.getDefaultFilterValues(item));
 
 				onFilterAdd(newItem, callBack);
 				break;
