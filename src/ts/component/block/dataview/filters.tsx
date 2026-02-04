@@ -11,7 +11,7 @@ interface Props extends I.ViewComponent {
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, block, className, isInline, isCollection, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget } = props;
+	const { rootId, block, className, isInline, isCollection, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget, closeFilters } = props;
 	const blockId = block.id;
 	const view = getView();
 	const filters = view?.filters;
@@ -184,6 +184,8 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 				onSortAdd,
 				isInline,
 				readonly: isReadonly,
+				closeFilters,
+				loadData,
 			}
 		});
 	};

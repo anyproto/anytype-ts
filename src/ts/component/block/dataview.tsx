@@ -1079,8 +1079,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
-	const onFiltersClear = () => {
+	const closeFilters = () => {
+		const view = getView();
+
+		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+			return;
+		};
+
 		Storage.setToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`), false);
+		setDummy(dummy + 1);
 	};
 
 	const onFilterAdd = (item: any, callBack?: () => void) => {
@@ -1564,6 +1571,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		onFilterAdd,
 		onFilterAddClick,
 		toggleFilters,
+		closeFilters,
 		isAllowedObject,
 		isAllowedDefaultType,
 		onSourceSelect,
@@ -1642,7 +1650,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					ref={filtersRef}
 					{...props}
 					{...dataviewProps}
-					onClear={onFiltersClear}
+					onClear={closeFilters}
 				/>
 			) : ''}
 

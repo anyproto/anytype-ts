@@ -26,7 +26,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
-		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick, toggleFilters,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick, toggleFilters, closeFilters,
 	} = props;
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
@@ -187,6 +187,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onTemplateAdd,
 				onSortAdd,
 				onFilterAdd,
+				closeFilters,
 				onViewSwitch,
 				onViewCopy,
 				onViewRemove,

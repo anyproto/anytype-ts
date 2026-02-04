@@ -1757,6 +1757,7 @@
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
 	"menuDataviewFilterNewFilter": "New filter",
+	"menuDataviewFilterDeleteSort": "Delete sort",
 	"menuDataviewFilterAdvancedAdd": "Add advanced filter",
 	"menuDataviewFilterAddRule": "Add rule",
 	"menuDataviewFilterDeleteFilter": "Delete filter",
