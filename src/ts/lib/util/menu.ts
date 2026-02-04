@@ -1024,15 +1024,7 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					const route = U.Router.build({ 
-						page: 'main', 
-						action: 'void', 
-						id: 'dashboard', 
-						spaceId: targetSpaceId,
-					});
-
-					Renderer.send('openTab', { route }, { setActive: false });
-					analytics.event('AddTab', { route, uxType });
+					Action.openSpaceTab(targetSpaceId, uxType);
 					break;
 				};
 

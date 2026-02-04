@@ -108,7 +108,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		checkKeyUp.current = false;
 
 		if (item) {
-			onClick(item);
+			onClick(e, item);
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
@@ -295,7 +295,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		);
 	};
 
-	const onClick = (item: any) => {
+	const onClick = (e: any, item: any) => {
+		if (e.ctrlKey || e.metaKey) {
+			Action.openSpaceTab(item.targetSpaceId, item.uxType);
+			return;
+		};
+
 		if (item.targetSpaceId != space) {
 			U.Router.switchSpace(item.targetSpaceId, '', !!space, {}, false);
 		} else {
@@ -477,7 +482,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				{...attributes}
 				{...listeners}
 				style={style} 
-				onClick={() => onClick(item)}
+				onClick={e => onClick(e, item)}
 				onMouseOver={() => onOver(item)}
 				onMouseOut={onOut}
 				onContextMenu={e => onContextMenu(e, item)}
