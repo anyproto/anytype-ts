@@ -221,8 +221,10 @@
 		.dataviewFilters {
 			> .sides { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; }
 			> .sides {
-				> .side.left { flex-grow: 1; padding-left: 14px; max-width: 100%; display: flex; gap: 4px; flex-wrap: wrap; }
+				> .side.left { flex-grow: 1; padding-left: 14px; max-width: 100%; display: flex; gap: 8px; flex-wrap: wrap; }
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; align-items: flex-start; }
+
+				.separator.vertical { width: 1px; height: 20px; background-color: var(--color-shape-secondary); align-self: center; flex-shrink: 0; }
 
 				.filterItem {
 					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 28px; align-items: center; padding: 0px 8px;
@@ -230,6 +232,8 @@
 				}
 				.filterItem {
 					.icon.filterIcon { width: 20px; height: 20px; }
+					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/dataview/filters/sort.svg'); }
+					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 					.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
 					.icon.isText { background-image: url('~img/icon/dataview/filters/relation/text0.svg'); }
 					.icon.isNumber { background-image: url('~img/icon/dataview/filters/relation/number0.svg'); }
