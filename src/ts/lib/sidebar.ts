@@ -434,11 +434,11 @@ class Sidebar {
 			return;
 		};
 
-		const { x, y } = keyboard.mouse.page;
+		const { x } = keyboard.mouse.page;
 
 		// Skip if mouse position is at origin - indicates uninitialized state
 		// This can happen when switching tabs before any mouse movement
-		if (!x && !y) {
+		if (!x) {
 			return;
 		};
 
@@ -446,7 +446,7 @@ class Sidebar {
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 		const leftState = S.Common.getLeftSidebarState();
 		const param = this.getSizeParam(I.SidebarPanel.Left);
-		const vw = dataLeft.isClosed ? 0 : param.threshold;
+		const vw = dataLeft.isClosed ? 0 : param.min;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -472,8 +472,7 @@ class Sidebar {
 		if (show) {
 			this.leftPanelOpen(dataLeft.width, false, false);
 			this.leftPanelSubPageOpen(leftState.subPage, false, false);
-		};
-
+		} else 
 		if (hide) {
 			if (!dataLeft.isClosed) {
 				this.leftPanelClose(false, false);
