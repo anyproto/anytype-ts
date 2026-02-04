@@ -1,7 +1,7 @@
-import React, { forwardRef, useImperativeHandle, useState, useRef, MouseEvent } from 'react';
+import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, U, keyboard, translate, S, Relation, C, Dataview } from 'Lib';
+import { I, U, translate, S, Relation, C, Dataview } from 'Lib';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
 
@@ -97,7 +97,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (items.length == 1) {
+		if (items.length === 1) {
 			props.onClear?.();
 		};
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => loadData(view.id, 0, false));

@@ -1,7 +1,7 @@
 import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, translate } from 'Lib';
-import { Icon, Label, IconObject } from 'Component';
+import { Icon, Label } from 'Component';
 
 interface FilterWithRelation extends I.Filter {
 	relation: any;

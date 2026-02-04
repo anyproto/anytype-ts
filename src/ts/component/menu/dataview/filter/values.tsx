@@ -446,7 +446,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			value = (
 				<>
 					{checkboxOptions.map((option, i) => {
-						const isSelected = String(item.value ? '1' : '0') == option.id;
+						const isSelected = (item.value ? '1' : '0') == option.id;
 						return (
 							<MenuItemVertical
 								key={i}
