@@ -137,7 +137,7 @@ export default {
 		graph: {
 			bg: '#171717',
 			link: '#3f3f3f',
-			arrow: '#555',
+			arrow: '#555555',
 			node: '#ababab',
 			text: '#ababab',
 			highlight: '#ffb522',

@@ -742,6 +742,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	let colorLink = parseColor(data.colors.link);
 	let colorArrow = parseColor(data.colors.arrow);
+	let colorText = parseColor(data.colors.text);
 	let alpha = 1;
 
 	if (isHovering) {
@@ -749,7 +750,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	if (io) {
-		colorLink = colorArrow = parseColor(data.colors.highlight);
+		colorLink = colorArrow = colorText = parseColor(data.colors.highlight);
 		alpha = 1;
 	};
 
@@ -759,13 +760,73 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	edgesGraphics.stroke({ width: lineWidth, color: colorLink, alpha: alpha });
 
 	let tw = 0;
+	let th = 0;
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
-	// Relation name label - disabled for now, needs canvas-style text rendering
+	// Relation name label
 	if (showName && transform.k >= transformThreshold) {
-		const fontSize = 12 / transform.k;
-		tw = d.name.length * fontSize * 0.5;
+		// Use fixed font size for crisp rendering, scale container instead
+		const baseFontSize = 12;
+		const labelScale = 1 / transform.k;
+		const scaledPadding = k * transform.k;
+		const scaledBorderRadius = borderRadius * transform.k;
+		const scaledLineWidth = lineWidth3 * transform.k;
+
+		// Get or create label for this edge
+		const edgeKey = d.source.id + '-' + d.target.id;
+		let labelContainer = edgeLabels.get(edgeKey);
+
+		if (!labelContainer) {
+			labelContainer = new PIXI.Container();
+			edgeLabelsContainer.addChild(labelContainer);
+			edgeLabels.set(edgeKey, labelContainer);
+		};
+
+		// Clear previous content
+		labelContainer.removeChildren();
+
+		// Create text at base resolution for crisp rendering
+		const label = new PIXI.Text({
+			text: d.name,
+			style: new PIXI.TextStyle({
+				fontFamily: fontFamily,
+				fontSize: baseFontSize,
+				fill: colorText,
+				align: 'center',
+			}),
+		});
+		label.anchor.set(0.5);
+
+		// Get text dimensions at base size
+		const textWidth = label.width;
+		const textHeight = label.height;
+
+		// Calculate world-space dimensions for arrow offset
+		tw = textWidth * labelScale;
+		th = textHeight * labelScale;
 		offset = arrowHeight / 2;
+
+		// Create background rectangle in label space
+		const bgGraphics = new PIXI.Graphics();
+		bgGraphics.roundRect(
+			-textWidth / 2 - scaledPadding,
+			-textHeight / 2 - scaledPadding,
+			textWidth + scaledPadding * 2,
+			textHeight + scaledPadding * 2,
+			scaledBorderRadius
+		);
+		bgGraphics.fill({ color: parseColor(data.colors.bg) });
+		bgGraphics.stroke({ width: scaledLineWidth, color: colorLink });
+
+		labelContainer.addChild(bgGraphics);
+		labelContainer.addChild(label);
+
+		// Position, rotate, and scale the container
+		labelContainer.position.set(mx, my);
+		labelContainer.scale.set(labelScale);
+		// Rotate to align with edge, but keep text readable (flip if pointing left)
+		labelContainer.rotation = Math.abs(a1) <= 1.5 ? a1 : a2;
+		labelContainer.visible = true;
 	};
 
 	// Arrow heads
