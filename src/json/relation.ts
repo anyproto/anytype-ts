@@ -144,7 +144,7 @@ export default {
 		'type',
 		'targetObjectType',
 		'internalFlags',
-		'sourceObject'
+		'sourceObject',
 	],
 
 	space: [

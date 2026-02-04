@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -32,8 +32,10 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	const isBookmark = U.Object.isBookmarkLayout(root?.layout);
 	const isChat = U.Object.isChatLayout(root?.layout);
 	const isType = U.Object.isTypeLayout(root?.layout);
-	const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
+	const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign', 'type', 'templateNamePrefillType' ]);
+	const isTemplate = U.Object.isTemplateType(object.type);
 	const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
+	const prefillType = Number(object.templateNamePrefillType) || 0;
 	const hasConflict = U.Object.hasLayoutConflict(object);
 	const check = U.Data.checkDetails(rootId);
 	const nodeRef = useRef(null);
@@ -66,6 +68,10 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 
 	const onDescriptionHandler = (e: any) => {
 		Action.toggleFeatureRelation(rootId, 'description');
+	};
+
+	const onPrefillNameHandler = (e: any) => {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'templateNamePrefillType', value: prefillType ? 0 : 1 } ]);
 	};
 
 	const onCoverHandler = (e: any) => {
@@ -158,14 +164,15 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		});
 	};
 
-	const getAllowedButtons = (): { allowedIcon: boolean, allowedLayout: boolean, allowedCover: boolean, allowedDescription: boolean } => {
+	const getAllowedButtons = (): { allowedIcon: boolean, allowedLayout: boolean, allowedCover: boolean, allowedDescription: boolean, allowedPrefillName: boolean } => {
 		let allowedLayout = false;
 		let allowedIcon = false;
 		let allowedCover = false;
 		let allowedDescription = false;
+		let allowedPrefillName = false;
 
 		if (!root) {
-			return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
+			return { allowedIcon, allowedLayout, allowedCover, allowedDescription, allowedPrefillName };
 		};
 
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -174,6 +181,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		allowedIcon = allowedDetails && !isTask && !isNote && !isBookmark && !isType;
 		allowedCover = allowedDetails && !isNote && !isType;
 		allowedDescription = allowedDetails && !isNote;
+		allowedPrefillName = allowedDetails && isTemplate;
 
 		if (isInSets && !hasConflict) {
 			allowedLayout = false;
@@ -184,9 +192,10 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 			allowedLayout = false;
 			allowedCover = false;
 			allowedDescription = false;
+			allowedPrefillName = false;
 		};
 
-		return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
+		return { allowedIcon, allowedLayout, allowedCover, allowedDescription, allowedPrefillName };
 	};
 
 	const resize = () => {
@@ -194,7 +203,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		$(nodeRef.current).toggleClass('small', ww <= 900);
 	};
 
-	const { allowedIcon, allowedLayout, allowedCover, allowedDescription } = getAllowedButtons();
+	const { allowedIcon, allowedLayout, allowedCover, allowedDescription, allowedPrefillName } = getAllowedButtons();
 
 	useEffect(() => {
 		if (allowedDescription) {
@@ -235,6 +244,13 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 				<div id="button-description" className="btn white withIcon" onClick={onDescriptionHandler}>
 					<Icon className="description" />
 					<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
+				</div>
+			) : ''}
+
+			{allowedPrefillName ? (
+				<div id="button-prefill-name" className="btn white withIcon" onClick={onPrefillNameHandler}>
+					<Icon className="preFillName" />
+					<div className="txt">{translate(`editorControlPrefillName${prefillType}`)}</div>
 				</div>
 			) : ''}
 

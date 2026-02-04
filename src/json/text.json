@@ -618,6 +618,8 @@
 	"editorControlLayout": "Settings",
 	"editorControlDescription0": "Show description",
 	"editorControlDescription1": "Hide description",
+	"editorControlPrefillName0": "Pre-fill name",
+	"editorControlPrefillName1": "Empty name",
 
 	"editorPagePasteAsHeader": "Paste as",
 	"editorPagePasteLink": "URL",

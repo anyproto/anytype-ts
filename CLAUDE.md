@@ -181,7 +181,13 @@ Use the Figma MCP tools to fetch design context and screenshots from Figma files
 - `fileKey` is the ID after `/design/`
 - `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
 
-**Example usage:**
+**Extract parameters from Figma URLs:**
 For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
 - `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
 - `nodeId`: `12769:19003`
+
+**Important - Icons and Images:**
+- All icons and images must be stored locally in `src/img/` - do NOT use remote Figma asset URLs
+- When implementing designs from Figma, recreate icons as SVG files in the appropriate `src/img/icon/` subdirectory
+- Follow existing icon patterns (e.g., `src/img/icon/add/` for editor control button icons)
+- Icons typically have two variants: `name0.svg` (default state, #B6B6B6) and `name1.svg` (hover state, #252525)
