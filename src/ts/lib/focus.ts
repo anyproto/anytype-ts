@@ -47,6 +47,9 @@ class Focus {
 		};
 		this.backup = U.Common.objectCopy(this.state);
 
+		console.log('Focus set:', JSON.stringify(this.state, null, 3));
+		console.trace();
+
 		C.BlockSetCarriage(keyboard.getRootId(), id, range);
 		return this;
 	};

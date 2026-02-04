@@ -790,7 +790,8 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return (
 			<CellMeasurer
-				{...param}
+				key={param.key}
+				parent={param.parent}
 				cache={cache.current}
 				columnIndex={0}
 				rowIndex={index}

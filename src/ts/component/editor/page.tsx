@@ -1852,7 +1852,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isCut && (ids.length == 1) && (ids[0] == focused)) {
-			focusSet(focused, range.from, range.from, false);
+			focusSet(focused, range.from, range.to, false);
 		};
 
 		Action.copyBlocks(rootId, ids, mode);
