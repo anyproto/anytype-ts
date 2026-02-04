@@ -47,11 +47,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	const onSlideClick = (e: MouseEvent) => {
-		const target = e.target as HTMLElement;
-
-		// Only close if clicked outside the media container and loader (empty area)
-		if (!target.closest('.mediaContainer') && !target.closest('.loader')) {
+	const onDimmer = (e: MouseEvent) => {
+		const target = $(e.target);
+		if (!target.hasClass('previewItem') && !target.parents('.previewItem').length) {
 			close();
 		};
 	};
@@ -281,7 +279,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	return (
 		<div ref={nodeRef} id="wrap" className="wrap">
-			<div className="galleryHeader">
+			<div className="galleryHeader" onClick={onDimmer}>
 				{current ? (
 					<>
 						<div className="side left" />
@@ -295,7 +293,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				) : ''}
 			</div>
 
-			<div className="gallerySlides">
+			<div className="gallerySlides" onClick={onDimmer}>
 				<Swiper
 					onSwiper={swiper => swiperRef.current = swiper}
 					initialSlide={initial}
@@ -312,35 +310,31 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					onSlideChange={swiper => setCurrentItem(swiper.activeIndex)}
 				>
 					{gallery.map((item: any, i: number) => (
-						<SwiperSlide key={i} onClick={onSlideClick}>
+						<SwiperSlide key={i}>
 							{getContent(item, i)}
 						</SwiperSlide>
 					))}
 				</Swiper>
 			</div>
 
-			<div className="galleryFooter">
+			<div className="galleryFooter" onClick={onDimmer}>
 				{gallery.length > 1 ? (
-					<div className="thumbnails">
-						<Swiper
-							onSwiper={swiper => thumbsRef.current = swiper}
-							initialSlide={initial}
-							spaceBetween={8}
-							slidesPerView="auto"
-							mousewheel={true}
-							modules={[ Thumbs, Mousewheel ]}
-							slidesOffsetAfter={BORDER}
-							slidesOffsetBefore={BORDER}
-						>
-							{gallery.map((item: any, i: number) => (
-								<SwiperSlide key={i}>
-									{getContent(item, i, true)}
-								</SwiperSlide>
-							))}
-						</Swiper>
-
-						<div className="innerDimmer" onClick={() => close()} />
-					</div>
+					<Swiper
+						onSwiper={swiper => thumbsRef.current = swiper}
+						initialSlide={initial}
+						spaceBetween={8}
+						slidesPerView="auto"
+						mousewheel={true}
+						modules={[ Thumbs, Mousewheel ]}
+						slidesOffsetAfter={BORDER}
+						slidesOffsetBefore={BORDER}
+					>
+						{gallery.map((item: any, i: number) => (
+							<SwiperSlide key={i}>
+								{getContent(item, i, true)}
+							</SwiperSlide>
+						))}
+					</Swiper>
 				) : ''}
 			</div>
 		</div>

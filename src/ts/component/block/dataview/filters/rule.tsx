@@ -31,6 +31,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		readonly, onRemove, onUpdate, onOperatorChange, onTurnIntoGroup
 	} = props;
 	const nodeId = `rule-${parentPath}-${index}`;
+	const { dateFormat } = S.Common;
 	const { relationKey, condition, value } = rule;
 	const operatorRef = useRef(null);
 	const conditionRef = useRef(null);
@@ -104,7 +105,6 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				if (quickOption == I.FilterQuickOption.ExactDate) {
 					let mask = '';
 					let ph = '';
-					const { dateFormat } = S.Common;
 
 					switch (dateFormat) {
 						case I.DateFormat.ISO: { mask = '9999.99.99'; ph = 'yyyy.mm.dd'; break; };

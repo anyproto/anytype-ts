@@ -1141,6 +1141,18 @@ class Action {
 		});
 	};
 
+	openSpaceTab (spaceId: string, uxType: I.SpaceUxType) {
+		const route = U.Router.build({ 
+			page: 'main', 
+			action: 'void', 
+			id: 'dashboard', 
+			spaceId,
+		});
+
+		Renderer.send('openTab', { route }, { setActive: false });
+		analytics.event('AddTab', { route, uxType });
+	};
+
 };
 
 export default new Action();

@@ -1014,6 +1014,8 @@ class Dispatcher {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
 								title.push(U.String.shorten(chat.name, 32));
+							} else {
+								break;
 							};
 						};
 

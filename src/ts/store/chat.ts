@@ -345,7 +345,12 @@ class ChatStore {
 			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId || U.Data.checkIsArchived(chatId)) {
+				if (!chatId) {
+					continue;
+				};
+
+				const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+				if (chat._empty_ || chat.isArchived) {
 					continue;
 				};
 
@@ -377,10 +382,11 @@ class ChatStore {
 			return ret;
 		};
 
-		const deletedIds = S.Record.getRecordIds(J.Constant.subId.deleted, '');
+		const chats = S.Record.getRecords(J.Constant.subId.chatGlobal);
+		const chatIds = chats.map(it => it.id);
 
 		for (const [ chatId, state ] of spaceMap) {
-			if (chatId && !deletedIds.includes(chatId)) {
+			if (chatId && chatIds.includes(chatId)) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
@@ -412,8 +418,9 @@ class ChatStore {
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
-		if (!spaceId || !chatId || U.Data.checkIsDeleted(chatId)) {
+		if (!spaceId || !chatId || chat._empty_ || chat.isArchived) {
 			return ret;
 		};
 

@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -500,137 +500,7 @@ const App: FC = () => {
 	};
 
 	const onSpellcheck = (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) => {
-		if (!misspelledWord) {
-			return;
-		};
-
-		keyboard.disableContextOpen(true);
-
-		const { focused } = focus.state;
-		const win = $(window);
-		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
-		const element = $(document.elementFromPoint(x, y));
-		const isInput = element.is('input');
-		const isTextarea = element.is('textarea');
-		const isEditable = element.is('.editable');
-
-		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
-
-		S.Menu.open('select', {
-			classNameWrap: 'fromBlock',
-			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			onOpen: () => S.Menu.close('blockContext'),
-			onClose: () => keyboard.disableContextOpen(false),
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					raf(() => {
-						switch (item.id) {
-							default: {
-								const rootId = keyboard.getRootId();
-								const block = S.Block.getLeaf(rootId, focused);
-
-								if (block && block.isText()) {
-									const value = block.content.text;
-
-									// Find the word at the click position using caret position
-									let wordIndex = -1;
-									const range = document.caretRangeFromPoint(x, y);
-
-									if (range) {
-										const container = range.startContainer;
-										const offset = range.startOffset;
-
-										// Get the text content and find word boundaries
-										if (container.nodeType === Node.TEXT_NODE) {
-											const editable = $(container).closest('.editable');
-											if (editable.length) {
-												// Calculate the absolute offset in the block text
-												let absoluteOffset = 0;
-												const walker = document.createTreeWalker(
-													editable.get(0),
-													NodeFilter.SHOW_TEXT,
-													null
-												);
-
-												let node;
-												while ((node = walker.nextNode())) {
-													if (node === container) {
-														absoluteOffset += offset;
-														break;
-													};
-													absoluteOffset += node.textContent?.length || 0;
-												};
-
-												// Find the occurrence of misspelledWord that contains this offset
-												let searchIndex = 0;
-												while (searchIndex < value.length) {
-													const idx = value.indexOf(misspelledWord, searchIndex);
-													if (idx === -1) break;
-
-													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
-														wordIndex = idx;
-														break;
-													};
-													searchIndex = idx + 1;
-												};
-											};
-										};
-									};
-
-									// Fallback to first occurrence if position detection failed
-									if (wordIndex === -1) {
-										wordIndex = value.indexOf(misspelledWord);
-									};
-
-									if (wordIndex >= 0) {
-										U.Data.blockInsertText(
-											rootId,
-											focused,
-											item.id,
-											wordIndex,
-											wordIndex + misspelledWord.length
-										);
-
-										focus.set(focused, { from: wordIndex, to: wordIndex + item.id.length });
-										focus.apply();
-									};
-								} else 
-								if (isInput || isTextarea || isEditable) {
-									let value = '';
-									if (isInput || isTextarea) {
-										value = String(element.val());
-									} else 
-									if (isEditable) {
-										value = String((element.get(0) as any).innerText || '');
-									};
-;
-									value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
-
-									if (isInput || isTextarea) {
-										element.val(value);
-									} else 
-									if (isEditable) {
-										element.text(value);
-									};
-								};
-								break;
-							};
-
-							case 'add-to-dictionary': {
-								Renderer.send('spellcheckAdd', misspelledWord);
-								break;
-							};
-
-							case 'disable-spellcheck': {
-								Action.setSpellingLang([]);
-								break;
-							};
-						};
-					});
-				},
-			}
-		});
+		U.Menu.spellcheck(misspelledWord, dictionarySuggestions, x, y, rect);
 	};
 
 	useEffect(() => {

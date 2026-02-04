@@ -32,8 +32,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
-	let center = null;
-
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
 	};
@@ -85,11 +83,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		};
 	};
 
+	let center = null;
 	if (!isDeleted) {
-		if (bannerProps.type != I.BannerType.None) {
-			center = <HeaderBanner {...bannerProps} />;
-		};
-
 		if (bannerProps.type == I.BannerType.None) {
 			center = (
 				<div className="path" onClick={onSearch}>

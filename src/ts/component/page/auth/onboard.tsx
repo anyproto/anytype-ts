@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'r
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
 import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
+import { set } from 'lodash';
 
 enum Stage {
 	Phrase 		= 0,
@@ -71,6 +72,8 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		if (!canMoveForward()) {
 			return;
 		};
+
+		setError('');
 
 		switch (stage) {
 			case Stage.Phrase: {
