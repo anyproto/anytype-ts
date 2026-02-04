@@ -201,12 +201,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const conditions = Relation.filterConditionsByType(relation.format);
+		const updatedFilter = {
+			...filter,
+			...Dataview.getDefaultFilterValues(relation),
+		};
 
-		filter.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-		filter.value = Relation.formatValue(relation, null, false);
-
-		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, updatedFilter, () => {
 			loadData(view.id, 0, false);
 		});
 	};

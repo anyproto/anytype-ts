@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, U, keyboard, translate, S, Relation, C } from 'Lib';
+import { I, U, keyboard, translate, S, Relation, C, Dataview } from 'Lib';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
 
@@ -109,16 +109,9 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClearFilter = (item: any) => {
-		const conditions = Relation.filterConditionsByType(item.relation.format);
-		const condition = conditions[0]?.id || I.FilterCondition.Equal;
-		const quickOptions = Relation.filterQuickOptions(item.relation.format, condition);
-		const quickOption = quickOptions[0]?.id || I.FilterQuickOption.ExactDate;
-
 		const filter = {
 			...item,
-			condition,
-			quickOption,
-			value: Relation.formatValue(item.relation, null, false),
+			...Dataview.getDefaultFilterValues(item.relation),
 		};
 
 		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, C, translate, analytics, Relation } from 'Lib';
+import { I, S, U, J, C, translate, analytics, Relation, Dataview } from 'Lib';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect } from 'Component';
 
 const SUB_ID_PREFIX = 'filterOptionList';
@@ -341,16 +341,9 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				onSelect: (e: any, option: any) => {
 					switch (option.id) {
 						case 'clear': {
-							const conditions = Relation.filterConditionsByType(relation.format);
-							const condition = conditions[0]?.id || I.FilterCondition.Equal;
-							const quickOptions = Relation.filterQuickOptions(relation.format, condition);
-							const quickOption = quickOptions[0]?.id || I.FilterQuickOption.ExactDate;
-
 							const filter = {
 								...U.Common.objectCopy(item),
-								condition,
-								quickOption,
-								value: Relation.formatValue(relation, null, false),
+								...Dataview.getDefaultFilterValues(relation),
 							};
 
 							view.setFilter(filter);
