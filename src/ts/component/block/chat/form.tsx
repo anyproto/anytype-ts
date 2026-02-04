@@ -102,6 +102,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const win = $(window);
 
 		S.Common.setTimeout('chatText', 150, () => {
+			// Don't open text menu if context is disabled (e.g., during spellcheck)
+			if (keyboard.isContextOpenDisabled) {
+				return;
+			};
+
 			S.Menu.open('chatText', {
 				classNameWrap: 'fromBlock',
 				element: '#messageBox',
@@ -133,11 +138,19 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const onMouseDown = () => {
+	const onMouseDown = (e: any) => {
+		// Allow native context menu (spellcheck) on right-click
+		if (e.button === 2) {
+			return;
+		};
 		onSelect();
 	};
 
-	const onMouseUp = () => {
+	const onMouseUp = (e: any) => {
+		// Allow native context menu (spellcheck) on right-click
+		if (e.button === 2) {
+			return;
+		};
 		onSelect();
 	};
 
@@ -1650,6 +1663,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						onPaste={onPaste}
 						onMouseDown={onMouseDown}
 						onMouseUp={onMouseUp}
+						spellcheck={true}
 					/>
 
 					<div ref={counterRef} className="charCounter" />

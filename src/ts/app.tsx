@@ -8,6 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
+import { setRange } from 'selection-ranges';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
@@ -519,7 +520,7 @@ const App: FC = () => {
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
 			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			onOpen: () => S.Menu.close('blockContext'),
+			onOpen: () => S.Menu.closeAll([ 'blockContext', 'chatText' ]),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
 				options,
@@ -595,23 +596,91 @@ const App: FC = () => {
 										focus.set(focused, { from: wordIndex, to: wordIndex + item.id.length });
 										focus.apply();
 									};
-								} else 
+								} else
 								if (isInput || isTextarea || isEditable) {
-									let value = '';
-									if (isInput || isTextarea) {
-										value = String(element.val());
-									} else 
-									if (isEditable) {
-										value = String((element.get(0) as any).innerText || '');
-									};
-;
-									value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
+									const isMessageBox = element.attr('id') === 'messageBox';
 
-									if (isInput || isTextarea) {
-										element.val(value);
-									} else 
-									if (isEditable) {
-										element.text(value);
+									if (isMessageBox) {
+										// Handle chat form's messageBox with marks preservation
+										const html = String(element.html() || '');
+										const parsed = Mark.fromHtml(html, []);
+										const { text } = parsed;
+										let { marks } = parsed;
+
+										// Find word position using caret position
+										let wordIndex = -1;
+										const range = document.caretRangeFromPoint(x, y);
+
+										if (range) {
+											const container = range.startContainer;
+											const offset = range.startOffset;
+
+											if (container.nodeType === Node.TEXT_NODE) {
+												let absoluteOffset = 0;
+												const walker = document.createTreeWalker(
+													element.get(0),
+													NodeFilter.SHOW_TEXT,
+													null
+												);
+
+												let node;
+												while ((node = walker.nextNode())) {
+													if (node === container) {
+														absoluteOffset += offset;
+														break;
+													};
+													absoluteOffset += node.textContent?.length || 0;
+												};
+
+												let searchIndex = 0;
+												while (searchIndex < text.length) {
+													const idx = text.indexOf(misspelledWord, searchIndex);
+													if (idx === -1) break;
+
+													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
+														wordIndex = idx;
+														break;
+													};
+													searchIndex = idx + 1;
+												};
+											};
+										};
+
+										if (wordIndex === -1) {
+											wordIndex = text.indexOf(misspelledWord);
+										};
+
+										if (wordIndex >= 0) {
+											const lengthDiff = item.id.length - misspelledWord.length;
+											const newText = text.substring(0, wordIndex) + item.id + text.substring(wordIndex + misspelledWord.length);
+
+											marks = Mark.adjust(marks, wordIndex + misspelledWord.length, lengthDiff);
+
+											const newHtml = Mark.toHtml(newText, marks);
+											element.html(U.String.sanitize(newHtml, true));
+
+											const cursorPos = wordIndex + item.id.length;
+											const el = element.get(0) as HTMLElement;
+											el.focus();
+											setRange(el, { start: cursorPos, end: cursorPos });
+										};
+									} else {
+										let value = '';
+										if (isInput || isTextarea) {
+											value = String(element.val());
+										} else
+										if (isEditable) {
+											value = String((element.get(0) as any).innerText || '');
+										};
+
+										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
+
+										if (isInput || isTextarea) {
+											element.val(value);
+										} else
+										if (isEditable) {
+											element.text(value);
+										};
 									};
 								};
 								break;
