@@ -131,6 +131,7 @@
 				}
 
 				.calendarSelect {
+					.head, .body { padding: 0px 16px; }
 					.day.weekend:not(.active) { background: none; }
 				}
 
