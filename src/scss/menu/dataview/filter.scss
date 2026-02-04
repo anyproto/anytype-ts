@@ -85,6 +85,7 @@
 				.conditionSelect {
 					.select {
 						.currentSelected { text-transform: lowercase; }
+						.icon.arrow { background-image: url('~img/arrow/select/filter.svg') !important; background-position: 50% 50%; background-size: 8px 8px; }
 					}
 				}
 				.conditionSelect:hover,
@@ -104,6 +105,13 @@
 				}
 			}
 			> .section {
+				&.noBorder::after { display: none; }
+
+				.tabSwitch { margin: 0px 16px; background: var(--color-shape-secondary); height: 28px; font-weight: 500; border-radius: 14px; }
+				.tabSwitch {
+					.highlight { box-shadow: inset 0px 0px 0px 2px var(--color-shape-secondary); }
+				}
+
 				.item {
 					.select { border: 0px; padding: 0px; display: block; width: 100%; }
 					.select:hover, .select.isFocused { background: none; }
@@ -122,14 +130,19 @@
 					}
 				}
 
+				.calendarSelect {
+					.head, .body { padding: 0px 16px; }
+					.day.weekend:not(.active) { background: none; }
+				}
+
 				.textInputWrapper { position: relative; margin: 0px 16px 4px; }
 				.textInputWrapper {
 					.input {
 						padding: 6px 28px 8px 12px; border-radius: 18px; border: 1px solid var(--color-shape-secondary);
-						background-color: var(--color-shape-highlight-light);
+						background-color: var(--color-shape-highlight-light); height: 36px;
 					}
 					.input.isFocused { border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
-					.icon.clear { position: absolute; top: 5px; right: 8px; width: 20px; height: 20px; opacity: 0; background-image: url('~img/icon/filter/clear0.svg'); }
+					.icon.clear { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; opacity: 0; background-image: url('~img/icon/filter/clear0.svg'); }
 					.icon.clear:hover { background-image: url('~img/icon/filter/clear1.svg'); }
 					.icon.clear.active { opacity: 1; }
 				}

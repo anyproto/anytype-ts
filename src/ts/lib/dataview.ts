@@ -159,7 +159,7 @@ class Dataview {
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const viewFilters = U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		const viewFilters = this.getActiveFilters(view);
 		const filters = viewFilters.concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
@@ -206,6 +206,15 @@ class Dataview {
 		} else {
 			cb();
 		};
+	};
+
+	/**
+	 * Returns only active filters from given view.
+	 * @param {I.View} view - The dataview view object.
+	 * @returns {I.Filter[]} Array of filter objects.
+	 */
+	getActiveFilters (view: I.View): I.Filter[] {
+		return U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
 	};
 
 	/**
@@ -1060,14 +1069,30 @@ class Dataview {
 	getDefaultFilterValues (item: any): { condition: I.FilterCondition; value: any; quickOption: I.FilterQuickOption } {
 		const conditions = Relation.filterConditionsByType(item.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-		const quickOptions = Relation.filterQuickOptions(item.format, condition);
-		const quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
+		const quickOption = this.getDefaultQuickOption(item);
 
 		return {
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(item, null, false),
 			quickOption,
 		};
+	};
+
+	/**
+	 * Returns default quick option for filter item.
+	 * @param {any} item - The relation item (must have format).
+	 * @returns {I.FilterQuickOption} The default quick option for filter item.
+	 */
+	getDefaultQuickOption (item: any): I.FilterQuickOption {
+		const conditions = Relation.filterConditionsByType(item.format);
+		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+		const quickOptions = Relation.filterQuickOptions(item.format, condition);
+
+		if (!quickOptions.length || quickOptions.find(it => it.id == I.FilterQuickOption.ExactDate)) {
+			return I.FilterQuickOption.ExactDate;
+		};
+
+		return quickOptions[0].id;
 	};
 
 	/**

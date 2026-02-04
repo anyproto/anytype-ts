@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, Mo
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, C, translate, analytics, Relation, Dataview } from 'Lib';
-import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect } from 'Component';
+import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
@@ -126,59 +126,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
-		const filterQuickOptions = Relation.filterQuickOptions(relation.format, item.condition);
+		const options = Relation.filterQuickOptions(relation.format, item.condition);
 
-		let filterOption: any = filterQuickOptions.find(it => it.id == item.quickOption);
-
-		if (!filterOption) {
-			filterOption = filterQuickOptions.length ? filterQuickOptions[0] : {};
+		if (relation.format == I.RelationType.Date) {
+			return options.filter(it => it.id != I.FilterQuickOption.ExactDate);
 		};
 
-		const ret: any[] = [];
-
-		if ((relation.format == I.RelationType.Date) && filterQuickOptions.length) {
-			ret.push({ id: 'quickOption', icon: '', name: filterOption.name, format: relation.format, condition: item.condition, arrow: true });
-		};
-
-		return ret;
-	};
-
-	const onQuickOption = (e: any, item: any) => {
-		if (isReadonly || S.Menu.isAnimating('select')) {
-			return;
-		};
-
-		if (S.Menu.isOpen('select')) {
-			S.Menu.closeAll([ 'select' ]);
-			return;
-		};
-
-		const menuParam = {
-			className,
-			classNameWrap,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			isSub: true,
-			noFlipY: true,
-		};
-
-		S.Menu.closeAll([ 'select' ], () => {
-			S.Menu.open('select', {
-				...menuParam,
-				rebind,
-				parentId: props.id,
-				data: {
-					noFilter: true,
-					noVirtualisation: true,
-					value: item[item.id],
-					options: Relation.filterQuickOptions(item.format, item.condition),
-					onSelect: (e: any, el: any) => {
-						onChange(item.id, el.id);
-					}
-				}
-			});
-		});
+		return options;
 	};
 
 	const onChange = (k: string, v: any, withTimeout?: boolean) => {
@@ -247,7 +201,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 			save();
 			setDummy(dummy + 1);
-		}, withTimeout ? 1000 : 0);
+		}, withTimeout ? 300 : 0);
 	};
 
 	const onSubmitHandler = (e: any) => {
@@ -387,6 +341,11 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		rebind,
 	};
 
+	const hasExactDate = relation.format == I.RelationType.Date &&
+		Relation.filterQuickOptions(relation.format, item.condition)
+			.some(it => it.id == I.FilterQuickOption.ExactDate);
+	const isExactTab = hasExactDate && item.quickOption == I.FilterQuickOption.ExactDate;
+
 	let wrapValue = false;
 	let value = null;
 	const onSubmit = e => onSubmitHandler(e);
@@ -485,19 +444,24 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.Checkbox: {
 			value = (
-				<Select 
-					id={[ 'filter', 'checkbox', item.id ].join('-')} 
-					ref={ref => selectRef.current = ref}
-					className="checkboxValue" 
-					arrowClassName="light"
-					options={checkboxOptions} 
-					value={item.value ? '1' : '0'}
-					onChange={v => onChange('value', Boolean(Number(v)), true)} 
-					menuParam={selectParam}
-					readonly={isReadonly}
-				/>
+				<>
+					{checkboxOptions.map((option, i) => {
+						const isSelected = (item.value ? '1' : '0') == option.id;
+						return (
+							<MenuItemVertical
+								key={i}
+								id={option.id}
+								name={option.name}
+								checkbox={isSelected}
+								onClick={() => {
+									onChange('value', Boolean(Number(option.id)));
+								}}
+								readonly={isReadonly}
+							/>
+						);
+					})}
+				</>
 			);
-			wrapValue = true;
 			break;
 		};
 
@@ -515,6 +479,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						position={position}
 						className="isInline"
 						menuClassNameWrap="fromBlock"
+						showFooter={false}
 					/>
 				);
 			} else {
@@ -538,7 +503,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				arrowClassName="light"
 				options={Relation.getDictionaryOptions(item.relationKey)} 
 				value={item.value}
-				onChange={v => onChange('value', Number(v), true)} 
+				onChange={v => onChange('value', Number(v))}
 				menuParam={selectParam}
 				readonly={isReadonly}
 			/>
@@ -583,13 +548,37 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				</div>
 			) : ''}
 
-			{items.length ? (
+			{hasExactDate ? (
+				<div className="section noBorder">
+					<TabSwitch
+						value={isExactTab ? 'exact' : 'relative'}
+						options={[
+							{ id: 'exact', name: translate('menuDataviewFilterValuesExact') },
+							{ id: 'relative', name: translate('menuDataviewFilterValuesRelative') },
+						]}
+						onChange={v => {
+							if (v == 'exact') {
+								onChange('quickOption', I.FilterQuickOption.ExactDate);
+							} else {
+								const first = items[0];
+								if (first) {
+									onChange('quickOption', first.id);
+								};
+							};
+						}}
+					/>
+				</div>
+			) : ''}
+
+			{items.length && !isExactTab ? (
 				<div className="section">
-					{items.map((item: any, i: number) => (
+					{items.map((option: any, i: number) => (
 						<MenuItemVertical
 							key={i}
-							{...item}
-							onClick={e => onQuickOption(e, item)}
+							id={String(option.id)}
+							name={option.name}
+							checkbox={item.quickOption == option.id}
+							onClick={() => onChange('quickOption', option.id)}
 							readonly={isReadonly}
 						/>
 					))}

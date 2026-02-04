@@ -1781,6 +1781,8 @@
 
 	"menuDataviewFilterValuesChecked": "Checked",
 	"menuDataviewFilterValuesUnchecked": "Unchecked",
+	"menuDataviewFilterValuesExact": "Exact",
+	"menuDataviewFilterValuesRelative": "Relative",
 
 	"menuDataviewGroupEditShowColumn": "Show column",
 	"menuDataviewGroupEditHideColumn": "Hide Column",

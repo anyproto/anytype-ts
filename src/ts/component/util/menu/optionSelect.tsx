@@ -12,6 +12,7 @@ import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from
 const HEIGHT = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 40;
+const LIMIT_TYPE = 2;
 
 interface SelectItem {
 	id: string;
@@ -276,6 +277,11 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			items = dataChange(items);
 		};
 
+		const typeNames = U.Data.getTypeNames(searchParam?.types || [], LIMIT_TYPE);
+		if (typeNames) {
+			items.unshift({ id: 'section-types', name: typeNames, isSection: true });
+		};
+
 		return items;
 	};
 
@@ -453,7 +459,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			element,
 			offsetX: getSize?.().width || $(element).outerWidth(),
 			vertical: I.MenuDirection.Center,
-			passThrough: true,
+			passThrough: false,
 			noFlipY: true,
 			noAnimation: true,
 			className: menuClassName,

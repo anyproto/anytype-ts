@@ -58,7 +58,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		const end = U.Date.timestamp(y, m, d, 23, 59, 59);
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-		].concat(view.filters as any[]);
+		].concat(Dataview.getActiveFilters(view) as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 

@@ -21,7 +21,7 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		};
 
 		const searchIds = getSearchIds();
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId }));
+		const filters = Dataview.getActiveFilters(view).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId }));
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 		const target = getTarget();
 

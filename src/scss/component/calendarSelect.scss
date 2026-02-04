@@ -12,7 +12,10 @@
 
 	.head {
 		.sides { margin-bottom: 10px; }
-		.side.left { display: flex; gap: 0px 4px; }
+		.side.left { display: flex; gap: 0px; font-weight: 500; }
+		.side.left {
+			.select { padding: 2px; }
+		}
 		.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
 		.side.right {
 			.icon.arrow {
@@ -28,7 +31,7 @@
 			align-items: center;
 		}
 
-		.weekDay { color: var(--color-control-active); @include text-small; width: 28px; text-align: center; }
+		.weekDay { color: var(--color-text-secondary); @include text-small; width: 28px; text-align: center; }
 	}
 
 	.body { padding: 0px 8px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px; }
@@ -52,7 +55,7 @@
 
 	.day.isToday, .day.active { font-weight: 600; }
 	.day.isToday { color: var(--color-system-accent-125); }
-	.day.other { color: var(--color-control-active); }
+	.day.other { color: var(--color-text-secondary); }
 	.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 	.day.weekend:not(.active) { background-color: var(--color-shape-highlight-light); }
 

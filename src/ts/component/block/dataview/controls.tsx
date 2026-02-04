@@ -447,10 +447,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			cn.push('on');
 		};
 
-		if ((item.id == 'filter') && filterCnt) {
-			cn.push('hasFilter');
-		};
-
 		return (
 			<Icon
 				id={elementId} 
