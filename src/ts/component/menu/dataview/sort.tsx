@@ -253,9 +253,9 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const ids = items.map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const sortIds = view.sorts.map(it => it.id);
+		const oldIndex = sortIds.indexOf(active.id);
+		const newIndex = sortIds.indexOf(over.id);
 		const object = getTarget();
 
 		n.current = newIndex;
@@ -374,12 +374,12 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div
 					id={`item-${item.id}`}
 					className="item add"
-					onClick={item.id == 'add' ? onAdd : onDeleteSort}
+					onClick={item.id === 'add' ? onAdd : onDeleteSort}
 					onMouseEnter={() => setHover({ id: item.id })}
 					onMouseLeave={() => setHover()}
 					style={param.style}
 				>
-					<Icon className={item.id == 'add' ? 'plus' : 'remove'} />
+					<Icon className={item.id === 'add' ? 'plus' : 'remove'} />
 					<div className="name">{item.name}</div>
 				</div>
 			);
