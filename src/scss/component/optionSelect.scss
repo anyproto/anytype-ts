@@ -49,7 +49,7 @@
             .icon.chk { right: 14px; }
 
             &:hover, &.hover {
-                .icon.chk { right: 40px; }
+                .icon.chk { display: none; }
             }
         }
     }
