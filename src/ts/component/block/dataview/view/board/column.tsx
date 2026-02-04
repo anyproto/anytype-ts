@@ -66,7 +66,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
-		].concat(view.filters as any[]);
+		].concat(Dataview.getActiveFilters(view) as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 

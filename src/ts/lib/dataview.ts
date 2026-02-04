@@ -159,7 +159,7 @@ class Dataview {
 		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const viewFilters = U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		const viewFilters = this.getActiveFilters(view);
 		const filters = viewFilters.concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
@@ -206,6 +206,15 @@ class Dataview {
 		} else {
 			cb();
 		};
+	};
+
+	/**
+	 * Returns only active filters from given view.
+	 * @param {I.View} view - The dataview view object.
+	 * @returns {I.Filter[]} Array of filter objects.
+	 */
+	getActiveFilters (view: I.View): I.Filter[] {
+		return U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
 	};
 
 	/**
