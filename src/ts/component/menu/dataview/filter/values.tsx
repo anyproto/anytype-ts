@@ -247,7 +247,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 			save();
 			setDummy(dummy + 1);
-		}, withTimeout ? 1000 : 0);
+		}, withTimeout ? 300 : 0);
 	};
 
 	const onSubmitHandler = (e: any) => {
@@ -479,19 +479,24 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		case I.RelationType.Checkbox: {
 			value = (
-				<Select 
-					id={[ 'filter', 'checkbox', item.id ].join('-')} 
-					ref={ref => selectRef.current = ref}
-					className="checkboxValue" 
-					arrowClassName="light"
-					options={checkboxOptions} 
-					value={item.value ? '1' : '0'}
-					onChange={v => onChange('value', Boolean(Number(v)), true)} 
-					menuParam={selectParam}
-					readonly={isReadonly}
-				/>
+				<>
+					{checkboxOptions.map((option, i) => {
+						const isSelected = String(item.value ? '1' : '0') == option.id;
+						return (
+							<MenuItemVertical
+								key={i}
+								id={option.id}
+								name={option.name}
+								checkbox={isSelected}
+								onClick={() => {
+									onChange('value', Boolean(Number(option.id)));
+								}}
+								readonly={isReadonly}
+							/>
+						);
+					})}
+				</>
 			);
-			wrapValue = true;
 			break;
 		};
 
@@ -532,7 +537,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				arrowClassName="light"
 				options={Relation.getDictionaryOptions(item.relationKey)} 
 				value={item.value}
-				onChange={v => onChange('value', Number(v), true)} 
+				onChange={v => onChange('value', Number(v))}
 				menuParam={selectParam}
 				readonly={isReadonly}
 			/>
