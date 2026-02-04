@@ -148,7 +148,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	const getItems = () => {
 		const value = Relation.getArrayValue(data.value);
-		const typeNames = getTypeNames();
+		const typeNames = U.Data.getTypeNames(data.types || [], LIMIT_TYPE);
 
 		let ret = U.Common.objectCopy(itemsRef.current);
 
@@ -175,10 +175,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	const getTypes = () => {
 		return (data.types || []).map(id => S.Record.getTypeById(id)).filter(it => it);
-	};
-
-	const getTypeNames = (): string => {
-		return U.Data.getTypeNames(data.types || [], LIMIT_TYPE);
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
