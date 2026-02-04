@@ -185,6 +185,7 @@ export default {
 	chatGlobal: [
 		'id',
 		'name',
+		'isArchived',
 	],
 
 	pageCover: 'pageCover',

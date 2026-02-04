@@ -51,9 +51,8 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 				.swiper-button-disabled { display: none; }
 			}
 
-			.galleryFooter { position: relative; height: $galleryFooterH; flex-shrink: 0; }
+			.galleryFooter { position: relative; height: $galleryFooterH; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 			.galleryFooter {
-				.thumbnails { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
 				.swiper { z-index: 2; }
 				.swiper-slide { width: unset; display: flex; align-items: center; }
 				.previewItem { width: 72px; height: 72px; border-radius: 4px; overflow: hidden; }
