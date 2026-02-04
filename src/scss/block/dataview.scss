@@ -227,14 +227,44 @@
 
 				.filterItem {
 					position: relative; display: flex; flex-direction: row; gap: 0px 6px; height: 32px; align-items: center; padding: 0px 10px 0px 8px;
-					border-radius: 16px; border: 1px solid var(--color-shape-highlight-medium); color: var(--color-text-secondary);
+					border-radius: 16px; color: var(--color-text-secondary); font-weight: 500;
 				}
 				.filterItem {
-					&.withValue { color: var(--color-text-primary); }
+					.icon.filterIcon { width: 20px; height: 20px; }
+					.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
+					.icon.isText { background-image: url('~img/icon/dataview/filters/relation/text0.svg'); }
+					.icon.isNumber { background-image: url('~img/icon/dataview/filters/relation/number0.svg'); }
+					.icon.isSelect { background-image: url('~img/icon/dataview/filters/relation/select0.svg'); }
+					.icon.isDate { background-image: url('~img/icon/dataview/filters/relation/date0.svg'); }
+					.icon.isAttachment { background-image: url('~img/icon/dataview/filters/relation/attachment0.svg'); }
+					.icon.isCheckbox { background-image: url('~img/icon/dataview/filters/relation/checkbox0.svg'); }
+					.icon.isUrl { background-image: url('~img/icon/dataview/filters/relation/url0.svg'); }
+					.icon.isEmail { background-image: url('~img/icon/dataview/filters/relation/email0.svg'); }
+					.icon.isPhone { background-image: url('~img/icon/dataview/filters/relation/phone0.svg'); }
+					.icon.isMultiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect0.svg'); }
+					.icon.isObject { background-image: url('~img/icon/dataview/filters/relation/object0.svg'); }
+
+					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
+					&.isActive {
+						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
+						.name { font-weight: 600; }
+
+						.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
+						.icon.isText { background-image: url('~img/icon/dataview/filters/relation/text1.svg'); }
+						.icon.isNumber { background-image: url('~img/icon/dataview/filters/relation/number1.svg'); }
+						.icon.isSelect { background-image: url('~img/icon/dataview/filters/relation/select1.svg'); }
+						.icon.isDate { background-image: url('~img/icon/dataview/filters/relation/date1.svg'); }
+						.icon.isAttachment { background-image: url('~img/icon/dataview/filters/relation/attachment1.svg'); }
+						.icon.isCheckbox { background-image: url('~img/icon/dataview/filters/relation/checkbox1.svg'); }
+						.icon.isUrl { background-image: url('~img/icon/dataview/filters/relation/url1.svg'); }
+						.icon.isEmail { background-image: url('~img/icon/dataview/filters/relation/email1.svg'); }
+						.icon.isPhone { background-image: url('~img/icon/dataview/filters/relation/phone1.svg'); }
+						.icon.isMultiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect1.svg'); }
+						.icon.isObject { background-image: url('~img/icon/dataview/filters/relation/object1.svg'); }
+					}
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
 
 					.content { display: flex; gap: 4px; @include text-overflow-nw; max-width: 256px; }
- 					.name { font-weight: 500; }
 					.value { @include text-overflow-nw; }
 
 					.label.condition { text-transform: lowercase; }
@@ -246,10 +276,6 @@
 					.icon.delete:hover { background-color: var(--color-shape-secondary); }
 					&:hover {
 						.icon.delete { display: block; }
-					}
-
-					&.isAdvanced {
-						.icon.advanced { width: 20px; height: 20px; background-image: url('~img/icon/dataview/filters/advanced.svg'); }
 					}
 				}
 

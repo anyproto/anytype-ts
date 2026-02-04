@@ -10,6 +10,7 @@ import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
 
 const HEIGHT = 28;
+const HEIGHT_DIV = 16;
 const LIMIT = 40;
 
 interface SelectItem {
@@ -17,6 +18,8 @@ interface SelectItem {
 	name: string;
 	color?: string;
 	isSection?: boolean;
+	isDiv?: boolean;
+	icon?: string;
 	isArchived?: boolean;
 	isDeleted?: boolean;
 	_empty_?: boolean;
@@ -58,18 +61,14 @@ interface Props {
 	skipIds?: string[];
 	filterMapper?: (item: any) => boolean;
 
-	// Creation
 	canAdd?: boolean;
-
-	// Drag and drop
 	canSort?: boolean;
-
-	// Editing
 	canEdit?: boolean;
 
 	// Callbacks
 	setActive?: (item?: any, scroll?: boolean) => void;
 	onClose?: () => void;
+	dataChange?: (items: any) => any[];
 
 	// Menu context (for edit menu)
 	menuId?: string;
@@ -106,12 +105,12 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
-		canSort, canEdit, setActive, onClose, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
+		canSort, canEdit, setActive, onClose, dataChange, menuId, menuClassName, menuClassNameWrap, getSize, position, cellRef, rebind,
 		searchParam, addParam, rootId,
 	} = props;
 
 	const relation = S.Record.getRelationByKey(relationKey);
-	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const nodeRef = useRef(null);
@@ -271,7 +270,18 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	};
 
 	const getItems = (): SelectItem[] => {
-		return isObjectMode ? getObjectItems() : getOptionItems();
+		let items = isObjectMode ? getObjectItems() : getOptionItems();
+
+		if (dataChange) {
+			items = dataChange(items);
+		};
+
+		return items;
+	};
+
+	const getRowHeight = (item: any) => {
+		if (item.isDiv) return HEIGHT_DIV;
+		return HEIGHT;
 	};
 
 	const onFilterChange = (v: string): void => {
@@ -538,8 +548,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const resize = (): void => {
 		const items = getItems();
 		const obj = $(nodeRef.current);
-		const offset = !isReadonly && !noFilter ? 44 : 16;
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+		const offset = !isReadonly && !noFilter ? 36 : 16;
+		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
+		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
 		obj.css({ height });
 		position?.();
@@ -603,6 +614,14 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			return <div className="sectionName" style={item.style}>{item.name}</div>;
 		};
 
+		if (item.isDiv) {
+			return (
+				<div className="separator" style={item.style}>
+					<div className="inner" />
+				</div>
+			);
+		};
+
 		// Regular item
 		const cn = [ 'item' ];
 
@@ -617,6 +636,13 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 		if (canSort) {
 			cn.push('withHandle');
+		};
+
+		let icon = null;
+		if (item.icon) {
+			icon = <Icon className={item.icon} />;
+		} else {
+			icon = <IconObject object={item} />;
 		};
 
 		return (
@@ -637,7 +663,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					{!noSelect && isSelected ? <Icon className="chk" /> : ''}
 					{isObjectMode ? (
 						<>
-							<IconObject object={item} />
+							{icon}
 							<ObjectName object={item} />
 						</>
 					) : (
@@ -739,7 +765,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 								height={height}
 								deferredMeasurmentCache={cache.current}
 								rowCount={items.length}
-								rowHeight={HEIGHT}
+								rowHeight={({ index }) => getRowHeight(items[index])}
 								rowRenderer={rowRenderer}
 								onRowsRendered={onRowsRendered}
 								overscanRowCount={10}

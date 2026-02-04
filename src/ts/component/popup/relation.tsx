@@ -254,7 +254,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 			cellRefs.current.clear();
 		};
-	}, [ loadObjects, initValues ]);
+	}, []);
 
 	useEffect(() => {
 		const id = S.Common.cellId;		
