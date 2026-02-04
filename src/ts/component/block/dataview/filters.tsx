@@ -11,7 +11,7 @@ interface Props extends I.ViewComponent {
 
 const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, block, className, isInline, isCollection, getView, onFilterAddClick, loadData, readonly, getTarget } = props;
+	const { rootId, block, className, isInline, isCollection, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget } = props;
 	const blockId = block.id;
 	const view = getView();
 	const filters = view?.filters;
@@ -90,7 +90,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			offsetY: 4,
 		};
 
-		onFilterAddClick(menuParam, true);
+		onFilterAddClick(menuParam);
 	};
 
 	const onRemove = (e: any, item: any) => {
@@ -164,10 +164,45 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
+	const sorts = view.sorts || [];
+	const sortTitle = sorts.length === 1
+		? (S.Record.getRelationByKey(sorts[0].relationKey)?.name || '')
+		: `${sorts.length} ${U.Common.plural(sorts.length, translate('pluralSort'))}`;
+
+	const onSortClick = () => {
+		S.Menu.open('dataviewSort', {
+			element: `#block-${blockId} #dataviewFilters #item-sort`,
+			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
+			noFlipY: true,
+			data: {
+				rootId,
+				blockId,
+				getView,
+				getTarget,
+				onSortAdd,
+				isInline,
+				readonly: isReadonly,
+			}
+		});
+	};
+
 	return (
 		<div ref={nodeRef} id="dataviewFilters" className={cn.join(' ')}>
 			<div className="sides">
 				<div id="sideLeft" className="side left">
+					{sorts.length ? (
+						<>
+							<div id="item-sort" className="filterItem isActive" onClick={onSortClick}>
+								<Icon className={`sortArrow c${sorts[0].type}`} />
+								<div className="content">
+									<Label className="name" text={sortTitle} />
+								</div>
+							</div>
+							<div className="separator vertical" />
+						</>
+					) : ''}
 					{items.map((item: any) => {
 						if (isAdvancedFilter(item)) {
 							return (

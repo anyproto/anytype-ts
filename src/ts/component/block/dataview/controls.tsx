@@ -26,13 +26,12 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
-		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick,
+		loadData, getVisibleRelations, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd, onFilterAddClick, toggleFilters,
 	} = props;
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
 	const sortCnt = view.sorts.length;
-	const filterCnt = U.Common.getViewFilters(view).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -125,20 +124,30 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && isFilter) {
-			onFilterAddClick({
-				classNameWrap: 'fromBlock',
-				element,
-				horizontal: I.MenuDirection.Center,
-				offsetY: 10,
-				noFlipY: true,
-			});
+			const items = U.Common.getViewFilters(view);
+
+			if (items.length) {
+				toggleFilters();
+			} else {
+				onFilterAddClick({
+					classNameWrap: 'fromBlock',
+					element,
+					horizontal: I.MenuDirection.Center,
+					offsetY: 10,
+					noFlipY: true,
+				});
+			};
 			return;
 		};
 
-		if (!readonly && (isSort && !view.sorts.length)) {
-			sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
-				onButton(element, component);
-			});
+		if (!readonly && isSort) {
+			if (view.sorts.length) {
+				toggleFilters();
+			} else {
+				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
+					onButton(element, component);
+				});
+			};
 			return;
 		};
 
@@ -432,9 +441,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
-	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: showFilters },
+		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
 		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
 		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
