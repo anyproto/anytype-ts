@@ -266,9 +266,16 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		window.clearTimeout(timeoutDragOver.current);
 		timeoutDragOver.current = window.setTimeout(() => {
 			if (dragActive.current) {
-				dragActive.current = false;
-				clearStyle();
-				prevTargetKey.current = null;
+				const { x, y } = lastKnownCoords.current;
+				const isInsideWindow = (x > 0) && (y > 0) && (x < window.innerWidth) && (y < window.innerHeight);
+
+				// On Linux, drag events may have gaps even when inside window
+				// Only clear styles if coordinates suggest we're outside the window
+				if (!isInsideWindow) {
+					dragActive.current = false;
+					clearStyle();
+					prevTargetKey.current = null;
+				};
 			};
 		}, 100);
 	};
@@ -291,9 +298,16 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		window.clearTimeout(timeoutDragOver.current);
 		timeoutDragOver.current = window.setTimeout(() => {
 			if (dragActive.current) {
-				dragActive.current = false;
-				clearStyle();
-				prevTargetKey.current = null;
+				const { x, y } = lastKnownCoords.current;
+				const isInsideWindow = (x > 0) && (y > 0) && (x < window.innerWidth) && (y < window.innerHeight);
+
+				// On Linux, drag events may have gaps even when inside window
+				// Only clear styles if coordinates suggest we're outside the window
+				if (!isInsideWindow) {
+					dragActive.current = false;
+					clearStyle();
+					prevTargetKey.current = null;
+				};
 			};
 		}, 100);
 	};

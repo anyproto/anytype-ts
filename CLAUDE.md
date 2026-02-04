@@ -140,6 +140,16 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
       // ...
   }
   ```
+- Wrap logical parts of compound conditions in parentheses for readability:
+  ```typescript
+  // Good
+  const isValid = (x > 0) && (y > 0) && (x < maxWidth);
+  if ((a > b) && (c < d)) { ... }
+
+  // Bad
+  const isValid = x > 0 && y > 0 && x < maxWidth;
+  if (a > b && c < d) { ... }
+  ```
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
