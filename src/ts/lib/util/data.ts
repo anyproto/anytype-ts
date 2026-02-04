@@ -1275,6 +1275,26 @@ class UtilData {
 		});
 	};
 
+	getTypeNames (typeIds: string[], limit: number): string {
+		const types = typeIds.map(id => S.Record.getTypeById(id)).filter(it => it);
+
+		if (!types.length) {
+			return '';
+		};
+
+		const names = types.map(it => it.name);
+		const l = names.length;
+
+		if (l > limit) {
+			const more = l - limit;
+
+			names.splice(limit, more);
+			names.push(`+${more}`);
+		};
+
+		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+	};
+
 	updateTabsDimmer(popupList?: I.Popup[], menuList?: I.Menu[]) {
 		const popups = (popupList || S.Popup.list).some(it => !S.Popup.noDimmerIds().includes(it.id));
 		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);

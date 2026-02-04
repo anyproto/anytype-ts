@@ -178,23 +178,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const getTypeNames = (): string => {
-		const types = getTypes();
-
-		if (!types || !types.length) {
-			return '';
-		};
-
-		const names = types.map(it => it.name);
-		const l = names.length;
-
-		if (l > LIMIT_TYPE) {
-			const more = l - LIMIT_TYPE;
-
-			names.splice(LIMIT_TYPE, more);
-			names.push(`+${more}`);
-		};
-
-		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		return U.Data.getTypeNames(data.types || [], LIMIT_TYPE);
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {

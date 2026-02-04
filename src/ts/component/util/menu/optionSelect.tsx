@@ -12,6 +12,7 @@ import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from
 const HEIGHT = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 40;
+const LIMIT_TYPE = 2;
 
 interface SelectItem {
 	id: string;
@@ -279,6 +280,11 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		if (dataChange) {
 			items = dataChange(items);
+		};
+
+		const typeNames = U.Data.getTypeNames(searchParam?.types || [], LIMIT_TYPE);
+		if (typeNames) {
+			items.unshift({ id: 'section-types', name: typeNames, isSection: true });
 		};
 
 		return items;
