@@ -619,11 +619,14 @@
 	"editorControlDescription0": "Show description",
 	"editorControlDescription1": "Hide description",
 
-	"editorPagePasteLink": "Paste as link",
+	"editorPagePasteAsHeader": "Paste as",
+	"editorPagePasteLink": "URL",
+	"editorPagePasteBookmark": "Bookmark",
+	"editorPagePasteText": "Plain Text",
+	"editorPagePasteEmbed": "Embed",
+	"editorPagePasteObject": "Object",
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
 	"editorPageCreateBookmark": "Create Bookmark",
-	"editorPagePasteText": "Paste as text",
-	"editorPagePasteEmbed": "Paste as embed",
 
 	"blockNameParagraph": "Text",
 	"blockNameHeader1": "Title",

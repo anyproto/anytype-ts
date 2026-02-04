@@ -310,7 +310,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					const item = J.Shortcut.getItems()[editingId];
 
 					let menuLabel = U.String.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
-					let options = [
+					let options: any[] = [
 						{ id: 'override', name: translate('popupShortcutOverride') },
 						{ id: 'reset', name: translate('commonRemove') },
 					];
@@ -332,6 +332,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					keyboard.setShortcutEditing(false);
 					window.clearTimeout(timeout.current);
 
+					options.unshift({ name: menuLabel, isSection: true });
+
 					S.Menu.open('select', {
 						element: `#${getId()} #item-${editingId}`,
 						horizontal: I.MenuDirection.Center,
@@ -344,7 +346,6 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						},
 						data: {
 							options,
-							menuLabel,
 							noVirtualisation: true,
 							onSelect: (e, item) => {
 								updated = true;

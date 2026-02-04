@@ -1989,26 +1989,47 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 		const processor = U.Embed.getProcessorByUrl(url);
-		const canBlock = !isInsideTable && !isLocal;
+		const canBookmark = !isInsideTable && !isLocal;
 
+		// Check if URL is an Anytype object link in the same space (but not the current page)
+		const linkParam = U.Common.getLinkParamFromUrl(url);
+		const isAnytypeObject = linkParam.isInside && linkParam.target;
+		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
+		const isSameObject = linkParam.target == rootId;
+		const canObject = isAnytypeObject && isSameSpace && !isSameObject && canBookmark;
 		const options: any[] = [
-			!currentMark ? { id: 'link', name: translate('editorPagePasteLink') } : null,
-			canBlock ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
-			{ id: 'cancel', name: translate('editorPagePasteText') },
-		].filter(it => it);
+			{ name: translate('editorPagePasteAsHeader'), isSection: true }
+		];
 
 		if (processor !== null) {
+			// Embed-compatible URL: Embed first
 			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
+		// Build options based on URL type
+		if (canObject) {
+			// Anytype Object Link: Object, Bookmark, URL, Plain Text
+			options.push({ id: 'object', name: translate('editorPagePasteObject') });
+		};
+
+		if (canBookmark) {
+			options.push({ id: 'bookmark', name: translate('editorPagePasteBookmark') });
+		};
+
+		if (!currentMark) {
+			options.push({ id: 'link', name: translate('editorPagePasteLink') });
+		};
+
+		options.push({ id: 'cancel', name: translate('editorPagePasteText') });
+
 		S.Common.clearTimeout('blockContext');
 
-		const menuParam = { 
+		const menuParam = {
 			component: 'select',
 			element: `#block-${focused}`,
-			recalcRect: () => { 
+			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
@@ -2025,12 +2046,33 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			data: {
 				value: '',
 				options,
+				noFilter: true,
 				onSelect: (event: any, item: any) => {
 					let marks = U.Common.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
 					switch (item.id) {
+						case 'object': {
+							const targetId = linkParam.target;
+							const newBlock = {
+								type: I.BlockType.Link,
+								content: {
+									...U.Data.defaultLinkSettings(),
+									targetBlockId: targetId,
+								},
+							};
+
+							C.BlockCreate(rootId, focused, position, newBlock, (message: any) => {
+								if (!message.error.code) {
+									blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Link });
+								};
+							});
+							break;
+						};
+
 						case 'link': {
 							if (currentFrom == currentTo) {
 								value = U.String.insert(value, url + ' ', currentFrom, currentFrom);
@@ -2040,7 +2082,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							} else {
 								to = currentTo;
 							};
-							
+
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
@@ -2050,7 +2092,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							break;
 						};
 
-						case 'block': {
+						case 'bookmark': {
 							const bookmark = S.Record.getBookmarkType();
 
 							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {

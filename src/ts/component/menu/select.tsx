@@ -368,10 +368,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			) : ''}
 
-			{menuLabel ? (
-				<Label className="menuLabel" text={menuLabel} />
-			) : ''}
-			
 			<div className="items">
 				{content}
 			</div>
