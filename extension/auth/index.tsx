@@ -28,8 +28,6 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 			const { appKey } = message;
 
-			console.log('[Auth] SolveChallenge response, appKey:', appKey);
-
 			if (!appKey || typeof appKey !== 'string') {
 				setError('Invalid appKey received');
 				return;

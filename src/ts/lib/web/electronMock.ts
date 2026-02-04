@@ -36,7 +36,7 @@ async function uploadFileToServer(file: File): Promise<string> {
 	}
 
 	const result = await response.json();
-	console.log('[WebFile] Uploaded:', file.name, '->', result.path);
+	console.log('[Web] Uploaded:', file.name, '->', result.path);
 	return result.path;
 }
 
@@ -446,7 +446,7 @@ class ElectronMock {
 					files
 				};
 			} catch (e) {
-				console.log('[showOpenDialog] Canceled or error:', e);
+				console.log('[Web] Canceled or error:', e);
 				return { canceled: true, filePaths: [] };
 			}
 		}
