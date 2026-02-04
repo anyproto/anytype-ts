@@ -1,6 +1,8 @@
 import $ from 'jquery';
+import raf from 'raf';
 import { observable } from 'mobx';
-import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U, Renderer } from 'Lib';
+import { setRange } from 'selection-ranges';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Mark, Preview, Relation, S, sidebar, translate, U, Renderer, focus } from 'Lib';
 import React, { MouseEvent } from 'react';
 
 interface SpaceContextParam {
@@ -1885,6 +1887,216 @@ class UtilMenu {
 			set: types,
 			relation: relations,
 		};
+	};
+
+	/**
+	 * Handles spellcheck context menu for correcting misspelled words.
+	 * @param {string} misspelledWord - The misspelled word.
+	 * @param {string[]} dictionarySuggestions - Suggested corrections.
+	 * @param {number} x - X coordinate of the click.
+	 * @param {number} y - Y coordinate of the click.
+	 * @param {any} rect - Selection rectangle.
+	 */
+	spellcheck (misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {
+		if (!misspelledWord) {
+			return;
+		};
+
+		keyboard.disableContextOpen(true);
+
+		const { focused } = focus.state;
+		const win = $(window);
+		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
+		const element = $(document.elementFromPoint(x, y));
+		const isInput = element.is('input');
+		const isTextarea = element.is('textarea');
+		const isEditable = element.is('.editable');
+
+		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
+
+		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
+			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			onOpen: () => S.Menu.closeAll([ 'blockContext', 'chatText' ]),
+			onClose: () => keyboard.disableContextOpen(false),
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					raf(() => {
+						switch (item.id) {
+							default: {
+								const rootId = keyboard.getRootId();
+								const block = S.Block.getLeaf(rootId, focused);
+
+								if (block && block.isText()) {
+									const value = block.content.text;
+
+									// Find the word at the click position using caret position
+									let wordIndex = -1;
+									const range = document.caretRangeFromPoint(x, y);
+
+									if (range) {
+										const container = range.startContainer;
+										const offset = range.startOffset;
+
+										// Get the text content and find word boundaries
+										if (container.nodeType === Node.TEXT_NODE) {
+											const editable = $(container).closest('.editable');
+											if (editable.length) {
+												// Calculate the absolute offset in the block text
+												let absoluteOffset = 0;
+												const walker = document.createTreeWalker(
+													editable.get(0),
+													NodeFilter.SHOW_TEXT,
+													null
+												);
+
+												let node;
+												while ((node = walker.nextNode())) {
+													if (node === container) {
+														absoluteOffset += offset;
+														break;
+													};
+													absoluteOffset += node.textContent?.length || 0;
+												};
+
+												// Find the occurrence of misspelledWord that contains this offset
+												let searchIndex = 0;
+												while (searchIndex < value.length) {
+													const idx = value.indexOf(misspelledWord, searchIndex);
+													if (idx === -1) break;
+
+													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
+														wordIndex = idx;
+														break;
+													};
+													searchIndex = idx + 1;
+												};
+											};
+										};
+									};
+
+									// Fallback to first occurrence if position detection failed
+									if (wordIndex === -1) {
+										wordIndex = value.indexOf(misspelledWord);
+									};
+
+									if (wordIndex >= 0) {
+										U.Data.blockInsertText(
+											rootId,
+											focused,
+											item.id,
+											wordIndex,
+											wordIndex + misspelledWord.length
+										);
+
+										focus.set(focused, { from: wordIndex, to: wordIndex + item.id.length });
+										focus.apply();
+									};
+								} else
+								if (isInput || isTextarea || isEditable) {
+									const isMessageBox = element.attr('id') === 'messageBox';
+
+									if (isMessageBox) {
+										// Handle chat form's messageBox with marks preservation
+										const html = String(element.html() || '');
+										const parsed = Mark.fromHtml(html, []);
+										const { text } = parsed;
+										let { marks } = parsed;
+
+										// Find word position using caret position
+										let wordIndex = -1;
+										const range = document.caretRangeFromPoint(x, y);
+
+										if (range) {
+											const container = range.startContainer;
+											const offset = range.startOffset;
+
+											if (container.nodeType === Node.TEXT_NODE) {
+												let absoluteOffset = 0;
+												const walker = document.createTreeWalker(
+													element.get(0),
+													NodeFilter.SHOW_TEXT,
+													null
+												);
+
+												let node;
+												while ((node = walker.nextNode())) {
+													if (node === container) {
+														absoluteOffset += offset;
+														break;
+													};
+													absoluteOffset += node.textContent?.length || 0;
+												};
+
+												let searchIndex = 0;
+												while (searchIndex < text.length) {
+													const idx = text.indexOf(misspelledWord, searchIndex);
+													if (idx === -1) break;
+
+													if (absoluteOffset >= idx && absoluteOffset <= idx + misspelledWord.length) {
+														wordIndex = idx;
+														break;
+													};
+													searchIndex = idx + 1;
+												};
+											};
+										};
+
+										if (wordIndex === -1) {
+											wordIndex = text.indexOf(misspelledWord);
+										};
+
+										if (wordIndex >= 0) {
+											const lengthDiff = item.id.length - misspelledWord.length;
+											const newText = text.substring(0, wordIndex) + item.id + text.substring(wordIndex + misspelledWord.length);
+
+											marks = Mark.adjust(marks, wordIndex + misspelledWord.length, lengthDiff);
+
+											const newHtml = Mark.toHtml(newText, marks);
+											element.html(U.String.sanitize(newHtml, true));
+
+											const cursorPos = wordIndex + item.id.length;
+											const el = element.get(0) as HTMLElement;
+											el.focus();
+											setRange(el, { start: cursorPos, end: cursorPos });
+										};
+									} else {
+										let value = '';
+										if (isInput || isTextarea) {
+											value = String(element.val());
+										} else
+										if (isEditable) {
+											value = String((element.get(0) as any).innerText || '');
+										};
+
+										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
+
+										if (isInput || isTextarea) {
+											element.val(value);
+										} else
+										if (isEditable) {
+											element.text(value);
+										};
+									};
+								};
+								break;
+							};
+
+							case 'add-to-dictionary': {
+								Renderer.send('spellcheckAdd', misspelledWord);
+								break;
+							};
+
+							case 'disable-spellcheck': {
+								Action.setSpellingLang([]);
+								break;
+							};
+						};
+					});
+				},
+			}
+		});
 	};
 
 };
