@@ -1815,7 +1815,7 @@
 	"menuDataviewRelationEditToastOnCreate": "Property <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
-	"menuDataviewSortNewSort": "New sort",
+	"menuDataviewSortAddSort": "Add sort",
 	"menuDataviewSortShowEmpty": "Show empty values",
 	"menuDataviewSortShowEmptyTop": "On top",
 	"menuDataviewSortShowEmptyBottom": "On bottom",

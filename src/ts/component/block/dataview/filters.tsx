@@ -163,6 +163,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipY: true,
+			noFlipX: true,
 			data: {
 				rootId,
 				blockId,

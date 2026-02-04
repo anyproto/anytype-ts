@@ -237,8 +237,9 @@
 
     .menu.menuDataviewSort {
         .item {
-            .txt {
-                .label::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            .chip.relation::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            .chip.type {
+                .icon.sortArrow { background-image: url('#{$themePath}/icon/menu/dataview/sort.svg'); }
             }
         }
     }
