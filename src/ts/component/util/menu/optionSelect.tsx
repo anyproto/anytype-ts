@@ -61,13 +61,8 @@ interface Props {
 	skipIds?: string[];
 	filterMapper?: (item: any) => boolean;
 
-	// Creation
 	canAdd?: boolean;
-
-	// Drag and drop
 	canSort?: boolean;
-
-	// Editing
 	canEdit?: boolean;
 
 	// Callbacks
