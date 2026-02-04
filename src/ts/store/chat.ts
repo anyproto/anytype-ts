@@ -377,10 +377,10 @@ class ChatStore {
 			return ret;
 		};
 
-		const deletedIds = S.Record.getRecordIds(J.Constant.subId.deleted, '');
+		const chatsIds = S.Record.getRecordIds(J.Constant.subId.chatGlobal, '');
 
 		for (const [ chatId, state ] of spaceMap) {
-			if (chatId && !deletedIds.includes(chatId)) {
+			if (chatId && chatsIds.includes(chatId)) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
