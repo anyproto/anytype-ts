@@ -145,7 +145,10 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				toggleFilters();
 			} else {
 				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
-					onButton(element, component);
+					const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
+					if (!Storage.checkToggle(rootId, filtersId)) {
+						toggleFilters();
+					};
 				});
 			};
 			return;
