@@ -11,7 +11,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
-	const showInvite = !spaceview.isOneToOne;
 	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 	const cnc = [ 'side', 'center' ];
 	
@@ -27,8 +26,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const isDeleted = object._empty_ || object.isDeleted;
-	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
 	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
@@ -40,10 +37,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
 	};
 
-	const onRelation = () => {
-		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
-	};
-	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
 
@@ -110,25 +103,13 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			</div>
 
 			<div className="side right">
-				{showInvite ? (
-					<Icon 
-						id="button-header-invite"
-						tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
-						className="invite withBackground"
-						onClick={() => Action.openSpaceShare(analytics.route.chat)}
-						onDoubleClick={e => e.stopPropagation()}
-					/>
-				) : ''}
-
-				{showRelations ? (
-					<Icon 
-						id="button-header-relation" 
-						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
-						onClick={onRelation} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
+				<Icon 
+					id="button-header-search" 
+					tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText'), typeY: I.MenuDirection.Bottom }}
+					className="search withBackground"
+					onClick={() => keyboard.onSearchText('',  analytics.route.header)} 
+					onDoubleClick={e => e.stopPropagation()}
+				/> 
 
 				{showPin ? (
 					<Icon 

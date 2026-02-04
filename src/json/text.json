@@ -1899,6 +1899,7 @@
 	"menuObjectAdvanced": "Advanced",
 	"menuObjectOpenInNewTab": "Open in New Tab",
 	"menuObjectOpenInNewWindow": "Open in New Window",
+	"menuObjectRelations": "Open Properties",
 
 	"menuItemFilterTimeAgo": "%d %s ago",
 	"menuItemFilterTimeFromNow": "%d %s from now",
