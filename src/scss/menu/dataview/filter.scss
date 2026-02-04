@@ -85,6 +85,7 @@
 				.conditionSelect {
 					.select {
 						.currentSelected { text-transform: lowercase; }
+						.icon.arrow { background-image: url('~img/arrow/select/filter.svg') !important; background-position: 50% 50%; background-size: 8px 8px; }
 					}
 				}
 				.conditionSelect:hover,
