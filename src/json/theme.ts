@@ -51,14 +51,14 @@ export default {
 		},
 
 		graph: {
-			bg: '#fff',
+			bg: '#ffffff',
 			link: '#dfddd0',
 			arrow: '#b6b6b6',
 			node: '#b6b6b6',
 			text: '#b6b6b6',
 			highlight: '#ffb522',
 			selected: '#2aa7ee',
-			iconBg: '#000'
+			iconBg: '#000000'
 		},
 
 		mermaid: {
