@@ -26,6 +26,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const dragActive = useRef(false);
 	const timeoutDragOver = useRef(0);
 	const prevTargetKey = useRef<string | null>(null);
+	const lastKnownCoords = useRef({ x: 0, y: 0 });
 
 	const getContainer = () => {
 		const isPopup = keyboard.isPopup();
@@ -246,9 +247,17 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		e.preventDefault();
 		e.stopPropagation();
 
+		const x = e.pageX;
+		const y = e.pageY;
+
+		// Save last known good coordinates for Linux fallback
+		if (x || y) {
+			lastKnownCoords.current = { x, y };
+		};
+
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
-		checkNodes(e, e.pageX, e.pageY);
+		checkNodes(e, x, y);
 
 		if (!dragActive.current) {
 			dragActive.current = true;
@@ -265,9 +274,18 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const onDrag = (e: any) => {
-		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		// On Linux, drag events may report (0, 0) coordinates - use last known good coordinates as fallback
+		let x = e.pageX;
+		let y = e.pageY;
+
+		if (!x && !y && (lastKnownCoords.current.x || lastKnownCoords.current.y)) {
+			x = lastKnownCoords.current.x;
+			y = lastKnownCoords.current.y;
+		};
+
+		scrollOnMove.onMouseMove(e.clientX || x, e.clientY || y);
 		initData();
-		checkNodes(e, e.pageX, e.pageY);
+		checkNodes(e, x, y);
 
 		// Reset timeout to prevent blinking on Linux where dragover events may not fire consistently
 		window.clearTimeout(timeoutDragOver.current);
@@ -884,6 +902,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		isInitialised.current = false;
 		objectData.current.clear();
 		prevTargetKey.current = null;
+		lastKnownCoords.current = { x: 0, y: 0 };
 	};
 
 	const setHoverData = (v: any) => {
