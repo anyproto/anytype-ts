@@ -194,14 +194,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onViewSwitch,
 				onViewCopy,
 				onViewRemove,
-				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
-					sortOrFilterRelationSelect(component, {
-						element: `#${menuId} #item-add`,
-						offsetX: menuWidth,
-						horizontal: I.MenuDirection.Right,
-						vertical: I.MenuDirection.Center,
-					});
-				},
 			},
 		};
 

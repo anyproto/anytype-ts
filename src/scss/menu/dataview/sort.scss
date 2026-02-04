@@ -12,7 +12,7 @@
 			&.add, &.deleteSort { padding: 4px 16px; }
 			&.sortItem:before { display: none; }
 
-			.sides { display: flex; justify-content: space-between; flex-grow: 1; }
+			.sides { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; }
 			.side { display: flex; gap: 8px; }
 
 			.chip { display: flex; align-items: center; gap: 0px 6px; height: 36px; padding: 0px 12px; border-radius: 8px; border: 1px solid var(--color-shape-secondary); }
