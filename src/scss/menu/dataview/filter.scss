@@ -105,6 +105,13 @@
 				}
 			}
 			> .section {
+				&.noBorder::after { display: none; }
+
+				.tabSwitch { margin: 0px 16px; background: var(--color-shape-secondary); height: 28px; font-weight: 500; border-radius: 14px; }
+				.tabSwitch {
+					.highlight { box-shadow: inset 0px 0px 0px 2px var(--color-shape-secondary); }
+				}
+
 				.item {
 					.select { border: 0px; padding: 0px; display: block; width: 100%; }
 					.select:hover, .select.isFocused { background: none; }
@@ -121,6 +128,10 @@
 					> .clickable {
 						> .name { padding-right: 16px; }
 					}
+				}
+
+				.calendarSelect {
+					.day.weekend:not(.active) { background: none; }
 				}
 
 				.textInputWrapper { position: relative; margin: 0px 16px 4px; }
