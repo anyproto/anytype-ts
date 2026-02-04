@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
+import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
 import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
@@ -137,74 +137,88 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	}));
 
 	return (
-		<div ref={nodeRef} className="layoutPreviewWrapper">
-			<div ref={previewRef} className={cn.join(' ')}>
-				<div className="layoutHeader">
-					{!isNote ? (
-						<div className="titleWrapper">
-							{icon}
-							<Title text={name || translate('defaultNamePage')} />
-						</div>
-					) : ''}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} 
+				className="layoutPreviewWrapper"
+				{...U.Common.animationProps({
+					transition: { duration: 0.3, delay: 0.1 },
+				})}
+			>
+				<motion.div
+					ref={previewRef} 
+					className={cn.join(' ')}
+					{...U.Common.animationProps({
+						transition: { duration: 0.3, delay: 0.2 },
+					})}
+				>
+					<div className="layoutHeader">
+						{!isNote ? (
+							<div className="titleWrapper">
+								{icon}
+								<Title text={name || translate('defaultNamePage')} />
+							</div>
+						) : ''}
 
-					{withDescription ? <Label text={'Description'} className="description" /> : ''}
+						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
-					<div className="featured">
-						{filtered.map((item, idx) => {
-							if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
-								let content: any = null;
-								if (item.relationKey == 'type') {
-									content = name || translate('defaultNamePage');
-								} else {
-									content = <EmptyNodes className="item" count={1} />;
+						<div className="featured">
+							{filtered.map((item, idx) => {
+								if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
+									let content: any = null;
+									if (item.relationKey == 'type') {
+										content = name || translate('defaultNamePage');
+									} else {
+										content = <EmptyNodes className="item" count={1} />;
+									};
+
+									return (
+										<dl key={idx} className="featuredColumnItem">
+											<dt><Label text={item.name} /></dt>
+											<dd>{content}</dd>
+										</dl>
+									);
 								};
 
 								return (
-									<dl key={idx} className="featuredColumnItem">
-										<dt><Label text={item.name} /></dt>
-										<dd>{content}</dd>
-									</dl>
+									<div key={idx} className="featuredItem">
+										<Label text={item.name} />
+										<div className="bullet" />
+									</div>
 								);
-							};
-
-							return (
-								<div key={idx} className="featuredItem">
-									<Label text={item.name} />
-									<div className="bullet" />
-								</div>
-							);
-						})}
-					</div>
-				</div>
-
-				{isFile ? <div className="filePreview" /> : ''}
-
-				{isList ? (
-					<div className="listHeader">
-						<div className="left">
-							<EmptyNodes className="view" count={3} />
-						</div>
-
-						<div className="right">
-							{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
-								<Icon key={i} className={cn} />
-							))}
-							<div className="buttonPlug" />
+							})}
 						</div>
 					</div>
-				) : ''}
 
-				<LayoutPlug
-					{...props}
-					layoutFormat={layoutFormat}
-					recommendedLayout={recommendedLayout}
-					recommendedFileRelations={object.recommendedFileRelations}
-					viewType={object.defaultViewType}
-					layoutWidth={object.layoutWidth}
-					isPopup={props.isPopup}
-				/>
-			</div>
-		</div>
+					{isFile ? <div className="filePreview" /> : ''}
+
+					{isList ? (
+						<div className="listHeader">
+							<div className="left">
+								<EmptyNodes className="view" count={3} />
+							</div>
+
+							<div className="right">
+								{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
+									<Icon key={i} className={cn} />
+								))}
+								<div className="buttonPlug" />
+							</div>
+						</div>
+					) : ''}
+
+					<LayoutPlug
+						{...props}
+						layoutFormat={layoutFormat}
+						recommendedLayout={recommendedLayout}
+						recommendedFileRelations={object.recommendedFileRelations}
+						viewType={object.defaultViewType}
+						layoutWidth={object.layoutWidth}
+						isPopup={props.isPopup}
+					/>
+				</motion.div>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

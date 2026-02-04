@@ -13,6 +13,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const spaceview = U.Space.getSpaceview();
 	const block = S.Block.getLeaf(rootId, blockId);
 	const object = data.object || S.Detail.get(rootId, blockId);
+	const type = S.Record.getTypeById(object.type);
 	const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 	const isTemplate = U.Object.isTemplateType(object.type);
 	const isDate = U.Object.isDateLayout(object.layout);
@@ -22,6 +23,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const isInSet = U.Object.isInSetLayouts(object.layout);
 	const isInFile = U.Object.isInFileLayouts(object.layout);
 	const isInFileOrSystem = U.Object.isInFileOrSystemLayouts(object.layout);
+	const isInSystem = U.Object.isInSystemLayouts(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isType = U.Object.isTypeLayout(object.layout);
@@ -61,7 +63,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let searchText = { id: 'searchText', icon: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
-		let searchChat = { id: 'searchChat', icon: 'search', name: translate('menuObjectSearchInChat'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
@@ -72,6 +73,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
+		let editRelation = { id: 'editRelation', name: translate('menuObjectRelations'), icon: 'editRelation' };
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
@@ -111,10 +113,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			isChat
 		);
 
-		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearchText = !isFilePreview && !isInSet && !isChat;
-		const allowedSearchChat = isChat;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
 		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
@@ -128,10 +128,19 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
-		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
+		const allowedEditType = (
+			isType && 
+			S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) && 
+			!U.Object.isParticipantLayout(object.recommendedLayout) && 
+			!U.Object.isTemplateType(object.id)
+		) || (
+			!isInSystem &&
+			S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ])
+		);
 		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
+		const allowedEditRelation = !isInSystem;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -143,7 +152,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedCopy)			 pageCopy = null;
 		if (!allowedReload)			 pageReload = null;
 		if (!allowedSearchText)		 searchText = null;
-		if (!allowedSearchChat)		 searchChat = null;
 		if (!allowedHistory)		 history = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (!allowedLinkTo)			 linkTo = null;
@@ -157,6 +165,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedEditChat) 		 editChat = null;
 		if (!allowedNotification) 	 notification = null;
 		if (!allowedCopyMedia)		 copyMedia = null;
+		if (!allowedEditRelation) 	 relation = null;
 
 		if (!canWrite) {
 			template = null;
@@ -179,7 +188,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			sections = sections.concat([
-				{ children: [ searchChat ] },
 				{ children: [ openObject ] },
 				{ children: [ pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
@@ -197,14 +205,12 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			} else
 			if (object.isArchived) {
 				sections = sections.concat([
-					{ children: [ searchChat ] },
 					{ children: [ openObject ] },
 					{ children: [ searchText, pageExport, remove, archive ] },
 					{ children: [ print ] },
 				]);
 			} else {
 				sections = sections.concat([
-					{ children: [ searchChat ] },
 					{ children: [ openObject ] },
 					{ children: [ pageLock ] },
 					{ children: [ linkTo, addCollection, template, pageLink ] },
@@ -217,8 +223,8 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			sections = sections.map((it: any, i: number) => ({ ...it, id: `page${i}` }));
 		};
 
+		sections.unshift({ children: [ editRelation, editType, editChat, notification ] });
 		sections.push({ children: [ advanced ] });
-		sections.unshift({ children: [ editType, editChat, notification ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -394,7 +400,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 			
-			case 'searchChat':
 			case 'searchText': {
 				keyboard.onSearchText('', route);
 				shouldClose = false;
@@ -498,8 +503,13 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 
+			case 'editRelation': {
+				sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly: object.isArchived });
+				break;
+			};
+
 			case 'editType': {
-				U.Object.editType(rootId, isPopup);
+				U.Object.editType(isType ? rootId : object.type, isPopup);
 				break;
 			};
 
