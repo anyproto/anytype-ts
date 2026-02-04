@@ -458,7 +458,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			element,
 			offsetX: getSize?.().width || $(element).outerWidth(),
 			vertical: I.MenuDirection.Center,
-			passThrough: true,
+			passThrough: false,
 			noFlipY: true,
 			noAnimation: true,
 			className: menuClassName,
