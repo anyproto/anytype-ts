@@ -1,5 +1,5 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { I, M, C, S, U, J, Relation, translate } from 'Lib';
+import { I, M, C, S, U, J, Relation, translate, Storage } from 'Lib';
 
 class Dataview {
 
@@ -1093,6 +1093,81 @@ class Dataview {
 		};
 
 		return quickOptions[0].id;
+	};
+
+	/**
+	 * Checks if a filter is an advanced filter (has And/Or operator).
+	 * @param {I.Filter} filter - The filter to check.
+	 * @returns {boolean} True if the filter is advanced.
+	 */
+	isAdvancedFilter (filter: I.Filter): boolean {
+		return [ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+	};
+
+	/**
+	 * Creates default advanced filter object with nested filters.
+	 * @returns {Partial<I.Filter>} The default advanced filter configuration.
+	 */
+	getDefaultAdvancedFilter (): Partial<I.Filter> {
+		return {
+			operator: I.FilterOperator.And,
+			condition: I.FilterCondition.None,
+			relationKey: '',
+			value: '',
+			nestedFilters: [
+				{
+					relationKey: 'name',
+					condition: I.FilterCondition.In,
+					value: '',
+				}
+			],
+		};
+	};
+
+	/**
+	 * Clears a filter to its default values.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {I.Filter} filter - The filter to clear.
+	 * @param {function} [callBack] - Optional callback after clearing.
+	 */
+	clearFilter (rootId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: () => void) {
+		const isAdvanced = this.isAdvancedFilter(filter);
+
+		let updatedFilter: any;
+
+		if (isAdvanced) {
+			updatedFilter = {
+				...filter,
+				...this.getDefaultAdvancedFilter(),
+			};
+		} else {
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation) {
+				return;
+			};
+			updatedFilter = {
+				...filter,
+				...this.getDefaultFilterValues(relation),
+			};
+		};
+
+		C.BlockDataviewFilterReplace(rootId, blockId, viewId, filter.id, updatedFilter, callBack);
+	};
+
+	/**
+	 * Adds a filter to a dataview.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any} filter - The filter to add.
+	 * @param {function} [callBack] - Optional callback after adding.
+	 */
+	addFilter (rootId: string, blockId: string, viewId: string, filter: any, callBack?: () => void) {
+		Storage.toggleViewFilter(rootId, viewId, true);
+
+		C.BlockDataviewFilterAdd(rootId, blockId, viewId, filter, callBack);
 	};
 
 	/**
