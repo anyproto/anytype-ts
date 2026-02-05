@@ -471,6 +471,15 @@ html.themeDark {
 		}
 	}
 
+	/* CalendarSelect */
+	.calendarSelect {
+		.head {
+			.side.right {
+				.icon.arrow { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
+			}
+		}
+	}
+
 	@import "./menu";
 	@import "./popup";
 	@import "./page";
