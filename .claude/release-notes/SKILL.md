@@ -300,6 +300,9 @@ When fixing user-reported issues:
 bullet(`Fix description. Thanks to @${link('https://community.anytype.io/t/12345', 'username')}!`)
 ```
 
+### Punctuation
+- Use n-dash (–) not m-dash (—) for parenthetical asides and ranges
+
 ### What to Avoid
 - Technical jargon (API, refactor, component names)
 - Implementation details (file names, function names)

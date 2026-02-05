@@ -30,13 +30,13 @@ export default () => {
 		title(`Focus & Flow`),
 		h4(`<span>Release 0.54.0</span>`),
 		text(''),
-		text('This release brings Tabs to Anytype — open multiple Objects side by side, pin the ones you use most, and pick up right where you left off. Advanced Filters let you combine conditions with AND/OR logic for precise queries, and Chat Search helps you find any message in seconds.'),
+		text('This release brings Tabs to Anytype – open multiple Objects side by side, pin the ones you use most, and pick up right where you left off. Advanced Filters let you combine conditions with AND/OR logic for precise queries, and Chat Search helps you find any message in seconds.'),
 		text('Also in this update: Toggle Headings for collapsible sections, Channel Ownership transfer, and a long list of quality-of-life improvements and fixes.'),
 		text(''),
 
 		h2(`Tabs`),
 		text(`One of the most requested features is here. You can now open multiple Objects side by side in a tab bar, just like in a browser. Open any Object in a new tab from the context menu, with ${hl('Cmd+Click')} / ${hl('Ctrl+Click')}, or from Widgets.`),
-		text(`Choose between two modes in Settings: <b>Contextual</b>, where the tab bar appears only when you have more than one tab open, or <b>Always visible</b>, where the tab bar is always shown.`),
+		text(`Choose between two modes in Settings > Preferences: <b>Contextual</b>, where the tab bar appears only when you have more than one tab open, or <b>Always visible</b>.`),
 		text(`Drag tabs to reorder them, drag a tab out of the window to open it in a new window, and your open tabs are restored when you relaunch the app.`),
 		text(``),
 
@@ -71,7 +71,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Spell Checking in Chat</b>`),
-		text(`Chat messages now support spell checking with the same red underline and suggestions you already get in the Editor. It uses your existing language settings — no extra setup needed.`),
+		text(`Chat messages now support spell checking with the same red underline and suggestions you already get in the Editor. It uses your existing language settings – no extra setup needed.`),
 		text(``),
 
 		text(`<b>Updated Sync Status</b>`),
@@ -83,7 +83,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Paste Link Menu Redesign</b>`),
-		text(`The paste link menu now shows clearer options: <b>Bookmark</b>, <b>URL</b>, <b>Embed</b> (for YouTube, Miro, etc.), and a new <b>Object</b> option for Anytype links — letting you insert an Object card directly from a copied link.`),
+		text(`The paste link menu now shows clearer options: <b>Bookmark</b>, <b>URL</b>, <b>Embed</b> (for YouTube, Miro, etc.), and a new <b>Object</b> option for Anytype links – letting you insert an Object card directly from a copied link.`),
 		text(``),
 
 		text(`<b>File Block Default Style</b>`),
@@ -95,7 +95,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Template Name Pre-fill</b>`),
-		text(`When editing a template, a new toggle lets you choose whether the template's name is pre-filled when creating Objects from it — so you no longer need to manually clear inherited names.`),
+		text(`When editing a template, a new toggle lets you choose whether the template's name is pre-filled when creating Objects from it – so you no longer need to manually clear inherited names.`),
 		text(``),
 
 		text(`<b>Full-Text Search in Collections</b>`),
@@ -107,7 +107,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Jump to Message in Chat</b>`),
-		text(`Click a quoted reply to jump to the original message. The scroll-down button then takes you back to the reply first, then to the bottom — just like in Telegram.`),
+		text(`Click a quoted reply to jump to the original message. The scroll-down button then takes you back to the reply first, then to the bottom – just like in Telegram.`),
 		text(``),
 
 		text(`<b>Page Up / Page Down Support</b>`),
