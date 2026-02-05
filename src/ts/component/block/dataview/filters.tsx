@@ -21,18 +21,14 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		return null;
 	};
 	
-	const isAdvancedFilter = (filter: I.Filter): boolean => {
-		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
-	};
-
 	const items = U.Common.objectCopy(filters).map((it: any) => {
 		return {
 			...it,
 			relation: S.Record.getRelationByKey(it.relationKey),
 		};
-	}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
-		const aAdvanced = isAdvancedFilter(a);
-		const bAdvanced = isAdvancedFilter(b);
+	}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+		const aAdvanced = Dataview.isAdvancedFilter(a);
+		const bAdvanced = Dataview.isAdvancedFilter(b);
 
 		if (aAdvanced !== bAdvanced) {
 			return aAdvanced ? -1 : 1;
@@ -120,12 +116,13 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClearFilter = (item: any) => {
-		const filter = {
-			...item,
-			...Dataview.getDefaultFilterValues(item.relation),
+		const filter = view.getFilter(item.id);
+
+		if (!filter) {
+			return;
 		};
 
-		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+		Dataview.clearFilter(rootId, blockId, view.id, filter, () => {
 			loadData(view.id, 0, false);
 		});
 	};
@@ -230,7 +227,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 						</>
 					) : ''}
 					{items.map((item: any) => {
-						if (isAdvancedFilter(item)) {
+						if (Dataview.isAdvancedFilter(item)) {
 							return (
 								<AdvancedItem
 									{...props}

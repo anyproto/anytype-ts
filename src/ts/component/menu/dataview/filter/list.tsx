@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, C, S, U, Relation, keyboard, translate, analytics, Dataview } from 'Lib';
-import { MenuItemVertical } from 'Component';
+import { MenuItemVertical, Icon, Label } from 'Component';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -42,10 +42,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const isAdvancedFilter = (filter: I.Filter): boolean => {
-		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
-	};
-
 	const getFilterItems = () => {
 		const view = getView();
 
@@ -58,9 +54,9 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				...it,
 				relation: S.Record.getRelationByKey(it.relationKey),
 			};
-		}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
-			const aAdvanced = isAdvancedFilter(a);
-			const bAdvanced = isAdvancedFilter(b);
+		}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+			const aAdvanced = Dataview.isAdvancedFilter(a);
+			const bAdvanced = Dataview.isAdvancedFilter(b);
 
 			if (aAdvanced !== bAdvanced) {
 				return aAdvanced ? -1 : 1;
@@ -96,7 +92,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getCaption = (item: any): string => {
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			return '';
 		};
 
@@ -113,12 +109,78 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getName = (item: any): string => {
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			const ruleCount = item.nestedFilters?.length || 1;
 			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
 		};
 
 		return item.relation?.name || '';
+	};
+
+	const getFilterRelationIcon = (format: I.RelationType): string => {
+		switch (format) {
+			case I.RelationType.LongText:
+			case I.RelationType.ShortText:	return 'isText';
+			case I.RelationType.Number:		return 'isNumber';
+			case I.RelationType.Select:		return 'isSelect';
+			case I.RelationType.Date:		return 'isDate';
+			case I.RelationType.File:		return 'isAttachment';
+			case I.RelationType.Checkbox:	return 'isCheckbox';
+			case I.RelationType.Url:		return 'isUrl';
+			case I.RelationType.Email:		return 'isEmail';
+			case I.RelationType.Phone:		return 'isPhone';
+			case I.RelationType.MultiSelect:return 'isMultiselect';
+			case I.RelationType.Object:		return 'isObject';
+			default:						return 'isObject';
+		};
+	};
+
+	const getValueText = (item: any): string => {
+		const { relation, condition, quickOption, value } = item;
+
+		if (!relation) return '';
+		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+			return '';
+		};
+
+		switch (relation.format) {
+			case I.RelationType.Date: {
+				const filterOptions = Relation.filterQuickOptions(relation.format, condition);
+				const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
+
+				if (quickOption == I.FilterQuickOption.ExactDate) {
+					return value !== null ? U.Date.date('d.m.Y', value) : '';
+				} else
+				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
+					const v = Number(value) || 0;
+					const key = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? 'menuItemFilterTimeAgo' : 'menuItemFilterTimeFromNow';
+					return U.String.sprintf(translate(key), v, U.Common.plural(v, translate('pluralDay')));
+				} else
+				if (filterOption) {
+					return String(filterOption.name || '').toLowerCase();
+				};
+				return '';
+			};
+			case I.RelationType.Checkbox:
+				return translate(`relationCheckboxLabelShort${Number(value)}`);
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select: {
+				const list = Relation.getOptions(value);
+				return list.length ? list.map(it => it.name).join(', ') : 'empty';
+			};
+			case I.RelationType.File:
+			case I.RelationType.Object: {
+				const subId = S.Record.getSubId(rootId, blockId);
+				const list = Relation.getArrayValue(value)
+					.map(it => S.Detail.get(subId, it, []))
+					.filter(it => !it._empty_);
+				return list.map(it => it.name).join(', ');
+			};
+			case I.RelationType.Number:
+				return String(Number(value) || 0);
+			default:
+				return `"${value}"`;
+		};
 	};
 
 	const onClick = (e: any, item: any) => {
@@ -132,13 +194,14 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			S.Menu.open('dataviewFilterAdvanced', {
 				element: `#${getId()} #item-${item.id}`,
 				classNameWrap: 'fromBlock',
 				horizontal: I.MenuDirection.Right,
 				offsetY: 4,
 				noFlipY: true,
+				rebind,
 				data: {
 					rootId,
 					blockId,
@@ -161,6 +224,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipY: true,
+			rebind,
 			data: {
 				rootId,
 				blockId,
@@ -195,18 +259,8 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClearFilter = (item: any) => {
 		const view = getView();
 		const filter = view.getFilter(item.id);
-		const relation = S.Record.getRelationByKey(filter.relationKey);
 
-		if (!relation) {
-			return;
-		};
-
-		const updatedFilter = {
-			...filter,
-			...Dataview.getDefaultFilterValues(relation),
-		};
-
-		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, updatedFilter, () => {
+		Dataview.clearFilter(rootId, blockId, view.id, filter, () => {
 			loadData(view.id, 0, false);
 		});
 	};
@@ -218,7 +272,9 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id} .icon.more`,
 			classNameWrap: 'fromBlock',
+			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			rebind,
 			data: {
 				options: [
 					{ id: 'clear', name: translate('commonClear') },
@@ -244,58 +300,41 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onAdd = () => {
+	const createFilter = (filter: any) => {
 		const view = getView();
 		const object = getTarget();
 
+		Dataview.addFilter(rootId, blockId, view.id, filter, () => {
+			loadData(view.id, 0, false);
+
+			analytics.event('AddFilter', {
+				condition: filter.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline),
+			});
+		});
+	};
+
+	const onAdd = () => {
 		U.Menu.sortOrFilterRelationSelect({
 			element: `#${getId()} #item-add`,
 			classNameWrap: 'fromBlock',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
+			rebind,
 		}, {
 			rootId,
 			blockId,
 			getView,
 			onSelect: (item: any) => {
-				const filterValues = Dataview.getDefaultFilterValues(item);
-
-				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
+				createFilter({
 					relationKey: item.relationKey || item.id,
-					...filterValues,
-				}, () => {
-					loadData(view.id, 0, false);
-
-					analytics.event('AddFilter', {
-						condition: filterValues.condition,
-						objectType: object.type,
-						embedType: analytics.embedType(isInline),
-					});
+					...Dataview.getDefaultFilterValues(item),
 				});
 			},
 			onAdvancedFilterAdd: () => {
-				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
-					operator: I.FilterOperator.And,
-					condition: I.FilterCondition.None,
-					relationKey: '',
-					value: '',
-					nestedFilters: [
-						{
-							relationKey: 'name',
-							condition: I.FilterCondition.In,
-							value: '',
-						}
-					],
-				}, () => {
-					loadData(view.id, 0, false);
-
-					analytics.event('AddFilter', {
-						condition: I.FilterCondition.None,
-						objectType: object.type,
-						embedType: analytics.embedType(isInline),
-					});
-				});
+				createFilter(Dataview.getDefaultAdvancedFilter());
 			},
 		});
 	};
@@ -334,21 +373,52 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			);
 		} else {
-			const isAdvanced = isAdvancedFilter(item);
+			const isAdvanced = Dataview.isAdvancedFilter(item);
+			const cn = [ 'item', 'filterItem' ];
+
+			if (isAdvanced) {
+				cn.push('isAdvanced');
+			};
+			if (isReadonly) {
+				cn.push('isReadonly');
+			};
+			if (Relation.isFilterActive(item)) {
+				cn.push('isActive');
+			};
 
 			content = (
-				<MenuItemVertical
-					id={item.id}
-					icon={isAdvanced ? 'advancedFilter' : undefined}
-					object={!isAdvanced && item.relation ? { relationFormat: item.relation.format, layout: I.ObjectLayout.Relation, name: item.relation.name } : undefined}
-					name={isAdvanced ? getName(item) : undefined}
-					caption={getCaption(item)}
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onClick={e => onClick(e, item)}
-					withMore={!isReadonly}
-					onMore={e => onMore(e, item)}
 					style={param.style}
-				/>
+				>
+					<div className="filterInner">
+						{isAdvanced ? (
+							<>
+								<Icon className="filterIcon advanced" />
+								<div className="filterContent">
+									<Label className="relationName" text={getName(item)} />
+								</div>
+							</>
+						) : (
+							<>
+								<Icon className={`filterIcon ${getFilterRelationIcon(item.relation.format)}`} />
+								<div className="filterContent">
+									<Label className="relationName" text={item.relation.name} />
+									{Relation.isFilterActive(item) ? (
+										<>
+											<Label className="condition" text={getCaption(item)} />
+											<div className="value">{getValueText(item)}</div>
+										</>
+									) : ''}
+								</div>
+							</>
+						)}
+					</div>
+					{!isReadonly ? <Icon className="more" onClick={e => onMore(e, item)} /> : ''}
+				</div>
 			);
 		};
 
