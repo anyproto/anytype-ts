@@ -25,6 +25,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 	const record = S.Detail.get(subId, id, relations.map(it => it.relationKey));
+
 	const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 	const { done } = record;
 	const cover = getCoverObject(id);

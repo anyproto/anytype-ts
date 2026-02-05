@@ -445,7 +445,7 @@ class Dataview {
 			};
 
 			case I.RelationType.Select: {
-				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
+				filter.condition = value ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
 				filter.value = value ? value : null;
 				break;
 			};
