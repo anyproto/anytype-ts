@@ -57,8 +57,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				<div
 					className="path"
 					onClick={onSearch}
-					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
-					onMouseOut={onTooltipHide}
+					onMouseEnter={e => onTooltipShow(e, translate('headerTooltipPath'))}
+					onMouseLeave={onTooltipHide}
 				>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />

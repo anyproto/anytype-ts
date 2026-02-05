@@ -485,8 +485,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				{...listeners}
 				style={style} 
 				onClick={e => onClick(e, item)}
-				onMouseOver={() => onOver(item)}
-				onMouseOut={onOut}
+				onMouseEnter={() => onOver(item)}
+				onMouseLeave={onOut}
 				onContextMenu={e => onContextMenu(e, item)}
 			>
 				<div className="iconWrap">
