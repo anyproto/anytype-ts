@@ -847,6 +847,22 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onAttachmentRemove(sha1(url));
 	};
 
+	const getAttachmentType = (layout: I.ObjectLayout) => {
+		let ret = I.AttachmentType.File;
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				ret = I.AttachmentType.Link;
+				break;
+			};
+			
+			case I.ObjectLayout.Image: {
+				ret = I.AttachmentType.Image;
+				break;
+			};
+		};
+		return ret;
+	};
+
 	const onSend = () => {
 		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')) {
 			return;
@@ -869,7 +885,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 		
 		const callBack = () => {
-			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
+			console.log(JSON.stringify(attachments, null, 3));
+
+			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: getAttachmentType(it.layout) }));
 			const parsed = getMarksFromHtml();
 			const text = trim(parsed.text);
 			const match = parsed.text.match(/^\r?\n+/);
@@ -935,8 +953,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
-						attachments = attachments.filter(it => it.id != item.id);
-						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
+						const idx = attachments.findIndex(it => it.id == item.id);
+						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
+
+						if (idx >= 0) {
+							attachments[idx] = newItem;
+						} else {
+							attachments.push(newItem);
+						};
 					};
 
 					if (n == fl) {
@@ -958,8 +982,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
-						attachments = attachments.filter(it => it.id != item.id);
-						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
+						const idx = attachments.findIndex(it => it.id == item.id);
+						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
+
+						if (idx >= 0) {
+							attachments[idx] = newItem;
+						} else {
+							attachments.push(newItem);
+						};
 					};
 
 					if (n == bl) {

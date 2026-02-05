@@ -332,7 +332,9 @@ class UtilSubscription {
 			return;
 		};
 
-		C.ObjectSearch(spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
+		const cmd = fullText ? 'ObjectSearchWithMeta' : 'ObjectSearch';
+
+		C[cmd](spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
