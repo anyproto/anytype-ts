@@ -241,6 +241,9 @@ class UtilData {
 			case I.TextStyle.Header1: s = 30; break;
 			case I.TextStyle.Header2: s = 26; break;
 			case I.TextStyle.Header3: s = 22; break;
+			case I.TextStyle.ToggleHeader1: s = 30; break;
+			case I.TextStyle.ToggleHeader2: s = 26; break;
+			case I.TextStyle.ToggleHeader3: s = 22; break;
 		};
 		return s;
 	};

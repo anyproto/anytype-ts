@@ -20,12 +20,12 @@
 	.form { display: inline-block; vertical-align: top; }
 
 	.icon { width: 20px; height: 20px; transition: none; flex-shrink: 0; }
-	.icon.image { background-image: url('~img/icon/menu/action/block/media/image0.svg'); }
-	.icon.video { background-image: url('~img/icon/menu/action/block/media/video0.svg'); }
-	.icon.file { background-image: url('~img/icon/menu/action/block/media/file0.svg'); }
-	.icon.audio { background-image: url('~img/icon/menu/action/block/media/audio0.svg'); }
-	.icon.pdf { background-image: url('~img/icon/menu/action/block/media/pdf0.svg'); }
-	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
+	.icon.image { background-image: url('~img/icon/menu/action/block/media/image.svg'); }
+	.icon.video { background-image: url('~img/icon/menu/action/block/media/video.svg'); }
+	.icon.file { background-image: url('~img/icon/menu/action/block/media/file.svg'); }
+	.icon.audio { background-image: url('~img/icon/menu/action/block/media/audio.svg'); }
+	.icon.pdf { background-image: url('~img/icon/menu/action/block/media/pdf.svg'); }
+	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark.svg'); }
 }
 
 .inputWithFile.isReadonly {

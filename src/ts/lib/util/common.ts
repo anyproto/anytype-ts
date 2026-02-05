@@ -1461,7 +1461,9 @@ class UtilCommon {
 			return;
 		};
 
-		const toggles = node.parents(`.block.${U.Data.blockTextClass(I.TextStyle.Toggle)}`);
+		const toggleClasses = [ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ]
+			.map(s => `.block.${U.Data.blockTextClass(s)}`).join(',');
+		const toggles = node.parents(toggleClasses);
 
 		if (toggles.length) {
 			const toggle = $(toggles.get(0));

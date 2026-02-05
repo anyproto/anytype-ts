@@ -22,6 +22,9 @@ export enum TextStyle {
 	Toggle		 = 11,
 	Description	 = 12,
 	Callout		 = 13,
+	ToggleHeader1 = 14,
+    ToggleHeader2 = 15,
+	ToggleHeader3 = 16,
 };
 
 export enum MarkType {

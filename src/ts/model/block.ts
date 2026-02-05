@@ -90,7 +90,7 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextCallout() || this.isTextQuote());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextToggleHeader() || this.isTextCallout() || this.isTextQuote());
 	};
 
 	canHaveAlign (): boolean {
@@ -375,27 +375,43 @@ class Block implements I.Block {
 	}; 
 	
 	isTextHeader (): boolean {
-		return this.isText() && (this.isTextHeader1() || this.isTextHeader2() || this.isTextHeader3());
+		return this.isText() && (this.isTextHeader1() || this.isTextHeader2() || this.isTextHeader3() || this.isTextToggleHeader());
 	};
-	
+
 	isTextHeader1 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header1);
 	};
-	
+
 	isTextHeader2 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header2);
 	};
-	
+
 	isTextHeader3 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header3);
 	};
 
 	isTextList (): boolean {
-		return this.isTextToggle() || this.isTextNumbered() || this.isTextBulleted() || this.isTextCheckbox();
+		return (this.isText() && (this.content.style == I.TextStyle.Toggle)) || this.isTextNumbered() || this.isTextBulleted() || this.isTextCheckbox();
 	};
 	
 	isTextToggle (): boolean {
-		return this.isText() && (this.content.style == I.TextStyle.Toggle);
+		return this.isText() && ((this.content.style == I.TextStyle.Toggle) || this.isTextToggleHeader());
+	};
+
+	isTextToggleHeader (): boolean {
+		return this.isText() && (this.isTextToggleHeader1() || this.isTextToggleHeader2() || this.isTextToggleHeader3());
+	};
+
+	isTextToggleHeader1 (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.ToggleHeader1);
+	};
+
+	isTextToggleHeader2 (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.ToggleHeader2);
+	};
+
+	isTextToggleHeader3 (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.ToggleHeader3);
 	};
 	
 	isTextNumbered (): boolean {

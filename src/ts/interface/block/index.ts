@@ -210,6 +210,10 @@ export interface Block {
 	isTextHeader3?(): boolean;
 	isTextList?(): boolean;
 	isTextToggle?(): boolean;
+	isTextToggleHeader?(): boolean;
+	isTextToggleHeader1?(): boolean;
+	isTextToggleHeader2?(): boolean;
+	isTextToggleHeader3?(): boolean;
 	isTextNumbered?(): boolean;
 	isTextBulleted?(): boolean;
 	isTextCheckbox?(): boolean;
