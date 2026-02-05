@@ -165,7 +165,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedEditChat) 		 editChat = null;
 		if (!allowedNotification) 	 notification = null;
 		if (!allowedCopyMedia)		 copyMedia = null;
-		if (!allowedEditRelation) 	 relation = null;
+		if (!allowedEditRelation) 	 editRelation = null;
 
 		if (!canWrite) {
 			template = null;
