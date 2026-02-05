@@ -702,6 +702,11 @@ class Api {
 				label: Util.translate('electronMenuTabPin'),
 				click: () => WindowManager.pinTab(win, tabId),
 			});
+		};
+
+		items.push({ type: 'separator' });
+
+		if (!isPinned) {
 			items.push({
 				label: Util.translate('electronMenuTabClose'),
 				click: () => WindowManager.removeTab(win, tabId, true),
