@@ -88,6 +88,16 @@ text(`Description. Can mention shortcuts like ${hl('Cmd+V')}.`),
 text(``),
 ```
 
+**Ordering:** When adding multiple QoL items, sort them by impact — largest first, smallest last:
+
+1. **Major new capabilities** — items that could almost be standalone features (e.g., Toggle Headings, Pinned Tabs, Spell Checking in Chat)
+2. **New settings and preferences** — user-facing options that change workflows (e.g., File Block Default Style, Click to Edit Title toggle)
+3. **Meaningful workflow improvements** — noticeably better experiences (e.g., full-text search in Collections, Jump to Message in Chat)
+4. **Small but welcome polish** — minor UX wins (e.g., Fullscreen preview click-to-close, URL properties openable in header)
+5. **Micro-fixes that feel like QoL** — tiny quality bumps (e.g., input field clearing, option sorting, clipboard edge cases)
+
+Community-credited items can appear at any tier based on their impact — don't group them separately.
+
 ### `/release-notes fix "Category" [context]`
 Add a bug fix under the specified category.
 
