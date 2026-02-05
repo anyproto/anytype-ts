@@ -20,6 +20,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const range = useRef(null);
 	const n = useRef(-1);
 	const timeout = useRef(0);
+	const exactDateValueRef = useRef<number | null>(null);
+	const relativeDateRef = useRef<{ quickOption: I.FilterQuickOption; value: any } | null>(null);
 	const [ dummy, setDummy ] = useState(0);
 
 	const view = getView();
@@ -202,6 +204,54 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			save();
 			setDummy(dummy + 1);
 		}, withTimeout ? 300 : 0);
+	};
+
+	const onTabSwitch = (toExact: boolean) => {
+		const view = getView();
+		if (!view) return;
+
+		let item = view.getFilter(itemId);
+		if (!item) return;
+
+		const rel = S.Record.getRelationByKey(item.relationKey);
+		if (!rel) return;
+
+		const object = getTarget();
+		item = U.Common.objectCopy(item);
+
+		if (toExact) {
+			// Cache current relative date state before switching away
+			if (item.quickOption !== I.FilterQuickOption.ExactDate) {
+				relativeDateRef.current = { quickOption: item.quickOption, value: item.value };
+			};
+			// Set exact mode with cached value
+			item.quickOption = I.FilterQuickOption.ExactDate;
+			item.value = exactDateValueRef.current !== null ? exactDateValueRef.current : Relation.formatValue(rel, null, false);
+		} else {
+			// Cache current exact date value before switching away
+			if (item.quickOption === I.FilterQuickOption.ExactDate && item.value) {
+				exactDateValueRef.current = item.value;
+			};
+			// Restore cached relative date state or use first option
+			if (relativeDateRef.current) {
+				item.quickOption = relativeDateRef.current.quickOption;
+				item.value = relativeDateRef.current.value ?? Relation.formatValue(rel, null, false);
+			} else {
+				const quickOptions = Relation.filterQuickOptions(rel.format, item.condition)
+					.filter(it => it.id != I.FilterQuickOption.ExactDate);
+				item.quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
+				item.value = Relation.formatValue(rel, null, false);
+			};
+		};
+
+		view.setFilter(item);
+		analytics.event('ChangeFilterValue', {
+			condition: item.condition,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
+		save();
+		setDummy(dummy + 1);
 	};
 
 	const onSubmitHandler = (e: any) => {
@@ -557,16 +607,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							{ id: 'exact', name: translate('menuDataviewFilterValuesExact') },
 							{ id: 'relative', name: translate('menuDataviewFilterValuesRelative') },
 						]}
-						onChange={v => {
-							if (v == 'exact') {
-								onChange('quickOption', I.FilterQuickOption.ExactDate);
-							} else {
-								const first = items[0];
-								if (first) {
-									onChange('quickOption', first.id);
-								};
-							};
-						}}
+						onChange={v => onTabSwitch(v == 'exact')}
 					/>
 				</div>
 			) : ''}
