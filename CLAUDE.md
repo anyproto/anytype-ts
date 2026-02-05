@@ -153,7 +153,7 @@ Anytype is an Electron-based desktop application with TypeScript/React frontend 
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
-- Translation keys are defined in `src/json/text.json`
+- Translation keys are defined in `src/json/text.json` (source of truth). Files in `dist/lib/json/lang/` are generated — do not edit them directly
 - Block operations should go through the command system
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory

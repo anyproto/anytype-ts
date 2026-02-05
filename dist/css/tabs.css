@@ -151,6 +151,19 @@ html.themeDark {
 	}
 }
 
+/* Pinned tabs */
+#tabs {
+	.tab.isPinned { min-width: 44px; max-width: 44px; flex: 0 0 44px; padding: 8px; }
+	.tab.isPinned .name { display: none; }
+	.tab.isPinned .icon.close { display: none !important; }
+	.tab.isPinned .clickable { justify-content: center; }
+}
+
+.tabs-divider {
+	width: 1px; height: 20px; background: var(--color-shape-highlight-dark);
+	margin: auto 0; flex-shrink: 0;
+}
+
 /* Tab drag outside window visual feedback */
 body.draggingOutside {
 	#tabs { opacity: 0.6; }

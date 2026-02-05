@@ -191,9 +191,15 @@ $(() => {
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
 		const isImage = Boolean(item.data.isImage);
+		const isPinned = Boolean(item.data.isPinned);
+
+		const cn = [ 'tab' ];
+		if (isPinned) {
+			cn.push('isPinned');
+		};
 
 		const tab = $(`
-			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
+			<div id="tab-${item.id}" class="${cn.join(' ')}" data-id="${item.id}" data-pinned="${isPinned}">
 				<div class="clickable">
 					<div class="name">${title}</div>
 					<div class="icon close withBackground"></div>
@@ -224,6 +230,12 @@ $(() => {
 		tab.find('.icon.close').off('click').on('click', (e) => {
 			e.stopPropagation();
 			electron.Api(winId, 'removeTab', [ item.id, true ]);
+		});
+
+		tab.off('contextmenu').on('contextmenu', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			electron.Api(winId, 'showTabContextMenu', { tabId: item.id, isPinned });
 		});
 
 		return tab;
@@ -287,6 +299,17 @@ $(() => {
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
+			onMove: (evt) => {
+				const dragged = $(evt.dragged);
+				const related = $(evt.related);
+				const draggedPinned = dragged.attr('data-pinned') === 'true';
+				const relatedPinned = related.attr('data-pinned') === 'true';
+
+				// Prevent dragging between pinned and unpinned zones
+				if (draggedPinned !== relatedPinned) {
+					return false;
+				};
+			},
 			onStart: async (evt) => {
 				isDragging = true;
 				draggedTabId = $(evt.item).attr('data-id');
@@ -334,7 +357,11 @@ $(() => {
 				item.css('visibility', '');
 
 				// Check if cursor was outside window (using last polled position)
-				if (tabId && bounds && cursorPos) {
+				// Don't detach pinned tabs
+				const draggedEl = container.find(`#tab-${tabId}`);
+				const isDraggedPinned = draggedEl.attr('data-pinned') === 'true';
+
+				if (tabId && bounds && cursorPos && !isDraggedPinned) {
 					const isOutside = isOutsideWindow(cursorPos.x, cursorPos.y);
 					if (isOutside) {
 						const tabs = container.find('.tab:not(.isAdd)');
@@ -382,8 +409,21 @@ $(() => {
 
 		tabs = tabs || [];
 		tabsData = tabs;
+
+		const hasPinned = tabs.some(it => it.data && it.data.isPinned);
+		let addedDivider = false;
+
 		tabs.forEach((it, i) => {
 			container.append(renderTab(it));
+
+			// Add divider after the last pinned tab
+			if (hasPinned && !addedDivider && (it.data && it.data.isPinned)) {
+				const nextTab = tabs[i + 1];
+				if (!nextTab || !(nextTab.data && nextTab.data.isPinned)) {
+					container.append($('<div class="tabs-divider"></div>'));
+					addedDivider = true;
+				};
+			};
 		});
 
 		container.append(renderAdd());
@@ -424,6 +464,12 @@ $(() => {
 		const existing = container.find(`#tab-${tab.id}`);
 		if (!existing.length) {
 			return;
+		};
+
+		// Update tabsData
+		const idx = tabsData.findIndex(it => it.id == tab.id);
+		if (idx >= 0) {
+			tabsData[idx] = tab;
 		};
 
 		const obj = renderTab(tab);

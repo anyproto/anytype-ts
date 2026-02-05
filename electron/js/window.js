@@ -518,6 +518,12 @@ class WindowManager {
 
 	closeActiveTab (win) {
 		const Api = require('./api.js');
+		const activeView = win.views.find(it => it.id == win.activeTabId);
+
+		if (activeView && activeView.data && activeView.data.isPinned) {
+			Api.close(win);
+			return;
+		};
 
 		if (win.views.length > 1) {
 			this.removeTab(win, win.activeTabId, true);
@@ -533,13 +539,75 @@ class WindowManager {
 			return;
 		};
 
-		const views = win.views.filter(it => it.id != id);
+		const views = win.views.filter(it => (it.id != id) && !(it.data && it.data.isPinned));
 
 		views.forEach(view => {
 			this.removeTab(win, view.id, false);
 		});
 
 		this.setActiveTab(win, id);
+	};
+
+	pinTab (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		view.data = view.data || {};
+		view.data.isPinned = true;
+
+		// Move to rightmost pinned position
+		const index = win.views.indexOf(view);
+		win.views.splice(index, 1);
+
+		const lastPinnedIndex = win.views.reduce((acc, v, i) => (v.data && v.data.isPinned) ? i : acc, -1);
+		win.views.splice(lastPinnedIndex + 1, 0, view);
+
+		this.sendUpdateTabs(win);
+	};
+
+	unpinTab (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		view.data = view.data || {};
+		view.data.isPinned = false;
+
+		// Move to leftmost unpinned position (right after last pinned tab)
+		const index = win.views.indexOf(view);
+		win.views.splice(index, 1);
+
+		const lastPinnedIndex = win.views.reduce((acc, v, i) => (v.data && v.data.isPinned) ? i : acc, -1);
+		win.views.splice(lastPinnedIndex + 1, 0, view);
+
+		this.sendUpdateTabs(win);
+	};
+
+	sendUpdateTabs (win) {
+		const ConfigManager = require('./config.js');
+		const alwaysShow = ConfigManager.config.alwaysShowTabs;
+		const isVisible = alwaysShow || (win.views && win.views.length > 1);
+
+		Util.send(win, 'update-tabs',
+			win.views.map(it => ({ id: it.id, data: it.data })),
+			win.activeTabId,
+			isVisible
+		);
 	};
 
 	reorderTabs (win, tabIds) {
@@ -556,20 +624,30 @@ class WindowManager {
 			};
 		});
 
+		// Validate zone separation: pinned tabs must come before unpinned tabs
+		let seenUnpinned = false;
+		let isValid = true;
+		for (const view of newViews) {
+			const isPinned = view.data && view.data.isPinned;
+			if (isPinned && seenUnpinned) {
+				isValid = false;
+				break;
+			};
+			if (!isPinned) {
+				seenUnpinned = true;
+			};
+		};
+
+		if (!isValid) {
+			// Reject reorder and send current state back
+			this.sendUpdateTabs(win);
+			return;
+		};
+
 		// Update the views array
 		win.views = newViews;
 
-		// Send updated tabs list to tabs.html
-		const ConfigManager = require('./config.js');
-		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const isVisible = alwaysShow || (win.views && win.views.length > 1);
-
-		Util.send(win, 'update-tabs',
-			win.views.map(it => ({ id: it.id, data: it.data })),
-			win.activeTabId,
-			isVisible
-		);
-
+		this.sendUpdateTabs(win);
 		this.updateTabBarVisibility(win);
 	};
 
