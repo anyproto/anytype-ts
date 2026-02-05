@@ -52,7 +52,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		};
 
 		const ids = selection?.get(I.SelectType.Record) || [];
-		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
+		if (((e.ctrlKey || e.metaKey)  && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

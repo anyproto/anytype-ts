@@ -31,15 +31,11 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	};
 
 	const onKeyDownHandler = (e: any) => {
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 	
 	const onKeyUpHandler = (e: any) => {
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
-		};
+		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
 
 	const onFocus = () => {
@@ -54,7 +50,16 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
-		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
+		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && (ids.length > 1))) {
+			return;
+		};
+
+		if (
+			object._empty_ || 
+			(targetBlockId == rootId) || 
+			((e.ctrlKey || e.metaKey) && (ids.length > 1)) || 
+			keyboard.isSelectionClearDisabled
+		) {
 			return;
 		};
 
