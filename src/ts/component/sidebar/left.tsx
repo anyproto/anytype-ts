@@ -180,8 +180,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
 		const w = Math.max(0, (e.pageX - ox.current));
+		const data = sidebar.getData(panel);
 
-		sidebar.setWidth(panel, false, w, true);
+		if (!data.isClosed) {
+			sidebar.setWidth(panel, false, w, true);
+		};
 		window.setTimeout(() => movedX.current = false, 15);
 	};
 

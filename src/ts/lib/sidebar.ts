@@ -5,6 +5,7 @@ import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
 interface SidebarData {
 	width: number;
 	isClosed: boolean;
+	savedClosed: boolean;
 };
 
 /**
@@ -28,9 +29,9 @@ interface SidebarData {
 class Sidebar {
 	
 	panelData = {
-		[I.SidebarPanel.Left]: { width: 0, isClosed: false } as SidebarData,
-		[I.SidebarPanel.SubLeft]: { width: 0, isClosed: false } as SidebarData,
-		[I.SidebarPanel.Right]: { width: 0, isClosed: false } as SidebarData,
+		[I.SidebarPanel.Left]: { width: 0, isClosed: false, savedClosed: false } as SidebarData,
+		[I.SidebarPanel.SubLeft]: { width: 0, isClosed: false, savedClosed: false } as SidebarData,
+		[I.SidebarPanel.Right]: { width: 0, isClosed: false, savedClosed: false } as SidebarData,
 	};
 
 	isAnimating = false;
@@ -52,8 +53,9 @@ class Sidebar {
 			const param = this.getSizeParam(panel);
 			const width = this.limitWidth(panel, data.width || param.default);
 			const isClosed = (undefined !== data.isClosed) && (panel != I.SidebarPanel.Right) ? Boolean(data.isClosed) : true;
+			const savedClosed = Boolean(data.savedClosed);
 
-			this.setData(panel, isPopup, { width, isClosed }, false);
+			this.setData(panel, isPopup, { width, isClosed, savedClosed }, false);
 			this.setStyle(panel, isPopup, { width, isClosed });
 
 			if ((panel == I.SidebarPanel.Left) && !isPopup) {
@@ -69,7 +71,7 @@ class Sidebar {
 		const key = [ panel, ns ].join('');
 		const param = this.getSizeParam(panel);
 
-		return this.panelData[key] || { width: param.default, isClosed: true };
+		return this.panelData[key] || { width: param.default, isClosed: true, savedClosed: false };
 	};
 
 	/**
@@ -156,7 +158,7 @@ class Sidebar {
 			pageWrapperLeft.addClass('sidebarAnimation');
 		};
 
-		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, save);
+		this.setData(I.SidebarPanel.Left, false, { isClosed: true, ...(save ? { savedClosed: true } : {}) }, save);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0, isClosed: true });
 		this.resizePage(false, dataSubLeft.isClosed ? 0 : dataSubLeft.width, null, animate);
 
@@ -187,7 +189,7 @@ class Sidebar {
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 
 		this.setStyle(I.SidebarPanel.Left, false, { width, isClosed: false });
-		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, save);
+		this.setData(I.SidebarPanel.Left, false, { isClosed: false, ...(save ? { savedClosed: false } : {}) }, save);
 		this.resizePage(false, width + (dataSubLeft.isClosed ? 0 : dataSubLeft.width), null, animate);
 
 		analytics.event('ExpandVault');
