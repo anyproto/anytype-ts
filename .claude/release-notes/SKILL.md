@@ -32,8 +32,8 @@ return [
     text('Intro paragraph...'),
     text(''),
 
-    // Big Feature Sections (h1)
-    h1(`Feature Name`),
+    // Big Feature Sections (h2)
+    h2(`Feature Name`),
     text(`Feature description...`),
     img(`XX/1.png`),
     text(``),
@@ -64,13 +64,13 @@ return [
 Parse the user's command to determine the action:
 
 ### `/release-notes feature "Title" [context]`
-Add a big feature (h1 section) to the current release.
+Add a big feature (h2 section) to the current release.
 
 **Insertion point:** Before `h2(\`Quality of Life Improvements\`)`
 
 **Format:**
 ```typescript
-h1(`Feature Title`),
+h2(`Feature Title`),
 text(`Description paragraph 1.`),
 text(`Description paragraph 2 if needed.`),
 text(``),
@@ -130,7 +130,7 @@ Batch create entries from a Linear parent issue and its sub-issues.
    - `feature` label → feature
    - `improvement` label → qol
 3. Create appropriate entries for each
-4. If parent is a big feature, use its title for h1 section
+4. If parent is a big feature, use its title for h2 section
 
 ### `/release-notes new "0.XX.0" "Title"`
 Create a new release page at the top of the file.
@@ -173,13 +173,13 @@ curl -s -X POST "https://api.linear.app/graphql" \
 | Child labels | Classification | Action |
 |---|---|---|
 | `📁 folder` + `🐛 bug` | Bug folder | Process like `from-parent`: fetch grandchildren, categorize into bug fix categories, write bullet entries |
-| `📁 folder` + `👌 quality` | QoL folder | Process like `from-parent`: fetch grandchildren, write QoL entries. Items with `💫 feature` label become h1 features instead |
-| `💫 feature` (no folder) | Standalone feature | Write as h1 feature section |
+| `📁 folder` + `👌 quality` | QoL folder | Process like `from-parent`: fetch grandchildren, write QoL entries. Items with `💫 feature` label become h2 features instead |
+| `💫 feature` (no folder) | Standalone feature | Write as h2 feature section |
 | `📈 analytics` only | Analytics (internal) | **Skip entirely** — not user-facing |
 
 3. Create the release page structure (if not already present):
    - `new` page with version and title
-   - All h1 feature sections
+   - All h2 feature sections
    - All QoL entries under `h2('Quality of Life Improvements')`
    - All bug fixes under `h2('Bug Fixes')` organized by category
    - Intro paragraph via `intro`
@@ -187,14 +187,14 @@ curl -s -X POST "https://api.linear.app/graphql" \
 4. For grandchildren (sub-issues of folder issues), apply the same label-based rules:
    - `🐛 bug` → bug fix bullet
    - `👌 quality` → QoL entry
-   - `💫 feature` → h1 feature or QoL depending on scope
+   - `💫 feature` → h2 feature or QoL depending on scope
    - `📈 analytics` only → skip
    - No relevant label → infer from parent folder type
    - `👨‍💻 feedback` → community-reported, extract username and link from description
 
 5. Order of operations:
    1. Create new release page (if needed)
-   2. Insert features (h1 sections)
+   2. Insert features (h2 sections)
    3. Insert QoL improvements
    4. Insert bug fixes by category
    5. Write intro paragraph
@@ -208,10 +208,10 @@ User: /release-notes all JS-8500
 Root issue "Sprint 18" has children:
   JS-8574 "Bugs | 18"         [📁 folder, 🐛 bug]     → process 37 bug sub-issues
   JS-8573 "Quality | 18"      [📁 folder, 👌 quality]  → process 25 QoL sub-issues
-  JS-292  "[epic] Tabs"        [💫 feature]             → h1 feature
-  JS-4551 "[epic] Filters"    [💫 feature]             → h1 feature
-  JS-8725 "Chat Search"       [💫 feature]             → h1 feature
-  JS-8703 "Transfer Ownership" [💫 feature]            → h1 feature
+  JS-292  "[epic] Tabs"        [💫 feature]             → h2 feature
+  JS-4551 "[epic] Filters"    [💫 feature]             → h2 feature
+  JS-8725 "Chat Search"       [💫 feature]             → h2 feature
+  JS-8703 "Transfer Ownership" [💫 feature]            → h2 feature
 
 Result: Complete release page with features, QoL, bug fixes, and intro.
 ```
@@ -221,9 +221,9 @@ Write or update the intro paragraph for the current release.
 
 **How it works:**
 1. Read the current release page in whatsNew.ts
-2. Identify all h1 feature sections and h2 sections
+2. Identify all h2 feature sections
 3. Write 2–3 sentences that highlight the essence of the main features
-4. Replace the empty intro `text('')` lines between `h4(...)` and the first `h1(...)` or `h2(...)`
+4. Replace the empty intro `text('')` lines between `h4(...)` and the first `h2(...)`
 
 **Insertion point:** The `text('')` lines between the `h4(<span>Release ...</span>)` and the first content section
 
@@ -325,7 +325,7 @@ Action:
 1. Review conversation - user worked on advanced filters with AND/OR logic
 2. Find insertion point before h2(`Quality of Life Improvements`)
 3. Insert:
-   h1(`Advanced Filters`),
+   h2(`Advanced Filters`),
    text(`Need more control over what shows in your Views? You can now create Advanced Filters that combine multiple conditions using AND or OR logic. Group related rules together to build precise queries – like finding all tasks that are either high priority or due this week.`),
    text(``),
 ```
@@ -359,7 +359,7 @@ Action:
 User: /release-notes intro
 
 Action:
-1. Read whatsNew.ts — find h1 sections: "Tabs", "Advanced Filters", "Chat Search", "Transfer Channel Ownership"
+1. Read whatsNew.ts — find h2 feature sections: "Tabs", "Advanced Filters", "Chat Search", "Transfer Channel Ownership"
 2. Write 2–3 sentences covering the highlights
 3. Replace empty text('') lines after h4(`<span>Release 0.54.0</span>`):
    text('This release brings Tabs to Anytype — open multiple Objects side by side and pin the ones you use most. Advanced Filters let you combine conditions with AND/OR logic, Chat Search helps you find any message instantly, and Channel Owners can now transfer ownership to another member.'),
@@ -379,7 +379,7 @@ Action:
    - JS-8725 [💫]       → standalone feature "Chat Search"
    - JS-8703 [💫]       → standalone feature "Transfer Ownership"
 3. Create new release page with `new "0.54.0" "Focus & Flow"`
-4. Insert 4 feature h1 sections
+4. Insert 4 feature h2 sections
 5. Insert 25 QoL entries
 6. Insert 37 bug fixes across 7 categories
 7. Write intro paragraph
