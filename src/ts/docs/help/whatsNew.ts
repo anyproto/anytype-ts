@@ -24,8 +24,198 @@ export default () => {
 
 	return [
 		//{ type: I.BlockType.IconPage, icon: '💬' },
-		{ type: I.BlockType.IconPage, icon: '🎄' },
+		{ type: I.BlockType.IconPage, icon: '🎯' },
 		//{ type: I.BlockType.IconPage, icon: '👋' },
+
+		title(`Focus & Flow`),
+		h4(`<span>Release 0.54.0</span>`),
+		text(''),
+		text('This release brings Tabs to Anytype — open multiple Objects side by side, pin the ones you use most, and pick up right where you left off. Advanced Filters let you combine conditions with AND/OR logic for precise queries, and Chat Search helps you find any message in seconds.'),
+		text('Also in this update: Toggle Headings for collapsible sections, Channel Ownership transfer, and a long list of quality-of-life improvements and fixes.'),
+		text(''),
+
+		h1(`Tabs`),
+		text(`One of the most requested features is here. You can now open multiple Objects side by side in a tab bar, just like in a browser. Open any Object in a new tab from the context menu, with ${hl('Cmd+Click')} / ${hl('Ctrl+Click')}, or from links and widgets.`),
+		text(`Choose between two modes in Settings: <b>Contextual</b>, where the tab bar appears only when you have more than one tab open, or <b>Always visible</b>, where the tab bar is always shown. Drag tabs to reorder them, drag a tab out of the window to open it in a new window, and your open tabs are restored when you relaunch the app.`),
+		text(``),
+
+		h1(`Advanced Filters`),
+		text(`Filters in Queries and Collections got a major upgrade. You can now build <b>Advanced Filters</b> that combine multiple conditions using AND and OR logic, and group related rules together to create precise queries — like finding all tasks that are either high priority or due this week.`),
+		text(`The simplified filter menu also makes everyday filtering faster: click any property to quickly pick values without extra steps. Sorts received a visual refresh too, with a cleaner layout that's easier to scan and adjust.`),
+		text(``),
+
+		h1(`Chat Search`),
+		text(`You can now search through your Chat messages with ${hl('Cmd+F')} / ${hl('Ctrl+F')} or from the three-dot menu. Results appear in a dropdown sorted by date — click any result to jump straight to that message, even if it's far back in the conversation. Use the navigation arrows to step through matches one by one.`),
+		text(``),
+
+		h1(`Transfer Channel Ownership`),
+		text(`Channel Owners can now transfer ownership to another member. Open <b>Channel Settings → Members</b>, select <b>Transfer Ownership</b> from the menu, pick the new owner, and confirm by typing the Channel name. You'll become an Editor and the new owner takes full control — including the ability to transfer ownership again.`),
+		text(``),
+
+		h2(`Quality of Life Improvements`),
+		text(``),
+
+		text(`<b>Toggle Headings</b>`),
+		text(`The most requested editor feature is here: Heading 1, Heading 2 and Heading 3 can now be collapsible toggles. Create them from the ${hl('/')} menu or with Markdown shortcuts (${hl('#>')}, ${hl('##>')}, ${hl('###>')}). Select multiple toggles and open or close them all at once. Converting a regular heading to a toggle automatically captures everything beneath it as children.`),
+		text(``),
+
+		text(`<b>Pinned Tabs</b>`),
+		text(`Right-click any tab to pin it. Pinned tabs collapse to a compact icon on the left of the tab bar and stay in place across sessions, so your most-used Objects are always one click away.`),
+		text(``),
+
+		text(`<b>Spell Checking in Chat</b>`),
+		text(`Chat messages now support spell checking with the same red underline and suggestions you already get in the Editor. It uses your existing language settings — no extra setup needed.`),
+		text(``),
+
+		text(`<b>Updated Sync Status</b>`),
+		text(`Sync status moved to the navigation panel with a refreshed look: a new globe icon shows your network name, a device counter shows connected peers, and a red dot appears in the sidebar when there's a notice to review.`),
+		text(``),
+
+		text(`<b>Automatic File Download</b>`),
+		text(`Files in shared Spaces are now downloaded automatically, so you no longer need to manually fetch each one.`),
+		text(``),
+
+		text(`<b>Paste Link Menu Redesign</b>`),
+		text(`The paste link menu now shows clearer options: <b>Bookmark</b>, <b>URL</b>, <b>Embed</b> (for YouTube, Miro, etc.), and a new <b>Object</b> option for Anytype links — letting you insert an Object card directly from a copied link.`),
+		text(``),
+
+		text(`<b>File Block Default Style</b>`),
+		text(`A new setting in <b>Editor Personalization</b> lets you choose whether files added to the Editor are shown as embedded previews or compact links by default.`),
+		text(``),
+
+		text(`<b>Click to Edit Title in Grid</b>`),
+		text(`A new toggle in <b>Preferences</b> lets you choose whether clicking a title in Grid view enters edit mode (new default) or opens the Object directly (legacy behavior).`),
+		text(``),
+
+		text(`<b>Template Name Pre-fill</b>`),
+		text(`When editing a template, a new toggle lets you choose whether the template's name is pre-filled when creating Objects from it — so you no longer need to manually clear inherited names.`),
+		text(``),
+
+		text(`<b>Full-Text Search in Collections</b>`),
+		text(`Searching inside a Collection now matches Object content, not just titles.`),
+		text(``),
+
+		text(`<b>Grid Layout as Default</b>`),
+		text(`New Queries and Collections now use Grid layout by default, making properties immediately visible and easier to discover.`),
+		text(``),
+
+		text(`<b>Jump to Message in Chat</b>`),
+		text(`Click a quoted reply to jump to the original message. The scroll-down button then takes you back to the reply first, then to the bottom — just like in Telegram.`),
+		text(``),
+
+		text(`<b>Page Up / Page Down Support</b>`),
+		text(`${hl('Page Up')} and ${hl('Page Down')} keys now scroll through the entire document, and ${hl('Alt+Up')} / ${hl('Alt+Down')} (${hl('Ctrl+Up')} / ${hl('Ctrl+Down')} on Windows) hop the cursor between blocks.`),
+		text(``),
+
+		text(`<b>Fullscreen Image Preview</b>`),
+		text(`Click anywhere outside the image to exit fullscreen preview. Double-click the image to zoom in.`),
+		text(``),
+
+		text(`<b>Windows System Menu via Alt</b>`),
+		text(`On Windows, pressing ${hl('Alt')} now opens the system menu, making it accessible for keyboard-only users.`),
+		text(``),
+
+		text(`<b>URL Properties in Header</b>`),
+		text(`URL properties placed in the header section can now be opened directly with a click.`),
+		text(``),
+
+		text(`<b>Quick Create from Type Widget</b>`),
+		text(`Hover over a Type in the sidebar widget to reveal a ${hl('+')} button for creating a new Object of that Type instantly.`),
+		text(``),
+
+		text(`<b>Clipboard in Title and Description</b>`),
+		text(`Copy, Cut and Paste actions are now available in the right-click menu for title and description blocks.`),
+		text(``),
+
+		text(`<b>Keyboard Shortcut Panel Focus</b>`),
+		text(`Opening the Keyboard Shortcut panel with ${hl('Ctrl+Space')} now places focus directly in the search field.`),
+		text(``),
+
+		text(`<b>Table Column Widths in PDF Export</b>`),
+		text(`Exporting a page to PDF now preserves custom table column widths. Thanks to @${link('https://community.anytype.io/t/26568', 'William Bruneau')}!`),
+		text(``),
+
+		text(`<b>Multi-Select Input Clearing</b>`),
+		text(`Selecting a tag in a Multi-Select property in the header now clears the input field automatically. Thanks to @${link('https://community.anytype.io/t/29843', 'Daniel Zolfaghari')}!`),
+		text(``),
+
+		text(`<b>Property Option Sorting</b>`),
+		text(`Property options can now be reordered via drag-and-drop even when there are only a few of them.`),
+		text(``),
+
+		text(`<b>Copy/Paste with Spellcheck Menu</b>`),
+		text(`Copy and paste shortcuts now work correctly on Windows when the spellcheck context menu is open.`),
+		text(``),
+
+		text(`<b>Colored Text Reset in Chat</b>`),
+		text(`Colored text pasted from the Editor into Chat is now reset to the default color to keep messages clean.`),
+		text(``),
+
+		h2(`Bug Fixes`),
+		text(``),
+
+		text(`<b>Chat & Messaging</b>`),
+		bullet(`Vault counters no longer appear for deleted Chat objects.`),
+		bullet(`Search results in Chat no longer flicker while typing.`),
+		bullet(`The emoji reaction popup in Chat no longer closes itself immediately.`),
+		bullet(`Images pasted from clipboard now show a preview in Chat, just like uploaded files.`),
+		bullet(`Dragging DWG, PSD and TIFF files into Chat no longer causes an error.`),
+		text(``),
+
+		text(`<b>Editor & Blocks</b>`),
+		bullet(`The Upload button in media blocks is now clickable again.`),
+		bullet(`Pressing ${hl('Enter')} in a code block now creates a new line on the first press. Thanks to @${link('https://community.anytype.io/t/29828', 'peron')}!`),
+		bullet(`Switching between RTL and LTR text no longer deletes the first character.`),
+		bullet(`Copy-pasting a Callout block now duplicates all lines, not just the first. Thanks to @${link('https://community.anytype.io/t/29723', 'Michael Singer')}!`),
+		bullet(`Mermaid <b>architecture-beta</b> diagrams now render correctly.`),
+		bullet(`File links with spaces in the path now work as expected. Thanks to @${link('https://community.anytype.io/t/29787', 'George A Kastanes')}!`),
+		bullet(`The Editor no longer makes small jumps while typing near the bottom of a modal. Thanks to @${link('https://community.anytype.io/t/29810', 'Michael Singer')}!`),
+		bullet(`Deleted blocks are now shown correctly in Version History. Thanks to @${link('https://community.anytype.io/t/29727', 'Michael Singer')}!`),
+		bullet(`"Move to" now preserves the original order of selected blocks. Thanks to @${link('https://community.anytype.io/t/29827', 'Michael Singer')}!`),
+		text(``),
+
+		text(`<b>Keyboard & Shortcuts</b>`),
+		bullet(`${hl('Cmd+X')} / ${hl('Ctrl+X')} now works correctly on the title of a page.`),
+		bullet(`Keyboard focus is now restored when you switch back to Anytype from another app. Thanks to @${link('https://community.anytype.io/t/29860', 'Daniel Zolfaghari')}!`),
+		bullet(`Zoom in/out now works with ${hl('+')} and ${hl('-')} keys on the numeric keypad. Thanks to @${link('https://community.anytype.io/t/29845', 'Michael Singer')}!`),
+		bullet(`${hl('Ctrl+F')} in the Bin now opens the built-in filter instead of the editor search menu.`),
+		text(``),
+
+		text(`<b>UI & Rendering</b>`),
+		bullet(`The "wrong email format" error text no longer carries over to subsequent onboarding screens.`),
+		bullet(`Closing the Vault sidebar with the mouse no longer leaves an empty white strip. Thanks to @${link('https://community.anytype.io/t/29980', 'Daniel Zolfaghari')}!`),
+		bullet(`Content is no longer visible behind the "Creating new type" screen in small windows.`),
+		bullet(`Content width settings now update live in modal view and show the correct current value. Thanks to @${link('https://community.anytype.io/t/29971', 'Michael Singer')}!`),
+		bullet(`Page cover buttons (icon, cover, description) are no longer shifted off-screen. Thanks to @${link('https://community.anytype.io/t/29970', 'Michael Singer')}!`),
+		bullet(`The Table of Contents icon no longer overlaps the scrollbar in modals. Thanks to @${link('https://community.anytype.io/t/29887', 'Michael Singer')}!`),
+		bullet(`The pin code screen no longer reveals open tab names. Thanks to @${link('https://community.anytype.io/t/29905', 'Michael Singer')}!`),
+		bullet(`Long Any ID / unique name no longer overflows the Membership screen layout.`),
+		bullet(`The sync status deletion confirmation popup now appears above the sync status window.`),
+		text(``),
+
+		text(`<b>Objects & Views</b>`),
+		bullet(`Dragging an object between views now correctly applies the target view's filters.`),
+		bullet(`Property columns in Grid view no longer break position after horizontal scrolling.`),
+		bullet(`Editing a Type now opens the existing type instead of creating a new one.`),
+		bullet(`Grid layout now updates correctly when you change zoom level.`),
+		bullet(`The "Move to Bin" option no longer appears for files owned by other members.`),
+		bullet(`Deleting a Type no longer shows a false warning about objects using it when there are none. Thanks to @${link('https://community.anytype.io/t/29819', 'Axel')}!`),
+		text(``),
+
+		text(`<b>Navigation</b>`),
+		bullet(`The Channel Sidebar no longer opens empty when switching Channels with ${hl('Ctrl+Tab')}.`),
+		bullet(`Objects that were never opened no longer appear in the "Last opened objects" menu.`),
+		bullet(`Clicking an object property in the header now opens the object correctly in window mode. Thanks to @${link('https://community.anytype.io/t/29952', 'Daniel Zolfaghari')}!`),
+		bullet(`Switching between tabs no longer unexpectedly opens the left sidebar. Thanks to @${link('https://community.anytype.io/t/29908', 'Michael Singer')}!`),
+		bullet(`The second window now works correctly after waking from suspend. Thanks to @${link('https://community.anytype.io/t/29753', 'Michael Singer')}!`),
+		text(``),
+
+		text(`<b>Membership</b>`),
+		bullet(`Selecting a .any name after a tier upgrade no longer causes a crash.`),
+		text(``),
+
+		div(),
+		// --------------------------------------------//
 
 		title(`Smoother Edges`),
 		h4(`<span>Release 0.53.0</span>`),
