@@ -95,7 +95,7 @@ class Keyboard {
 		if (!data.isClosed && (cw <= threshold)) {
 			sidebar.leftPanelClose(false, false);
 		} else
-		if (data.isClosed && (cw > threshold + data.width)) {
+		if (data.isClosed && !data.savedClosed && (cw > threshold + data.width)) {
 			sidebar.leftPanelOpen(data.width, false, false);
 		};
 	};
