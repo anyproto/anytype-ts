@@ -307,7 +307,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			U.Space.openDashboard();
 		};
 
-		Preview.tooltipHide();
+		unsetHover();
+		Preview.tooltipHide(true);
+		keyboard.disableMouse(true);
 	};
 
 	const onOver = (item: any) => {
