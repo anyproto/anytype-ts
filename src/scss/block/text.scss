@@ -134,12 +134,7 @@
 
 	/* Headers */
 
-	.block.blockText.textHeader1,
-	.block.blockText.textHeader2,
-	.block.blockText.textHeader3,
-	.block.blockText.textToggleHeader1,
-	.block.blockText.textToggleHeader2,
-	.block.blockText.textToggleHeader3 {
+	.block.blockText.textHeader {
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
@@ -173,20 +168,25 @@
 
 	.block.blockText.textToggleHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textToggleHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; padding: 3px 0px 1px 0px; }
+	.block.blockText.textToggleHeader1 > .wrapContent > .selectionTarget > .dropTarget {
+		.markerToggle { margin-top: 4px; }
+	}
 
 	/* Toggle Header2 */
 
 	.block.blockText.textToggleHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textToggleHeader2 > .wrapContent > .selectionTarget > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
+	.block.blockText.textToggleHeader2 > .wrapContent > .selectionTarget > .dropTarget {
+		.markerToggle { margin-top: 2px; }
+	}
 
 	/* Toggle Header3 */
 
 	.block.blockText.textToggleHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textToggleHeader3 > .wrapContent > .selectionTarget > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
-
-	/* Header4 */
-	.block.blockText.textHeader4 { padding: 8px 0px 0px 0px; }
-	.block.blockText.textHeader4 > .wrapContent > .selectionTarget > .dropTarget { @include text-common; font-weight: 500; color: var(--color-text-secondary); padding: 1px 0px 2px 0px; }
+	.block.blockText.textToggleHeader3 > .wrapContent > .selectionTarget > .dropTarget {
+		.markerToggle { margin-top: 2px; }
+	}
 
 	/* Quote */
 	
@@ -321,12 +321,7 @@
 	{ box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
 	.block.blockText.textParagraph > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textHeader1 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textToggleHeader1 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textToggleHeader2 > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textToggleHeader3 > .wrapContent.bgColor > .selectionTarget > .dropTarget
+	.block.blockText.textHeader > .wrapContent.bgColor > .selectionTarget > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
 }
 
