@@ -120,12 +120,9 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClearFilter = (item: any) => {
-		const filter = {
-			...item,
-			...Dataview.getDefaultFilterValues(item.relation),
-		};
+		const filter = view.getFilter(item.id);
 
-		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, filter, () => {
+		Dataview.clearFilter(rootId, blockId, view.id, filter, () => {
 			loadData(view.id, 0, false);
 		});
 	};

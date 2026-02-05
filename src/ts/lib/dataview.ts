@@ -1,5 +1,5 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { I, M, C, S, U, J, Relation, translate } from 'Lib';
+import { I, M, C, S, U, J, Relation, translate, analytics, Storage } from 'Lib';
 
 class Dataview {
 
@@ -1093,6 +1093,82 @@ class Dataview {
 		};
 
 		return quickOptions[0].id;
+	};
+
+	/**
+	 * Creates default advanced filter object with nested filters.
+	 * @returns {any} The default advanced filter configuration.
+	 */
+	getDefaultAdvancedFilter (): any {
+		return {
+			operator: I.FilterOperator.And,
+			condition: I.FilterCondition.None,
+			relationKey: '',
+			value: '',
+			nestedFilters: [
+				{
+					relationKey: 'name',
+					condition: I.FilterCondition.In,
+					value: '',
+				}
+			],
+		};
+	};
+
+	/**
+	 * Clears a filter to its default values.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {I.Filter} filter - The filter to clear.
+	 * @param {function} [callBack] - Optional callback after clearing.
+	 */
+	clearFilter (rootId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: () => void) {
+		const isAdvanced = [ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+
+		let updatedFilter: any;
+
+		if (isAdvanced) {
+			updatedFilter = {
+				...filter,
+				...this.getDefaultAdvancedFilter(),
+			};
+		} else {
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation) {
+				return;
+			};
+			updatedFilter = {
+				...filter,
+				...this.getDefaultFilterValues(relation),
+			};
+		};
+
+		C.BlockDataviewFilterReplace(rootId, blockId, viewId, filter.id, updatedFilter, callBack);
+	};
+
+	/**
+	 * Adds a filter to a dataview and tracks analytics.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {any} filter - The filter to add.
+	 * @param {any} object - The target object (for analytics).
+	 * @param {boolean} isInline - Whether the dataview is inline.
+	 * @param {function} [callBack] - Optional callback after adding.
+	 */
+	addFilter (rootId: string, blockId: string, viewId: string, filter: any, object: any, isInline: boolean, callBack?: () => void) {
+		Storage.toggleViewFilter(rootId, viewId, true);
+
+		C.BlockDataviewFilterAdd(rootId, blockId, viewId, filter, () => {
+			callBack?.();
+
+			analytics.event('AddFilter', {
+				condition: filter.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline),
+			});
+		});
 	};
 
 	/**

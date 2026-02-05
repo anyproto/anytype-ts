@@ -263,18 +263,8 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClearFilter = (item: any) => {
 		const view = getView();
 		const filter = view.getFilter(item.id);
-		const relation = S.Record.getRelationByKey(filter.relationKey);
 
-		if (!relation) {
-			return;
-		};
-
-		const updatedFilter = {
-			...filter,
-			...Dataview.getDefaultFilterValues(relation),
-		};
-
-		C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, updatedFilter, () => {
+		Dataview.clearFilter(rootId, blockId, view.id, filter, () => {
 			loadData(view.id, 0, false);
 		});
 	};
@@ -330,42 +320,18 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			blockId,
 			getView,
 			onSelect: (item: any) => {
-				const filterValues = Dataview.getDefaultFilterValues(item);
-
-				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
+				const filter = {
 					relationKey: item.relationKey || item.id,
-					...filterValues,
-				}, () => {
-					loadData(view.id, 0, false);
+					...Dataview.getDefaultFilterValues(item),
+				};
 
-					analytics.event('AddFilter', {
-						condition: filterValues.condition,
-						objectType: object.type,
-						embedType: analytics.embedType(isInline),
-					});
+				Dataview.addFilter(rootId, blockId, view.id, filter, object, isInline, () => {
+					loadData(view.id, 0, false);
 				});
 			},
 			onAdvancedFilterAdd: () => {
-				C.BlockDataviewFilterAdd(rootId, blockId, view.id, {
-					operator: I.FilterOperator.And,
-					condition: I.FilterCondition.None,
-					relationKey: '',
-					value: '',
-					nestedFilters: [
-						{
-							relationKey: 'name',
-							condition: I.FilterCondition.In,
-							value: '',
-						}
-					],
-				}, () => {
+				Dataview.addFilter(rootId, blockId, view.id, Dataview.getDefaultAdvancedFilter(), object, isInline, () => {
 					loadData(view.id, 0, false);
-
-					analytics.event('AddFilter', {
-						condition: I.FilterCondition.None,
-						objectType: object.type,
-						embedType: analytics.embedType(isInline),
-					});
 				});
 			},
 		});

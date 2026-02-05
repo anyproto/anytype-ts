@@ -414,6 +414,19 @@ class Storage {
 	};
 
 	/**
+	 * Toggles or sets the filter visibility for a dataview view.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} viewId - The view ID.
+	 * @param {boolean} [value] - Optional value to set. If not provided, toggles current value.
+	 */
+	toggleViewFilter (rootId: string, viewId: string, value?: boolean) {
+		const filtersId = U.String.toCamelCase(`view-${viewId}-filters`);
+		const newValue = value !== undefined ? value : !this.checkToggle(rootId, filtersId);
+
+		return this.setToggle(rootId, filtersId, newValue);
+	};
+
+	/**
 	 * Deletes toggle values for a root object.
 	 * @param {string} rootId - The root object ID.
 	 */
