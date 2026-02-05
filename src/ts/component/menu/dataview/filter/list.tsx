@@ -300,10 +300,22 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onAdd = () => {
+	const createFilter = (filter: any) => {
 		const view = getView();
 		const object = getTarget();
 
+		Dataview.addFilter(rootId, blockId, view.id, filter, () => {
+			loadData(view.id, 0, false);
+
+			analytics.event('AddFilter', {
+				condition: filter.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline),
+			});
+		});
+	};
+
+	const onAdd = () => {
 		U.Menu.sortOrFilterRelationSelect({
 			element: `#${getId()} #item-add`,
 			classNameWrap: 'fromBlock',
@@ -316,19 +328,13 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			blockId,
 			getView,
 			onSelect: (item: any) => {
-				const filter = {
+				createFilter({
 					relationKey: item.relationKey || item.id,
 					...Dataview.getDefaultFilterValues(item),
-				};
-
-				Dataview.addFilter(rootId, blockId, view.id, filter, object, isInline, () => {
-					loadData(view.id, 0, false);
 				});
 			},
 			onAdvancedFilterAdd: () => {
-				Dataview.addFilter(rootId, blockId, view.id, Dataview.getDefaultAdvancedFilter(), object, isInline, () => {
-					loadData(view.id, 0, false);
-				});
+				createFilter(Dataview.getDefaultAdvancedFilter());
 			},
 		});
 	};

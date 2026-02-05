@@ -1073,7 +1073,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		Dataview.addFilter(rootId, block.id, view.id, item, object, isInline, callBack);
+		Dataview.addFilter(rootId, block.id, view.id, item, () => {
+			callBack?.();
+
+			analytics.event('AddFilter', {
+				condition: item.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline),
+			});
+		});
 	};
 
 	const getIdPrefix = () => {

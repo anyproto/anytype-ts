@@ -1,5 +1,5 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { I, M, C, S, U, J, Relation, translate, analytics, Storage } from 'Lib';
+import { I, M, C, S, U, J, Relation, translate, Storage } from 'Lib';
 
 class Dataview {
 
@@ -1157,27 +1157,17 @@ class Dataview {
 	};
 
 	/**
-	 * Adds a filter to a dataview and tracks analytics.
+	 * Adds a filter to a dataview.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} blockId - The block ID.
 	 * @param {string} viewId - The view ID.
 	 * @param {any} filter - The filter to add.
-	 * @param {any} object - The target object (for analytics).
-	 * @param {boolean} isInline - Whether the dataview is inline.
 	 * @param {function} [callBack] - Optional callback after adding.
 	 */
-	addFilter (rootId: string, blockId: string, viewId: string, filter: any, object: any, isInline: boolean, callBack?: () => void) {
+	addFilter (rootId: string, blockId: string, viewId: string, filter: any, callBack?: () => void) {
 		Storage.toggleViewFilter(rootId, viewId, true);
 
-		C.BlockDataviewFilterAdd(rootId, blockId, viewId, filter, () => {
-			callBack?.();
-
-			analytics.event('AddFilter', {
-				condition: filter.condition,
-				objectType: object.type,
-				embedType: analytics.embedType(isInline),
-			});
-		});
+		C.BlockDataviewFilterAdd(rootId, blockId, viewId, filter, callBack);
 	};
 
 	/**
