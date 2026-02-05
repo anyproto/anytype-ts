@@ -1096,10 +1096,19 @@ class Dataview {
 	};
 
 	/**
-	 * Creates default advanced filter object with nested filters.
-	 * @returns {any} The default advanced filter configuration.
+	 * Checks if a filter is an advanced filter (has And/Or operator).
+	 * @param {I.Filter} filter - The filter to check.
+	 * @returns {boolean} True if the filter is advanced.
 	 */
-	getDefaultAdvancedFilter (): any {
+	isAdvancedFilter (filter: I.Filter): boolean {
+		return [ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+	};
+
+	/**
+	 * Creates default advanced filter object with nested filters.
+	 * @returns {Partial<I.Filter>} The default advanced filter configuration.
+	 */
+	getDefaultAdvancedFilter (): Partial<I.Filter> {
 		return {
 			operator: I.FilterOperator.And,
 			condition: I.FilterCondition.None,
@@ -1124,7 +1133,7 @@ class Dataview {
 	 * @param {function} [callBack] - Optional callback after clearing.
 	 */
 	clearFilter (rootId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: () => void) {
-		const isAdvanced = [ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
+		const isAdvanced = this.isAdvancedFilter(filter);
 
 		let updatedFilter: any;
 

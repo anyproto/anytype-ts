@@ -418,8 +418,9 @@ class Storage {
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} viewId - The view ID.
 	 * @param {boolean} [value] - Optional value to set. If not provided, toggles current value.
+	 * @returns {any} The updated toggle object.
 	 */
-	toggleViewFilter (rootId: string, viewId: string, value?: boolean) {
+	toggleViewFilter (rootId: string, viewId: string, value?: boolean): any {
 		const filtersId = U.String.toCamelCase(`view-${viewId}-filters`);
 		const newValue = value !== undefined ? value : !this.checkToggle(rootId, filtersId);
 

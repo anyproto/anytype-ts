@@ -42,10 +42,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const isAdvancedFilter = (filter: I.Filter): boolean => {
-		return !![ I.FilterOperator.And, I.FilterOperator.Or ].includes(filter.operator);
-	};
-
 	const getFilterItems = () => {
 		const view = getView();
 
@@ -58,9 +54,9 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				...it,
 				relation: S.Record.getRelationByKey(it.relationKey),
 			};
-		}).filter(it => it.relation || isAdvancedFilter(it)).sort((a, b) => {
-			const aAdvanced = isAdvancedFilter(a);
-			const bAdvanced = isAdvancedFilter(b);
+		}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+			const aAdvanced = Dataview.isAdvancedFilter(a);
+			const bAdvanced = Dataview.isAdvancedFilter(b);
 
 			if (aAdvanced !== bAdvanced) {
 				return aAdvanced ? -1 : 1;
@@ -96,7 +92,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getCaption = (item: any): string => {
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			return '';
 		};
 
@@ -113,7 +109,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getName = (item: any): string => {
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			const ruleCount = item.nestedFilters?.length || 1;
 			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
 		};
@@ -198,7 +194,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (isAdvancedFilter(item)) {
+		if (Dataview.isAdvancedFilter(item)) {
 			S.Menu.open('dataviewFilterAdvanced', {
 				element: `#${getId()} #item-${item.id}`,
 				classNameWrap: 'fromBlock',
@@ -371,7 +367,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			);
 		} else {
-			const isAdvanced = isAdvancedFilter(item);
+			const isAdvanced = Dataview.isAdvancedFilter(item);
 			const cn = [ 'item', 'filterItem' ];
 
 			if (isAdvanced) {
