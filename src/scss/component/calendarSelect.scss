@@ -27,14 +27,14 @@
 		}
 
 		.weekDays {
-			display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px;
-			align-items: center;
+			display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 4px;
+			align-items: center; padding-bottom: 4px;
 		}
 
 		.weekDay { color: var(--color-text-secondary); @include text-small; width: 28px; text-align: center; }
 	}
 
-	.body { padding: 0px 8px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px; }
+	.body { padding: 0px 8px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 4px; }
 
 	.day {
 		display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px;
