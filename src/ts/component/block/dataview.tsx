@@ -1036,51 +1036,58 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 
-	const onFilterAddClick = (menuParam: I.MenuParam, noToggle?: boolean) => {
-		const items = U.Common.getViewFilters(view);
+	const toggleFilters = () => {
 		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
+		const showFilters = Storage.checkToggle(rootId, filtersId);
 
-		if (items.length && !noToggle) {
-			const showFilters = Storage.checkToggle(rootId, filtersId);
-
-			Storage.setToggle(rootId, filtersId, !showFilters);
-			setDummy(dummy + 1);
-		} else {
-			U.Menu.sortOrFilterRelationSelect(menuParam, {
-				rootId,
-				blockId: block.id,
-				getView,
-				onSelect: item => {
-					Storage.setToggle(rootId, filtersId, true);
-
-					onFilterAdd({
-						relationKey: item.relationKey || item.id,
-						...Dataview.getDefaultFilterValues(item),
-					});
-				},
-				onAdvancedFilterAdd: () => {
-					Storage.setToggle(rootId, filtersId, true);
-
-					onFilterAdd({
-						operator: I.FilterOperator.And,
-						condition: I.FilterCondition.None,
-						relationKey: '',
-						value: '',
-						nestedFilters: [
-							{
-								relationKey: 'name',
-								condition: I.FilterCondition.In,
-								value: '',
-							}
-						],
-					});
-				},
-			});
-		};
+		Storage.setToggle(rootId, filtersId, !showFilters);
+		setDummy(dummy + 1);
 	};
 
-	const onFiltersClear = () => {
+	const onFilterAddClick = (menuParam: I.MenuParam) => {
+		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
+
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
+			rootId,
+			blockId: block.id,
+			getView,
+			onSelect: item => {
+				Storage.setToggle(rootId, filtersId, true);
+
+				onFilterAdd({
+					relationKey: item.relationKey || item.id,
+					...Dataview.getDefaultFilterValues(item),
+				});
+			},
+			onAdvancedFilterAdd: () => {
+				Storage.setToggle(rootId, filtersId, true);
+
+				onFilterAdd({
+					operator: I.FilterOperator.And,
+					condition: I.FilterCondition.None,
+					relationKey: '',
+					value: '',
+					nestedFilters: [
+						{
+							relationKey: 'name',
+							condition: I.FilterCondition.In,
+							value: '',
+						}
+					],
+				});
+			},
+		});
+	};
+
+	const closeFilters = () => {
+		const view = getView();
+
+		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+			return;
+		};
+
 		Storage.setToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`), false);
+		setDummy(dummy + 1);
 	};
 
 	const onFilterAdd = (item: any, callBack?: () => void) => {
@@ -1495,7 +1502,9 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
-	const showFilters = Storage.checkToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`));
+	const filtersToggleId = U.String.toCamelCase(`view-${view.id}-filters`);
+	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
+		&& (view.sorts.length > 0 || U.Common.getViewFilters(view).length > 0);
 
 	let ViewComponent: any = null;
 	let body = null;
@@ -1561,6 +1570,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		onSortAdd,
 		onFilterAdd,
 		onFilterAddClick,
+		toggleFilters,
+		closeFilters,
 		isAllowedObject,
 		isAllowedDefaultType,
 		onSourceSelect,
@@ -1639,7 +1650,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					ref={filtersRef}
 					{...props}
 					{...dataviewProps}
-					onClear={onFiltersClear}
+					onClear={closeFilters}
 				/>
 			) : ''}
 

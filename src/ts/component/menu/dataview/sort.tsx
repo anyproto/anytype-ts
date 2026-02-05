@@ -6,17 +6,20 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, IconObject, Label, Select } from 'Component';
+import { Icon, IconObject } from 'Component';
 import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
 
 const HEIGHT = 48;
+const HEIGHT_DIV = 16;
+const HEIGHT_ITEM = 28;
+const HEIGHT_EMPTY = 48;
 const LIMIT = 20;
 
 const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, setHover, onKeyDown, setActive, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
-	const { rootId, blockId, getView, onSortAdd, onFilterOrSortAdd, isInline, getTarget, readonly } = data;
+	const { rootId, blockId, getView, onSortAdd, isInline, getTarget, readonly, closeFilters, loadData } = data;
 	const [ dummy, setDummy ] = useState(0);
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -38,13 +41,32 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const getItems = () => {
+	const getSortItems = () => {
 		const view = getView();
 		if (!view) {
 			return [];
 		};
 
 		return U.Common.objectCopy(view.sorts || []);
+	};
+
+	const getItems = () => {
+		const sortItems = getSortItems();
+		const items: any[] = [ ...sortItems ];
+
+		if (!sortItems.length) {
+			items.push({ isEmpty: true });
+		};
+
+		if (!isReadonlyValue) {
+			items.push({ isDiv: true });
+			items.push({ id: 'add', name: translate('menuDataviewSortAddSort') });
+			if (sortItems.length) {
+				items.push({ id: 'clear', name: translate('menuDataviewFilterDeleteSort') });
+			};
+		};
+
+		return items;
 	};
 
 	const getRelationOptions = () => {
@@ -63,22 +85,39 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClick = (e: any, item: any) => {
-		S.Menu.open('select', {
-			element: `#${getId()} #item-${item.id}`,
-			className,
-			classNameWrap,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				...data,
-				options: getRelationOptions(),
-				value: item.relationKey,
-				itemId: item.id,
-				onSelect: (e: any, el: any) => {
-					onChange(item.id, 'relationKey', el.id);
-				}
-			}
-		});
+		switch (item.id) {
+			case 'add': {
+				onAdd();
+				break;
+			};
+
+			case 'clear': {
+				onClear();
+				break;
+			};
+
+			default: {
+				S.Menu.open('select', {
+					rebind,
+					element: `#${getId()} #item-${item.id}`,
+					className,
+					classNameWrap,
+					horizontal: I.MenuDirection.Center,
+					noFlipY: true,
+					data: {
+						...data,
+						options: getRelationOptions(),
+						value: item.relationKey,
+						itemId: item.id,
+						onSelect: (e: any, el: any) => {
+							onChange(item.id, 'relationKey', el.id);
+						}
+					}
+				});
+				break;
+			};
+		};
+
 	};
 
 	const onMore = (e: any, item: any) => {
@@ -90,6 +129,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		];
 
 		S.Menu.open('select', {
+			rebind,
 			className,
 			classNameWrap,
 			element: `${elementId} .more`,
@@ -117,10 +157,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const menuParam = {
 			className,
 			classNameWrap,
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center,
+			element: `#${getId()} #item-${item.id} .chip.relation`,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Bottom,
+			offsetY: 4,
 		};
 
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
@@ -134,36 +174,46 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onAdd = () => {
-		const relationOptions = getRelationOptions();
-
-		if (!relationOptions.length) {
-			return;
+		const menuParam = {
+			className,
+			classNameWrap,
+			element: `#${getId()} #item-add`,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Bottom,
+			offsetY: 4,
+			offsetX: 8,
 		};
-
-		if (onFilterOrSortAdd) {
-			onFilterOrSortAdd(getId(), param.component || id, getSize().width);
-			return;
-		};
-
 		const content = $(`#${getId()} .content`);
-		const newItem = { 
-			relationKey: relationOptions[0].id, 
-			type: I.SortType.Asc,
-			empty: I.EmptyType.End,
-		};
 
-		onSortAdd(newItem, () => {
-			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
+			rootId,
+			blockId,
+			getView,
+			onSelect: (item: any) => {
+				const newItem = {
+					relationKey: item.relationKey ? item.relationKey : item.id,
+					type: I.SortType.Asc,
+					empty: I.EmptyType.End,
+				};
+
+				onSortAdd(newItem, () => {
+					content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+				});
+			},
 		});
 	};
 
-	const onChange = (id: number, k: string, v: string) => {
+	const onChange = (id: string, k: string, v: string) => {
 		const view = getView();
 		if (!view) {
 			return;
 		};
 
 		const item = view.getSort(id);
+		if (!item) {
+			return;
+		};
+
 		const object = getTarget();
 
 		item[k] = v;
@@ -197,6 +247,25 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
+	const getRowHeight = (item: any) => {
+		if (item.isDiv) return HEIGHT_DIV;
+		if (item.isEmpty) return HEIGHT_EMPTY;
+		if ([ 'add', 'clear' ].includes(item.id)) return HEIGHT_ITEM;
+		return HEIGHT;
+	};
+
+	const onClear = () => {
+		const view = getView();
+		if (!view) return;
+
+		C.BlockDataviewSortRemove(rootId, blockId, view.id, view.sorts.map(it => it.id), () => {
+			loadData?.(view.id, 0, false);
+			closeFilters?.();
+		});
+
+		S.Menu.close('dataviewSort');
+	};
+
 	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
@@ -212,9 +281,9 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const ids = items.map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const sortIds = view.sorts.map(it => it.id);
+		const oldIndex = sortIds.indexOf(active.id);
+		const newIndex = sortIds.indexOf(over.id);
 		const object = getTarget();
 
 		n.current = newIndex;
@@ -238,8 +307,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const resize = () => {
 		const items = getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = !isReadonly() ? 62 : 16;
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+		const offset = 16;
+		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
 		obj.css({ height });
 		position();
@@ -251,14 +320,13 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return readonly || !allowedView;
 	};
 
+	const onTypeChange = (e: any, item: any) => {
+		const type = item.type === I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+		onChange(item.id, 'type', String(type));
+	};
+
 	const isReadonlyValue = isReadonly();
 	const items = getItems();
-	const sortCnt = items.length;
-
-	const typeOptions = [
-		{ id: I.SortType.Asc, name: translate('commonAscending') },
-		{ id: I.SortType.Desc, name: translate('commonDescending') },
-	];
 
 	const Item = (item: any) => {
 		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: isReadonlyValue });
@@ -268,15 +336,15 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
-		const cn = [ 'item' ];
+		const cn = [ 'item', 'sortItem' ];
 
 		if (isReadonlyValue) {
 			cn.push('isReadonly');
 		};
 
 		return (
-			<div 
-				id={`item-${item.id}`} 
+			<div
+				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
 				ref={setNodeRef}
@@ -285,33 +353,67 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				style={style}
 			>
 				{!isReadonlyValue ? <Icon className="dnd" /> : ''}
-				<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
-				<div className="txt">
-					<Label id={[ 'filter', 'relation', item.id ].join('-')} text={relation.name} onClick={e => onSortNameClick(e, item)} />
-
-					<Select 
-						id={[ 'filter', 'type', item.id ].join('-')} 
-						className="grey" 
-						options={typeOptions}
-						arrowClassName={'light'}
-						value={item.type} 
-						onChange={v => onChange(item.id, 'type', v)} 
-						readonly={isReadonlyValue}
-						menuParam={{ className, classNameWrap }}
-					/>
-				</div>
-				{!isReadonlyValue ? (
-					<div className="buttons">
-						<Icon className="more withBackground" onClick={e => onMore(e, item)} />
-						<Icon className="delete withBackground" onClick={e => onRemove(e, item)} />
+				<div className="sides">
+					<div className="side left">
+						<div className="chip relation" onClick={e => onSortNameClick(e, item)}>
+							<IconObject size={20} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
+							<div className="name">{relation.name}</div>
+						</div>
+						<div className="chip type" onClick={e => onTypeChange(e, item)}>
+							<Icon className={`sortArrow c${item.type}`} />
+						</div>
 					</div>
-				) : ''}
+					<div className="side right">
+						{!isReadonlyValue ? (
+							<div className="buttons">
+								<Icon className="more withBackground" onClick={e => onMore(e, item)} />
+								<Icon className="delete withBackground" onClick={e => onRemove(e, item)} />
+							</div>
+						) : ''}
+					</div>
+				</div>
 			</div>
 		);
 	};
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
+
+		let content = null;
+
+		if (item.isDiv) {
+			content = (
+				<div className="separator" style={param.style}>
+					<div className="inner" />
+				</div>
+			);
+		} else
+		if (item.isEmpty) {
+			content = (
+				<div className="item empty" style={param.style}>
+					<div className="inner">{translate('menuDataviewSortNoSortsApplied')}</div>
+				</div>
+			);
+		} else
+		if ([ 'add', 'clear' ].includes(item.id)) {
+			const cn = [ 'item', item.id ];
+			content = (
+				<div
+					key={`sort-item-${item.id}`}
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={item.id === 'add' ? onAdd : onClear}
+					onMouseEnter={() => setHover({ id: item.id })}
+					onMouseLeave={() => setHover()}
+					style={param.style}
+				>
+					<Icon className={item.id === 'add' ? 'plus' : 'remove'} />
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else {
+			content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+		};
 
 		return (
 			<CellMeasurer
@@ -321,7 +423,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<Item key={item.id} {...item} index={param.index} style={param.style} />
+				{content}
 			</CellMeasurer>
 		);
 	};
@@ -378,61 +480,39 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 			>
 				<SortableContext
-					items={items.map((item) => item.id)}
+					items={items.filter(it => !it.isDiv && !it.isEmpty && ![ 'add', 'clear' ].includes(it.id)).map(it => it.id)}
 					strategy={verticalListSortingStrategy}
 				>
 					<div className="items">
-						{!items.length ? (
-							<div className="item empty">
-								<div className="inner">{translate('menuDataviewSortNoSortsApplied')}</div>
-							</div>
-						) : (
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={() => true}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={LIMIT}
-												onScroll={onScroll}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						)}
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => true}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={listRef}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={cache.current}
+											rowCount={items.length}
+											rowHeight={({ index }) => getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={onScroll}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
 					</div>
 				</SortableContext>
 			</DndContext>
-
-			{!isReadonlyValue ? (
-				<div className="bottom">
-					<div className="line" />
-					<div 
-						id="item-add" 
-						className="item add" 
-						onClick={onAdd}
-						onMouseEnter={() => setHover({ id: 'add' })} 
-						onMouseLeave={() => setHover()}
-					>
-						<Icon className="plus" />
-						<div className="name">{translate('menuDataviewSortNewSort')}</div>
-					</div> 
-				</div>
-			) : ''}
 		</div>
 	);
 

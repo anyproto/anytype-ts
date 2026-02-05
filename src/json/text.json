@@ -277,6 +277,7 @@
 	"pluralBookmark": "Bookmark|Bookmarks",
 	"pluralAttachment": "Attachment|Attachments",
 	"pluralRule": "rule|rules",
+	"pluralSort": "sort|sorts",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1756,6 +1757,7 @@
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
 	"menuDataviewFilterNewFilter": "New filter",
+	"menuDataviewFilterDeleteSort": "Delete sort",
 	"menuDataviewFilterAdvancedAdd": "Add advanced filter",
 	"menuDataviewFilterAddRule": "Add rule",
 	"menuDataviewFilterDeleteFilter": "Delete filter",
@@ -1813,7 +1815,7 @@
 	"menuDataviewRelationEditToastOnCreate": "Property <b>%s</b> has been created",
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
-	"menuDataviewSortNewSort": "New sort",
+	"menuDataviewSortAddSort": "Add sort",
 	"menuDataviewSortShowEmpty": "Show empty values",
 	"menuDataviewSortShowEmptyTop": "On top",
 	"menuDataviewSortShowEmptyBottom": "On bottom",
