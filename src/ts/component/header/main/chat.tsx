@@ -26,11 +26,17 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const isDeleted = object._empty_ || object.isDeleted;
+	const readonly = object.isArchived;
+	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
 	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
+	};
+
+	const onRelation = () => {
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 
 	const onPin = () => {
@@ -103,13 +109,23 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-search" 
+				<Icon
+					id="button-header-search"
 					tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText'), typeY: I.MenuDirection.Bottom }}
 					className="search withBackground"
-					onClick={() => keyboard.onSearchText('',  analytics.route.header)} 
+					onClick={() => keyboard.onSearchText('',  analytics.route.header)}
 					onDoubleClick={e => e.stopPropagation()}
-				/> 
+				/>
+
+				{showRelations ? (
+					<Icon
+						id="button-header-relation"
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						onClick={onRelation}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
 
 				{showPin ? (
 					<Icon 

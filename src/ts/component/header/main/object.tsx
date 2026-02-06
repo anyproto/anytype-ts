@@ -8,21 +8,25 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
 	const isLocked = root ? root.isLocked() : false;
+	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const isTemplate = U.Object.isTemplateType(object.type);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted && !object.isArchived;
+	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isDeleted;
 	const showPin = canWrite && !isRelation && !isTemplate;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const isRelationOpen = (rightSidebar.page == 'object/relation');
 	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 	const cnc = [ 'side', 'center' ];
 
@@ -104,6 +108,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		analytics.event('ClickShareObject', { objectType: object.type });
 	};
 
+	const onRelation = () => {
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
+	};
+
 	const onPin = () => {
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
 	};
@@ -152,18 +160,28 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					/>
 				) : ''}
 
+				{showRelations ? (
+					<Icon
+						id="button-header-relation"
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (isRelationOpen ? 'active' : '') ].join(' ')}
+						onClick={onRelation}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+
 				{showPin ? (
-					<Icon 
-						id="button-header-pin" 
-						tooltipParam={{ 
-							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
-							caption: keyboard.getCaption('addFavorite'), 
+					<Icon
+						id="button-header-pin"
+						tooltipParam={{
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'),
+							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 
 				{showMenu ? (

@@ -149,7 +149,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.GoogleMaps, name: 'Google maps' },
 			{ id: I.EmbedProcessor.Miro, name: 'Miro' },
 			{ id: I.EmbedProcessor.Figma, name: 'Figma' },
-			{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
+			{ id: I.EmbedProcessor.Twitter, name: 'X (ex-Twitter)' },
 			{ id: I.EmbedProcessor.OpenStreetMap, name: 'OpenStreetMap' },
 			{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
 			{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
