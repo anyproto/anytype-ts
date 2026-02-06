@@ -3,6 +3,7 @@ import { I } from 'Lib';
 
 import FooterAuthIndex from './auth';
 import FooterAuthDisclaimer from './auth/disclaimer';
+import FooterAuthOnboardEmail from './auth/email';
 import FooterMainObject from './main/object';
 
 interface Props extends I.FooterComponent {
@@ -13,6 +14,7 @@ interface Props extends I.FooterComponent {
 const Components = {
 	authIndex:			 FooterAuthIndex,
 	authDisclaimer:		 FooterAuthDisclaimer,
+	authOnboardEmail:		 	 FooterAuthOnboardEmail,
 	mainObject:			 FooterMainObject,
 };
 
