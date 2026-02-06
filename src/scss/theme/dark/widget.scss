@@ -38,6 +38,17 @@
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
+.widget.widgetObject {
+	.item {
+		.buttons {
+			.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+			.icon.plus:hover, .icon.plus.hover { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
+		}
+	}
+
+	.empty { color: var(--color-text-secondary); padding: 3px 8px; }
+}
+
 .widget.widgetView {
 	#viewSelect {
 		.select {
