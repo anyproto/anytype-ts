@@ -528,6 +528,15 @@ class RecordStore {
 	};
 
 	/**
+	 * Gets the participant type object.
+	 * @private
+	 * @returns {any|null} The participant type object or null.
+	 */
+	getParticipantType () {
+		return this.getTypeByKey(J.Constant.typeKey.participant);
+	};
+
+	/**
 	 * Gets all type objects.
 	 * @private
 	 * @returns {any[]} The type objects.

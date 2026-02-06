@@ -480,6 +480,14 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							templates = templates.filter(it => it.templateType != I.FilterValueTemplate.Object);
 						};
 
+						if (types.length) {
+							const participantType = S.Record.getParticipantType();
+
+							if (!participantType || !types.includes(participantType.id)) {
+								templates = templates.filter(it => it.templateType != I.FilterValueTemplate.Participant);
+							};
+						};
+
 						if (items.length && templates.length) {
 							templates.push({ isDiv: true });
 						};
