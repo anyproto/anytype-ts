@@ -1207,7 +1207,7 @@ class UtilMenu {
 		const options = Relation.getFilterOptions(rootId, blockId, view);
 
 		const hasAdvancedFilter = view?.filters?.some(f => f.operator === I.FilterOperator.And);
-		const bottomItems = hasAdvancedFilter ? [] : [
+		const bottomItems = (!onAdvancedFilterAdd || hasAdvancedFilter) ? [] : [
 			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), icon: 'advancedFilter' }
 		];
 
