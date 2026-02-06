@@ -102,13 +102,18 @@ class UtilObject {
 
 		const spaceview = U.Space.getSpaceview();
 
+		let route = '';
+		if (object.layout != I.ObjectLayout.SpaceView) {
+			route = this.route(object);
+		};
+
 		return { 
 			title: U.Object.name(object, true),
 			icon: U.Graph.imageSrc(object),
 			layout: object.layout,
 			isImage: object.iconImage,
 			uxType: spaceview?.uxType,
-			route: this.route(object),
+			route,
 		};
 	};
 

@@ -89,7 +89,7 @@ class Keyboard {
 		const isPopup = this.isPopup();
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
-		const data = sidebar.getData(I.SidebarPanel.Left, isPopup);
+		const data = sidebar.getData(I.SidebarPanel.Left, false);
 		const threshold = J.Size.sidebar.left.threshold.close;
 
 		if (!data.isClosed && (cw <= threshold)) {
