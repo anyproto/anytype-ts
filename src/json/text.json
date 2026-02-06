@@ -2019,9 +2019,9 @@
 	"filterConditionNotLike": "Doesn't contain",
 	"filterConditionEmpty": "Is empty",
 	"filterConditionNotEmpty": "Is not empty",
-	"filterConditionAllIn": "Has all of",
-	"filterConditionInArray": "Has any of",
-	"filterConditionNotInArray": "Has none of",
+	"filterConditionAllIn": "Contains all",
+	"filterConditionInArray": "Contains any",
+	"filterConditionNotInArray": "Contains none",
 
 	"filterOperatorOr": "Or",
 	"filterOperatorAnd": "And",
