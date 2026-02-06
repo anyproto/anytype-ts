@@ -13,16 +13,23 @@ interface Props {
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
 	onRemove?: (e: any, id: string) => void;
+	onContext?: (e: any, item: any) => void;
 };
 
 const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 
-	const { cellId, size, iconSize, relation, canEdit, elementMapper, onClick, onRemove, getObject } = props;
+	const { cellId, size, iconSize, relation, canEdit, elementMapper, onClick, onRemove, onContext, getObject } = props;
 	const cn = [ 'element' ];
-	
+
 	const onClickHandler = (e: any) => {
 		if (onClick) {
 			onClick(e, getObjectHandler());
+		};
+	};
+
+	const onContextHandler = (e: any) => {
+		if (onContext) {
+			onContext(e, getObjectHandler());
 		};
 	};
 
@@ -66,7 +73,7 @@ const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 	};
 
 	return (
-		<div className={cn.join(' ')}>
+		<div className={cn.join(' ')} onContextMenu={onContext ? onContextHandler : undefined}>
 			<div className="flex">
 				{iconObject}
 				<ObjectName object={object} onClick={onClickHandler} />

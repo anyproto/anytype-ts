@@ -244,6 +244,24 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		};
 	};
 
+	const onContext = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('objectContext', {
+			classNameWrap: param.classNameWrap || 'fromBlock',
+			recalcRect: () => {
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y };
+			},
+			data: {
+				objectIds: [ item.id ],
+				subId: data.subId,
+				allowedNewTab: true,
+			},
+		});
+	};
+
 	const getRowHeight = (item: any) => {
 		let h = HEIGHT_ITEM;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
@@ -294,13 +312,14 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 		} else {
 			content = (
-				<MenuItemVertical 
+				<MenuItemVertical
 					id={item.id}
 					object={item.isSystem ? null : item}
 					icon={item.icon}
 					name={<ObjectName object={item} />}
-					onMouseEnter={e => onOver(e, item)} 
+					onMouseEnter={e => onOver(e, item)}
 					onClick={e => onClick(e, item)}
+					onContextMenu={e => onContext(e, item)}
 					caption={type ? <ObjectType object={type} /> : ''}
 					style={param.style}
 				/>

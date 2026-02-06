@@ -8,7 +8,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	const { 
 		id = '', icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
-		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, tooltipParam = {},
+		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
 	const cn = [];
 	const withArrow = arrow || subComponent;
@@ -168,7 +168,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 				<div 
 					className="clickable" 
 					onClick={hasClick ? undefined : onClick}
-					onContextMenu={!hasClick && withMore ? onMore : undefined}
+					onContextMenu={onContextMenu || (!hasClick && withMore ? onMore : undefined)}
 				>
 					{iconMainElement}
 					{nameElement}
@@ -213,7 +213,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 			onClick={hasClick ? onClick : undefined}
 			onMouseEnter={onMouseEnterHandler} 
 			onMouseLeave={onMouseLeaveHandler}
-			onContextMenu={hasClick && withMore ? onMore : undefined}
+			onContextMenu={onContextMenu || (hasClick && withMore ? onMore : undefined)}
 			style={style}
 		>
 			{content}

@@ -285,7 +285,7 @@ class UtilObject {
 	*/
 	openConfig (e: any, object: any, param?: any) {
 		const cb = () => {
-			if (e && (e.button == 1)) {
+			if (e && ((e.metaKey || e.ctrlKey) || (e.button == 1))) {
 				this.openTab(object);
 				return;
 			};

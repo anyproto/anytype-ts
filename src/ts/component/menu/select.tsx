@@ -18,7 +18,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { 
 		filter, value, disabled, placeholder, noVirtualisation, menuLabel, noKeys, preventFilter, withAdd, 
-		canSelectInitial, onSelect, noClose, noScroll, maxHeight, noFilter, onSwitch,
+		canSelectInitial, onSelect, onContext, noClose, noScroll, maxHeight, noFilter, onSwitch,
 	} = data;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
 	const filterRef = useRef(null);
@@ -274,13 +274,14 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			content = (
-				<MenuItemVertical 
-					{...item} 
+				<MenuItemVertical
+					{...item}
 					icon={item.icon}
-					className={cn.join(' ')} 
-					checkbox={isActive(item)} 
-					onClick={e => onClick(e, item)} 
-					onMouseEnter={e => onMouseEnter(e, item)} 
+					className={cn.join(' ')}
+					checkbox={isActive(item)}
+					onClick={e => onClick(e, item)}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onContextMenu={onContext ? e => onContext(e, item) : undefined}
 					style={item.style}
 				/>
 			);
