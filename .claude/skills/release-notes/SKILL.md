@@ -307,7 +307,7 @@ When merging across parts, append Part 2's items after Part 1's items within eac
 
 7. Write the JSON to a temp file, then run the generator script:
 ```bash
-python3 .claude/release-notes/generate_docx.py /tmp/release_data.json <output_path>
+python3 .claude/skills/release-notes/generate_docx.py /tmp/release_data.json <output_path>
 ```
 
 **Output location:** Save the .docx in the project root as `release-<version>.docx` (e.g., `release-0.54.0.docx`).
