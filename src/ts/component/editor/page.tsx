@@ -699,7 +699,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			ret = true;
 		});
 
-		if (!ret && ids.length && !keyboard.isSpecial(e) && !readonly) {
+		if (!ret && ids.length && !keyboard.isSpecial(e) && !e.metaKey && !e.ctrlKey && !readonly) {
 			const param = {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
