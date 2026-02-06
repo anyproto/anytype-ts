@@ -542,7 +542,23 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				noFlipY: true,
 				data: {
 					options,
-					onSelect: (e: any, item: any) => U.Object.openAuto(item),
+					onSelect: (e: any, item: any) => U.Object.openEvent(e, item),
+					onContext: (e: any, item: any) => {
+						e.preventDefault();
+						e.stopPropagation();
+
+						S.Menu.open('objectContext', {
+							classNameWrap: 'fromBlock',
+							recalcRect: () => {
+								const { x, y } = keyboard.mouse.page;
+								return { width: 0, height: 0, x: x + 4, y };
+							},
+							data: {
+								objectIds: [ item.id ],
+								allowedNewTab: true,
+							},
+						});
+					},
 				}
 			});
 		});

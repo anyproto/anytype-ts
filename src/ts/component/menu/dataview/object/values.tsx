@@ -72,6 +72,24 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 	};
 
+	const onContext = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('objectContext', {
+			classNameWrap: classNameWrap || 'fromBlock',
+			recalcRect: () => {
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y };
+			},
+			data: {
+				objectIds: [ item.id ],
+				subId,
+				allowedNewTab: true,
+			},
+		});
+	};
+
 	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
@@ -186,10 +204,11 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 
 		return (
-			<div 
-				id={`item-${item.id}`} 
-				className={cn.join(' ')} 
+			<div
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
+				onContextMenu={e => onContext(e, item)}
 				ref={setNodeRef}
 				{...attributes}
 				{...listeners}
