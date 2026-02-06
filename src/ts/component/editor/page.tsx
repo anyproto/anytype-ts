@@ -1028,9 +1028,17 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const next = S.Block.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
+		let next = S.Block.getNextBlock(rootId, block.id, dir, (it: any) => {
+			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem() &&
+				!it.isTable() && !it.isTableColumn() && !it.isTableRow() &&
+				ids.every(id => !S.Block.checkIsChild(rootId, id, it.id));
 		});
+
+		if (next && S.Block.checkIsInsideTable(rootId, next.id)) {
+			next = S.Block.getNextBlock(rootId, block.id, dir, (it: any) => {
+				return it.isTable() && ids.every(id => !S.Block.checkIsChild(rootId, id, it.id));
+			});
+		};
 
 		if (!next) {
 			return;
