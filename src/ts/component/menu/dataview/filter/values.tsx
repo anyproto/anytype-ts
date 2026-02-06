@@ -475,10 +475,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						details: types.length == 1 ? { type: types[0] } : {},
 					}}
 					dataChange={(items: any) => {
-						if (!config.experimental) {
-							return items;
-						};
-
 						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
 
 						if (items.length) {

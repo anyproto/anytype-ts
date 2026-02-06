@@ -2714,9 +2714,8 @@
 	"notificationMode3": "Custom",
 
 	"filterTemplate0": "Value template",
-	"filterTemplate1": "Current User",
-	"filterTemplate2": "Current Object",
-	"filterTemplate3": "Space Member",
+	"filterTemplate1": "This Object",
+	"filterTemplate2": "Current User",
 
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
