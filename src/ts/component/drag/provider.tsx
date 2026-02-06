@@ -664,7 +664,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			};
 		};
 
-		const hd = hoverData.current;
+		let hd = hoverData.current;
 		const dropType = String(data.droptype) || '';
 		const rootId = String(data.rootid) || '';
 		const ids = data.ids || [];
@@ -682,7 +682,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		let style = 0;
 		let canDropMiddle = 0;
 		let isReversed = 0;
-		let col1 = 0; 
+		let col1 = 0;
 		let col2 = 0;
 
 		if (hd) {
@@ -739,6 +739,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				const targetBot = objectData.current.get(hd.cacheKey + '-bot');
 				if (targetBot) {
 					setHoverData(targetBot);
+					hd = targetBot;
 					initVars();
 				};
 			};
