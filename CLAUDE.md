@@ -292,6 +292,10 @@ For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=1276
 - Follow existing icon patterns (e.g., `src/img/icon/add/` for editor control button icons)
 - Icons typically have two variants: `name0.svg` (default state, #B6B6B6) and `name1.svg` (hover state, #252525)
 
+## Update Docs
+
+After completing any task that adds, removes, or significantly modifies files in a component/abstraction folder, run the `/update-docs` skill to update the co-located README.md. Documentation is kept lean and delta-driven — only sections affected by the change are updated. Skip for trivial changes (typo fixes, minor logic tweaks).
+
 ## Dark Mode Check
 
 After completing any task that edits SCSS files (`src/scss/`), SVG/image files (`src/img/`), or adds new UI components, run the `/dark-mode-check` skill to audit for dark mode issues. This catches:
