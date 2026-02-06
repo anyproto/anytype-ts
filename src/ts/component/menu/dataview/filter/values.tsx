@@ -8,8 +8,7 @@ const SUB_ID_PREFIX = 'filterOptionList';
 
 const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { config } = S.Common;
-	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
+	const { param, setHover, close, onKeyDown, setActive, getId, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead, onFilterPropChange } = data;
 	const nodeRef = useRef(null);
@@ -475,9 +474,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						details: types.length == 1 ? { type: types[0] } : {},
 					}}
 					dataChange={(items: any) => {
-						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+						let templates = Relation.getFilterTemplateOptions().map(it => ({ ...it, isSystem: true }));
 
-						if (items.length) {
+						if (!isInline) {
+							templates = templates.filter(it => it.templateType != I.FilterValueTemplate.Object);
+						};
+
+						if (items.length && templates.length) {
 							templates.push({ isDiv: true });
 						};
 
