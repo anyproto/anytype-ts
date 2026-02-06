@@ -1052,18 +1052,18 @@ class BlockStore {
 			if (isHeader || isTitle) {
 				let depth = 0;
 
-				if (block.isTextHeader1()) {
+				if (block.isTextHeader1() || block.isTextToggleHeader1()) {
 					depth = 0;
 					hasH1 = true;
 					hasH2 = false;
 				};
 
-				if (block.isTextHeader2()) {
+				if (block.isTextHeader2() || block.isTextToggleHeader2()) {
 					hasH2 = true;
 					if (hasH1) depth++;
 				};
 
-				if (block.isTextHeader3()) {
+				if (block.isTextHeader3() || block.isTextToggleHeader3()) {
 					if (hasH1) depth++;
 					if (hasH2) depth++;
 				};

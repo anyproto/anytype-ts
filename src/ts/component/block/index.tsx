@@ -69,8 +69,23 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	const onToggle = (e: any) => {
 		e.stopPropagation();
 
-		S.Block.toggle(rootId, block.id, !$(nodeRef.current).hasClass('isToggled'));
-		focus.apply();
+		const value = !Storage.checkToggle(rootId, block.id);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block, false) || [];
+
+		if (!ids.length) {
+			ids.push(block.id);
+		};
+
+		const toggles = S.Block.getBlocks(rootId).filter(it => ids.includes(it.id) && it.isTextToggle());
+
+		toggles.forEach(it => {
+			S.Block.toggle(rootId, it.id, value);
+		});
+
+		if (ids.length == 1) {
+			focus.apply();
+		};
 	};
 
 	const onDragStart = (e: any) => {

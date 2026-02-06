@@ -11,6 +11,7 @@ interface Props {
 	readonly?: boolean;
 	active?: boolean;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 };
 
 const Icons: any = {};
@@ -36,6 +37,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	active = false,
 	readonly = false,
 	onClick,
+	onMouseDown,
 }, ref) => {
 
 	const colorValue = color || 'default';
@@ -123,6 +125,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 			ref={refNode} 
 			className={cn.join(' ')} 
 			onClick={onClick}
+			onMouseDown={onMouseDown}
 		>
 			{inner}
 		</div>

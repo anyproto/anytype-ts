@@ -106,6 +106,9 @@ class UtilMenu {
 			{ id: I.TextStyle.Bulleted, lang: 'Bulleted', aliases: [ 'bulleted list' ] },
 			{ id: I.TextStyle.Numbered, lang: 'Numbered', aliases: [ 'numbered list' ] },
 			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: [ 'toggle' ] },
+			{ id: I.TextStyle.ToggleHeader1, lang: 'ToggleHeader1', aliases: [ 'toggle title', 'toggled title', 'toggle h1', 'toggle heading 1' ] },
+			{ id: I.TextStyle.ToggleHeader2, lang: 'ToggleHeader2', aliases: [ 'toggle heading', 'toggled heading', 'toggle h2', 'toggle heading 2' ] },
+			{ id: I.TextStyle.ToggleHeader3, lang: 'ToggleHeader3', aliases: [ 'toggle subheading', 'toggled subheading', 'toggle h3', 'toggle heading 3' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = U.Data.blockTextClass(it.id);

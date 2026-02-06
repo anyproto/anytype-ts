@@ -44,7 +44,20 @@ class UtilData {
 	 * @returns {string} The CSS class.
 	 */
 	blockTextClass(v: I.TextStyle): string {
-		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
+		let ret = `text${String(I.TextStyle[v] || 'Paragraph')}`;
+
+		if ([ 
+			I.TextStyle.Header1,
+			I.TextStyle.Header2,
+			I.TextStyle.Header3,
+			I.TextStyle.ToggleHeader1, 
+			I.TextStyle.ToggleHeader2, 
+			I.TextStyle.ToggleHeader3,
+		].includes(v)) {
+			ret = `textHeader ${ret}`;
+		};
+
+		return ret;
 	};
 
 	/**
@@ -241,6 +254,9 @@ class UtilData {
 			case I.TextStyle.Header1: s = 30; break;
 			case I.TextStyle.Header2: s = 26; break;
 			case I.TextStyle.Header3: s = 22; break;
+			case I.TextStyle.ToggleHeader1: s = 30; break;
+			case I.TextStyle.ToggleHeader2: s = 26; break;
+			case I.TextStyle.ToggleHeader3: s = 22; break;
 		};
 		return s;
 	};

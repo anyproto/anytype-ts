@@ -482,7 +482,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 	const clearState = () => {
 		keyboard.disablePreview(false);
-		
 		hide();
 		setIsSelecting(false);
 		cacheNodeMap.current.clear();
