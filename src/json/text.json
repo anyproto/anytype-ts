@@ -451,6 +451,7 @@
 	"authSelectLogin": "I already have a Key",
 	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
+	"onboardEmailDisclaimer": "By clicking Continue, you agree to receive emails from Anytype. You can unsubscribe at any time.",
 
 	"authLoginTitle": "Welcome back",
 	"authLoginLabel": "Enter your key to access your vault",
@@ -476,7 +477,7 @@
 	"authOnboardPhraseRevealAndCopy": "Reveal and Copy",
 
 	"authOnboardEmailTitle": "Stay in the loop",
-	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
+	"authOnboardEmailLabel": "We’d love to share product updates, tips, and community news.<br/>Your email is not linked to your data.",
 	"authOnboardEmailPlaceholder": "Enter your email...",
 
 	"authOnboardPersonaTitle": "Tell Us About Yourself",
