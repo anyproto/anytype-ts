@@ -59,6 +59,24 @@ return [
 ];
 ```
 
+## Multi-Part Releases
+
+A release may be split across **multiple Linear root issues** (parts), e.g.:
+- `JS-8571` "Release 18 | 0.54.0 | Desktop | Part 1" — contains Features, Design, Tech
+- `JS-8672` "Release 18 | 0.54.0 | Desktop | Part 2" — contains Bugs, Quality
+
+Commands that accept issue IDs (`all`, `from-parent`, `docx`) support multiple IDs. When multiple roots are provided, fetch each one and merge their children by type (features, QoL, bugs). Each part's items keep their relative Linear ordering; Part 1 items come before Part 2.
+
+## Exclusion Rules
+
+When processing issues from Linear (via `from-parent`, `all`, `docx`), **skip** any issue that matches:
+
+1. **Analytics-only** — labels contain only `📈 analytics` (no bug/quality/feature labels)
+2. **Internal** — labels contain only `🖌️ design` or `⚙️ tech` (no user-facing labels)
+3. **Alpha-version references** — the issue **title** or **description** contains a version string with an `-alpha` suffix (e.g., `0.53.28-alpha`, `0.50.29-alpha`). These issues were reported against pre-release builds and were already fixed before the public release; including them would confuse users who never saw the bug.
+
+   Detection: match the regex `\d+\.\d+\.\d+-alpha` in `title` or `description` fields.
+
 ## Commands
 
 Parse the user's command to determine the action:
@@ -155,8 +173,8 @@ div(),
 // --------------------------------------------//
 ```
 
-### `/release-notes all JS-XXXX`
-Generate a complete release notes page from a root Linear issue (typically a sprint/milestone issue).
+### `/release-notes all JS-XXXX [JS-YYYY ...]`
+Generate a complete release notes page from one or more root Linear issues (typically sprint/milestone issues). When a release is split across **multiple parts**, pass all root issue IDs — their children are merged by type.
 
 **How it works:**
 
@@ -165,7 +183,7 @@ Generate a complete release notes page from a root Linear issue (typically a spr
 curl -s -X POST "https://api.linear.app/graphql" \
   --header "Content-Type: application/json" \
   --header "Authorization: $(printenv LINEAR_API_KEY)" \
-  --data '{"query":"query{issue(id:\"JS-XXXX\"){title description labels{nodes{name}}children{nodes{identifier title description state{name}labels{nodes{name}}children{nodes{identifier title description state{name}labels{nodes{name}}}}}}}}"}' | jq .
+  --data '{"query":"query{issue(id:\"JS-XXXX\"){title description labels{nodes{name}}children(first:250){nodes{identifier title description state{name}labels{nodes{name}}children(first:250){nodes{identifier title description state{name}labels{nodes{name}}}}}}}}"}' | jq .
 ```
 
 2. Classify each child by its labels:
@@ -206,7 +224,7 @@ curl -s -X POST "https://api.linear.app/graphql" \
 User: /release-notes all JS-8500
 
 Root issue "Sprint 18" has children:
-  JS-8574 "Bugs | 18"         [📁 folder, 🐛 bug]     → process 37 bug sub-issues
+  JS-8574 "Bugs | 18"         [📁 folder, 🐛 bug]     → process 81 bug sub-issues
   JS-8573 "Quality | 18"      [📁 folder, 👌 quality]  → process 25 QoL sub-issues
   JS-292  "[epic] Tabs"        [💫 feature]             → h2 feature
   JS-4551 "[epic] Filters"    [💫 feature]             → h2 feature
@@ -214,6 +232,106 @@ Root issue "Sprint 18" has children:
   JS-8703 "Transfer Ownership" [💫 feature]            → h2 feature
 
 Result: Complete release page with features, QoL, bug fixes, and intro.
+```
+
+### `/release-notes docx JS-XXXX [JS-YYYY ...]`
+Export the current release notes as a `.docx` file with hyperlinks to Linear issues. Items follow Linear's ordering (the order children appear under their parent issue), not the category-based grouping from whatsNew.ts.
+
+Accepts one or more root issue IDs. When a release is split across **multiple Linear issues** ("parts"), pass all of them — their children are merged by type (features, QoL, bugs) and each part's items keep their relative order within the merged section.
+
+**How it works:**
+
+1. Fetch each root issue and its full children tree from Linear (using `first:250`):
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{issue(id:\"JS-XXXX\"){title description labels{nodes{name}}children(first:250){nodes{identifier title description state{name}labels{nodes{name}}children(first:250){nodes{identifier title description state{name}labels{nodes{name}}}}}}}}"}' | jq .
+```
+
+2. Collect and classify children from **all** root issues using these rules:
+
+| Child labels | Classification | Action |
+|---|---|---|
+| `💫 feature` (with or without `📁 folder`) | Features | If folder: use grandchildren as individual features. If standalone: single feature entry |
+| `📁 folder` + `👌 quality` | QoL folder | Grandchildren → QoL items. Items with `💫 feature` label become features instead |
+| `🐛 bug` (with or without `📁 folder`) | Bug folder | Grandchildren → Bug Fixes |
+| `📈 analytics` only | Analytics | **Skip** |
+| `🖌️ design` / `⚙️ tech` only | Internal | **Skip** — not user-facing |
+
+When merging across parts, append Part 2's items after Part 1's items within each section (preserving each part's internal ordering).
+
+3. Read the current release page from whatsNew.ts to get the user-facing note text for each entry.
+
+4. Match each Linear issue to its whatsNew.ts entry. Matching strategy:
+   - For **features**: match by h2 title keywords (e.g., JS-292 "Tabs" → `h2(\`Tabs\`)`)
+   - For **QoL items**: match by bold title keywords (e.g., "Toggle Headings" → `text(\`<b>Toggle Headings</b>\`)`) and collect the description paragraph(s) that follow
+   - For **bug fixes**: match by community link URL (`community.anytype.io/t/XXXXX`), by keywords from the issue title, or by position within the same category
+   - If no match is found, use the Linear issue title as fallback text, formatted as `**Title** – <Linear title>.`
+
+5. Build a JSON data file with this structure, preserving **Linear's child ordering** within each section:
+```json
+{
+    "version": "0.54.0",
+    "title": "Focus & Flow",
+    "sections": [
+        {
+            "heading": "Features",
+            "items": [
+                {"id": "JS-292", "text": "Note text from whatsNew.ts (cleaned of HTML)."},
+                {"id": "JS-4551", "text": "..."}
+            ]
+        },
+        {
+            "heading": "Quality of Life Improvements",
+            "items": [
+                {"id": "JS-XXXX", "text": "**Toggle Headings** – H1, H2, H3 can now be collapsible toggles..."}
+            ]
+        },
+        {
+            "heading": "Bug Fixes",
+            "items": [
+                {"id": "JS-8845", "text": "Action icons now look consistent across light and dark modes."}
+            ]
+        }
+    ]
+}
+```
+
+6. Text cleanup rules when extracting from whatsNew.ts:
+   - Strip HTML tags: `<span class="highlight">X</span>` → `X`, `<b>X</b>` → `**X**`, `<i>X</i>` → `X`
+   - Strip `<a href="...">text</a>` → `text`
+   - Resolve template expressions: `${hl('Cmd+F')}` → `Cmd+F`, `${link('url', 'name')}` → `name`
+   - For QoL items, combine the bold title and description paragraph(s) into one text string: `**Title** – Description text.`
+   - For features, combine all text paragraphs into one string
+
+7. Write the JSON to a temp file, then run the generator script:
+```bash
+python3 .claude/release-notes/generate_docx.py /tmp/release_data.json <output_path>
+```
+
+**Output location:** Save the .docx in the project root as `release-<version>.docx` (e.g., `release-0.54.0.docx`).
+
+**Item ordering:** Within each section, items MUST appear in the same order as they are listed under their parent issue in Linear. This is the order returned by the Linear API's `children` field. Do NOT reorder by category, alphabet, or any other criterion. When multiple parts are merged, Part 1 items come first, then Part 2, etc.
+
+**Example (multi-part):**
+```
+User: /release-notes docx JS-8571 JS-8672
+
+1. Fetch JS-8571 (Part 1) children:
+   - JS-8575 [💫 + 📁] → Features folder → 4 feature grandchildren
+   - JS-8630 [🖌️ + 📁] → Design folder → skip (internal)
+   - JS-8594 [⚙️ + 📁] → Tech folder → skip (internal)
+
+2. Fetch JS-8672 (Part 2) children:
+   - JS-8573 [👌 + 📁] → QoL folder → 33 grandchildren → QoL items
+   - JS-8574 [🐛]       → Bug folder → 82 grandchildren → Bug Fixes
+
+3. Merge: Features from Part 1, QoL from Part 2, Bugs from Part 2
+4. Read whatsNew.ts, match each issue to its note text
+5. Write JSON with items in Linear order
+6. Run generate_docx.py → release-0.54.0.docx
+7. Report: "Generated release-0.54.0.docx with 4 features, 33 QoL items, 82 bug fixes."
 ```
 
 ### `/release-notes intro`
@@ -375,7 +493,7 @@ User: /release-notes all JS-8500
 Action:
 1. Fetch root issue JS-8500 — "Sprint 18" with 6 children
 2. Classify children:
-   - JS-8574 [📁 + 🐛] → bug folder, fetch 37 grandchildren → bug fixes
+   - JS-8574 [📁 + 🐛] → bug folder, fetch 81 grandchildren → bug fixes
    - JS-8573 [📁 + 👌] → QoL folder, fetch 28 grandchildren → QoL entries + features
    - JS-292  [💫]       → standalone feature "Tabs"
    - JS-4551 [💫]       → standalone feature "Advanced Filters"
@@ -384,6 +502,6 @@ Action:
 3. Create new release page with `new "0.54.0" "Focus & Flow"`
 4. Insert 4 feature h2 sections
 5. Insert 25 QoL entries
-6. Insert 37 bug fixes across 7 categories
+6. Insert 80 bug fixes across categories
 7. Write intro paragraph
 ```
