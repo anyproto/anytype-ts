@@ -77,14 +77,8 @@
 				.content { overflow: hidden; }
 			}
 
-			> .block.first.blockText.textHeader1 { padding-top: 0px; }
-			> .block.last.blockText.textHeader1 { padding-bottom: 0px; }
-
-			> .block.first.blockText.textHeader2 { padding-top: 0px; }
-			> .block.last.blockText.textHeader2 { padding-bottom: 0px; }
-
-			> .block.first.blockText.textHeader3 { padding-top: 0px; }
-			> .block.last.blockText.textHeader3 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader { padding-top: 0px; }
+			> .block.last.blockText.textHeader { padding-bottom: 0px; }
 
 			> .block.first.blockFile > .wrapContent > .selectionTarget > .dropTarget { padding-top: 0px; }
 			> .block.last.blockFile > .wrapContent > .selectionTarget > .dropTarget { padding-bottom: 0px; }

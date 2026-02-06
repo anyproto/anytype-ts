@@ -100,6 +100,9 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		edges.current = (data.edges || []).map(edgeMapper);
 		nodes.current = (data.nodes || []).map(nodeMapper);
 
+		// Start loading images in batches after initial setup
+		loadNodeImages(nodes.current);
+
 		node.find('canvas').remove();
 
 		canvas.current = d3.select(`#${elementId}`).append('canvas')
@@ -141,7 +144,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		const transfer = canvas.current.transferControlToOffscreen();
 
-		worker.current = new Worker('workers/graph.js');
+		worker.current = new Worker('workers/graph.pixi.js');
 		worker.current.onerror = (e: any) => console.log(e);
 		worker.current.addEventListener('message', onMessage);
 
@@ -227,36 +230,74 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			d.iconEmoji = '';
 		};
 
-		if (!images.current[d.src]) {
-			const img = new Image();
+		return d;
+	};
 
-			img.onload = () => {
-				if (images.current[d.src]) {
+	const loadNodeImages = (mappedNodes: any[]) => {
+		// Collect unique image sources that haven't been loaded yet
+		const sourcesToLoad = new Map<string, any[]>();
+
+		for (const d of mappedNodes) {
+			if (d.src && !images.current[d.src]) {
+				if (!sourcesToLoad.has(d.src)) {
+					sourcesToLoad.set(d.src, []);
+				};
+				sourcesToLoad.get(d.src).push(d);
+			};
+		};
+
+		// Load images in batches to avoid overwhelming the browser
+		const BATCH_SIZE = 10;
+		const sources = Array.from(sourcesToLoad.keys());
+		let batchIndex = 0;
+
+		const loadBatch = () => {
+			const batch = sources.slice(batchIndex * BATCH_SIZE, (batchIndex + 1) * BATCH_SIZE);
+			if (batch.length === 0) {
+				return;
+			};
+
+			batch.forEach(src => {
+				if (images.current[src]) {
 					return;
 				};
 
-				const ratio = img.naturalHeight / img.naturalWidth || 1; 
+				const img = new Image();
+				img.onload = () => {
+					if (images.current[src]) {
+						return;
+					};
 
-				try {
-					createImageBitmap(img, { 
-						resizeWidth: I.ImageSize.Small, 
-						resizeHeight: I.ImageSize.Small * ratio, 
-						resizeQuality: 'high',
-					}).then((res: any) => {
-						if (images.current[d.src]) {
-							return;
-						};
+					const ratio = img.naturalHeight / img.naturalWidth || 1;
 
-						images.current[d.src] = true;
-						send('image', { src: d.src, bitmap: res });
-					}).catch(() => { /**/ });
-				} catch (e) { /**/ };
+					try {
+						createImageBitmap(img, {
+							resizeWidth: I.ImageSize.Small,
+							resizeHeight: I.ImageSize.Small * ratio,
+							resizeQuality: 'high',
+						}).then((res: any) => {
+							if (images.current[src]) {
+								return;
+							};
+
+							images.current[src] = true;
+							send('image', { src, bitmap: res });
+						}).catch(() => { /**/ });
+					} catch (e) { /**/ };
+				};
+				img.crossOrigin = 'anonymous';
+				img.src = src;
+			});
+
+			batchIndex++;
+			if (batchIndex * BATCH_SIZE < sources.length) {
+				// Schedule next batch with a small delay to not block rendering
+				setTimeout(loadBatch, 16);
 			};
-			img.crossOrigin = 'anonymous';
-			img.src = d.src;
 		};
 
-		return d;
+		// Start loading after a microtask to let the graph render first
+		queueMicrotask(loadBatch);
 	};
 
 	const edgeMapper = (d: any) => {

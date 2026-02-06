@@ -7,7 +7,6 @@ import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, an
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
-const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
 const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -142,15 +141,15 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		let sections: any[] = [
-			{ id: 'text', name: translate('menuBlockAddSectionText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
-			{ id: 'list', name: translate('menuBlockAddSectionList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
-			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockLink(), isBig: true, withDescription: true },
-			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
-			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
-			{ id: 'type', name: translate('menuBlockAddSectionType'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
-			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: getRelations(), isBig: false, withDescription: false },
-			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items, isBig: false, withDescription: false },
-			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
+			{ id: 'text', name: translate('menuBlockAddSectionText'), children: U.Menu.getBlockText() },
+			{ id: 'list', name: translate('menuBlockAddSectionList'), children: U.Menu.getBlockList() },
+			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockLink() },
+			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia() },
+			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther() },
+			{ id: 'type', name: translate('menuBlockAddSectionType'), children: U.Menu.getBlockObject() },
+			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: getRelations() },
+			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items },
+			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed() },
 		].map(s => ({ 
 			...s, 
 			children: s.children.map(c => ({
@@ -654,9 +653,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection && (index > 0)) {
 			h = HEIGHT_SECTION;
-		} else 
-		if (item.withDescription) {
-			h = HEIGHT_DESCRIPTION;
 		};
 		return h;
 	};
@@ -761,28 +757,22 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				item.inner = <div className={icn.join(' ')} />;
 			};
 
-			if (item.isBig) {
-				cn.push('isBig');
-			};
-
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
 
 			if (item.isObject) {
 				item.object = { ...item, layout: I.ObjectLayout.Type };
-				item.iconSize = 40;
 			};
 			
 			content = (
-				<MenuItemVertical 
-					key={[ item.id, index ].join('-')} 
-					{...item} 
+				<MenuItemVertical
+					key={[ item.id, index ].join('-')}
+					{...item}
 					index={index}
 					className={cn.join(' ')}
-					withDescription={item.withDescription} 
-					onMouseEnter={e => onMouseEnter(e, item)} 
-					onClick={e => onClick(e, item)} 
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
 					style={param.style}
 				/>
 			);

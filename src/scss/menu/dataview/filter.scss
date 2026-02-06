@@ -4,6 +4,69 @@
 	.menu.menuDataviewFilterList {
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
+
+		.filterItem { position: relative; display: flex; flex-direction: row; height: 28px; align-items: center; padding: 0px 16px; color: var(--color-text-secondary); }
+		.filterItem {
+			&::before {display: none; }
+
+			.filterInner {
+				display: flex; flex-direction: row; align-items: center;  gap: 0px 6px; border-radius: 16px;
+				@include text-common; padding: 0px 8px; height: 24px; max-width: calc(100% - 32px);
+			}
+
+			.icon.filterIcon { width: 20px; height: 20px; margin-right: 0px; }
+			.icon.filterIcon {
+				&.advanced { background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
+				&.isText { background-image: url('~img/icon/dataview/filters/relation/text0.svg'); }
+				&.isNumber { background-image: url('~img/icon/dataview/filters/relation/number0.svg'); }
+				&.isSelect { background-image: url('~img/icon/dataview/filters/relation/select0.svg'); }
+				&.isDate { background-image: url('~img/icon/dataview/filters/relation/date0.svg'); }
+				&.isAttachment { background-image: url('~img/icon/dataview/filters/relation/attachment0.svg'); }
+				&.isCheckbox { background-image: url('~img/icon/dataview/filters/relation/checkbox0.svg'); }
+				&.isUrl { background-image: url('~img/icon/dataview/filters/relation/url0.svg'); }
+				&.isEmail { background-image: url('~img/icon/dataview/filters/relation/email0.svg'); }
+				&.isPhone { background-image: url('~img/icon/dataview/filters/relation/phone0.svg'); }
+				&.isMultiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect0.svg'); }
+				&.isObject { background-image: url('~img/icon/dataview/filters/relation/object0.svg'); }
+			}
+
+			.filterContent { display: flex; gap: 6px; align-items: center; @include text-overflow-nw; }
+			.value { @include text-overflow-nw; }
+
+			.label.condition { text-transform: lowercase; }
+
+			.icon.more { display: none; width: 20px; height: 20px; flex-shrink: 0; right: 16px; }
+
+			&:hover,
+			&.hover {
+				.filterInner { background-color: var(--color-shape-highlight-medium); }
+				.icon.more { display: block; }
+			}
+
+			&.isActive {
+				.filterInner {  color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
+				.relationName { font-weight: 500; }
+				.icon.filterIcon {
+					&.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
+					&.isText { background-image: url('~img/icon/dataview/filters/relation/text1.svg'); }
+					&.isNumber { background-image: url('~img/icon/dataview/filters/relation/number1.svg'); }
+					&.isSelect { background-image: url('~img/icon/dataview/filters/relation/select1.svg'); }
+					&.isDate { background-image: url('~img/icon/dataview/filters/relation/date1.svg'); }
+					&.isAttachment { background-image: url('~img/icon/dataview/filters/relation/attachment1.svg'); }
+					&.isCheckbox { background-image: url('~img/icon/dataview/filters/relation/checkbox1.svg'); }
+					&.isUrl { background-image: url('~img/icon/dataview/filters/relation/url1.svg'); }
+					&.isEmail { background-image: url('~img/icon/dataview/filters/relation/email1.svg'); }
+					&.isPhone { background-image: url('~img/icon/dataview/filters/relation/phone1.svg'); }
+					&.isMultiselect { background-image: url('~img/icon/dataview/filters/relation/multiselect1.svg'); }
+					&.isObject { background-image: url('~img/icon/dataview/filters/relation/object1.svg'); }
+				}
+
+				&:hover,
+				&.hover {
+					.filterInner { background-color: var(--color-system-drop-zone); }
+				}
+			}
+		}
 	}
 
 	.menu.menuDataviewFilterAdvanced { width: var(--menu-width-advanced); }

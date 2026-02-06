@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.53.35-alpha",
+	"version": "0.53.38-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -22,6 +22,7 @@
 		"build:deps": "rspack build --config rspack.node.config.js --json=compilation-stats.json && cat compilation-stats.json | grep -o '[^\"]\\+node_modules[^\"]\\+' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
 		"build:nmh": "go build -o dist/nativeMessagingHost ./go/nativeMessagingHost.go",
 		"build:nmh-win": "go build -o dist/nativeMessagingHost.exe ./go/nativeMessagingHost.go",
+		"build:pixi": "rspack --config rspack.pixi.config.js",
 		"dist:mac": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
 		"dist:macamd": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
@@ -152,6 +153,7 @@
 		"p-finally": "^2.0.1",
 		"pako": "^2.1.0",
 		"pdfjs-dist": "^5.4.296",
+		"pixi.js": "^8.16.0",
 		"prismjs": "^1.21.0",
 		"qrcode.react": "^4.1.0",
 		"raf": "^3.4.1",

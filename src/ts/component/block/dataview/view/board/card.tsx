@@ -25,6 +25,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 	const record = S.Detail.get(subId, id, relations.map(it => it.relationKey));
+
 	const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 	const { done } = record;
 	const cover = getCoverObject(id);
@@ -52,7 +53,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		};
 
 		const ids = selection?.get(I.SelectType.Record) || [];
-		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
+		if (((e.ctrlKey || e.metaKey)  && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

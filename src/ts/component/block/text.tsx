@@ -512,6 +512,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
+			'###\\>':		 I.TextStyle.ToggleHeader3,
+			'##\\>':		 I.TextStyle.ToggleHeader2,
+			'#\\>':			 I.TextStyle.ToggleHeader1,
 			'#':			 I.TextStyle.Header1,
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
@@ -526,6 +529,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
 		Length[I.TextStyle.Numbered] = 2;
+		Length[I.TextStyle.ToggleHeader1] = 2;
+		Length[I.TextStyle.ToggleHeader2] = 3;
+		Length[I.TextStyle.ToggleHeader3] = 4;
 		Length[I.TextStyle.Header1] = 1;
 		Length[I.TextStyle.Header2] = 2;
 		Length[I.TextStyle.Header3] = 3;
@@ -645,7 +651,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						focus.apply();
 					});
 
-					if (newStyle == I.TextStyle.Toggle) {
+					if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
 						S.Block.toggle(rootId, id, true);
 					};
 
@@ -1250,13 +1256,16 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			break;
 		};
 			
-		case I.TextStyle.Toggle: {
-			marker = { type: I.MarkerType.Toggle, onClick: onToggle };
+		case I.TextStyle.Toggle:
+		case I.TextStyle.ToggleHeader1:
+		case I.TextStyle.ToggleHeader2:
+		case I.TextStyle.ToggleHeader3: {
+			marker = { type: I.MarkerType.Toggle, onMouseDown: onToggle };
 			break;
 		};
 
 		case I.TextStyle.Checkbox: {
-			marker = { type: I.MarkerType.Checkbox, active: checked, onClick: onCheckbox };
+			marker = { type: I.MarkerType.Checkbox, active: checked, onMouseDown: onCheckbox };
 			break;
 		};
 

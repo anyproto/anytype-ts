@@ -97,7 +97,10 @@
 
 		.separator .inner { margin: 8px 16px 7px 16px; height: 1px; background: var(--color-shape-secondary); }
 	
-		.item { padding: 4px 16px; @include text-common; line-height: 20px; position: relative; width: 100%; background: var(--color-bg-primary); }
+		.item { 
+			padding: 4px 16px; @include text-common; line-height: 20px; position: relative; width: 100%; background: var(--color-bg-primary); 
+			-webkit-app-region: no-drag;
+		}
 		.item.isDragging::before { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadonly { cursor: default; }
 		

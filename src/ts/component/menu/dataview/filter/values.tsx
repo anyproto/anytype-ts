@@ -8,8 +8,7 @@ const SUB_ID_PREFIX = 'filterOptionList';
 
 const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { config } = S.Common;
-	const { param, setHover, close, onKeyDown, setActive, getId, getSize, position } = props;
+	const { param, setHover, close, onKeyDown, setActive, getId, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, itemId, readonly, save, isInline, getTarget, filter: filterProp, hideHead, onFilterPropChange } = data;
 	const nodeRef = useRef(null);
@@ -20,6 +19,8 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const range = useRef(null);
 	const n = useRef(-1);
 	const timeout = useRef(0);
+	const exactDateValueRef = useRef<number | null>(null);
+	const relativeDateRef = useRef<{ quickOption: I.FilterQuickOption; value: any } | null>(null);
 	const [ dummy, setDummy ] = useState(0);
 
 	const view = getView();
@@ -204,6 +205,54 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		}, withTimeout ? 300 : 0);
 	};
 
+	const onTabSwitch = (toExact: boolean) => {
+		const view = getView();
+		if (!view) return;
+
+		let item = view.getFilter(itemId);
+		if (!item) return;
+
+		const rel = S.Record.getRelationByKey(item.relationKey);
+		if (!rel) return;
+
+		const object = getTarget();
+		item = U.Common.objectCopy(item);
+
+		if (toExact) {
+			// Cache current relative date state before switching away
+			if (item.quickOption !== I.FilterQuickOption.ExactDate) {
+				relativeDateRef.current = { quickOption: item.quickOption, value: item.value };
+			};
+			// Set exact mode with cached value
+			item.quickOption = I.FilterQuickOption.ExactDate;
+			item.value = exactDateValueRef.current !== null ? exactDateValueRef.current : Relation.formatValue(rel, null, false);
+		} else {
+			// Cache current exact date value before switching away
+			if (item.quickOption === I.FilterQuickOption.ExactDate && item.value) {
+				exactDateValueRef.current = item.value;
+			};
+			// Restore cached relative date state or use first option
+			if (relativeDateRef.current) {
+				item.quickOption = relativeDateRef.current.quickOption;
+				item.value = relativeDateRef.current.value ?? Relation.formatValue(rel, null, false);
+			} else {
+				const quickOptions = Relation.filterQuickOptions(rel.format, item.condition)
+					.filter(it => it.id != I.FilterQuickOption.ExactDate);
+				item.quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
+				item.value = Relation.formatValue(rel, null, false);
+			};
+		};
+
+		view.setFilter(item);
+		analytics.event('ChangeFilterValue', {
+			condition: item.condition,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
+		save();
+		setDummy(dummy + 1);
+	};
+
 	const onSubmitHandler = (e: any) => {
 		e.preventDefault();
 
@@ -335,6 +384,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		isSub: true,
 		noScroll: true,
 		noVirtualisation: true,
+		passThrough: false,
 		onClose: onSelectClose,
 		className,
 		classNameWrap,
@@ -424,13 +474,21 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						details: types.length == 1 ? { type: types[0] } : {},
 					}}
 					dataChange={(items: any) => {
-						if (!config.experimental) {
-							return items;
+						let templates = Relation.getFilterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+
+						if (!isInline) {
+							templates = templates.filter(it => it.templateType != I.FilterValueTemplate.Object);
 						};
 
-						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+						if (types.length) {
+							const participantType = S.Record.getParticipantType();
 
-						if (items.length) {
+							if (!participantType || !types.includes(participantType.id)) {
+								templates = templates.filter(it => it.templateType != I.FilterValueTemplate.Participant);
+							};
+						};
+
+						if (items.length && templates.length) {
 							templates.push({ isDiv: true });
 						};
 
@@ -556,16 +614,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							{ id: 'exact', name: translate('menuDataviewFilterValuesExact') },
 							{ id: 'relative', name: translate('menuDataviewFilterValuesRelative') },
 						]}
-						onChange={v => {
-							if (v == 'exact') {
-								onChange('quickOption', I.FilterQuickOption.ExactDate);
-							} else {
-								const first = items[0];
-								if (first) {
-									onChange('quickOption', first.id);
-								};
-							};
-						}}
+						onChange={v => onTabSwitch(v == 'exact')}
 					/>
 				</div>
 			) : ''}

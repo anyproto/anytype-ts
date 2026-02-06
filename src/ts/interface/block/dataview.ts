@@ -92,9 +92,8 @@ export enum FilterQuickOption {
 
 export enum FilterValueTemplate {
 	None			 = 0,
-	User			 = 1,
-	Object			 = 2,
-	Participant		 = 3,
+	Object			 = 1,
+	Participant		 = 2,
 };
 
 export enum FormulaType {

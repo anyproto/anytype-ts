@@ -1404,6 +1404,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
+				if (block.isTextToggleHeader() && !length) {
+					const map = {
+						[I.TextStyle.ToggleHeader1]: I.TextStyle.Header1,
+						[I.TextStyle.ToggleHeader2]: I.TextStyle.Header2,
+						[I.TextStyle.ToggleHeader3]: I.TextStyle.Header3,
+					};
+					C.BlockListTurnInto(rootId, [ block.id ], map[block.content.style]);
+				} else
 				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
 					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
@@ -1511,6 +1519,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
+		} else
+		if (block.isTextToggleHeader() && (range.from == length)) {
+			S.Block.toggle(rootId, block.id, true);
+			blockCreate(block.id, I.BlockPosition.Inner, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+			return;
 		} else
 		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id) && S.Block.getChildrenIds(rootId, block.id).length && !range.to) {
 			blockCreate(block.id, I.BlockPosition.Top, {

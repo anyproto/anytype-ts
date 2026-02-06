@@ -989,16 +989,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onViewDrop = (targetId: string, ids: string[]) => {
-		console.log('onViewDrop', targetId, ids);
-
 		if (!targetId || !ids.length) {
 			return;
 		};
 
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
-
-		console.log('details', details);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1037,44 +1033,23 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const toggleFilters = () => {
-		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
-		const showFilters = Storage.checkToggle(rootId, filtersId);
-
-		Storage.setToggle(rootId, filtersId, !showFilters);
+		Storage.toggleViewFilter(rootId, view.id);
 		setDummy(dummy + 1);
 	};
 
 	const onFilterAddClick = (menuParam: I.MenuParam) => {
-		const filtersId = U.String.toCamelCase(`view-${view.id}-filters`);
-
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,
 			getView,
 			onSelect: item => {
-				Storage.setToggle(rootId, filtersId, true);
-
 				onFilterAdd({
 					relationKey: item.relationKey || item.id,
 					...Dataview.getDefaultFilterValues(item),
 				});
 			},
 			onAdvancedFilterAdd: () => {
-				Storage.setToggle(rootId, filtersId, true);
-
-				onFilterAdd({
-					operator: I.FilterOperator.And,
-					condition: I.FilterCondition.None,
-					relationKey: '',
-					value: '',
-					nestedFilters: [
-						{
-							relationKey: 'name',
-							condition: I.FilterCondition.In,
-							value: '',
-						}
-					],
-				});
+				onFilterAdd(Dataview.getDefaultAdvancedFilter());
 			},
 		});
 	};
@@ -1086,7 +1061,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		Storage.setToggle(rootId, U.String.toCamelCase(`view-${view.id}-filters`), false);
+		Storage.toggleViewFilter(rootId, view.id, false);
 		setDummy(dummy + 1);
 	};
 
@@ -1094,13 +1069,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, (message: any) => {
+		Dataview.addFilter(rootId, block.id, view.id, item, () => {
 			callBack?.();
 
 			analytics.event('AddFilter', {
 				condition: item.condition,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		});
 	};

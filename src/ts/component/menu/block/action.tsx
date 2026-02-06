@@ -294,7 +294,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							C.BlockListTurnInto(rootId, ids, item.itemId, () => {
 								setFocus(ids[0]);
 
-								if (item.itemId == I.TextStyle.Toggle) {
+								if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(item.itemId)) {
 									ids.forEach(id => S.Block.toggle(rootId, id, true));
 								};
 							});

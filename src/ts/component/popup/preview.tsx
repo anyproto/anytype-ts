@@ -49,7 +49,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onDimmer = (e: MouseEvent) => {
 		const target = $(e.target);
-		if (!target.hasClass('previewItem') && !target.parents('.previewItem').length) {
+		if (!target.hasClass('mediaContainer') && !target.parents('.mediaContainer').length) {
 			close();
 		};
 	};
@@ -122,7 +122,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			w = h / (height / width);
 		};
 
-		wrap.css({ width: w, height: h });
+		//wrap.css({ width: w, height: h });
 	};
 
 	const resize = (idx: number) => {
