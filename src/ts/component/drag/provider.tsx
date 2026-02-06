@@ -27,6 +27,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const timeoutDragOver = useRef(0);
 	const prevTargetKey = useRef<string | null>(null);
 	const lastKnownCoords = useRef({ x: 0, y: 0 });
+	const dragData = useRef<any>(null);
 
 	const getContainer = () => {
 		const isPopup = keyboard.isPopup();
@@ -110,6 +111,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const onDropCommon = (e: any) => {
 		e.preventDefault();
+		dragData.current = null;
 
 		if (keyboard.isCommonDropDisabled) {
 			clearState();
@@ -199,6 +201,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
 
 		origin.current = component;
+		dragData.current = dataTransfer;
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -313,6 +316,27 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const onDragEnd = (e: any) => {
+		// On Linux, the drop event may not fire. If hoverData is still set,
+		// it means onDropCommon never ran - perform the drop using saved drag data.
+		if (hoverData.current && (position.current != I.BlockPosition.None) && canDrop.current && dragData.current) {
+			let targetId = String(hoverData.current.id || '');
+
+			if (targetId == 'blockLast') {
+				targetId = '';
+				position.current = I.BlockPosition.Bottom;
+			};
+
+			const fakeEvent = {
+				dataTransfer: {
+					getData: () => JSON.stringify(dragData.current),
+				},
+			};
+
+			onDrop(fakeEvent, hoverData.current.dropType, targetId, position.current);
+		};
+
+		dragData.current = null;
+
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
