@@ -289,11 +289,6 @@ class Dataview {
 				break;
 			};
 
-			case I.FilterValueTemplate.User: {
-				r = account.id;
-				break;
-			};
-
 			case I.FilterValueTemplate.Participant: {
 				r = U.Space.getParticipantId(space, account.id);
 				break;
