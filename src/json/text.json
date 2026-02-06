@@ -2716,7 +2716,7 @@
 
 	"notificationMode0": "All messages",
 	"notificationMode1": "Mentions only",
-	"notificationMode2": "Disable all",
+	"notificationMode2": "Mute and hide",
 	"notificationMode3": "Custom",
 
 	"filterTemplate0": "Value template",

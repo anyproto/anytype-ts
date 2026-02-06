@@ -1285,8 +1285,20 @@ class UtilData {
 	};
 
 	getWidgetChats(): any[] {
+		const spaceview = U.Space.getSpaceview();
+
 		return S.Record.getRecords(J.Constant.subId.chat).filter(it => {
 			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
+
+			if (mode == I.NotificationMode.All) {
+				return true;
+			};
+
+			if (mode == I.NotificationMode.Nothing) {
+				return false;
+			};
+
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
 		});
 	};
