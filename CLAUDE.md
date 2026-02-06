@@ -200,6 +200,55 @@ npx rspack --config rspack.pixi.config.js
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
 
+## Directory Documentation (README Files)
+
+Detailed README files are available throughout the codebase for deeper context on each module:
+
+### Source Root
+- [`src/ts/README.md`](src/ts/README.md) - TypeScript source overview, entry points, import aliases, key patterns
+
+### Components
+- [`src/ts/component/README.md`](src/ts/component/README.md) - All 18 component subdirectories overview
+- [`src/ts/component/block/README.md`](src/ts/component/block/README.md) - Block system: 19 block types (text, media, dataview, table, chat, embed, etc.)
+- [`src/ts/component/page/README.md`](src/ts/component/page/README.md) - Page routing: auth flow, main pages, settings hierarchy
+- [`src/ts/component/menu/README.md`](src/ts/component/menu/README.md) - Menu system: ~50 context menu types with positioning and keyboard nav
+- [`src/ts/component/popup/README.md`](src/ts/component/popup/README.md) - Popup system: ~27 modal dialog types
+- [`src/ts/component/editor/README.md`](src/ts/component/editor/README.md) - Block-based document editor (page.tsx ~2600 lines)
+- [`src/ts/component/graph/README.md`](src/ts/component/graph/README.md) - Graph visualization: D3 + PixiJS WebGL via Web Worker
+- [`src/ts/component/sidebar/README.md`](src/ts/component/sidebar/README.md) - Left/right sidebars with tree navigation and object views
+- [`src/ts/component/widget/README.md`](src/ts/component/widget/README.md) - Dashboard widgets: list, gallery, board, calendar, graph views
+- [`src/ts/component/cell/README.md`](src/ts/component/cell/README.md) - Data cells for dataview grid/board rendering
+- [`src/ts/component/drag/README.md`](src/ts/component/drag/README.md) - Drag-and-drop system for blocks and lists
+- [`src/ts/component/form/README.md`](src/ts/component/form/README.md) - Form controls: inputs, selects, phrases, pins
+- [`src/ts/component/header/README.md`](src/ts/component/header/README.md) - Page headers by context (editor, set, settings, auth)
+- [`src/ts/component/footer/README.md`](src/ts/component/footer/README.md) - Page footers (auth, main editor)
+- [`src/ts/component/list/README.md`](src/ts/component/list/README.md) - Object list components with virtual scrolling
+- [`src/ts/component/notification/README.md`](src/ts/component/notification/README.md) - Toast notification system
+- [`src/ts/component/preview/README.md`](src/ts/component/preview/README.md) - Preview cards and tooltips
+- [`src/ts/component/selection/README.md`](src/ts/component/selection/README.md) - Block and text selection handling
+- [`src/ts/component/util/README.md`](src/ts/component/util/README.md) - ~48 reusable utility components
+
+### Libraries
+- [`src/ts/lib/README.md`](src/ts/lib/README.md) - Core libraries overview (api, util, services, keyboard, storage)
+- [`src/ts/lib/api/README.md`](src/ts/lib/api/README.md) - gRPC communication: dispatcher, 100+ commands, protobuf mapping
+- [`src/ts/lib/util/README.md`](src/ts/lib/util/README.md) - ~20 utility modules (common, data, menu, object, router, string, etc.)
+- [`src/ts/lib/constant/README.md`](src/ts/lib/constant/README.md) - Application constants and static configuration
+- [`src/ts/lib/service/README.md`](src/ts/lib/service/README.md) - Singleton services (sidebar, analytics, focus, translation)
+
+### State & Data
+- [`src/ts/store/README.md`](src/ts/store/README.md) - MobX stores: 13 domain stores (auth, block, common, detail, record, menu, popup, chat, etc.)
+- [`src/ts/model/README.md`](src/ts/model/README.md) - Data models: Block, Content classes, View, Filter, Sort
+- [`src/ts/interface/README.md`](src/ts/interface/README.md) - TypeScript interfaces and enums for all domain types
+
+### Other
+- [`src/ts/hook/README.md`](src/ts/hook/README.md) - Custom React hooks
+- [`src/ts/docs/README.md`](src/ts/docs/README.md) - In-app documentation and help content
+- [`src/ts/workers/README.md`](src/ts/workers/README.md) - Web Workers (graph PixiJS worker)
+- [`electron/README.md`](electron/README.md) - Electron main process: window management, IPC, updates, menus
+- [`src/scss/README.md`](src/scss/README.md) - SCSS stylesheets organized to mirror component structure
+- [`src/img/README.md`](src/img/README.md) - Images, icons (SVG), and static assets
+- [`src/json/README.md`](src/json/README.md) - JSON data: translations, constants, colors, keyboard shortcuts
+
 ## Web Mode Development
 
 Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
