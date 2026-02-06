@@ -1412,7 +1412,25 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					};
 					C.BlockListTurnInto(rootId, [ block.id ], map[block.content.style]);
 				} else
-				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
+				if (block.isTextList()) {
+					const parent = S.Block.getParentLeaf(rootId, block.id);
+					const parentElement = S.Block.getParentMapElement(rootId, block.id);
+					const canOutdent = parent && parentElement && parent.canHaveChildren() && block.isIndentable();
+
+					if (canOutdent) {
+						e.preventDefault();
+
+						const idx = parentElement.childrenIds.indexOf(block.id);
+
+						Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, () => {
+							Action.move(rootId, rootId, block.id, parentElement.childrenIds.slice(idx), I.BlockPosition.Inner);
+							focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
+						});
+					} else {
+						C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+					};
+				} else
+				if (block.isTextQuote() || block.isTextCallout()) {
 					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
 					ids.length ? blockRemove(block) : blockMerge(block, -1, length);
