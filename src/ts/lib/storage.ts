@@ -582,6 +582,16 @@ class Storage {
 	};
 
 	/**
+	 * Clears the survey state for a survey type.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
+	clearSurvey (type: I.SurveyType) {
+		const obj = this.get('survey', this.isLocal('survey')) || {};
+		delete obj[type];
+		this.set('survey', obj, this.isLocal('survey'));
+	};
+
+	/**
 	 * Checks if an array is valid (non-empty).
 	 * @param {any} a - The array to check.
 	 * @returns {boolean} True if valid.
