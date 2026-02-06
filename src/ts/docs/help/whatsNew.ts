@@ -30,8 +30,7 @@ export default () => {
 		title(`Focus & Flow`),
 		h4(`<span>Release 0.54.0</span>`),
 		text(''),
-		text('This release brings Tabs to Anytype – open multiple Objects side by side, pin the ones you use most, and pick up right where you left off. Advanced Filters let you combine conditions with AND/OR logic for precise queries, and Chat Search helps you find any message in seconds.'),
-		text('Also in this update: Toggle Headings for collapsible sections, Channel Ownership transfer, and a long list of quality-of-life improvements and fixes.'),
+		text('This release brings Tabs for working with multiple objects, updated Filters with a simplified interface and advanced logic, and Search inside chats, alongside toggle Headings, Channel ownership transfer, and a range of Quality of Life improvements and fixes.'),
 		text(''),
 
 		h2(`Tabs`),
@@ -63,11 +62,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Toggle Headings</b>`),
-		text(`The most requested editor feature is here: Heading 1, Heading 2 and Heading 3 can now be collapsible toggles. Create them from the ${hl('/')} menu or with Markdown shortcuts (${hl('#>')}, ${hl('##>')}, ${hl('###>')}). Select multiple toggles and open or close them all at once. Converting a regular heading to a toggle automatically captures everything beneath it as children.`),
-		text(``),
-
-		text(`<b>Pinned Tabs</b>`),
-		text(`Right-click any tab to pin it. Pinned tabs collapse to a compact icon on the left of the tab bar and stay in place across sessions, so your most-used Objects are always one click away.`),
+		text(`Heading 1, Heading 2 and Heading 3 can now be collapsible toggles. Create them from the ${hl('/')} menu or with Markdown shortcuts (${hl('#>')}, ${hl('##>')}, ${hl('###>')}). Select multiple toggles and open or close them all at once. Converting a regular heading to a toggle automatically captures everything beneath it as children.`),
 		text(``),
 
 		text(`<b>Spell Checking in Chat</b>`),
@@ -107,11 +102,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Jump to Message in Chat</b>`),
-		text(`Click a quoted reply to jump to the original message. The scroll-down button then takes you back to the reply first, then to the bottom – just like in Telegram.`),
-		text(``),
-
-		text(`<b>Page Up / Page Down Support</b>`),
-		text(`${hl('Page Up')} and ${hl('Page Down')} keys now scroll through the entire document, and ${hl('Alt+Up')} / ${hl('Alt+Down')} (${hl('Ctrl+Up')} / ${hl('Ctrl+Down')} on Windows) hop the cursor between blocks.`),
+		text(`Click a quoted reply to jump to the original message. The scroll-down button then takes you back to the reply first, then to the bottom. Thanks to @${link('https://community.anytype.io/t/chats-add-jump-to-message-functionality/29433', 'boots')}!`),
 		text(``),
 
 		text(`<b>Fullscreen Image Preview</b>`),
@@ -135,7 +126,7 @@ export default () => {
 		text(``),
 
 		text(`<b>Keyboard Shortcut Panel Focus</b>`),
-		text(`Opening the Keyboard Shortcut panel with ${hl('Ctrl+Space')} now places focus directly in the search field.`),
+		text(`Opening the Keyboard Shortcut panel with ${hl('Ctrl+Space')} now places focus directly in the search field. Thanks to @${link('https://community.anytype.io/t/keyboard-shortcut-panel-should-focus-on-the-text-input-when-opened/29797', 'EricNoteTaker')}!`),
 		text(``),
 
 		text(`<b>Table Column Widths in PDF Export</b>`),
@@ -167,7 +158,6 @@ export default () => {
 		text(``),
 
 		text(`<b>Editor & Blocks</b>`),
-		bullet(`The Upload button in media blocks is now clickable again.`),
 		bullet(`Pressing ${hl('Enter')} in a code block now creates a new line on the first press. Thanks to @${link('https://community.anytype.io/t/29828', 'personnotman')}!`),
 		bullet(`Switching between RTL and LTR text no longer deletes the first character.`),
 		bullet(`Copy-pasting a Callout block now duplicates all lines, not just the first. Thanks to @${link('https://community.anytype.io/t/29723', 'Code-Jack')}!`),
@@ -181,12 +171,11 @@ export default () => {
 		bullet(`Pressing ${hl('Enter')} above a collapsed Toggle block no longer moves nested content out of it. Thanks to @${link('https://community.anytype.io/t/29451', 'crediblesauce')}!`),
 		bullet(`${hl('Shift+Click')} selection now works correctly in large Pages. Thanks to @${link('https://community.anytype.io/t/29437', 'Code-Jack')}!`),
 		bullet(`Blocks now correctly switch from RTL back to LTR when you delete RTL text and start typing in a left-to-right language. Thanks to @${link('https://community.anytype.io/t/28873', 'Hexara')}!`),
+		bullet(`The cursor now correctly moves to the left side when switching from an RTL to an LTR language.`),
 		bullet(`Selection is no longer inverted in very large Pages. Thanks to @${link('https://community.anytype.io/t/28035', 'Code-Jack')}!`),
 		bullet(`${hl('Shift+Click')} now correctly limits the selection after using Select All. Thanks to @${link('https://community.anytype.io/t/28072', 'Code-Jack')}!`),
-		bullet(`Deleting an LTR line and entering RTL text no longer causes the deleted text to reappear.`),
 		bullet(`Undo now works correctly in large code blocks after using a heading shortcut. Thanks to @${link('https://community.anytype.io/t/27660', 'szc188')}!`),
 		bullet(`The ${hl('Enter')} key now works inside code blocks while the ${hl('Cmd+F')} / ${hl('Ctrl+F')} search bar is open. Thanks to @${link('https://community.anytype.io/t/27661', 'szc188')}!`),
-		bullet(`The cursor now correctly moves to the left side when switching from an RTL to an LTR language.`),
 		bullet(`Closing the in-page search bar inside a Toggle block no longer loses the cursor position. Thanks to @${link('https://community.anytype.io/t/26118', 'Code-Jack')}!`),
 		bullet(`Right-click context menu now reliably appears when selecting multiple blocks on Windows. Thanks to @${link('https://community.anytype.io/t/20108', 'Code-Jack')}!`),
 		text(``),
@@ -198,10 +187,10 @@ export default () => {
 		bullet(`Buttons at the top of the Shortcuts popup are now fully clickable.`),
 		bullet(`SecureEventInput is now properly released when input fields lose focus, restoring compatibility with third-party input methods on macOS.`),
 		bullet(`Shortcut recording no longer inserts Cyrillic characters when a non-Latin keyboard layout is active.`),
+		bullet(`${hl('Page Up')} and ${hl('Page Down')} keys now scroll through the entire document, and ${hl('Alt+Up')} / ${hl('Alt+Down')} (${hl('Ctrl+Up')} / ${hl('Ctrl+Down')} on Windows) hop the cursor between blocks. Thanks to @${link('https://community.anytype.io/t/navigation-to-the-beginning-or-end-of-the-content-does-not-work/27737', 'mig2k')} & @${link('https://community.anytype.io/t/editor-navigation-allow-jumping-page-up-down-with-the-corresponding-keyboard-keys/29629', 'Code-Jack')}!`),
 		text(``),
 
 		text(`<b>UI & Rendering</b>`),
-		bullet(`The "wrong email format" error text no longer carries over to subsequent onboarding screens.`),
 		bullet(`Content is no longer visible behind the "Creating new type" screen in small windows.`),
 		bullet(`Long Any ID / unique name no longer overflows the Membership screen layout.`),
 		bullet(`The sync status deletion confirmation popup now appears above the sync status window.`),
@@ -237,12 +226,6 @@ export default () => {
 		bullet(`Anytype now asks for the pin code on launch after a Windows reboot. Thanks to @${link('https://community.anytype.io/t/28638', 'stef47')}!`),
 		bullet(`The pin code setting no longer deactivates itself after a system restart. Thanks to @${link('https://community.anytype.io/t/27996', 'stef47')}!`),
 		bullet(`Deep links now open the correct object when launching Anytype on Windows.`),
-		text(``),
-
-		text(`<b>Membership</b>`),
-		bullet(`Selecting a .any name after a tier upgrade no longer causes a crash.`),
-		bullet(`The Key is now generated correctly when creating a new account on Windows. Thanks to @${link('https://community.anytype.io/t/28515', 'rrangelo')}!`),
-		bullet(`Anytype no longer asks you to re-enter your Key after rebooting or waking from sleep. Thanks to @${link('https://community.anytype.io/t/20686', 'Bob')}!`),
 		text(``),
 
 		div(),
