@@ -249,7 +249,7 @@ class UtilRouter {
 				this.isOpening = false;
 
 				if (!useFallback) {
-					U.Space.openDashboard();
+					U.Space.openDashboard(routeParam);
 					window.setTimeout(() => {
 						S.Popup.open('confirm', {
 							data: {
@@ -261,7 +261,7 @@ class UtilRouter {
 						});
 					}, J.Constant.delay.popup);
 				} else {
-					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk);
+					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk, routeParam);
 				};
 				return;
 			};

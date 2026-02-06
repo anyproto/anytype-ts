@@ -885,8 +885,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 		
 		const callBack = () => {
-			console.log(JSON.stringify(attachments, null, 3));
-
 			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: getAttachmentType(it.layout) }));
 			const parsed = getMarksFromHtml();
 			const text = trim(parsed.text);

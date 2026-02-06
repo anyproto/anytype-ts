@@ -656,8 +656,6 @@ class Dataview {
 			};
 		};
 
-		console.log('getDetails', hasGroupValue, details);
-
 		for (const filter of view.filters) {
 			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
@@ -676,9 +674,6 @@ class Dataview {
 			if (!value) {
 				continue;
 			};
-
-			console.log('VALUE', filter.value, 'QUICK OPTION', filter.quickOption, value);
-
 			
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);

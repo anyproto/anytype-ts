@@ -62,22 +62,13 @@ class UtilSpace {
 
 		let spaces = U.Menu.getVaultItems();
 
-		console.log('openFirstSpaceOrVoid', spaces);
-
 		if (filter) {
-			spaces = spaces.filter(it => {
-				console.log('FILTER', it, filter, filter(it));
-
-				return filter(it);
-			});
+			spaces = spaces.filter(filter);
 		};
-
-		console.log('openFirstSpaceOrVoid', spaces);
 
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			console.log('openFirstSpaceOrVoid go void');
 			U.Router.go('/main/void/error', param);
 			sidebar.leftPanelSubPageClose(false, false);
 		};

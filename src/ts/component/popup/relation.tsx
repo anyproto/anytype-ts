@@ -172,8 +172,6 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onCellClick = (e: any, id: string) => {
-		console.log(id, cellRefs.current);
-
 		cellRefs.current.get(id)?.onClick?.(e);
 	};
 

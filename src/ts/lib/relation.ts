@@ -339,7 +339,7 @@ class Relation {
 		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
 	};
 
-	public filterTemplateOptions () {
+	public getFilterTemplateOptions () {
 		const ret = [];
 		for (const i in I.FilterValueTemplate) {
 			const id = Number(i);
@@ -359,7 +359,7 @@ class Relation {
 	};
 
 	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
-		return this.filterTemplateOptions().find(it => it.id == id);
+		return this.getFilterTemplateOptions().find(it => it.id == id);
 	};
 
 	/**

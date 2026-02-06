@@ -989,16 +989,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onViewDrop = (targetId: string, ids: string[]) => {
-		console.log('onViewDrop', targetId, ids);
-
 		if (!targetId || !ids.length) {
 			return;
 		};
 
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
-
-		console.log('details', details);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
