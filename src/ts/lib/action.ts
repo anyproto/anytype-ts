@@ -1107,7 +1107,7 @@ class Action {
 
 	finalizeMembership (product: any, route: string, callBack?: () => void) {
 		const showSurveyPopup = () => {
-			if (window.isExtension || Survey.isComplete(I.SurveyType.Cta)) {
+			if (Survey.isComplete(I.SurveyType.Cta)) {
 				S.Popup.close('membershipFinalization');
 				callBack?.();
 				return;
