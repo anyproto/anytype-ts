@@ -117,16 +117,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 
-				{showRelations ? (
-					<Icon
-						id="button-header-relation"
-						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
-						onClick={onRelation}
-						onDoubleClick={e => e.stopPropagation()}
-					/>
-				) : ''}
-
 				{showPin ? (
 					<Icon 
 						id="button-header-pin" 
@@ -139,6 +129,16 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
+				) : ''}
+
+				{showRelations ? (
+					<Icon
+						id="button-header-relation"
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						onClick={onRelation}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
 				) : ''}
 
 				<Icon 

@@ -160,16 +160,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					/>
 				) : ''}
 
-				{showRelations ? (
-					<Icon
-						id="button-header-relation"
-						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (isRelationOpen ? 'active' : '') ].join(' ')}
-						onClick={onRelation}
-						onDoubleClick={e => e.stopPropagation()}
-					/>
-				) : ''}
-
 				{showPin ? (
 					<Icon
 						id="button-header-pin"
@@ -180,6 +170,16 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						}}
 						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+
+				{showRelations ? (
+					<Icon
+						id="button-header-relation"
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (isRelationOpen ? 'active' : '') ].join(' ')}
+						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}
