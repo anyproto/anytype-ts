@@ -1796,7 +1796,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isSpecial(e: any): boolean {
-		const fk = Array.from({ length: 12 }, (_, i) => `F${i + 1}`);
+		const fk = Array.from({ length: 24 }, (_, i) => `F${i + 1}`);
 		const sk = new Set([
 			Key.escape, Key.backspace, Key.delete, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
 			Key.left, Key.up, Key.right, Key.down,
