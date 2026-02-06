@@ -291,3 +291,11 @@ For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=1276
 - When implementing designs from Figma, recreate icons as SVG files in the appropriate `src/img/icon/` subdirectory
 - Follow existing icon patterns (e.g., `src/img/icon/add/` for editor control button icons)
 - Icons typically have two variants: `name0.svg` (default state, #B6B6B6) and `name1.svg` (hover state, #252525)
+
+## Dark Mode Check
+
+After completing any task that edits SCSS files (`src/scss/`), SVG/image files (`src/img/`), or adds new UI components, run the `/dark-mode-check` skill to audit for dark mode issues. This catches:
+- Hardcoded colors that should use CSS variables (`--color-text-*`, `--color-bg-*`, `--color-shape-*`, etc.)
+- Missing dark icon variants in `src/img/theme/dark/`
+- Inline `html.themeDark` overrides that belong in `src/scss/theme/dark/`
+- Dynamic icon paths missing `S.Common.getThemePath()`
