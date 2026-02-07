@@ -107,9 +107,9 @@ class UtilObject {
 			route = this.route(object);
 		};
 
-		return { 
+		return {
 			title: U.Object.name(object, true),
-			icon: U.Graph.imageSrc(object),
+			icon: U.Graph.imageSrc(object) || this.defaultIcon(object.layout, object.type, 100),
 			layout: object.layout,
 			isImage: object.iconImage,
 			uxType: spaceview?.uxType,

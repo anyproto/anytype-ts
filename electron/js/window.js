@@ -601,7 +601,8 @@ class WindowManager {
 	sendUpdateTabs (win) {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const isVisible = alwaysShow || (win.views && win.views.length > 1);
+		const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
+		const isVisible = alwaysShow || hasPinnedTab || (win.views && win.views.length > 1);
 
 		Util.send(win, 'update-tabs',
 			win.views.map(it => ({ id: it.id, data: it.data })),
@@ -744,7 +745,8 @@ class WindowManager {
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const configShowMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
-		const shouldShowTabs = alwaysShow || hasMultipleTabs;
+		const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
+		const shouldShowTabs = alwaysShow || hasPinnedTab || hasMultipleTabs;
 
 		// Check for temporary menu bar visibility (Alt key toggle)
 		const showMenuBar = win.tempMenuBarVisible !== undefined ? win.tempMenuBarVisible : configShowMenuBar;
@@ -769,9 +771,10 @@ class WindowManager {
 		const ConfigManager = require('./config.js');
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
+		const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
 		const isSingleTab = win.views && (win.views.length == 1);
 		const isPinCheckRequired = Api.hasPinSet && !Api.isPinChecked;
-		const isVisible = !isPinCheckRequired && (alwaysShow || hasMultipleTabs);
+		const isVisible = !isPinCheckRequired && (alwaysShow || hasPinnedTab || hasMultipleTabs);
 
 		// Send to tabs.html window (tab bar UI)
 		Util.send(win, 'update-tab-bar-visibility', isVisible);
