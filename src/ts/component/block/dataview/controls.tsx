@@ -423,15 +423,29 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (node.hasClass('small')) {
 			node.removeClass('small');
-			// Force synchronous reflow before measuring widths
-			void node[0]?.offsetWidth;
 		};
 
-		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
+		const el = sideLeft[0];
+
+		// Temporarily disable flex-grow on sideLeft to measure natural content width
+		// With flex-grow: 1, sideLeft expands to fill all space, making the measurement
+		// equal to container width regardless of actual content, which breaks at non-standard zoom levels
+		if (el) {
+			el.style.flexGrow = '0';
+		};
+
+		// Force synchronous reflow before measuring widths
+		void node[0]?.offsetWidth;
+
+		const width = Math.ceil(sideLeft.outerWidth() + sideRight.outerWidth());
+
+		if (el) {
+			el.style.flexGrow = '';
+		};
 
 		if (width + 16 > nw) {
 			node.addClass('small');
-		} else 
+		} else
 		if (S.Menu.isOpen('dataviewViewList')) {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
