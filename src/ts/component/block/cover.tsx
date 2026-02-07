@@ -55,13 +55,14 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		focus.clear(true);
 
-		S.Menu.open('smile', { 
+		S.Menu.open('smile', {
 			element: `#block-${block.id} #button-icon`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => $(elementsRef.current).addClass('hover'),
 			onClose: () => $(elementsRef.current).removeClass('hover'),
 			data: {
+				objectId: rootId,
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => U.Object.setIcon(rootId, icon, '', cb),
 				onUpload: (objectId: string) => U.Object.setIcon(rootId, '', objectId, cb),

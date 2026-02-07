@@ -37,7 +37,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		focus.clear(true);
 
-		S.Menu.open('smile', { 
+		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
 			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
@@ -47,6 +47,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 				noUpload: isType,
 				noGallery: isType,
 				withIcons: isType,
+				objectId: rootId,
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
