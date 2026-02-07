@@ -8,6 +8,7 @@ $(() => {
 	const winId = Number(currentWindow?.windowId) || 0;
 	const container = $('#tabs');
 	const marker = $('#marker');
+	const tabsBg = $('#tabsBackground');
 	const menuBar = $('#menuBar');
 	const tabsWrapper = $('#tabsWrapper');
 	const theme = Electron.getTheme();
@@ -175,11 +176,41 @@ $(() => {
 		const containerOffset = container.offset();
 
 		if (offset && containerOffset) {
-			marker.css({ 
-				width: active.outerWidth() - 4, 
+			marker.css({
+				width: active.outerWidth() - 4,
 				left: offset.left - containerOffset.left + 2,
 			});
 		};
+	};
+
+	const updateBackgroundPosition = () => {
+		const unpinnedTabs = container.find('.tab:not(.isPinned):not(.isAdd)');
+		const addTab = container.find('.tab.isAdd');
+
+		// Start from first unpinned tab, or add button if all tabs are pinned
+		const startEl = unpinnedTabs.first().length ? unpinnedTabs.first() : addTab;
+		const endEl = addTab.length ? addTab : unpinnedTabs.last();
+
+		if (!startEl.length || !endEl.length) {
+			tabsBg.css({ width: 0 });
+			return;
+		};
+
+		const containerOffset = container.offset();
+		const startOffset = startEl.offset();
+		const endOffset = endEl.offset();
+
+		if (!containerOffset || !startOffset || !endOffset) {
+			return;
+		};
+
+		const left = startOffset.left - containerOffset.left;
+		const right = (endOffset.left + endEl.outerWidth()) - containerOffset.left;
+
+		tabsBg.css({
+			left: left,
+			width: right - left,
+		});
 	};
 
 	const renderTab = (item) => {
@@ -191,9 +222,15 @@ $(() => {
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
 		const isImage = Boolean(item.data.isImage);
+		const isPinned = Boolean(item.data.isPinned);
+
+		const cn = [ 'tab' ];
+		if (isPinned) {
+			cn.push('isPinned');
+		};
 
 		const tab = $(`
-			<div id="tab-${item.id}" class="tab" data-id="${item.id}">
+			<div id="tab-${item.id}" class="${cn.join(' ')}" data-id="${item.id}" data-pinned="${isPinned}">
 				<div class="clickable">
 					<div class="name">${title}</div>
 					<div class="icon close withBackground"></div>
@@ -210,7 +247,7 @@ $(() => {
 			};
 
 			clickable.prepend($(`
-				<div className="iconWrapper">
+				<div class="iconWrapper">
 					<div class="${cn.join(' ')}" style="background-image: url('${icon}')" />
 				</div>
 			`));
@@ -224,6 +261,12 @@ $(() => {
 		tab.find('.icon.close').off('click').on('click', (e) => {
 			e.stopPropagation();
 			electron.Api(winId, 'removeTab', [ item.id, true ]);
+		});
+
+		tab.off('contextmenu').on('contextmenu', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			electron.Api(winId, 'showTabContextMenu', { tabId: item.id, isPinned });
 		});
 
 		return tab;
@@ -252,6 +295,7 @@ $(() => {
 
 			tabs.toggleClass('noClose', tabs.length == 1);
 			updateMarkerPosition(activeId);
+			updateBackgroundPosition();
 		}, 40);
 	};
 
@@ -287,6 +331,17 @@ $(() => {
 			draggable: '.tab:not(.isAdd)',
 			filter: '.icon.close',
 			preventOnFilter: false,
+			onMove: (evt) => {
+				const dragged = $(evt.dragged);
+				const related = $(evt.related);
+				const draggedPinned = dragged.attr('data-pinned') === 'true';
+				const relatedPinned = related.attr('data-pinned') === 'true';
+
+				// Prevent dragging between pinned and unpinned zones
+				if (draggedPinned !== relatedPinned) {
+					return false;
+				};
+			},
 			onStart: async (evt) => {
 				isDragging = true;
 				draggedTabId = $(evt.item).attr('data-id');
@@ -318,6 +373,7 @@ $(() => {
 			},
 			onChange: (evt) => {
 				updateMarkerPosition(draggedActiveId || activeId);
+				updateBackgroundPosition();
 			},
 			onEnd: async (evt) => {
 				const tabId = draggedTabId;
@@ -334,7 +390,11 @@ $(() => {
 				item.css('visibility', '');
 
 				// Check if cursor was outside window (using last polled position)
-				if (tabId && bounds && cursorPos) {
+				// Don't detach pinned tabs
+				const draggedEl = container.find(`#tab-${tabId}`);
+				const isDraggedPinned = draggedEl.attr('data-pinned') === 'true';
+
+				if (tabId && bounds && cursorPos && !isDraggedPinned) {
 					const isOutside = isOutsideWindow(cursorPos.x, cursorPos.y);
 					if (isOutside) {
 						const tabs = container.find('.tab:not(.isAdd)');
@@ -357,6 +417,7 @@ $(() => {
 				draggedActiveId = null;
 				marker.addClass('anim').css('pointer-events', '');
 				updateMarkerPosition(activeId);
+				updateBackgroundPosition();
 
 				const tabIds = [];
 				container.find('.tab:not(.isAdd)').each((i, el) => {
@@ -382,6 +443,7 @@ $(() => {
 
 		tabs = tabs || [];
 		tabsData = tabs;
+
 		tabs.forEach((it, i) => {
 			container.append(renderTab(it));
 		});
@@ -424,6 +486,12 @@ $(() => {
 		const existing = container.find(`#tab-${tab.id}`);
 		if (!existing.length) {
 			return;
+		};
+
+		// Update tabsData
+		const idx = tabsData.findIndex(it => it.id == tab.id);
+		if (idx >= 0) {
+			tabsData[idx] = tab;
 		};
 
 		const obj = renderTab(tab);

@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, Notification, ipcMain, nativeTheme } = require('electron');
+const { app, shell, BrowserWindow, Menu, Notification, ipcMain, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const fs = require('fs');
 const path = require('path');
@@ -673,6 +673,53 @@ class Api {
 
 	closeOtherTabs (win, id) {
 		WindowManager.closeOtherTabs(win, id);
+	};
+
+	pinTab (win, id) {
+		WindowManager.pinTab(win, id);
+	};
+
+	unpinTab (win, id) {
+		WindowManager.unpinTab(win, id);
+	};
+
+	showTabContextMenu (win, param) {
+		const { tabId, isPinned } = param || {};
+
+		if (!tabId) {
+			return;
+		};
+
+		const items = [];
+
+		if (isPinned) {
+			items.push({
+				label: Util.translate('electronMenuTabUnpin'),
+				click: () => WindowManager.unpinTab(win, tabId),
+			});
+		} else {
+			items.push({
+				label: Util.translate('electronMenuTabPin'),
+				click: () => WindowManager.pinTab(win, tabId),
+			});
+		};
+
+		items.push({ type: 'separator' });
+
+		if (!isPinned) {
+			items.push({
+				label: Util.translate('electronMenuTabClose'),
+				click: () => WindowManager.removeTab(win, tabId, true),
+			});
+		};
+
+		items.push({
+			label: Util.translate('electronMenuTabCloseOtherTabs'),
+			click: () => WindowManager.closeOtherTabs(win, tabId),
+		});
+
+		const menu = Menu.buildFromTemplate(items);
+		menu.popup({ window: win });
 	};
 
 	reorderTabs (win, tabIds) {

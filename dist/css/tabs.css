@@ -71,7 +71,7 @@ body.platform-win32.showMenuBar {
 #tabsWrapper.isHidden { opacity: 0; pointer-events: none; -webkit-app-region: no-drag; }
 
 #tabs {
-	display: flex; flex-direction: row; background: var(--color-shape-tertiary); border-radius: 18px; overflow-x: auto;
+	display: flex; flex-direction: row; overflow-x: auto;
 	overflow-y: hidden;
 }
 #tabs::-webkit-scrollbar { display: none; }
@@ -90,7 +90,7 @@ body.platform-win32.showMenuBar {
 	.tab.active .div { display: none; }
 	.tab.hideDiv .div { display: none; }
 
-	.tab.isAdd { flex: 0 0 auto; min-width: 32px; padding: 4px 8px; }
+	.tab.isAdd { flex: 0 0 auto; min-width: 24px; padding: 4px; }
 	.tab.isAdd {
 		.icon { 
 			width: 28px; height: 28px; background-size: 20px; background-image: url('../img/icon/plus.svg'); 
@@ -101,6 +101,7 @@ body.platform-win32.showMenuBar {
 	.tab {
 		.clickable {
 			display: flex; flex-direction: row; gap: 0px 6px; align-items: center; overflow: hidden; flex-grow: 1; -webkit-app-region: no-drag;
+			position: relative; z-index: 2;
 		}
 
 		.name { height: 20px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; -webkit-app-region: no-drag; }
@@ -126,7 +127,27 @@ body.platform-win32.showMenuBar {
 		.icon.close { opacity: 1; }
 	}
 
+	.tab.isPinned {
+		width: 36px; height: 36px; min-width: 36px; max-width: 36px; flex: 0 0 36px; padding: 0; border-radius: 50%;
+		overflow: hidden; margin-right: 4px; z-index: auto;
+	}
+	.tab.isPinned {
+		.name { display: none; }
+		.icon.close { display: none !important; }
+		.clickable { justify-content: center; align-self: stretch; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+		.div { display: none; }
+	}
+	.tab.isPinned::after { content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: var(--color-shape-tertiary); border-radius: inherit; z-index: 0; }
+	.tab.isPinned:hover { background: var(--color-shape-highlight-medium); }
+	.tab.isPinned.active { background: transparent; }
+
 	.sortable-drag { opacity: 1; background: var(--color-shape-tertiary); border-radius: 16px; color: var(--color-text-primary); -webkit-app-region: no-drag; }
+	.sortable-drag.isPinned { background: var(--color-shape-highlight-medium); border-radius: 50%; }
+}
+
+#tabsBackground {
+	height: 100%; background: var(--color-shape-tertiary); top: 0px; position: absolute;
+	border-radius: 16px; z-index: 0; pointer-events: none; -webkit-app-region: no-drag;
 }
 
 #marker {
@@ -154,6 +175,7 @@ html.themeDark {
 /* Tab drag outside window visual feedback */
 body.draggingOutside {
 	#tabs { opacity: 0.6; }
+	#tabsBackground { opacity: 0.6; }
 	#marker { opacity: 0.6; }
 }
 

@@ -366,6 +366,10 @@
 	"electronMenuCloseTab": "Close Tab",
 	"electronMenuNextTab": "Next Tab",
 	"electronMenuPrevTab": "Previous Tab",
+	"electronMenuTabPin": "Pin",
+	"electronMenuTabUnpin": "Unpin",
+	"electronMenuTabClose": "Close",
+	"electronMenuTabCloseOtherTabs": "Close Other Tabs",
 
 	"month1": "January",
 	"month2": "February",
