@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
+import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
 import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
 import { set } from 'lodash';
 
@@ -220,6 +220,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	let content = null;
 	let additional = null;
 	let buttons = null;
+	let footer = null;
 
 	switch (stage) {
 		case Stage.Phrase: {
@@ -290,6 +291,8 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					</div>
 				</>
 			);
+
+			footer = <Footer {...props} component="authOnboardEmail" />;
 			break;
 		};
 
@@ -385,6 +388,8 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				<Error className="animation" text={error} />
 				<div className="buttons">{buttons}</div>
 			</Frame>
+
+			{footer}
 		</div>
 	);
 

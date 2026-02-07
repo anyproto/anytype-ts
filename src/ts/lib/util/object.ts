@@ -102,13 +102,18 @@ class UtilObject {
 
 		const spaceview = U.Space.getSpaceview();
 
+		let route = '';
+		if (object.layout != I.ObjectLayout.SpaceView) {
+			route = this.route(object);
+		};
+
 		return { 
 			title: U.Object.name(object, true),
 			icon: U.Graph.imageSrc(object),
 			layout: object.layout,
 			isImage: object.iconImage,
 			uxType: spaceview?.uxType,
-			route: this.route(object),
+			route,
 		};
 	};
 
@@ -279,12 +284,16 @@ class UtilObject {
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
 	openConfig (e: any, object: any, param?: any) {
-		if (e && (e.button == 1)) {
-			this.openTab(object);
-			return;
+		const cb = () => {
+			if (e && ((e.metaKey || e.ctrlKey) || (e.button == 1))) {
+				this.openTab(object);
+				return;
+			};
+
+			S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 		};
 
-		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
+		S.Menu.closeAll(null, cb);
 	};
 
 	/**

@@ -192,6 +192,7 @@ const App: FC = () => {
 				return;
 			};
 
+			S.Common.redirectSet(U.Router.getRoute());
 			keyboard.setPinChecked(false);
 			U.Router.go('/auth/pin-check', {});
 		});

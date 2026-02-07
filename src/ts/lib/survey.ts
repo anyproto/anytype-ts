@@ -47,6 +47,10 @@ class Survey {
 	 * @param {I.SurveyType} type - The survey type.
 	 */
 	onConfirm (type: I.SurveyType) {
+		if (window.isExtension) {
+			return;
+		};
+
 		const { account } = S.Auth;
 		const t = I.SurveyType[type].toLowerCase();
 		const param: any = {};
@@ -72,6 +76,10 @@ class Survey {
 	 * @param {I.SurveyType} type - The survey type.
 	 */
 	onSkip (type: I.SurveyType) {
+		if (window.isExtension) {
+			return;
+		};
+
 		const param: any = {};
 
 		switch (type) {

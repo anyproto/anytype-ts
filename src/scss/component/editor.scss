@@ -193,6 +193,10 @@
 
 	&.isSet, 
 	&.isCollection,
+	&.isType { padding-bottom: 80px; }
+
+	&.isSet, 
+	&.isCollection,
 	&.isType {
 		&.withIcon {
 			.controlButtons { left: 14px !important; }
@@ -213,8 +217,6 @@
 		}
 	}
 
-	&.isSet,
-	&.isCollection { padding-bottom: 80px; }
 	&.isSet,
 	&.isCollection {
 		.blocks {

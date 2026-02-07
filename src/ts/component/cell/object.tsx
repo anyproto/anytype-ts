@@ -15,7 +15,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	const placeholderRef = useRef(null);
 	const timeout = useRef(0);
 	const [ isEditing, setIsEditing ] = useState(false);
-	const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, subId, onChange, getRecord, elementMapper } = props;
+	const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, subId, menuParam, onChange, getRecord, elementMapper } = props;
 	const record = getRecord(recordId) || {};
 	const cn = [ 'wrap' ];
 
@@ -33,6 +33,24 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		if (isEditing) {
 			U.Object.openConfig(e, item);
 		};
+	};
+
+	const onContext = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('objectContext', {
+			classNameWrap: menuParam?.classNameWrap || '',
+			recalcRect: () => {
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y };
+			},
+			data: {
+				objectIds: [ item.id ],
+				subId,
+				allowedNewTab: true,
+			},
+		});
 	};
 
 	const placeholderCheck = () => {
@@ -243,13 +261,13 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 								draggable={canEdit}
 								{...U.Common.dataProps({ id: item.id, index: i })}
 							>
-								<ItemObject 
-									key={item.id} 
+								<ItemObject
+									key={item.id}
 									cellId={id}
 									getObject={() => item}
 									size={size}
-									iconSize={iconSize} 
-									relation={relation} 
+									iconSize={iconSize}
+									relation={relation}
 									elementMapper={elementMapper}
 									canEdit={canEdit}
 									onClick={(e, item) => onClick(e, item)}
@@ -307,6 +325,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 							elementMapper={elementMapper} 
 							canEdit={canEdit}
 							onClick={e => onClick(e, item)}
+							onContext={(length == 1) ? onContext : undefined}
 						/>
 					))}
 					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}

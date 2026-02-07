@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockAdd { width: var(--menu-width-value) !important; }
+	.menu.menuBlockAdd { width: var(--menu-width-set) !important; }
 	.menu.menuBlockAdd {
 		.content { padding: 0px; max-height: unset; }
 		.wrap { height: 100%; }
@@ -40,6 +40,9 @@
 		.cellContent.c-longText {
 			.name { @include clamp1; }
 		}
+
+		.icon.collection { background-image: url('~img/icon/menu/action/block/collection.svg'); }
+		.icon.set { background-image: url('~img/icon/menu/action/block/set.svg'); }
 	}
 }
 

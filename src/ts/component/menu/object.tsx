@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate, sidebar } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
 
 const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -73,7 +73,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
-		let editRelation = { id: 'editRelation', name: translate('menuObjectRelations'), icon: 'editRelation' };
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
@@ -140,8 +139,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
-		const allowedEditRelation = !isInSystem;
-
 		if (!allowedPageLink) {
 			pageLink = null;
 			pageDeeplink = null;
@@ -165,8 +162,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedEditChat) 		 editChat = null;
 		if (!allowedNotification) 	 notification = null;
 		if (!allowedCopyMedia)		 copyMedia = null;
-		if (!allowedEditRelation) 	 editRelation = null;
-
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
@@ -223,7 +218,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			sections = sections.map((it: any, i: number) => ({ ...it, id: `page${i}` }));
 		};
 
-		sections.unshift({ children: [ editRelation, editType, editChat, notification ] });
+		sections.unshift({ children: [ editType, editChat, notification ] });
 		sections.push({ children: [ advanced ] });
 
 		sections = sections.filter((section: any) => {
@@ -500,11 +495,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'openAsObject': {
 				U.Object.openAuto(object);
-				break;
-			};
-
-			case 'editRelation': {
-				sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly: object.isArchived });
 				break;
 			};
 

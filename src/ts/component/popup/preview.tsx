@@ -122,7 +122,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			w = h / (height / width);
 		};
 
-		//wrap.css({ width: w, height: h });
+		wrap.css({ width: w, height: h });
 	};
 
 	const resize = (idx: number) => {

@@ -126,5 +126,6 @@ export interface MenuItem {
 	onSwitch?(e: any, v: boolean): void;
 	onSelect?(id: string): void;
 	onMore?(e: any): void;
+	onContextMenu?(e: any): void;
 	tooltipParam?: I.TooltipParam;
 };
