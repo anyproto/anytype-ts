@@ -367,7 +367,8 @@ class WindowManager {
 		// Send initial single tab state when view finishes loading
 		view.webContents.once('did-finish-load', () => {
 			view.isLoaded = true;
-			const isSingleTab = win.views && (win.views.length == 1);
+			const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
+			const isSingleTab = win.views && (win.views.length == 1) && !hasPinnedTab;
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
 
 			// Apply zoom level from config
@@ -772,9 +773,9 @@ class WindowManager {
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
 		const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
-		const isSingleTab = win.views && (win.views.length == 1);
 		const isPinCheckRequired = Api.hasPinSet && !Api.isPinChecked;
 		const isVisible = !isPinCheckRequired && (alwaysShow || hasPinnedTab || hasMultipleTabs);
+		const isSingleTab = win.views && (win.views.length == 1) && !hasPinnedTab;
 
 		// Send to tabs.html window (tab bar UI)
 		Util.send(win, 'update-tab-bar-visibility', isVisible);

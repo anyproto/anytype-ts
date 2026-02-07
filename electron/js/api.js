@@ -50,7 +50,7 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
 			activeTabId: win.activeTabId,
-			isSingleTab: win.views && (win.views.length == 1),
+			isSingleTab: win.views && (win.views.length == 1) && !win.views.some(it => it.data && it.data.isPinned),
 		};
 	};
 
