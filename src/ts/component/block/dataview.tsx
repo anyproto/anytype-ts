@@ -414,6 +414,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const isViewCalendar = view.type == I.ViewType.Calendar;
 		const isViewBoard = view.type == I.ViewType.Board;
 
+		if (isCollection) {
+			details.createdInContext = objectId;
+		};
+
 		let typeId = '';
 		let templateId = '';
 

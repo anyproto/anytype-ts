@@ -57,7 +57,11 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		const type = S.Record.getTypeById(getTypeId());
 		const templateId = getTemplateId();
 
-		details = Object.assign(Dataview.getDetails(rootId, block.id, objectId, view.id), details, { createdInContext: rootId, createdInContextRef: block.id });
+		details = Object.assign(Dataview.getDetails(rootId, block.id, objectId, view.id), details);
+
+		if (isCollection) {
+			details.createdInContext = objectId;
+		};
 
 		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {

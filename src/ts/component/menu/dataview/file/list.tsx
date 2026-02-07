@@ -123,7 +123,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 	const onUpload = () => {
 		Action.openFileDialog({}, paths => {
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, false, '', 0, data.rootId || '', data.relationKey || '', (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, false, '', 0, data.record?.id || '', data.relationKey || '', (message: any) => {
 				if (!message.error.code) {
 					onChangeHandler(message.objectId);
 					reload();
