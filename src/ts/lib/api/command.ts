@@ -319,7 +319,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, imageKind: I.ImageKind, callBack?: (message: any) => void) => {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, imageKind: I.ImageKind, createdInContext: string, createdInBlockId: string, callBack?: (message: any) => void) => {
 	if (!url && !path && !preloadFileId) {
 		return;
 	};
@@ -334,6 +334,8 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setPreloadfileid(preloadFileId);
 	request.setPreloadonly(preloadOnly);
 	request.setImagekind(imageKind as number);
+	request.setCreatedincontext(createdInContext);
+	request.setCreatedinblockid(createdInBlockId);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -2016,11 +2018,13 @@ export const UnsplashSearch = (query: string, limit: number, callBack?: (message
 	dispatcher.request(UnsplashSearch.name, request, callBack);
 };
 
-export const UnsplashDownload = (spaceId: string, id: string, callBack?: (message: any) => void) => {
+export const UnsplashDownload = (spaceId: string, id: string, createdInContext: string, createdInBlockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Unsplash.Download.Request();
 
 	request.setSpaceid(spaceId);
 	request.setPictureid(id);
+	request.setCreatedincontext(createdInContext);
+	request.setCreatedinblockid(createdInBlockId);
 
 	dispatcher.request(UnsplashDownload.name, request, callBack);
 };

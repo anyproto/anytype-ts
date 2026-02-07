@@ -309,14 +309,14 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableCommonDrop(true);
 		setLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
 			setLoading(false);
 			keyboard.disableCommonDrop(false);
 
 			if (message?.error?.code) {
 				return;
 			};
-			
+
 			loadedRef.current = false;
 			U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});

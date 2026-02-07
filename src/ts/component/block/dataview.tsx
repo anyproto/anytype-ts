@@ -539,7 +539,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		param.offsetY = 4 * -dir;
 
 		param.data = param.data || {};
-		param.data.details = getDetails(groupId);
+		param.data.details = Object.assign(getDetails(groupId), { createdInContext: rootId, createdInBlockId: block.id });
 
 		const objectId = getObjectId();
 		const menuParam = {
@@ -814,6 +814,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
+				details = Object.assign(details, { createdInContext: rootId });
 				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
 		} else {

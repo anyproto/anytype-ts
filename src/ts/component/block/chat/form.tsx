@@ -787,7 +787,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const preloadFile = (item: any, callBack: (preloadId: string) => void) => {
-		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', 0, (message: any) => callBack(message.preloadFileId));
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', 0, rootId, '', (message: any) => callBack(message.preloadFileId));
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -947,7 +947,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, rootId, '', (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -976,7 +976,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of bookmarks) {
-				C.ObjectCreateBookmark({ source: item.source }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
+				C.ObjectCreateBookmark({ source: item.source, createdInContext: rootId, createdInBlockId: '' }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
 					if (message.objectId) {

@@ -117,7 +117,8 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
+				details = Object.assign(details, { createdInContext: rootId });
+				C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};

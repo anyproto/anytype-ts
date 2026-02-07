@@ -149,7 +149,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			close();
 			onUploadStart?.();
 
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -170,7 +170,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.type == I.CoverType.Source) {
 			onUploadStart?.();
 
-			C.UnsplashDownload(S.Common.space, item.itemId, (message: any) => {
+			C.UnsplashDownload(S.Common.space, item.itemId, rootId, 'coverId', (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.objectId);
 				};
@@ -238,7 +238,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover,(message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
 			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -482,7 +482,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				return;
 			};
 
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
 				if (!message.error.code) {
 					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};

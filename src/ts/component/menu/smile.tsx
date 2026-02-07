@@ -800,7 +800,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setIsLoading(true);
 		keyboard.disableCommonDrop(true);
 		
-		C.FileUpload(spaceId, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Icon, (message: any) => {
+		C.FileUpload(spaceId, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Icon, data.objectId || '', 'iconImage', (message: any) => {
 			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -820,7 +820,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			setIsLoading(true);
 
-			C.FileUpload(spaceId, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Icon, (message: any) => {
+			C.FileUpload(spaceId, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Icon, data.objectId || '', 'iconImage', (message: any) => {
 				setIsLoading(false);
 
 				if (!message.error.code) {
