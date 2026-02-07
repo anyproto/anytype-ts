@@ -539,7 +539,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		param.offsetY = 4 * -dir;
 
 		param.data = param.data || {};
-		param.data.details = Object.assign(getDetails(groupId), { createdInContext: rootId, createdInBlockId: block.id });
+		param.data.details = Object.assign(getDetails(groupId), { createdInContext: rootId, createdInContextRef: block.id });
 
 		const objectId = getObjectId();
 		const menuParam = {

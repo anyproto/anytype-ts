@@ -976,7 +976,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of bookmarks) {
-				C.ObjectCreateBookmark({ source: item.source, createdInContext: rootId, createdInBlockId: '' }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
+				C.ObjectCreateBookmark({ source: item.source, createdInContext: rootId, createdInContextRef: '' }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
 					if (message.objectId) {
