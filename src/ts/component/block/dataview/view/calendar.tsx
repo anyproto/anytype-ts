@@ -59,6 +59,10 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 
 		details = Object.assign(Dataview.getDetails(rootId, block.id, objectId, view.id), details);
 
+		if (isCollection) {
+			details.createdInContext = objectId;
+		};
+
 		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;

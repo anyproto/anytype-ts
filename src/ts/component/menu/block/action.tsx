@@ -443,6 +443,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
+						details = Object.assign(details, { createdInContext: rootId });
 						C.ObjectCreate(details, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
 					};
 

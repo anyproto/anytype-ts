@@ -218,11 +218,12 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const noUpload = props.noUpload;
 		const withIcons = U.Object.isTypeLayout(object.layout);
 
-		S.Menu.open('smile', { 
+		S.Menu.open('smile', {
 			element: `#${props.id}`,
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
 				spaceId: object.spaceId,
+				objectId: object.id,
 				noGallery,
 				noUpload,
 				withIcons,

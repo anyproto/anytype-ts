@@ -55,13 +55,14 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		focus.clear(true);
 
-		S.Menu.open('smile', { 
+		S.Menu.open('smile', {
 			element: `#block-${block.id} #button-icon`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => $(elementsRef.current).addClass('hover'),
 			onClose: () => $(elementsRef.current).removeClass('hover'),
 			data: {
+				objectId: rootId,
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => U.Object.setIcon(rootId, icon, '', cb),
 				onUpload: (objectId: string) => U.Object.setIcon(rootId, '', objectId, cb),
@@ -309,14 +310,14 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableCommonDrop(true);
 		setLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
 			setLoading(false);
 			keyboard.disableCommonDrop(false);
 
 			if (message?.error?.code) {
 				return;
 			};
-			
+
 			loadedRef.current = false;
 			U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
