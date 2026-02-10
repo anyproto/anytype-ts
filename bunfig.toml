@@ -1,0 +1,23 @@
+[install]
+# Use the default npm registry
+registry = "https://registry.npmjs.org/"
+
+# Enable lockfile for reproducible installs
+lockfile = true
+
+# Cache settings for faster installs
+cache = true
+
+# Development-specific settings
+[install.dev]
+default = true
+
+# Runtime configuration
+[run]
+silent = false
+
+# Bundle configuration for bun build (used for scripts/utils)
+[bundle]
+target = "node"
+minify = true
+sourcemap = true

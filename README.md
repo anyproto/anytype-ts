@@ -52,6 +52,27 @@ Also install:
 
 On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
 
+### 🥟 Using Bun (Optional but Recommended)
+
+For significantly faster installs and builds, you can use **Bun** instead of npm:
+
+```bash
+# Install Bun
+curl -fsSL https://bun.sh/install | bash  # macOS/Linux
+# or
+powershell -c "irm bun.sh/install.ps1 | iex"  # Windows
+
+# Install dependencies (5-10x faster than npm)
+bun install
+
+# Run scripts with Bun
+bun run start:dev
+bun run build
+bun run typecheck
+```
+
+See [BUN_MIGRATION.md](./BUN_MIGRATION.md) for detailed information about Bun integration.
+
 ## 🏗 Building from Source
 
 ```bash
@@ -59,6 +80,7 @@ On ARM systems, node package `keytar` needs to be rebuilt during installation, s
 git clone https://github.com/anyproto/anytype-ts.git
 cd anytype-ts
 npm ci               # or: pnpm i --frozen-lockfile
+# or with Bun for faster installs: bun install
 
 # 2 – Fetch / build middleware & protobuf bindings
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
@@ -87,6 +109,7 @@ You can either run the helper (from *anytype‑heart*) separately or just launch
 ```bash
 anytypeHelper &       # or ./bin/anytypeHelper
 npm run start:dev     # Windows: npm run start:dev-win
+# or with Bun: bun run start:dev
 ```
 
 For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
