@@ -226,16 +226,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 25.2.1
+          bun-version: latest
 
-      - name: Install Webpack
-        run: npm install --save-dev webpack-cli --legacy-peer-deps
+      - name: Install dependencies
+        run: bun install
 
       - name: Update locale
-        run: npm run update:locale
+        run: bun run update:locale
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
@@ -342,13 +342,13 @@ jobs:
 
       - name: Build Native Messaging Host Windows
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: npm run build:nmh-win
+        run: bun run build:nmh-win
         env:
           CGO_ENABLED: 0
 
       - name: Build Native Messaging Host
         if: ${{ !startsWith(matrix.os, 'windows-') }}
-        run: npm run build:nmh
+        run: bun run build:nmh
         env:
           CGO_ENABLED: 0
 
