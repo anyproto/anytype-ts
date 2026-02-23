@@ -1092,6 +1092,19 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdatePinnedStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach((subId) => {
+						const message = S.Chat.getMessageById(subId, mapped.message?.id);
+						if (message) {
+							set(message, { isPinned: mapped.isPinned });
+						};
+					});
+
+					$(window).trigger('pinnedStatusUpdate', [ mapped.message, mapped.isPinned, mapped.subIds ]);
+					break;
+				};
+
 				case 'ProcessNew': {
 					const { process } = mapped;
 					const { progress, type } = process;

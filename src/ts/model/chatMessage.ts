@@ -67,6 +67,7 @@ class ChatMessage implements I.ChatMessage {
 	isReadMention = false;
 	hasMention = false;
 	isSynced = false;
+	isPinned = false;
 
 	constructor (props: I.ChatMessage) {
 
@@ -87,6 +88,7 @@ class ChatMessage implements I.ChatMessage {
 		this.isReadMention = Boolean(props.isReadMention);
 		this.hasMention = Boolean(props.hasMention);
 		this.isSynced = Boolean(props.isSynced);
+		this.isPinned = Boolean(props.isPinned);
 
 		this.reactions.sort((c1, c2) => {
 			const l1 = c1.authors.length;
@@ -113,6 +115,7 @@ class ChatMessage implements I.ChatMessage {
 			isReadMention: observable,
 			hasMention: observable,
 			isSynced: observable,
+			isPinned: observable,
 		});
 
 		return this;

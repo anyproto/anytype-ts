@@ -714,13 +714,14 @@ export const Mapper = {
 				createdAt: obj.getCreatedat(),
 				modifiedAt: obj.getModifiedat(),
 				replyToMessageId: obj.getReplytomessageid(),
-				content: Mapper.From.ChatMessageContent(obj.getMessage()),
+				content: obj.hasMessage() ? Mapper.From.ChatMessageContent(obj.getMessage()) : { text: '', style: 0, marks: [] },
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
-				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+				reactions: obj.hasReactions() ? Mapper.From.ChatMessageReaction(obj.getReactions()) : [],
 				isReadMessage: obj.getRead(),
 				isReadMention: obj.getMentionread(),
 				hasMention: obj.getHasmention(),
 				isSynced: obj.getSynced(),
+				isPinned: obj.getPinned(),
 			};
 		},
 
@@ -1179,6 +1180,7 @@ export const Mapper = {
 			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
 			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
 			item.setReactions(Mapper.To.ChatMessageReaction(obj.reactions));
+			item.setPinned(obj.isPinned);
 
 			return item;
 		},
@@ -1334,6 +1336,7 @@ export const Mapper = {
 			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
+			if (v == V.CHATUPDATEPINNEDSTATUS)		 t = 'ChatUpdatePinnedStatus';
 
 			if (v == V.MEMBERSHIPV2UPDATE)			 t = 'MembershipV2Update';
 			if (v == V.MEMBERSHIPV2PRODUCTSUPDATE)	 t = 'MembershipV2ProductsUpdate';
@@ -1872,6 +1875,14 @@ export const Mapper = {
 			return {
 				ids: obj.getIdsList(),
 				isSynced: obj.getIssynced(),
+				subIds: obj.getSubidsList(),
+			};
+		},
+
+		ChatUpdatePinnedStatus: (obj: Events.Event.Chat.UpdatePinnedStatus) => {
+			return {
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+				isPinned: obj.getIspinned(),
 				subIds: obj.getSubidsList(),
 			};
 		},

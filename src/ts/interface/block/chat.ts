@@ -63,6 +63,7 @@ export interface ChatMessage {
 	dependencies: Map<string, any>;
 	reactions: ChatMessageReaction[];
 	isSynced: boolean;
+	isPinned: boolean;
 
 	// Internal
 	isFirst: boolean;
