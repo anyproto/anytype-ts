@@ -91,7 +91,6 @@ const Data = {
 	},
 
 	common: () => {
-		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
 		const elements = {
 			vault: '#sidebarPageVault #body',
@@ -101,7 +100,7 @@ const Data = {
 			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
 			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
 			relation: '#header #button-header-relation',
-			widgetSpace: (spaceview.isChat || spaceview.isOneToOne) ? '#widget-space .spaceInfo' : '#widget-space .spaceData .head',
+			widgetSpace: spaceview.isOneToOne ? '#widget-space .spaceInfo' : '#widget-space .spaceData .head',
 		};
 
 		const getOffset = (el: string) => {

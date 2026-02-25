@@ -90,7 +90,7 @@ class UtilSubscription {
 		let ignoreChat = param.ignoreChat;
 
 		if (undefined === ignoreChat) {
-			ignoreChat = spaceview.isChat || spaceview.isOneToOne;
+			ignoreChat = spaceview.isOneToOne;
 		};
 
 		if (ignoreChat) {
@@ -549,7 +549,7 @@ class UtilSubscription {
 					{
 						relationKey: 'uniqueKey',
 						type: I.SortType.Custom,
-						customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
+						customOrder: U.Data.typeSortKeys(spaceview.isOneToOne),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],

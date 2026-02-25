@@ -62,6 +62,7 @@
 
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; line-height: 20px; }
 		.label { @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
+		.label.lastMessage { @include text-overflow-nw; }
 		.label.chatName { font-weight: 500; @include text-overflow-nw; }
 
 		&::before {
@@ -102,17 +103,7 @@
 			}
 			.cnt { display: none; }
 		}
-
-		&:not(.spaceChat) {
-			.label.lastMessage { @include text-overflow-nw; }
-		}
-
-		&.spaceChat {
-			.label.lastMessage { @include clamp2; }
-		}
 	}
-
-
 
 	&.isMinimal {
 		> .head { height: 8px; }

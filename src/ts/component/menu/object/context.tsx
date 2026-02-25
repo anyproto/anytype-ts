@@ -190,7 +190,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne || spaceview.isChat) {
+		if (spaceview.isOneToOne) {
 			const chatMode = (objectIds.length == 1) ? U.Object.getChatNotificationMode(spaceview, objectIds[0]) : I.NotificationMode.All;
 			const isMuted = chatMode != I.NotificationMode.All;
 

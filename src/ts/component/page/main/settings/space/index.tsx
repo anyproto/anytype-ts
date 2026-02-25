@@ -65,7 +65,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isChat && !spaceview.isOneToOne) {
+		if (!spaceview.isOneToOne) {
 			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 		};
 	};
@@ -356,7 +356,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 							) : ''}
 
 							<div className="sectionContent">
-								{!spaceview.isChat && !spaceview.isOneToOne ? (
+								{!spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />

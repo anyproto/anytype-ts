@@ -814,7 +814,7 @@ class UtilData {
 		const spaceview = U.Space.getSpaceview();
 
 		let ret = null;
-		if ((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace)) {
+		if (spaceview.isOneToOne && (rootId == S.Block.workspace)) {
 			ret = spaceview;
 		} else {
 			ret = S.Detail.get(rootId, objectId);

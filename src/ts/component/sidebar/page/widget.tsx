@@ -32,7 +32,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
-		if (!spaceview.isChat && !spaceview.isOneToOne) {
+		if (!spaceview.isOneToOne) {
 			const chats = U.Data.getWidgetChats();
 			if (chats.length) {
 				ret.push(I.WidgetSection.Unread);

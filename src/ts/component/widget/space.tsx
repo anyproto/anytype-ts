@@ -16,7 +16,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const canWrite = U.Space.canMyParticipantWrite();
 	const route = analytics.route.widget;
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
-	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
+	const iconSize = spaceview.isOneToOne ? 80 : 48;
 	const rootId = keyboard.getRootId();
 
 	const icon = (
@@ -40,7 +40,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			},
 		} : null,
 		{ id: 'search', name: translate('commonSearch') },
-		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
+		spaceview.isOneToOne ? { id: 'chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: MouseEvent, item: any) => {
@@ -91,7 +91,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	let content = null;
-	if (spaceview.isChat || spaceview.isOneToOne) {
+	if (spaceview.isOneToOne) {
 		content = (
 			<div className="spaceInfo">
 				{icon}

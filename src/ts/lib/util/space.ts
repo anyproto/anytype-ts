@@ -158,7 +158,7 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
-		if (space.isChat || space.isOneToOne) {
+		if (space.isOneToOne) {
 			return this.getChat();
 		};
 
