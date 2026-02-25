@@ -210,7 +210,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = buttons.reduce((res: number, current: any) => res + getRowHeight(current), height);
 
 			height = Math.min(mh || 370, height);
-			height = Math.max(80, height);
+			height = Math.max(48, height);
 
 			content.css({ height });
 		};
