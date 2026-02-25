@@ -21,6 +21,10 @@ class CommentStore {
 			addReply: action,
 			updateReply: action,
 			deleteReply: action,
+			setHasMorePosts: action,
+			setHasMoreReplies: action,
+			clear: action,
+			clearAll: action,
 		});
 	};
 
@@ -70,8 +74,9 @@ class CommentStore {
 	};
 
 	deletePost (subId: string, id: string): void {
-		this.setPosts(subId, this.getPosts(subId).filter(it => it.id != id));
 		this.replyMap.delete(id);
+		this.hasMoreRepliesMap.delete(id);
+		this.setPosts(subId, this.getPosts(subId).filter(it => it.id != id));
 	};
 
 	getPosts (subId: string): I.CommentMessage[] {
@@ -143,14 +148,14 @@ class CommentStore {
 	};
 
 	clear (subId: string): void {
-		this.postMap.delete(subId);
-		this.hasMorePostsMap.delete(subId);
-
 		const posts = this.getPosts(subId);
 		for (const post of posts) {
 			this.replyMap.delete(post.id);
 			this.hasMoreRepliesMap.delete(post.id);
 		};
+
+		this.postMap.delete(subId);
+		this.hasMorePostsMap.delete(subId);
 	};
 
 	clearAll (): void {

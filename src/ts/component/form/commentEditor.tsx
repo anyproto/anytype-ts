@@ -52,10 +52,11 @@ const theme = {
 	},
 };
 
-/**
- * Converts Lexical EditorState to CommentContentPart array.
- */
 const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
+	if (!editor) {
+		return [];
+	};
+
 	const parts: I.CommentContentPart[] = [];
 
 	editor.getEditorState().read(() => {
@@ -63,13 +64,12 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 		const paragraphs = root.getChildren();
 
 		for (const paragraph of paragraphs) {
-			let text = '';
-			const marks: I.Mark[] = [];
-
 			if (!$isElementNode(paragraph)) {
 				continue;
 			};
 
+			let text = '';
+			const marks: I.Mark[] = [];
 			const children = paragraph.getChildren();
 
 			for (const child of children) {
@@ -110,10 +110,11 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 	return parts;
 };
 
-/**
- * Populates a Lexical editor with CommentContentPart array content.
- */
 const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => {
+	if (!editor) {
+		return;
+	};
+
 	editor.update(() => {
 		const root = $getRoot();
 		root.clear();
@@ -132,7 +133,6 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 			if (!part.marks || !part.marks.length) {
 				p.append($createTextNode(text));
 			} else {
-				// Build segments based on mark boundaries
 				const boundaries = new Set<number>();
 				boundaries.add(0);
 				boundaries.add(text.length);
@@ -176,9 +176,6 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 	});
 };
 
-/**
- * Plugin to handle Enter to submit and Shift+Enter for newline.
- */
 const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 	const [editor] = useLexicalComposerContext();
 
@@ -201,9 +198,6 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 	return null;
 };
 
-/**
- * Plugin to handle Escape to cancel.
- */
 const EscapePlugin = ({ onCancel }: { onCancel?: () => void }) => {
 	const [editor] = useLexicalComposerContext();
 
@@ -226,9 +220,6 @@ const EscapePlugin = ({ onCancel }: { onCancel?: () => void }) => {
 	return null;
 };
 
-/**
- * Plugin to handle keyboard shortcuts for formatting.
- */
 const FormattingPlugin = () => {
 	const [editor] = useLexicalComposerContext();
 
@@ -261,9 +252,6 @@ const FormattingPlugin = () => {
 	return null;
 };
 
-/**
- * Plugin to manage keyboard focus state so editor shortcuts don't conflict.
- */
 const FocusPlugin = () => {
 	const [editor] = useLexicalComposerContext();
 
@@ -296,8 +284,22 @@ const FocusPlugin = () => {
 };
 
 /**
- * Bridge plugin to expose editor ref.
+ * Loads initialParts into editor after it mounts.
  */
+const InitialPartsPlugin = ({ parts }: { parts?: I.CommentContentPart[] }) => {
+	const [editor] = useLexicalComposerContext();
+	const loaded = useRef(false);
+
+	useEffect(() => {
+		if (!loaded.current && parts && parts.length) {
+			loaded.current = true;
+			partsToEditor(editor, parts);
+		};
+	}, [ editor ]);
+
+	return null;
+};
+
 const EditorRefPlugin = ({ editorRef }: { editorRef: React.MutableRefObject<LexicalEditor | null> }) => {
 	const [editor] = useLexicalComposerContext();
 
@@ -371,16 +373,11 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		},
 
 		getParts: () => {
-			if (!editorRef.current) {
-				return [];
-			};
 			return editorStateToParts(editorRef.current);
 		},
 
 		setParts: (parts: I.CommentContentPart[]) => {
-			if (editorRef.current) {
-				partsToEditor(editorRef.current, parts);
-			};
+			partsToEditor(editorRef.current, parts);
 		},
 
 		isEmpty: () => checkEmpty(),
@@ -393,11 +390,6 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			console.error('[CommentEditor]', error);
 		},
 		editable: !readonly,
-		editorState: () => {
-			if (initialParts && initialParts.length) {
-				partsToEditor(editorRef.current, initialParts);
-			};
-		},
 	};
 
 	return (
@@ -414,6 +406,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<EscapePlugin onCancel={onCancel} />
 				<FormattingPlugin />
 				<FocusPlugin />
+				<InitialPartsPlugin parts={initialParts} />
 				<EditorRefPlugin editorRef={editorRef} />
 			</div>
 		</LexicalComposer>

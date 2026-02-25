@@ -90,6 +90,19 @@ const CommentReply = observer((props: Props) => {
 		);
 	};
 
+	const renderActions = () => {
+		if (isEditing || readonly || !isSelf) {
+			return null;
+		};
+
+		return (
+			<div className="actions">
+				<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
+				<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
+			</div>
+		);
+	};
+
 	return (
 		<div className="commentReply">
 			<div className="head">
@@ -106,17 +119,7 @@ const CommentReply = observer((props: Props) => {
 			</div>
 
 			{renderContent()}
-
-			{!isEditing && !readonly ? (
-				<div className="actions">
-					{isSelf ? (
-						<>
-							<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
-							<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
-						</>
-					) : ''}
-				</div>
-			) : ''}
+			{renderActions()}
 		</div>
 	);
 });

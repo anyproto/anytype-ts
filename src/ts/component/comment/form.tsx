@@ -24,22 +24,31 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { placeholder, initialParts, isEdit, readonly, onSubmit, onCancel } = props;
 	const editorRef = useRef<any>(null);
 	const [ isEmpty, setIsEmpty ] = useState(true);
+	const [ isLoading, setIsLoading ] = useState(false);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => editorRef.current?.focus(),
 		clear: () => {
 			editorRef.current?.clear();
 			setIsEmpty(true);
+			setIsLoading(false);
 		},
 	}));
 
 	const handleSubmit = useCallback((parts: I.CommentContentPart[]) => {
+		if (isLoading) {
+			return;
+		};
+
+		setIsLoading(true);
 		onSubmit?.(parts);
+
 		if (!isEdit) {
 			editorRef.current?.clear();
 			setIsEmpty(true);
+			setIsLoading(false);
 		};
-	}, [ onSubmit, isEdit ]);
+	}, [ onSubmit, isEdit, isLoading ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -50,6 +59,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const cn = [ 'commentForm' ];
+	const isDisabled = isEmpty || isLoading;
 
 	if (isEdit) {
 		cn.push('isEdit');
@@ -76,13 +86,15 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				) : ''}
 
 				<div
-					className={[ 'btn', 'send', (isEmpty ? 'disabled' : '') ].join(' ')}
+					className={[ 'btn', 'send', (isDisabled ? 'disabled' : '') ].join(' ')}
 					onClick={() => {
-						if (!isEmpty) {
-							const parts = editorRef.current?.getParts();
-							if (parts) {
-								handleSubmit(parts);
-							};
+						if (isDisabled) {
+							return;
+						};
+
+						const parts = editorRef.current?.getParts();
+						if (parts) {
+							handleSubmit(parts);
 						};
 					}}
 				>

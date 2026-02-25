@@ -34,7 +34,7 @@ const CommentPost = observer((props: Props) => {
 		if (replyCount > 0) {
 			loadReplies(true);
 		};
-	}, [ id ]);
+	}, [ id, replyCount ]);
 
 	const loadReplies = useCallback((initial?: boolean) => {
 		const existing = S.Comment.getReplies(id);
@@ -184,6 +184,24 @@ const CommentPost = observer((props: Props) => {
 		);
 	};
 
+	const renderActions = () => {
+		if (isEditing || readonly) {
+			return null;
+		};
+
+		return (
+			<div className="actions">
+				<div className="action" onClick={onReply}>{translate('commentReply')}</div>
+				{isSelf ? (
+					<>
+						<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
+						<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
+					</>
+				) : ''}
+			</div>
+		);
+	};
+
 	return (
 		<div className="commentPost">
 			<div className="head">
@@ -200,18 +218,7 @@ const CommentPost = observer((props: Props) => {
 			</div>
 
 			{renderContent()}
-
-			{!isEditing && !readonly ? (
-				<div className="actions">
-					<div className="action" onClick={onReply}>{translate('commentReply')}</div>
-					{isSelf ? (
-						<>
-							<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
-							<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
-						</>
-					) : ''}
-				</div>
-			) : ''}
+			{renderActions()}
 
 			{replies.length ? (
 				<div className="replyList">

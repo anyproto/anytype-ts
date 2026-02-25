@@ -18,10 +18,6 @@ const CommentList = observer((props: Props) => {
 	const posts = S.Comment.getPosts(subId);
 	const hasMore = S.Comment.getHasMorePosts(subId);
 
-	if (!posts.length) {
-		return null;
-	};
-
 	return (
 		<div className="commentList">
 			{hasMore ? (
