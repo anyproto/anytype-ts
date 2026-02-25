@@ -413,6 +413,10 @@ html.themeDark {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
 
+			.createHome {
+				.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
+			}
+
 			.widgetSection {
 				> .nameWrap {
 					.name {

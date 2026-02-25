@@ -204,6 +204,17 @@
 		}
 	}
 
+	.pageSettingsSpaceHome {
+		.spaceHome {
+			.homeOptions .option {
+				.icon.preview.chat { background-image: url('#{$themePath}/icon/settings/homeChat.svg'); }
+				.icon.preview.page { background-image: url('#{$themePath}/icon/settings/homePage.svg'); }
+				.icon.preview.collection { background-image: url('#{$themePath}/icon/settings/homeCollection.svg'); }
+				.icon.preview.empty { background-image: url('#{$themePath}/icon/settings/homeEmpty.svg'); }
+			}
+		}
+	}
+
 	.pageSettingsSpaceNotifications {
         .section { display: flex; flex-direction: column; gap: 8px 0px; }
         .section {

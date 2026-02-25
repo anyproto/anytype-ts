@@ -1636,28 +1636,11 @@ class UtilMenu {
 	};
 
 	spaceCreate (param: I.MenuParam, route) {
-		const ids = [ 'chat', 'space', 'join' ];
-		const options = ids.map(id => {
-			const suffix = U.String.toUpperCamelCase(id);
-
-			let icon = '';
-			let description = '';
-			let withDescription = false;
-
-			if (id != 'join') {
-				icon = id;
-				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
-				withDescription = true;
-			};
-
-			return {
-				id,
-				icon,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description,
-				withDescription,
-			};
-		});
+		const options = [
+			{ id: 'personal', icon: 'personal', name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			{ id: 'group', icon: 'group', name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			{ id: 'join', icon: 'join', name: translate('sidebarMenuSpaceCreateTitleJoin') },
+		];
 
 		let prefix = '';
 		switch (route) {
@@ -1679,13 +1662,13 @@ class UtilMenu {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'chat': {
-							Action.createSpace(I.SpaceUxType.Chat, route);
+						case 'personal': {
+							Action.createSpace(I.SpaceUxType.Data, route);
 							break;
 						};
 
-						case 'space': {
-							Action.createSpace(I.SpaceUxType.Data, route);
+						case 'group': {
+							Action.createSpace(I.SpaceUxType.Chat, route);
 							break;
 						};
 

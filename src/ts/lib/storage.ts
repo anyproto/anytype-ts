@@ -18,6 +18,7 @@ const SPACE_KEYS = new Set([
 	'graphData',
 	'recentEditMode',
 	'widgetSections',
+	'channelBanner',
 ]);
 
 const LOCAL_KEYS = new Set([

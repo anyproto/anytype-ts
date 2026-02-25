@@ -16,8 +16,13 @@
 }
 
 .button.accent { background: var(--color-system-accent-100); color: #fff; }
-.button.accent:not(.disabled):hover, .button.accent:not(.disabled).hover { background: var(--color-system-accent-125); }
+.button.accent
 .button.accent {
+	&.disabled { background-color: var(--color-shape-secondary); color: var(--color-text-tertiary); opacity: 1; }
+	&:not(.disabled) {
+		&:hover, &.hover { background: var(--color-system-accent-125); }
+	}
+
 	.loaderWrapper {
 		.dots {
 			.dot { border-color: #fff; animation-name: dots-accent; }

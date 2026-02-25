@@ -1,6 +1,6 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Error, Icon, Input } from 'Component';
+import { Button, Error, Input, Icon } from 'Component';
 import { I, U, translate } from 'Lib';
 import $ from 'jquery';
 
@@ -29,14 +29,14 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 
 	return (
 		<>
-			<Label text={translate('popupSpaceJoinByLinkLabel')} />
+			<Icon className="close" onClick={() => close()} />
+			<div className="stepTitle">{translate('popupSpaceJoinByLinkLabel')}</div>
 			<form onSubmit={onSubmit}>
-				<Icon />
-				<Input 
-					type="text" 
-					ref={inputRef} 
-					onKeyUp={onKeyUp} 
-					placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')} 
+				<Input
+					type="text"
+					ref={inputRef}
+					onKeyUp={onKeyUp}
+					placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')}
 					focusOnMount={true}
 				/>
 				<Button className="disabled" text={translate('popupInviteRequestRequestToJoin')} onClick={onSubmit} />

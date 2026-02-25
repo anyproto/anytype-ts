@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativ
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics, translate } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -120,19 +120,19 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		content = <Deleted {...props} />;
 	} else {
 		content = (
-			<> 
-				<Header 
-					{...props} 
-					component="mainChat" 
-					ref={headerRef} 
-					rootId={rootId} 
+			<>
+				<Header
+					{...props}
+					component="mainChat"
+					ref={headerRef}
+					rootId={rootId}
 				/>
 
-				<div 
+				<div
 					ref={nodeRef}
 					className="wrapper"
-					onDragOver={onDragOver} 
-					onDragLeave={onDragLeave} 
+					onDragOver={onDragOver}
+					onDragLeave={onDragLeave}
 					onDrop={onDrop}
 				>
 					<div className="editorWrapper isChat">

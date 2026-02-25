@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -626,6 +626,25 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			</>
 		);
 
+		const isOwner = U.Space.isMyOwner();
+		const hasDashboard = spaceview.spaceDashboardId && (spaceview.spaceDashboardId != I.HomePredefinedId.Last);
+		const bannerData = Storage.get('channelBanner') || {};
+		const showCreateHome = spaceview.isChat && isOwner && !hasDashboard && !bannerData.home;
+
+		const onCreateHome = () => {
+			Action.openSettings('spaceHome', analytics.route.widget);
+		};
+
+		const onDismissCreateHome = (e: React.MouseEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const obj = Storage.get('channelBanner') || {};
+
+			obj.home = true;
+			Storage.set('channelBanner', obj);
+		};
+
 		content = (
 			<div className="content">
 				<Widget
@@ -639,6 +658,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
+
+				{showCreateHome ? (
+					<div className="createHome" onClick={onCreateHome}>
+						<Icon className="home" />
+						<div className="name">{translate('widgetCreateHome')}</div>
+						<Icon className="close" onClick={onDismissCreateHome} />
+					</div>
+				) : ''}
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;

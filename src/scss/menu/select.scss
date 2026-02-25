@@ -80,22 +80,12 @@
 		.item.add { gap: 0px 12px; }
 	}
 
-	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
 	.menu.menuSelect.spaceCreate {
 		.content { height: auto !important; }
 
-		.item { height: 64px; }
-		.item {
-			.info { padding-left: 58px !important; }
-
-			.icon { width: 48px; height: 48px; }
-			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
-			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
-			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
-			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
-		}
-
-		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
+		.icon.personal { background-image: url('~img/icon/menu/spaceCreate/personal.svg'); }
+		.icon.group { background-image: url('~img/icon/menu/spaceCreate/group.svg'); }
+		.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
 	}
 
 	/* Type layout conflict */
