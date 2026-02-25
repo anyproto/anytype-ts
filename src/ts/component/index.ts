@@ -112,6 +112,7 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
+import { CommentSection } from './comment';
 import OptionSelect from './util/menu/optionSelect';
 import CalendarSelect from './util/menu/calendarSelect';
 
@@ -230,4 +231,6 @@ export {
 
 	OptionSelect,
 	CalendarSelect,
+
+	CommentSection,
 };
