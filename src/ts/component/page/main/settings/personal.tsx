@@ -20,6 +20,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		if (!v) {
 			analytics.clearAmplitudeStorage();
 		};
+		analytics.reinit();
 	};
 
 	const onHardwareAccelerationChange = (v: boolean) => {

@@ -109,14 +109,14 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (tl) {
-			setOfString.push(U.String.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(U.String.sprintf(translate('commonObjectTypeList'), U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			setOfString.push(`${U.Common.plural(rl, translate('pluralProperty'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(U.String.sprintf(translate('commonPropertyList'), U.Common.plural(rl, translate('pluralProperty')), relations.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -197,7 +197,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					className="cellContent"
 					onClick={e => onLinks(e, relationKey)}
 				>
-					{`${l} ${U.Common.plural(l, translate(U.String.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+					{U.String.sprintf(translate('commonCountRelation'), l, U.Common.plural(l, translate(U.String.toCamelCase([ 'plural', relationKey ].join('-')))))}
 				</div>
 				<div className="bullet" />
 			</span>

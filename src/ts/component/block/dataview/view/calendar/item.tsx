@@ -234,7 +234,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	if (total > LIMIT) {
 		more = (
 			<div className="record more" onClick={onMore}>
-				+{total - LIMIT} {translate('commonMore')} {U.Common.plural(total, translate('pluralObject')).toLowerCase()}
+				{U.String.sprintf(translate('commonCountMore'), total - LIMIT, translate('commonMore'), U.Common.plural(total, translate('pluralObject')).toLowerCase())}
 			</div>
 		);
 	};

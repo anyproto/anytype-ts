@@ -283,16 +283,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'zoomIn' },
 			{ key: 'zoomOut' },
 			{ key: 'zoomReset' },
-			{ key: 'turnBlock0' },
-			{ key: 'turnBlock1' },
-			{ key: 'turnBlock2' },
-			{ key: 'turnBlock3' },
-			{ key: 'turnBlock4' },
-			{ key: 'turnBlock5' },
-			{ key: 'turnBlock6' },
-			{ key: 'turnBlock7' },
-			{ key: 'turnBlock8' },
-			{ key: 'turnBlock9' },
 			{ key: 'menuAction' },
 			{ key: 'indent', preventDefault: true },
 			{ key: 'outdent', preventDefault: true },
@@ -304,6 +294,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: `ctrl+shift+/` },
 			{ key: 'theme' },
 		];
+
+		for (let i = 0; i <= 9; i++) {
+			saveKeys.push({ key: `turnBlock${i}` });
+		};
 
 		if (isInsideTable) {
 			if (!range.to) {
@@ -1056,7 +1050,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						focus.setWithTimeout(block.id, { from: to, to }, 30);
 					});
 				},
-				route: analytics.route.editor,
+				route: analytics.route.shortcut,
 			},
 		});
 	};

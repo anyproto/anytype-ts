@@ -16,8 +16,8 @@ const MemberCnt = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { route } = props;
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-	const text = spaceview.isShared ? 
-		`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}` : 
+	const text = spaceview.isShared ?
+		U.String.sprintf(translate('commonCountMembers'), members.length, U.Common.plural(members.length, translate('pluralMember'))) :
 		translate('commonPersonalSpace');
 
 	const onClick = (e: any) => {

@@ -211,7 +211,7 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 	const sorts = view.sorts || [];
 	const sortTitle = sorts.length === 1
 		? (S.Record.getRelationByKey(sorts[0].relationKey)?.name || '')
-		: `${sorts.length} ${U.Common.plural(sorts.length, translate('pluralSort'))}`;
+		: U.String.sprintf(translate('commonCountSorts'), sorts.length, U.Common.plural(sorts.length, translate('pluralSort')));
 
 	const onSortRemove = (e: any) => {
 		e.preventDefault();

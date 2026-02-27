@@ -214,7 +214,14 @@ class Dataview {
 	 * @returns {I.Filter[]} Array of filter objects.
 	 */
 	getActiveFilters (view: I.View): I.Filter[] {
-		return U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		return U.Common.objectCopy(view.filters).filter(it => {
+			if (!Relation.isFilterActive(it)) {
+				return false;
+			};
+
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		});
 	};
 
 	/**
@@ -391,7 +398,10 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const filters = view.filters.map(it => this.filterMapper(it, { rootId }));
+		const filters = view.filters.filter(it => {
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		}).map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);

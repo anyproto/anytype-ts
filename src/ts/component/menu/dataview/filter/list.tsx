@@ -114,7 +114,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getName = (item: any): string => {
 		if (Dataview.isAdvancedFilter(item)) {
 			const ruleCount = item.nestedFilters?.length || 1;
-			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
+			return U.String.sprintf(translate('commonCountRules'), ruleCount, U.Common.plural(ruleCount, translate('pluralRule')));
 		};
 
 		return item.relation?.name || '';

@@ -190,6 +190,11 @@ class Analytics {
 		this.log('[Analytics].init');
 	};
 
+	reinit () {
+		this.instance = null;
+		this.init();
+	};
+
 	/**
 	 * Sets the version for analytics events based on app config and environment.
 	 */

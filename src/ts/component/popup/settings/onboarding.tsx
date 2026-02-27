@@ -219,6 +219,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 								if (!v) {
 									analytics.clearAmplitudeStorage();
 								};
+								analytics.reinit();
 							}}
 						/>
 					</div>

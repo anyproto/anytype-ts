@@ -190,7 +190,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					break;
 				};
 
-				case I.DateFormat.ShortUS: {
+				case I.DateFormat.ShortUS:
+				case I.DateFormat.MonthAbbrBeforeDay:
+				case I.DateFormat.Long:
+				case I.DateFormat.Default: {
 					mask.push('99.99.9999');
 					ph.push('mm.dd.yyyy');
 					break;
@@ -349,7 +352,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 				switch (dateFormat) {
 					case I.DateFormat.ISO: format.push('Y.m.d'); break;
-					case I.DateFormat.ShortUS: format.push('m.d.Y'); break;
+					case I.DateFormat.ShortUS:
+					case I.DateFormat.MonthAbbrBeforeDay:
+					case I.DateFormat.Long:
+					case I.DateFormat.Default: format.push('m.d.Y'); break;
 					default: format.push('d.m.Y'); break;
 				};
 

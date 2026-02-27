@@ -50,6 +50,7 @@ class Dispatcher {
 	eventBuffer: { event: Events.Event, skipDebug: boolean }[] = [];
 	flushScheduled = false;
 	rafId = 0;
+	flushTimerId = 0;
 
 	/**
 	 * Initialize the gRPC client with the middleware server address.
@@ -95,7 +96,12 @@ class Dispatcher {
 
 			if (!this.flushScheduled) {
 				this.flushScheduled = true;
-				this.rafId = requestAnimationFrame(() => this.flushEvents());
+
+				if (S.Common.isActiveTab) {
+					this.rafId = requestAnimationFrame(() => this.flushEvents());
+				} else {
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+				};
 			};
 		});
 
@@ -119,6 +125,10 @@ class Dispatcher {
 	stopStream () {
 		if (this.rafId) {
 			cancelAnimationFrame(this.rafId);
+		};
+
+		if (this.flushTimerId) {
+			window.clearTimeout(this.flushTimerId);
 		};
 
 		this.flushEvents();
@@ -159,6 +169,7 @@ class Dispatcher {
 	flushEvents () {
 		this.flushScheduled = false;
 		this.rafId = 0;
+		this.flushTimerId = 0;
 
 		const buffer = this.eventBuffer;
 		this.eventBuffer = [];
@@ -1202,16 +1213,30 @@ class Dispatcher {
 		});
 
 		window.setTimeout(() => {
-			if (updateParents) {
-				S.Block.updateStructureParents(rootId);
-			};
+			if (S.Common.isActiveTab) {
+				if (updateParents) {
+					S.Block.updateStructureParents(rootId);
+				};
 
-			if (updateNumbers) {
-				S.Block.updateNumbers(rootId);
-			};
+				if (updateNumbers) {
+					S.Block.updateNumbers(rootId);
+				};
 
-			if (updateMarkup) {
-				S.Block.updateMarkup(rootId);
+				if (updateMarkup) {
+					S.Block.updateMarkup(rootId);
+				};
+			} else {
+				if (updateParents) {
+					S.Block.deferredParentUpdates.add(rootId);
+				};
+
+				if (updateNumbers) {
+					S.Block.deferredNumberUpdates.add(rootId);
+				};
+
+				if (updateMarkup) {
+					S.Block.deferredMarkupUpdates.add(rootId);
+				};
 			};
 		});
 	};

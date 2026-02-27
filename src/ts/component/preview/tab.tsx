@@ -70,7 +70,7 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Object.getById(object.id, { spaceId: spaceview.targetSpaceId }, (loaded: any) => {
 			if (loaded && !cancelRef.current) {
 				setDisplayObject(loaded);
-				loadType(loaded.type)
+				loadType(loaded.type);
 			};
 		});
 	};

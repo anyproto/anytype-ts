@@ -35,6 +35,10 @@ class BlockStore {
 	public restrictionMap: Map<string, Map<string, any>> = new Map();
 	public participantMap: Map<string, Map<string, string>> = new Map();
 
+	public deferredParentUpdates: Set<string> = new Set();
+	public deferredNumberUpdates: Set<string> = new Set();
+	public deferredMarkupUpdates: Set<string> = new Set();
+
 	constructor() {
 		makeObservable(this, {
 			profileId: observable,
@@ -190,6 +194,31 @@ class BlockStore {
 		this.treeMap.clear();
 		this.restrictionMap.clear();
 		this.participantMap.clear();
+	};
+
+	/**
+	 * Flushes deferred parent/number/markup updates that were skipped while the tab was inactive.
+	 */
+	flushDeferredUpdates () {
+		const parents = this.deferredParentUpdates;
+		const numbers = this.deferredNumberUpdates;
+		const markups = this.deferredMarkupUpdates;
+
+		this.deferredParentUpdates = new Set();
+		this.deferredNumberUpdates = new Set();
+		this.deferredMarkupUpdates = new Set();
+
+		for (const rootId of parents) {
+			this.updateStructureParents(rootId);
+		};
+
+		for (const rootId of numbers) {
+			this.updateNumbers(rootId);
+		};
+
+		for (const rootId of markups) {
+			this.updateMarkup(rootId);
+		};
 	};
 
 	/**

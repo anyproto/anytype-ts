@@ -1324,7 +1324,7 @@ class UtilData {
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
-				return false;
+				return counters.mentionCounter > 0;
 			};
 
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
@@ -1348,7 +1348,7 @@ class UtilData {
 			names.push(`+${more}`);
 		};
 
-		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		return U.String.sprintf(translate('commonObjectTypeList'), U.Common.plural(l, translate('pluralObjectType')), names.join(', '));
 	};
 
 	updateTabsDimmer(popupList?: I.Popup[], menuList?: I.Menu[]) {

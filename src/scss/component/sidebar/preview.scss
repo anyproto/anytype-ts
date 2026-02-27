@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    position: absolute; top: 0px; right: 100%; background-color: var(--color-bg-primary);
+    position: absolute; top: 0px; right: 100%; background-color: var(--color-bg-primary); overflow: hidden;
     border-right: 1px solid var(--color-shape-secondary);
 }
 

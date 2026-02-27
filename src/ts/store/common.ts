@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
+import { setReactionsPaused } from 'Lib/reactionScheduler';
 
 interface Filter {
 	from: number;
@@ -160,6 +161,7 @@ class CommonStore {
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
 			analyticsDeviceIdValue: observable,
+			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
 			recentEditModeValue: observable,
@@ -215,6 +217,7 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			isActiveTabSet: action,
 			isPinnedSet: action,
 			singleTabSet: action,
 			autoDownloadSet: action,
@@ -1064,6 +1067,13 @@ class CommonStore {
 	 */
 	isActiveTabSet (v: boolean) {
 		this.isActiveTab = v;
+
+		if (v) {
+			S.Block.flushDeferredUpdates();
+			setReactionsPaused(false);
+		} else {
+			setReactionsPaused(true);
+		};
 	};
 
 	/**

@@ -375,12 +375,32 @@ class Api {
 
 	openTab (win, data, options) {
 		const { isPinned, ...rest } = data || {};
+		const route = rest.route || '';
+
+		// Check if a pinned tab with this route already exists
+		if (route) {
+			const existing = WindowManager.findTabByRoute(win, route);
+			if (existing && existing.data && existing.data.isPinned) {
+				WindowManager.setActiveTab(win, existing.id);
+				return true;
+			};
+		};
 
 		if (options?.fireAnalytics) {
 			Util.sendToActiveTab(win, 'commandGlobal', 'analyticsAddTab');
 		};
 
 		WindowManager.createTab(win, rest, options);
+		return false;
+	};
+
+	switchToTabByRoute (win, route) {
+		const existing = WindowManager.findTabByRoute(win, route);
+		if (existing && existing.data && existing.data.isPinned) {
+			WindowManager.setActiveTab(win, existing.id);
+			return true;
+		};
+		return false;
 	};
 
 	openTabs (win, tabs) {
@@ -389,6 +409,13 @@ class Api {
 		};
 
 		for (const tab of tabs) {
+			const route = tab.data?.route || '';
+
+			// Skip if a tab with this route already exists
+			if (route && WindowManager.findTabByRoute(win, route)) {
+				continue;
+			};
+
 			WindowManager.createTab(win, tab.data, { setActive: false });
 		};
 	};

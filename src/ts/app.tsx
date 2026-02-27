@@ -10,8 +10,9 @@ import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
+import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 
-configure({ enforceActions: 'never' });
+configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
@@ -416,6 +417,7 @@ const App: FC = () => {
 	const onCloseSession = (e: any, tabId: string) => {
 		const currentTabId = electron.tabId();
 
+		clearReactionQueue();
 		U.Data.closeSession(() => {
 			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
 		});

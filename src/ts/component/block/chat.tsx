@@ -300,29 +300,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		const subId = getSubId();
-		const depsSubId = `${subId}-deps`;
 		const keys = U.Subscription.chatRelationKeys();
 
-		U.Subscription.destroyList([ depsSubId ], false, () => {
+		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
-				subId: depsSubId,
+				subId,
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
 				keys,
 				noDeps: true,
 				crossSpace: true,
-			}, (message: any) => {
-				if (!message.error.code) {
-					const records = (message.records || []).concat(message.dependencies || []);
-
-					for (const record of records) {
-						S.Detail.update(subId, { id: record.id, details: record }, true);
-					};
-				};
-
-				callBack?.();
-			});
+			}, callBack);
 		});
 	};
 

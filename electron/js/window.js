@@ -569,12 +569,19 @@ class WindowManager {
 		this.setActiveTab(win, id);
 	};
 
+	findTabByRoute (win, route) {
+		if (!win || !win.views || !route) {
+			return null;
+		};
+		return win.views.find(it => it.data && (it.data.route === route)) || null;
+	};
+
 	openRouteInTab (win, route, data) {
 		if (!win || !win.views || !route) {
 			return;
 		};
 
-		const existing = win.views.find(it => it.data && (it.data.route === route));
+		const existing = this.findTabByRoute(win, route);
 		if (existing) {
 			this.setActiveTab(win, existing.id);
 		} else {

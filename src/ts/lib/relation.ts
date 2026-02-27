@@ -621,9 +621,9 @@ class Relation {
 	 */
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const ret: any[] = [];
-		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => {
 			const relation = S.Record.getRelationByKey(it.relationKey);
-			return !!relation;
+			return relation && !relation.isArchived && !relation.isDeleted;
 		});
 
 		relations.forEach((it: I.ViewRelation) => {

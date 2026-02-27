@@ -140,15 +140,6 @@ html.bodyAuthDeleted {
 		}
 		.input.isFocused { box-shadow: 0px 0px; background: var(--color-shape-highlight-dark); }
 	}
-
-	.button.simple { 
-		min-width: auto; padding: 4px 6px; border-radius: 6px; transition: background-color $transitionCommon; 
-		font-weight: 400; color: var(--color-text-secondary);
-	}
-	.button.simple {
-		.icon { width: 20px; height: 20px; }
-		&:hover { color: var(--color-text-secondary) !important; background-color: var(--color-shape-highlight-medium) !important; }
-	}
 }
 
 .pageAuthSetup {
@@ -254,17 +245,20 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthDeleted {
-	.title { color: var(--color-text-primary) !important; margin: 0px 0px 10px 0px; }
+	.title { color: var(--color-text-primary) !important; margin: 0px 0px 8px 0px; }
 	.frame { width: 500px; }
-	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
+	.label { @include text-paragraph; margin: 0px 0px 32px 0px; }
 
-	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid var(--color-text-secondary) !important; border-radius: 100%; width: 64px; height: 64px; }
+		margin: 0px 0px 16px 0px; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;
 	}
 
 	.button { width: 320px; }
 	.remove { color: var(--color-red) !important; }
+
+	.isDeleted {
+		.title { margin-bottom: 32px; }
+	}
 }
 
 .pageAuthMigrate { height: 100vh; background: #232323; }

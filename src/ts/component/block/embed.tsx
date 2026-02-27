@@ -151,6 +151,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onKeyDownBlock = (e: any) => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const isEditing = node.hasClass('isEditing');
 
@@ -178,6 +182,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onKeyUpBlock = (e: any) => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const isEditing = node.hasClass('isEditing');
 
@@ -226,6 +234,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onChange = () => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		const value = getValue();
+
+		setValue(value);
+		setContent(value);
+	};
+
+	const onCompositionEndInput = () => {
 		const value = getValue();
 
 		setValue(value);
@@ -823,6 +842,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		} else {
 			$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
 			keyboard.disableSelection(false);
+			keyboard.setComposition(false);
 		};
 	}, [ isEditing ]);
 
@@ -887,6 +907,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					onInput={onChange}
 					onPaste={onPaste}
 					onMouseDown={onSelect}
+					onCompositionEnd={onCompositionEndInput}
 				/>
 			) : ''}
 		</div>

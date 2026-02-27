@@ -36,7 +36,8 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	const operatorRef = useRef(null);
 	const conditionRef = useRef(null);
 	const inputRef = useRef(null);
-	const relation: any = relationKey ? S.Record.getRelationByKey(relationKey) : null;
+	const relationRaw: any = relationKey ? S.Record.getRelationByKey(relationKey) : null;
+	const relation: any = (relationRaw && !relationRaw.isArchived && !relationRaw.isDeleted) ? relationRaw : null;
 	const conditionOptions = relation ? Relation.filterConditionsByType(relation.format) : [];
 	const operatorOptions = [
 		{ id: String(I.FilterOperator.And), name: translate('filterOperatorAnd') },
@@ -110,7 +111,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 
 					switch (dateFormat) {
 						case I.DateFormat.ISO: { mask = '9999.99.99'; ph = 'yyyy.mm.dd'; inputFormat = 'Y.m.d'; break; };
-						case I.DateFormat.ShortUS: { mask = '99.99.9999'; ph = 'mm.dd.yyyy'; inputFormat = 'm.d.Y'; break; };
+						case I.DateFormat.ShortUS:
+						case I.DateFormat.MonthAbbrBeforeDay:
+						case I.DateFormat.Long:
+						case I.DateFormat.Default: { mask = '99.99.9999'; ph = 'mm.dd.yyyy'; inputFormat = 'm.d.Y'; break; };
 						default: { mask = '99.99.9999'; ph = 'dd.mm.yyyy'; inputFormat = 'd.m.Y'; break; };
 					};
 

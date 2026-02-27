@@ -104,6 +104,18 @@
 	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
+	"commonDuplicateBlocks": "Duplicate %s",
+	"commonDeleteBlocks": "Delete %s",
+	"commonCountBlocks": "%d %s",
+	"commonCountObjects": "%d %s",
+	"commonCountMembers": "%d %s",
+	"commonCountDays": "%d %s",
+	"commonCountSorts": "%d %s",
+	"commonCountRules": "%d %s",
+	"commonCountMore": "+%d %s %s",
+	"commonPropertyList": "%s: %s",
+	"commonObjectTypeList": "%s: %s",
+	"commonCountRelation": "%d %s",
 	"commonPin": "Pin",
 	"commonUnpin": "Unpin",
 	"commonTogglePin": "Add / Remove Object to Pinned",
@@ -468,9 +480,8 @@
 	"authLoginLostPhrase": "I've lost my Key",
 
 	"authDeleteTitle": "Delete Profile",
-	"authDeleteTitleDeleted": "Vault data removed from the backup node",
-	"authDeleteDescription": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Key.",
+	"authDeleteTitleDeleted": "Your account has been removed",
+	"authDeleteDescription": "We’ll miss you! If you change your mind, you can cancel anytime within the next 30 days. After that, your data will be permanently removed and you won’t be able to log in on new devices.",
 	"authDeleteCancelButton": "Cancel deletion",
 	"authDeleteExportButton": "Export data to markdown",
 	"authDeleteRemoveButton": "Remove local data",
@@ -544,6 +555,9 @@
 	"pageMainRelationPropertyType": "Property format",
 
 	"pageMainMediaNotFound": "File not found",
+
+	"pageMainBookmarkOpenWebsite": "Open Website",
+	"pageMainBookmarkLinkInfo": "Link Information",
 
 	"pageMainImportTitle": "Downloading manifest",
 

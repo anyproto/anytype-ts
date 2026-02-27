@@ -46,7 +46,7 @@ const Toast: FC = observer(() => {
 				break;
 			};
 
-			const cnt = `${count} ${U.Common.plural(count, translate('pluralBlock'))}`;
+			const cnt = U.String.sprintf(translate('commonCountBlocks'), count, U.Common.plural(count, translate('pluralBlock')));
 
 			textAction = U.String.sprintf(translate('toastMovedTo'), cnt);
 			textTarget = <Element {...target} />;
@@ -105,7 +105,7 @@ const Toast: FC = observer(() => {
 				break;
 			};
 
-			const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedToBin'), cnt);
 
 			buttons = buttons.concat([
@@ -119,7 +119,7 @@ const Toast: FC = observer(() => {
 				break;
 			};
 
-			const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedFromBin'), cnt);
 
 			buttons = buttons.concat([

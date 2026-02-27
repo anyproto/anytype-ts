@@ -389,7 +389,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let chatName = null;
 		let time = null;
 		let last = null;
-		let icons = [];
+		const icons = [];
 
 		if (targetSpaceId == space) {
 			cn.push('active');

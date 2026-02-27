@@ -234,6 +234,7 @@ class Keyboard {
 				e.preventDefault();
 
 				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
+				analytics.event('ScreenTableOfContents');
 			});
 		};
 
@@ -376,6 +377,7 @@ class Keyboard {
 						onConfirm: () => U.Common.copyToast('ID', this.getRootId()),
 					}
 				});
+				analytics.event('ScreenObjectId');
 			});
 
 			// Copy page link
@@ -469,7 +471,9 @@ class Keyboard {
 			this.shortcut('pinTab', e, () => {
 				e.preventDefault();
 
-				Renderer.send(S.Common.isPinned ? 'unpinTab' : 'pinTab', S.Common.tabId);
+				const isPinned = S.Common.isPinned;
+				Renderer.send(isPinned ? 'unpinTab' : 'pinTab', S.Common.tabId);
+				analytics.event(isPinned ? 'UnpinTab' : 'PinTab');
 			});
 
 			// Switch space
@@ -1320,6 +1324,8 @@ class Keyboard {
 			});
 		};
 
+		analytics.event('ScreenSearchObject');
+
 		S.Menu.closeAll(null, () => {
 			S.Menu.open(menuId, menuParam);
 		});
@@ -1977,6 +1983,10 @@ class Keyboard {
 		};
 
 		if (res) {
+			if (this.shortcuts[res]) {
+				analytics.event('UseShortcut', { name: res });
+			};
+
 			callBack(res);
 		};
 	};

@@ -68,12 +68,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const onArrow = (e: MouseEvent) => {
 		e.stopPropagation();
 
-		U.Menu.typeSuggest({ 
+		analytics.event('ScreenSelectType');
+
+		U.Menu.typeSuggest({
 			element: '#button-create-arrow',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: 4,
-		}, {}, { 
+		}, {}, {
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,

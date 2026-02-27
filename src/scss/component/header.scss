@@ -112,8 +112,13 @@
 	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
-.header.authIndex { height: 52px; width: 100% !important; }
-.header.authIndex {
+.header.authIndex,
+.header.authLogout { height: 52px; width: 100% !important; }
+
+.header.authIndex, 
+.header.authLogout {
+	.logo { width: 70px; height: 18px; background: url('~img/icon/header/logo.svg'); }
+
 	.select {
 		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px 4px 29px; border-radius: 6px;
 		@include text-small; font-weight: 500; color: var(--color-text-secondary);
@@ -126,7 +131,14 @@
 		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
 	}
 
-	.logo { width: 70px; height: 18px; background: url('~img/icon/header/logo.svg'); }
+	.button.simple { 
+		min-width: auto; padding: 4px 6px; border-radius: 6px; transition: background-color $transitionCommon; 
+		font-weight: 400; color: var(--color-text-secondary); width: auto;
+	}
+	.button.simple {
+		.icon { width: 20px; height: 20px; }
+		&:hover { color: var(--color-text-secondary) !important; background-color: var(--color-shape-highlight-medium) !important; }
+	}
 }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {

@@ -137,6 +137,17 @@ class UpdateManager {
 		app.isQuiting = true;
 
 		autoUpdater.quitAndInstall();
+
+		// Safety net: on Linux, quitAndInstall() runs the package install synchronously
+		// via spawnSync (e.g. pkexec dpkg -i). If the install fails (permission denied,
+		// dialog cancelled, etc.), electron-updater does NOT call app.quit(), leaving the
+		// app in a zombie state with middleware already stopped. Force exit as a fallback.
+		// If quitAndInstall succeeded, it schedules app.quit() via setImmediate which
+		// will terminate the process before this timeout fires.
+		setTimeout(() => {
+			Util.log('error', 'Relaunch: quitAndInstall did not exit the app, forcing exit');
+			app.exit(0);
+		}, 5000);
 	};
 
 	cancel () {

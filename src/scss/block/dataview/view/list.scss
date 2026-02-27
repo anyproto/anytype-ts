@@ -163,9 +163,12 @@
 			.loadMore { margin-top: 2px; }
 
 			&.isRegular {
-				.row { height: 52px !important; display: flex; align-items: center; }
+				.row { height: 52px !important; }
 				.row {
-					.dropTarget { display: flex; align-items: center; height: 100%; flex: 1 1 auto; overflow: hidden; }
+					.dropTarget { display: flex; align-items: center; height: 100%; }
+					.dropTarget.isOver.top::before { top: -3px; }
+					.dropTarget.isOver.bottom::before { bottom: -3px; }
+
 					.selectionTarget { display: flex; align-items: center; width: 100%; height: 100%; }
 
 					.regularContent { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; width: 100%; overflow: hidden; }
