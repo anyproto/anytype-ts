@@ -670,6 +670,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const menuOpenEmoji = S.Menu.isOpen('blockEmoji');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
+		const threeSymbolBefore = range ? value[range.from - 3] : '';
+		const isAllowedMenuBase = isAllowedMenu;
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
@@ -678,7 +680,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 		const canOpenMenuLink = !menuOpenMention && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
-		const canOpenMenuEmoji = !menuOpenEmoji && (oneSymbolBefore == ':') && isAllowedMenu;
+		const canOpenMenuEmoji = !menuOpenEmoji && (twoSymbolBefore == ':') && /\S/.test(oneSymbolBefore) && isAllowedMenuBase && (!range || (range.from <= 2) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(threeSymbolBefore));
 
 		preventMenu.current = false;
 
@@ -975,9 +977,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let value = getTextValue();
 
-		value = U.String.cut(value, range.from - 1, range.from);
+		value = U.String.cut(value, range.from - 2, range.from - 1);
 
-		S.Common.filterSet(range.from - 1, '');
+		S.Common.filterSet(range.from - 2, '');
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
