@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import { I, U, keyboard, translate } from 'Lib';
 
 const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -73,10 +73,7 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{
 				id: 'embed',
 				name: translate('commentSlashMenuEmbed'),
-				children: [
-					{ id: 'latex', action: 'latex', icon: 'latex', name: translate('commentBlockLatex'), description: translate('commentBlockLatexDescription') },
-					{ id: 'mermaid', action: 'mermaid', icon: 'mermaid', name: translate('commentBlockMermaid'), description: translate('commentBlockMermaidDescription') },
-				],
+				children: U.Menu.getBlockEmbed().map(it => ({ ...it, action: 'embed', embedProcessor: it.id })),
 			},
 		];
 
@@ -122,7 +119,7 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		close();
 
 		if (item.action) {
-			onSelect?.({ action: item.action });
+			onSelect?.({ action: item.action, embedProcessor: item.embedProcessor });
 		} else {
 			onSelect?.({ style: item.textStyle, type: item.blockType });
 		};
@@ -163,7 +160,7 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<div className="items scrollWrap">
 				{items.map((item: any, i: number) => {
 					if (item.isSeparator) {
-						return <div key={item.id} className="separator" />;
+						return <div key={item.id} className="separator"><div className="inner" /></div>;
 					};
 
 					if (item.isSection) {
@@ -180,8 +177,6 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							id={item.id}
 							icon={item.icon}
 							name={item.name}
-							description={item.description}
-							withDescription={true}
 							onClick={e => onClick(e, item)}
 							onMouseEnter={e => onOver(e, item)}
 						/>

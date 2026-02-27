@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate } from 'Lib';
@@ -38,8 +39,12 @@ const renderPart = (part: I.CommentContentPart, index: number): JSX.Element => {
 		case I.TextStyle.Quote:
 			return <blockquote key={key} className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />;
 
-		case I.TextStyle.Code:
-			return <pre key={key} className="commentCodeBlock"><code>{part.text || ''}</code></pre>;
+		case I.TextStyle.Code: {
+			const grammar = Prism.languages.clike || {};
+			const highlighted = Prism.highlight(part.text || '', grammar, 'clike');
+
+			return <pre key={key} className="commentCodeBlock"><code dangerouslySetInnerHTML={{ __html: highlighted }} /></pre>;
+		}
 
 		case I.TextStyle.Bulleted:
 		case I.TextStyle.Numbered:
