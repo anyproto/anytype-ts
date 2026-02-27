@@ -26,7 +26,6 @@ import {
 	BLUR_COMMAND,
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
-	KEY_ENTER_COMMAND,
 	KEY_ESCAPE_COMMAND,
 	SELECTION_CHANGE_COMMAND,
 	createCommand,
@@ -480,19 +479,18 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
-		return editor.registerCommand(
-			KEY_ENTER_COMMAND,
-			(e: KeyboardEvent) => {
-				if (e && e.shiftKey) {
-					return false;
-				};
-
-				e?.preventDefault();
+		const onKeyDown = (e: KeyboardEvent) => {
+			if ((e.key === 'Enter') && (e.metaKey || e.ctrlKey)) {
+				e.preventDefault();
 				onSubmit?.();
-				return true;
-			},
-			COMMAND_PRIORITY_HIGH,
-		);
+			};
+		};
+
+		const root = editor.getRootElement();
+		if (root) {
+			root.addEventListener('keydown', onKeyDown);
+			return () => root.removeEventListener('keydown', onKeyDown);
+		};
 	}, [ editor, onSubmit ]);
 
 	return null;
@@ -560,6 +558,7 @@ const FocusPlugin = ({ onFocus, onBlur }: { onFocus?: () => void; onBlur?: () =>
 			FOCUS_COMMAND,
 			() => {
 				keyboard.setFocus(true);
+				keyboard.disableSelection(true);
 				onFocus?.();
 				return false;
 			},
@@ -570,6 +569,7 @@ const FocusPlugin = ({ onFocus, onBlur }: { onFocus?: () => void; onBlur?: () =>
 			BLUR_COMMAND,
 			() => {
 				keyboard.setFocus(false);
+				keyboard.disableSelection(false);
 				onBlur?.();
 				return false;
 			},
@@ -727,8 +727,16 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					};
 				});
 
-				// Apply block transform
-				applyBlockTransform(editor, item);
+				// Action items (image, file, etc.) are handled by the form
+				if (!item.action) {
+					applyBlockTransform(editor, item);
+				};
+
+				// Dispatch custom event so the form can handle action items
+				const el = document.getElementById(editorId);
+				if (el) {
+					el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: item }));
+				};
 			},
 		},
 	});

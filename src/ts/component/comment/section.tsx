@@ -1,11 +1,13 @@
 import React, { useEffect, useCallback, useRef } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, translate } from 'Lib';
+import { I, C, S, U, keyboard, translate } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
 import mockupPosts from './mockupPosts';
 
 const POST_LIMIT = 20;
+const SCROLL_THRESHOLD = 16;
 
 const CommentSection = observer((props: I.CommentSectionProps) => {
 
@@ -14,13 +16,26 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const formRef = useRef<any>(null);
 	const isLoaded = useRef(false);
 	const localIdCounter = useRef(0);
+	const isBottom = useRef(false);
 
 	useEffect(() => {
 		if (targetId) {
 			subscribe();
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
+		const ns = 'commentSection';
+
+		container.on(`scroll.${ns}`, () => {
+			const st = Math.ceil(container.scrollTop());
+			const max = U.Common.getMaxScrollHeight(isPopup);
+
+			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
+		});
+
 		return () => {
+			container.off(`scroll.${ns}`);
+
 			if (targetId) {
 				unsubscribe();
 			};
@@ -87,15 +102,32 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		S.Comment.clear(subId);
 	}, [ targetId, subId ]);
 
-	const onLoadMore = useCallback(() => {
+	const scrollToBottom = useCallback(() => {
+		const container = U.Common.getScrollContainer(isPopup);
+		if (container.length) {
+			isBottom.current = true;
+			container.scrollTop(U.Common.getMaxScrollHeight(isPopup));
+		};
+	}, [ isPopup ]);
+
+	const scrollToBottomCheck = useCallback(() => {
+		if (isBottom.current) {
+			scrollToBottom();
+		};
+	}, [ scrollToBottom ]);
+
+	const onLoadMore = useCallback((callBack?: () => void) => {
 		const posts = S.Comment.getPosts(subId);
 		if (!posts.length) {
+			callBack?.();
 			return;
 		};
 
 		const firstPost = posts[0];
 
 		C.ChatGetMessages(targetId, firstPost.orderId, '', POST_LIMIT, false, (message: any) => {
+			callBack?.();
+
 			if (message.error.code) {
 				return;
 			};
@@ -116,7 +148,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		});
 	}, [ targetId, subId ]);
 
-	const onSubmitPost = useCallback((parts: I.CommentContentPart[]) => {
+	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[]) => {
 		const encoded = U.Comment.encodeParts(parts);
 		const { account } = S.Auth;
 
@@ -127,7 +159,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				style: encoded.style,
 				marks: encoded.marks,
 			},
-			attachments: [],
+			attachments: messageAttachments || [],
 			reactions: [],
 		};
 
@@ -147,7 +179,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 						...encoded,
 						parts,
 					},
-					attachments: [],
+					attachments: messageAttachments || [],
 					reactions: [],
 					isSynced: false,
 					replyCount: 0,
@@ -155,6 +187,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 				S.Comment.addPost(subId, newPost as any);
 				formRef.current?.clear();
+				window.setTimeout(() => scrollToBottom(), 50);
 				return;
 			};
 
@@ -169,7 +202,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					...encoded,
 					parts,
 				},
-				attachments: [],
+				attachments: messageAttachments || [],
 				reactions: [],
 				isSynced: false,
 				replyCount: 0,
@@ -177,11 +210,26 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 			S.Comment.addPost(subId, newPost as any);
 			formRef.current?.clear();
+			window.setTimeout(() => scrollToBottom(), 50);
 		});
-	}, [ targetId, subId ]);
+	}, [ targetId, subId, scrollToBottom ]);
+
+	const onMouseDown = useCallback((e: React.MouseEvent) => {
+		keyboard.disableSelection(true);
+
+		// Allow native text selection inside rendered comment content
+		const target = e.target as HTMLElement;
+		if (target.closest('.content') || target.closest('.commentAttachments')) {
+			keyboard.disableSelection(false);
+		};
+	}, []);
+
+	const onMouseUp = useCallback(() => {
+		keyboard.disableSelection(false);
+	}, []);
 
 	return (
-		<div className="commentSection">
+		<div className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
 			<CommentList
 				rootId={rootId}
 				targetId={targetId}
@@ -195,6 +243,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				rootId={rootId}
 				readonly={readonly}
 				onSubmit={onSubmitPost}
+				onResize={scrollToBottomCheck}
 			/>
 		</div>
 	);

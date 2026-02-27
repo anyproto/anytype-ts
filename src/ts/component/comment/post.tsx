@@ -4,6 +4,7 @@ import { IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
+import Attachment from 'Component/block/chat/attachment';
 
 interface Props {
 	rootId: string;
@@ -138,6 +139,7 @@ const CommentPost = observer((props: Props) => {
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ isReplying, setIsReplying ] = useState(false);
+	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const { id, creator, content, createdAt, modifiedAt, replyCount } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
@@ -154,10 +156,20 @@ const CommentPost = observer((props: Props) => {
 	}, [ id, replyCount ]);
 
 	const loadReplies = useCallback((initial?: boolean) => {
+		if (!initial && isLoadingReplies) {
+			return;
+		};
+
+		if (!initial) {
+			setIsLoadingReplies(true);
+		};
+
 		const existing = S.Comment.getReplies(id);
 		const afterOrderId = existing.length ? existing[existing.length - 1].orderId : '';
 
 		C.ChatGetMessages(targetId, '', afterOrderId, REPLY_LIMIT, false, (message: any) => {
+			setIsLoadingReplies(false);
+
 			if (message.error.code) {
 				return;
 			};
@@ -181,7 +193,7 @@ const CommentPost = observer((props: Props) => {
 
 			S.Comment.setHasMoreReplies(id, messages.length >= REPLY_LIMIT);
 		});
-	}, [ id, targetId ]);
+	}, [ id, targetId, isLoadingReplies ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
@@ -279,6 +291,29 @@ const CommentPost = observer((props: Props) => {
 		});
 	}, [ targetId, id, replyCount ]);
 
+	const renderAttachments = () => {
+		const list = (message.attachments || [])
+			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
+			.filter(it => !it._empty_);
+
+		if (!list.length) {
+			return null;
+		};
+
+		return (
+			<div className="commentAttachments">
+				{list.map((item: any) => (
+					<Attachment
+						key={item.id}
+						object={item}
+						showAsFile={true}
+						onRemove={() => {}}
+					/>
+				))}
+			</div>
+		);
+	};
+
 	const renderContent = () => {
 		if (isEditing) {
 			return (
@@ -293,9 +328,12 @@ const CommentPost = observer((props: Props) => {
 		};
 
 		return (
-			<div className="content">
-				{renderParts(parts)}
-			</div>
+			<>
+				<div className="content">
+					{renderParts(parts)}
+				</div>
+				{renderAttachments()}
+			</>
 		);
 	};
 
@@ -338,8 +376,11 @@ const CommentPost = observer((props: Props) => {
 			{replies.length ? (
 				<div className="replyList">
 					{hasMoreReplies ? (
-						<div className="loadMore" onClick={() => loadReplies()}>
-							{translate('commentLoadMoreReplies')}
+						<div
+							className={[ 'loadMore', (isLoadingReplies ? 'isLoading' : '') ].join(' ')}
+							onClick={() => loadReplies()}
+						>
+							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
 						</div>
 					) : ''}
 

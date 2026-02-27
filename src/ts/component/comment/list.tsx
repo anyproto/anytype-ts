@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, translate } from 'Lib';
 import CommentPost from './post';
@@ -8,7 +8,7 @@ interface Props {
 	targetId: string;
 	targetType: I.CommentTargetType;
 	readonly?: boolean;
-	onLoadMore?: () => void;
+	onLoadMore?: (callBack: () => void) => void;
 };
 
 const CommentList = observer((props: Props) => {
@@ -17,12 +17,25 @@ const CommentList = observer((props: Props) => {
 	const subId = U.Comment.getSubId(targetType, targetId);
 	const posts = S.Comment.getPosts(subId);
 	const hasMore = S.Comment.getHasMorePosts(subId);
+	const [ isLoadingMore, setIsLoadingMore ] = useState(false);
+
+	const handleLoadMore = useCallback(() => {
+		if (isLoadingMore) {
+			return;
+		};
+
+		setIsLoadingMore(true);
+		onLoadMore?.(() => setIsLoadingMore(false));
+	}, [ isLoadingMore, onLoadMore ]);
 
 	return (
 		<div className="commentList">
 			{hasMore ? (
-				<div className="loadMore" onClick={onLoadMore}>
-					{translate('commentLoadMore')}
+				<div
+					className={[ 'loadMore', (isLoadingMore ? 'isLoading' : '') ].join(' ')}
+					onClick={handleLoadMore}
+				>
+					{isLoadingMore ? translate('commentLoading') : translate('commentLoadMore')}
 				</div>
 			) : ''}
 

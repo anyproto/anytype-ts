@@ -2826,6 +2826,7 @@
 	"commentReplyPlaceholder": "Write a reply...",
 	"commentLoadMore": "Load more comments",
 	"commentLoadMoreReplies": "Load more replies",
+	"commentLoading": "Loading...",
 	"commentEdited": "edited",
 	"commentReply": "Reply",
 	"commentEdit": "Edit",
@@ -2864,6 +2865,12 @@
 	"commentBlockDividerDescription": "Horizontal line separator",
 	"commentBlockCode": "Code block",
 	"commentBlockCodeDescription": "Monospace code block",
+
+	"commentSlashMenuEmbed": "Embed",
+	"commentBlockLatex": "LaTeX",
+	"commentBlockLatexDescription": "Mathematical formula",
+	"commentBlockMermaid": "Mermaid",
+	"commentBlockMermaidDescription": "Diagram and flowchart",
 
 	"commentToolbarRegular": "Regular Text",
 	"commentToolbarTitle": "Title",

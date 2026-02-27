@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate } from 'Lib';
 import CommentForm from './form';
+import Attachment from 'Component/block/chat/attachment';
 
 interface Props {
 	rootId: string;
@@ -118,6 +119,29 @@ const CommentReply = observer((props: Props) => {
 		});
 	}, [ targetId, id, parentId ]);
 
+	const renderAttachments = () => {
+		const list = (message.attachments || [])
+			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
+			.filter(it => !it._empty_);
+
+		if (!list.length) {
+			return null;
+		};
+
+		return (
+			<div className="commentAttachments">
+				{list.map((item: any) => (
+					<Attachment
+						key={item.id}
+						object={item}
+						showAsFile={true}
+						onRemove={() => {}}
+					/>
+				))}
+			</div>
+		);
+	};
+
 	const renderContent = () => {
 		if (isEditing) {
 			return (
@@ -132,9 +156,12 @@ const CommentReply = observer((props: Props) => {
 		};
 
 		return (
-			<div className="content">
-				{parts.map((part, i) => renderPart(part, i))}
-			</div>
+			<>
+				<div className="content">
+					{parts.map((part, i) => renderPart(part, i))}
+				</div>
+				{renderAttachments()}
+			</>
 		);
 	};
 

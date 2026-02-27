@@ -43,34 +43,26 @@
 
 	/* ---- Comment Form ---- */
 
-	.commentForm { display: flex; flex-direction: column; gap: 0px; }
 	.commentForm {
-		.editorRow { display: flex; align-items: flex-end; gap: 0px 8px; }
-		.editorRow {
-			.editorWrap { flex: 1; }
+		display: flex; flex-direction: column; border-radius: 16px; background-color: var(--color-shape-tertiary); overflow: hidden;
+	}
+	.commentForm {
+		.contentArea { padding: 10px 12px; }
+
+		.attachmentList {
+			display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0px 0px 0px;
 		}
-
-		.sideButtons { display: flex; align-items: center; gap: 0px 6px; padding: 0px 0px 4px 0px; }
-		.sideButtons {
-			.btn { user-select: none; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-			.btn .icon { width: 16px; height: 16px; }
-
-			.btn.plus { background: var(--color-shape-tertiary); transition: background-color 0.15s ease; }
-			.btn.plus:hover { background: var(--color-shape-secondary); }
-			.btn.plus .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
-
-			.btn.send {
-				background: var(--color-control-accent); transition: opacity 0.15s ease;
+		.attachmentList {
+			.attachment {
+				max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary);
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 			}
-			.btn.send .icon.send { width: 16px; height: 16px; }
-			.btn.send.disabled { opacity: 0.3; }
 		}
 
-		.bottomToolbar {
-			display: flex; align-items: center; justify-content: space-between;
-			padding: 4px 0px 0px 0px;
+		.formToolbar {
+			display: flex; align-items: center; justify-content: space-between; padding: 0px 8px 8px 8px;
 		}
-		.bottomToolbar {
+		.formToolbar {
 			.toolbarLeft { display: flex; align-items: center; gap: 0px 4px; }
 			.toolbarRight { display: flex; align-items: center; gap: 0px 8px; }
 
@@ -78,36 +70,37 @@
 				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
 				border-radius: 6px; user-select: none;
 			}
-			.toolbarBtn:hover { background: var(--color-shape-tertiary); }
-			.toolbarBtn .icon { width: 16px; height: 16px; }
-		}
+			.toolbarBtn:hover { background: var(--color-shape-secondary); }
+			.toolbarBtn .icon { width: 20px; height: 20px; }
+			.toolbarBtn .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
 
-		.editButtons { display: flex; justify-content: flex-end; padding: 4px 0px 0px 0px; }
-		.editButtons {
+			.btn.send {
+				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+				border-radius: 50%; background: var(--color-control-accent); user-select: none; transition: opacity 0.15s ease;
+			}
+			.btn.send .icon.send { width: 16px; height: 16px; }
+			.btn.send.disabled { opacity: 0.3; }
+
 			.btn.cancel { @include text-small; color: var(--color-text-secondary); user-select: none; }
 			.btn.cancel:hover { color: var(--color-text-primary); }
-		}
-
-		&.isEdit {
-			.sideButtons { display: none; }
 		}
 	}
 
 	.loadMore { @include text-small; color: var(--color-text-secondary); padding: 4px 0px; user-select: none; }
 	.loadMore:hover { color: var(--color-text-primary); }
+	.loadMore.isLoading { opacity: 0.5; pointer-events: none; }
 
 	/* ---- Lexical Editor ---- */
 
 	.commentEditorWrap { position: relative; }
 	.commentEditorWrap {
 		.commentEditorInput {
-			min-height: 36px; padding: 8px 16px; border: 1px solid var(--color-shape-secondary); border-radius: 18px;
-			outline: none; line-height: 20px; word-break: break-word; transition: border-radius 0.15s ease;
+			min-height: 20px; padding: 0px; border: 0px; background-color: transparent;
+			outline: none; line-height: 20px; word-break: break-word;
 		}
-		.commentEditorInput:focus { border-color: var(--color-control-accent); border-radius: 12px; }
 
 		.commentEditorPlaceholder {
-			position: absolute; top: 8px; left: 16px; color: var(--color-text-tertiary);
+			position: absolute; top: 0px; left: 0px; color: var(--color-text-tertiary);
 			pointer-events: none; line-height: 20px;
 		}
 	}
@@ -182,6 +175,10 @@
 	}
 	.commentCodeBlock code { font-family: inherit; font-size: inherit; }
 
+	.commentAttachments {
+		display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0px 0px 36px;
+	}
+
 	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); margin: 8px 0px; }
 
 	.commentList { margin: 2px 0px; padding-left: 20px; line-height: 22px; }
@@ -219,6 +216,8 @@
 			padding: 8px 12px 4px 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
 		}
 
+		.separator { height: 1px; background: var(--color-shape-secondary); margin: 4px 8px; }
+
 		.item.isDisabled { opacity: 0.35; }
 	}
 }
@@ -226,52 +225,14 @@
 /* ---- Formatting Toolbar ---- */
 
 .menu.menuCommentToolbar {
-	background: none; box-shadow: none; border: none; padding: 0px;
-}
-.menu.menuCommentToolbar {
-	.commentToolbar {
-		position: relative;
-	}
-	.commentToolbar {
-		.toolbarInner {
-			display: flex; align-items: center; gap: 0px 2px;
-			padding: 4px 8px; background: var(--color-bg-primary);
-			border: 1px solid var(--color-shape-secondary); border-radius: 8px;
-			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+	.buttons { display: flex; align-items: center; gap: 0px 2px; }
+	.buttons {
+		.icon {
+			width: 28px; height: 28px; border-radius: 4px;
+			display: flex; align-items: center; justify-content: center;
+			user-select: none;
 		}
-		.toolbarInner {
-			.icon {
-				width: 28px; height: 28px; border-radius: 4px;
-				display: flex; align-items: center; justify-content: center;
-				user-select: none;
-			}
-			.icon:hover { background: var(--color-shape-tertiary); }
-			.icon.active { background: var(--color-shape-highlight-medium); }
-
-			.separator { width: 1px; height: 20px; background: var(--color-shape-secondary); margin: 0px 4px; }
-
-			.styleDropdown {
-				display: flex; align-items: center; gap: 0px 4px; padding: 4px 8px;
-				border-radius: 4px; user-select: none; @include text-small; font-weight: 500;
-			}
-			.styleDropdown:hover { background: var(--color-shape-tertiary); }
-			.styleDropdown {
-				.icon.arrow { width: 12px; height: 12px; }
-			}
-		}
-
-		.styleMenu {
-			position: absolute; top: 100%; left: 0px; margin-top: 4px;
-			background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary);
-			border-radius: 8px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-			padding: 4px; min-width: 160px; z-index: 1;
-		}
-		.styleMenu {
-			.styleItem {
-				padding: 6px 12px; border-radius: 4px; @include text-small; user-select: none;
-			}
-			.styleItem:hover { background: var(--color-shape-tertiary); }
-			.styleItem.active { font-weight: 600; }
-		}
+		.icon:hover { background: var(--color-shape-tertiary); }
+		.icon.active { background: var(--color-shape-highlight-medium); }
 	}
 }

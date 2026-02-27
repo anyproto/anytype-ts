@@ -1,16 +1,36 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, translate } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 
 const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setHover } = props;
+	const { param, close, onKeyDown, setActive } = props;
 	const { data } = param;
 	const { onSelect } = data;
 	const [ filter, setFilter ] = useState('');
 	const filterRef = useRef(null);
-	const itemIndexRef = useRef(-1);
+	const n = useRef(-1);
+
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
+	};
+
+	const unbind = () => {
+		$(window).off('keydown.menu');
+	};
+
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	}, []);
+
+	useEffect(() => {
+		rebind();
+	}, [ filter ]);
 
 	const getSections = () => {
 		const sections: any[] = [
@@ -36,9 +56,9 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				id: 'attachments',
 				name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'image', icon: 'mediaImage', name: translate('commentBlockImage'), description: translate('commentBlockImageDescription'), isDisabled: true },
-					{ id: 'file', icon: 'mediaFile', name: translate('commentBlockFile'), description: translate('commentBlockFileDescription'), isDisabled: true },
-					{ id: 'object', icon: 'existing', name: translate('commentBlockObject'), description: translate('commentBlockObjectDescription'), isDisabled: true },
+					{ id: 'image', action: 'image', icon: 'mediaImage', name: translate('commentBlockImage'), description: translate('commentBlockImageDescription') },
+					{ id: 'file', action: 'file', icon: 'mediaFile', name: translate('commentBlockFile'), description: translate('commentBlockFileDescription') },
+					{ id: 'object', action: 'object', icon: 'existing', name: translate('commentBlockObject'), description: translate('commentBlockObjectDescription') },
 				],
 			},
 			{
@@ -48,6 +68,14 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'textQuote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
 					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'divLine', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
 					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+				],
+			},
+			{
+				id: 'embed',
+				name: translate('commentSlashMenuEmbed'),
+				children: [
+					{ id: 'latex', action: 'latex', icon: 'latex', name: translate('commentBlockLatex'), description: translate('commentBlockLatexDescription') },
+					{ id: 'mermaid', action: 'mermaid', icon: 'mermaid', name: translate('commentBlockMermaid'), description: translate('commentBlockMermaidDescription') },
 				],
 			},
 		];
@@ -72,7 +100,13 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items: any[] = [];
 		const sections = getSections();
 
-		for (const section of sections) {
+		for (let i = 0; i < sections.length; i++) {
+			const section = sections[i];
+
+			if (i > 0) {
+				items.push({ id: `separator-${section.id}`, isSeparator: true });
+			};
+
 			items.push({ id: `section-${section.id}`, name: section.name, isSection: true });
 			items.push(...section.children);
 		};
@@ -81,25 +115,39 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClick = (e: any, item: any) => {
-		if (item.isDisabled || item.isSection) {
+		if (item.isSection || item.isSeparator) {
 			return;
 		};
 
 		close();
-		onSelect?.({ style: item.textStyle, type: item.blockType });
+
+		if (item.action) {
+			onSelect?.({ action: item.action });
+		} else {
+			onSelect?.({ style: item.textStyle, type: item.blockType });
+		};
 	};
 
-	useImperativeHandle(ref, () => ({
-		getItems,
-		onClick,
-		getFilterRef: () => filterRef.current,
-		getIndex: () => itemIndexRef.current,
-		setIndex: (n: number) => { itemIndexRef.current = n; },
-	}));
+	const onOver = (e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+		};
+	};
 
 	const onFilterChange = (v: string) => {
 		setFilter(v);
 	};
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => { n.current = i; },
+		getFilterRef: () => filterRef.current,
+		onClick,
+		onOver,
+	}));
 
 	const items = getItems();
 
@@ -114,17 +162,16 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<div className="items scrollWrap">
 				{items.map((item: any, i: number) => {
+					if (item.isSeparator) {
+						return <div key={item.id} className="separator" />;
+					};
+
 					if (item.isSection) {
 						return (
 							<div key={item.id} className="sectionName">
 								{item.name}
 							</div>
 						);
-					};
-
-					const cn = [ 'item' ];
-					if (item.isDisabled) {
-						cn.push('isDisabled');
 					};
 
 					return (
@@ -135,9 +182,8 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							name={item.name}
 							description={item.description}
 							withDescription={true}
-							className={cn.join(' ')}
 							onClick={e => onClick(e, item)}
-							onMouseEnter={() => setHover(item)}
+							onMouseEnter={e => onOver(e, item)}
 						/>
 					);
 				})}

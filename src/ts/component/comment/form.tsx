@@ -1,8 +1,9 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useCallback } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, C, J, S, U, translate } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
+import Attachment from 'Component/block/chat/attachment';
 
 interface Props {
 	rootId: string;
@@ -10,8 +11,9 @@ interface Props {
 	initialParts?: I.CommentContentPart[];
 	isEdit?: boolean;
 	readonly?: boolean;
-	onSubmit?: (parts: I.CommentContentPart[]) => void;
+	onSubmit?: (parts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => void;
 	onCancel?: () => void;
+	onResize?: () => void;
 };
 
 interface RefProps {
@@ -21,12 +23,16 @@ interface RefProps {
 
 const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, isEdit, readonly, onSubmit, onCancel } = props;
+	const { rootId, placeholder, initialParts, isEdit, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const formRef = useRef<HTMLDivElement>(null);
 	const [ isEmpty, setIsEmpty ] = useState(true);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ attachments, setAttachments ] = useState<any[]>([]);
+	const electron = U.Common.getElectron();
 
 	useImperativeHandle(ref, () => ({
 		focus: () => editorRef.current?.focus(),
@@ -35,8 +41,62 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			setIsEmpty(true);
 			setIsLoading(false);
 			setIsMultiline(false);
+			setAttachments([]);
 		},
 	}));
+
+	const getAttachmentType = useCallback((layout: I.ObjectLayout): I.AttachmentType => {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: return I.AttachmentType.Link;
+			case I.ObjectLayout.Image: return I.AttachmentType.Image;
+			default: return I.AttachmentType.File;
+		};
+	}, []);
+
+	const uploadFiles = useCallback((list: any[], callBack: (uploaded: I.ChatMessageAttachment[]) => void) => {
+		const files = list.filter(it => it.isTmp);
+		const existing = list.filter(it => !it.isTmp).map(it => ({
+			target: it.id,
+			type: getAttachmentType(it.layout),
+		}));
+
+		if (!files.length) {
+			callBack(existing);
+			return;
+		};
+
+		let n = 0;
+		const uploaded: I.ChatMessageAttachment[] = [ ...existing ];
+
+		for (const item of files) {
+			C.FileUpload(
+				S.Common.space,
+				'',
+				item.path,
+				I.FileType.None,
+				{},
+				false,
+				'',
+				0,
+				rootId,
+				'',
+				(message: any) => {
+					n++;
+
+					if (message.objectId) {
+						uploaded.push({
+							target: message.objectId,
+							type: getAttachmentType(item.layout),
+						});
+					};
+
+					if (n === files.length) {
+						callBack(uploaded);
+					};
+				},
+			);
+		};
+	}, [ rootId ]);
 
 	const handleSubmit = useCallback((parts: I.CommentContentPart[]) => {
 		if (isLoading) {
@@ -44,15 +104,30 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		setIsLoading(true);
-		onSubmit?.(parts);
 
-		if (!isEdit) {
-			editorRef.current?.clear();
-			setIsEmpty(true);
-			setIsLoading(false);
-			setIsMultiline(false);
+		if (attachments.length) {
+			uploadFiles(attachments, (uploaded) => {
+				onSubmit?.(parts, uploaded);
+
+				if (!isEdit) {
+					editorRef.current?.clear();
+					setIsEmpty(true);
+					setIsLoading(false);
+					setIsMultiline(false);
+					setAttachments([]);
+				};
+			});
+		} else {
+			onSubmit?.(parts);
+
+			if (!isEdit) {
+				editorRef.current?.clear();
+				setIsEmpty(true);
+				setIsLoading(false);
+				setIsMultiline(false);
+			};
 		};
-	}, [ onSubmit, isEdit, isLoading ]);
+	}, [ onSubmit, isEdit, isLoading, attachments ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -64,7 +139,6 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const handleBlur = useCallback(() => {
-		// Delay blur to allow button clicks to register
 		window.setTimeout(() => setIsFocused(false), 200);
 	}, []);
 
@@ -92,16 +166,8 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			noDimmer: true,
 			passThrough: true,
 			data: {
-				editorRef,
 				onToggleFormat: (format: string) => {
 					editorRef.current?.toggleFormat(format);
-				},
-				onSetBlockStyle: (style: I.TextStyle) => {
-					editorRef.current?.setBlockStyle(style);
-					S.Menu.close('commentToolbar');
-				},
-				getCurrentBlockStyle: () => {
-					return editorRef.current?.getCurrentBlockStyle() || I.TextStyle.Paragraph;
 				},
 				getActiveFormats: () => {
 					return {};
@@ -114,6 +180,93 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const lineCount = editorRef.current?.getLineCount() || 0;
 		setIsMultiline(lineCount >= 2);
 	}, []);
+
+	const addAttachmentFiles = useCallback((files: File[]) => {
+		const limit = J.Constant.limit.chat.attachments;
+		const list: any[] = [];
+
+		for (const file of files) {
+			const path = electron.webFilePath ? electron.webFilePath(file) : '';
+			const mime = file.type || '';
+			const ext = path ? (electron.fileExt ? electron.fileExt(path) : '') : '';
+
+			let layout = I.ObjectLayout.File;
+
+			if (mime) {
+				const [ t1, t2 ] = mime.split('/');
+				if ((t1 === 'image') && J.Constant.fileExtension.image.includes(t2)) {
+					layout = I.ObjectLayout.Image;
+				};
+			};
+
+			list.push({
+				id: `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				name: file.name,
+				layout,
+				sizeInBytes: file.size,
+				fileExt: ext,
+				isTmp: true,
+				mime,
+				path,
+				file,
+			});
+		};
+
+		const newList = [ ...attachments, ...list ].slice(0, limit);
+		setAttachments(newList);
+	}, [ attachments ]);
+
+	const onAttachmentRemove = useCallback((id: string) => {
+		setAttachments(attachments.filter(it => it.id !== id));
+	}, [ attachments ]);
+
+	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = Array.from(e.target.files || []);
+		if (files.length) {
+			addAttachmentFiles(files);
+		};
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		};
+	}, [ addAttachmentFiles ]);
+
+	const openFilePicker = useCallback((accept?: string) => {
+		if (fileInputRef.current) {
+			fileInputRef.current.accept = accept || '';
+			fileInputRef.current.click();
+		};
+	}, []);
+
+	const handleSlashAction = useCallback((item: any) => {
+		if (item.action) {
+			switch (item.action) {
+				case 'image': {
+					openFilePicker('image/*');
+					break;
+				};
+
+				case 'file': {
+					openFilePicker();
+					break;
+				};
+
+				case 'object':
+				case 'latex':
+				case 'mermaid': {
+					break;
+				};
+			};
+		} else
+		if (item.type === I.BlockType.Div) {
+			editorRef.current?.insertDivider();
+		} else
+		if (item.style !== undefined) {
+			editorRef.current?.setBlockStyle(item.style);
+		};
+
+		editorRef.current?.focus();
+	}, [ openFilePicker ]);
 
 	const onPlusClick = useCallback(() => {
 		const editor = editorRef.current?.getEditor();
@@ -137,37 +290,70 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			noAnimation: true,
 			data: {
 				editor,
-				onSelect: (item: any) => {
-					if (item.type === I.BlockType.Div) {
-						editorRef.current?.insertDivider();
-					} else
-					if (item.style !== undefined) {
-						editorRef.current?.setBlockStyle(item.style);
-					};
-
-					editorRef.current?.focus();
-				},
+				onSelect: handleSlashAction,
 			},
 		});
-	}, []);
+	}, [ handleSlashAction ]);
 
-	const onSlashClick = useCallback(() => {
-		// Focus editor and simulate typing /
+	const onSendClick = useCallback(() => {
+		if ((isEmpty && !attachments.length) || isLoading) {
+			return;
+		};
+
+		const parts = editorRef.current?.getParts();
+		if (parts) {
+			handleSubmit(parts);
+		};
+	}, [ isEmpty, attachments, isLoading, handleSubmit ]);
+
+	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
+	useEffect(() => {
+		const node = formRef.current;
+		if (!node || !onResize) {
+			return;
+		};
+
+		const observer = new ResizeObserver(() => onResize());
+
+		observer.observe(node);
+		return () => observer.disconnect();
+	}, [ onResize ]);
+
+	// Listen for slash menu action events from the editor's inline slash menu
+	useEffect(() => {
 		const editor = editorRef.current?.getEditor();
 		if (!editor) {
 			return;
 		};
 
-		editor.focus();
-		onPlusClick();
-	}, []);
+		const root = editor.getRootElement();
+		if (!root) {
+			return;
+		};
+
+		const wrap = root.closest('.commentEditorWrap');
+		if (!wrap) {
+			return;
+		};
+
+		const onAction = (e: Event) => {
+			const item = (e as CustomEvent).detail;
+			if (item?.action) {
+				handleSlashAction(item);
+			};
+		};
+
+		wrap.addEventListener('commentSlashAction', onAction);
+		return () => wrap.removeEventListener('commentSlashAction', onAction);
+	}, [ handleSlashAction ]);
 
 	if (readonly) {
 		return null;
 	};
 
-	const isDisabled = isEmpty || isLoading;
-	const showButtons = isFocused || !isEmpty || isEdit;
+	const hasAttachments = attachments.length > 0;
+	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
+	const showToolbar = isFocused || !isEmpty || hasAttachments || isEdit;
 
 	const cn = [ 'commentForm' ];
 	if (isEdit) cn.push('isEdit');
@@ -176,56 +362,39 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	if (isMultiline) cn.push('isMultiline');
 
 	return (
-		<div className={cn.join(' ')}>
-			<div className="editorRow">
-				<div className="editorWrap">
-					<CommentEditor
-						ref={editorRef}
-						placeholder={placeholder || translate('commentPlaceholder')}
-						initialParts={initialParts}
-						onSubmit={handleSubmit}
-						onCancel={onCancel}
-						onEmpty={handleEmpty}
-						onFocus={handleFocus}
-						onBlur={handleBlur}
-						onSelectionChange={handleSelectionChange}
-					/>
-				</div>
+		<div ref={formRef} className={cn.join(' ')}>
+			<div className="contentArea">
+				<CommentEditor
+					ref={editorRef}
+					placeholder={placeholder || translate('commentPlaceholder')}
+					initialParts={initialParts}
+					onSubmit={handleSubmit}
+					onCancel={onCancel}
+					onEmpty={handleEmpty}
+					onFocus={handleFocus}
+					onBlur={handleBlur}
+					onSelectionChange={handleSelectionChange}
+				/>
 
-				{showButtons ? (
-					<div className="sideButtons">
-						{(isFocused || !isEmpty) ? (
-							<div className="btn plus" onClick={onPlusClick}>
-								<Icon className="plus" />
-							</div>
-						) : ''}
-
-						{!isEmpty ? (
-							<div
-								className={[ 'btn', 'send', (isDisabled ? 'disabled' : '') ].join(' ')}
-								onClick={() => {
-									if (isDisabled) {
-										return;
-									};
-
-									const parts = editorRef.current?.getParts();
-									if (parts) {
-										handleSubmit(parts);
-									};
-								}}
-							>
-								<Icon className="send" />
-							</div>
-						) : ''}
+				{hasAttachments ? (
+					<div className="attachmentList">
+						{attachments.map(item => (
+							<Attachment
+								key={item.id}
+								object={item}
+								showAsFile={item.layout !== I.ObjectLayout.Image}
+								onRemove={() => onAttachmentRemove(item.id)}
+							/>
+						))}
 					</div>
 				) : ''}
 			</div>
 
-			{isMultiline && isFocused ? (
-				<div className="bottomToolbar">
+			{showToolbar ? (
+				<div className="formToolbar">
 					<div className="toolbarLeft">
-						<div className="toolbarBtn" onClick={onSlashClick}>
-							<Icon className="slash" />
+						<div className="toolbarBtn" onClick={onPlusClick}>
+							<Icon className="plus" />
 						</div>
 					</div>
 
@@ -235,19 +404,24 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								{translate('commonCancel')}
 							</div>
 						) : ''}
+
+						<div
+							className={[ 'btn', 'send', (isDisabled ? 'disabled' : '') ].join(' ')}
+							onClick={onSendClick}
+						>
+							<Icon className="send" />
+						</div>
 					</div>
 				</div>
 			) : ''}
 
-			{isEdit && !isMultiline ? (
-				<div className="editButtons">
-					{onCancel ? (
-						<div className="btn cancel" onClick={onCancel}>
-							{translate('commonCancel')}
-						</div>
-					) : ''}
-				</div>
-			) : ''}
+			<input
+				ref={fileInputRef}
+				type="file"
+				multiple={true}
+				className="dn"
+				onChange={onFileInputChange}
+			/>
 		</div>
 	);
 }));
