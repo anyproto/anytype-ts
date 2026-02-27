@@ -4,10 +4,19 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { ListNode, ListItemNode } from '@lexical/list';
+import { CodeNode } from '@lexical/code';
+import { $isHeadingNode, $createHeadingNode } from '@lexical/rich-text';
+import { $isListNode, $isListItemNode, $createListNode, $createListItemNode, INSERT_UNORDERED_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND } from '@lexical/list';
+import { $isCodeNode, $createCodeNode } from '@lexical/code';
 import {
 	$getRoot,
+	$getSelection,
+	$isRangeSelection,
 	$createParagraphNode,
 	$createTextNode,
 	$isElementNode,
@@ -16,13 +25,65 @@ import {
 	FOCUS_COMMAND,
 	BLUR_COMMAND,
 	COMMAND_PRIORITY_HIGH,
+	COMMAND_PRIORITY_LOW,
 	KEY_ENTER_COMMAND,
 	KEY_ESCAPE_COMMAND,
+	SELECTION_CHANGE_COMMAND,
+	createCommand,
 	EditorState,
 	LexicalEditor,
+	LexicalNode,
 	TextFormatType,
+	ElementNode,
+	DecoratorNode,
+	TextNode,
 } from 'lexical';
-import { I, keyboard } from 'Lib';
+import { $setBlocksType } from '@lexical/selection';
+import { I, S, U, keyboard, translate } from 'Lib';
+
+// Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
+class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
+
+	static getType (): string {
+		return 'horizontalrule';
+	};
+
+	static clone (node: HorizontalRuleNode): HorizontalRuleNode {
+		return new HorizontalRuleNode(node.__key);
+	};
+
+	createDOM (): HTMLElement {
+		const el = document.createElement('div');
+		el.className = 'commentEditor-divider';
+		return el;
+	};
+
+	updateDOM (): boolean {
+		return false;
+	};
+
+	decorate (): JSX.Element {
+		return <hr className="commentEditor-hr" />;
+	};
+
+	isIsolated (): boolean {
+		return true;
+	};
+
+	exportJSON () {
+		return {
+			type: 'horizontalrule',
+			version: 1,
+		};
+	};
+
+	static importJSON (): HorizontalRuleNode {
+		return new HorizontalRuleNode();
+	};
+
+};
+
+export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZONTAL_RULE_COMMAND');
 
 interface Props {
 	placeholder?: string;
@@ -31,6 +92,9 @@ interface Props {
 	onSubmit?: (parts: I.CommentContentPart[]) => void;
 	onCancel?: () => void;
 	onEmpty?: (isEmpty: boolean) => void;
+	onFocus?: () => void;
+	onBlur?: () => void;
+	onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null) => void;
 };
 
 interface RefProps {
@@ -39,10 +103,34 @@ interface RefProps {
 	getParts: () => I.CommentContentPart[];
 	setParts: (parts: I.CommentContentPart[]) => void;
 	isEmpty: () => boolean;
+	getEditor: () => LexicalEditor | null;
+	getLineCount: () => number;
+	insertBlock: (style: I.TextStyle) => void;
+	insertDivider: () => void;
+	toggleFormat: (format: TextFormatType) => void;
+	setBlockStyle: (style: I.TextStyle) => void;
+	getCurrentBlockStyle: () => I.TextStyle;
 };
 
 const theme = {
 	paragraph: 'commentEditor-paragraph',
+	heading: {
+		h1: 'commentEditor-h1',
+		h2: 'commentEditor-h2',
+		h3: 'commentEditor-h3',
+	},
+	quote: 'commentEditor-quote',
+	code: 'commentEditor-codeBlock',
+	list: {
+		ul: 'commentEditor-ul',
+		ol: 'commentEditor-ol',
+		listitem: 'commentEditor-li',
+		listitemChecked: 'commentEditor-li-checked',
+		listitemUnchecked: 'commentEditor-li-unchecked',
+		nested: {
+			listitem: 'commentEditor-li-nested',
+		},
+	},
 	text: {
 		bold: 'commentEditor-bold',
 		italic: 'commentEditor-italic',
@@ -52,6 +140,82 @@ const theme = {
 	},
 };
 
+/**
+ * Maps a Lexical heading tag to I.TextStyle
+ */
+const headingTagToStyle = (tag: string): I.TextStyle => {
+	switch (tag) {
+		case 'h1': return I.TextStyle.Header1;
+		case 'h2': return I.TextStyle.Header2;
+		case 'h3': return I.TextStyle.Header3;
+		default: return I.TextStyle.Paragraph;
+	};
+};
+
+/**
+ * Maps I.TextStyle to Lexical heading tag
+ */
+const styleToHeadingTag = (style: I.TextStyle): string => {
+	switch (style) {
+		case I.TextStyle.Header1: return 'h1';
+		case I.TextStyle.Header2: return 'h2';
+		case I.TextStyle.Header3: return 'h3';
+		default: return '';
+	};
+};
+
+/**
+ * Extract marks from a Lexical TextNode
+ */
+const extractMarks = (child: TextNode, start: number, end: number): I.Mark[] => {
+	const marks: I.Mark[] = [];
+	const range = { from: start, to: end };
+
+	if (child.hasFormat('bold')) {
+		marks.push({ type: I.MarkType.Bold, range: { ...range }, param: '' });
+	};
+	if (child.hasFormat('italic')) {
+		marks.push({ type: I.MarkType.Italic, range: { ...range }, param: '' });
+	};
+	if (child.hasFormat('strikethrough')) {
+		marks.push({ type: I.MarkType.Strike, range: { ...range }, param: '' });
+	};
+	if (child.hasFormat('underline')) {
+		marks.push({ type: I.MarkType.Underline, range: { ...range }, param: '' });
+	};
+	if (child.hasFormat('code')) {
+		marks.push({ type: I.MarkType.Code, range: { ...range }, param: '' });
+	};
+
+	return marks;
+};
+
+/**
+ * Extract text and marks from an element node's children
+ */
+const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mark[] } => {
+	let text = '';
+	const marks: I.Mark[] = [];
+	const children = element.getChildren();
+
+	for (const child of children) {
+		const childText = child.getTextContent();
+		const start = text.length;
+		const end = start + childText.length;
+
+		if ($isTextNode(child)) {
+			marks.push(...extractMarks(child, start, end));
+		};
+
+		text += childText;
+	};
+
+	return { text, marks };
+};
+
+/**
+ * Serialize Lexical editor state to CommentContentPart[]
+ */
 const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 	if (!editor) {
 		return [];
@@ -61,42 +225,99 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 
 	editor.getEditorState().read(() => {
 		const root = $getRoot();
-		const paragraphs = root.getChildren();
+		const children = root.getChildren();
 
-		for (const paragraph of paragraphs) {
-			if (!$isElementNode(paragraph)) {
+		for (const node of children) {
+			// Horizontal rule (decorator)
+			if (node instanceof HorizontalRuleNode) {
+				parts.push({
+					style: I.TextStyle.Paragraph,
+					type: I.BlockType.Div,
+					text: '',
+					marks: [],
+				});
 				continue;
 			};
 
-			let text = '';
-			const marks: I.Mark[] = [];
-			const children = paragraph.getChildren();
-
-			for (const child of children) {
-				const childText = child.getTextContent();
-				const start = text.length;
-				const end = start + childText.length;
-
-				if ($isTextNode(child)) {
-					if (child.hasFormat('bold')) {
-						marks.push({ type: I.MarkType.Bold, range: { from: start, to: end }, param: '' });
-					};
-					if (child.hasFormat('italic')) {
-						marks.push({ type: I.MarkType.Italic, range: { from: start, to: end }, param: '' });
-					};
-					if (child.hasFormat('strikethrough')) {
-						marks.push({ type: I.MarkType.Strike, range: { from: start, to: end }, param: '' });
-					};
-					if (child.hasFormat('underline')) {
-						marks.push({ type: I.MarkType.Underline, range: { from: start, to: end }, param: '' });
-					};
-					if (child.hasFormat('code')) {
-						marks.push({ type: I.MarkType.Code, range: { from: start, to: end }, param: '' });
-					};
-				};
-
-				text += childText;
+			if (!$isElementNode(node)) {
+				continue;
 			};
+
+			// Heading
+			if ($isHeadingNode(node)) {
+				const tag = node.getTag();
+				const { text, marks } = extractTextAndMarks(node);
+
+				parts.push({
+					style: headingTagToStyle(tag),
+					type: I.BlockType.Text,
+					text,
+					marks,
+				});
+				continue;
+			};
+
+			// Quote
+			if (node.getType() === 'quote') {
+				const { text, marks } = extractTextAndMarks(node);
+
+				parts.push({
+					style: I.TextStyle.Quote,
+					type: I.BlockType.Text,
+					text,
+					marks,
+				});
+				continue;
+			};
+
+			// Code block
+			if ($isCodeNode(node)) {
+				const text = node.getTextContent();
+
+				parts.push({
+					style: I.TextStyle.Code,
+					type: I.BlockType.Text,
+					text,
+					marks: [],
+				});
+				continue;
+			};
+
+			// Lists
+			if ($isListNode(node)) {
+				const listType = node.getListType();
+				const items = node.getChildren();
+
+				for (const item of items) {
+					if (!$isListItemNode(item)) {
+						continue;
+					};
+
+					const { text, marks } = extractTextAndMarks(item);
+					let style = I.TextStyle.Bulleted;
+					let checked: boolean | undefined;
+
+					if (listType === 'number') {
+						style = I.TextStyle.Numbered;
+					} else
+					if (listType === 'check') {
+						style = I.TextStyle.Checkbox;
+						checked = item.getChecked();
+					};
+
+					parts.push({
+						style,
+						type: I.BlockType.Text,
+						text,
+						marks,
+						checked,
+					});
+				};
+				continue;
+			};
+
+			// Paragraph (default)
+			const { text, marks } = extractTextAndMarks(node);
 
 			parts.push({
 				style: I.TextStyle.Paragraph,
@@ -110,6 +331,58 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 	return parts;
 };
 
+/**
+ * Create text nodes with formatting from marks
+ */
+const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
+	if (!marks || !marks.length) {
+		return [ $createTextNode(text) ];
+	};
+
+	const boundaries = new Set<number>();
+	boundaries.add(0);
+	boundaries.add(text.length);
+
+	for (const mark of marks) {
+		boundaries.add(mark.range.from);
+		boundaries.add(mark.range.to);
+	};
+
+	const sorted = [ ...boundaries ].sort((a, b) => a - b);
+	const nodes: LexicalNode[] = [];
+
+	for (let i = 0; i < sorted.length - 1; i++) {
+		const from = sorted[i];
+		const to = sorted[i + 1];
+		const segment = text.slice(from, to);
+
+		if (!segment) {
+			continue;
+		};
+
+		const node = $createTextNode(segment);
+
+		for (const mark of marks) {
+			if ((mark.range.from <= from) && (mark.range.to >= to)) {
+				switch (mark.type) {
+					case I.MarkType.Bold: node.toggleFormat('bold'); break;
+					case I.MarkType.Italic: node.toggleFormat('italic'); break;
+					case I.MarkType.Strike: node.toggleFormat('strikethrough'); break;
+					case I.MarkType.Underline: node.toggleFormat('underline'); break;
+					case I.MarkType.Code: node.toggleFormat('code'); break;
+				};
+			};
+		};
+
+		nodes.push(node);
+	};
+
+	return nodes.length ? nodes : [ $createTextNode(text) ];
+};
+
+/**
+ * Deserialize CommentContentPart[] into Lexical editor state
+ */
 const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => {
 	if (!editor) {
 		return;
@@ -126,58 +399,85 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 			return;
 		};
 
-		for (const part of parts) {
-			const p = $createParagraphNode();
-			const text = part.text || '';
+		// Group consecutive list items of the same style into list nodes
+		let i = 0;
+		while (i < parts.length) {
+			const part = parts[i];
 
-			if (!part.marks || !part.marks.length) {
-				p.append($createTextNode(text));
-			} else {
-				const boundaries = new Set<number>();
-				boundaries.add(0);
-				boundaries.add(text.length);
-
-				for (const mark of part.marks) {
-					boundaries.add(mark.range.from);
-					boundaries.add(mark.range.to);
-				};
-
-				const sorted = [...boundaries].sort((a, b) => a - b);
-
-				for (let i = 0; i < sorted.length - 1; i++) {
-					const from = sorted[i];
-					const to = sorted[i + 1];
-					const segment = text.slice(from, to);
-
-					if (!segment) {
-						continue;
-					};
-
-					const node = $createTextNode(segment);
-
-					for (const mark of part.marks) {
-						if ((mark.range.from <= from) && (mark.range.to >= to)) {
-							switch (mark.type) {
-								case I.MarkType.Bold: node.toggleFormat('bold'); break;
-								case I.MarkType.Italic: node.toggleFormat('italic'); break;
-								case I.MarkType.Strike: node.toggleFormat('strikethrough'); break;
-								case I.MarkType.Underline: node.toggleFormat('underline'); break;
-								case I.MarkType.Code: node.toggleFormat('code'); break;
-							};
-						};
-					};
-
-					p.append(node);
-				};
+			// Divider
+			if (part.type === I.BlockType.Div) {
+				root.append(new HorizontalRuleNode());
+				i++;
+				continue;
 			};
 
+			// Heading
+			const headingTag = styleToHeadingTag(part.style);
+			if (headingTag) {
+				const heading = $createHeadingNode(headingTag as 'h1' | 'h2' | 'h3');
+				heading.append(...createFormattedNodes(part.text || '', part.marks));
+				root.append(heading);
+				i++;
+				continue;
+			};
+
+			// Quote
+			if (part.style === I.TextStyle.Quote) {
+				const quote = new QuoteNode();
+				quote.append(...createFormattedNodes(part.text || '', part.marks));
+				root.append(quote);
+				i++;
+				continue;
+			};
+
+			// Code block
+			if (part.style === I.TextStyle.Code) {
+				const code = $createCodeNode();
+				code.append($createTextNode(part.text || ''));
+				root.append(code);
+				i++;
+				continue;
+			};
+
+			// Lists — group consecutive items of the same list style
+			if ([ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(part.style)) {
+				const listStyle = part.style;
+				let listType: 'bullet' | 'number' | 'check' = 'bullet';
+
+				if (listStyle === I.TextStyle.Numbered) {
+					listType = 'number';
+				} else
+				if (listStyle === I.TextStyle.Checkbox) {
+					listType = 'check';
+				};
+
+				const list = $createListNode(listType);
+
+				while ((i < parts.length) && (parts[i].style === listStyle) && (parts[i].type !== I.BlockType.Div)) {
+					const itemPart = parts[i];
+					const item = $createListItemNode(listType === 'check' ? itemPart.checked || false : undefined);
+					item.append(...createFormattedNodes(itemPart.text || '', itemPart.marks));
+					list.append(item);
+					i++;
+				};
+
+				root.append(list);
+				continue;
+			};
+
+			// Paragraph (default)
+			const p = $createParagraphNode();
+			p.append(...createFormattedNodes(part.text || '', part.marks));
 			root.append(p);
+			i++;
 		};
 	});
 };
 
+// ---- Lexical Plugins ----
+
 const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
-	const [editor] = useLexicalComposerContext();
+	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
 		return editor.registerCommand(
@@ -199,7 +499,7 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 };
 
 const EscapePlugin = ({ onCancel }: { onCancel?: () => void }) => {
-	const [editor] = useLexicalComposerContext();
+	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
 		if (!onCancel) {
@@ -221,7 +521,7 @@ const EscapePlugin = ({ onCancel }: { onCancel?: () => void }) => {
 };
 
 const FormattingPlugin = () => {
-	const [editor] = useLexicalComposerContext();
+	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
@@ -252,14 +552,15 @@ const FormattingPlugin = () => {
 	return null;
 };
 
-const FocusPlugin = () => {
-	const [editor] = useLexicalComposerContext();
+const FocusPlugin = ({ onFocus, onBlur }: { onFocus?: () => void; onBlur?: () => void }) => {
+	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
 		const unregisterFocus = editor.registerCommand(
 			FOCUS_COMMAND,
 			() => {
 				keyboard.setFocus(true);
+				onFocus?.();
 				return false;
 			},
 			COMMAND_PRIORITY_HIGH,
@@ -269,6 +570,7 @@ const FocusPlugin = () => {
 			BLUR_COMMAND,
 			() => {
 				keyboard.setFocus(false);
+				onBlur?.();
 				return false;
 			},
 			COMMAND_PRIORITY_HIGH,
@@ -278,16 +580,13 @@ const FocusPlugin = () => {
 			unregisterFocus();
 			unregisterBlur();
 		};
-	}, [ editor ]);
+	}, [ editor, onFocus, onBlur ]);
 
 	return null;
 };
 
-/**
- * Loads initialParts into editor after it mounts.
- */
 const InitialPartsPlugin = ({ parts }: { parts?: I.CommentContentPart[] }) => {
-	const [editor] = useLexicalComposerContext();
+	const [ editor ] = useLexicalComposerContext();
 	const loaded = useRef(false);
 
 	useEffect(() => {
@@ -301,7 +600,7 @@ const InitialPartsPlugin = ({ parts }: { parts?: I.CommentContentPart[] }) => {
 };
 
 const EditorRefPlugin = ({ editorRef }: { editorRef: React.MutableRefObject<LexicalEditor | null> }) => {
-	const [editor] = useLexicalComposerContext();
+	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
 		editorRef.current = editor;
@@ -310,11 +609,222 @@ const EditorRefPlugin = ({ editorRef }: { editorRef: React.MutableRefObject<Lexi
 	return null;
 };
 
+const HorizontalRulePlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			INSERT_HORIZONTAL_RULE_COMMAND,
+			() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection)) {
+					return false;
+				};
+
+				const focus = selection.focus;
+				const focusNode = focus.getNode();
+				const topLevelNode = focusNode.getTopLevelElementOrThrow();
+
+				const hrNode = new HorizontalRuleNode();
+				const newParagraph = $createParagraphNode();
+
+				topLevelNode.insertAfter(hrNode);
+				hrNode.insertAfter(newParagraph);
+				newParagraph.select();
+
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+	}, [ editor ]);
+
+	return null;
+};
+
+const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const slashOffset = useRef(-1);
+	const prevText = useRef('');
+
+	useEffect(() => {
+		const removeListener = editor.registerUpdateListener(({ editorState }) => {
+			editorState.read(() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node)) {
+					prevText.current = '';
+					return;
+				};
+
+				const text = node.getTextContent();
+				const offset = anchor.offset;
+
+				// Only trigger when new text was added (not on deletions or cursor moves)
+				if ((offset > 0) && (text[offset - 1] === '/') && (text !== prevText.current)) {
+					const charBefore = offset > 1 ? text[offset - 2] : '';
+					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
+						slashOffset.current = offset - 1;
+						openSlashMenu(editor, editorId, slashOffset);
+					};
+				};
+
+				prevText.current = text;
+			});
+		});
+
+		return removeListener;
+	}, [ editor, editorId ]);
+
+	return null;
+};
+
+const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>) => {
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+
+	S.Menu.open('commentAdd', {
+		rect: { ...rect, y: rect.y + win.scrollTop() + 4, x: rect.x, width: 0, height: rect.height },
+		vertical: I.MenuDirection.Bottom,
+		horizontal: I.MenuDirection.Left,
+		offsetY: 4,
+		noAnimation: true,
+		data: {
+			editor,
+			editorId,
+			onSelect: (item: any) => {
+				// Remove the slash character
+				editor.update(() => {
+					const selection = $getSelection();
+					if (!$isRangeSelection(selection)) {
+						return;
+					};
+
+					const anchor = selection.anchor;
+					const node = anchor.getNode();
+
+					if ($isTextNode(node)) {
+						const text = node.getTextContent();
+						const offset = slashOffset.current;
+
+						if ((offset >= 0) && (text[offset] === '/')) {
+							const before = text.slice(0, offset);
+							const after = text.slice(offset + 1);
+							node.setTextContent(before + after);
+
+							// Set cursor position
+							const newOffset = Math.min(before.length, (before + after).length);
+							node.select(newOffset, newOffset);
+						};
+					};
+				});
+
+				// Apply block transform
+				applyBlockTransform(editor, item);
+			},
+		},
+	});
+};
+
+const applyBlockTransform = (editor: LexicalEditor, item: any) => {
+	if (!item) {
+		return;
+	};
+
+	editor.update(() => {
+		const selection = $getSelection();
+		if (!$isRangeSelection(selection)) {
+			return;
+		};
+
+		switch (item.style) {
+			case I.TextStyle.Header1:
+			case I.TextStyle.Header2:
+			case I.TextStyle.Header3: {
+				const tag = styleToHeadingTag(item.style) as 'h1' | 'h2' | 'h3';
+				$setBlocksType(selection, () => $createHeadingNode(tag));
+				break;
+			};
+
+			case I.TextStyle.Quote: {
+				$setBlocksType(selection, () => new QuoteNode());
+				break;
+			};
+
+			case I.TextStyle.Code: {
+				$setBlocksType(selection, () => $createCodeNode());
+				break;
+			};
+
+			case I.TextStyle.Bulleted: {
+				editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+				break;
+			};
+
+			case I.TextStyle.Numbered: {
+				editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+				break;
+			};
+
+			case I.TextStyle.Checkbox: {
+				editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+				break;
+			};
+
+			case I.TextStyle.Paragraph: {
+				if (item.type === I.BlockType.Div) {
+					editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+				} else {
+					$setBlocksType(selection, () => $createParagraphNode());
+				};
+				break;
+			};
+		};
+	});
+
+	editor.focus();
+};
+
+const SelectionPlugin = ({ onSelectionChange }: { onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null) => void }) => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			SELECTION_CHANGE_COMMAND,
+			() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+					onSelectionChange?.(false, null);
+					return false;
+				};
+
+				const rect = U.Common.getSelectionRect();
+				onSelectionChange?.(true, rect);
+				return false;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+	}, [ editor, onSelectionChange ]);
+
+	return null;
+};
+
+// ---- Main Component ----
+
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty } = props;
+	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onFocus, onBlur, onSelectionChange } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
+	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
 
 	const checkEmpty = useCallback(() => {
 		const editor = editorRef.current;
@@ -349,12 +859,91 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		onSubmit?.(parts);
 	}, [ onSubmit ]);
 
+	const getLineCount = useCallback(() => {
+		const editor = editorRef.current;
+		if (!editor) {
+			return 0;
+		};
+
+		let count = 0;
+		editor.getEditorState().read(() => {
+			count = $getRoot().getChildrenSize();
+		});
+
+		return count;
+	}, []);
+
+	const getCurrentBlockStyle = useCallback((): I.TextStyle => {
+		const editor = editorRef.current;
+		if (!editor) {
+			return I.TextStyle.Paragraph;
+		};
+
+		let style = I.TextStyle.Paragraph;
+		editor.getEditorState().read(() => {
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const anchorNode = selection.anchor.getNode();
+			const element = anchorNode.getTopLevelElementOrThrow();
+
+			if ($isHeadingNode(element)) {
+				style = headingTagToStyle(element.getTag());
+			} else
+			if (element.getType() === 'quote') {
+				style = I.TextStyle.Quote;
+			} else
+			if ($isCodeNode(element)) {
+				style = I.TextStyle.Code;
+			} else
+			if ($isListNode(element)) {
+				const listType = element.getListType();
+				if (listType === 'number') {
+					style = I.TextStyle.Numbered;
+				} else
+				if (listType === 'check') {
+					style = I.TextStyle.Checkbox;
+				} else {
+					style = I.TextStyle.Bulleted;
+				};
+			};
+		});
+
+		return style;
+	}, []);
+
+	const setBlockStyle = useCallback((style: I.TextStyle) => {
+		const editor = editorRef.current;
+		if (!editor) {
+			return;
+		};
+
+		applyBlockTransform(editor, { style, type: I.BlockType.Text });
+	}, []);
+
+	const insertDivider = useCallback(() => {
+		const editor = editorRef.current;
+		if (!editor) {
+			return;
+		};
+
+		editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+	}, []);
+
+	const toggleFormat = useCallback((format: TextFormatType) => {
+		const editor = editorRef.current;
+		if (!editor) {
+			return;
+		};
+
+		editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
+	}, []);
+
 	useImperativeHandle(ref, () => ({
 		focus: () => {
-			const editor = editorRef.current;
-			if (editor) {
-				editor.focus();
-			};
+			editorRef.current?.focus();
 		},
 
 		clear: () => {
@@ -381,11 +970,25 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		},
 
 		isEmpty: () => checkEmpty(),
+
+		getEditor: () => editorRef.current,
+
+		getLineCount,
+
+		insertBlock: (style: I.TextStyle) => {
+			setBlockStyle(style);
+		},
+
+		insertDivider,
+		toggleFormat,
+		setBlockStyle,
+		getCurrentBlockStyle,
 	}));
 
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, HorizontalRuleNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -394,20 +997,24 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<LexicalComposer initialConfig={initialConfig}>
-			<div className="commentEditorWrap">
+			<div className="commentEditorWrap" id={editorId}>
 				<RichTextPlugin
 					contentEditable={<ContentEditable className="commentEditorInput" />}
 					placeholder={<div className="commentEditorPlaceholder">{placeholder || ''}</div>}
 					ErrorBoundary={LexicalErrorBoundary}
 				/>
 				<HistoryPlugin />
+				<ListPlugin />
 				<OnChangePlugin onChange={handleChange} />
 				<SubmitPlugin onSubmit={handleSubmit} />
 				<EscapePlugin onCancel={onCancel} />
 				<FormattingPlugin />
-				<FocusPlugin />
+				<FocusPlugin onFocus={onFocus} onBlur={onBlur} />
 				<InitialPartsPlugin parts={initialParts} />
 				<EditorRefPlugin editorRef={editorRef} />
+				<HorizontalRulePlugin />
+				<SlashMenuPlugin editorId={editorId} />
+				<SelectionPlugin onSelectionChange={onSelectionChange} />
 			</div>
 		</LexicalComposer>
 	);

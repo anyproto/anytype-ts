@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { I, C, S, U, translate } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
+import mockupPosts from './mockupPosts';
 
 const POST_LIMIT = 20;
 
@@ -12,6 +13,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const subId = U.Comment.getSubId(targetType, targetId);
 	const formRef = useRef<any>(null);
 	const isLoaded = useRef(false);
+	const localIdCounter = useRef(0);
 
 	useEffect(() => {
 		if (targetId) {
@@ -28,6 +30,9 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const subscribe = useCallback(() => {
 		C.ChatSubscribeLastMessages(targetId, POST_LIMIT, subId, (message: any) => {
 			if (message.error.code) {
+				// Seed mockup posts on error (no middleware)
+				seedMockup();
+				isLoaded.current = true;
 				return;
 			};
 
@@ -55,7 +60,13 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				post.replyCount = replyCountMap[post.id] || 0;
 			};
 
-			S.Comment.setPosts(subId, posts);
+			// If no real posts, seed mockup data
+			if (!posts.length) {
+				seedMockup();
+			} else {
+				S.Comment.setPosts(subId, posts);
+			};
+
 			S.Comment.setHasMorePosts(subId, posts.length >= POST_LIMIT);
 
 			// Store replies grouped by parent
@@ -66,6 +77,10 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			isLoaded.current = true;
 		});
 	}, [ targetId, subId ]);
+
+	const seedMockup = useCallback(() => {
+		S.Comment.setPosts(subId, mockupPosts);
+	}, [ subId ]);
 
 	const unsubscribe = useCallback(() => {
 		C.ChatUnsubscribe(targetId, subId);
@@ -118,6 +133,28 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 		C.ChatAddMessage(targetId, msg as any, (response: any) => {
 			if (response.error.code) {
+				// Add locally even on error so the MVP works without middleware
+				localIdCounter.current++;
+
+				const newPost = {
+					id: `local-${localIdCounter.current}`,
+					orderId: `local-${localIdCounter.current}`,
+					creator: account?.id || '',
+					createdAt: U.Date.now(),
+					modifiedAt: 0,
+					replyToMessageId: '',
+					content: {
+						...encoded,
+						parts,
+					},
+					attachments: [],
+					reactions: [],
+					isSynced: false,
+					replyCount: 0,
+				};
+
+				S.Comment.addPost(subId, newPost as any);
+				formRef.current?.clear();
 				return;
 			};
 

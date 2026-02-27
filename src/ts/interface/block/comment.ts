@@ -10,6 +10,7 @@ export interface CommentContentPart {
 	type: I.BlockType;
 	text: string;
 	marks: I.Mark[];
+	checked?: boolean;
 };
 
 export interface CommentMessage {

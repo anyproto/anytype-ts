@@ -2831,5 +2831,43 @@
 	"commentReply": "Reply",
 	"commentEdit": "Edit",
 	"commentDelete": "Delete",
-	"commentSend": "Send"
+	"commentSend": "Send",
+
+	"commentSlashMenuTitle": "Text Styles",
+	"commentSlashMenuLists": "Lists",
+	"commentSlashMenuAttachments": "Attachments",
+	"commentSlashMenuDecorations": "Decorations",
+
+	"commentBlockTitle": "Title",
+	"commentBlockTitleDescription": "Large heading",
+	"commentBlockHeading": "Heading",
+	"commentBlockHeadingDescription": "Medium heading",
+	"commentBlockSubheading": "Subheading",
+	"commentBlockSubheadingDescription": "Small heading",
+
+	"commentBlockNumbered": "Numbered list",
+	"commentBlockNumberedDescription": "Ordered list with numbers",
+	"commentBlockBulleted": "Bulleted list",
+	"commentBlockBulletedDescription": "Unordered list with bullets",
+	"commentBlockCheckbox": "Check list",
+	"commentBlockCheckboxDescription": "List with checkboxes",
+
+	"commentBlockImage": "Image",
+	"commentBlockImageDescription": "Upload an image",
+	"commentBlockFile": "File",
+	"commentBlockFileDescription": "Upload a file",
+	"commentBlockObject": "Object",
+	"commentBlockObjectDescription": "Link an object",
+
+	"commentBlockQuote": "Blockquote",
+	"commentBlockQuoteDescription": "Highlighted quote block",
+	"commentBlockDivider": "Divider",
+	"commentBlockDividerDescription": "Horizontal line separator",
+	"commentBlockCode": "Code block",
+	"commentBlockCodeDescription": "Monospace code block",
+
+	"commentToolbarRegular": "Regular Text",
+	"commentToolbarTitle": "Title",
+	"commentToolbarHeading": "Heading",
+	"commentToolbarSubheading": "Subheading"
 }

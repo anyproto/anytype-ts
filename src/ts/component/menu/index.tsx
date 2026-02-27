@@ -88,6 +88,9 @@ import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
 import MenuChangeOwner from './changeOwner';
 
+import MenuCommentAdd from './comment/add';
+import MenuCommentToolbar from './comment/toolbar';
+
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
@@ -177,6 +180,9 @@ const Components: any = {
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
 	changeOwner:			 MenuChangeOwner,
+
+	commentAdd:				 MenuCommentAdd,
+	commentToolbar:			 MenuCommentToolbar,
 };
 
 interface RefProps extends I.MenuRef {

@@ -106,6 +106,7 @@
 		"@emoji-mart/data": "^1.2.1",
 		"@excalidraw/excalidraw": "^0.17.6",
 		"@lexical/link": "^0.40.0",
+		"@lexical/list": "^0.40.0",
 		"@lexical/markdown": "^0.40.0",
 		"@lexical/react": "^0.40.0",
 		"@lexical/rich-text": "^0.40.0",
