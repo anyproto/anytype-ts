@@ -137,7 +137,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${id}`);
+		const cell = $(`#${U.Common.esc(id)}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
 		if (content.length) {
@@ -316,7 +316,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${id}`).toggleClass('isEditing', isEditing);
+		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
 
 		if (isEditing) {
 			placeholderCheck();
