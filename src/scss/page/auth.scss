@@ -245,7 +245,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthDeleted {
-	.title { color: var(--color-text-primary) !important; margin: 0px 0px 8px 0px; }
+	.title { font-weight: 600; margin: 0px 0px 8px 0px; }
 	.frame { width: 500px; }
 	.label { @include text-paragraph; margin: 0px 0px 32px 0px; }
 
@@ -253,7 +253,7 @@ html.bodyAuthDeleted {
 		margin: 0px 0px 16px 0px; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;
 	}
 
-	.button { width: 320px; }
+	.button { width: 224px; }
 	.remove { color: var(--color-red) !important; }
 
 	.isDeleted {

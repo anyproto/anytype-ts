@@ -1152,7 +1152,7 @@ class UtilMenu {
 
 		const items = U.Common.objectCopy(U.Space.getList()).
 			map(it => {
-				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId, true);
+				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
 				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
 				it.isPinned = !!it.orderId;

@@ -29,7 +29,6 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			archived:			 Boolean(options.archived),
 			json:				 (undefined === options.json) ? true : Boolean(options.json),
 			landscape:			 Boolean(options.landscape),
-			printBackground:	 Boolean(options.printBackground),
 			pageSize:			 String(options.pageSize || 'A4'),
 			background:			 (undefined === options.background) ? (S.Common.getThemeClass() ? 'dark' : '') : String(options.background),
 		});
@@ -167,7 +166,6 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 				{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
 				{ id: 'background', name: translate('popupExportBackground'), control: 'select', options: backgroundOptions },
-				(!stateData.background ? { id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' } : null),
 			]);
 			break;
 		}

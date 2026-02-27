@@ -1,12 +1,17 @@
 .editorWrapper.isBookmark {
 	.editorControls { display: none; }
 
-	.bookmarkOgImage { width: 100%; height: 300px; background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: 6px; }
+	.bookmarkOgImage { 
+		width: 100%; aspect-ratio: 1.91; background-size: contain; background-position: center; background-repeat: no-repeat; 
+		border-radius: 6px; margin-left: 48px;
+	}
 
-	.bookmarkLink { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; margin: 16px 0px 0px 0px; padding-left: 48px; }
+	.bookmarkLink { 
+		display: flex; flex-direction: row; gap: 0px 6px; align-items: center; margin: 16px 0px 0px 0px; padding-left: 48px; 
+	}
 	.bookmarkLink {
 		.fav { width: 14px; height: 14px; flex-shrink: 0; border-radius: 2px; }
-		.url { @include text-small; color: var(--color-text-secondary); }
+		.url { color: var(--color-text-secondary); }
 	}
 
 	.block.blockFeatured { padding-bottom: 0px; }

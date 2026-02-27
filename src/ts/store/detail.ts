@@ -222,7 +222,7 @@ class DetailStore {
 				detailMap.delete(k);
 			};
 		} else {
-			map.set(id, new Map());
+			map.delete(id);
 		};
 	};
 

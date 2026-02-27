@@ -99,7 +99,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 				) : ''}
 
 				{source ? (
-					<div className="bookmarkLink">
+					<div className="bookmarkLink" onClick={() => Action.openUrl(source)}>
 						{iconImage ? <img className="fav" src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} /> : ''}
 						<div className="url">{U.String.shortUrl(source)}</div>
 					</div>

@@ -188,9 +188,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const renderMarkup = () => {
-		renderMentions(rootId, nodeRef.current, marksRef.current, () => text);
-		renderObjects(rootId, nodeRef.current, marksRef.current, () => text, props);
-		renderLinks(rootId, nodeRef.current, marksRef.current, () => text, props);
+		renderMentions(rootId, nodeRef.current, marksRef.current, getTextValue);
+		renderObjects(rootId, nodeRef.current, marksRef.current, getTextValue, props);
+		renderLinks(rootId, nodeRef.current, marksRef.current, getTextValue, props);
 		renderEmoji(nodeRef.current);
 	};
 	
@@ -976,10 +976,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 
 		let value = getTextValue();
+		
+		const firstChar = value.charAt(range.from - 1);
 
-		value = U.String.cut(value, range.from - 2, range.from - 1);
-
-		S.Common.filterSet(range.from - 2, '');
+		value = U.String.cut(value, range.from - 2, range.from);
+		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',

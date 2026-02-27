@@ -163,7 +163,7 @@
 			.loadMore { margin-top: 2px; }
 
 			&.isRegular {
-				.row { height: 52px !important; }
+				.row { height: 64px !important; }
 				.row {
 					.dropTarget { display: flex; align-items: center; height: 100%; }
 					.dropTarget.isOver.top::before { top: -3px; }

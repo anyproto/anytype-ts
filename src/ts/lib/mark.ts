@@ -762,6 +762,14 @@ class Mark {
 				};
 			};
 
+			// Skip replacement inside unmatched backtick context (inline code being typed)
+			if (check) {
+				const backtickCount = (html.substring(0, o).match(/`/g) || []).length;
+				if (backtickCount % 2 === 1) {
+					check = false;
+				};
+			};
+
 			if (check && Patterns[p]) {
 				text = text.replace(s, Patterns[p]);
 				marks = this.adjust(marks, o, Patterns[p].length - p.length);

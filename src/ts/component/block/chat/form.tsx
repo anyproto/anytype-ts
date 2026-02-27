@@ -178,30 +178,33 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
+		const hasMenu = S.Menu.isOpen('blockEmoji') || S.Menu.isOpen('blockMention');
 
 		let value = getTextValue();
 
-		if (chatCmdSend) {
-			keyboard.shortcut(`${cmd}+enter`, e, () => {
-				e.preventDefault();
-				onSend();
-			});
-		} else {
-			keyboard.shortcut(`enter`, e, () => {
-				e.preventDefault();
-				onSend();
-			});
+		if (!hasMenu) {
+			if (chatCmdSend) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					e.preventDefault();
+					onSend();
+				});
+			} else {
+				keyboard.shortcut(`enter`, e, () => {
+					e.preventDefault();
+					onSend();
+				});
 
-			keyboard.shortcut(`${cmd}+enter`, e, () => {
-				e.preventDefault();
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					e.preventDefault();
 
-				if (!value.match(/\r?\n$/)) {
-					value += '\n';
-				};
+					if (!value.match(/\r?\n$/)) {
+						value += '\n';
+					};
 
-				insert('\n', value);
-				scrollToBottom();
-			});
+					insert('\n', value);
+					scrollToBottom();
+				});
+			};
 		};
 
 		keyboard.shortcut('arrowup', e, () => {

@@ -746,6 +746,14 @@ class UtilSubscription {
 	};
 
 	/**
+	 * Clears all internal subscription state immediately without making gRPC calls.
+	 */
+	clear (): void {
+		this.map.clear();
+		this.spaceSubIds.clear();
+	};
+
+	/**
 	 * Returns the relation keys for space subscriptions.
 	 * @returns {string[]} The list of relation keys.
 	 */

@@ -144,6 +144,7 @@ class ElectronMock {
 			css: '',
 			activeIndex: 0,
 			isSingleTab: true,
+			activeTabId: this.tabId_,
 		}));
 
 		handlers.set('setConfig', (args) => {

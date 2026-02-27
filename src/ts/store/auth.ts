@@ -263,6 +263,7 @@ class AuthStore {
 
 			S.Common.spaceSet('');
 
+			U.Subscription.clear();
 			S.Block.clearAll();
 			S.Detail.clearAll();
 			S.Record.clearAll();

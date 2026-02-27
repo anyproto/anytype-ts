@@ -2404,6 +2404,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const isOpen = Storage.checkToggle(rootId, focused.id);
 		const childrenIds = S.Block.getChildrenIds(rootId, focused.id);
 		const length = focused.getLength();
+		const isMiddle = (range.from != 0) && (range.from != length);
 
 		let style = I.TextStyle.Paragraph;
 		let mode = I.BlockSplitMode.Bottom;
@@ -2418,6 +2419,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			mode = range.to ? I.BlockSplitMode.Bottom : I.BlockSplitMode.Top;
 		};
 
+		if (isHeader) {
+			style = (!range.from && !range.to) || (range.to != length) ? content.style : I.TextStyle.Paragraph;
+		};
+
 		if (isCode || (isToggle && isOpen)) {
 			style = I.TextStyle.Paragraph;
 		};
@@ -2430,7 +2435,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			mode = I.BlockSplitMode.Top;
 		};
 
-		if (isCallout || isQuote || (isHeader && !isToggle)) {
+		if (isCallout || isQuote) {
 			style = content.style;
 		};
 
