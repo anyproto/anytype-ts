@@ -80,9 +80,7 @@ class Dataview {
 	 */
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
-			if (!message.error.code) {
-				this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
-			};
+			this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
 		});
 	};
 
