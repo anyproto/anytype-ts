@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
-import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import { I, S, U, J, Action, keyboard, translate, analytics, Onboarding } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 12;
@@ -38,12 +38,12 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		$(`#${getId()}`).on('click', () => onCloseInfo());
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 		$(`#${getId()}`).off('click');
 	};
 

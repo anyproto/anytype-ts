@@ -35,12 +35,12 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			};
 		});
 
-		win.on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 	};
 
 	const unbind = () => {
 		$(`#${getId()}`).off('click mousedown');
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onKeyDown = (e: any) => {

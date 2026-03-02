@@ -9,17 +9,17 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const n = useRef(0);
-	const { param, close } = props;
+	const { param, close, getId } = props;
 	const { data } = param;
 	const { smileId, onSelect } = data;
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onClick = (e: any, id: number) => {

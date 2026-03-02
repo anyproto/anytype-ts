@@ -6,7 +6,7 @@ import { I, S, U, keyboard } from 'Lib';
 
 const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, onKeyDown, close } = props;
+	const { param, setActive, onKeyDown, close, getId } = props;
 	const { data } = param;
 	const { rootId, onSelect } = data;
 	const blockIds = data.blockIds || [];
@@ -16,12 +16,12 @@ const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 	
 	const getItems = () => {

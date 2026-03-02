@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, J, analytics, translate } from 'Lib';
+import { I, C, S, J, analytics, keyboard, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
 import relation from 'json/relation';
@@ -21,12 +21,12 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		obj.off('click').on('click', () => S.Menu.closeAll(J.Menu.cell));
 
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getAdvancedFilter = () => {

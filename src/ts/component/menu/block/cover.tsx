@@ -22,7 +22,7 @@ const Tabs = [
 
 const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close } = props;
+	const { param, close, getId } = props;
 	const { data } = param;
 	const { rootId, onSelect, onUpload, onUploadStart } = data;
 	const [ filter, setFilter ] = useState('');
@@ -65,15 +65,14 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, [ filter, tab, items ]);
 
 	const unbind = () => {
-		$(window).off('paste.menu keydown.menu');
+		$(window).off('paste.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('paste.menu', e => onPaste(e));
-		win.on('keydown.menu', e => onKeyDown(e));
+		$(window).on('paste.menu', e => onPaste(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 	};
 
 	const load = () => {

@@ -52,11 +52,11 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keyboard.router.pushMenuZone(getId(), keyHandlerRef.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const focus = () => {

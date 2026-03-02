@@ -6,7 +6,7 @@ import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setActive, onKeyDown, position } = props;
+	const { param, close, setActive, onKeyDown, position, getId } = props;
 	const { data } = param;
 	const { blockId, isPreview } = data;
 	const { widgets } = S.Block;
@@ -38,12 +38,12 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getSections = () => {

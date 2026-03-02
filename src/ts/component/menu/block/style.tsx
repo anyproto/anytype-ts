@@ -6,7 +6,7 @@ import { I, S, U, keyboard, analytics, translate } from 'Lib';
 
 const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, onKeyDown, setActive, close } = props;
+	const { param, onKeyDown, setActive, close, getId } = props;
 	const { data } = param;
 	const { rootId, blockId, blockIds, onSelect } = data;
 	const block = S.Block.getLeaf(rootId, blockId);
@@ -14,12 +14,12 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 	
 	const getActive = (): I.TextStyle | I.DivStyle | I.FileStyle => {

@@ -4,7 +4,7 @@ import { I, S, U, keyboard, Renderer, Action } from 'Lib';
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive } = props;
+	const { param, onKeyDown, setActive, getId } = props;
 	const { data } = param;
 	const { title, message } = data;
 	const buttons = data.buttons || [];
@@ -12,12 +12,12 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onClick = (e, item) => {

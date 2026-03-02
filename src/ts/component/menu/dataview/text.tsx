@@ -41,12 +41,12 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		window.setTimeout(() => {
 			setActive();
-			$(window).on('keydown.menu', e => onKeyDownHandler(e));
+			keyboard.router.pushMenuZone(getId(), onKeyDownHandler);
 		}, 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getValue = () => {

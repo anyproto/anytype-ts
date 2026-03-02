@@ -6,7 +6,7 @@ import { MenuItemVertical } from 'Component';
 
 const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, onKeyDown, setActive, close } = props;
+	const { param, onKeyDown, setActive, close, getId } = props;
 	const { data } = param;
 	const { rootId, blockId, groupId, getView } = data;
 	const view = getView();
@@ -17,12 +17,12 @@ const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getSections = () => {

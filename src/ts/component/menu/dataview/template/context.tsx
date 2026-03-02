@@ -6,7 +6,7 @@ import { I, C, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
 const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, onKeyDown, setActive } = props;
+	const { param, close, onKeyDown, setActive, getId } = props;
 	const { data } = param;
 	const { template, isView, templateId, noToast, route, onDuplicate, onArchive, onSetDefault } = data;
 	const isDefault = template.id == templateId;
@@ -14,12 +14,12 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getItems = () => {

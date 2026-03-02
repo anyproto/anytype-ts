@@ -4,7 +4,7 @@ class KeyboardRouter {
 
 	private stack: KeyboardZone[] = [];
 	private listener: ((e: KeyboardEvent) => void) | null = null;
-	compatMode = true;
+	compatMode = false;
 
 	init () {
 		this.destroy();
@@ -65,6 +65,21 @@ class KeyboardRouter {
 		};
 	};
 
+	pushMenuZone (menuId: string, handler: (e: any) => void) {
+		this.pushZone({
+			id: `menu:${menuId}`,
+			type: KeyboardZoneType.Menu,
+			onKeyDown: (e: KeyboardEvent) => {
+				handler(e);
+				return true;
+			},
+		});
+	};
+
+	popMenuZone (menuId: string) {
+		this.popZone(`menu:${menuId}`);
+	};
+
 	getActiveZone (): KeyboardZone | undefined {
 		return this.stack.length ? this.stack[this.stack.length - 1] : undefined;
 	};
@@ -94,7 +109,6 @@ class KeyboardRouter {
 			const zone = this.stack[i];
 
 			if (zone.onKeyDown(e)) {
-				e.stopPropagation();
 				return;
 			};
 		};

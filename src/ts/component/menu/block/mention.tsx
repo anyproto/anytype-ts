@@ -46,12 +46,12 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => props.onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), props.onKeyDown);
 		window.setTimeout(() => props.setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const getSections = () => {

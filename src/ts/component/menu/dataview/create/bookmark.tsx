@@ -1,10 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
-import { I, C, S, U, J, translate, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, analytics, Storage } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, storageSet, storageGet } = props;
+	const { param, close, storageSet, storageGet, getId } = props;
 	const inputRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ preview, setPreview ] = useState(null);
@@ -21,11 +21,11 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => {});
+		keyboard.router.pushMenuZone(getId(), () => {});
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onSubmit = (e: any) => {

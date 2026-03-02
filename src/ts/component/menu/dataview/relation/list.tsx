@@ -31,12 +31,12 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onKeyDownHandler = (e: any) => {

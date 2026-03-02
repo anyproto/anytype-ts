@@ -18,13 +18,13 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDownHandler);
 		$(`#${getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 		$(`#${getId()}`).off('click');
 	};
 

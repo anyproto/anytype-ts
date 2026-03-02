@@ -7,18 +7,18 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const n = useRef(0);
-	const { param, close } = props;
+	const { param, close, getId } = props;
 	const { data } = param;
 	const { itemId, isEmoji, onSelect } = data;
 	const colors = isEmoji ? [ 1, 2, 3, 4, 5, 6 ] : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keyboard.router.pushMenuZone(getId(), onKeyDown);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		keyboard.router.popMenuZone(getId());
 	};
 
 	const onClick = (e: any, id: number) => {
