@@ -106,10 +106,10 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		init();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keyboard.router.pushPopupZone(props.id, onKeyDown);
 
 		return () => {
-			$(window).off(`keydown.${props.id}`);
+			keyboard.router.popPopupZone(props.id);
 		};
 	}, []);
 

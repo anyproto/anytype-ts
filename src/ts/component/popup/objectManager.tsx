@@ -16,11 +16,11 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keyboard.router.pushPopupZone(props.id, onKeyDown);
 	};
 
 	const unbind = () => {
-		$(window).off(`keydown.${props.id}`);
+		keyboard.router.popPopupZone(props.id);
 	};
 
 	const onKeyDown = (e: any) => {

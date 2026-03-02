@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, sidebar, translate } from 'Lib';
+import { I, S, J, U, sidebar, translate, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
 
@@ -26,7 +26,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nodeRef = useRef(null);
 
 	const unbind = () => {
-		$(window).off('resize.popupPreview keydown.popupPreview');
+		$(window).off('resize.popupPreview');
+		keyboard.router.popPopupZone('preview');
 	};
 
 	const rebind = () => {

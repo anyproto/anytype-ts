@@ -286,7 +286,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			clear();
-			$(window).off('keyup.shortcut keydown.shortcut');
+			$(window).off('keyup.shortcut');
+			keyboard.router.popPopupZone('shortcutEdit');
 		};
 	}, []);
 
@@ -372,14 +373,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let pressed = [];
 
-		win.off('keyup.shortcut keydown.shortcut');
+		win.off('keyup.shortcut');
+		keyboard.router.popPopupZone('shortcutEdit');
 		keyboard.setShortcutEditing(!!editingId);
 
 		if (!editingId) {
 			return;
 		};
 
-		win.on('keydown.shortcut', (e: any) => {
+		keyboard.router.pushPopupZone('shortcutEdit', (e: any) => {
 			e.preventDefault();
 			e.stopPropagation();
 

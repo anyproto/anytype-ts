@@ -49,10 +49,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const rebind = () => {
 		unbind();
 
-		const win = $(window);
-
-		win.on('keydown.search', e => onKeyDown(e));
-		win.on('archiveObject.search', (e: any, data: any) => {
+		keyboard.router.pushPopupZone('search', onKeyDown);
+		$(window).on('archiveObject.search', (e: any, data: any) => {
 			const ids = U.Common.objectCopy(data.ids);
 			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
 
@@ -61,7 +59,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.search archiveObject.search');
+		keyboard.router.popPopupZone('search');
+		$(window).off('archiveObject.search');
 	};
 
 	const onKeyDown = (e: any) => {
