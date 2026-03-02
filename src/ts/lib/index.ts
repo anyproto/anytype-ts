@@ -11,6 +11,8 @@ import { dispatcher } from './api/dispatcher';
 import { Mapper } from './api/mapper';
 import { Encode, Decode } from './api/struct';
 import { keyboard, Key } from './keyboard';
+import { router, KeyboardZoneType } from './keyboard/index';
+import type { KeyboardZone } from './keyboard/index';
 import { sidebar } from './sidebar';
 import Storage from './storage';
 import Mark from './mark';
@@ -61,4 +63,8 @@ export {
 	Highlight,
 	Animation,
 	getSparkOnboardingService,
+	router,
+	KeyboardZoneType,
 };
+
+export type { KeyboardZone };

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, U, J, H, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
+import { router } from './keyboard/router';
 
 class Keyboard {
 
@@ -31,6 +32,8 @@ class Keyboard {
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
 
+	router = router;
+
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
@@ -38,7 +41,8 @@ class Keyboard {
 		this.unbind();
 		this.initShortcuts();
 		this.onResize();
-		
+		this.router.init();
+
 		const win = $(window);
 
 		S.Common.isOnlineSet(navigator.onLine);
@@ -158,6 +162,7 @@ class Keyboard {
 
 		$(window).off(events.map(it => `${it}.common`).join(' '));
 		document.removeEventListener('copy', this.onCopyEvent);
+		this.router.destroy();
 	};
 
 	/**
