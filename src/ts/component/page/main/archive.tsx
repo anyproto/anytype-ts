@@ -67,10 +67,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	}, []);
 
 	useEffect(() => {
-		const win = $(window);
-
-		win.on('keydown.archive', (e: any) => onKeyDown(e));
-		return () => { win.off('keydown.archive'); };
+		keyboard.router.pushPageZone('keydown.archive', (e) => onKeyDown(e));
+		return () => { keyboard.router.popPageZone('keydown.archive'); };
 	}, []);
 
 	useImperativeHandle(ref, () => ({

@@ -15,15 +15,16 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const key = J.Constant.graphId.global;
 
 	const unbind = () => {
-		const events = [ 'keydown', 'updateGraphRoot', 'sidebarResize' ];
+		const events = [ 'updateGraphRoot', 'sidebarResize' ];
 		$(window).off(events.map(it => `${it}.${key}`).join(' '));
+		keyboard.router.popPageZone(`keydown.${key}`);
 	};
 
 	const rebind = () => {
 		const win = $(window);
 
 		unbind();
-		win.on(`keydown.${key}`, e => onKeyDown(e));
+		keyboard.router.pushPageZone(`keydown.${key}`, (e) => onKeyDown(e));
 		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => initRootId(data.id));
 		win.on(`sidebarResize.${key}`, () => resize());
 	};

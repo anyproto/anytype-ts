@@ -24,19 +24,18 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 	const unbind = () => {
 		const ns = U.Common.getEventNamespace(isPopup);
-		const events = [ 'keydown', 'scroll' ];
 
-		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+		$(window).off(`scroll.set${ns}`);
+		keyboard.router.popPageZone(`keydown.set${ns}`);
 	};
 
 	const rebind = () => {
-		const win = $(window);
 		const ns = U.Common.getEventNamespace(isPopup);
 		const container = U.Common.getScrollContainer(isPopup);
 
 		unbind();
 
-		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+		keyboard.router.pushPageZone(`keydown.set${ns}`, (e) => onKeyDown(e));
 		container.on(`scroll.set${ns}`, () => onScroll());
 	};
 

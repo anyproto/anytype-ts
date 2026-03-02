@@ -36,8 +36,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const init = () => {
-		const win = $(window);
-
 		if (spaceview.isShared && !invite.cid && !invite.key) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
 				if (cid && key) {
@@ -46,10 +44,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			});
 		};
 
-		win.off('keydown.settingsSpace');
+		keyboard.router.popPageZone('keydown.settingsSpace');
 
 		if (isEditing) {
-			win.on('keydown.settingsSpace', (e: any) => {
+			keyboard.router.pushPageZone('keydown.settingsSpace', (e) => {
 				keyboard.shortcut('enter', e, () => onSave());
 				keyboard.shortcut('escape', e, () => onCancel());
 			});

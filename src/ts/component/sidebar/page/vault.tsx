@@ -41,17 +41,15 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const unbind = () => {
-		const events = [ 'keydown', 'keyup' ];
-		const ns = 'sidebarPageVault';
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		$(window).off('keyup.sidebarPageVault');
+		keyboard.router.popPageZone('keydown.sidebarPageVault');
 	};
 
 	const rebind = () => {
 		const win = $(window);
 
 		unbind();
-		win.on('keydown.sidebarPageVault', e => onKeyDown(e));
+		keyboard.router.pushPageZone('keydown.sidebarPageVault', (e) => onKeyDown(e));
 		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
 	};
 

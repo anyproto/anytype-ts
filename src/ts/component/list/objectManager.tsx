@@ -135,11 +135,13 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			};
 		});
 
-		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+		keyboard.router.popMenuZone('keydown.filter');
+		keyboard.router.pushMenuZone('keydown.filter', (e) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				win.off('keydown.filter');
+				keyboard.router.popMenuZone('keydown.filter');
 			});
+			return true;
 		});
 	};
 
@@ -479,7 +481,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		return () => {
 			window.clearTimeout(timeout.current);
 			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
-			$(window).off('keydown.filter');
+			keyboard.router.popMenuZone('keydown.filter');
 			checkboxRef.current.clear();
 		};
 	}, []);

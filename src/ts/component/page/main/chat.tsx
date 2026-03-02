@@ -18,16 +18,15 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
 
 	const unbind = () => {
-		const events = [ 'keydown', 'scrollToMessage' ];
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		$(window).off(`scrollToMessage.${ns}`);
+		keyboard.router.popPageZone(`keydown.${ns}`);
 	};
 
 	const rebind = () => {
 		const win = $(window);
 
 		unbind();
-		win.on(`keydown.${ns}`, e => onKeyDown(e));
+		keyboard.router.pushPageZone(`keydown.${ns}`, (e) => onKeyDown(e));
 		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
 			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
 		});

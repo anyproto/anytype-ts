@@ -21,16 +21,12 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const rightRef = useRef(null);
 
 	const unbind = () => {
-		const events = ['keydown'];
-
-		$(window).off(events.map(it => `${it}.history${ns}`).join(' '));
+		keyboard.router.popPageZone(`keydown.history${ns}`);
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.history${ns}`, e => onKeyDown(e));
+		keyboard.router.pushPageZone(`keydown.history${ns}`, (e) => onKeyDown(e));
 	};
 
 	const onKeyDown = (e: any) => {

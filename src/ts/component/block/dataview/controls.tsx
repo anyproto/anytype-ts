@@ -386,15 +386,18 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			};
 		});
 
-		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+		keyboard.router.popMenuZone('keydown.filter');
+		keyboard.router.pushMenuZone('keydown.filter', (e) => {
 			e.stopPropagation();
 
 			if (!isPopup && !keyboard.isPopup()) {
 				keyboard.shortcut('escape', e, () => {
 					onFilterHide();
-					win.off('keydown.filter');
+					keyboard.router.popMenuZone('keydown.filter');
 				});
 			};
+
+			return true;
 		});
 	};
 
@@ -516,10 +519,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		return () => {
 			const container = U.Common.getPageFlexContainer(isPopup);
-			const win = $(window);
 
 			container.off('mousedown.filter');
-			win.off('keydown.filter');
+			keyboard.router.popMenuZone('keydown.filter');
 		};
 
 	}, []);

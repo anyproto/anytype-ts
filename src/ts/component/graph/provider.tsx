@@ -71,14 +71,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
 		win.on(`updateGraphData.${id}`, () => load());
 		win.on(`archiveObject.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
-		win.on(`keydown.${id}`, e => onKeyDown(e));
+		keyboard.router.pushPageZone(`keydown.${id}`, (e) => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'archiveObject', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'archiveObject' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 		$(canvas.current).off('touchstart touchmove');
+		keyboard.router.popPageZone(`keydown.${id}`);
 	};
 
 	const getTouchDistance = (touches: TouchList): number => {

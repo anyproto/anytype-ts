@@ -114,11 +114,11 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 
 	const bindKeyboard = (): void => {
 		unbindKeyboard();
-		$(window).on('keydown.calendarSelect', e => onKeyDown(e));
+		keyboard.router.pushMenuZone('keydown.calendarSelect', (e) => { onKeyDown(e); return true; });
 	};
 
 	const unbindKeyboard = (): void => {
-		$(window).off('keydown.calendarSelect');
+		keyboard.router.popMenuZone('keydown.calendarSelect');
 	};
 
 	const onKeyDown = (e: any): void => {

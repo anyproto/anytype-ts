@@ -1416,8 +1416,9 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			setRecordEditingOff(id);
 		});
 
-		win.on(`keydown.record-${id}`, (e) => {
+		keyboard.router.pushMenuZone(`keydown.record-${id}`, (e) => {
 			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
+			return true;
 		});
 	};
 
@@ -1426,7 +1427,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 		const pageContainer = getPageContainer();
 
-		win.off(`mousedown.record-${id} keydown.record-${id}`);
+		win.off(`mousedown.record-${id}`);
+		keyboard.router.popMenuZone(`keydown.record-${id}`);
 
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);

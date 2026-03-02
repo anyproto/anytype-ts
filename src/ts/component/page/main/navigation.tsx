@@ -40,11 +40,11 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.navigation', e => onKeyDown(e));
+		keyboard.router.pushPageZone('keydown.navigation', (e) => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.navigation');
+		keyboard.router.popPageZone('keydown.navigation');
 	};
 	
 	const resize = () => {

@@ -33,12 +33,12 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
-		$(window).off('keydown.onboarding');
+		keyboard.router.popPageZone('keydown.onboarding');
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.onboarding', e => onKeyDown(e));
+		keyboard.router.pushPageZone('keydown.onboarding', (e) => onKeyDown(e));
 	};
 
 	const onKeyDown = e => {
