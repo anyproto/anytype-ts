@@ -1,20 +1,27 @@
 import { useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { keyboard, Key, KeyboardZoneType, U } from 'Lib';
+import { FocusedPanel } from 'Lib/keyboard/router';
 
 interface UseSidebarKeyboardProps {
 	containerId: string;
-	isPopup: boolean;
+	panel: FocusedPanel;
 };
 
+const HIGHLIGHT_CLASS = 'keyboardHighlight';
+
 export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
-	const { containerId, isPopup } = props;
+	const { containerId, panel } = props;
 	const currentIdx = useRef(-1);
 	const cleanupRef = useRef<(() => void) | null>(null);
 
 	useEffect(() => {
+		const getContainer = (): JQuery => {
+			return $(`#${U.Common.esc(containerId)}`);
+		};
+
 		const getItems = (): JQuery => {
-			return $(`#${U.Common.esc(containerId)} #body .item:not(.isSection):visible`);
+			return getContainer().find('> .body .item:not(.isSection):visible');
 		};
 
 		const setFocus = (idx: number) => {
@@ -24,12 +31,12 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 				return;
 			};
 
-			clearFocus();
+			clearItemFocus();
 
 			currentIdx.current = Math.max(0, Math.min(idx, items.length - 1));
 
 			const item = items.eq(currentIdx.current);
-			item.addClass('isSidebarFocused');
+			item.addClass(HIGHLIGHT_CLASS);
 
 			const el = item.get(0);
 			if (el) {
@@ -37,10 +44,26 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 			};
 		};
 
-		const clearFocus = () => {
-			$(`#${U.Common.esc(containerId)} .isSidebarFocused`).removeClass('isSidebarFocused');
+		const clearItemFocus = () => {
+			getContainer().find(`.item.${HIGHLIGHT_CLASS}`).removeClass(HIGHLIGHT_CLASS);
 			currentIdx.current = -1;
 		};
+
+		const updatePanelIndicator = () => {
+			const isActive = keyboard.router.focusedPanel === panel;
+
+			getContainer().toggleClass(HIGHLIGHT_CLASS, isActive);
+		};
+
+		const onFocusPanelChange = () => {
+			updatePanelIndicator();
+
+			if (keyboard.router.focusedPanel !== panel) {
+				clearItemFocus();
+			};
+		};
+
+		window.addEventListener('focusPanelChange', onFocusPanelChange);
 
 		const handler = (e: KeyboardEvent) => {
 			const key = keyboard.eventKey(e);
@@ -61,7 +84,7 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 				case Key.up: {
 					e.preventDefault();
 					if (currentIdx.current <= 0) {
-						clearFocus();
+						clearItemFocus();
 						return true;
 					};
 					setFocus(currentIdx.current - 1);
@@ -120,7 +143,7 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 
 				case Key.escape: {
 					e.preventDefault();
-					clearFocus();
+					clearItemFocus();
 					keyboard.router.clearFocus();
 					return true;
 				};
@@ -130,18 +153,11 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 			return false;
 		};
 
-		const updatePanelIndicator = () => {
-			const container = $(`#${U.Common.esc(containerId)}`);
-			container.toggleClass('isSidebarActive', keyboard.router.focusedPanel === 'sidebar');
-		};
-
 		cleanupRef.current = keyboard.router.pushZone({
-			id: `sidebar:${containerId}`,
+			id: `sidebar:${panel}`,
 			type: KeyboardZoneType.Sidebar,
 			onKeyDown: (e: KeyboardEvent) => {
-				updatePanelIndicator();
-
-				if (keyboard.router.focusedPanel !== 'sidebar') {
+				if (keyboard.router.focusedPanel !== panel) {
 					return false;
 				};
 
@@ -166,8 +182,9 @@ export const useSidebarKeyboard = (props: UseSidebarKeyboardProps) => {
 				cleanupRef.current();
 				cleanupRef.current = null;
 			};
-			clearFocus();
-			$(`#${U.Common.esc(containerId)}`).removeClass('isSidebarActive');
+			clearItemFocus();
+			window.removeEventListener('focusPanelChange', onFocusPanelChange);
+			getContainer().removeClass(HIGHLIGHT_CLASS);
 		};
-	}, [ containerId ]);
+	}, [ containerId, panel ]);
 };

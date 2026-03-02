@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import $ from 'jquery';
-import { keyboard, Key, KeyboardZoneType, Relation, U } from 'Lib';
+import { keyboard, Key, KeyboardZoneType, Relation, U, FocusedPanel } from 'Lib';
 import { gridFocus } from '../component/block/dataview/view/grid/gridFocus';
 
 interface UseGridKeyboardProps {
@@ -185,6 +185,12 @@ export const useGridKeyboard = (props: UseGridKeyboardProps) => {
 			id: zoneId,
 			type: KeyboardZoneType.DataviewGrid,
 			onKeyDown: (e: KeyboardEvent) => {
+				const fp = keyboard.router.focusedPanel;
+
+				if (fp && (fp !== FocusedPanel.Page)) {
+					return false;
+				};
+
 				// Don't intercept when a cell is being edited
 				if (keyboard.isFocused) {
 					return false;

@@ -7,7 +7,8 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel } from 'Lib';
+import { useSidebarKeyboard } from 'Hook';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 44;
@@ -19,6 +20,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const { getId } = props;
 	const { space, vaultMessages, vaultIsMinimal } = S.Common;
+
+	useSidebarKeyboard({ containerId: getId(), panel: FocusedPanel.Vault });
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);

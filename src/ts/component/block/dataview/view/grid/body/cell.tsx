@@ -68,7 +68,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 	};
 
 	if (gridFocus.matches(relationKey, record.id)) {
-		cn.push('isGridFocused');
+		cn.push('keyboardHighlight');
 	};
 
 	let button = null;

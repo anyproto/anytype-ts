@@ -1,14 +1,16 @@
 import { KeyboardZone, KeyboardZoneType } from './zone';
 
-type FocusedPanel = 'sidebar' | 'page' | null;
-
-const PANEL_CYCLE: FocusedPanel[] = [ 'sidebar', 'page', null ];
+export enum FocusedPanel {
+	Vault = 'vault',
+	Widget = 'widget',
+	Page = 'page',
+};
 
 class KeyboardRouter {
 
 	private stack: KeyboardZone[] = [];
 	private listener: ((e: KeyboardEvent) => void) | null = null;
-	public focusedPanel: FocusedPanel = null;
+	public focusedPanel: FocusedPanel | null = null;
 
 	init () {
 		this.destroy();
@@ -28,12 +30,30 @@ class KeyboardRouter {
 	};
 
 	cycleFocus () {
-		const idx = PANEL_CYCLE.indexOf(this.focusedPanel);
-		this.focusedPanel = PANEL_CYCLE[(idx + 1) % PANEL_CYCLE.length];
+		const cycle = this.getPanelCycle();
+		const idx = cycle.indexOf(this.focusedPanel);
+		this.setFocusedPanel(cycle[(idx + 1) % cycle.length]);
 	};
 
 	clearFocus () {
-		this.focusedPanel = null;
+		this.setFocusedPanel(null);
+	};
+
+	private getPanelCycle (): (FocusedPanel | null)[] {
+		const cycle: (FocusedPanel | null)[] = [ FocusedPanel.Vault ];
+		const hasWidget = this.stack.some(z => z.id === `sidebar:${FocusedPanel.Widget}`);
+
+		if (hasWidget) {
+			cycle.push(FocusedPanel.Widget);
+		};
+
+		cycle.push(FocusedPanel.Page, null);
+		return cycle;
+	};
+
+	private setFocusedPanel (panel: FocusedPanel | null) {
+		this.focusedPanel = panel;
+		window.dispatchEvent(new CustomEvent('focusPanelChange', { detail: panel }));
 	};
 
 	pushZone (zone: KeyboardZone): () => void {

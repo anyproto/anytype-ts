@@ -166,7 +166,6 @@
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.cellKeyHover { background-color: var(--color-shape-highlight-light); }
-		.cell.isGridFocused { box-shadow: 0px 0px 0px 2px var(--color-control-accent) inset; border-radius: 4px; }
 			.cell {
 				&.align1 { text-align: center; }
 				&.align1 {
