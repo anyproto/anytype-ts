@@ -75,4 +75,14 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
+
+	.item.isSidebarFocused > .inner::before,
+	.item.isSidebarFocused > .dropTarget > .inner::before {
+		opacity: 1;
+		background: var(--color-shape-highlight-medium);
+		box-shadow: 0px 0px 0px 2px var(--color-control-accent) inset;
+		border-radius: 6px;
+	}
+
+	&.isSidebarActive > .body { box-shadow: 0px 0px 0px 2px var(--color-control-accent) inset; border-radius: 8px; }
 }

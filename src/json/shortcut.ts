@@ -60,6 +60,7 @@ const getSections = () => {
 						{ id: 'zoomOut', name: translate('popupShortcutMainBasics17'), keys: [ cmdKey, '-' ] },
 						{ id: 'zoomReset', name: translate('popupShortcutMainBasics18'), keys: [ cmdKey, '0' ] },
 						{ id: 'theme', name: translate('popupShortcutMainBasics21'), keys: [ cmdKey, 'shift', 'm' ] },
+						{ id: 'zoneCycle', name: translate('popupShortcutZoneCycle'), keys: [ 'tab' ], noEdit: true },
 					]
 				},
 

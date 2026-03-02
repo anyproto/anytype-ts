@@ -2,6 +2,7 @@ import React, { FC, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, J, U, Relation, translate } from 'Lib';
 import { Cell, Button, Icon } from 'Component';
+import { gridFocus } from '../gridFocus';
 
 interface Props {
 	rootId?: string;
@@ -64,6 +65,10 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 
 	if (className) {
 		cn.push(className);
+	};
+
+	if (gridFocus.matches(relationKey, record.id)) {
+		cn.push('isGridFocused');
 	};
 
 	let button = null;

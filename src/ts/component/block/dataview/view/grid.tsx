@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
 import { I, C, S, U, J, keyboard, Relation } from 'Lib';
+import { useGridKeyboard } from 'Hook';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import AddRow from './grid/body/add';
@@ -17,9 +18,9 @@ const HEIGHT = 48;
 
 const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	const { 
-		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords, 
-		getLimit, getVisibleRelations, getSubId, isAllowedObject,
+	const {
+		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords,
+		getLimit, getVisibleRelations, getSubId, isAllowedObject, onCellClick, getIdPrefix,
 	} = props;
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -29,6 +30,15 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	const scrollWrapRef = useRef(null);
 	const view = getView();
 	const relations = getVisibleRelations();
+
+	useGridKeyboard({
+		blockId: block.id,
+		isPopup,
+		getRecords,
+		getVisibleRelations,
+		getIdPrefix,
+		onCellClick,
+	});
 
 	useEffect(() => {
 		resize();

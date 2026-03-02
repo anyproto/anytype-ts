@@ -1,9 +1,14 @@
 import { KeyboardZone, KeyboardZoneType } from './zone';
 
+type FocusedPanel = 'sidebar' | 'page' | null;
+
+const PANEL_CYCLE: FocusedPanel[] = [ 'sidebar', 'page', null ];
+
 class KeyboardRouter {
 
 	private stack: KeyboardZone[] = [];
 	private listener: ((e: KeyboardEvent) => void) | null = null;
+	public focusedPanel: FocusedPanel = null;
 
 	init () {
 		this.destroy();
@@ -19,6 +24,16 @@ class KeyboardRouter {
 		};
 
 		this.stack = [];
+		this.focusedPanel = null;
+	};
+
+	cycleFocus () {
+		const idx = PANEL_CYCLE.indexOf(this.focusedPanel);
+		this.focusedPanel = PANEL_CYCLE[(idx + 1) % PANEL_CYCLE.length];
+	};
+
+	clearFocus () {
+		this.focusedPanel = null;
 	};
 
 	pushZone (zone: KeyboardZone): () => void {

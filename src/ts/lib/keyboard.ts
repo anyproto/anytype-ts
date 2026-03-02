@@ -312,6 +312,14 @@ class Keyboard {
 			this.shortcut('systemMenu', e, () => Renderer.send('setMenuBarVisibility', !config.showMenuBar)) ;
 		};
 
+		// Zone cycling: Tab cycles between sidebar and page when unfocused
+		if (!this.isFocused && !S.Menu.isOpen() && !S.Popup.isOpen() && isMain) {
+			this.shortcut('zoneCycle', e, () => {
+				e.preventDefault();
+				this.router.cycleFocus();
+			});
+		};
+
 		if (isMain) {
 
 			// Print
