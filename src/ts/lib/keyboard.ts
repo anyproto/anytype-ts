@@ -56,13 +56,6 @@ class Keyboard {
 
 		S.Common.isOnlineSet(navigator.onLine);
 
-		win.on('keydown.common', e => {
-			if (!this.router.compatMode) {
-				return;
-			};
-
-			this.onKeyDown(e);
-		});
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
@@ -165,7 +158,6 @@ class Keyboard {
 	unbind () {
 		const events = [
 			'keyup',
-			'keydown',
 			'mousedown',
 			'scroll',
 			'mousemove',

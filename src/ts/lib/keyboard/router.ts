@@ -4,7 +4,6 @@ class KeyboardRouter {
 
 	private stack: KeyboardZone[] = [];
 	private listener: ((e: KeyboardEvent) => void) | null = null;
-	compatMode = false;
 
 	init () {
 		this.destroy();
@@ -131,10 +130,6 @@ class KeyboardRouter {
 	};
 
 	private handleEvent (e: KeyboardEvent) {
-		if (this.compatMode) {
-			return;
-		};
-
 		for (let i = this.stack.length - 1; i >= 0; i--) {
 			const zone = this.stack[i];
 
