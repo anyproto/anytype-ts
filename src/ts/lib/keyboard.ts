@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { I, C, S, U, J, H, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 import { router } from './keyboard/router';
+import { KeyboardZoneType } from './keyboard/zone';
 
 class Keyboard {
 
@@ -42,12 +43,26 @@ class Keyboard {
 		this.initShortcuts();
 		this.onResize();
 		this.router.init();
+		this.router.pushZone({
+			id: 'global',
+			type: KeyboardZoneType.Global,
+			onKeyDown: (e: KeyboardEvent) => {
+				this.onKeyDown(e as any);
+				return false;
+			},
+		});
 
 		const win = $(window);
 
 		S.Common.isOnlineSet(navigator.onLine);
 
-		win.on('keydown.common', e => this.onKeyDown(e));
+		win.on('keydown.common', e => {
+			if (!this.router.compatMode) {
+				return;
+			};
+
+			this.onKeyDown(e);
+		});
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
