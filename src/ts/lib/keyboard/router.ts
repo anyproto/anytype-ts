@@ -80,6 +80,21 @@ class KeyboardRouter {
 		this.popZone(`menu:${menuId}`);
 	};
 
+	pushPageZone (pageId: string, handler: (e: any) => void) {
+		this.pushZone({
+			id: `page:${pageId}`,
+			type: KeyboardZoneType.Page,
+			onKeyDown: (e: KeyboardEvent) => {
+				handler(e);
+				return false;
+			},
+		});
+	};
+
+	popPageZone (pageId: string) {
+		this.popZone(`page:${pageId}`);
+	};
+
 	pushPopupZone (popupId: string, handler: (e: any) => void) {
 		this.pushZone({
 			id: `popup:${popupId}`,

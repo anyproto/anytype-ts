@@ -223,10 +223,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const unbind = () => {
 		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
 		const container = U.Common.getScrollContainer(isPopup);
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
+		const events = [ 'mousemove', 'paste', 'resize', 'focus' ];
 		const selection = S.Common.getRef('selectionProvider');
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		keyboard.router.popPageZone(ns);
 		container.off(`scroll.${ns}`);
 		Renderer.remove(`commandEditor`);
 		selection?.setContextMenuHandler(null);
@@ -245,7 +246,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			win.on(`mousemove.${ns}`, throttle(e => onMouseMove(e), THROTTLE));
 		};
 
-		win.on(`keydown.${ns}`, e => onKeyDownEditor(e));
+		keyboard.router.pushPageZone(ns, onKeyDownEditor);
 		win.on(`paste.${ns}`, (e: any) => {
 			if (!keyboard.isFocused) {
 				onPasteEvent(e, props);
