@@ -1,2 +1,3 @@
 export { useGridKeyboard } from './useGridKeyboard';
-export { useSidebarKeyboard } from './useSidebarKeyboard';
+export { useKeyboardGroup } from './useKeyboardGroup';
+export { usePanelIndicator } from './usePanelIndicator';

@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Deleted, DropTarget, EditorControls } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
+import { FocusedPanel } from 'Lib/keyboard/router';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
@@ -186,6 +187,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const panel = keyboard.router.focusedPanel;
+		if (panel && (panel !== FocusedPanel.Page)) {
+			return;
+		};
+
 		const storage = Storage.getFocus(rootId);
 		const root = S.Block.getLeaf(rootId, rootId);
 
@@ -258,6 +264,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const menuOpen = menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			const top = Storage.getScroll('editor', rootId, isPopup);
+			const focusPanel = keyboard.router.focusedPanel;
+
+			if (focusPanel && (focusPanel !== FocusedPanel.Page)) {
+				if (top) {
+					window.setTimeout(() => container.scrollTop(top), 10);
+				};
+				return;
+			};
 
 			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
@@ -682,6 +696,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
 			if (menuOpen || popupOpen) {
+				return;
+			};
+
+			if ($('.keyboardHighlight').length) {
 				return;
 			};
 

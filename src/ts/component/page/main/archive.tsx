@@ -2,11 +2,19 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
-import { I, U, J, translate, Action, analytics, keyboard, sidebar } from 'Lib';
+import { I, U, J, translate, Action, analytics, keyboard, sidebar, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
+	const pageContainerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const nodeRef = useRef(null);
 	const managerRef = useRef(null);
 	const [ rowLength, setRowLength ] = useState(0);

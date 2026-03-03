@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, U, keyboard } from 'Lib';
+import { I, U, keyboard, FocusedPanel } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -281,9 +281,12 @@ const Input = forwardRef<InputRef, Props>(({
 		};
 
 		if (focusOnMount) {
-			focus();
-			keyboard.setFocus(true);
-			keyboard.disableSelection(true);
+			const panel = keyboard.router.focusedPanel;
+			if (!panel || (panel === FocusedPanel.Page)) {
+				focus();
+				keyboard.setFocus(true);
+				keyboard.disableSelection(true);
+			};
 		};
 
 		return () => {

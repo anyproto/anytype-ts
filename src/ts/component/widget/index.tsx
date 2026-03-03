@@ -1,10 +1,11 @@
-import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useCallback, type MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, ChatCounter } from 'Component';
-import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
+import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove, FocusedPanel } from 'Lib';
+import { useKeyboardGroup } from 'Hook';
 
 import WidgetSpace from './space';
 import WidgetObject from './object';
@@ -91,6 +92,36 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+	const isTree = layout === I.WidgetLayout.Tree;
+	const isSpace = layout === I.WidgetLayout.Space;
+
+	const onGroupLeft = useCallback((item: HTMLElement) => {
+		const arrow = item.querySelector('.arrowWrap .icon.arrow');
+		if (arrow && item.classList.contains('isOpen')) {
+			const arrowWrap = item.querySelector('.arrowWrap') as HTMLElement;
+			arrowWrap?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+		};
+		return true;
+	}, []);
+
+	const onGroupRight = useCallback((item: HTMLElement) => {
+		const arrow = item.querySelector('.arrowWrap .icon.arrow');
+		if (arrow && !item.classList.contains('isOpen')) {
+			const arrowWrap = item.querySelector('.arrowWrap') as HTMLElement;
+			arrowWrap?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+		};
+		return true;
+	}, []);
+
+	// Register keyboard navigation group for widget body items
+	useKeyboardGroup(nodeRef, {
+		id: `widget-${block.id}`,
+		panel: FocusedPanel.Widget,
+		direction: 'v',
+		itemSelector: isSpace ? '.widgetSpace' : '.item:not(.isSection)',
+		onLeft: isTree ? onGroupLeft : undefined,
+		onRight: isTree ? onGroupRight : undefined,
+	});
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];

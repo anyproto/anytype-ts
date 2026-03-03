@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics, sidebar, keyboard, Relation, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 import { observable } from 'mobx';
 
 const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -10,6 +11,13 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	const [ isDeleted, setIsDeleted ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
+	const pageContainerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, J.Relation.relation);
 	const { isReadonlyRelation, objectTypes } = object;

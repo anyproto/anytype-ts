@@ -1,15 +1,39 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics, keyboard } from 'Lib';
+import { I, S, U, Onboarding, analytics, keyboard, focus, FocusedPanel } from 'Lib';
+import { navigation } from 'Lib/keyboard/navigation';
+import { usePanelIndicator } from 'Hook';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
+	const pageContainerRef = useRef<HTMLElement>(null);
 	const rootId = keyboard.getRootId(isPopup);
 	const ns = U.Common.getEventNamespace(isPopup);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
+
+	useEffect(() => {
+		navigation.registerOverflow(FocusedPanel.Page, (direction: number) => {
+			if (direction > 0) {
+				const first = S.Block.getFirstBlock(rootId, 1, (b: I.Block) => b.isFocusable());
+				if (first) {
+					keyboard.router.clearFocus();
+					focus.set(first.id, { from: 0, to: 0 });
+					focus.apply();
+				};
+			};
+		});
+
+		return () => navigation.unregisterOverflow(FocusedPanel.Page);
+	}, [ rootId ]);
 
 	const onOpen = () => {
 		const home = U.Space.getDashboard();

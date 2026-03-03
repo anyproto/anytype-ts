@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard, Mark } from 'Lib';
+import { FocusedPanel } from 'Lib/keyboard/router';
 
 /**
  * Focus manages the focus state and text selection within the application.
@@ -107,6 +108,11 @@ class Focus {
 	apply (): Focus {
 		const { focused, range } = this.state;
 		if (!focused) {
+			return;
+		};
+
+		const panel = keyboard.router.focusedPanel;
+		if (panel && (panel !== FocusedPanel.Page)) {
 			return;
 		};
 

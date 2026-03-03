@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, FocusedPanel } from 'Lib';
-import { useSidebarKeyboard } from 'Hook';
+import { usePanelIndicator, useKeyboardGroup } from 'Hook';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -18,10 +18,26 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const bodyRef = useRef<HTMLDivElement>(null);
+	const headRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
+
+	// Resolve container ref from parent element ID
+	useEffect(() => {
+		containerRef.current = document.getElementById(getId());
+	}, []);
+
+	usePanelIndicator(containerRef, FocusedPanel.Widget);
+
+	useKeyboardGroup(headRef, {
+		id: 'widget-head',
+		panel: FocusedPanel.Widget,
+		direction: 'h',
+		itemSelector: '.side > .icon, .side > .sync',
+	});
 
 	let content = null;
 	let head = null;
@@ -725,10 +741,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		);
 	};
 
-	useSidebarKeyboard({
-		containerId: getId(),
-		panel: FocusedPanel.Widget,
-	});
 
 	useEffect(() => {
 		initSections();
@@ -742,7 +754,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	return (
 		<>
-			<div id="head" className="head">
+			<div id="head" ref={headRef} className="head">
 				{head}
 			</div>
 

@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, U, keyboard, Mark } from 'Lib';
+import { I, U, keyboard, Mark, FocusedPanel } from 'Lib';
 import raf from 'raf';
 
 interface Props {
@@ -293,7 +293,10 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	useEffect(() => {
 		if (focusOnMount && !readonly) {
-			setFocus();
+			const panel = keyboard.router.focusedPanel;
+			if (!panel || (panel === FocusedPanel.Page)) {
+				setFocus();
+			};
 		};
 	}, []);
 

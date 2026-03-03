@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard, FocusedPanel } from 'Lib';
+import { useKeyboardGroup } from 'Hook';
 
 interface Props {
 	rootId: string;
@@ -40,6 +41,13 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	const check = U.Data.checkDetails(rootId);
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
+
+	useKeyboardGroup(nodeRef, {
+		id: 'control-buttons',
+		panel: FocusedPanel.Page,
+		direction: 'h',
+		itemSelector: '.btn',
+	});
 
 	const rebind = () => {
 		unbind();

@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import sha1 from 'sha1';
 import $ from 'jquery';
 import { Input } from 'Component';
-import { keyboard } from 'Lib';
+import { keyboard, FocusedPanel } from 'Lib';
 
 interface Props {
 	isNumeric?: boolean;
@@ -175,7 +175,10 @@ const Pin = forwardRef<PinRefProps, Props>(({
 
 	useEffect(() => {
 		if (focusOnMount) {
-			window.setTimeout(() => focus(), 10);
+			const panel = keyboard.router.focusedPanel;
+			if (!panel || (panel === FocusedPanel.Page)) {
+				window.setTimeout(() => focus(), 10);
+			};
 		};
 
 		rebind();

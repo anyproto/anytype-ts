@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useCallback, memo, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -8,7 +8,7 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel } from 'Lib';
-import { useSidebarKeyboard } from 'Hook';
+import { usePanelIndicator, useKeyboardGroup } from 'Hook';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 44;
@@ -21,12 +21,16 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const { getId } = props;
 	const { space, vaultMessages, vaultIsMinimal } = S.Common;
 
-	useSidebarKeyboard({ containerId: getId(), panel: FocusedPanel.Vault });
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
+	const containerRef = useRef<HTMLElement>(null);
+	const headRef = useRef<HTMLDivElement>(null);
+	const filterWrapperRef = useRef<HTMLDivElement>(null);
+	const bodyRef = useRef<HTMLDivElement>(null);
+	const footerRef = useRef<HTMLDivElement>(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -256,6 +260,48 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		defaultHeight: HEIGHT_ITEM,
 		fixedWidth: true,
 		keyMapper: index => items[index].id,
+	});
+
+	// Resolve container ref from parent element ID
+	useEffect(() => {
+		containerRef.current = document.getElementById(getId());
+	}, []);
+
+	usePanelIndicator(containerRef, FocusedPanel.Vault);
+
+	useKeyboardGroup(headRef, {
+		id: 'vault-head',
+		panel: FocusedPanel.Vault,
+		direction: 'h',
+		itemSelector: '.icon, .name',
+	});
+
+	useKeyboardGroup(filterWrapperRef, {
+		id: 'vault-filter',
+		panel: FocusedPanel.Vault,
+		direction: 'h',
+		itemSelector: '.filter',
+	});
+
+	const getItemCount = useCallback(() => items.length, [ items.length ]);
+	const scrollToIndex = useCallback((idx: number) => {
+		listRef.current?.scrollToRow(Math.max(0, idx));
+	}, []);
+
+	useKeyboardGroup(bodyRef, {
+		id: 'vault-body',
+		panel: FocusedPanel.Vault,
+		direction: 'v',
+		itemSelector: '.item',
+		getItemCount,
+		scrollToIndex,
+	});
+
+	useKeyboardGroup(footerRef, {
+		id: 'vault-footer',
+		panel: FocusedPanel.Vault,
+		direction: 'h',
+		itemSelector: '.appSettings, .icon, .help',
 	});
 
 	// Subscriptions
@@ -636,7 +682,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	return (
 		<>
-			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
+			<div onContextMenu={onVaultContext} id="head" ref={headRef} className={cnh.join(' ')}>
 				<div className="side left">
 					{!vaultIsMinimal ? (
 						<div className="name">
@@ -664,7 +710,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				</div>
 			</div>
 			{!vaultIsMinimal ? (
-				<div className="filterWrapper">
+				<div ref={filterWrapperRef} className="filterWrapper">
 					<Filter
 						ref={filterRef}
 						icon="search"
@@ -675,7 +721,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					/>
 				</div>
 			) : ''}
-			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
+			<div onContextMenu={onVaultContext} id="body" ref={bodyRef} className={cnb.join(' ')}>
 				{!items.length && !vaultIsMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
@@ -722,7 +768,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				</InfiniteLoader>
 			</div>
 
-			<div className={cnf.join(' ')}>
+			<div ref={footerRef} className={cnf.join(' ')}>
 				<div className="grad" />
 				<div className="sides">
 					<div className="side left">

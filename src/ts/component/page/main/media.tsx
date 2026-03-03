@@ -2,13 +2,21 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 
 const MAX_HEIGHT = 396;
 
 const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
+	const pageContainerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);

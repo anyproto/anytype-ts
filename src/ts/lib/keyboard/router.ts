@@ -1,4 +1,5 @@
 import { KeyboardZone, KeyboardZoneType } from './zone';
+import { navigation } from './navigation';
 
 export enum FocusedPanel {
 	Vault = 'vault',
@@ -11,12 +12,14 @@ class KeyboardRouter {
 	private stack: KeyboardZone[] = [];
 	private listener: ((e: KeyboardEvent) => void) | null = null;
 	public focusedPanel: FocusedPanel | null = null;
+	public navigation = navigation;
 
 	init () {
 		this.destroy();
 
 		this.listener = (e: KeyboardEvent) => this.handleEvent(e);
 		window.addEventListener('keydown', this.listener, true);
+		this.navigation.init();
 	};
 
 	destroy () {
@@ -25,6 +28,7 @@ class KeyboardRouter {
 			this.listener = null;
 		};
 
+		this.navigation.destroy();
 		this.stack = [];
 		this.focusedPanel = null;
 	};
@@ -41,7 +45,9 @@ class KeyboardRouter {
 
 	private getPanelCycle (): (FocusedPanel | null)[] {
 		const cycle: (FocusedPanel | null)[] = [ FocusedPanel.Vault ];
-		const hasWidget = this.stack.some(z => z.id === `sidebar:${FocusedPanel.Widget}`);
+
+		const hasWidget = this.stack.some(z => z.id === `sidebar:${FocusedPanel.Widget}`) ||
+			Array.from(this.navigation.groups.values()).some(g => g.panel === FocusedPanel.Widget);
 
 		if (hasWidget) {
 			cycle.push(FocusedPanel.Widget);
@@ -53,6 +59,11 @@ class KeyboardRouter {
 
 	private setFocusedPanel (panel: FocusedPanel | null) {
 		this.focusedPanel = panel;
+
+		if (panel && (document.activeElement instanceof HTMLElement)) {
+			document.activeElement.blur();
+		};
+
 		window.dispatchEvent(new CustomEvent('focusPanelChange', { detail: panel }));
 	};
 
@@ -119,6 +130,10 @@ class KeyboardRouter {
 			id: `page:${pageId}`,
 			type: KeyboardZoneType.Page,
 			onKeyDown: (e: KeyboardEvent) => {
+				if (this.focusedPanel) {
+					return false;
+				};
+
 				handler(e);
 				return false;
 			},
@@ -169,6 +184,13 @@ class KeyboardRouter {
 			const zone = this.stack[i];
 
 			if (zone.onKeyDown(e)) {
+				return;
+			};
+		};
+
+		// Panel navigation (group-based)
+		if (this.focusedPanel) {
+			if (this.navigation.handle(this.focusedPanel, e)) {
 				return;
 			};
 		};

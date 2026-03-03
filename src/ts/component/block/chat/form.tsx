@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, FocusedPanel } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -1535,7 +1535,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		editableRef.current.setValue(Mark.toHtml(value, marks.current));
 		editableRef.current.placeholderCheck();
-		setRange(range.current);
+
+		const panel = keyboard.router.focusedPanel;
+		if (!panel || (panel === FocusedPanel.Page)) {
+			setRange(range.current);
+		};
+
 		onInput();
 	};
 
@@ -1667,7 +1672,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			historySaveState();
 			checkSendButton();
 		} else {
-			editableRef.current?.setRange({ from: 0, to: 0 });
+			const panel = keyboard.router.focusedPanel;
+			if (!panel || (panel === FocusedPanel.Page)) {
+				editableRef.current?.setRange({ from: 0, to: 0 });
+			};
 		};
 	};
 
@@ -1833,7 +1841,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	useEffect(() => {
 		scrollToBottom();
-		setRange(range.current);
+
+		const panel = keyboard.router.focusedPanel;
+		if (!panel || (panel === FocusedPanel.Page)) {
+			setRange(range.current);
+		};
 	}, [ attachments ]);
 
 	useImperativeHandle(ref, () => ({

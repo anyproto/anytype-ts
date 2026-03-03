@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, Relation, S, Storage, translate, U, sidebar } from 'Lib';
+import { analytics, I, J, keyboard, Relation, S, Storage, translate, U, sidebar, FocusedPanel } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -451,7 +451,11 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		initSort();
 		load(() => {
 			openFirst();
-			window.setTimeout(() => filterInputRef.current?.focus(), 50);
+
+			const panel = keyboard.router.focusedPanel;
+			if (!panel || (panel === FocusedPanel.Page)) {
+				window.setTimeout(() => filterInputRef.current?.focus(), 50);
+			};
 		});
 
 		return () => {

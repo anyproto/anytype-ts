@@ -1,12 +1,20 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, sidebar } from 'Lib';
+import { I, C, S, U, J, keyboard, sidebar, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
 
 const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
+	const pageContainerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const [ data, setData ] = useState({ edges: [], nodes: [] });
 	const nodeRef = useRef(null);
 	const headerRef = useRef(null);

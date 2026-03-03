@@ -200,6 +200,9 @@ class Keyboard {
 			this.onForward(isPopup);
 		};
 
+		// Clear keyboard navigation state on mouse click
+		this.router.navigation.onMouseDown();
+
 		// Remove isFocusable from focused block
 		if (target.parents(`#block-${U.Common.esc(focused)}`).length <= 0) {
 			$(`.focusable.c${U.Common.esc(focused)}`).removeClass('isFocused');
@@ -312,10 +315,11 @@ class Keyboard {
 			this.shortcut('systemMenu', e, () => Renderer.send('setMenuBarVisibility', !config.showMenuBar)) ;
 		};
 
-		// Zone cycling: Tab cycles between sidebar and page when unfocused
-		if (!this.isFocused && !S.Menu.isOpen() && !S.Popup.isOpen() && isMain) {
+		// Zone cycling: Tab cycles between sidebar and page
+		if (!S.Menu.isOpen() && !S.Popup.isOpen() && isMain) {
 			this.shortcut('zoneCycle', e, () => {
 				e.preventDefault();
+				this.setFocus(false);
 				this.router.cycleFocus();
 			});
 		};

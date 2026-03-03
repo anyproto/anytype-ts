@@ -2,7 +2,8 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, S, U, J, keyboard, Action, focus } from 'Lib';
+import { I, S, U, J, keyboard, Action, focus, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
@@ -12,6 +13,13 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
+	const pageContainerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
+	}, [ isPopup ]);
+
+	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const rootId = keyboard.getRootId(isPopup);
 	const ns = U.Common.getEventNamespace(isPopup);
 	const cmd = keyboard.cmdKey();
