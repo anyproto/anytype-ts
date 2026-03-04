@@ -111,9 +111,15 @@
 			#placeholder { padding: 6px 12px; }
 		}
 
-		.icon.source { 
-			position: absolute; top: 0px; right: -28px; opacity: 0; background-image: url('~img/icon/block/edit.svg'); 
+		.icon.source {
+			position: absolute; top: 0px; right: -28px; opacity: 0; background-image: url('~img/icon/block/edit.svg');
 			transition: $transitionAllCommon; width: 20px; height: 20px;
+		}
+
+		.icon.expand {
+			position: absolute; top: 0px; right: -28px; opacity: 0;
+			background-image: url('~img/icon/menu/action/expand0.svg');
+			transition: $transitionAllCommon;
 		}
 
 		.icon.resize { 
@@ -151,7 +157,7 @@
 	}
 
 	.block.blockEmbed:hover {
-		.icon.source, .icon.resize { opacity: 1; }
+		.icon.source, .icon.resize, .icon.expand { opacity: 1; }
 	}
 
 	.block.blockEmbed.isLatex {
@@ -168,10 +174,30 @@
 
 	.block.blockEmbed.isExcalidraw {
 		.icon.source { display: none !important; }
-		.mediaExcalidraw { height: calc(100vh - 52px); }
-		.mediaExcalidraw {
+		> .wrapContent .selectionTarget.isKeyboardFocused::after { display: none; }
+		.mediaExcalidraw { height: 100%;
 			.LaserToolOverlay { display: none !important; }
 		}
+	}
+
+	.block.blockEmbed.isExcalidraw .wrap.isFullScreen {
+		position: fixed; inset: 0; z-index: 100;
+		background: var(--color-bg-primary);
+		padding: 0;
+
+		.valueWrap { width: 100% !important; height: 100%; }
+		#value { height: 100% !important; }
+		.mediaExcalidraw { height: 100% !important; }
+		.layer-ui__wrapper__top-right { margin-right: 36px; }
+		.icon.expand { position: fixed; top: 20px; right: 16px; opacity: 1; z-index: 101; }
+		.icon.resize { display: none; }
+	}
+}
+
+html.platformMac {
+	.blocks .block.blockEmbed.isExcalidraw .wrap.isFullScreen {
+		.App-menu_top { padding-left: 88px; }
+		.App-menu_left { padding-top: 52px; }
 	}
 }
 

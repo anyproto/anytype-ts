@@ -504,13 +504,6 @@ class Relation {
 			return (filter.nestedFilters || []).some(it => this.isFilterActive(it));
 		};
 
-		const relation = S.Record.getRelationByKey(relationKey);
-		if (!relation) {
-			return false;
-		};
-
-		const { format } = relation;
-
 		// None condition is always inactive
 		if (condition == I.FilterCondition.None) {
 			return false;
@@ -522,7 +515,12 @@ class Relation {
 		};
 
 
-		if (format == I.RelationType.Date) {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return false;
+		};
+
+		if (this.isDate(relation.format)) {
 			// Date condition In
 			if (condition == I.FilterCondition.In) {
 				return true;
@@ -532,7 +530,7 @@ class Relation {
 			if (![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
 				return true;
 			};
-		}
+		};
 
 		// For all other conditions, check if value is present
 		return this.isFilterValueSet(value);

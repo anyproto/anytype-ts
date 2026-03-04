@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate, FocusedPanel } from 'Lib';
+import { usePanelIndicator } from 'Hook';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -70,6 +71,10 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Common.getEventNamespace(isPopup);
 	const childRef = useRef(null);
+	const pageRef = useRef<HTMLDivElement>(null);
+
+	usePanelIndicator(pageRef, FocusedPanel.Page);
+
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
@@ -186,8 +191,9 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
-			<div 
-				id="page" 
+			<div
+				id="page"
+				ref={pageRef}
 				className={`page ${keyboard.getPageClass('page', isPopup)}`}
 			>
 				{Component ? (

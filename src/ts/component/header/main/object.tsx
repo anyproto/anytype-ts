@@ -1,8 +1,7 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, Action, sidebar, FocusedPanel } from 'Lib';
-import { useKeyboardGroup } from 'Hook';
+import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
@@ -30,22 +29,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const isRelationOpen = (rightSidebar.page == 'object/relation');
 	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 	const cnc = [ 'side', 'center' ];
-	const sideLeftRef = useRef<HTMLDivElement>(null);
-	const sideRightRef = useRef<HTMLDivElement>(null);
-
-	useKeyboardGroup(sideLeftRef, {
-		id: 'header-left',
-		panel: FocusedPanel.Page,
-		direction: 'h',
-		itemSelector: '.icon',
-	});
-
-	useKeyboardGroup(sideRightRef, {
-		id: 'header-right',
-		panel: FocusedPanel.Page,
-		direction: 'h',
-		itemSelector: '[id^="button-header-"]',
-	});
 
 	if (isSearchMenuOpen) {
 		cnc.push('withSearch');
@@ -158,7 +141,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 
 	return (
 		<>
-			<div ref={sideLeftRef} className="side left">
+			<div className="side left">
 				{renderLeftIcons(true, true, onOpen)}
 			</div>
 
@@ -166,7 +149,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{center}
 			</div>
 
-			<div ref={sideRightRef} className="side right">
+			<div className="side right">
 				{showShare ? (
 					<Label
 						id="button-header-share"

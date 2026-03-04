@@ -259,6 +259,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			let content = null;
 
 			if (name) {
+				if (isUrl && shortUrl) {
+					name = U.String.shortUrl(name, true);
+				};
 				if (textLimit) {
 					name = U.String.shorten(name, textLimit);
 				};
@@ -287,8 +290,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			};
 		};
 
-		if (isUrl && shortUrl) {
-			val = val !== null ? U.String.shortUrl(val, true) : '';
+		if (isUrl) {
+			val = val !== null ? val : '';
 		};
 
 		if (isNumber) {

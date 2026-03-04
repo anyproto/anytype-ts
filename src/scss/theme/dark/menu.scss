@@ -17,12 +17,23 @@
         .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted.svg'); }
 		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered.svg'); }
 		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle.svg'); }
+		.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout.svg'); }
+		.icon.textCheckbox { background-image: url('#{$themePath}/icon/menu/action/block/text/checkbox.svg'); }
 
 		.icon.textToggleHeader1,
 		.icon.textToggleHeader2,
 		.icon.textToggleHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/toggleHeader.svg'); }
 
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+		
+		.icon.embed-latex { background-image: url('#{$themePath}/icon/menu/action/block/embed/latex.svg'); }
+		.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/menu/action/block/embed/soundcloud.svg'); }
+		.icon.embed-codepen { background-image: url('#{$themePath}/icon/menu/action/block/embed/codepen.svg'); }
+		.icon.embed-githubGist { background-image: url('#{$themePath}/icon/menu/action/block/embed/githubGist.svg'); }
+		.icon.embed-graphviz { background-image: url('#{$themePath}/icon/menu/action/block/embed/graphviz.svg'); }
+		.icon.embed-kroki { background-image: url('#{$themePath}/icon/menu/action/block/embed/kroki.svg'); }
+		.icon.embed-openStreetMap { background-image: url('#{$themePath}/icon/menu/action/block/embed/openStreetMap.svg'); }
+		.icon.embed-twitter { background-image: url('#{$themePath}/icon/menu/action/block/embed/twitter.svg'); }
 
         .icon.color {
 			.inner {
@@ -41,6 +52,20 @@
         }
 
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
+
+		.colorMark {
+			&.bgColor-default { background: transparent; }
+			&.bgColor-grey { background: #3c3c3c !important; }
+			&.bgColor-yellow { background: #55500d !important; }
+			&.bgColor-orange { background: #5f430a !important; }
+			&.bgColor-red { background: #74321e !important; }
+			&.bgColor-pink { background: #712055 !important; }
+			&.bgColor-purple { background: #542663 !important; }
+			&.bgColor-blue { background: #2b3368 !important; }
+			&.bgColor-ice { background: #19465f !important; }
+			&.bgColor-teal { background: #16534e !important; }
+			&.bgColor-lime { background: #36551d !important; }
+		}
     }
 
     /* Vertical */
@@ -258,16 +283,12 @@
 
     /* Widget */
 
-	.menu.menuWidget {
-		.options {
-			.option {
-				.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-				.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-				.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-				.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
-				.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
-			}
-		}
+	.menu {
+		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
+		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
+		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
+		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
 	}
 
 	/* Publish */

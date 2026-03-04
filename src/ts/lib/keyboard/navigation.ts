@@ -2,10 +2,15 @@ import { FocusedPanel } from './router';
 import { KeyboardZoneType } from './zone';
 import { keyboard, Key } from 'Lib';
 
+export enum GroupDirection {
+	Horizontal = 'h',
+	Vertical = 'v',
+};
+
 export interface GroupRegistration {
 	id: string;
 	panel: FocusedPanel;
-	direction: 'h' | 'v';
+	direction: GroupDirection;
 	getContainer: () => HTMLElement | null;
 	itemSelector: string;
 	onEnter?: (item: HTMLElement) => boolean;
@@ -13,6 +18,7 @@ export interface GroupRegistration {
 	onRight?: (item: HTMLElement) => boolean;
 	getItemCount?: () => number;
 	scrollToIndex?: (idx: number) => void;
+	getItemElement?: (index: number) => HTMLElement | null;
 };
 
 type OverflowHandler = (direction: number) => void;
@@ -109,9 +115,15 @@ class KeyboardNavigation {
 			return false;
 		};
 
-		// Don't handle if text input is focused
-		if (keyboard.isFocused) {
+		// Don't handle if text input is focused (unless we have active keyboard navigation)
+		if (keyboard.isFocused && !this.activeGroupId) {
 			return false;
+		};
+
+		if (key === Key.escape) {
+			e.preventDefault();
+			keyboard.router.clearFocus();
+			return true;
 		};
 
 		const sortedGroups = this.getVisibleGroupsForPanel(panel);
@@ -132,12 +144,7 @@ class KeyboardNavigation {
 					return true;
 				};
 
-				case Key.escape: {
-					e.preventDefault();
-					keyboard.router.clearFocus();
-					return true;
 				};
-			};
 
 			return false;
 		};
@@ -148,7 +155,7 @@ class KeyboardNavigation {
 			case Key.down: {
 				e.preventDefault();
 
-				if (group.direction === 'h') {
+				if (group.direction === GroupDirection.Horizontal) {
 					this.moveBetweenGroups(sortedGroups, groupIndex, 1, true);
 				} else {
 					const totalCount = group.getItemCount ? group.getItemCount() : this.getVisibleItems(group).length;
@@ -164,7 +171,7 @@ class KeyboardNavigation {
 			case Key.up: {
 				e.preventDefault();
 
-				if (group.direction === 'h') {
+				if (group.direction === GroupDirection.Horizontal) {
 					this.moveBetweenGroups(sortedGroups, groupIndex, -1, false);
 				} else {
 					if (this.activeItemIndex <= 0) {
@@ -179,7 +186,7 @@ class KeyboardNavigation {
 			case Key.right: {
 				e.preventDefault();
 
-				if (group.direction === 'h') {
+				if (group.direction === GroupDirection.Horizontal) {
 					const items = this.getVisibleItems(group);
 					if (this.activeItemIndex < items.length - 1) {
 						this.moveWithinGroup(group, this.activeItemIndex + 1);
@@ -199,7 +206,7 @@ class KeyboardNavigation {
 			case Key.left: {
 				e.preventDefault();
 
-				if (group.direction === 'h') {
+				if (group.direction === GroupDirection.Horizontal) {
 					if (this.activeItemIndex > 0) {
 						this.moveWithinGroup(group, this.activeItemIndex - 1);
 					};
@@ -237,10 +244,10 @@ class KeyboardNavigation {
 				if (capturable) {
 					this.enterCapture(capturable);
 				} else {
-					// Click the .clickable child or item itself
-					const clickable = item.querySelector('.clickable') as HTMLElement;
-					if (clickable) {
-						clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+					// Try mousedown on clickable targets (.clickable for tree items, .inner for list items)
+					const target = (item.querySelector('.clickable') || item.querySelector('.inner')) as HTMLElement;
+					if (target) {
+						target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 					} else {
 						item.click();
 					};
@@ -251,11 +258,36 @@ class KeyboardNavigation {
 			case Key.escape: {
 				e.preventDefault();
 				this.clearHighlight();
+				keyboard.router.clearFocus();
 				return true;
 			};
 		};
 
 		return false;
+	};
+
+	moveInGroup (groupId: string, direction: number): HTMLElement | null {
+		const group = this.groups.get(groupId);
+		if (!group) {
+			return null;
+		};
+
+		const items = this.getVisibleItems(group);
+		if (!items.length) {
+			return null;
+		};
+
+		let newIndex = this.activeGroupId === groupId ? this.activeItemIndex + direction : (direction > 0 ? 0 : items.length - 1);
+
+		if (newIndex < 0) {
+			newIndex = items.length - 1;
+		};
+		if (newIndex >= items.length) {
+			newIndex = 0;
+		};
+
+		this.moveWithinGroup(group, newIndex);
+		return this.highlightedElement;
 	};
 
 	onPanelChange (panel: FocusedPanel | null) {
@@ -334,20 +366,26 @@ class KeyboardNavigation {
 	private moveWithinGroup (group: GroupRegistration, newIndex: number) {
 		if (group.scrollToIndex) {
 			group.scrollToIndex(newIndex);
-			requestAnimationFrame(() => {
-				this.setHighlight(group, newIndex);
-			});
+			this.retrySetHighlight(group, newIndex, 0);
 		} else {
 			this.setHighlight(group, newIndex);
 		};
 	};
 
-	private setHighlight (group: GroupRegistration, index: number) {
-		// Remove old highlight
-		if (this.highlightedElement) {
-			this.highlightedElement.classList.remove('keyboardHighlight');
-		};
+	private retrySetHighlight (group: GroupRegistration, index: number, attempt: number) {
+		requestAnimationFrame(() => {
+			const el = group.getItemElement ? group.getItemElement(index) : null;
 
+			if (el) {
+				this.setHighlightElement(group, el, index);
+			} else
+			if (attempt < 4) {
+				this.retrySetHighlight(group, index, attempt + 1);
+			};
+		});
+	};
+
+	private setHighlight (group: GroupRegistration, index: number) {
 		const items = this.getVisibleItems(group);
 		if (!items.length) {
 			return;
@@ -360,12 +398,22 @@ class KeyboardNavigation {
 			return;
 		};
 
-		item.classList.add('keyboardHighlight');
-		item.scrollIntoView({ block: 'center', behavior: 'instant' });
+		this.setHighlightElement(group, item, clampedIndex);
 
+		if (!group.scrollToIndex && (group.direction === GroupDirection.Vertical)) {
+			item.scrollIntoView({ block: 'center', behavior: 'instant' });
+		};
+	};
+
+	private setHighlightElement (group: GroupRegistration, item: HTMLElement, index: number) {
+		if (this.highlightedElement) {
+			this.highlightedElement.classList.remove('keyboardHighlight');
+		};
+
+		item.classList.add('keyboardHighlight');
 		this.highlightedElement = item;
 		this.activeGroupId = group.id;
-		this.activeItemIndex = clampedIndex;
+		this.activeItemIndex = index;
 	};
 
 	private enterCapture (element: HTMLElement) {
@@ -443,8 +491,9 @@ class KeyboardNavigation {
 			return [];
 		};
 
-		const all = Array.from(container.querySelectorAll(group.itemSelector)) as HTMLElement[];
-		const visible = all.filter(el => this.isVisible(el));
+		const scopedSelector = group.itemSelector.split(',').map(s => `:scope ${s.trim()}`).join(', ');
+		const all = Array.from(container.querySelectorAll(scopedSelector)) as HTMLElement[];
+		const visible = all.filter(el => this.isVisible(el) && !el.classList.contains('disabled'));
 
 		// Sort by visual position for virtualized lists where DOM order ≠ visual order
 		if (group.scrollToIndex) {

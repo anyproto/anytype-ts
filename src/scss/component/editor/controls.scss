@@ -40,5 +40,5 @@
 	}
 
 	&.isDraggingOver { background: var(--color-system-drop-zone); }
-	&:hover, &.hover, &.active { opacity: 1; }
+	&:hover, &.hover, &.active, &:has(> .controlButtons .keyboardHighlight) { opacity: 1; }
 }

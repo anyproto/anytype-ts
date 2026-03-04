@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel, GroupDirection } from 'Lib';
 import { usePanelIndicator, useKeyboardGroup } from 'Hook';
 
 const LIMIT = 20;
@@ -25,7 +25,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
 	const pressed = useRef(new Set());
-	const n = useRef(-1);
 	const containerRef = useRef<HTMLElement>(null);
 	const headRef = useRef<HTMLDivElement>(null);
 	const filterWrapperRef = useRef<HTMLDivElement>(null);
@@ -71,6 +70,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyboard.shortcut('prevSpace, nextSpace', e, pressed => {
 			checkKeyUp.current = true;
 
+			const dir = pressed == 'prevSpace' ? -1 : 1;
+
 			if (sidebar.isAnimating) {
 				return;
 			};
@@ -79,12 +80,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				closeSidebar.current = true;
 				sidebar.leftPanelOpen(width, false, false);
 
-				// Wait for sidebar to open and list to render before navigating
 				requestAnimationFrame(() => {
-					onArrow(pressed == 'prevSpace' ? -1 : 1);
+					keyboard.router.navigation.moveInGroup('vault-body', dir);
 				});
 			} else {
-				onArrow(pressed == 'prevSpace' ? -1 : 1);
+				keyboard.router.navigation.moveInGroup('vault-body', dir);
 			};
 		});
 	};
@@ -99,7 +99,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (
 			(
-				pressed.current.has(Key.ctrl) || 
+				pressed.current.has(Key.ctrl) ||
 				pressed.current.has(Key.tab)
 			) ||
 			!checkKeyUp.current
@@ -107,13 +107,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			return;
 		};
 
-		const items = U.Menu.getVaultItems();
-		const item = items[n.current];
-
 		checkKeyUp.current = false;
 
-		if (item) {
-			onClick(e, item);
+		const highlighted = keyboard.router.navigation.highlightedElement;
+		if (highlighted) {
+			highlighted.click();
+			keyboard.router.navigation.clearHighlight();
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
@@ -122,31 +121,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		Preview.tooltipHide();
-	};
-
-	const onArrow = (dir: number) => {
-		const items = U.Menu.getVaultItems();
-
-		if (items.length == 1) {
-			return;
-		};
-		
-		n.current += dir;
-		if (n.current < 0) {
-			n.current = items.length - 1;
-		};
-		if (n.current >= items.length) {
-			n.current = 0;
-		};
-
-		unsetHover();
-
-		const next = items[n.current];
-		if (next) {
-			setHover(next);
-			listRef.current?.scrollToRow(Math.max(0, n.current));
-			tooltipShow(next, 1);
-		};
 	};
 
 	const tooltipShow = (item: any, delay: number) => {
@@ -246,6 +220,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			withOpenNewTab: true,
 			noMembers: true, 
 			noManage: true,
+			noShare: true,
 			route: analytics.route.vault,
 		});
 	};
@@ -272,35 +247,43 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	useKeyboardGroup(headRef, {
 		id: 'vault-head',
 		panel: FocusedPanel.Vault,
-		direction: 'h',
+		direction: GroupDirection.Horizontal,
 		itemSelector: '.icon, .name',
 	});
 
 	useKeyboardGroup(filterWrapperRef, {
 		id: 'vault-filter',
 		panel: FocusedPanel.Vault,
-		direction: 'h',
-		itemSelector: '.filter',
+		direction: GroupDirection.Horizontal,
+		itemSelector: '.filter .inner',
 	});
 
 	const getItemCount = useCallback(() => items.length, [ items.length ]);
 	const scrollToIndex = useCallback((idx: number) => {
 		listRef.current?.scrollToRow(Math.max(0, idx));
 	}, []);
+	const getItemElement = useCallback((idx: number) => {
+		const item = items[idx];
+		if (!item) {
+			return null;
+		};
+		return document.getElementById(`item-${item.id}`);
+	}, [ items ]);
 
 	useKeyboardGroup(bodyRef, {
 		id: 'vault-body',
 		panel: FocusedPanel.Vault,
-		direction: 'v',
+		direction: GroupDirection.Vertical,
 		itemSelector: '.item',
 		getItemCount,
 		scrollToIndex,
+		getItemElement,
 	});
 
 	useKeyboardGroup(footerRef, {
 		id: 'vault-footer',
 		panel: FocusedPanel.Vault,
-		direction: 'h',
+		direction: GroupDirection.Horizontal,
 		itemSelector: '.appSettings, .icon, .help',
 	});
 
@@ -359,37 +342,24 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			U.Space.openDashboard();
 		};
 
-		unsetHover();
 		Preview.tooltipHide(true);
 		keyboard.disableMouse(true);
 	};
 
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			setHover(item);
 			tooltipShow(item, 50);
 		};
 	};
 
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
-			unsetHover();
 			Preview.tooltipHide(false);
 		};
 	};
 
 	const getNode = () => {
 		return $(`#${getId()}`);
-	};
-
-	const setHover = (item: any) => {
-		if (item) {
-			getNode().find(`#item-${U.Common.esc(item.id)}`).addClass('hover');
-		};
-	};
-
-	const unsetHover = () => {
-		getNode().find('.item.hover').removeClass('hover');
 	};
 
 	const onFilterChange = (v: string) => {

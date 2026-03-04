@@ -841,9 +841,16 @@
 					"Categories": "Utility;Office;Calendar;ProjectManagement;",
 					"Keywords": "project management;",
 					"StartupWMClass": "anytype",
-					"MimeType": "x-scheme-handler/anytype;"
+					"MimeType": "x-scheme-handler/anytype;",
+					"Exec": "anytype --ozone-platform-hint=auto %u"
 				}
-			}
+			},
+			"extraFiles": [
+				{
+					"from": "anytype-xwayland.desktop",
+					"to": "anytype-xwayland.desktop"
+				}
+			]
 		},
 		"rpm": {
 			"fpm": [

@@ -70,6 +70,7 @@ class Api {
 
 	pinCheck (win) {
 		WindowManager.sendToAll('pin-check');
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	pinSet (win) {
@@ -162,7 +163,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, pinTimeout);
 	};
 
@@ -184,7 +185,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, this.pinTimeValue);
 	};
 
@@ -272,6 +273,10 @@ class Api {
 
 		// Update view bounds
 		WindowManager.updateTabBarVisibility(win);
+	};
+
+	setHideSidebar (win, v) {
+		WindowManager.sendToAllTabs('set-hide-sidebar', v);
 	};
 
 	setAlwaysShowTabs (win, show) {
@@ -387,7 +392,7 @@ class Api {
 		};
 
 		if (options?.fireAnalytics) {
-			Util.sendToActiveTab(win, 'commandGlobal', 'analyticsAddTab');
+			Util.sendToActiveTab(win, 'analyticsEvent', 'AddTab', { route: 'Navigation' });
 		};
 
 		WindowManager.createTab(win, rest, options);

@@ -158,6 +158,10 @@ class UtilRouter {
 		S.Popup.closeAll();
 		focus.clear(true);
 
+		if (S.Common.getRightSidebarState(false).page == 'object/tableOfContents') {
+			sidebar.rightPanelClose(false, false);
+		};
+
 		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
 			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;

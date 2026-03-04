@@ -19,10 +19,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
+	const [ isFullScreen, setIsFullScreen ] = useState(false);
 	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
-	const { width, type } = fields || {};
+	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 	const text = String(content.text || '');
@@ -38,10 +39,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const selection = S.Common.getRef('selectionProvider');
 	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 	const rootRef = useRef(null);
+	const resizeStartRef = useRef({ x: 0, y: 0, w: 0, h: 0 });
+	const scrollTopRef = useRef(0);
 	const isExcalidraw = block.isEmbedExcalidraw();
+
+	const excalidrawCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
+	};
+
+	if (isExcalidraw) {
+		if (fieldHeight) {
+			excalidrawCss.height = Math.max(200, fieldHeight);
+		} else {
+			const el = $(`#selectionTarget-${U.Common.esc(block.id)}`);
+			const containerWidth = el.length ? el.width() : 600;
+			excalidrawCss.height = Math.max(200, containerWidth * (width || 1) * 9 / 16);
+		};
 	};
 
 	if (!text) {
@@ -54,6 +69,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	if (isUnsupported) {
 		cn.push('isUnsupported');
+	};
+
+	if (isFullScreen) {
+		cn.push('isFullScreen');
 	};
 
 	const init = () => {
@@ -685,17 +704,27 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const win = $(window);
 		const node = $(nodeRef.current);
 
-		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		
+
+		selection?.clear();
 		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
+
+		if (isExcalidraw) {
+			const media = node.find('.mediaExcalidraw');
+			resizeStartRef.current = {
+				x: e.pageX,
+				y: e.pageY,
+				w: Number(fields.width) || 1,
+				h: media.length ? media.height() : 400,
+			};
+		};
 
 		node.addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
@@ -705,24 +734,31 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const node = $(nodeRef.current);
 		const wrap = node.find('#valueWrap');
-		
+
 		if (!wrap.length) {
 			return;
 		};
 
 		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
+
 		wrap.css({ width: (w * 100) + '%' });
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			const newHeight = Math.max(200, start.h + dy);
+			node.find('#value').css({ height: newHeight });
+		};
 	};
 
 	const onResizeEnd = (e: any, checkMax: boolean) => {
 		const node = $(nodeRef.current);
 		const wrap = node.find('#valueWrap');
-		
+
 		if (!wrap.length) {
 			return;
 		};
@@ -734,15 +770,23 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const win = $(window);
 		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
+
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		node.removeClass('isResizing');
 
+		const newFields: any = { ...fields, width: w };
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			newFields.height = Math.max(200, start.h + dy);
+		};
+
 		C.BlockListSetFields(rootId, [
-			{ blockId: block.id, fields: { ...fields, width: w } },
+			{ blockId: block.id, fields: newFields },
 		]);
 	};
 
@@ -768,11 +812,16 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let select = null;
 	let source = null;
 	let resizeIcon = null;
+	let expandIcon = null;
 	let empty = '';
 	let placeholder = '';
 
 	if (U.Embed.allowBlockResize(processor) && text) {
 		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+	};
+
+	if (isExcalidraw && text) {
+		expandIcon = <Icon className="expand withBackground" onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
@@ -846,6 +895,34 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	}, [ isEditing ]);
 
+	useEffect(() => {
+		const container = U.Common.getScrollContainer(isPopup);
+
+		if (isFullScreen) {
+			scrollTopRef.current = container.scrollTop();
+		};
+
+		const onEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				e.stopPropagation();
+				setIsFullScreen(false);
+			};
+		};
+
+		if (isFullScreen) {
+			window.addEventListener('keydown', onEscape, true);
+		};
+
+		return () => {
+			window.removeEventListener('keydown', onEscape, true);
+
+			if (isFullScreen) {
+				container.scrollTop(scrollTopRef.current);
+			};
+		};
+	}, [ isFullScreen ]);
+
 	let tabIndex = -1;
 	let onKeyDownProp;
 	let onKeyUpProp;
@@ -868,6 +945,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			onFocus={onFocusProp}
 		>
 			{source}
+			{expandIcon}
 
 			<div id="valueWrap" className="valueWrap" style={css}>
 				{select ? <div className="selectWrap">{select}</div> : ''}
@@ -882,7 +960,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
-						<div id="value" onMouseDown={onEdit} />
+						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />
 
 						{empty ? <Label text={empty} className="label empty" onMouseDown={onEdit} /> : ''}
 						{resizeIcon}

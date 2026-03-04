@@ -46,15 +46,8 @@ app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1')
 app.commandLine.appendSwitch('gtk-version', '3');
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
-if (Util.isWayland()) {
-	if (Util.isKDE()) {
-		// Force XWayland on KDE Plasma to fix global menu DBus integration
-		// Chromium's GlobalMenuBarX11 only works under X11, not native Wayland
-		app.commandLine.appendSwitch('ozone-platform', 'x11');
-	} else {
-		app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
-	};
-};
+// Wayland: ozone-platform is now configured via .desktop files instead of runtime detection
+// Users can choose anytype.desktop (native Wayland) or anytype-xwayland.desktop (XWayland)
 
 // GPU/Hardware acceleration settings
 // Check for --disable-gpu CLI argument or stored setting

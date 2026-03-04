@@ -264,23 +264,17 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					break;
 
 				case I.NavigationType.LinkTo:
-					const isCollection = U.Object.isCollectionLayout(target.layout);
-					const cb = (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
-						const linkType = isCollection ? 'Collection' : 'Object';
-
-						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
-						analytics.event('LinkToObject', { objectType: target.type, linkType });
-					};
-
-					if (isCollection) {
-						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
+					if (U.Object.isCollectionLayout(target.layout)) {
+						Action.addToCollection(target.id, [ rootId ]);
 					} else {
-						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							Preview.toastShow({ action: I.ToastAction.Link, objectId: blockId, targetId: target.id });
+							analytics.event('LinkToObject', { objectType: target.type, linkType: 'Object' });
+						});
 					};
 					break;
 			};
@@ -450,6 +444,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				<Filter 
 					ref={filterRef}
 					className="outlined round"
+					icon="search"
 					placeholder={placeholder} 
 					value={filter}
 					onChange={onFilterChange} 

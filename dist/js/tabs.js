@@ -330,7 +330,7 @@ $(() => {
 			const { isPinned, route, ...data } = activeTab?.data || {};
 
 			data.route = '/main/void/dashboard';
-			electron.Api(winId, 'openTab', data, { setActive: true, fireAnalytics: true });
+			electron.Api(winId, 'openTab', [data, { setActive: true, fireAnalytics: true }]);
 		});
 
 		return tab;

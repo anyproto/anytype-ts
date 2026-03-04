@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { observer } from 'mobx-react';
-import { S, keyboard } from 'Lib';
+import { S, J, keyboard } from 'Lib';
 
 interface Props {
 	data?: any;
@@ -37,6 +37,7 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 	data.elements = data.elements || [];
 	data.appState = data.appState || {};
 	data.appState.collaborators = new Map();
+	data.appState.viewBackgroundColor = J.Theme[theme]?.graph?.bg || '#ffffff';
 
 	return (
 		<div

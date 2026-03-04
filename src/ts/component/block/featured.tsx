@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
-import { I, C, S, U, J, M, Preview, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate, FocusedPanel } from 'Lib';
+import { I, C, S, U, J, M, Preview, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate, FocusedPanel, GroupDirection } from 'Lib';
 import { useKeyboardGroup } from 'Hook';
 
 interface Props extends I.BlockComponent {
@@ -24,11 +24,13 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const cellRefs = useRef(new Map<string, any>());
 	const menuContext = useRef(null);
 
+	const isColumn = headerRelationsLayout == I.FeaturedRelationLayout.Column;
+
 	useKeyboardGroup(nodeRef, {
 		id: 'featured-relations',
 		panel: FocusedPanel.Page,
-		direction: 'h',
-		itemSelector: '.cell',
+		direction: isColumn ? GroupDirection.Vertical : GroupDirection.Horizontal,
+		itemSelector: isColumn ? '.block' : '.cell',
 	});
 
 	useEffect(() => {

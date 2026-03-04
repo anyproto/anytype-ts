@@ -144,18 +144,31 @@ class ChatStore {
 	};
 
 	/**
+	 * Sets the read reaction status for messages by IDs.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string[]} ids - The message IDs.
+	 * @param {boolean} value - The read reaction status value.
+	 */
+	setReadReactionStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isReadReaction: value }));
+	};
+
+	/**
 	 * Creates a chat state object with observables.
 	 * @private
 	 * @param {I.ChatState} state - The chat state input.
 	 * @returns {ChatState} The created chat state object.
 	 */
 	private createState (state: I.ChatState): I.ChatStoreState {
-		const { messages, mentions, lastStateId, order } = state;
+		const { messages, mentions, reactionOrderId, lastStateId, order } = state;
+
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
 			mentionOrderId: mentions.orderId,
 			mentionCounter: mentions.counter,
+			reactionOrderId,
+			reactionCounter: reactionOrderId ? 1 : 0,
 			lastStateId,
 			order,
 		};
@@ -165,6 +178,8 @@ class ChatStore {
 			messageCounter: observable,
 			mentionOrderId: observable,
 			mentionCounter: observable,
+			reactionOrderId: observable,
+			reactionCounter: observable,
 			lastStateId: observable,
 			order: observable,
 		});
@@ -221,7 +236,7 @@ class ChatStore {
 		const current = spaceMap.get(param.chatId);
 
 		if (current) {
-			const { messages, mentions, lastStateId, order } = state;
+			const { messages, mentions, reactionOrderId, lastStateId, order } = state;
 
 			// Ignore outdated state
 			if (current.order && order && (order < current.order)) {
@@ -233,6 +248,8 @@ class ChatStore {
 				messageCounter: messages.counter,
 				mentionOrderId: mentions.orderId,
 				mentionCounter: mentions.counter,
+				reactionOrderId,
+				reactionCounter: reactionOrderId ? 1 : 0,
 				lastStateId,
 				order,
 			});
@@ -256,6 +273,8 @@ class ChatStore {
 			messageCounter: 0,
 			mentionOrderId: '',
 			mentionCounter: 0,
+			reactionOrderId: '',
+			reactionCounter: 0,
 			lastStateId: '',
 			order: 0,
 		};
@@ -328,7 +347,7 @@ class ChatStore {
 	 */
 	getTotalCounters (): I.ChatCounter {
 		const spaces = U.Space.getList();
-		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
 
 		if (!spaces.length) {
 			return ret;
@@ -363,6 +382,10 @@ class ChatStore {
 				if (state.messageCounter && [ I.NotificationMode.All ].includes(chatMode)) {
 					ret.messageCounter += Number(state.messageCounter) || 0;
 				};
+
+				if (state.reactionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+					ret.reactionCounter += Number(state.reactionCounter) || 0;
+				};
 			};
 		};
 
@@ -376,7 +399,7 @@ class ChatStore {
 	 * @returns {I.ChatCounter} The counters for the space.
 	 */
 	getSpaceCounters (spaceId: string, ignoreMute?: boolean): I.ChatCounter {
-		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
 		const spaceMap = this.stateMap.get(spaceId);
 
 		if (!spaceMap) {
@@ -401,8 +424,12 @@ class ChatStore {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 			};
 
-			if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All ].includes(chatMode))) {
+			if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
 				ret.messageCounter += Number(state.messageCounter) || 0;
+			};
+
+			if (state.reactionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+				ret.reactionCounter += Number(state.reactionCounter) || 0;
 			};
 		};
 
@@ -431,7 +458,7 @@ class ChatStore {
 	 * @returns {Counter} The counters for the chat.
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
-		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
 		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
 		if (!spaceId || !chatId || chat._empty_ || chat.isArchived) {
@@ -445,6 +472,7 @@ class ChatStore {
 			if (state) {
 				ret.mentionCounter = Number(state.mentionCounter) || 0;
 				ret.messageCounter = Number(state.messageCounter) || 0;
+				ret.reactionCounter = Number(state.reactionCounter) || 0;
 			};
 		};
 

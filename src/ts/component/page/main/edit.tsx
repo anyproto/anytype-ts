@@ -4,21 +4,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
 import { I, S, U, Onboarding, analytics, keyboard, focus, FocusedPanel } from 'Lib';
 import { navigation } from 'Lib/keyboard/navigation';
-import { usePanelIndicator } from 'Hook';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
-	const pageContainerRef = useRef<HTMLElement>(null);
 	const rootId = keyboard.getRootId(isPopup);
 	const ns = U.Common.getEventNamespace(isPopup);
-
-	useEffect(() => {
-		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
-	}, [ isPopup ]);
-
-	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 
 	useEffect(() => {
 		navigation.registerOverflow(FocusedPanel.Page, (direction: number) => {

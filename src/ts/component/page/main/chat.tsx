@@ -2,8 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativ
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics, FocusedPanel } from 'Lib';
-import { usePanelIndicator } from 'Hook';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -13,15 +12,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef(null);
-	const pageContainerRef = useRef<HTMLElement>(null);
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 
-	useEffect(() => {
-		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
-	}, [ isPopup ]);
-
-	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
 

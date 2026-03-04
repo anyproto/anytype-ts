@@ -589,6 +589,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Image;
 	};
 
+	isVideoOrAudioLayout (layout: I.ObjectLayout): boolean {
+		return [ I.ObjectLayout.Video, I.ObjectLayout.Audio ].includes(layout);
+	};
+
 	isDateLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Date;
 	};

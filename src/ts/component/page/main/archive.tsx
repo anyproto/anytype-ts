@@ -2,19 +2,11 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
-import { I, U, J, translate, Action, analytics, keyboard, sidebar, FocusedPanel } from 'Lib';
-import { usePanelIndicator } from 'Hook';
+import { I, U, J, translate, Action, analytics, keyboard, sidebar } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const pageContainerRef = useRef<HTMLElement>(null);
-
-	useEffect(() => {
-		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
-	}, [ isPopup ]);
-
-	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const nodeRef = useRef(null);
 	const managerRef = useRef(null);
 	const [ rowLength, setRowLength ] = useState(0);
@@ -50,9 +42,16 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 	};
 
+	const spaceview = U.Space.getSpaceview();
 	const filters: I.Filter[] = [
 		{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 	];
+
+	// In shared spaces, non-owners can only see objects they created
+	if (spaceview.isShared && !U.Space.isMyOwner()) {
+		filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() });
+	};
+
 	const sorts: I.Sort[] = [
 		{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 	];

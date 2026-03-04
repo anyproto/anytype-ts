@@ -237,6 +237,12 @@
 		.section > .inputWrap { padding-bottom: 0px; }
 		.section.noLine::after { display: none; }
 
+		.section.settingsText {
+			.item.withCaption {
+				.caption { @include text-common; }
+			}
+		}
+
 		.input-drag-horizontal {
 			.back { background-color: var(--color-shape-secondary); }
 			.icon { 

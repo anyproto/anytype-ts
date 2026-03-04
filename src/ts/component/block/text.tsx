@@ -296,7 +296,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		];
 
 		for (let i = 0; i <= 9; i++) {
-			saveKeys.push({ key: `turnBlock${i}` });
+			saveKeys.push({ key: `turnBlock${i}`, preventDefault: true });
 		};
 
 		if (isInsideTable) {

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, ChatCounter } from 'Component';
-import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove, FocusedPanel } from 'Lib';
+import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove, FocusedPanel, GroupDirection } from 'Lib';
 import { useKeyboardGroup } from 'Hook';
 
 import WidgetSpace from './space';
@@ -117,8 +117,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	useKeyboardGroup(nodeRef, {
 		id: `widget-${block.id}`,
 		panel: FocusedPanel.Widget,
-		direction: 'v',
-		itemSelector: isSpace ? '.widgetSpace' : '.item:not(.isSection)',
+		direction: GroupDirection.Vertical,
+		itemSelector: isSpace ? '.buttons .item' : '.head .sides, #viewSelect .select, .body .item:not(.isSection), .ReactVirtualized__List > .item:not(.isSection), .items > .item, #button-show-all',
 		onLeft: isTree ? onGroupLeft : undefined,
 		onRight: isTree ? onGroupRight : undefined,
 	});
@@ -603,6 +603,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				subId,
 				allowedNewTab: true,
 				openAfterDuplicate: true,
+				allowedCollection: true,
 			},
 		};
 

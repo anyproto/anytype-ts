@@ -756,6 +756,12 @@ class Dispatcher {
 													break;
 												};
 											};
+
+											// Preserve existing custom width if update doesn't specify one
+											// (protobuf3 defaults unset int fields to 0)
+											if (!item.width) {
+												item.width = list[idx]?.width || 0;
+											};
 										};
 
 										list[idx] = item;
@@ -1116,6 +1122,14 @@ class Dispatcher {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
 						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+					});
+					break;
+				};
+
+				case 'ChatUpdateReactionReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach(subId => {
+						S.Chat.setReadReactionStatus(subId, mapped.ids, mapped.isRead);
 					});
 					break;
 				};

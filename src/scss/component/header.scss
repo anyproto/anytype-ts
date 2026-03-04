@@ -39,10 +39,11 @@
 
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; -webkit-app-region: no-drag; }
 	.tabs {
-		.tab { 
+		.tab {
 			font-weight: 700; color: var(--color-control-active); transition: $transitionAllCommon; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
+		.tab.keyboardHighlight { border-radius: 6px; }
 		.tab:hover { color: var(--color-text-primary); }
 		.tab.active { color: var(--color-text-primary); border-color: var(--color-text-primary); }
 	}

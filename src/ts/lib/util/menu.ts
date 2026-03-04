@@ -302,11 +302,12 @@ class UtilMenu {
 
 		let items: any[] = [];
 
+		if (hasTurnObject) {
+			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
+		};
+
 		if (hasCommon) {
-			items = items.concat([
-				{ id: 'remove', icon: 'remove', name: U.String.sprintf(translate('commonDeleteBlocks'), U.Common.plural(count, translate('pluralLCBlock'))), caption: 'Del' },
-				{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
-			]);
+			items.push({ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true });
 		};
 
 		if (hasClipboard) {
@@ -316,28 +317,13 @@ class UtilMenu {
 				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
 			]);
 		};
-
-		if (hasCommon) {
-			items = items.concat([
-				{ isDiv: true },
-				{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-			]);
-		};
-
-		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
-		};
-		
-		if (hasText) {
-			items.push({ id: 'clear', icon: 'clear', name: translate('libMenuClearStyle') });
-		};
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyMedia') });
+			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
@@ -353,6 +339,13 @@ class UtilMenu {
 
 		if (hasFile || hasBookmark || hasDataview) {
 			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+		};
+
+		if (hasCommon) {
+			items = items.concat([
+				{ id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') },
+				{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+			]);
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
@@ -1037,25 +1030,22 @@ class UtilMenu {
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
-				search: [],
 				general: [],
-				share: [],
-				archive: [],
-				manage: [],
+				actions: [],
 				delete: [],
 			};
 
-			if (!noShare && inviteLink) {
-				sections.share = [
-					{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
-					{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
-				];
-			}
-
 			if (isSharePage) {
+				if (inviteLink) {
+					sections.general = [
+						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+					];
+				};
+
 				if (isOwner && space.isShared) {
 					const isDisabled = participants.length > 1;
-					sections.archive.push({
+					sections.actions.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
 						disabled: isDisabled,
@@ -1067,38 +1057,46 @@ class UtilMenu {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
-				if (withOpenNewTab) {
-					sections.general.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
+				if (!noShare && space.isPrivate) {
+					sections.general.push({ id: 'members', icon: 'inviteMembers', name: translate('commonInviteMembers') });
 				};
 
-				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
-					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
+				if (!noShare && inviteLink) {
+					sections.general = sections.general.concat([
+						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+					]);
 				};
 
 				if (withPin) {
 					if (space.orderId) {
-						sections.manage.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 					} else {
-						sections.manage.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 					};
 				};
 
-				if (!space.isPersonal) {
+				if (!space.isPrivate) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.manage.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 					} else {
-						sections.manage.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 					};
+				};
+
+				if (withOpenNewTab) {
+					sections.actions.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!noManage) {
-					sections.manage.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
+					sections.actions.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
 				if (withDelete) {
+					const icon = isOwner ? 'remove-red' : 'leave-red';
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
+					sections.delete.push({ id: 'remove', icon, name, color: 'red' });
 				};
 			};
 
@@ -1869,7 +1867,7 @@ class UtilMenu {
 			exportIndex: translate('commonExport'),
 			importIndex: translate('commonImport'),
 			spaceIndex: translate('pageSettingsSpaceGeneral'),
-			spaceShare: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers'),
+			spaceShare: members.length > 1 ? translate('commonMembers') : translate('commonInviteMembers'),
 			spaceNotifications: translate('commonNotifications'),
 			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
 			archive: translate('commonBin'),

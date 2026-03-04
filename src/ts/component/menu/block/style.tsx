@@ -93,23 +93,9 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		selection?.clear();
 		analytics.event('ChangeBlockStyle', { type: item.type, style: item.itemId });
 	};
-	
-	const sections = getSections();
-	const active = getActive();
 
-	const Section = (item: any) => (
-		<div className="section">
-			{item.children.map((action: any, i: number) => (
-				<MenuItemVertical 
-					key={i} 
-					{...action} 
-					checkbox={action.itemId == active} 
-					onClick={e => onClick(e, action)} 
-					onMouseEnter={e => onOver(e, action)}  
-				/>
-			))}
-		</div>
-	);
+	const items = getItems();
+	const active = getActive();
 
 	useEffect(() => {
 		rebind();
@@ -131,8 +117,16 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div>
-			{sections.map((section: any, i: number) => {
-				return <Section key={i} {...section} />;
+			{items.map((action: any, i: number) => {
+				return (
+					<MenuItemVertical
+						key={i}
+						{...action}
+						checkbox={action.itemId == active}
+						onClick={e => onClick(e, action)}
+						onMouseEnter={e => onOver(e, action)}
+					/>
+				);
 			})}
 		</div>
 	);

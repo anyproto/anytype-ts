@@ -106,7 +106,10 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 				<div className="item">
 					<Label text={translate('popupSettingsPersonalSidebar')} />
-					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
+					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => {
+						S.Common.hideSidebarSet(v);
+						Renderer.send('setHideSidebar', v);
+					}} />
 				</div>
 
 				<div className="item">

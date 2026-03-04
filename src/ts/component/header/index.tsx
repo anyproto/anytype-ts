@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate, FocusedPanel, GroupDirection } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
+import { useKeyboardGroup } from 'Hook';
 
 import HeaderAuthIndex from './auth';
 import HeaderAuthLogout from './auth/logout';
@@ -49,6 +50,14 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
+
+	useKeyboardGroup(nodeRef, {
+		id: 'header',
+		panel: FocusedPanel.Page,
+		direction: GroupDirection.Horizontal,
+		itemSelector: '.side.left .icon, .side.center .tab, .side.right [id^="button-header-"], .side.right .icon, .side.right .btn',
+	});
+
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
 	const object = S.Detail.get(rootId, rootId, []);

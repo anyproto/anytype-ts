@@ -324,7 +324,7 @@ class Action {
 		if (!id) {
 			return;
 		};
-		
+
 		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {

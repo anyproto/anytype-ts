@@ -217,6 +217,10 @@ class Dataview {
 				return false;
 			};
 
+			if (it.operator != I.FilterOperator.None) {
+				return true;
+			};
+
 			const relation = S.Record.getRelationByKey(it.relationKey);
 			return relation && !relation.isArchived && !relation.isDeleted;
 		});

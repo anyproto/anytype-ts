@@ -1324,10 +1324,10 @@ class UtilData {
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
-				return counters.mentionCounter > 0;
+				return (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 			};
 
-			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 		});
 	};
 

@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, sidebar, FocusedPanel } from 'Lib';
-import { usePanelIndicator } from 'Hook';
+import { I, C, S, U, J, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 const SUB_ID = 'dateListObject';
@@ -11,13 +10,6 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	const { space, config } = S.Common;
 	const { isPopup } = props;
-	const pageContainerRef = useRef<HTMLElement>(null);
-
-	useEffect(() => {
-		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
-	}, [ isPopup ]);
-
-	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ relations, setRelations ] = useState([]);
 	const [ dummy, setDummy ] = useState(0);

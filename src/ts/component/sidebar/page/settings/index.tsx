@@ -50,6 +50,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			importExport.unshift({ id: 'importIndex', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
 		};
 
+		const isOwner = U.Space.isMyOwner();
+		const leaveOrRemove = !spaceview.isPersonal ? {
+			id: 'remove',
+			icon: isOwner ? 'remove' : 'leave',
+			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
+			color: 'red',
+		} : null;
+
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
@@ -66,9 +74,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-		].map(s => {
+			leaveOrRemove ? { id: 'delete', isDiv: true, children: [ leaveOrRemove ] } : null,
+		].filter(it => it).map(s => {
 			s.children = s.children.filter(it => it).map((c: any) => {
-				c.name = map[c.id];
+				c.name = map[c.id] || c.name;
 				return c;
 			});
 			return s;
@@ -152,6 +161,9 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	};
 
 	const onClick = (item) => {
+		if (item.id == 'remove') {
+			Action.removeSpace(S.Common.space, analytics.route.settings);
+		} else
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
@@ -199,6 +211,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 			if (item.id == currentId || (item.subPages && item.subPages.includes(currentId))) {
 				cn.push('active');
+			};
+
+			if (item.color) {
+				cn.push(`textColor-${item.color}`);
 			};
 
 			if (item.id == 'account') {

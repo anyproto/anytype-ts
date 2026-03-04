@@ -37,7 +37,7 @@
 	}
 
 	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
-	.filterWrapper { padding: 0px 12px 8px 12px; overflow: hidden; }
+	.filterWrapper { padding: 0px 12px 8px 12px; }
 
 	.item { display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 12px; -webkit-app-region: no-drag; }
 	.item {
@@ -69,7 +69,7 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1;
 			pointer-events: none; border-radius: inherit; opacity: 0;
 		}
-		&.active::before, &.hover::before { opacity: 1; }
+		&.active::before, &.hover::before, &:hover::before { opacity: 1; }
 
 		.time { @include text-small; color: var(--color-text-secondary); text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 0px 4px; }
 		&.isSyncing {

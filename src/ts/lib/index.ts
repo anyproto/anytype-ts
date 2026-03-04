@@ -11,7 +11,7 @@ import { dispatcher } from './api/dispatcher';
 import { Mapper } from './api/mapper';
 import { Encode, Decode } from './api/struct';
 import { keyboard, Key } from './keyboard';
-import { router, KeyboardZoneType, FocusedPanel } from './keyboard/index';
+import { router, KeyboardZoneType, FocusedPanel, GroupDirection } from './keyboard/index';
 import type { KeyboardZone } from './keyboard/index';
 import { sidebar } from './sidebar';
 import Storage from './storage';
@@ -66,6 +66,7 @@ export {
 	router,
 	KeyboardZoneType,
 	FocusedPanel,
+	GroupDirection,
 };
 
 export type { KeyboardZone };

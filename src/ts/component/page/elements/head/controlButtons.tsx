@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard, FocusedPanel } from 'Lib';
+import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard, FocusedPanel, GroupDirection } from 'Lib';
 import { useKeyboardGroup } from 'Hook';
 
 interface Props {
@@ -45,7 +45,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	useKeyboardGroup(nodeRef, {
 		id: 'control-buttons',
 		panel: FocusedPanel.Page,
-		direction: 'h',
+		direction: GroupDirection.Horizontal,
 		itemSelector: '.btn',
 	});
 

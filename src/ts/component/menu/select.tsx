@@ -16,8 +16,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, position, getId, close, setHover, getMaxHeight } = props;
 	const { data } = param;
-	const { 
-		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd, 
+	const {
+		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd,
 		canSelectInitial, onSelect, onContext, noClose, noScroll, maxHeight, noFilter, onSwitch, buttons = [],
 		useMaxWindowHeight,
 	} = data;
@@ -210,7 +210,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = buttons.reduce((res: number, current: any) => res + getRowHeight(current), height);
 
 			height = Math.min(mh || 370, height);
-			height = Math.max(48, height);
+			height = Math.max(44, height);
 
 			content.css({ height });
 		};
@@ -346,7 +346,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<>
 			{withFilter ? (
-				<Filter 
+				<Filter
 					ref={filterRef}
 					className="outlined round"
 					value={filter}

@@ -191,6 +191,11 @@ const App: FC = () => {
 			S.Common.themeSet(theme);
 		});
 
+		Renderer.on('set-hide-sidebar', (e: any, v: boolean) => {
+			S.Common.hideSidebarSet(v);
+			sidebar.init(false);
+		});
+
 		Renderer.on('pin-check', () => {
 			if (!S.Common.pin) {
 				return;

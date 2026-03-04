@@ -65,7 +65,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
 	const counters = S.Chat.getState(subId);
-	const mentionCounter = counters.mentionCounter;
+	const { mentionCounter, reactionCounter } = counters;
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
@@ -1280,6 +1280,22 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				analytics.event('ClickScrollToMention', { chatId: analyticsChatId });
 				break;
 			};
+
+			case I.ChatReadType.Reaction: {
+				const { reactionOrderId } = S.Chat.getState(subId);
+				const target = S.Chat.getMessageByOrderId(subId, reactionOrderId);
+
+				if (target) {
+					scrollToMessage(target.id, true, true);
+				} else {
+					loadMessagesByOrderId(reactionOrderId, () => {
+						highlightMessage('', reactionOrderId);
+					});
+				};
+
+				analytics.event('ClickScrollToReaction', { chatId: analyticsChatId });
+				break;
+			};
 		};
 	};
 
@@ -1885,6 +1901,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="inner">
 				{!isEmpty ? (
 					<div className="navigation">
+						{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
 						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>

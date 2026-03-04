@@ -3,8 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar, Onboarding, Storage, FocusedPanel } from 'Lib';
-import { usePanelIndicator } from 'Hook';
+import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar, Onboarding, Storage } from 'Lib';
 
 const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -17,14 +16,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const headRef = useRef(null);
 	const controlsRef = useRef(null);
 	const blockRefs = useRef<any>({});
-	const pageContainerRef = useRef<HTMLElement>(null);
 	const rootId = keyboard.getRootId(isPopup);
 
-	useEffect(() => {
-		pageContainerRef.current = U.Common.getPageContainer(isPopup).get(0) || null;
-	}, [ isPopup ]);
-
-	usePanelIndicator(pageContainerRef, FocusedPanel.Page);
 	const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
 	const idRef = useRef('');
 	const scrollTopRef = useRef(0);
@@ -147,6 +140,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
+		const rootId = keyboard.getRootId(isPopup);
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
