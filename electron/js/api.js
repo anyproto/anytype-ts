@@ -69,6 +69,7 @@ class Api {
 
 	pinCheck (win) {
 		WindowManager.sendToAll('pin-check');
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	pinSet (win) {
@@ -161,7 +162,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, pinTimeout);
 	};
 
@@ -183,7 +184,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, this.pinTimeValue);
 	};
 
