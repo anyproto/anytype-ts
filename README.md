@@ -35,41 +35,29 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 
 Just want to try it? Grab the latest installer from the [releases page](https://github.com/anyproto/anytype-ts/releases) or head to **[download.anytype.io](https://download.anytype.io)** and log in with your *Any‑ID*.
 
-
-## 🛠 Prerequisites
-
-| Platform          | System packages                            |
-|-------------------|--------------------------------------------|
-| **Debian/Ubuntu** | `sudo apt install libsecret-1-dev jq`      |
-| **Fedora**        | `sudo dnf install libsecret jq`            |
-| **Arch Linux**    | `sudo pacman -S libsecret jq`              |
-| **Alpine**        | `apk add libsecret jq`                     |
-
-Also install:
-
-- **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
-- **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
+## 🏗 Building from Source
 
 On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
 
-## 🏗 Building from Source
-
 ```bash
-# 1 – Clone & install JS deps
-git clone https://github.com/anyproto/anytype-ts.git
-cd anytype-ts
-npm ci               # or: pnpm i --frozen-lockfile
+# 1 – Clone & open this repository
+git clone https://github.com/anyproto/anytype-ts.git && cd anytype-ts
 
-# 2 – Fetch / build middleware & protobuf bindings
+# 2 - Install JavaScript dependencies
+npm ci
+
+# 3 – Fetch / build middleware & protobuf bindings
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
 
-# 3 – Build the core engine (outside this repo)
-git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
-make install-dev-js && cd ../anytype-ts
+# 4 – Build the core engine
+cd .. && git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
+make install-dev-js CLIENT_DESKTOP_PATH=../anytype-ts && cd ../anytype-ts
 
-# 4 – Build the Electron desktop app
+# 5 - Update locale
 npm run update:locale
-npm run dist:mac      # or dist:win / dist:linux
+
+# 6 – Build the Electron desktop app (see package.json for more options)
+npm run dist:<linux|win|mac>
 ```
 
 ### Environment flags
@@ -82,11 +70,19 @@ npm run dist:mac      # or dist:win / dist:linux
 
 ## 🧑‍💻 Development Workflow
 
+You can use [nix](https://nix.dev/install-nix) to install all the required dependencies at once.
+
+```shell
+# open a shell with all the required dependencies
+nix develop --command $SHELL
+```
+
 You can either run the helper (from *anytype‑heart*) separately or just launch the client with hot‑reload:
 
 ```bash
 anytypeHelper &       # or ./bin/anytypeHelper
 npm run start:dev     # Windows: npm run start:dev-win
+# add --user-data-dir=./my_dir to electron(-win) script in package.json if you want to use custom user data directory
 ```
 
 For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
