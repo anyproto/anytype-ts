@@ -348,7 +348,7 @@ const App: FC = () => {
 				if (spaceId) {
 					U.Router.switchSpace(spaceId, '', false, routeParam, true);
 				} else {
-					U.Router.go('/main/void/select', routeParam);
+					U.Data.onAuthWithoutSpace(routeParam);
 				};
 			});
 		};
