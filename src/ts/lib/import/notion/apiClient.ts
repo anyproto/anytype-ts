@@ -1,8 +1,14 @@
 import { NotionPage, NotionDatabase } from './types';
 
+interface QueueItem {
+	requestFn: () => Promise<any>;
+	resolve: (value: any) => void;
+	reject: (reason?: any) => void;
+}
+
 export class NotionApiClient {
 	private readonly token: string;
-	private requestQueue: Array<() => Promise<void>> = [];
+	private requestQueue: Array<QueueItem> = [];
 	private isProcessingQueue = false;
 
 	constructor(token: string) {
@@ -34,15 +40,7 @@ export class NotionApiClient {
 
 	private async enqueueRequest<T>(requestFn: () => Promise<T>): Promise<T> {
 		return new Promise((resolve, reject) => {
-			this.requestQueue.push(async () => {
-				try {
-					const result = await requestFn();
-					resolve(result);
-				} catch (error) {
-					reject(error);
-				}
-			});
-
+			this.requestQueue.push({ requestFn, resolve, reject });
 			this.processQueue();
 		});
 	}
@@ -52,10 +50,11 @@ export class NotionApiClient {
 		this.isProcessingQueue = true;
 
 		while (this.requestQueue.length > 0) {
-			const request = this.requestQueue.shift();
-			if (request) {
+			const requestItem = this.requestQueue.shift();
+			if (requestItem) {
 				try {
-					await request();
+					const result = await requestItem.requestFn();
+					requestItem.resolve(result);
 					await new Promise(resolve => setTimeout(resolve, 333)); // Rate limit to 3 requests/sec
 				} catch (error) {
 					if (error instanceof Error && error.message.includes('429')) {
@@ -63,9 +62,10 @@ export class NotionApiClient {
 						const waitTime = retryAfterMatch ? parseInt(retryAfterMatch[1], 10) * 1000 : this.calculateBackoff();
 						console.log(`Rate limited, waiting for ${waitTime}ms...`);
 						await new Promise(resolve => setTimeout(resolve, waitTime));
-						this.requestQueue.unshift(request); // Re-queue failed request
+						this.requestQueue.unshift(requestItem); // Re-queue failed request
 					} else {
 						console.error("API request failed:", error);
+						requestItem.reject(error);
 					}
 				}
 			}
