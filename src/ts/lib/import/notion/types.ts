@@ -3,6 +3,8 @@ export type AnytypeBlockType = 'text' | 'header1' | 'header2' | 'header3' | 'bul
 
 export type NotionPropertyType = 'title' | 'rich_text' | 'number' | 'select' | 'multi_select' | 'date' | 'checkbox' | 'url' | 'email' | 'phone_number' | 'files' | 'relation' | 'status' | 'formula' | 'rollup' | 'created_time' | 'last_edited_time' | 'created_by' | 'last_edited_by' | 'people' | 'unique_id' | 'verification';
 
+export type NotionBlockType = 'paragraph' | 'heading_1' | 'heading_2' | 'heading_3' | 'bulleted_list_item' | 'numbered_list_item' | 'to_do' | 'toggle' | 'code' | 'quote' | 'callout' | 'divider' | 'image' | 'video' | 'audio' | 'file' | 'pdf' | 'bookmark' | 'equation' | 'table' | 'table_row' | 'child_page' | 'child_database' | 'synced_block' | 'link_preview' | 'column_list' | 'column' | 'breadcrumb' | 'table_of_contents' | 'unsupported' | 'embed';
+
 export const NOTION_PROPERTY_TYPE_MAP: Record<NotionPropertyType, AnytypeRelationType> = {
   title:            'text',
   rich_text:        'text',
@@ -28,7 +30,7 @@ export const NOTION_PROPERTY_TYPE_MAP: Record<NotionPropertyType, AnytypeRelatio
   verification:     'text',
 };
 
-export const NOTION_BLOCK_TYPE_MAP: Record<string, AnytypeBlockType> = {
+export const NOTION_BLOCK_TYPE_MAP: Record<NotionBlockType, AnytypeBlockType> = {
   paragraph:            'text',
   heading_1:            'header1',
   heading_2:            'header2',
@@ -59,6 +61,7 @@ export const NOTION_BLOCK_TYPE_MAP: Record<string, AnytypeBlockType> = {
   breadcrumb:           'text',   // render as plain text
   table_of_contents:    'toc',
   unsupported:          'text',   // render as '[unsupported block]'
+  embed:                'bookmark',
 };
 
 export interface NotionRichTextAnnotations {

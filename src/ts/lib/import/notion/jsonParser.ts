@@ -1,4 +1,4 @@
-import { NotionWorkspace, NotionPage, NotionDatabase, NotionBlock, NOTION_PROPERTY_TYPE_MAP, NOTION_BLOCK_TYPE_MAP } from './types';
+import { NotionWorkspace, NotionPage, NotionDatabase, NotionBlock, NotionBlockType, NOTION_PROPERTY_TYPE_MAP, NOTION_BLOCK_TYPE_MAP } from './types';
 
 export class JsonParser {
 	async parseNotionApiJson(folderPath: string, fileContentsMap: Map<string, string>): Promise<NotionWorkspace> {
@@ -64,7 +64,7 @@ export class JsonParser {
 	private buildBlockTree(parentId: string, blockMap: Map<string, NotionBlock[]>): any[] {
 		const blocks = blockMap.get(parentId) || [];
 		return blocks.map(block => {
-			const mappedType = NOTION_BLOCK_TYPE_MAP[block.type] || 'text';
+			const mappedType = NOTION_BLOCK_TYPE_MAP[block.type as NotionBlockType] || 'text';
 			return {
 				...block,
 				_mappedType: mappedType,
