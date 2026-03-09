@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import Papa from 'papaparse';
 import { NotionWorkspace, NotionPage, NotionDatabase, NOTION_PROPERTY_TYPE_MAP } from './types';
 import { HtmlParser } from './htmlParser';
 
@@ -27,12 +28,14 @@ export class ZipParser {
 			const parsedDb = this.parseDatabaseCsv(dbId, csvContent);
 			workspace.databases.push(parsedDb);
 
-			// Match CSV rows with HTML files for page bodies
 			const rows = this.parseCsvRows(csvContent);
+			const headers = rows[0] || [];
+			const idColIndex = headers.findIndex(h => h === 'Notion ID' || h.toLowerCase() === 'id');
+
 			for (let i = 1; i < rows.length; i++) {
 				const row = rows[i];
-				const pageId = this.extractIdFromRow(row);
-				const pageHtmlPath = htmlFiles.find(p => p.includes(pageId) && p.startsWith(dirPath));
+				const pageId = this.extractIdFromRow(row, dbId, i, idColIndex); // Stable ID per row
+				const pageHtmlPath = htmlFiles.find(p => p.includes(pageId) && (dirPath === '' || p.startsWith(dirPath)));
 
 				let blocks = [];
 				if (pageHtmlPath) {
@@ -47,9 +50,8 @@ export class ZipParser {
 					last_edited_time: new Date().toISOString(),
 					parent: { type: 'database_id', database_id: dbId },
 					archived: false,
-					properties: this.mapRowToProperties(rows[0], row),
+					properties: this.mapRowToProperties(headers, row),
 					url: '',
-					// store parsed blocks in a custom property for processing later
 					_parsedBlocks: blocks
 				} as any;
 
@@ -59,9 +61,10 @@ export class ZipParser {
 
 		// Parse non-database pages
 		for (const htmlPath of htmlFiles) {
-			const isDatabasePage = workspace.pages.some(p => htmlPath.includes(p.id));
+			const pageId = this.extractIdFromFilename(htmlPath);
+			// Check if any database row extracted this page ID or if the ID exists in filename
+			const isDatabasePage = workspace.pages.some(p => p.id === pageId || htmlPath.includes(p.id));
 			if (!isDatabasePage && !htmlPath.includes('Export-')) {
-				const pageId = this.extractIdFromFilename(htmlPath);
 				const htmlContent = await unzipped.files[htmlPath].async('string');
 				const blocks = htmlParser.parse(htmlContent);
 
@@ -70,7 +73,7 @@ export class ZipParser {
 					id: pageId,
 					created_time: new Date().toISOString(),
 					last_edited_time: new Date().toISOString(),
-					parent: { type: 'workspace' },
+					parent: { type: 'workspace', workspace: true },
 					archived: false,
 					properties: { title: { type: 'title', title: [{ plain_text: this.extractTitleFromFilename(htmlPath) }] } },
 					url: '',
@@ -95,9 +98,15 @@ export class ZipParser {
 		return filePart.replace(/ [a-f0-9]{32}\.html$/i, '');
 	}
 
-	private extractIdFromRow(row: string[]): string {
-		// Mock implementation, would look for ID in a hidden column or generate one
-		return `row-id-${Date.now()}-${Math.random()}`;
+	private extractIdFromRow(row: string[], dbId: string, rowIndex: number, idColIndex: number): string {
+		if (idColIndex !== -1 && row[idColIndex] && row[idColIndex].match(/^[a-f0-9]{32}$/i)) {
+			return row[idColIndex];
+		}
+		// Fallback regex scan
+		const fallbackMatch = row.findIndex(c => c && c.match(/^[a-f0-9]{32}$/i));
+		if (fallbackMatch !== -1) return row[fallbackMatch];
+
+		return `row-id-${dbId}-${rowIndex}`;
 	}
 
 	private parseDatabaseCsv(dbId: string, csvContent: string): NotionDatabase {
@@ -106,7 +115,6 @@ export class ZipParser {
 
 		const properties: Record<string, any> = {};
 		headers.forEach(header => {
-			// Basic inference: default to text, attempt to infer type based on typical Notion headers
 			properties[header] = { type: 'rich_text' };
 		});
 
@@ -120,7 +128,8 @@ export class ZipParser {
 	}
 
 	private parseCsvRows(csvContent: string): string[][] {
-		return csvContent.split('\n').filter(line => line.trim() !== '').map(line => line.split(','));
+		const parsed = Papa.parse(csvContent, { skipEmptyLines: true });
+		return parsed.data as string[][];
 	}
 
 	private mapRowToProperties(headers: string[], row: string[]): Record<string, any> {

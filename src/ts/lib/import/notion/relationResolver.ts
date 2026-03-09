@@ -20,27 +20,30 @@ export class RelationResolver {
 					isUpdated = true;
 				} else if (prop.type === 'rollup') {
 					const functionType = prop.rollup.function;
-					const anytypeIdArray = prop.rollup.array.map((a: any) => notionIdToAnytypeId.get(a.id) || `_unresolved_notion_id:${a.id}`);
+					const normalizedArray = (prop.rollup.array || []).map((a: any) => ({
+						id: a.id ? notionIdToAnytypeId.get(a.id) || `_unresolved_notion_id:${a.id}` : null,
+						number: typeof a === 'number' ? a : (a.number ?? null)
+					}));
 
 					let result: string;
 					switch (functionType) {
 						case 'count':
-							result = anytypeIdArray.length.toString();
+							result = normalizedArray.length.toString();
 							break;
 						case 'sum':
-							result = this.calculateSum(prop.rollup.array).toString();
+							result = this.calculateSum(normalizedArray).toString();
 							break;
 						case 'average':
-							result = this.calculateAverage(prop.rollup.array).toString();
+							result = this.calculateAverage(normalizedArray).toString();
 							break;
 						case 'min':
-							result = this.calculateMin(prop.rollup.array).toString();
+							result = this.calculateMin(normalizedArray).toString();
 							break;
 						case 'max':
-							result = this.calculateMax(prop.rollup.array).toString();
+							result = this.calculateMax(normalizedArray).toString();
 							break;
 						case 'show_original':
-							result = anytypeIdArray.join(', ');
+							result = normalizedArray.map((a: any) => a.id).filter(Boolean).join(', ');
 							break;
 						default:
 							result = `_notion_rollup: [rollup: ${functionType}(${propName})]`;
@@ -58,21 +61,21 @@ export class RelationResolver {
 	}
 
 	private calculateSum(array: any[]): number {
-		return array.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+		return array.reduce((acc, curr) => acc + (typeof curr.number === 'number' ? curr.number : 0), 0);
 	}
 
 	private calculateAverage(array: any[]): number {
-		const numbers = array.filter(v => typeof v === 'number');
-		return numbers.length ? this.calculateSum(numbers) / numbers.length : 0;
+		const numbers = array.filter(v => typeof v.number === 'number').map(v => v.number);
+		return numbers.length ? numbers.reduce((a, b) => a + b, 0) / numbers.length : 0;
 	}
 
 	private calculateMin(array: any[]): number {
-		const numbers = array.filter(v => typeof v === 'number');
+		const numbers = array.filter(v => typeof v.number === 'number').map(v => v.number);
 		return numbers.length ? Math.min(...numbers) : 0;
 	}
 
 	private calculateMax(array: any[]): number {
-		const numbers = array.filter(v => typeof v === 'number');
+		const numbers = array.filter(v => typeof v.number === 'number').map(v => v.number);
 		return numbers.length ? Math.max(...numbers) : 0;
 	}
 }

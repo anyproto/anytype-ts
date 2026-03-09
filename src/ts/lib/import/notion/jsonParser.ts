@@ -46,7 +46,6 @@ export class JsonParser {
 
 	private convertPage(json: any): NotionPage {
 		const page = { ...json };
-		// Map properties
 		const mappedProperties: Record<string, any> = {};
 		for (const key in page.properties) {
 			const prop = page.properties[key];
@@ -58,7 +57,15 @@ export class JsonParser {
 	}
 
 	private convertDatabase(json: any): NotionDatabase {
-		return json as NotionDatabase; // Mapping logic can be expanded
+		const db = { ...json };
+		const mappedProperties: Record<string, any> = {};
+		for (const key in db.properties) {
+			const prop = db.properties[key];
+			const mappedType = NOTION_PROPERTY_TYPE_MAP[prop.type as keyof typeof NOTION_PROPERTY_TYPE_MAP];
+			mappedProperties[key] = { ...prop, _mappedType: mappedType };
+		}
+		db.properties = mappedProperties;
+		return db;
 	}
 
 	private buildBlockTree(parentId: string, blockMap: Map<string, NotionBlock[]>): any[] {

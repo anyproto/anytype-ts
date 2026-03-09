@@ -73,28 +73,53 @@ export interface NotionRichTextAnnotations {
   color: string;
 }
 
-export interface NotionRichText {
-  type: 'text' | 'mention' | 'equation';
-  text?: { content: string; link: { url: string } | null };
-  annotations: NotionRichTextAnnotations;
+export type NotionRichText = NotionRichTextText | NotionRichTextMention | NotionRichTextEquation;
+
+export interface NotionRichTextBase {
   plain_text: string;
   href: string | null;
-  mention?: {
-    type: 'page' | 'date' | 'user';
-    page?: { id: string };
-    date?: { start: string; end?: string; time_zone?: string };
-    user?: { id: string; name?: string };
-  };
+  annotations: NotionRichTextAnnotations;
 }
+
+export interface NotionRichTextText extends NotionRichTextBase {
+  type: 'text';
+  text: { content: string; link: { url: string } | null };
+}
+
+export interface NotionRichTextEquation extends NotionRichTextBase {
+  type: 'equation';
+  equation: { expression: string };
+}
+
+export interface NotionRichTextMention extends NotionRichTextBase {
+  type: 'mention';
+  mention: NotionMention;
+}
+
+export type NotionMention =
+  | { type: 'page'; page: { id: string } }
+  | { type: 'database'; database: { id: string } }
+  | { type: 'date'; date: { start: string; end?: string; time_zone?: string } }
+  | { type: 'user'; user: { id: string; name?: string } }
+  | { type: 'link_preview'; link_preview: { url: string } }
+  | { type: 'template_mention'; template_mention: { type: string; template_mention_date?: string; template_mention_user?: string } };
+
+export type PageParent =
+  | { type: 'database_id'; database_id: string }
+  | { type: 'page_id'; page_id: string }
+  | { type: 'workspace'; workspace: true }
+  | { type: 'block_id'; block_id: string };
+
+export type PropertyMap = Record<string, unknown>;
 
 export interface NotionPage {
   object: 'page';
   id: string;
   created_time: string;
   last_edited_time: string;
-  parent: any;
+  parent: PageParent;
   archived: boolean;
-  properties: Record<string, any>;
+  properties: PropertyMap;
   url: string;
 }
 
@@ -103,27 +128,23 @@ export interface NotionDatabase {
   id: string;
   title: NotionRichText[];
   description: NotionRichText[];
-  properties: Record<string, any>;
+  properties: PropertyMap;
 }
 
 export interface NotionBlock {
   object: 'block';
   id: string;
-  parent: any;
-  type: string;
+  parent: PageParent;
+  type: NotionBlockType;
   has_children: boolean;
-  [key: string]: any; // type-specific payload
-}
-
-export interface NotionWorkspace {
-  pages: NotionPage[];
-  databases: NotionDatabase[];
+  [key: string]: unknown; // Strict base payload
 }
 
 export type AnytypeMarkType = 'bold' | 'italic' | 'strikethrough' | 'underline' | 'code' | 'color' | 'link' | 'date' | 'object';
 
 export function mapNotionColor(notionColor: string): string {
   const map: Record<string, string> = {
+    'default': '#37352f', // Neutral text color default
     'gray': '#787774',
     'brown': '#9F6B53',
     'orange': '#D9730D',
@@ -143,5 +164,5 @@ export function mapNotionColor(notionColor: string): string {
     'pink_background': '#FAF1F5',
     'red_background': '#FDEBEC',
   };
-  return map[notionColor] || notionColor;
+  return map[notionColor] || map['default'];
 }

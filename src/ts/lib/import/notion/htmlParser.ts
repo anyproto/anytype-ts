@@ -58,20 +58,21 @@ export class HtmlParser {
 	}
 
 	private createListBlock(type: AnytypeBlockType, node: HTMLElement): BlockNode {
-		// Handle list items. In Notion HTML, list items are usually li or div within a list container.
 		const items = Array.from(node.querySelectorAll('li, .list-item'));
+		const parentBlock: BlockNode = { type, text: '', children: [], marks: [] };
+
 		if (items.length > 0) {
-			const firstItem = items[0] as HTMLElement;
-			const { text, marks } = this.extractTextAndMarks(firstItem);
-			const block: BlockNode = { type, text, children: [], marks };
-			// Subsequent items could be siblings or we handle the list as multiple blocks.
-			// Simplified: we treat each list item as a separate block at the caller level usually,
-			// or group them. Here we just return the first one as representative if it's a wrapper,
-			// but correctly we should map lists to multiple blocks.
-			// For simplicity in this mock-up, return the first item's content.
-			return block;
+			for (const item of items) {
+				const { text, marks } = this.extractTextAndMarks(item as HTMLElement);
+				parentBlock.children.push({ type: 'text', text, children: [], marks });
+			}
+		} else {
+			const { text, marks } = this.extractTextAndMarks(node);
+			parentBlock.text = text;
+			parentBlock.marks = marks;
 		}
-		return this.createTextBlock(type, node);
+
+		return parentBlock;
 	}
 
 	private createTodoListBlock(node: HTMLElement): BlockNode {
@@ -86,7 +87,14 @@ export class HtmlParser {
 	private createToggleBlock(node: HTMLElement): BlockNode {
 		const summary = node.querySelector('summary') || node;
 		const block = this.createTextBlock('toggle', summary as HTMLElement);
-		// Children would be parsed recursively here
+
+		// Parse children
+		const childNodes = Array.from(node.children).filter(el => el.tagName !== 'SUMMARY');
+		for (const child of childNodes) {
+			const parsedChild = this.parseNode(child as HTMLElement);
+			if (parsedChild) block.children.push(parsedChild);
+		}
+
 		return block;
 	}
 
@@ -103,7 +111,22 @@ export class HtmlParser {
 	}
 
 	private createTableBlock(node: HTMLElement): BlockNode {
-		return { type: 'table', text: '', children: [], marks: [] };
+		const block: BlockNode = { type: 'table', text: '', children: [], marks: [] };
+
+		const rows = node.querySelectorAll('tr');
+		for (const row of Array.from(rows)) {
+			const rowBlock: BlockNode = { type: 'tableRow', text: '', children: [], marks: [] };
+
+			const cells = row.querySelectorAll('td, th');
+			for (const cell of Array.from(cells)) {
+				const { text, marks } = this.extractTextAndMarks(cell as HTMLElement);
+				rowBlock.children.push({ type: 'text', text, children: [], marks }); // Simulate table cell
+			}
+
+			block.children.push(rowBlock);
+		}
+
+		return block;
 	}
 
 	private extractTextAndMarks(node: HTMLElement): { text: string; marks: any[] } {

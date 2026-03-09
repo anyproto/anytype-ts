@@ -24,6 +24,7 @@ export class ImportManager {
 	}
 
 	async startImport(zipFile: string, totalFiles: number): Promise<string> {
+		this._cancelRequested = false;
 		const importId = Date.now().toString();
 		const zipCopyPath = path.join(this.importDir, `notion-${importId}.zip`);
 		const checkpointPath = path.join(this.importDir, `notion-${importId}.json`);
@@ -46,19 +47,23 @@ export class ImportManager {
 	}
 
 	async processBatch(batch: string[]): Promise<void> {
-		if (this._cancelRequested) {
-			this.currentState!.status = 'cancelled';
-			this.saveCheckpoint(this.currentState!.checkpointPath!, this.currentState!);
-			return;
-		}
-
 		for (const fileId of batch) {
+			if (this._cancelRequested) {
+				this.currentState!.status = 'cancelled';
+				this.saveCheckpoint(this.currentState!.checkpointPath!, this.currentState!);
+				return;
+			}
+
 			// Mock process file
 			this.currentState!.progress++;
 			this.currentState!.currentFileId = fileId;
 
 			// Simulate yield
 			await new Promise(resolve => setTimeout(resolve, 0));
+		}
+
+		if (this.currentState!.progress === this.currentState!.total) {
+			this.currentState!.status = 'completed';
 		}
 
 		this.saveCheckpoint(this.currentState!.checkpointPath!, this.currentState!);
@@ -69,6 +74,7 @@ export class ImportManager {
 	}
 
 	async resumeImport(importId: string): Promise<ImportState> {
+		this._cancelRequested = false;
 		const checkpointPath = path.join(this.importDir, `notion-${importId}.json`);
 		if (fs.existsSync(checkpointPath)) {
 			const checkpoint = JSON.parse(fs.readFileSync(checkpointPath, 'utf8'));

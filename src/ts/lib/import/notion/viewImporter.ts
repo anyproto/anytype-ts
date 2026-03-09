@@ -56,7 +56,13 @@ export class ViewImporter {
 			greater_than: 'gt',
 			less_than: 'lt'
 		};
-		return map[condition] || 'eq';
+
+		if (condition in map) {
+			return map[condition];
+		}
+
+		// Preserve unknown conditions instead of silently coercing to 'eq'
+		return condition;
 	}
 
 	private mapSorts(notionSorts: any[]): any[] {
