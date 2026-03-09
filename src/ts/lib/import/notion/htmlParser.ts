@@ -1,4 +1,4 @@
-import { AnytypeBlockType, NOTION_BLOCK_TYPE_MAP, NotionRichText } from './types';
+import { AnytypeBlockType } from './types';
 
 // Assuming basic types for internal block representation for the converter
 export interface BlockNode {
@@ -41,7 +41,7 @@ export class HtmlParser {
 		if (node.tagName === 'HR' || node.classList.contains('divider')) return { type: 'divider', text: '', children: [], marks: [] };
 		if (node.classList.contains('image')) return this.createMediaBlock('image', node);
 		if (node.classList.contains('video')) return this.createMediaBlock('video', node);
-		if (node.classList.contains('bookmark')) return this.createBookmarkBlock(node);
+		if (node.classList.contains('bookmark')) return this.createMediaBlock('bookmark', node);
 		if (node.tagName === 'TABLE' || node.classList.contains('simple-table')) return this.createTableBlock(node);
 
 		// Fallback to text (paragraph)
@@ -99,15 +99,23 @@ export class HtmlParser {
 	}
 
 	private createMediaBlock(type: AnytypeBlockType, node: HTMLElement): BlockNode {
+		let url = '';
+		const img = node.querySelector('img') as HTMLImageElement;
+		const video = node.querySelector('video') as HTMLVideoElement;
+		const source = node.querySelector('source') as HTMLSourceElement;
 		const a = node.querySelector('a') as HTMLAnchorElement;
-		const url = a ? a.getAttribute('href') || '' : '';
-		return { type, text: '', children: [], marks: [], url };
-	}
 
-	private createBookmarkBlock(node: HTMLElement): BlockNode {
-		const a = node.querySelector('a') as HTMLAnchorElement;
-		const url = a ? a.getAttribute('href') || '' : '';
-		return { type: 'bookmark', text: '', children: [], marks: [], url };
+		if (img && (img.src || img.dataset.src)) {
+			url = img.src || img.dataset.src || '';
+		} else if (video && video.src) {
+			url = video.src;
+		} else if (source && source.src) {
+			url = source.src;
+		} else if (a && a.href) {
+			url = a.href;
+		}
+
+		return { type, text: '', children: [], marks: [], url };
 	}
 
 	private createTableBlock(node: HTMLElement): BlockNode {

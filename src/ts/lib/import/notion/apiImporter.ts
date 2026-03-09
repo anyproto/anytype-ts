@@ -1,5 +1,5 @@
 import { NotionApiClient } from './apiClient';
-import { NotionWorkspace } from './types';
+import { NotionWorkspace, NotionPage } from './types';
 
 export class ApiImporter {
 	private readonly apiClient: NotionApiClient;
@@ -31,7 +31,7 @@ export class ApiImporter {
 			}
 
 			if (typeResult.object === 'page') {
-				const page = await this.fetchPageWithBlocks(id);
+				const page = await this.fetchPageWithBlocks(typeResult);
 				this.workspace.pages.push(page);
 			} else if (typeResult.object === 'database') {
 				this.workspace.databases.push(typeResult);
@@ -46,19 +46,25 @@ export class ApiImporter {
 	}
 
 	private async fetchDatabasePages(databaseId: string) {
-		const pages = await this.apiClient.getWorkspaceTree(); // Ideally use queryDatabase, mocking here
-		for (const page of pages.results || []) {
-			if (page.object === 'page' && page.parent?.database_id === databaseId) {
-				const pageWithBlocks = await this.fetchPageWithBlocks(page.id);
-				this.workspace.pages.push(pageWithBlocks);
+		let hasMore = true;
+		let cursor: string | undefined;
+
+		while (hasMore) {
+			const queryResult = await this.apiClient.queryDatabase(databaseId, cursor);
+			for (const page of queryResult.results || []) {
+				if (page.object === 'page' && page.parent?.database_id === databaseId) {
+					const pageWithBlocks = await this.fetchPageWithBlocks(page);
+					this.workspace.pages.push(pageWithBlocks);
+				}
 			}
+			hasMore = queryResult.has_more;
+			cursor = queryResult.next_cursor;
 		}
 	}
 
-	private async fetchPageWithBlocks(pageId: string): Promise<any> {
-		const page = await this.apiClient.getPage(pageId);
-		const blocks = await this.fetchBlocksRecursively(pageId);
-		(page as any)._parsedBlocks = blocks;
+	private async fetchPageWithBlocks(page: NotionPage): Promise<NotionPage> {
+		const blocks = await this.fetchBlocksRecursively(page.id);
+		page._parsedBlocks = blocks;
 		return page;
 	}
 
@@ -69,6 +75,11 @@ export class ApiImporter {
 
 		while (hasMore) {
 			const children = await this.apiClient.getBlockChildren(parentId, cursor);
+
+			if (!children || !Array.isArray(children.results)) {
+				console.warn(`getBlockChildren returned malformed results for parentId ${parentId}`);
+				break;
+			}
 
 			for (const block of children.results) {
 				if (block.has_children) {

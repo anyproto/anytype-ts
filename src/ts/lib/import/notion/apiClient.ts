@@ -28,6 +28,12 @@ export class NotionApiClient {
 		return this.enqueueRequest(() => this.fetchNotionAPI(url));
 	}
 
+	async queryDatabase(databaseId: string, cursor?: string): Promise<any> {
+		const url = `databases/${databaseId}/query`;
+		const body = cursor ? JSON.stringify({ start_cursor: cursor }) : undefined;
+		return this.enqueueRequest(() => this.fetchNotionAPI(url, { method: "POST", body }));
+	}
+
 	async getWorkspaceTree(): Promise<any> {
 		return this.enqueueRequest(() => this.fetchNotionAPI('search', { method: 'POST', body: JSON.stringify({ query: '', sort: { direction: 'ascending', timestamp: 'last_edited_time' } }) }));
 	}

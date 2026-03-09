@@ -1,10 +1,34 @@
-import { NotionDatabase } from './types';
+export interface NotionView {
+	type: string;
+	filters?: any[];
+	sorts?: any[];
+	format?: {
+		table_properties?: any[];
+		board_groups?: any;
+		board_groups2?: any;
+		calendar_properties?: any;
+		timeline_properties?: any;
+		gallery_properties?: any;
+	};
+}
+
+export interface AnytypeViewConfig {
+	type: string;
+	filters: any[];
+	sorts: any[];
+	hiddenProperties: string[];
+	groupBy?: string;
+	dateProperty?: string;
+	startDateProperty?: string;
+	endDateProperty?: string;
+	coverProperty?: string;
+}
 
 export class ViewImporter {
-	importView(notionView: any, database: NotionDatabase): any {
+	importView(notionView: NotionView): AnytypeViewConfig {
 		const anytypeViewType = this.mapViewType(notionView.type);
 
-		const viewConfig: any = {
+		const viewConfig: AnytypeViewConfig = {
 			type: anytypeViewType,
 			filters: this.mapFilters(notionView.filters),
 			sorts: this.mapSorts(notionView.sorts),
@@ -37,7 +61,7 @@ export class ViewImporter {
 		return map[notionType] || 'list';
 	}
 
-	private mapFilters(notionFilters: any[]): any[] {
+	private mapFilters(notionFilters?: any[]): any[] {
 		if (!notionFilters) return [];
 		return notionFilters.map(filter => {
 			const mappedCondition = this.mapFilterCondition(filter.condition);
@@ -65,15 +89,21 @@ export class ViewImporter {
 		return condition;
 	}
 
-	private mapSorts(notionSorts: any[]): any[] {
+	private mapSorts(notionSorts?: any[]): any[] {
 		if (!notionSorts) return [];
-		return notionSorts.map(sort => ({
-			property: sort.property,
-			direction: sort.direction === 'ascending' ? 'asc' : 'desc'
-		}));
+		return notionSorts.map(sort => {
+			let direction = 'asc';
+			if (sort.direction === 'ascending') direction = 'asc';
+			else if (sort.direction === 'descending') direction = 'desc';
+
+			return {
+				property: sort.property,
+				direction
+			};
+		});
 	}
 
-	private mapHiddenProperties(notionProperties: any[]): string[] {
+	private mapHiddenProperties(notionProperties?: any[]): string[] {
 		if (!notionProperties) return [];
 		return notionProperties.filter(prop => !prop.visible).map(prop => prop.property);
 	}

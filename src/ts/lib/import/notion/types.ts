@@ -113,6 +113,7 @@ export type PageParent =
 export type PropertyMap = Record<string, unknown>;
 
 export interface NotionPage {
+  _parsedBlocks?: any[];
   object: 'page';
   id: string;
   created_time: string;

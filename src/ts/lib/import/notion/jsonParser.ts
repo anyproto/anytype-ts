@@ -16,32 +16,45 @@ export class JsonParser {
 
 			try {
 				const json = JSON.parse(content);
-
-				if (json.object === 'page') {
-					pageMap.set(json.id, json as NotionPage);
-					workspace.pages.push(this.convertPage(json));
-				} else if (json.object === 'database') {
-					dbMap.set(json.id, json as NotionDatabase);
-					workspace.databases.push(this.convertDatabase(json));
-				} else if (json.object === 'block') {
-					const block = json as NotionBlock;
-					const parentId = block.parent?.block_id || block.parent?.page_id || 'root';
-					if (!blockMap.has(parentId)) {
-						blockMap.set(parentId, []);
-					}
-					blockMap.get(parentId)!.push(block);
-				}
+				this.processItem(json, workspace, pageMap, dbMap, blockMap);
 			} catch (e) {
-				console.error(`Error parsing JSON file ${filename}:`, e);
+				throw new Error(`Error parsing JSON file ${filename}: ${e}`);
 			}
 		}
 
 		// Attach blocks to pages
 		workspace.pages.forEach(page => {
-			(page as any)._parsedBlocks = this.buildBlockTree(page.id, blockMap);
+			page._parsedBlocks = this.buildBlockTree(page.id, blockMap);
 		});
 
 		return workspace;
+	}
+
+	private processItem(json: any, workspace: NotionWorkspace, pageMap: Map<string, NotionPage>, dbMap: Map<string, NotionDatabase>, blockMap: Map<string, NotionBlock[]>) {
+		if (json.object === 'list' && Array.isArray(json.results)) {
+			for (const item of json.results) {
+				this.processItem(item, workspace, pageMap, dbMap, blockMap);
+			}
+		} else if (json.object === 'page') {
+			if (!pageMap.has(json.id)) {
+				const page = this.convertPage(json);
+				pageMap.set(json.id, page);
+				workspace.pages.push(page);
+			}
+		} else if (json.object === 'database') {
+			if (!dbMap.has(json.id)) {
+				const db = this.convertDatabase(json);
+				dbMap.set(json.id, db);
+				workspace.databases.push(db);
+			}
+		} else if (json.object === 'block') {
+			const block = json as NotionBlock;
+			const parentId = block.parent?.block_id || block.parent?.page_id || 'root';
+			if (!blockMap.has(parentId)) {
+				blockMap.set(parentId, []);
+			}
+			blockMap.get(parentId)!.push(block);
+		}
 	}
 
 	private convertPage(json: any): NotionPage {

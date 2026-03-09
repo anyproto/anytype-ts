@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 import Papa from 'papaparse';
-import { NotionWorkspace, NotionPage, NotionDatabase, NOTION_PROPERTY_TYPE_MAP } from './types';
+import { NotionWorkspace, NotionPage, NotionDatabase } from './types';
 import { HtmlParser } from './htmlParser';
 
 export class ZipParser {
@@ -25,10 +25,11 @@ export class ZipParser {
 			const dbId = this.extractIdFromFilename(csvPath);
 
 			const csvContent = await unzipped.files[csvPath].async('string');
-			const parsedDb = this.parseDatabaseCsv(dbId, csvContent);
+			const rows = this.parseCsvRows(csvContent);
+
+			const parsedDb = this.parseDatabaseCsv(dbId, rows);
 			workspace.databases.push(parsedDb);
 
-			const rows = this.parseCsvRows(csvContent);
 			const headers = rows[0] || [];
 			const idColIndex = headers.findIndex(h => h === 'Notion ID' || h.toLowerCase() === 'id');
 
@@ -53,7 +54,7 @@ export class ZipParser {
 					properties: this.mapRowToProperties(headers, row),
 					url: '',
 					_parsedBlocks: blocks
-				} as any;
+				};
 
 				workspace.pages.push(page);
 			}
@@ -78,7 +79,7 @@ export class ZipParser {
 					properties: { title: { type: 'title', title: [{ plain_text: this.extractTitleFromFilename(htmlPath) }] } },
 					url: '',
 					_parsedBlocks: blocks
-				} as any;
+				};
 
 				workspace.pages.push(page);
 			}
@@ -109,8 +110,7 @@ export class ZipParser {
 		return `row-id-${dbId}-${rowIndex}`;
 	}
 
-	private parseDatabaseCsv(dbId: string, csvContent: string): NotionDatabase {
-		const rows = this.parseCsvRows(csvContent);
+	private parseDatabaseCsv(dbId: string, rows: string[][]): NotionDatabase {
 		const headers = rows[0] || [];
 
 		const properties: Record<string, any> = {};
@@ -129,6 +129,9 @@ export class ZipParser {
 
 	private parseCsvRows(csvContent: string): string[][] {
 		const parsed = Papa.parse(csvContent, { skipEmptyLines: true });
+		if (parsed.errors && parsed.errors.length > 0) {
+			console.warn(`Encountered CSV Parsing Errors:`, parsed.errors);
+		}
 		return parsed.data as string[][];
 	}
 
