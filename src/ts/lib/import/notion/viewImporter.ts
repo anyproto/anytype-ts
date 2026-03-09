@@ -1,21 +1,45 @@
+export interface NotionFilter {
+	property: string;
+	condition: string;
+	value?: unknown;
+}
+
+export interface NotionSort {
+	property: string;
+	direction: string;
+}
+
+export interface NotionViewFormat {
+	table_properties?: Array<{ property: string; visible: boolean }>;
+	board_groups?: { property: string };
+	board_groups2?: { group_by_property: string };
+	calendar_properties?: { property: string };
+	timeline_properties?: { start_property: string; end_property: string };
+	gallery_properties?: { cover_property: string };
+}
+
 export interface NotionView {
 	type: string;
-	filters?: any[];
-	sorts?: any[];
-	format?: {
-		table_properties?: any[];
-		board_groups?: any;
-		board_groups2?: any;
-		calendar_properties?: any;
-		timeline_properties?: any;
-		gallery_properties?: any;
-	};
+	filters?: NotionFilter[];
+	sorts?: NotionSort[];
+	format?: NotionViewFormat;
+}
+
+export interface AnytypeViewFilter {
+	property: string;
+	condition: string;
+	value?: unknown;
+}
+
+export interface AnytypeViewSort {
+	property: string;
+	direction: 'asc' | 'desc';
 }
 
 export interface AnytypeViewConfig {
 	type: string;
-	filters: any[];
-	sorts: any[];
+	filters: AnytypeViewFilter[];
+	sorts: AnytypeViewSort[];
 	hiddenProperties: string[];
 	groupBy?: string;
 	dateProperty?: string;
@@ -61,7 +85,7 @@ export class ViewImporter {
 		return map[notionType] || 'list';
 	}
 
-	private mapFilters(notionFilters?: any[]): any[] {
+	private mapFilters(notionFilters?: NotionFilter[]): AnytypeViewFilter[] {
 		if (!notionFilters) return [];
 		return notionFilters.map(filter => {
 			const mappedCondition = this.mapFilterCondition(filter.condition);
@@ -89,12 +113,11 @@ export class ViewImporter {
 		return condition;
 	}
 
-	private mapSorts(notionSorts?: any[]): any[] {
+	private mapSorts(notionSorts?: NotionSort[]): AnytypeViewSort[] {
 		if (!notionSorts) return [];
 		return notionSorts.map(sort => {
-			let direction = 'asc';
-			if (sort.direction === 'ascending') direction = 'asc';
-			else if (sort.direction === 'descending') direction = 'desc';
+			let direction: 'asc' | 'desc' = 'asc';
+			if (sort.direction === 'descending') direction = 'desc';
 
 			return {
 				property: sort.property,
@@ -103,7 +126,7 @@ export class ViewImporter {
 		});
 	}
 
-	private mapHiddenProperties(notionProperties?: any[]): string[] {
+	private mapHiddenProperties(notionProperties?: Array<{ property: string; visible: boolean }>): string[] {
 		if (!notionProperties) return [];
 		return notionProperties.filter(prop => !prop.visible).map(prop => prop.property);
 	}

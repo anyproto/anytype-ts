@@ -160,6 +160,8 @@ export class HtmlParser {
 					marks.push({ type: 'italic', start, end });
 				} else if (element.tagName === 'S' || element.tagName === 'DEL') {
 					marks.push({ type: 'strikethrough', start, end });
+				} else if (element.tagName === 'U' || element.tagName === 'INS') {
+					marks.push({ type: 'underline', start, end });
 				} else if (element.tagName === 'CODE') {
 					marks.push({ type: 'code', start, end });
 				} else if (element.tagName === 'A') {

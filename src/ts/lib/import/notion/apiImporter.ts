@@ -1,4 +1,4 @@
-import { NotionApiClient } from './apiClient';
+import { NotionApiClient, NotionApiError } from './apiClient';
 import { NotionWorkspace, NotionPage } from './types';
 
 export class ApiImporter {
@@ -23,7 +23,7 @@ export class ApiImporter {
 			try {
 				typeResult = await this.apiClient.getPage(id);
 			} catch (error: any) {
-				if (error.message.includes('404') || error.message.includes('object_not_found')) {
+				if (error instanceof NotionApiError && (error.status === 404 || error.code === 'object_not_found')) {
 					typeResult = await this.apiClient.getDatabase(id);
 				} else {
 					throw error;
@@ -31,7 +31,7 @@ export class ApiImporter {
 			}
 
 			if (typeResult.object === 'page') {
-				const page = await this.fetchPageWithBlocks(typeResult);
+				const page = await this.fetchPageWithBlocks(typeResult as NotionPage);
 				this.workspace.pages.push(page);
 			} else if (typeResult.object === 'database') {
 				this.workspace.databases.push(typeResult);
@@ -53,7 +53,7 @@ export class ApiImporter {
 			const queryResult = await this.apiClient.queryDatabase(databaseId, cursor);
 			for (const page of queryResult.results || []) {
 				if (page.object === 'page' && page.parent?.database_id === databaseId) {
-					const pageWithBlocks = await this.fetchPageWithBlocks(page);
+					const pageWithBlocks = await this.fetchPageWithBlocks(page as NotionPage);
 					this.workspace.pages.push(pageWithBlocks);
 				}
 			}

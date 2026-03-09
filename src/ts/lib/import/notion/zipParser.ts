@@ -32,11 +32,20 @@ export class ZipParser {
 
 			const headers = rows[0] || [];
 			const idColIndex = headers.findIndex(h => h === 'Notion ID' || h.toLowerCase() === 'id');
+			const createdColIndex = headers.findIndex(h => h.toLowerCase().includes('created'));
+			const editedColIndex = headers.findIndex(h => h.toLowerCase().includes('edited'));
 
 			for (let i = 1; i < rows.length; i++) {
 				const row = rows[i];
 				const pageId = this.extractIdFromRow(row, dbId, i, idColIndex); // Stable ID per row
-				const pageHtmlPath = htmlFiles.find(p => p.includes(pageId) && (dirPath === '' || p.startsWith(dirPath)));
+
+				// Stricter html matching logic
+				const pageHtmlPath = htmlFiles.find(p => {
+					if (dirPath !== '' && !p.startsWith(dirPath)) return false;
+					const filename = p.split('/').pop() || '';
+					const idSegment = filename.replace('.html', '').split(' ').pop();
+					return idSegment === pageId;
+				});
 
 				let blocks = [];
 				if (pageHtmlPath) {
@@ -44,14 +53,26 @@ export class ZipParser {
 					blocks = htmlParser.parse(htmlContent);
 				}
 
+				let created_time = new Date().toISOString();
+				let last_edited_time = new Date().toISOString();
+
+				if (createdColIndex !== -1 && row[createdColIndex]) {
+					const parsed = Date.parse(row[createdColIndex]);
+					if (!isNaN(parsed)) created_time = new Date(parsed).toISOString();
+				}
+				if (editedColIndex !== -1 && row[editedColIndex]) {
+					const parsed = Date.parse(row[editedColIndex]);
+					if (!isNaN(parsed)) last_edited_time = new Date(parsed).toISOString();
+				}
+
 				const page: NotionPage = {
 					object: 'page',
 					id: pageId,
-					created_time: new Date().toISOString(), // Mocked or extracted from row if available
-					last_edited_time: new Date().toISOString(),
+					created_time,
+					last_edited_time,
 					parent: { type: 'database_id', database_id: dbId },
 					archived: false,
-					properties: this.mapRowToProperties(headers, row),
+					properties: this.mapRowToProperties(headers, row, parsedDb.properties),
 					url: '',
 					_parsedBlocks: blocks
 				};
@@ -63,8 +84,8 @@ export class ZipParser {
 		// Parse non-database pages
 		for (const htmlPath of htmlFiles) {
 			const pageId = this.extractIdFromFilename(htmlPath);
-			// Check if any database row extracted this page ID or if the ID exists in filename
-			const isDatabasePage = workspace.pages.some(p => p.id === pageId || htmlPath.includes(p.id));
+			// Check if any database row extracted this page ID or if the ID exists in filename exactly
+			const isDatabasePage = workspace.pages.some(p => p.id === pageId || htmlPath.endsWith(` ${p.id}.html`));
 			if (!isDatabasePage && !htmlPath.includes('Export-')) {
 				const htmlContent = await unzipped.files[htmlPath].async('string');
 				const blocks = htmlParser.parse(htmlContent);
@@ -115,7 +136,18 @@ export class ZipParser {
 
 		const properties: Record<string, any> = {};
 		headers.forEach(header => {
-			properties[header] = { type: 'rich_text' };
+			const lowerHeader = header.toLowerCase();
+			let mappedType = 'rich_text';
+
+			if (lowerHeader.includes('date')) mappedType = 'date';
+			else if (lowerHeader.includes('check') || lowerHeader.includes('bool')) mappedType = 'checkbox';
+			else if (lowerHeader.includes('number') || lowerHeader.includes('amount') || lowerHeader.includes('qty')) mappedType = 'number';
+			else if (lowerHeader.includes('select') || lowerHeader.includes('status') || lowerHeader.includes('tag')) mappedType = 'select';
+			else if (lowerHeader.includes('url') || lowerHeader.includes('link')) mappedType = 'url';
+			else if (lowerHeader.includes('email')) mappedType = 'email';
+			else if (lowerHeader.includes('phone')) mappedType = 'phone_number';
+
+			properties[header] = { type: mappedType };
 		});
 
 		return {
@@ -135,11 +167,12 @@ export class ZipParser {
 		return parsed.data as string[][];
 	}
 
-	private mapRowToProperties(headers: string[], row: string[]): Record<string, any> {
+	private mapRowToProperties(headers: string[], row: string[], dbProperties: Record<string, any>): Record<string, any> {
 		const properties: Record<string, any> = {};
 		headers.forEach((header, index) => {
 			const value = row[index] || '';
-			properties[header] = { type: 'rich_text', rich_text: [{ plain_text: value }] };
+			const type = dbProperties[header]?.type || 'rich_text';
+			properties[header] = { type, rich_text: [{ plain_text: value }] };
 		});
 		return properties;
 	}

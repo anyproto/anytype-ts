@@ -1,7 +1,7 @@
 import { NotionWorkspace, NotionPage, NotionDatabase, NotionBlock, NotionBlockType, NOTION_PROPERTY_TYPE_MAP, NOTION_BLOCK_TYPE_MAP } from './types';
 
 export class JsonParser {
-	async parseNotionApiJson(folderPath: string, fileContentsMap: Map<string, string>): Promise<NotionWorkspace> {
+	async parseNotionApiJson(fileContentsMap: Map<string, string>): Promise<NotionWorkspace> {
 		const workspace: NotionWorkspace = {
 			pages: [],
 			databases: []
@@ -62,7 +62,11 @@ export class JsonParser {
 		const mappedProperties: Record<string, any> = {};
 		for (const key in page.properties) {
 			const prop = page.properties[key];
-			const mappedType = NOTION_PROPERTY_TYPE_MAP[prop.type as keyof typeof NOTION_PROPERTY_TYPE_MAP];
+			let mappedType = NOTION_PROPERTY_TYPE_MAP[prop.type as keyof typeof NOTION_PROPERTY_TYPE_MAP];
+			if (!mappedType) {
+				console.warn(`Unknown property type '${prop.type}' on property '${key}'. Defaulting to 'text'.`);
+				mappedType = 'text';
+			}
 			mappedProperties[key] = { ...prop, _mappedType: mappedType };
 		}
 		page.properties = mappedProperties;
@@ -74,7 +78,11 @@ export class JsonParser {
 		const mappedProperties: Record<string, any> = {};
 		for (const key in db.properties) {
 			const prop = db.properties[key];
-			const mappedType = NOTION_PROPERTY_TYPE_MAP[prop.type as keyof typeof NOTION_PROPERTY_TYPE_MAP];
+			let mappedType = NOTION_PROPERTY_TYPE_MAP[prop.type as keyof typeof NOTION_PROPERTY_TYPE_MAP];
+			if (!mappedType) {
+				console.warn(`Unknown property type '${prop.type}' on property '${key}'. Defaulting to 'text'.`);
+				mappedType = 'text';
+			}
 			mappedProperties[key] = { ...prop, _mappedType: mappedType };
 		}
 		db.properties = mappedProperties;

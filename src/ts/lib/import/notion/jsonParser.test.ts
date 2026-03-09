@@ -42,7 +42,7 @@ describe('JsonParser', () => {
 			has_children: false
 		}));
 
-		const workspace = await parser.parseNotionApiJson('mockPath', mockFileContentsMap);
+		const workspace = await parser.parseNotionApiJson(mockFileContentsMap);
 
 		expect(workspace.pages).toHaveLength(1);
 		expect(workspace.databases).toHaveLength(1);

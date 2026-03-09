@@ -4,12 +4,26 @@ interface QueueItem {
 	requestFn: () => Promise<any>;
 	resolve: (value: any) => void;
 	reject: (reason?: any) => void;
+	attempts: number;
+}
+
+export class NotionApiError extends Error {
+	status: number;
+	code?: string;
+
+	constructor(message: string, status: number, code?: string) {
+		super(message);
+		this.name = 'NotionApiError';
+		this.status = status;
+		this.code = code;
+	}
 }
 
 export class NotionApiClient {
 	private readonly token: string;
 	private requestQueue: Array<QueueItem> = [];
 	private isProcessingQueue = false;
+	private readonly MAX_ATTEMPTS = 5;
 
 	constructor(token: string) {
 		this.token = token;
@@ -35,18 +49,36 @@ export class NotionApiClient {
 	}
 
 	async getWorkspaceTree(): Promise<any> {
-		return this.enqueueRequest(() => this.fetchNotionAPI('search', { method: 'POST', body: JSON.stringify({ query: '', sort: { direction: 'ascending', timestamp: 'last_edited_time' } }) }));
+		let hasMore = true;
+		let cursor: string | undefined = undefined;
+		const results: any[] = [];
+
+		while (hasMore) {
+			const body: any = { query: '', sort: { direction: 'ascending', timestamp: 'last_edited_time' } };
+			if (cursor) body.start_cursor = cursor;
+
+			const response = await this.enqueueRequest(() => this.fetchNotionAPI('search', { method: 'POST', body: JSON.stringify(body) }));
+
+			results.push(...(response.results || []));
+			hasMore = response.has_more;
+			cursor = response.next_cursor;
+		}
+		return { results, has_more: false, next_cursor: null, object: 'list' };
 	}
 
 	async downloadFile(url: string): Promise<ArrayBuffer> {
 		const response = await fetch(url);
-		if (!response.ok) throw new Error(`Failed to download file from ${url}`);
+		if (!response.ok) {
+			const redactedUrl = new URL(url);
+			redactedUrl.search = "REDACTED";
+			throw new Error(`Failed to download file from ${redactedUrl.toString()}`);
+		}
 		return response.arrayBuffer();
 	}
 
 	private async enqueueRequest<T>(requestFn: () => Promise<T>): Promise<T> {
 		return new Promise((resolve, reject) => {
-			this.requestQueue.push({ requestFn, resolve, reject });
+			this.requestQueue.push({ requestFn, resolve, reject, attempts: 0 });
 			this.processQueue();
 		});
 	}
@@ -63,10 +95,19 @@ export class NotionApiClient {
 					requestItem.resolve(result);
 					await new Promise(resolve => setTimeout(resolve, 333)); // Rate limit to 3 requests/sec
 				} catch (error) {
-					if (error instanceof Error && error.message.includes('429')) {
+					if (error instanceof NotionApiError && error.status === 429) {
+						requestItem.attempts++;
+						if (requestItem.attempts >= this.MAX_ATTEMPTS) {
+							console.error("Max retries reached for API request.");
+							requestItem.reject(error);
+							continue;
+						}
+
+						// Match retry-after if available in message (we append it below)
 						const retryAfterMatch = error.message.match(/Retry-After: (\d+)/);
-						const waitTime = retryAfterMatch ? parseInt(retryAfterMatch[1], 10) * 1000 : this.calculateBackoff();
-						console.log(`Rate limited, waiting for ${waitTime}ms...`);
+						const waitTime = retryAfterMatch ? parseInt(retryAfterMatch[1], 10) * 1000 : this.calculateBackoff(requestItem.attempts);
+
+						console.log(`Rate limited, waiting for ${waitTime}ms... (Attempt ${requestItem.attempts})`);
 						await new Promise(resolve => setTimeout(resolve, waitTime));
 						this.requestQueue.unshift(requestItem); // Re-queue failed request
 					} else {
@@ -80,10 +121,10 @@ export class NotionApiClient {
 		this.isProcessingQueue = false;
 	}
 
-	private calculateBackoff(): number {
+	private calculateBackoff(attempts: number): number {
 		const baseDelay = 2000;
 		const maxDelay = 64000;
-		const delay = Math.min(baseDelay * Math.pow(2, Math.floor(Math.random() * 5)), maxDelay); // max 5 retries backoff range
+		const delay = Math.min(baseDelay * Math.pow(2, attempts - 1), maxDelay);
 		const jitter = delay * 0.2 * (Math.random() * 2 - 1);
 		return delay + jitter;
 	}
@@ -100,16 +141,23 @@ export class NotionApiClient {
 		const response = await fetch(url, { ...options, headers });
 
 		if (!response.ok) {
-			const errorText = await response.text();
-			const errorMessage = `HTTP Error ${response.status} on ${url}: ${errorText}`;
-			const error = new Error(errorMessage);
+			let errorText = await response.text();
+			let code = undefined;
+			try {
+				const jsonBody = JSON.parse(errorText);
+				if (jsonBody.code) code = jsonBody.code;
+			} catch (e) {
+				// Ignore parse error
+			}
+
+			let errorMessage = `HTTP Error ${response.status} on ${url}: ${errorText}`;
 			if (response.status === 429) {
 				const retryAfter = response.headers.get('Retry-After');
 				if (retryAfter) {
-					error.message += ` | Retry-After: ${retryAfter}`;
+					errorMessage += ` | Retry-After: ${retryAfter}`;
 				}
 			}
-			throw error;
+			throw new NotionApiError(errorMessage, response.status, code);
 		}
 
 		return response.json();
