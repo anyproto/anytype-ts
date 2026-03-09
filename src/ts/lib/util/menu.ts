@@ -128,6 +128,7 @@ class UtilMenu {
 			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
+			{ type: I.BlockType.Excalidraw, id: 'excalidraw', icon: 'pencil', lang: 'Drawing', aliases: [ 'drawing', 'sketch', 'excalidraw' ] },
 		].map(this.mapperBlock);
 	};
 

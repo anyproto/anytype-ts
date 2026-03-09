@@ -33,6 +33,7 @@ export enum BlockType {
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
 	Chat				 = 'chat',
+	Excalidraw			 = 'excalidraw',
 };
 
 export enum BlockPosition {
@@ -199,6 +200,7 @@ export interface Block {
 	isEmbedSketchfab?(): boolean;
 	isEmbedBilibili?(): boolean;
 	isEmbedDrawio?():boolean;
+	isExcalidraw?(): boolean;
 	isEmbedExcalidraw?(): boolean;
 
 	isText?(): boolean;

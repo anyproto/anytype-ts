@@ -217,13 +217,19 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` } : null;
 				const copy = hasCommon ? { id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') } : null;
 				const remove = hasCommon ? { id: 'remove', icon: 'remove', name: deleteName, caption: 'Del' } : null;
+				const hasExcalidraw = block.isExcalidraw();
 				const download = hasFile ? { id: 'download', icon: 'download', name: translate('commonDownload') } : null;
 				const copyUrl = hasBookmark ? { id: 'copyUrl', icon: 'pageLink', name: translate('libMenuCopyUrl') } : null;
+				const exportExcalidraw = hasExcalidraw ? { id: 'exportExcalidraw', icon: 'export', name: 'Export drawing...' } : null;
 				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') } : null;
 				const newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
 				const newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
 
-				if (hasLink) {
+				if (hasExcalidraw) {
+					actionSections = [
+						{ children: [ exportExcalidraw, move, clipboardCopy, clipboardCut, clipboardPaste, copy, remove ] }
+					];
+				} else if (hasLink) {
 					actionSections = [
 						{ children: [ move, clipboardCopy, clipboardCut, clipboardPaste, copy, remove ] },
 						{ children: [ newTab, newWindow ] },
@@ -590,6 +596,19 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					window.setTimeout(() => Renderer.send('paste'), 50);
 				}, J.Constant.delay.menu);
 				return;
+			};
+
+			case 'exportExcalidraw': {
+				import('../../../lib/export/excalidraw/exporter').then(mod => {
+					const elements = JSON.parse(block.fields.excalidraw_elements || '[]');
+					const appState = JSON.parse(block.fields.excalidraw_app_state || '{}');
+					const files = JSON.parse(block.fields.excalidraw_files || '{}');
+					mod.exportToExcalidraw(elements, appState, files).then((jsonStr: string) => {
+						Action.downloadData(jsonStr, 'drawing.excalidraw', 'application/json');
+					});
+				});
+				close();
+				break;
 			};
 
 			case 'download': {

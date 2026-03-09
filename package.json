@@ -65,6 +65,7 @@
 		"@rspack/plugin-react-refresh": "^1.0.0",
 		"@tomjs/electron-devtools-installer": "^3.0.1",
 		"@types/history": "^4.7.8",
+		"@types/jest": "^30.0.0",
 		"@types/jquery": "^3.5.33",
 		"@types/katex": "^0.16.7",
 		"@types/lodash": "^4.14.165",

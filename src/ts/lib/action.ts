@@ -1153,6 +1153,16 @@ class Action {
 		analytics.event('AddTab', { route: analyticsRoute, uxType });
 	};
 
+
+	downloadData(data: string, filename: string, mimeType: string) {
+		const blob = new Blob([data], { type: mimeType });
+		const url = URL.createObjectURL(blob);
+
+		this.openDirectoryDialog({ buttonLabel: 'Download' }, paths => {
+			Renderer.send('download', url, { directory: paths[0], filename });
+		});
+	}
+
 };
 
 export default new Action();
