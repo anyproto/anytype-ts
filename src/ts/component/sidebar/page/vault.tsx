@@ -8,7 +8,7 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel, GroupDirection, KeyboardZoneType } from 'Lib';
-import { usePanelIndicator, useKeyboardGroup } from 'Hook';
+import { useKeyboardGroup } from 'Hook';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 44;
@@ -25,7 +25,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
 	const pressed = useRef(new Set());
-	const containerRef = useRef<HTMLElement>(null);
 	const headRef = useRef<HTMLDivElement>(null);
 	const filterWrapperRef = useRef<HTMLDivElement>(null);
 	const bodyRef = useRef<HTMLDivElement>(null);
@@ -243,13 +242,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		fixedWidth: true,
 		keyMapper: index => items[index].id,
 	});
-
-	// Resolve container ref from parent element ID
-	useEffect(() => {
-		containerRef.current = document.getElementById(getId());
-	}, []);
-
-	usePanelIndicator(containerRef, FocusedPanel.Vault);
 
 	useKeyboardGroup(headRef, {
 		id: 'vault-head',

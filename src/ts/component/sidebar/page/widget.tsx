@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, FocusedPanel, GroupDirection } from 'Lib';
-import { usePanelIndicator, useKeyboardGroup } from 'Hook';
+import { useKeyboardGroup } from 'Hook';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -19,18 +19,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const canWrite = U.Space.canMyParticipantWrite();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const headRef = useRef<HTMLDivElement>(null);
-	const containerRef = useRef<HTMLElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
-
-	// Resolve container ref from parent element ID
-	useEffect(() => {
-		containerRef.current = document.getElementById(getId());
-	}, []);
-
-	usePanelIndicator(containerRef, FocusedPanel.Widget);
 
 	useKeyboardGroup(headRef, {
 		id: 'widget-head',

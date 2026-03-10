@@ -130,15 +130,11 @@ class KeyboardNavigation {
 				return true;
 			};
 
-			// Tab / Shift+Tab: exit capture and move to next/prev group
+			// Tab / Shift+Tab: exit capture and cycle to next panel
 			if (key === Key.tab) {
 				e.preventDefault();
 				this.exitCapture();
-
-				const sortedGroups = this.getVisibleGroupsForPanel(panel);
-				const groupIndex = sortedGroups.findIndex(g => g.id === this.activeGroupId);
-
-				this.tabBetweenGroups(sortedGroups, groupIndex, e.shiftKey ? -1 : 1);
+				this.tabCyclePanel();
 				return true;
 			};
 
@@ -199,7 +195,7 @@ class KeyboardNavigation {
 
 		const group = this.activeGroupId ? this.groups.get(this.activeGroupId) : null;
 
-		// Tab / Shift+Tab: move between groups within the focused panel
+		// Tab: cycle to next panel. First Tab into a panel highlights first/last item.
 		if (key === Key.tab) {
 			e.preventDefault();
 
@@ -212,8 +208,7 @@ class KeyboardNavigation {
 				return true;
 			};
 
-			const gi = sortedGroups.findIndex(g => g.id === this.activeGroupId);
-			this.tabBetweenGroups(sortedGroups, gi, e.shiftKey ? -1 : 1);
+			this.tabCyclePanel();
 			return true;
 		};
 
@@ -389,13 +384,8 @@ class KeyboardNavigation {
 		this.onPanelEnter(panel);
 	};
 
-	onPanelEnter (panel: FocusedPanel) {
+	onPanelEnter (_panel: FocusedPanel) {
 		this.clearHighlight();
-
-		const sortedGroups = this.getVisibleGroupsForPanel(panel);
-		if (sortedGroups.length) {
-			this.highlightFirstGroupFirstItem(sortedGroups);
-		};
 	};
 
 	onPanelLeave () {
@@ -435,21 +425,9 @@ class KeyboardNavigation {
 	};
 
 	/**
-	 * Tab-specific group movement: when no next group is found, cycle to next panel.
+	 * Tab always cycles to the next panel. Arrow keys handle navigation between groups within a panel.
 	 */
-	private tabBetweenGroups (sortedGroups: GroupRegistration[], currentIndex: number, direction: number) {
-		for (let i = currentIndex + direction; (i >= 0) && (i < sortedGroups.length); i += direction) {
-			const nextGroup = sortedGroups[i];
-			const items = this.getVisibleItems(nextGroup);
-
-			if (items.length) {
-				const idx = direction > 0 ? 0 : items.length - 1;
-				this.setHighlight(nextGroup, idx);
-				return;
-			};
-		};
-
-		// No more groups in this panel — cycle to next panel
+	private tabCyclePanel () {
 		this.clearHighlight();
 		keyboard.router.cycleFocus();
 	};

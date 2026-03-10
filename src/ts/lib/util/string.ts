@@ -400,7 +400,7 @@ class UtilString {
 		const param: any = { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
-			ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel|ftp|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z][a-z0-9+.\-]*):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			FORBID_ATTR: [],
 		};
 
