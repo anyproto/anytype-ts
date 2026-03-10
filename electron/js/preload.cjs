@@ -68,7 +68,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		const fn = path.parse(name).base;
 		const fp = path.join(tmpPath(), fn);
 
-		options.mode = 0o666;
+		options.mode = 0o644;
 
 		fs.writeFileSync(fp, data, options);
 		return fp;

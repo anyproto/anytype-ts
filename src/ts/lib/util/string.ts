@@ -396,15 +396,11 @@ class UtilString {
 			return s;
 		};
 
-		if (!UNSAFE_HTML_PATTERN.test(s)) {
-			return s;
-		};
-
 		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ].concat(Object.values(Mark.getTags()));
 		const param: any = { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
-			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel|ftp|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			FORBID_ATTR: [],
 		};
 

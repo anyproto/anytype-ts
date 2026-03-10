@@ -426,6 +426,20 @@ class Api {
 	};
 
 	openUrl (win, url) {
+		const dangerous = [ 'javascript:', 'data:', 'ws:', 'wss:', 'chrome:', 'about:', 'ssh:', 'blob:', 'ms-msdt:', 'search-ms:', 'ms-officecmd:', 'vbscript:' ];
+
+		try {
+			const scheme = new URL(url).protocol.toLowerCase();
+
+			if (dangerous.includes(scheme)) {
+				Util.log('error', '[Api].openUrl: Blocked scheme:', scheme);
+				return;
+			};
+		} catch (e) {
+			Util.log('error', '[Api].openUrl: Invalid URL:', url);
+			return;
+		};
+
 		shell.openExternal(url);
 	};
 
@@ -445,7 +459,10 @@ class Api {
 			});
 		} else 
 		if (is.windows) {
-			exec(`start "" "${fp}"`, { shell: 'cmd.exe' }, (err) => {
+			// Escape cmd.exe metacharacters to prevent command injection
+			const safeFp = fp.replace(/"/g, '').replace(/%/g, '%%').replace(/!/g, '^^!');
+
+			exec(`start "" "${safeFp}"`, { shell: 'cmd.exe' }, (err) => {
 				if (err) {
 					Util.log('error', '[Api].openPath error:', err);
 				};

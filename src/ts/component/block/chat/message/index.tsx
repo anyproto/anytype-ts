@@ -361,7 +361,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										<div
 											ref={textRef}
 											className="text"
-											dangerouslySetInnerHTML={{ __html: text }}
+											dangerouslySetInnerHTML={{ __html: U.String.sanitize(text, true) }}
 										/>
 										<div className="time">
 											<Icon className={cns.join(' ')} />

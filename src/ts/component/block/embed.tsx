@@ -476,7 +476,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			switch (processor) {
 			default: {
-				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
+				const sandbox = U.Embed.allowJs(processor) ? [ 'allow-scripts', 'allow-popups' ] : [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
@@ -568,6 +568,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 					win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 						const oe = e.originalEvent as any;
+
+						if (oe.origin && (oe.origin !== 'null') && !oe.origin.match(/^(file:\/\/|https?:\/\/localhost[:/])/)) {
+							return;
+						};
+
 						const { type, height, blockId, url } = oe.data;
 
 						if (blockId != block.id) {

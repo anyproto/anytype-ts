@@ -25,7 +25,7 @@ const SORT_IDS = [
 	'BlockDataviewViewDelete',
 ];
 
-const SKIP_IDS = [ 'BlockSetCarriage' ];
+const SKIP_IDS = [ 'BlockSetCarriage', 'WalletCreateSession', 'WalletRecover', 'WalletConvert' ];
 const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
 
 /**

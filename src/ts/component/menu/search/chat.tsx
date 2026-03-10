@@ -202,11 +202,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { highlight, highlightRanges } = item;
 
 		if (!highlight) {
-			return item.message?.content?.text || '';
+			return U.String.sanitize(item.message?.content?.text || '');
 		};
 
 		if (!highlightRanges || !highlightRanges.length) {
-			return highlight;
+			return U.String.sanitize(highlight);
 		};
 
 		let result = '';

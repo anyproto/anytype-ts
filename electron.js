@@ -225,7 +225,7 @@ function createWindow () {
 			};
 		};
 
-		if (Api[cmd]) {
+		if ((typeof Api[cmd] === 'function') && Object.getOwnPropertyNames(Object.getPrototypeOf(Api)).includes(cmd) && (cmd !== 'constructor')) {
 			return Api[cmd].apply(Api, [ win ].concat(args || []));
 		} else {
 			console.error('[Api] method not defined:', cmd);
