@@ -2618,7 +2618,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const bt = blocks.offset().top;
 				const bh = blocks.outerHeight();
 
-				let height = ch - ct - bt - bh;
+				let height = ch - ct - bt - bh - 8;
 
 				if (bh > ch) {
 					height = Math.max(ch / 2, height);
