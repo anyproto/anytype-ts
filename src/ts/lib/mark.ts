@@ -4,7 +4,8 @@ import { I, U } from 'Lib';
 const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {
 	if (!isNaN(Number(i))) {
-		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+		const type = Number(i) as I.MarkType;
+		Tags[i] = type == I.MarkType.Link ? 'a' : `markup${I.MarkType[i].toLowerCase()}`;
 	};
 };
 
