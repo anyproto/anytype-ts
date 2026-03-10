@@ -4,9 +4,10 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, FocusedPanel } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, FocusedPanel, GroupDirection } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
+import { useKeyboardGroup } from 'Hook';
 
 import Attachment from './attachment';
 
@@ -1834,6 +1835,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			</>
 		);
 	};
+
+	useKeyboardGroup(nodeRef, {
+		id: 'chatForm',
+		panel: FocusedPanel.Page,
+		direction: GroupDirection.Horizontal,
+		itemSelector: '.plus, #messageBox, .send, .emoji',
+	});
 
 	useEffect(() => {
 		init();

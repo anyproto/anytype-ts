@@ -205,6 +205,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const polyRef = useRef(null);
 	const isAnimating = useRef(false);
 	const framePosition = useRef(0);
+	const flipXRef = useRef(false);
 
 	const getContext = () => ({
 		getChildRef: () => childRef.current,
@@ -488,6 +489,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 					break;
 			};
 
+			flipXRef.current = flipX;
+
 			if (!noBorderX) {
 				x = Math.max(borderLeft, x);
 				x = Math.min(ww - width - J.Size.menuBorder, x);
@@ -523,7 +526,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 					h = height;
 					top = y;
 
-					if (flipX || I.MenuDirection.Right) {
+					if (flipX || (horizontal === I.MenuDirection.Right)) {
 						left = x + width;
 						w = Math.abs(x + width - coords.x) - offset;
 						transform = 'scaleX(-1)';
@@ -615,7 +618,6 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const close = (callBack?: () => void) => {
 		S.Menu.close(props.id, () => {
-			window.setTimeout(() => rebindPrevious(), S.Menu.getTimeout());
 			callBack?.();
 		});
 	};
@@ -723,8 +725,13 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		};
 
 		if (!commonFilter && !keyboard.isFocused) {
-			shortcutClose.push('arrowleft');
-			shortcutSelect.push('arrowright');
+			if (flipXRef.current) {
+				shortcutClose.push('arrowright');
+				shortcutSelect.push('arrowleft');
+			} else {
+				shortcutClose.push('arrowleft');
+				shortcutSelect.push('arrowright');
+			};
 		};
 
 		keyboard.shortcut(shortcutClose.join(', '), e, () => {
