@@ -152,6 +152,7 @@
 			.grad { bottom: 100%; }
 			.sides { flex-direction: column-reverse; gap: 12px; overflow: hidden; height: 100%; }
 			.side.left { display: flex; justify-content: center; flex-shrink: 0; }
+			.side.left .appSettings.keyboardHighlight { border-radius: 50%; }
 			.side.right { flex-direction: column; gap: 12px; }
 
 			&:hover, &.hover { height: 134px; }

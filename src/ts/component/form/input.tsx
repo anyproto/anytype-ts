@@ -155,6 +155,12 @@ const Input = forwardRef<InputRef, Props>(({
 		addClass('isFocused');
 		keyboard.setFocus(true);
 		keyboard.disableSelection(true);
+
+		// Integrate with keyboard navigation
+		if (inputRef.current) {
+			keyboard.router.navigation.activateForElement(inputRef.current);
+		};
+
 		handleEvent(onFocus, e);
 	};
 

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
 import { J, analytics, I, keyboard, translate } from 'Lib';
@@ -68,6 +69,26 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 			onChangeHandler();
+		});
+
+		keyboard.shortcut('indent, outdent', e, () => {
+			e.preventDefault();
+			onChangeHandler();
+
+			const body = $(nameRef.current?.getNode()).parents('#body');
+			const editables = body.find('.editableWrap .editable');
+			const current = nameRef.current?.getNode()?.find('.editable').get(0);
+
+			if (!current || !editables.length) {
+				return;
+			};
+
+			const idx = editables.index(current);
+			const next = e.shiftKey ? idx - 1 : idx + 1;
+
+			if ((next >= 0) && (next < editables.length)) {
+				$(editables.get(next)).focus();
+			};
 		});
 	};
 

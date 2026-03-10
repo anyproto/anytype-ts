@@ -238,6 +238,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		keyboard.setFocus(true);
 		isFocused.current = true;
 
+		// Integrate with keyboard navigation: if this editable is inside a
+		// registered keyboard group, activate navigation from this element
+		if (editableRef.current) {
+			keyboard.router.navigation.activateForElement(editableRef.current);
+		};
+
 		if (onFocus) {
 			onFocus(e);
 		};
@@ -314,6 +320,13 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			const panel = keyboard.router.focusedPanel;
 			if (!panel || (panel === FocusedPanel.Page)) {
 				setFocus();
+			};
+		};
+
+		return () => {
+			if (isFocused.current) {
+				keyboard.setFocus(false);
+				isFocused.current = false;
 			};
 		};
 	}, []);

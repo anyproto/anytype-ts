@@ -72,6 +72,48 @@ class KeyboardNavigation {
 		this.overflowHandlers.delete(panel);
 	};
 
+	/**
+	 * Called when a text input/editable receives focus (e.g. user clicks on it).
+	 * Finds the keyboard group containing this element and activates it,
+	 * so that Tab/arrow navigation works from this element.
+	 */
+	activateForElement (element: HTMLElement) {
+		for (const [ , group ] of this.groups) {
+			const container = group.getContainer();
+
+			if (!container || !container.contains(element)) {
+				continue;
+			};
+
+			const items = this.getVisibleItems(group);
+			const itemIndex = items.findIndex(item => (item === element) || item.contains(element));
+
+			if (itemIndex === -1) {
+				continue;
+			};
+
+			// Set panel without blurring the active element or dispatching focusPanelChange
+			keyboard.router.focusedPanel = group.panel;
+
+			// Track group/item state
+			this.activeGroupId = group.id;
+			this.activeItemIndex = itemIndex;
+
+			// Enter capture mode for the focused element
+			this.captureElement = element;
+
+			// Remove any existing highlight (the input itself is visually focused)
+			if (this.highlightedElement) {
+				this.highlightedElement.classList.remove('keyboardHighlight');
+				this.highlightedElement = null;
+			};
+
+			return true;
+		};
+
+		return false;
+	};
+
 	handle (panel: FocusedPanel, e: KeyboardEvent): boolean {
 		const key = keyboard.eventKey(e);
 
@@ -80,7 +122,7 @@ class KeyboardNavigation {
 			return false;
 		};
 
-		// Capture mode
+		// Capture mode: a text input is focused within a keyboard group
 		if (this.captureElement) {
 			if (key === Key.escape) {
 				e.preventDefault();
@@ -88,12 +130,31 @@ class KeyboardNavigation {
 				return true;
 			};
 
-			// Up/Down in single-line inputs exits capture and navigates groups
+			// Tab / Shift+Tab: exit capture and move to next/prev group
+			if (key === Key.tab) {
+				e.preventDefault();
+				this.exitCapture();
+
+				const sortedGroups = this.getVisibleGroupsForPanel(panel);
+				const groupIndex = sortedGroups.findIndex(g => g.id === this.activeGroupId);
+
+				this.tabBetweenGroups(sortedGroups, groupIndex, e.shiftKey ? -1 : 1);
+				return true;
+			};
+
+			// Up/Down: exit capture for single-line inputs, or at multiline boundaries
 			if ((key === Key.up) || (key === Key.down)) {
 				const tag = this.captureElement.tagName.toLowerCase();
 				const isMultiline = (tag === 'textarea') || this.captureElement.hasAttribute('contenteditable');
 
-				if (!isMultiline) {
+				let shouldExit = !isMultiline;
+
+				// For multiline non-editor inputs, exit at first/last line
+				if (isMultiline && !this.isInsideEditor(this.captureElement)) {
+					shouldExit = this.isAtMultilineBoundary(this.captureElement, key === Key.up);
+				};
+
+				if (shouldExit) {
 					e.preventDefault();
 					this.exitCapture();
 
@@ -137,6 +198,24 @@ class KeyboardNavigation {
 		};
 
 		const group = this.activeGroupId ? this.groups.get(this.activeGroupId) : null;
+
+		// Tab / Shift+Tab: move between groups within the focused panel
+		if (key === Key.tab) {
+			e.preventDefault();
+
+			if (!group || (group.panel !== panel)) {
+				if (e.shiftKey) {
+					this.highlightLastGroupLastItem(sortedGroups);
+				} else {
+					this.highlightFirstGroupFirstItem(sortedGroups);
+				};
+				return true;
+			};
+
+			const gi = sortedGroups.findIndex(g => g.id === this.activeGroupId);
+			this.tabBetweenGroups(sortedGroups, gi, e.shiftKey ? -1 : 1);
+			return true;
+		};
 
 		// No active group yet
 		if (!group || (group.panel !== panel)) {
@@ -355,6 +434,26 @@ class KeyboardNavigation {
 		};
 	};
 
+	/**
+	 * Tab-specific group movement: when no next group is found, cycle to next panel.
+	 */
+	private tabBetweenGroups (sortedGroups: GroupRegistration[], currentIndex: number, direction: number) {
+		for (let i = currentIndex + direction; (i >= 0) && (i < sortedGroups.length); i += direction) {
+			const nextGroup = sortedGroups[i];
+			const items = this.getVisibleItems(nextGroup);
+
+			if (items.length) {
+				const idx = direction > 0 ? 0 : items.length - 1;
+				this.setHighlight(nextGroup, idx);
+				return;
+			};
+		};
+
+		// No more groups in this panel — cycle to next panel
+		this.clearHighlight();
+		keyboard.router.cycleFocus();
+	};
+
 	private moveBetweenGroups (sortedGroups: GroupRegistration[], currentIndex: number, direction: number, selectFirst: boolean) {
 		for (let i = currentIndex + direction; (i >= 0) && (i < sortedGroups.length); i += direction) {
 			const nextGroup = sortedGroups[i];
@@ -460,6 +559,55 @@ class KeyboardNavigation {
 				this.setHighlight(group, this.activeItemIndex);
 			};
 		};
+	};
+
+	/**
+	 * Checks if the element is inside the block editor (not sidebar/form editors).
+	 */
+	private isInsideEditor (element: HTMLElement): boolean {
+		return !!element.closest('.editorWrapper');
+	};
+
+	/**
+	 * Checks if the cursor is at the first line (for Up) or last line (for Down)
+	 * in a multiline input, so we can exit and navigate to the next group.
+	 */
+	private isAtMultilineBoundary (element: HTMLElement, isUp: boolean): boolean {
+		const sel = window.getSelection();
+
+		if (!sel || !sel.rangeCount) {
+			return true;
+		};
+
+		const range = sel.getRangeAt(0);
+		const text = element.textContent || '';
+
+		if (isUp) {
+			// At the very start of content
+			if (range.startOffset === 0) {
+				const container = range.startContainer;
+				if ((container === element) || (container === element.firstChild) || (container.parentNode === element)) {
+					return true;
+				};
+			};
+		} else {
+			// At the very end of content
+			if (!text.length) {
+				return true;
+			};
+
+			const endContainer = range.endContainer;
+			const endOffset = range.endOffset;
+			const nodeLength = endContainer.nodeType === Node.TEXT_NODE
+				? (endContainer.textContent || '').length
+				: endContainer.childNodes.length;
+
+			if ((endOffset >= nodeLength) && !endContainer.nextSibling) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	private getVisibleGroupsForPanel (panel: FocusedPanel): GroupRegistration[] {

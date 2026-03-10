@@ -330,7 +330,8 @@ class Keyboard {
 		};
 
 		// Zone cycling: Tab cycles between sidebar and page
-		if (!S.Menu.isOpen() && !S.Popup.isOpen() && isMain) {
+		// Skip when actively editing text or when panel navigation is active (Tab moves between groups there)
+		if (!S.Menu.isOpen() && !S.Popup.isOpen() && !this.isEditing() && !this.router.focusedPanel && isMain) {
 			this.shortcut('zoneCycle', e, () => {
 				e.preventDefault();
 				this.setFocus(false);
@@ -1672,7 +1673,28 @@ class Keyboard {
 	setFocus (v: boolean) {
 		this.isFocused = v;
 	};
-	
+
+	/**
+	 * Checks whether the user is actively editing text by inspecting the DOM.
+	 * More reliable than isFocused which can get stuck if blur events are missed.
+	 */
+	isEditing (): boolean {
+		const el = document.activeElement;
+		if (!el) {
+			return false;
+		};
+
+		if ((el instanceof HTMLInputElement) || (el instanceof HTMLTextAreaElement)) {
+			return true;
+		};
+
+		if (el.getAttribute('contenteditable') === 'true') {
+			return true;
+		};
+
+		return false;
+	};
+
 	/**
 	 * Sets the resize state.
 	 * @param {boolean} v - The resize state.
