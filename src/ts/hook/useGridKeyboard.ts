@@ -27,6 +27,11 @@ export const useGridKeyboard = (props: UseGridKeyboardProps) => {
 				return false;
 			};
 
+			// Don't intercept modified arrow keys (Cmd+Arrow, Alt+Arrow are text editing shortcuts)
+			if (keyboard.isArrow(e) && (e.metaKey || e.ctrlKey || e.altKey)) {
+				return false;
+			};
+
 			const relationKeys = relations.map(r => r.relationKey);
 
 			// If no cell is focused, focus the first cell on arrow down
@@ -188,6 +193,11 @@ export const useGridKeyboard = (props: UseGridKeyboardProps) => {
 				const fp = keyboard.router.focusedPanel;
 
 				if (fp && (fp !== FocusedPanel.Page)) {
+					return false;
+				};
+
+				// Don't intercept when panel group navigation is active
+				if (fp && keyboard.router.navigation.activeGroupId) {
 					return false;
 				};
 

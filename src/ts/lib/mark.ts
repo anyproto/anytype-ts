@@ -574,7 +574,6 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-
 			const key = U.Common.getKeyByValue(Tags, p2);
 			if (undefined === key) {
 				return;

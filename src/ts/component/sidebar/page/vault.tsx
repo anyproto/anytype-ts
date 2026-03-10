@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel, GroupDirection } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel, GroupDirection, KeyboardZoneType } from 'Lib';
 import { usePanelIndicator, useKeyboardGroup } from 'Hook';
 
 const LIMIT = 20;
@@ -48,14 +48,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const unbind = () => {
 		$(window).off('keyup.sidebarPageVault');
-		keyboard.router.popPageZone('keydown.sidebarPageVault');
+		keyboard.router.popZone('sidebar:vault');
 	};
 
 	const rebind = () => {
 		const win = $(window);
 
 		unbind();
-		keyboard.router.pushPageZone('keydown.sidebarPageVault', (e) => onKeyDown(e));
+		keyboard.router.pushZone({
+			id: 'sidebar:vault',
+			type: KeyboardZoneType.Sidebar,
+			onKeyDown: (e: KeyboardEvent) => {
+				onKeyDown(e);
+				return false;
+			},
+		});
 		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
 	};
 
@@ -258,12 +265,28 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		itemSelector: '.filter .inner',
 	});
 
-	const getItemCount = useCallback(() => items.length, [ items.length ]);
-	const scrollToIndex = useCallback((idx: number) => {
-		listRef.current?.scrollToRow(Math.max(0, idx));
-	}, []);
-	const getItemElement = useCallback((idx: number) => {
-		const item = items[idx];
+	const getNavigableIndices = useCallback(() => {
+		return items.reduce((acc: number[], item, idx) => {
+			if (!item.isDiv) {
+				acc.push(idx);
+			};
+			return acc;
+		}, []);
+	}, [ items ]);
+
+	const getItemCount = useCallback(() => getNavigableIndices().length, [ items ]);
+	const scrollToIndex = useCallback((navIdx: number) => {
+		const actualIdx = getNavigableIndices()[navIdx];
+		if (actualIdx != null) {
+			listRef.current?.scrollToRow(Math.max(0, actualIdx));
+		};
+	}, [ items ]);
+	const getItemElement = useCallback((navIdx: number) => {
+		const actualIdx = getNavigableIndices()[navIdx];
+		if (actualIdx == null) {
+			return null;
+		};
+		const item = items[actualIdx];
 		if (!item) {
 			return null;
 		};
@@ -386,7 +409,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.id == 'createSpace') {
 			return (
-				<div ref={forwardedRef} className="item add" style={item.style}>
+				<div ref={forwardedRef} id="item-createSpace" className="item add" style={item.style}>
 					{iconCreate()}
 				</div>
 			);

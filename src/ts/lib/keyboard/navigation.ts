@@ -75,6 +75,11 @@ class KeyboardNavigation {
 	handle (panel: FocusedPanel, e: KeyboardEvent): boolean {
 		const key = keyboard.eventKey(e);
 
+		// Don't intercept arrow keys with modifiers (Cmd+Arrow, Alt+Arrow, etc. are text editing shortcuts)
+		if (keyboard.isArrow(e) && (e.metaKey || e.ctrlKey || e.altKey)) {
+			return false;
+		};
+
 		// Capture mode
 		if (this.captureElement) {
 			if (key === Key.escape) {
@@ -144,7 +149,13 @@ class KeyboardNavigation {
 					return true;
 				};
 
+				case Key.up:
+				case Key.left: {
+					e.preventDefault();
+					this.highlightLastGroupLastItem(sortedGroups);
+					return true;
 				};
+			};
 
 			return false;
 		};
@@ -313,11 +324,6 @@ class KeyboardNavigation {
 		this.captureElement = null;
 	};
 
-	onMouseDown () {
-		this.clearHighlight();
-		this.captureElement = null;
-	};
-
 	clearHighlight () {
 		if (this.highlightedElement) {
 			this.highlightedElement.classList.remove('keyboardHighlight');
@@ -329,12 +335,24 @@ class KeyboardNavigation {
 	};
 
 	private highlightFirstGroupFirstItem (sortedGroups: GroupRegistration[]) {
-		const group = sortedGroups[0];
-		if (!group) {
-			return;
+		for (const group of sortedGroups) {
+			const items = this.getVisibleItems(group);
+			if (items.length) {
+				this.setHighlight(group, 0);
+				return;
+			};
 		};
+	};
 
-		this.setHighlight(group, 0);
+	private highlightLastGroupLastItem (sortedGroups: GroupRegistration[]) {
+		for (let i = sortedGroups.length - 1; i >= 0; i--) {
+			const group = sortedGroups[i];
+			const items = this.getVisibleItems(group);
+			if (items.length) {
+				this.setHighlight(group, items.length - 1);
+				return;
+			};
+		};
 	};
 
 	private moveBetweenGroups (sortedGroups: GroupRegistration[], currentIndex: number, direction: number, selectFirst: boolean) {

@@ -211,7 +211,7 @@ class Keyboard {
 
 		// Clear keyboard navigation state on real mouse click (not programmatic)
 		if (e.isTrusted) {
-			this.router.navigation.onMouseDown();
+			this.router.clearFocus();
 		};
 
 		// Remove isFocusable from focused block
