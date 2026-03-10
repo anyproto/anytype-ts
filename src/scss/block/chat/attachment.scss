@@ -40,7 +40,7 @@
 			.iconWrapper {
 				.icon.syncStatus { width: 28px; height: 28px; background-size: 28px; margin: -14px 0px 0px -14px; }
 				.icon.downloading {
-					display: block; width: 28px; height: 28px; background-size: 28px; position: absolute; left: 50%; top: 50%;
+					display: block; width: 28px; height: 28px; background-size: 28px; position: absolute; left: 50%; top: 50%; z-index: 1;
 					margin: -14px 0px 0px -14px; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear;
 				}
 			}
@@ -105,12 +105,14 @@
 
 		&.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 		&.isImage {
-			.imgWrapper { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 12px; overflow: hidden; width: 100%; height: 100%; }
-
 			.image,
 			.loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; width: 100%; height: 100%; }
 
 			.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
+			.icon.downloading {
+				display: block; width: 72px; height: 72px; background-size: 72px; position: absolute; left: 50%; top: 50%; z-index: 2;
+				margin: -36px 0px 0px -36px; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear;
+			}
 
 			&.withBlur {
 				.image { border-radius: 0px; position: relative; z-index: 1; }
@@ -120,7 +122,7 @@
 		&.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 		&.isVideo {
 			.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
-			video { width: 100%; height: 100%; display: block; object-fit: cover; height: 224px; }
+			video { width: 100%; display: block; object-fit: cover; height: 224px; }
 
 			.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 
@@ -145,7 +147,7 @@
 			&.isQueued,
 			&.isError {
 				&.isImage {
-					.imgWrapper { background-color: var(--color-shape-highlight-medium); border-radius: 8px;  width: 100%; height: 100%; }
+					.mediaWrapper { background-color: var(--color-shape-highlight-medium); border-radius: 8px;  width: 100%; height: 100%; }
 					.image { opacity: 0; }
 				}
 
@@ -175,7 +177,6 @@
 .attachments.withLayout {
 	.attachment { border-radius: 12px; height: auto; width: 100%; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
 	.attachment.isImage {
-		.imgWrapper { min-width: unset; min-height: unset; }
 		.image, .loaderWrapper { max-width: 100%; max-height: 360px; }
 	}
 }

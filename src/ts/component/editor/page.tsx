@@ -1544,23 +1544,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 			});
 		} else {
-			const childrenIds = S.Block.getChildrenIds(rootId, block.id);
+			Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
+				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 
-			const doIndent = () => {
-				Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
-					focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
-
-					if (next && next.canToggle()) {
-						S.Block.toggle(rootId, next.id, true);
-					};
-				});
-			};
-
-			if (childrenIds.length) {
-				Action.move(rootId, rootId, block.id, childrenIds, I.BlockPosition.Bottom, doIndent);
-			} else {
-				doIndent();
-			};
+				if (next && next.canToggle()) {
+					S.Block.toggle(rootId, next.id, true);
+				};
+			});
 		};
 	};
 
