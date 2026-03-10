@@ -476,7 +476,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			switch (processor) {
 			default: {
-				const sandbox = U.Embed.allowJs(processor) ? [ 'allow-scripts', 'allow-popups' ] : [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
+				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
