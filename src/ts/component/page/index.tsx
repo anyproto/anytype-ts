@@ -186,8 +186,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			id="pageFlex" 
+		<div
+			id="pageFlex"
 			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
@@ -197,8 +197,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				className={`page ${keyboard.getPageClass('page', isPopup)}`}
 			>
 				{Component ? (
-					<Component 
-						ref={childRef} 
+					<Component
+						ref={childRef}
 						{...props}
 						storageGet={() => Storage.get(pageId) || {}}
 						storageSet={data => Storage.set(pageId, data)}
@@ -209,14 +209,14 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					</Frame>
 				)}
 			</div>
-			<SidebarRight 
-				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)} 
-				key="sidebarRight" 
-				{...props} 
+			<SidebarRight
+				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)}
+				key="sidebarRight"
+				{...props}
 			/>
 		</div>
 	);
-	
+
 }));
 
 export default PageIndex;

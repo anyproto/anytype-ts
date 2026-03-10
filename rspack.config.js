@@ -155,19 +155,120 @@ module.exports = (env, argv) => {
 		].filter(Boolean),
 	};
 
+	// Track compilation hash for ETag-based caching in dev server
+	let appCompilationHash = '';
+
 	// App config: keeps Excalidraw
 	const appConfig = {
 		name: 'app',
 		...base,
 		entry: {
-			app: { 
-				import: './src/ts/entry.tsx', 
+			app: {
+				import: './src/ts/entry.tsx',
 				filename: 'js/main.js',
 			},
 		},
+		output: {
+			path: path.resolve(__dirname, 'dist'),
+			publicPath: process.env.WEBPACK_SERVE ? '/' : './',
+			chunkFilename: 'js/chunks/[name].js',
+		},
+		optimization: {
+			...base.optimization,
+			splitChunks: {
+				chunks: 'all',
+				cacheGroups: {
+					protobuf: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]/,
+						name: 'protobuf',
+						chunks: 'all',
+						priority: 30,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorReact: {
+						test: /[\\/]node_modules[\\/](react|react-dom|scheduler|mobx|mobx-react)[\\/]/,
+						name: 'vendor-react',
+						chunks: 'all',
+						priority: 28,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorD3: {
+						test: /[\\/]node_modules[\\/](d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)[\\/]/,
+						name: 'vendor-d3',
+						chunks: 'all',
+						priority: 27,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorMermaid: {
+						test: /[\\/]node_modules[\\/](mermaid|@mermaid-js|elkjs|cytoscape|cytoscape-[a-z-]+|cose-base|layout-base|avsdf-base|roughjs|dagre|graphlib|path-data-parser|points-on-curve|points-on-path)[\\/]/,
+						name: 'vendor-mermaid',
+						chunks: 'all',
+						priority: 26,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorSentry: {
+						test: /[\\/]node_modules[\\/]@sentry[\\/]/,
+						name: 'vendor-sentry',
+						chunks: 'all',
+						priority: 25,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorExcalidraw: {
+						test: /[\\/]node_modules[\\/]@excalidraw[\\/]/,
+						name: 'vendor-excalidraw',
+						chunks: 'all',
+						priority: 24,
+						filename: 'js/chunks/[name].js',
+					},
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendor',
+						chunks: 'all',
+						priority: 20,
+						filename: 'js/chunks/[name].js',
+					},
+				},
+			},
+		},
+		plugins: [
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
+			new rspack.HtmlRspackPlugin({
+				template: path.resolve(__dirname, 'src/html/index.html'),
+				filename: 'index.html',
+				inject: 'head',
+				scriptLoading: 'defer',
+			}),
+			{
+				apply(compiler) {
+					compiler.hooks.done.tap('CompilationHashPlugin', (stats) => {
+						appCompilationHash = stats.hash || Date.now().toString();
+					});
+				}
+			},
+		],
 		devServer: {
 			hot: true,
 			static: ['dist'],
+			setupMiddlewares: (middlewares) => {
+				middlewares.unshift({
+					name: 'etag-cache',
+					middleware: (req, res, next) => {
+						if (req.method === 'GET' && /\.(js|css)$/.test(req.url) && !req.url.includes('.hot-update.')) {
+							const etag = `"${appCompilationHash}"`;
+
+							if (req.headers['if-none-match'] === etag) {
+								res.writeHead(304);
+								return res.end();
+							};
+
+							res.setHeader('ETag', etag);
+							res.setHeader('Cache-Control', 'no-cache');
+						};
+						next();
+					},
+				});
+				return middlewares;
+			},
 			watchFiles: {
 				paths: ['src'],
 				options: {
@@ -397,11 +498,6 @@ module.exports = (env, argv) => {
 			},
 		},
 
-		output: {
-			path: path.resolve(__dirname, 'dist-web'),
-			publicPath: '/',
-		},
-
 		devServer: {
 			hot: true,
 			static: [
@@ -504,16 +600,80 @@ module.exports = (env, argv) => {
 			},
 		},
 
+		output: {
+			path: path.resolve(__dirname, 'dist-web'),
+			publicPath: '/',
+			chunkFilename: 'js/chunks/[name].js',
+		},
+
+		optimization: {
+			...base.optimization,
+			splitChunks: {
+				chunks: 'all',
+				cacheGroups: {
+					protobuf: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]/,
+						name: 'protobuf',
+						chunks: 'all',
+						priority: 30,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorReact: {
+						test: /[\\/]node_modules[\\/](react|react-dom|scheduler|mobx|mobx-react)[\\/]/,
+						name: 'vendor-react',
+						chunks: 'all',
+						priority: 28,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorD3: {
+						test: /[\\/]node_modules[\\/](d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)[\\/]/,
+						name: 'vendor-d3',
+						chunks: 'all',
+						priority: 27,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorMermaid: {
+						test: /[\\/]node_modules[\\/](mermaid|@mermaid-js|elkjs|cytoscape|cytoscape-[a-z-]+|cose-base|layout-base|avsdf-base|roughjs|dagre|graphlib|path-data-parser|points-on-curve|points-on-path)[\\/]/,
+						name: 'vendor-mermaid',
+						chunks: 'all',
+						priority: 26,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorSentry: {
+						test: /[\\/]node_modules[\\/]@sentry[\\/]/,
+						name: 'vendor-sentry',
+						chunks: 'all',
+						priority: 25,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorExcalidraw: {
+						test: /[\\/]node_modules[\\/]@excalidraw[\\/]/,
+						name: 'vendor-excalidraw',
+						chunks: 'all',
+						priority: 24,
+						filename: 'js/chunks/[name].js',
+					},
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendor',
+						chunks: 'all',
+						priority: 20,
+						filename: 'js/chunks/[name].js',
+					},
+				},
+			},
+		},
+
 		plugins: [
-			...base.plugins,
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
 			new rspack.DefinePlugin({
 				__IS_WEB__: 'true',
 			}),
 			new rspack.HtmlRspackPlugin({
 				template: path.resolve(__dirname, 'dist/index.web.html'),
 				filename: 'index.html',
-				inject: 'body',
-				scriptLoading: 'blocking',
+				inject: 'head',
+				scriptLoading: 'defer',
 			}),
 		],
 	};
