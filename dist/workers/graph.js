@@ -319,6 +319,7 @@ image = ({ src, bitmap }) => {
 		if (app && app.renderer) {
 			const texture = PIXI.Texture.from(bitmap);
 			images[src + '_texture'] = texture;
+			redraw();
 		};
 	};
 };
