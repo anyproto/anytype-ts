@@ -309,6 +309,9 @@ class Keyboard {
 			if (!data.isClosed) {
 				sidebar.rightPanelClose(isPopup, true);
 			} else
+			if (this.router.focusedPanel) {
+				// Panel navigation active — let navigation.handle() deal with Escape
+			} else
 			if (!this.isFocused) {
 				if (this.isMainSettings()) {
 					U.Space.openDashboard({ replace: false });

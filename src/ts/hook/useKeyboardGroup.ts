@@ -18,10 +18,16 @@ interface UseKeyboardGroupOptions {
 export const useKeyboardGroup = (ref: RefObject<HTMLElement>, options: UseKeyboardGroupOptions) => {
 	const { id, panel, direction, itemSelector, onEnter, onLeft, onRight, getItemCount, scrollToIndex, getItemElement } = options;
 
+	const onEnterRef = useRef(onEnter);
+	const onLeftRef = useRef(onLeft);
+	const onRightRef = useRef(onRight);
 	const getItemCountRef = useRef(getItemCount);
 	const scrollToIndexRef = useRef(scrollToIndex);
 	const getItemElementRef = useRef(getItemElement);
 
+	onEnterRef.current = onEnter;
+	onLeftRef.current = onLeft;
+	onRightRef.current = onRight;
 	getItemCountRef.current = getItemCount;
 	scrollToIndexRef.current = scrollToIndex;
 	getItemElementRef.current = getItemElement;
@@ -33,9 +39,9 @@ export const useKeyboardGroup = (ref: RefObject<HTMLElement>, options: UseKeyboa
 			direction,
 			getContainer: () => ref.current,
 			itemSelector,
-			onEnter,
-			onLeft,
-			onRight,
+			onEnter: onEnter ? (item: HTMLElement) => onEnterRef.current(item) : undefined,
+			onLeft: onLeft ? (item: HTMLElement) => onLeftRef.current(item) : undefined,
+			onRight: onRight ? (item: HTMLElement) => onRightRef.current(item) : undefined,
 			getItemCount: getItemCount ? () => getItemCountRef.current() : undefined,
 			scrollToIndex: scrollToIndex ? (idx: number) => scrollToIndexRef.current(idx) : undefined,
 			getItemElement: getItemElement ? (idx: number) => getItemElementRef.current(idx) : undefined,
