@@ -5,7 +5,7 @@ description: Update README documentation in the folder of changed components/abs
 
 # Update Docs Skill
 
-Update README.md files in the folders where code was changed. Documentation lives next to the code it describes — each component/abstraction folder has its own README.
+Update README.md documentation files when code changes. Documentation lives in `docs/`, mirroring the source tree structure (e.g., `src/ts/component/block/` is documented in `docs/src/ts/component/block/README.md`).
 
 ## When to Use
 
@@ -15,7 +15,7 @@ Activate this skill when:
 
 ## Principles
 
-1. **Co-located** — Each README lives in the folder it documents
+1. **Centralized** — All READMEs live in `docs/` mirroring the source tree
 2. **Lean** — Only document what helps a developer understand the folder's purpose, structure, and patterns
 3. **Precise** — Accurate file names, sizes, type counts, and descriptions
 4. **Compact** — No verbose prose. Use tables, bullet points, and code snippets
@@ -63,16 +63,16 @@ One-sentence overview. Contains **N files**.
 
 ## Process
 
-1. **Identify affected folders** — Determine which folders had files added, removed, or significantly changed
-2. **Read existing README** — Check if a README.md exists in each affected folder
+1. **Identify affected folders** — Determine which source folders had files added, removed, or significantly changed
+2. **Read existing README** — Check if a README.md exists in the corresponding `docs/` path (e.g., for `src/ts/component/block/`, check `docs/src/ts/component/block/README.md`)
 3. **Determine delta** — Compare the change against what the README currently says
 4. **Apply minimal update** — Edit only the affected lines/sections
 5. **Verify accuracy** — Ensure file names, counts, and descriptions match reality
 
 ## Scope Rules
 
-- Only update READMEs in folders where code actually changed
-- If a folder has no README yet and the change is significant (new subfolder, new abstraction layer), create one following the convention
+- Only update READMEs for folders where code actually changed
+- If a folder has no corresponding README in `docs/` yet and the change is significant (new subfolder, new abstraction layer), create one following the convention
 - If the change is trivial (typo fix, minor logic tweak), skip documentation update
 - Never update CLAUDE.md from this skill — that file has its own maintenance process
 
@@ -82,7 +82,7 @@ One-sentence overview. Contains **N files**.
 ```
 Change: Added `src/ts/component/block/ai.tsx`
 
-Action: Edit `src/ts/component/block/README.md`
+Action: Edit `docs/src/ts/component/block/README.md`
 - Update file count in overview line
 - Add entry under "Other Blocks":
   - `ai.tsx` - AI-generated content block
@@ -92,7 +92,7 @@ Action: Edit `src/ts/component/block/README.md`
 ```
 Change: Added `src/ts/store/theme.ts`
 
-Action: Edit `src/ts/store/README.md`
+Action: Edit `docs/src/ts/store/README.md`
 - Add row to the Stores table:
   | `theme.ts` | `S.Theme` | Theme management: color schemes, dark mode preferences |
 ```
@@ -101,7 +101,7 @@ Action: Edit `src/ts/store/README.md`
 ```
 Change: Removed `src/ts/component/menu/legacySearch.tsx`
 
-Action: Edit `src/ts/component/menu/README.md`
+Action: Edit `docs/src/ts/component/menu/README.md`
 - Remove entry for legacySearch from the menu types list
 - Update count if mentioned
 ```
@@ -110,7 +110,7 @@ Action: Edit `src/ts/component/menu/README.md`
 ```
 Change: Created `src/ts/component/block/ai/` with index.tsx, toolbar.tsx, preview.tsx
 
-Action: Create `src/ts/component/block/ai/README.md`:
+Action: Create `docs/src/ts/component/block/ai/README.md`:
   # ai/ - AI Content Block
 
   AI-generated content blocks with toolbar controls and preview. Contains **3 files**.
@@ -120,5 +120,5 @@ Action: Create `src/ts/component/block/ai/README.md`:
   - `toolbar.tsx` - Prompt input and model selection toolbar
   - `preview.tsx` - Streaming preview of AI-generated content
 
-Also update parent `src/ts/component/block/README.md` to reference the new subfolder.
+Also update parent `docs/src/ts/component/block/README.md` to reference the new subfolder.
 ```
