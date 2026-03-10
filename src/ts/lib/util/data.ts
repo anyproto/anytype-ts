@@ -317,7 +317,10 @@ class UtilData {
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
-						if (route) {
+						const rp = route ? U.Router.getParam(route) : {};
+						const isRestorable = route && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+
+						if (isRestorable) {
 							U.Router.go(route, routeParam);
 						} else {
 							U.Space.openDashboard(routeParam);

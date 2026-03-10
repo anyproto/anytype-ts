@@ -251,8 +251,16 @@ const App: FC = () => {
 		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
-		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
+
+		// Validate tab route — don't restore blank/void routes that can't render content
+		let route = String(data.route || redirect || '');
+		if (route) {
+			const rp = U.Router.getParam(route);
+			if ((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action)) {
+				route = '';
+			};
+		};
 
 		if (config) {
 			S.Common.configSet(config, true);
