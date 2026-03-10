@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.54.9-alpha",
+	"version": "0.54.13-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -823,6 +823,10 @@
 		"linux": {
 			"icon": "electron/img/icons",
 			"category": "Utility",
+			"executableName": "anytype",
+			"executableArgs": [
+				"--ozone-platform-hint=auto"
+			],
 			"target": [
 				"AppImage",
 				"deb",
@@ -841,8 +845,7 @@
 					"Categories": "Utility;Office;Calendar;ProjectManagement;",
 					"Keywords": "project management;",
 					"StartupWMClass": "anytype",
-					"MimeType": "x-scheme-handler/anytype;",
-					"Exec": "anytype --ozone-platform-hint=auto %u"
+					"MimeType": "x-scheme-handler/anytype;"
 				}
 			},
 			"extraFiles": [

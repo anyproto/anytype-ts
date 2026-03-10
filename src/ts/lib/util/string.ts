@@ -282,7 +282,7 @@ class UtilString {
 	 * @returns {string} The converted string.
 	 */
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
+		return s.toString().replace(/\n/g, '<br/>');
 	};
 
 	/**

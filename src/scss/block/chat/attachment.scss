@@ -39,7 +39,15 @@
 
 			.iconWrapper {
 				.icon.syncStatus { width: 28px; height: 28px; background-size: 28px; margin: -14px 0px 0px -14px; }
+				.icon.downloading {
+					display: block; width: 28px; height: 28px; background-size: 28px; position: absolute; left: 50%; top: 50%;
+					margin: -14px 0px 0px -14px; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear;
+				}
 			}
+		}
+
+		&.isDownloadingFile {
+			.clickable { opacity: 0.6; }
 		}
 
 		&.isBookmark { min-width: unset; height: unset; max-width: 360px; }

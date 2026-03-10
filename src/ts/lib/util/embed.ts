@@ -20,6 +20,18 @@ DOMAINS[I.EmbedProcessor.AppleMusic] = [ 'music.apple.com'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
+let DOMAIN_REGEXPS: Map<number, RegExp> = null;
+const getDomainRegexps = (): Map<number, RegExp> => {
+	if (!DOMAIN_REGEXPS) {
+		DOMAIN_REGEXPS = new Map();
+		for (const i in DOMAINS) {
+			const domains = DOMAINS[i].map(U.String.regexEscape);
+			DOMAIN_REGEXPS.set(Number(i), new RegExp(`:\/\/([^.]*\\.)?(${domains.join('|')})([\/\\?#:]|$)`, 'gi'));
+		};
+	};
+	return DOMAIN_REGEXPS;
+};
+
 class UtilEmbed {
 
 	/**
@@ -194,9 +206,8 @@ class UtilEmbed {
 	 */
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
-		for (const i in DOMAINS) {
-			const domains = DOMAINS[i].map(U.String.regexEscape);
-			const reg = new RegExp(`:\/\/([^.]*\\.)?(${domains.join('|')})([\/\\?#:]|$)`, 'gi');
+		for (const [ i, reg ] of getDomainRegexps()) {
+			reg.lastIndex = 0;
 
 			if (!url.match(reg)) {
 				continue;

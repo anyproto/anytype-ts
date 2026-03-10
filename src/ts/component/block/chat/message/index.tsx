@@ -235,6 +235,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
 
+	if (!text && !hasAttachments) {
+		return null;
+	};
+
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);
 		cnBubble.push('withLayout');

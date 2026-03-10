@@ -32,7 +32,13 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 				wrap.addClass('blocks');
 
 				width -= J.Size.blockMenu;
-				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(U.Common.objectCopy(it)));
+				const items: M.Block[] = [];
+				for (const id of ids) {
+					const leaf = S.Block.getLeaf(rootId, id);
+					if (leaf) {
+						items.push(new M.Block(U.Common.objectCopy(leaf)));
+					};
+				};
 
 				items.forEach(block => {
 					const clone = container.find(`#block-${U.Common.esc(block.id)}`).clone();

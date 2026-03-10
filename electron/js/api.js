@@ -747,12 +747,18 @@ class Api {
 		if (isPinned) {
 			items.push({
 				label: Util.translate('electronMenuTabUnpin'),
-				click: () => WindowManager.unpinTab(win, tabId),
+				click: () => {
+					WindowManager.unpinTab(win, tabId);
+					Util.sendToActiveTab(win, 'analytics', 'UnpinTab');
+				},
 			});
 		} else {
 			items.push({
 				label: Util.translate('electronMenuTabPin'),
-				click: () => WindowManager.pinTab(win, tabId),
+				click: () => {
+					WindowManager.pinTab(win, tabId);
+					Util.sendToActiveTab(win, 'analytics', 'PinTab');
+				},
 			});
 		};
 

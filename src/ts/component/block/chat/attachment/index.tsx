@@ -23,10 +23,15 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+	const isDownloadingFile = S.Common.isDownloading(object.id);
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 	const nodeRef = useRef(null);
 	const src = useRef('');
+
+	if (isDownloadingFile) {
+		cn.push('isDownloadingFile');
+	};
 
 	const renderDefault = () => {
 		const isFile = U.Object.isInFileLayouts(object.layout);
@@ -52,7 +57,11 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="clickable" onClick={e => onOpen(e)}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					<Icon onClick={onSyncStatusClick} className="syncStatus" />
+					{isDownloadingFile ? (
+						<Icon className="downloading" />
+					) : (
+						<Icon onClick={onSyncStatusClick} className="syncStatus" />
+					)}
 				</div>
 
 				<div className="info">
@@ -194,6 +203,10 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 
 		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
+			return;
+		};
+
+		if (isDownloadingFile) {
 			return;
 		};
 

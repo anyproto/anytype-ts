@@ -395,6 +395,16 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
+	isLastChild (rootId: string, blockId: string): boolean {
+		const parentElement = this.getParentMapElement(rootId, blockId);
+		if (!parentElement) {
+			return false;
+		};
+
+		const ids = parentElement.childrenIds || [];
+		return ids.length > 0 && (ids[ids.length - 1] === blockId);
+	};
+
 	getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
 		return this.getChildrenIds(rootId, blockId).map(id => this.getLeaf(rootId, id)).filter((it: any) => {
 			return it ? (filter ? filter(it) : true) : false;

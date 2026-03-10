@@ -10,18 +10,10 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, analyticsDeviceId } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
-
-	const onAnalyticsDeviceIdChange = (e: any, v: boolean) => {
-		S.Common.analyticsDeviceIdSet(v);
-		if (!v) {
-			analytics.clearAmplitudeStorage();
-		};
-		analytics.reinit();
-	};
 
 	const onHardwareAccelerationChange = (v: boolean) => {
 		S.Popup.open('confirm', {
@@ -230,14 +222,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						value={hardwareAcceleration !== false}
 						onChange={(e: any, v: boolean) => onHardwareAccelerationChange(v)}
 					/>
-				</div>
-
-				<div className="item">
-					<div>
-						<Label text={translate('popupSettingsPersonalAnalyticsDeviceId')} />
-						<Label className="small" text={translate('popupSettingsPersonalAnalyticsDeviceIdDescription')} />
-					</div>
-					<Switch className="big" value={analyticsDeviceId} onChange={onAnalyticsDeviceIdChange} />
 				</div>
 			</div>
 		</>

@@ -1,18 +1,53 @@
-import React, { forwardRef, useEffect, useState, useRef, memo } from 'react';
+import React, { Suspense, forwardRef, useEffect, useState, useRef, memo } from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid, MediaExcalidraw } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
-const katex = require('katex');
-const pako = require('pako');
+const MediaMermaid = React.lazy(() => import('Component/util/media/mermaid'));
+const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
 
-require('katex/dist/contrib/mhchem');
+let _katex: any = null;
+let _katexLoading: Promise<any> | null = null;
+let _pako: any = null;
+let _pakoLoading: Promise<any> | null = null;
+let _viz: any = null;
+let _vizLoading: Promise<any> | null = null;
+
+const getKatex = (): any => {
+	if (_katex) return _katex;
+	if (!_katexLoading) {
+		_katexLoading = import('katex').then(m => {
+			_katex = m.default || m;
+			return import('katex/dist/contrib/mhchem');
+		});
+	};
+	return null;
+};
+
+
+const getPako = async (): Promise<any> => {
+	if (_pako) return _pako;
+	if (!_pakoLoading) {
+		_pakoLoading = import('pako').then(m => { _pako = m.default || m; return _pako; });
+	};
+	return _pakoLoading;
+};
+
+const getViz = async (): Promise<any> => {
+	if (_viz) return _viz;
+	if (!_vizLoading) {
+		_vizLoading = import('@viz-js/viz').then(m => {
+			_viz = m.instance;
+			return _viz;
+		});
+	};
+	return _vizLoading;
+};
 
 const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
@@ -75,7 +110,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		cn.push('isFullScreen');
 	};
 
-	const init = () => {
+	const init = async () => {
 		setText(block.content.text);
 		setValue(text);
 		setContent(text);
@@ -451,7 +486,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					sandbox.push('allow-presentation');
 				};
 
-				const onLoad = () => {
+				const onLoad = async () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const sanitizeParam: any = { 
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
@@ -483,6 +518,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
+						const pako = await getPako();
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
 						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
@@ -574,11 +610,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Latex: {
+				const katex = getKatex();
+				if (!katex) {
+					_katexLoading?.then(() => init());
+					break;
+				};
+
 				let html = '';
 
 				try {
-					html = katex.renderToString(text, { 
-						displayMode: true, 
+					html = katex.renderToString(text, {
+						displayMode: true,
 						strict: false,
 						throwOnError: true,
 						output: 'html',
@@ -609,7 +651,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				rootRef.current.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />);
+				rootRef.current.render(
+					<Suspense fallback={<Loader />}>
+						<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />
+					</Suspense>
+				);
 				break;
 			};
 
@@ -622,22 +668,26 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 
 				rootRef.current.render(
-					<MediaExcalidraw
-						data={data}
-						onChange={(elements, appState, files) => {
-							window.clearTimeout(timeoutSaveRef.current);
-							timeoutSaveRef.current = window.setTimeout(() => {
-								C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
-							}, 1000);
-						}}
-						readonly={readonly}
-					/>
+					<Suspense fallback={<Loader />}>
+						<MediaExcalidraw
+							data={data}
+							onChange={(elements, appState, files) => {
+								window.clearTimeout(timeoutSaveRef.current);
+								timeoutSaveRef.current = window.setTimeout(() => {
+									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
+								}, 1000);
+							}}
+							readonly={readonly}
+						/>
+					</Suspense>
 				);
 				break;
 			};
 
 			case I.EmbedProcessor.Graphviz: {
-				viz().then(res => {
+				getViz().then(instance => {
+					return instance();
+				}).then(res => {
 					try {
 						value.html(res.renderSVGElement(text));
 					} catch (e) {
@@ -751,6 +801,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			const start = resizeStartRef.current;
 			const dy = e.pageY - start.y;
 			const newHeight = Math.max(200, start.h + dy);
+			
 			node.find('#value').css({ height: newHeight });
 		};
 	};
@@ -816,11 +867,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let empty = '';
 	let placeholder = '';
 
-	if (U.Embed.allowBlockResize(processor) && text) {
+	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
 		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
 	};
 
-	if (isExcalidraw && text) {
+	if (isExcalidraw) {
 		expandIcon = <Icon className="expand withBackground" onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 

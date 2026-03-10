@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+
+const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
 import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -70,6 +72,8 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	const onPageRender = () => {
 		heightRef.current = $(wrapRef.current).outerHeight();
 	};
+
+	const isDownloading = S.Common.isDownloading(targetObjectId);
 
 	const onOpenFile = () => {
 		Action.openFile(object, analytics.route.block);
@@ -217,19 +221,22 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 				element = (
 					<div ref={wrapRef} className={cn.join(' ')} style={css}>
-						<div className="info" onMouseDown={onOpenObject}>
+						<div className={[ 'info', (isDownloading ? 'isDownloading' : '') ].join(' ')} onMouseDown={onOpenObject}>
+							{isDownloading ? <Icon className="downloading" /> : ''}
 							<ObjectName object={object} />
 							<span className="size">{U.File.size(object.sizeInBytes)}</span>
 						</div>
 
-						<MediaPdf 
-							ref={mediaRef}
-							src={S.Common.fileUrl(targetObjectId)}
-							page={page}
-							onDocumentLoad={onDocumentLoad}
-							onPageRender={onPageRender}
-							onClick={onOpenFile}
-						/>
+						<Suspense fallback={<Loader />}>
+							<MediaPdf
+								ref={mediaRef}
+								src={S.Common.fileUrl(targetObjectId)}
+								page={page}
+								onDocumentLoad={onDocumentLoad}
+								onPageRender={onPageRender}
+								onClick={onOpenFile}
+							/>
+						</Suspense>
 
 						{pager}
 

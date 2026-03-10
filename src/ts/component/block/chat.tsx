@@ -683,14 +683,19 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
 			};
 
-			// Read reactions: if any visible message is at or past the unread reaction orderId, mark as read
-			if (state.reactionOrderId && last) {
+			// Read reactions: only if the message with the unread reaction is within the visible range
+			if (state.reactionOrderId && first && last) {
+				const minOrderId = ids.reduce((min, id) => {
+					const msg = S.Chat.getMessageById(subId, id);
+					return (msg && (!min || (msg.orderId <= min))) ? msg.orderId : min;
+				}, '');
+
 				const maxOrderId = ids.reduce((max, id) => {
 					const msg = S.Chat.getMessageById(subId, id);
 					return (msg && (msg.orderId >= max)) ? msg.orderId : max;
 				}, '');
 
-				if (maxOrderId >= state.reactionOrderId) {
+				if ((state.reactionOrderId >= minOrderId) && (state.reactionOrderId <= maxOrderId)) {
 					C.ChatReadReactions(chatId, maxOrderId);
 				};
 			};
@@ -756,7 +761,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		if (downloadable.length == 1) {
-			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
+
+			options.push({ id: 'download', icon: 'download', name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
 		};
 
 		if (isSelf) {
@@ -912,6 +919,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		} else {
 			loadMessages(1, true, () => scrollToBottom(true));
 		};
+	};
+
+	const reloadAndScrollToBottom = () => {
+		loadMessages(1, true, () => scrollToBottom(true));
 	};
 
 	const onReplyEdit = (e: MouseEvent, message: any) => {
@@ -1211,6 +1222,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					getReplyContent={getReplyContent}
 					highlightMessage={highlightMessage}
 					loadDepsAndReplies={loadDepsAndReplies}
+					reloadAndScrollToBottom={reloadAndScrollToBottom}
 					isEmpty={isEmpty}
 				/>
 			) : ''}

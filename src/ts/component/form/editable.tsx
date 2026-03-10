@@ -162,6 +162,24 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		} else {
 			setRange(editableRef.current, { start: range.from, end: range.to });
 		};
+
+		// Fix cursor landing inside contenteditable="false" elements (emoji/mention marks)
+		if (range.from == range.to) {
+			const sel = window.getSelection();
+
+			if (sel && sel.rangeCount) {
+				const r = sel.getRangeAt(0);
+				const container = r.startContainer.nodeType === Node.ELEMENT_NODE ? r.startContainer as HTMLElement : r.startContainer.parentElement;
+				const nonEditable = container?.closest?.('[contenteditable="false"]');
+
+				if (nonEditable && editableRef.current.contains(nonEditable)) {
+					r.setStartAfter(nonEditable);
+					r.setEndAfter(nonEditable);
+					sel.removeAllRanges();
+					sel.addRange(r);
+				};
+			};
+		};
 	};
 
 	const onPasteHandler = (e: any) => {

@@ -40,7 +40,8 @@ class Onboarding {
 			|| !section.items
 			|| !section.items.length
 			|| (!force && Storage.getOnboarding(key))
-			|| !Storage.get('multichatsOnboarding')
+			// JS-9163: multi chats onboarding gate disabled
+			// || !Storage.get('multichatsOnboarding')
 		) {
 			return false;
 		};
@@ -63,10 +64,7 @@ class Onboarding {
 					noFlipX: true,
 					onClose: () => { 
 						Storage.setOnboarding(key);
-
-						if (section.onComplete) {
-							section.onComplete(force);
-						};
+						section.onComplete?.(force);
 					},
 					data: {
 						...param.data,

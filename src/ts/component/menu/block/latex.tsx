@@ -1,11 +1,21 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, keyboard, translate } from 'Lib';
 
-const katex = require('katex');
-require('katex/dist/contrib/mhchem');
+let _katex: any = null;
+let _katexLoading: Promise<any> | null = null;
+const getKatex = (): any => {
+	if (_katex) return _katex;
+	if (!_katexLoading) {
+		_katexLoading = import('katex').then(m => {
+			_katex = m.default || m;
+			return import('katex/dist/contrib/mhchem');
+		}).then(() => _katex);
+	};
+	return null;
+};
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
@@ -22,6 +32,18 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(-1);
 	const emptyRef = useRef(0);
 	const listRef = useRef(null);
+	const [ katexLoaded, setKatexLoaded ] = useState(!!getKatex());
+
+	useEffect(() => {
+		if (!katexLoaded) {
+			const katex = getKatex();
+			if (katex) {
+				setKatexLoaded(true);
+			} else {
+				_katexLoading?.then(() => setKatexLoaded(true));
+			};
+		};
+	}, []);
 
 	const rebind = () => {
 		unbind();
@@ -169,13 +191,14 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			const name = String(item.name || '').replace(/\\\\/g, '\\');
 
-			const math = katex.renderToString(item.comment || item.symbol, {
+			const katex = getKatex();
+			const math = katex ? katex.renderToString(item.comment || item.symbol, {
 				displayMode: true,
 				throwOnError: false,
 				output: 'html',
 				fleqn: false,
 				trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-			});
+			}) : '';
 
 			content = (
 				<div

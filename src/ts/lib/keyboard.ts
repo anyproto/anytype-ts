@@ -76,6 +76,12 @@ class Keyboard {
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
 
+			// Restore editor focus when window regains focus with a from-block menu open
+			// (e.g., OS keyboard layout popup on Linux temporarily steals focus)
+			if (S.Menu.isOpenList([ 'blockAdd', 'blockMention', 'blockEmoji' ])) {
+				focus.apply();
+			};
+
 			// Check if PIN timeout has elapsed since last activity
 			const { pin, pinTime } = S.Common;
 			if (pin && pinTime) {

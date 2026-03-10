@@ -210,11 +210,39 @@ module.exports = (env, argv) => {
 			cssChunkFilename: 'extension/css/chunks/[name].css',
 		},
 
-		// Override CSS rules to use CSS extraction instead of style-loader
+		// Override rules: disable React Refresh for extension, use CSS extraction, inline dynamic imports
 		module: {
 			...base.module,
+			parser: {
+				javascript: {
+					dynamicImportMode: 'eager',
+				},
+			},
 			rules: [
-				...base.module.rules.filter(rule => !rule.test?.toString().includes('css')),
+				...base.module.rules
+					.filter(rule => !rule.test?.toString().includes('css'))
+					.map(rule => {
+						// Disable React Refresh transform for extension builds (both .ts and .tsx rules)
+						if (rule.loader === 'builtin:swc-loader') {
+							return {
+								...rule,
+								options: {
+									...rule.options,
+									jsc: {
+										...rule.options?.jsc,
+										transform: {
+											...rule.options?.jsc?.transform,
+											react: {
+												...rule.options?.jsc?.transform?.react,
+												refresh: false,
+											},
+										},
+									},
+								},
+							};
+						}
+						return rule;
+					}),
 				{
 					test: /\.s?css$/,
 					use: [
@@ -312,15 +340,16 @@ module.exports = (env, argv) => {
 				'd3': path.resolve(__dirname, 'src/stubs/d3.js'),
 				'react-pdf': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
 				'pdfjs-dist': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
-				'katex': path.resolve(__dirname, 'src/stubs/katex.js'),
+				'katex$': path.resolve(__dirname, 'src/stubs/katex.js'),
+				'katex/dist/contrib/mhchem': path.resolve(__dirname, 'src/stubs/katex.js'),
 				'pako': path.resolve(__dirname, 'src/stubs/pako.js'),
 				'prismjs': path.resolve(__dirname, 'src/stubs/prismjs.js'),
 			},
 		},
 
 		plugins: [
-			// Filter out LimitChunkCountPlugin to allow code splitting
-			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
+			// Filter out LimitChunkCountPlugin (allow code splitting) and ReactRefreshPlugin (not needed for extension)
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin) && !(p instanceof ReactRefreshPlugin)),
 			new rspack.CssExtractRspackPlugin({
 				filename: 'extension/css/chunks/[name].css',
 				chunkFilename: 'extension/css/chunks/[name].css',

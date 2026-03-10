@@ -18,6 +18,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
 	const dragRef = useRef(null);
 	const dragValueRef = useRef(null);
+	const wrapperRef = useRef(null);
 	const check = U.Data.checkDetails(rootId, rootId, []);
 	const isBookmark = U.Object.isBookmarkLayout(check.layout);
 	const header = S.Block.getLeaf(rootId, 'header');
@@ -29,9 +30,11 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		const pageContainer = U.Common.getPageContainer(isPopup);
+		const wrapper = $(wrapperRef.current).parents('#editorWrapper').first();
 
-		pageContainer.find('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		if (wrapper.length) {
+			wrapper.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		};
 		U.Common.triggerResizeEditor(isPopup);
 	};
 
@@ -160,7 +163,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<>
-			<div id="editorSize" className="dragWrap">
+			<div ref={wrapperRef} id="editorSize" className="dragWrap">
 				<DragHorizontal
 					ref={dragRef}
 					value={check.layoutWidth}

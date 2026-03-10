@@ -40,6 +40,10 @@
 .cellContent { cursor: default; }
 .cellContent {
 	.iconObject { flex-shrink: 0; cursor: default; }
+	.icon.downloading {
+		width: 20px; height: 20px; flex-shrink: 0;
+		background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+	}
 	.icon.clear { display: none; }
 
 	.name { display: inline-block; vertical-align: top; user-select: text !important; }

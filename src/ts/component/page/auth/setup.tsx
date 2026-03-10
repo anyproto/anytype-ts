@@ -93,16 +93,17 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					};
 
 					const cb2 = () => {
-						if (!chatsOnboarding) {
-							S.Popup.open('introduceChats', {
-								onClose: () => {
-									Storage.set('multichatsOnboarding', true);
-									Storage.setHighlight('createSpace', true);
-
-									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
-								},
-							});
-						} else
+						// JS-9163: multi chats onboarding popups disabled
+						// if (!chatsOnboarding) {
+						// 	S.Popup.open('introduceChats', {
+						// 		onClose: () => {
+						// 			Storage.set('multichatsOnboarding', true);
+						// 			Storage.setHighlight('createSpace', true);
+						//
+						// 			window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
+						// 		},
+						// 	});
+						// } else
 						if (whatsNew) {
 							U.Common.showWhatsNew();
 						};

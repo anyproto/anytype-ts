@@ -44,6 +44,12 @@
 			.icon.more:hover, .icon.more.active { background-color: var(--color-shape-highlight-medium); }
 		}
 
+		.item.isFile {
+			.icon.downloading {
+				width: 20px; height: 20px; flex-shrink: 0;
+				background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+			}
+		}
 		.item.isFile:hover, .item.isFile.active {
 			.clickable { width: calc(100% - 46px); }
 		}

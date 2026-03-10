@@ -149,10 +149,10 @@ class Analytics {
 			},
 		};
 
-		if (!S.Common.analyticsDeviceId) {
-			initOptions.storage = 'none';
-			initOptions.saveEvents = false;
-		};
+		initOptions.storage = 'none';
+		initOptions.saveEvents = false;
+
+		this.clearAmplitudeStorage();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(J.Constant.amplitude, null, Object.assign(initOptions, options || {}));

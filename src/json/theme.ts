@@ -122,7 +122,7 @@ export default {
 		textInversion: '#171717',
 
 		color: {
-			default: '#f8f8f8',
+			default: '#e1e1e1',
 			grey: '#737373',
 			yellow: '#ecd91b',
 			orange: '#ffb522',
@@ -139,9 +139,9 @@ export default {
 			bg: '#171717',
 			link: '#3f3f3f',
 			arrow: '#555555',
-			node: '#ababab',
-			text: '#ababab',
-			muted: '#ababab',
+			node: '#a3a3a3',
+			text: '#a3a3a3',
+			muted: '#a3a3a3',
 			highlight: '#ffb522',
 			selected: '#2aa7ee',
 			iconBg: '#252525'
@@ -163,7 +163,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: '#ababab',
+		iconUser: '#a3a3a3',
 
 		progress: {
 			bg: '#292929',

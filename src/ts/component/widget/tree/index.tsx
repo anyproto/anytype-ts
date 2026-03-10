@@ -224,7 +224,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const onClick = (e: MouseEvent, item: unknown): void => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 

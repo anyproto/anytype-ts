@@ -61,6 +61,10 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 					onChange(elements as any[], appState, files);
 				}}
 				theme={(theme ? 'dark' : 'light')}
+				validateEmbeddable={(url: string | URL) => {
+					const s = typeof url === 'string' ? url : url.toString();
+					return s.startsWith('anytype://') || /^https?:\/\/object\.any\.coop(\/|$|\?)/.test(s);
+				}}
 				UIOptions={{
 					tools: {
 						image: false,

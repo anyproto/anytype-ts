@@ -7,12 +7,12 @@ interface Props {
 	spaceId?: string;
 	chatId?: string;
 	className?: string;
-	disableMention?: boolean;
+	isMinimal?: boolean;
 };
 
 const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
-	const { spaceId = S.Common.space, chatId, className = '', disableMention } = props;
+	const { spaceId = S.Common.space, chatId, className = '', isMinimal = false } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
@@ -63,7 +63,7 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
 	const cnReaction = [ 'reaction' ];
-	const showMention = mentionCounter && !spaceview?.isOneToOne && !disableMention;
+	const showMention = mentionCounter && !spaceview?.isOneToOne;
 	const showMessage = messageCounter && (modeMessage != I.NotificationMode.Nothing);
 	const showReaction = reactionCounter && (modeReaction != I.NotificationMode.Nothing);
 
@@ -81,11 +81,35 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		return null;
 	};
 
+	const iconMention = <Icon className={cnMention.join(' ')} />;
+	const iconMessage = <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} />;
+	const iconReaction = <Icon className={cnReaction.join(' ')} />;
+
+	let content = null;
+
+	if (isMinimal) {
+		if (showMention) {
+			content = iconMention;
+		} else 
+		if (showMessage) {
+			content = iconMessage;
+		} else 
+		if (showReaction) {
+			content = iconReaction;
+		};
+	} else {
+		content = (
+			<>
+				{showReaction ? iconReaction : ''}
+				{showMention ? iconMention : ''}
+				{showMessage ? iconMessage : ''}
+			</>
+		);
+	};
+
 	return (
 		<div className={cn.join(' ')}>
-			{showReaction ? <Icon className={cnReaction.join(' ')} /> : ''}
-			{showMention ? <Icon className={cnMention.join(' ')} /> : ''}
-			{showMessage ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
+			{content}
 		</div>
 	);
 

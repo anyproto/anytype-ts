@@ -9,13 +9,12 @@ import { FocusedPanel } from 'Lib/keyboard/router';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
-import { link } from 'fs';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 
-const THROTTLE = 50;
+const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
 const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
@@ -342,7 +341,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			timeoutMove.current = window.setTimeout(() => {
 				buttonAdd.current.removeClass('show');
 				clear();
-			}, 30);
+			}, 100);
 		};
 
 		if (
@@ -646,10 +645,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 			};
 
-			// Open action menu
-			keyboard.shortcut('menuAction', e, () => {
-				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
-					S.Menu.open('blockAction', {
+			// Open action/add menu
+			keyboard.shortcut('menuAction, menuAdd', e, pressed => {
+				const menuId = pressed == 'menuAction' ? 'blockAction' : 'blockAdd';
+
+				S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+					S.Menu.open(menuId, {
 						element: `#block-${U.Common.esc(ids[0])}`,
 						classNameWrap: 'fromBlock',
 						offsetX: J.Size.blockMenu,
@@ -1484,13 +1485,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					C.BlockListTurnInto(rootId, [ block.id ], map[block.content.style]);
 				} else
 				if (block.isTextList() || block.isTextParagraph()) {
-					const parent = S.Block.getParentLeaf(rootId, block.id);
-					const parentElement = S.Block.getParentMapElement(rootId, block.id);
-					const canOutdent = parent && parentElement && parent.canHaveChildren() && block.isIndentable() && !parent.canToggle();
-
-					if (canOutdent) {
-						onTabBlock(e, range, true);	
-					} else 
 					if (block.isTextParagraph()) {
 						ids.length ? blockRemove(block) : blockMerge(block, -1, length);
 					} else {
@@ -1547,7 +1541,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (isShift) {
 			Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Bottom, () => {
-				Action.move(rootId, rootId, block.id, parentElement.childrenIds.slice(idx), I.BlockPosition.Inner);
 				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 			});
 		} else {
@@ -1649,9 +1642,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				style: I.TextStyle.Paragraph,
 			}, releaseEnterGuard);
 		} else
-		if (block.isTextParagraph() && !length && parent && parent.canToggle()) {
-			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
-			releaseEnterGuard();
+		if (block.isTextCallout() && (range.from == length) && (range.to == length)) {
+			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			}, releaseEnterGuard);
+		} else
+		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout())) {
+			if (S.Block.isLastChild(rootId, block.id)) {
+				Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
+				releaseEnterGuard();
+			} else {
+				blockSplit(block, range, isShift, releaseEnterGuard);
+			};
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
@@ -2408,9 +2411,23 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			analytics.event('DeleteBlock', { count: 1 });
 		};
 
+		// When deleting forward into a toggle, preserve the toggle structure
+		if ((dir > 0) && next.canToggle()) {
+			if (!length) {
+				focus.clear(true);
+				C.BlockListDelete(rootId, [ focused.id ], (message: any) => {
+					if (!message.error.code) {
+						focusSet(next.id, 0, 0, true);
+						analytics.event('DeleteBlock', { count: 1 });
+					};
+				});
+			};
+			return;
+		};
+
 		if (next.isText()) {
 			C.BlockMerge(rootId, blockId, targetId, cb);
-		} else 
+		} else
 		if (!length) {
 			focus.clear(true);
 			C.BlockListDelete(rootId, [ focused.id ], cb);
@@ -2476,7 +2493,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isCallout || isQuote) {
-			style = content.style;
+			if ((range.from != length) || (range.to != length)) {
+				style = content.style;
+			};
 		};
 
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {

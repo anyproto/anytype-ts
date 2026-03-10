@@ -175,6 +175,8 @@
 	.block.blockEmbed.isExcalidraw {
 		.icon.source { display: none !important; }
 		> .wrapContent .selectionTarget.isKeyboardFocused::after { display: none; }
+		#value { position: relative; z-index: 0; }
+		.icon.expand { z-index: 1; }
 		.mediaExcalidraw { height: 100%;
 			.LaserToolOverlay { display: none !important; }
 		}
