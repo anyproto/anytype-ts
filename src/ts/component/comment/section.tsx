@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, keyboard, translate } from 'Lib';
@@ -19,6 +19,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isBottom = useRef(false);
 	const isCreating = useRef(false);
 	const subscribedId = useRef('');
+	const [ , forceUpdate ] = useState(0);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -221,6 +222,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 				S.Comment.addPost(sid, newPost as any);
 				formRef.current?.clear();
+				forceUpdate(n => n + 1);
 				window.setTimeout(() => scrollToBottom(), 50);
 			});
 		});
