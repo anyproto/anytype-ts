@@ -2449,7 +2449,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isHeader) {
-			style = (range.to != length) ? content.style : I.TextStyle.Paragraph;
+			mode = range.to ? I.BlockSplitMode.Bottom : I.BlockSplitMode.Top;
+			style = I.TextStyle.Paragraph;
 		};
 
 		if (isCode || (isToggle && isOpen)) {
