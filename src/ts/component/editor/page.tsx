@@ -643,6 +643,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							blockId: ids[0],
 							blockIds: ids,
 							rootId,
+							blockCreate,
 						},
 						onClose: () => {
 							selection.clear();
