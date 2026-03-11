@@ -4,6 +4,7 @@ import { Icon, Label } from 'Component';
 import { I, S, U, C, translate } from 'Lib';
 
 const AUTO_EXPAND = true;
+const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 
 const getIconClass = (type: I.ProgressType): string => {
 	switch (type) {
@@ -76,8 +77,7 @@ const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
 
 const SidebarProgress: FC = observer(() => {
 
-	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
-	const list = S.Progress.getList(it => !skipState.includes(it.state));
+	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const prevCount = useRef(0);
 
