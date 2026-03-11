@@ -449,6 +449,12 @@
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
 	"progressUpdateDownloading": "Downloading update",
+	"progressProcessing": "Processing %s items...",
+	"progressStatusDropFiles": "Copying",
+	"progressStatusImport": "Importing",
+	"progressStatusExport": "Exporting",
+	"progressStatusSaveFile": "Downloading",
+	"progressStatusUpdate": "Downloading",
 
 	"spellcheckAdd": "Add to dictionary",
 

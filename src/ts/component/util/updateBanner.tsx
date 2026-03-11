@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Label, ProgressBar, Button } from 'Component';
+import { Icon, Label, Button } from 'Component';
 import { I, S, U, J, translate, Renderer, keyboard, Storage, analytics } from 'Lib';
 
 const STORAGE_KEY = 'updateBanner';
@@ -8,16 +8,16 @@ const STORAGE_KEY = 'updateBanner';
 const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 
 	const { updateVersion } = S.Common;
-	const cn = [ 'updateBanner' ];
+	const cn = [ 'updateBanner', 'withButtons' ];
 	const nodeRef = useRef(null);
 	const width = useRef(0);
 	const height = useRef(0);
 	const dx = useRef(0);
 	const dy = useRef(0);
-	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 
-	let info = null;
-	let buttons = null;
+	if (!updateVersion) {
+		return null;
+	};
 
 	const onDragStart = (e: any) => {
 		const win = $(window);
@@ -92,32 +92,30 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		};
 
 		resize();
-	}, [ updateVersion, progress.length ]);
+	}, [ updateVersion ]);
 
-	if (updateVersion) {
-		cn.push('withButtons');
-
-		info = (
-			<div className="info">
-				<div className="name">{translate('commonUpdateAvailable')}</div>
-				<Label text={U.String.sprintf(translate('commonNewVersion'), updateVersion)} />
+	return (
+		<div ref={nodeRef} className={cn.join(' ')} onMouseDown={onDragStart}>
+			<div className="infoWrapper">
+				<Icon />
+				<div className="info">
+					<div className="name">{translate('commonUpdateAvailable')}</div>
+					<Label text={U.String.sprintf(translate('commonNewVersion'), updateVersion)} />
+				</div>
 			</div>
-		);
-
-		buttons = (
 			<div className="buttons">
-				<Button 
+				<Button
 					color="blank"
 					className="c28"
-					text={translate('commonLater')} 
+					text={translate('commonLater')}
 					onClick={() => {
 						S.Common.updateVersionSet('');
 						Renderer.send('updateCancel');
-						
+
 						analytics.event('ClickCancelVersion');
 					}}
 				/>
-				<Button 
+				<Button
 					color="blank"
 					className="c28"
 					text={translate('commonUpdateApp')}
@@ -130,41 +128,6 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 					}}
 				/>
 			</div>
-		);
-
-	} else {
-		const obj = progress.length ? progress[0] : null;
-		const segments = [];
-
-		if (!obj) {
-			return null;
-		};
-
-		let percent = 0;
-		if (progress.length) {
-			segments.push({ name: '', caption: '', percent: obj.current / obj.total, isActive: true });
-
-			percent = S.Progress.getPercent(progress);
-		};
-
-		info = (
-			<div className="info">
-				<div className="nameWrapper">
-					<div className="name">{translate('progressUpdateDownloading')}</div>
-					<div className="percent">{percent}%</div>
-				</div>
-				<ProgressBar segments={segments} />
-			</div>
-		);
-	};
-
-	return (
-		<div ref={nodeRef} className={cn.join(' ')} onMouseDown={onDragStart}>
-			<div className="infoWrapper">
-				<Icon />
-				{info}
-			</div>
-			{buttons}
 		</div>
 	);
 
