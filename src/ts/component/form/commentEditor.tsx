@@ -27,6 +27,7 @@ import {
 	BLUR_COMMAND,
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
+	KEY_ENTER_COMMAND,
 	KEY_ESCAPE_COMMAND,
 	createCommand,
 	EditorState,
@@ -38,7 +39,8 @@ import {
 	TextNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
-import { I, S, U, keyboard, translate } from 'Lib';
+import $ from 'jquery';
+import { I, J, S, U, keyboard, translate } from 'Lib';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
@@ -337,12 +339,14 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 			// Code block
 			if ($isCodeNode(node)) {
 				const text = node.getTextContent();
+				const lang = node.getLanguage() || '';
 
 				parts.push({
 					style: I.TextStyle.Code,
 					type: I.BlockType.Text,
 					text,
 					marks: [],
+					lang: lang || undefined,
 				});
 				continue;
 			};
@@ -506,7 +510,7 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 
 			// Code block
 			if (part.style === I.TextStyle.Code) {
-				const code = $createCodeNode();
+				const code = $createCodeNode(part.lang || undefined);
 				code.append($createTextNode(part.text || ''));
 				root.append(code);
 				i++;
@@ -738,13 +742,28 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 
 				const text = node.getTextContent();
 				const offset = anchor.offset;
+				const menuOpen = S.Menu.isOpen('commentAdd');
 
 				// Only trigger when new text was added (not on deletions or cursor moves)
-				if ((offset > 0) && (text[offset - 1] === '/') && (text !== prevText.current)) {
+				if ((offset > 0) && (text[offset - 1] === '/') && (text !== prevText.current) && !menuOpen) {
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
+						S.Common.filterSet(0, '');
 						openSlashMenu(editor, editorId, slashOffset);
+					};
+				};
+
+				// Update filter text while slash menu is open
+				if (menuOpen && (slashOffset.current >= 0)) {
+					const filterStart = slashOffset.current + 1;
+					const filterText = text.slice(filterStart, offset);
+					S.Common.filterSetText(filterText);
+
+					// Close if / was deleted
+					if ((offset <= slashOffset.current) || (text[slashOffset.current] !== '/')) {
+						S.Menu.close('commentAdd');
+						slashOffset.current = -1;
 					};
 				};
 
@@ -776,28 +795,34 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 			editor,
 			editorId,
 			onSelect: (item: any) => {
-				// Remove the slash character
+				const filterLen = (S.Common.filter.text || '').length;
+
+				// Remove the slash character and any filter text after it
 				editor.update(() => {
-					const selection = $getSelection();
-					if (!$isRangeSelection(selection)) {
-						return;
-					};
+					const root = $getRoot();
+					const children = root.getChildren();
 
-					const anchor = selection.anchor;
-					const node = anchor.getNode();
+					for (const child of children) {
+						if (!$isElementNode(child)) {
+							continue;
+						};
 
-					if ($isTextNode(node)) {
-						const text = node.getTextContent();
-						const offset = slashOffset.current;
+						for (const textChild of child.getChildren()) {
+							if (!$isTextNode(textChild)) {
+								continue;
+							};
 
-						if ((offset >= 0) && (text[offset] === '/')) {
-							const before = text.slice(0, offset);
-							const after = text.slice(offset + 1);
-							node.setTextContent(before + after);
+							const text = textChild.getTextContent();
+							const offset = slashOffset.current;
 
-							// Set cursor position
-							const newOffset = Math.min(before.length, (before + after).length);
-							node.select(newOffset, newOffset);
+							if ((offset >= 0) && (offset < text.length) && (text[offset] === '/')) {
+								const before = text.slice(0, offset);
+								const after = text.slice(offset + 1 + filterLen);
+								textChild.setTextContent(before + after);
+								textChild.select(before.length, before.length);
+								slashOffset.current = -1;
+								return;
+							};
 						};
 					};
 				});
@@ -1001,6 +1026,256 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 			},
 		},
 	});
+};
+
+const EmojiPlugin = ({ editorId }: { editorId: string }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const prevText = useRef('');
+	const colonOffset = useRef(-1);
+
+	useEffect(() => {
+		const removeListener = editor.registerUpdateListener(({ editorState }) => {
+			editorState.read(() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node) || $isMentionNode(node)) {
+					prevText.current = '';
+					return;
+				};
+
+				const text = node.getTextContent();
+				const offset = anchor.offset;
+				const menuOpen = S.Menu.isOpen('smile');
+
+				if ((offset > 0) && (text[offset - 1] === ':') && (text !== prevText.current) && !menuOpen) {
+					const charBefore = offset > 1 ? text[offset - 2] : '';
+					if (!charBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(charBefore)) {
+						colonOffset.current = offset - 1;
+						openEmojiMenu(editor, editorId, colonOffset);
+					};
+				};
+
+				prevText.current = text;
+			});
+		});
+
+		return removeListener;
+	}, [ editor, editorId ]);
+
+	return null;
+};
+
+const openEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: React.MutableRefObject<number>) => {
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+
+	S.Menu.open('smile', {
+		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		vertical: I.MenuDirection.Top,
+		horizontal: I.MenuDirection.Left,
+		offsetY: -4,
+		noAnimation: true,
+		data: {
+			noHead: true,
+			noUpload: true,
+			value: '',
+			onSelect: (icon: string) => {
+				editor.update(() => {
+					const selection = $getSelection();
+					if (!$isRangeSelection(selection)) {
+						return;
+					};
+
+					const anchor = selection.anchor;
+					const node = anchor.getNode();
+
+					if ($isTextNode(node)) {
+						const text = node.getTextContent();
+						const offset = colonOffset.current;
+
+						if ((offset >= 0) && (text[offset] === ':')) {
+							const before = text.slice(0, offset);
+							const after = text.slice(offset + 1);
+							node.setTextContent(before + icon + after);
+							node.select(before.length + icon.length, before.length + icon.length);
+						};
+					};
+				});
+
+				colonOffset.current = -1;
+				editor.focus();
+			},
+		},
+	});
+};
+
+const CodeExitPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			KEY_ENTER_COMMAND,
+			(e: KeyboardEvent | null) => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return false;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				const codeNode = node.getTopLevelElementOrThrow();
+
+				if (!$isCodeNode(codeNode)) {
+					return false;
+				};
+
+				const text = codeNode.getTextContent();
+				const offset = anchor.offset;
+
+				// Check if cursor is at the end and last line is empty
+				const isAtEnd = (anchor.getNode() === codeNode.getLastChild()) && (offset === anchor.getNode().getTextContentSize());
+
+				if (!isAtEnd) {
+					return false;
+				};
+
+				// Check if the text ends with a newline (empty last line)
+				if (!text.endsWith('\n')) {
+					return false;
+				};
+
+				e?.preventDefault();
+
+				// Remove the trailing newline
+				const lastChild = codeNode.getLastChild();
+				if ($isTextNode(lastChild)) {
+					const childText = lastChild.getTextContent();
+					if (childText.endsWith('\n')) {
+						lastChild.setTextContent(childText.slice(0, -1));
+					};
+				};
+
+				// Create a new paragraph after the code block
+				const paragraph = $createParagraphNode();
+				paragraph.append($createTextNode(''));
+				codeNode.insertAfter(paragraph);
+				paragraph.select();
+
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor ]);
+
+	return null;
+};
+
+const CodeBlockPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+	const buttonsRef = useRef<Map<string, HTMLElement>>(new Map());
+
+	useEffect(() => {
+		const getLangLabel = (lang: string): string => {
+			const titles = U.Prism.getTitles();
+			const match = titles.find((t: any) => t.id === lang);
+			return match ? match.name : lang;
+		};
+
+		const addBtn = (element: HTMLElement, nodeKey: string) => {
+			if (buttonsRef.current.has(nodeKey)) {
+				// Update label
+				const btn = buttonsRef.current.get(nodeKey);
+				if (btn) {
+					editor.getEditorState().read(() => {
+						const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
+						if ($isCodeNode(node)) {
+							btn.textContent = getLangLabel(node.getLanguage() || J.Constant.default.codeLang);
+						};
+					});
+				};
+				return;
+			};
+
+			const btn = document.createElement('div');
+			btn.className = 'codeLangBtn';
+			btn.setAttribute('contenteditable', 'false');
+
+			editor.getEditorState().read(() => {
+				const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
+				if ($isCodeNode(node)) {
+					btn.textContent = getLangLabel(node.getLanguage() || J.Constant.default.codeLang);
+				};
+			});
+
+			btn.addEventListener('mousedown', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				S.Menu.open('select', {
+					element: $(btn),
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Left,
+					offsetY: -4,
+					noAnimation: true,
+					width: 200,
+					data: {
+						options: U.Menu.codeLangOptions(),
+						noFilter: false,
+						onSelect: (_e: any, item: any) => {
+							editor.update(() => {
+								const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
+								if ($isCodeNode(node)) {
+									node.setLanguage(item.id === 'plain' ? null : item.id);
+								};
+							});
+							btn.textContent = getLangLabel(item.id);
+						},
+					},
+				});
+			});
+
+			element.appendChild(btn);
+			buttonsRef.current.set(nodeKey, btn);
+		};
+
+		const removeBtn = (nodeKey: string) => {
+			const btn = buttonsRef.current.get(nodeKey);
+			if (btn && btn.parentNode) {
+				btn.parentNode.removeChild(btn);
+			};
+			buttonsRef.current.delete(nodeKey);
+		};
+
+		const unregister = editor.registerMutationListener(CodeNode, (mutations) => {
+			for (const [ nodeKey, mutation ] of mutations) {
+				if (mutation === 'destroyed') {
+					removeBtn(nodeKey);
+					continue;
+				};
+
+				const element = editor.getElementByKey(nodeKey);
+				if (element) {
+					addBtn(element, nodeKey);
+				};
+			};
+		});
+
+		return () => {
+			unregister();
+			buttonsRef.current.forEach((_btn, key) => removeBtn(key));
+		};
+	}, [ editor ]);
+
+	return null;
 };
 
 // ---- Main Component ----
@@ -1232,6 +1507,9 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<HorizontalRulePlugin />
 				<SlashMenuPlugin editorId={editorId} />
 				<MentionPlugin editorId={editorId} />
+				<EmojiPlugin editorId={editorId} />
+				<CodeExitPlugin />
+				<CodeBlockPlugin />
 			</div>
 		</LexicalComposer>
 	);

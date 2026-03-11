@@ -289,6 +289,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+		S.Common.filterSet(0, '');
 		S.Menu.open('commentAdd', {
 			element: $(e.currentTarget),
 			vertical: I.MenuDirection.Top,

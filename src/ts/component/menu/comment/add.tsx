@@ -1,17 +1,16 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Filter, MenuItemVertical } from 'Component';
-import { I, U, keyboard, translate } from 'Lib';
+import { MenuItemVertical } from 'Component';
+import { I, S, U, keyboard, translate } from 'Lib';
 
 const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, onKeyDown, setActive } = props;
 	const { data } = param;
 	const { onSelect } = data;
-	const [ filter, setFilter ] = useState('');
-	const filterRef = useRef(null);
 	const n = useRef(-1);
+	const filter = S.Common.filter.text;
 
 	const rebind = () => {
 		unbind();
@@ -30,6 +29,7 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
+		window.setTimeout(() => props.position?.(), 0);
 	}, [ filter ]);
 
 	const getSections = () => {
@@ -131,17 +131,12 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const onFilterChange = (v: string) => {
-		setFilter(v);
-	};
-
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => { n.current = i; },
-		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
 	}));
@@ -150,13 +145,6 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div className="commentMenuAdd">
-			<Filter
-				ref={filterRef}
-				placeholder={translate('commonSearch')}
-				onChange={onFilterChange}
-				focusOnMount={true}
-			/>
-
 			<div className="items scrollWrap">
 				{items.map((item: any, i: number) => {
 					if (item.isSeparator) {

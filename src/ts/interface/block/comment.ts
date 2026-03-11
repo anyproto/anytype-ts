@@ -11,6 +11,7 @@ export interface CommentContentPart {
 	text: string;
 	marks: I.Mark[];
 	checked?: boolean;
+	lang?: string;
 };
 
 export interface CommentMessage {

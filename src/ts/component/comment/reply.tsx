@@ -135,9 +135,13 @@ const CommentReply = observer((props: Props) => {
 		const encoded = U.Comment.encodeParts(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
-			text: encoded.text,
-			style: encoded.style,
-			marks: encoded.marks,
+			content: {
+				text: encoded.text,
+				style: encoded.style,
+				marks: encoded.marks,
+			},
+			attachments: message.attachments || [],
+			reactions: message.reactions || [],
 		} as any, () => {
 			setIsEditing(false);
 
@@ -300,7 +304,7 @@ const CommentReply = observer((props: Props) => {
 					<ObjectName object={author} withBadge={true} />
 				</div>
 				<div className="date">
-					{U.Date.date('M j', createdAt)}{editedLabel}
+					{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
 				</div>
 
 				{renderHoverActions()}

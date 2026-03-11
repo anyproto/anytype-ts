@@ -45,10 +45,20 @@ const renderPart = (part: I.CommentContentPart, index: number): JSX.Element => {
 			return <blockquote key={key} className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />;
 
 		case I.TextStyle.Code: {
-			const grammar = Prism.languages.clike || {};
-			const highlighted = Prism.highlight(part.text || '', grammar, 'clike');
+			const lang = part.lang || 'plain';
+			const grammar = Prism.languages[lang];
+			const text = part.text || '';
+			const highlighted = grammar ? Prism.highlight(text, grammar, lang) : U.String.sanitize(text);
+			const titles = U.Prism.getTitles();
+			const langTitle = titles.find((t: any) => t.id === lang);
+			const langLabel = langTitle ? langTitle.name : (lang !== 'plain' ? lang : '');
 
-			return <pre key={key} className="commentCodeBlock"><code dangerouslySetInnerHTML={{ __html: highlighted }} /></pre>;
+			return (
+				<pre key={key} className="commentCodeBlock">
+					{langLabel ? <div className="codeLang">{langLabel}</div> : ''}
+					<code dangerouslySetInnerHTML={{ __html: highlighted }} />
+				</pre>
+			);
 		}
 
 		case I.TextStyle.Bulleted:
@@ -276,9 +286,13 @@ const CommentPost = observer((props: Props) => {
 		const encoded = U.Comment.encodeParts(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
-			text: encoded.text,
-			style: encoded.style,
-			marks: encoded.marks,
+			content: {
+				text: encoded.text,
+				style: encoded.style,
+				marks: encoded.marks,
+			},
+			attachments: message.attachments || [],
+			reactions: message.reactions || [],
 		} as any, () => {
 			setIsEditing(false);
 
@@ -567,7 +581,7 @@ const CommentPost = observer((props: Props) => {
 						<ObjectName object={author} withBadge={true} />
 					</div>
 					<div className="date">
-						{U.Date.date('M j', createdAt)}{editedLabel}
+						{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
 					</div>
 				</div>
 

@@ -58,7 +58,7 @@
 
 		.commentAttachments { margin: 8px 0px 0px 40px; }
 
-		.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
+		.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
 		.reactions {
 			.reaction {
 				display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500;
@@ -114,17 +114,12 @@
 	}
 	.commentForm.isReply { max-height: 280px; }
 	.commentForm {
-		.contentArea {
-			padding: 10px 12px; overflow-y: auto; flex: 1 1 auto;
-		}
+		.contentArea { padding: 10px 12px; overflow-y: auto; flex: 1 1 auto; }
 
-		.attachmentList {
-			display: flex; flex-direction: column; gap: 8px; padding: 8px 0px 0px 0px;
-		}
+		.attachmentList { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px 0px 0px; }
 		.attachmentList {
 			.attachment {
-				width: 100%; border-radius: 12px;
-				border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary);
+				width: 100%; border-radius: 12px; border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary);
 			}
 			.attachment .image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; }
 			.attachment .mediaWrapper { max-height: 200px; overflow: hidden; }
@@ -211,10 +206,18 @@
 	}
 
 	.commentEditor-codeBlock {
-		margin: 4px 0px; padding: 12px;
-		background: var(--color-bg-secondary); border-radius: 8px;
-		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
-		white-space: pre-wrap; tab-size: 4;
+		display: block; margin: 4px 0px; padding: 12px; background: var(--color-shape-highlight-light); border-radius: 8px;
+		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px; white-space: pre-wrap; tab-size: 4;
+		position: relative;
+	}
+	.commentEditor-codeBlock {
+		.codeLangBtn {
+			position: absolute; top: 4px; right: 4px; padding: 2px 8px;
+			@include text-very-small; color: var(--color-text-secondary); font-family: var(--fontFamily);
+			background: var(--color-shape-highlight-medium); border-radius: 4px; user-select: none;
+			z-index: 1;
+		}
+		.codeLangBtn:hover { color: var(--color-text-primary); background: var(--color-shape-highlight-dark); }
 	}
 
 	.commentEditor-ul { margin: 2px 0px; padding-left: 20px; list-style-type: disc; }
@@ -248,12 +251,21 @@
 	}
 
 	.commentCodeBlock {
-		margin: 4px 0px; padding: 12px;
-		background: var(--color-bg-secondary); border-radius: 8px;
+		margin: 4px 0px; padding: 12px; position: relative;
+		background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 		white-space: pre-wrap; tab-size: 4; overflow-x: auto;
 	}
-	.commentCodeBlock code { font-family: inherit; font-size: inherit; }
+	.commentCodeBlock {
+		code { font-family: inherit; font-size: inherit; }
+
+		.codeLang {
+			position: absolute; top: 4px; right: 4px; padding: 2px 8px;
+			@include text-very-small; color: var(--color-text-secondary);
+			background: var(--color-shape-highlight-medium); border-radius: 4px; user-select: none;
+			font-family: var(--fontFamily);
+		}
+	}
 
 	/* Rendered mention and link styles */
 	.content, .commentParagraph, .commentH1, .commentH2, .commentH3, .commentBlockquote {
@@ -276,9 +288,7 @@
 	}
 
 	/* Rendered attachments in posts */
-	.commentAttachments {
-		display: flex; flex-direction: column; gap: 8px;
-	}
+	.commentAttachments { display: flex; flex-direction: column; gap: 8px; }
 	.commentAttachments {
 		.attachment { width: 100%; border-radius: 12px; border: 1px solid var(--color-shape-secondary); }
 		.attachment .image { max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; }
@@ -316,11 +326,10 @@
 
 .menu.menuCommentAdd { width: var(--menu-width-icon); }
 .menu.menuCommentAdd {
-	.content { padding-top: 12px; max-height: 450px; }
+	.content { max-height: 450px; }
 
 	.commentMenuAdd {
 		.items { max-height: 320px; overflow-y: auto; padding: 4px 0px; }
-
 		.item.isDisabled { opacity: 0.35; }
 	}
 }
@@ -331,8 +340,7 @@
 	.buttons { display: flex; align-items: center; gap: 0px 2px; }
 	.buttons {
 		.icon {
-			width: 28px; height: 28px; border-radius: 4px;
-			display: flex; align-items: center; justify-content: center;
+			width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
 			user-select: none;
 		}
 		.icon:hover { background: var(--color-shape-tertiary); }
