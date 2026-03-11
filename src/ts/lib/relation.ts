@@ -857,7 +857,9 @@ class Relation {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
-		return String(value || '');
+
+		const s = String(value || '');
+		return s == J.Constant.missingObjectId ? '' : s;
 	};
 
 	/**
@@ -875,7 +877,7 @@ class Relation {
 		if (!U.Common.objectLength(value)) {
 			return [];
 		};
-		return U.Common.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
+		return U.Common.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it) && (it != J.Constant.missingObjectId)));
 	};
 
 	/**
