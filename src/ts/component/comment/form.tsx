@@ -161,6 +161,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
+
+		window.setTimeout(() => {
+			if (formRef.current) {
+				formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			};
+		}, 50);
 	}, []);
 
 	const handleBlur = useCallback(() => {

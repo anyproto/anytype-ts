@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .commentSection {
-	display: flex; flex-direction: column; min-height: 200px;
+	display: flex; flex-direction: column; flex: 1 1 auto; min-height: 200px;
 	padding: 24px 0px 0px 0px; border-top: 1px solid var(--color-shape-secondary);
 }
 .commentSection {

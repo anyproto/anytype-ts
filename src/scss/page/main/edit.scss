@@ -3,4 +3,5 @@
 .pageMainEdit {
 	#bodyWrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
 	.editorWrapper { width: 60%; }
+	.editorWrapper .editor { display: flex; flex-direction: column; min-height: calc(100vh - 60px); }
 }
