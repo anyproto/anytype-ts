@@ -1,8 +1,8 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, M, C, S, U, Action, Relation, keyboard, translate } from 'Lib';
-import { Block, Button, DragHorizontal } from 'Component';
+import { Block, Button, DragHorizontal, Loader } from 'Component';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -18,6 +18,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
 	const dragRef = useRef(null);
 	const dragValueRef = useRef(null);
+	const wrapperRef = useRef(null);
 	const check = U.Data.checkDetails(rootId, rootId, []);
 	const isBookmark = U.Object.isBookmarkLayout(check.layout);
 	const header = S.Block.getLeaf(rootId, 'header');
@@ -29,9 +30,11 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		const pageContainer = U.Common.getPageContainer(isPopup);
+		const wrapper = $(wrapperRef.current).parents('#editorWrapper').first();
 
-		pageContainer.find('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		if (wrapper.length) {
+			wrapper.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		};
 		U.Common.triggerResizeEditor(isPopup);
 	};
 
@@ -77,11 +80,31 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setPercent: (v: number) => setPercent(v),
 	}));
 
+	const [ ogImageLoaded, setOgImageLoaded ] = useState(false);
+	const ogImageUrlRef = useRef('');
+	const bookmarkObject = isBookmark ? S.Detail.get(rootId, rootId, [ 'source', 'picture', 'iconImage' ]) : null;
+	const bookmarkPicture = bookmarkObject?.picture || '';
+	const ogImageUrl = bookmarkPicture ? S.Common.imageUrl(bookmarkPicture, I.ImageSize.Large) : '';
+
+	useEffect(() => {
+		if (!ogImageUrl || (ogImageUrl === ogImageUrlRef.current)) {
+			return;
+		};
+
+		ogImageUrlRef.current = ogImageUrl;
+		setOgImageLoaded(false);
+
+		const img = new Image();
+		img.onload = () => setOgImageLoaded(true);
+		img.onerror = () => setOgImageLoaded(true);
+		img.src = ogImageUrl;
+	}, [ ogImageUrl ]);
+
 	let bookmarkHead = null;
 	let bookmarkFoot = null;
 
 	if (isBookmark) {
-		const object = S.Detail.get(rootId, rootId, [ 'source', 'picture', 'iconImage' ]);
+		const object = bookmarkObject;
 		const { source, picture, iconImage } = object;
 		const type = S.Record.getTypeById(object.type);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -95,7 +118,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		bookmarkHead = (
 			<>
 				{picture ? (
-					<div className="bookmarkOgImage" style={{ backgroundImage: `url("${S.Common.imageUrl(picture, I.ImageSize.Large)}")` }} />
+					<div className={[ 'bookmarkOgImage', (ogImageLoaded ? 'isLoaded' : '') ].join(' ')} style={ogImageLoaded ? { backgroundImage: `url("${ogImageUrl}")` } : {}}>
+						{!ogImageLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+					</div>
 				) : ''}
 
 				{source ? (
@@ -138,7 +163,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<>
-			<div id="editorSize" className="dragWrap">
+			<div ref={wrapperRef} id="editorSize" className="dragWrap">
 				<DragHorizontal
 					ref={dragRef}
 					value={check.layoutWidth}

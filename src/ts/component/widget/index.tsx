@@ -572,6 +572,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				subId,
 				allowedNewTab: true,
 				openAfterDuplicate: true,
+				allowedCollection: true,
 			},
 		};
 
@@ -592,8 +593,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const onClickHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		if (e.button) {
+		
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 

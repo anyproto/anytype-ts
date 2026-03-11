@@ -400,14 +400,14 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const bindContainerClick = () => {
-			const pc = $(pageContainer);
+			const win = $(window);
 
-			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
+			win.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
 				if (!$(e.target).parents(`#${U.Common.esc(cellId)}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
-					pc.off(`mousedown.cell${cellId}`);
+					win.off(`mousedown.cell${cellId}`);
 				};
 			});
 		};

@@ -320,9 +320,7 @@
 	.block.blockText.textToggleHeader3 > .wrapContent > .dropTarget.targetBot.isOver.bottom
 	{ box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
-	.block.blockText.textParagraph > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textHeader > .wrapContent.bgColor > .selectionTarget > .dropTarget
-	{ padding-left: 8px; padding-right: 8px;  }
+	.block.blockText > .wrapContent.bgColor > .selectionTarget > .dropTarget { padding-left: 8px; padding-right: 8px;  }
 }
 
 .editorWrapper.isTask {

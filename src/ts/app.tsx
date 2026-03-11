@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
+import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 
@@ -191,6 +191,11 @@ const App: FC = () => {
 			S.Common.themeSet(theme);
 		});
 
+		Renderer.on('set-hide-sidebar', (e: any, v: boolean) => {
+			S.Common.hideSidebarSet(v);
+			sidebar.init(false);
+		});
+
 		Renderer.on('pin-check', () => {
 			if (!S.Common.pin) {
 				return;
@@ -211,6 +216,7 @@ const App: FC = () => {
 
 		Renderer.on('tab-show-tooltip', (e: any, data: any) => U.Common.tabTooltipShow(data));
 		Renderer.on('tab-hide-tooltip', () => U.Common.tabTooltipHide());
+		Renderer.on('analytics', (e: any, code: string, data?: any) => analytics.event(code, data));
 	};
 	
 	const unregisterIpcEvents = () => {
@@ -241,6 +247,7 @@ const App: FC = () => {
 		Renderer.remove('tab-show-tooltip');
 		Renderer.remove('tab-hide-tooltip');
 		Renderer.remove('set-active-tab');
+		Renderer.remove('analytics');
 	};
 
 	const onInit = (data: any) => {
@@ -254,8 +261,16 @@ const App: FC = () => {
 		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
-		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
+
+		// Validate tab route — don't restore blank/void routes that can't render content
+		let route = String(data.route || redirect || '');
+		if (route) {
+			const rp = U.Router.getParam(route);
+			if ((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action)) {
+				route = '';
+			};
+		};
 
 		if (config) {
 			S.Common.configSet(config, true);
@@ -372,7 +387,7 @@ const App: FC = () => {
 				if (spaceId) {
 					U.Router.switchSpace(spaceId, '', false, routeParam, true);
 				} else {
-					U.Router.go('/main/void/select', routeParam);
+					U.Data.onAuthWithoutSpace(routeParam);
 				};
 			});
 		};
@@ -572,7 +587,6 @@ const App: FC = () => {
 					<div id="globalFade" />
 
 					<PreviewIndex />
-					<Progress />
 					<Toast />
 					<ListNotification key="listNotification" />
 

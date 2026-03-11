@@ -28,7 +28,7 @@ class Dataview {
 			};
 		};
 
-		relations = U.Common.objectCopy(relations).filter(it => it);
+		relations = U.Common.objectCopy(relations).filter(it => it && !it.isArchived && !it.isDeleted);
 
 		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
@@ -215,6 +215,10 @@ class Dataview {
 		return U.Common.objectCopy(view.filters).filter(it => {
 			if (!Relation.isFilterActive(it)) {
 				return false;
+			};
+
+			if (it.operator != I.FilterOperator.None) {
+				return true;
 			};
 
 			const relation = S.Record.getRelationByKey(it.relationKey);

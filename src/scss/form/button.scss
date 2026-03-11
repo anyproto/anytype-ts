@@ -62,6 +62,10 @@ input.button { line-height: 1; }
 
 .button {
 	.icon { margin-right: 6px; }
+	.icon.downloading {
+		width: 16px; height: 16px;
+		background-image: url('~img/icon/vault/spinner.svg'); background-size: 16px; animation: rotate 1.2s infinite linear;
+	}
 	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
 }
 

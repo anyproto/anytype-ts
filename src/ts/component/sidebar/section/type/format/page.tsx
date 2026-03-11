@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Select, DragHorizontal } from 'Component';
+import { Select, Switch } from 'Component';
 import { I, U, translate } from 'Lib';
 
 interface Props extends I.SidebarSectionComponent {
@@ -10,18 +10,11 @@ interface Props extends I.SidebarSectionComponent {
 const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { object, onChange, layoutOptions, readonly } = props;
-	const percentRef = useRef(null);
 	const layoutRef = useRef(null);
 	const alignRef = useRef(null);
 	const featuredRef = useRef(null);
-	const widthRef = useRef(null);
 	const alignOptions = U.Menu.getHAlign([ I.BlockHAlign.Justify ]);
 	const featuredViewOptions = U.Menu.getFeaturedRelationLayout();
-	const snaps = [];
-
-	for (let i = 0; i <= 10; i ++) {
-		snaps.push(i / 10);
-	};
 
 	useEffect(() => {
 		setValue();
@@ -31,20 +24,10 @@ const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props
 		layoutRef.current.setValue(object.recommendedLayout);
 		alignRef.current.setValue(object.layoutAlign);
 		featuredRef.current.setValue(object.headerRelationsLayout);
-		widthRef.current.setValue(object.layoutWidth);
 	};
 
-	const onWidthMove = (v: number) => {
-		$(percentRef.current).text(`${getPercent(v)}%`);
-	};
-
-	const onWidthEnd = (v: number) => {
-		onChange({ layoutWidth: v });
-	};
-
-	const getPercent = (v: number): string => {
-		v = Number(v) || 0;
-		return Math.floor((1 + v) * 100).toString();
+	const onFullWidthChange = (e: any, v: boolean) => {
+		onChange({ layoutWidth: v ? 1 : 0 });
 	};
 
 	return (
@@ -120,19 +103,15 @@ const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props
 
 			<div className="item">
 				<div className="name">
-					{translate('sidebarSectionLayoutWidth')}
+					{translate('sidebarSectionFullWidth')}
 				</div>
 
-				<div className="value flex">
-					<div ref={percentRef}>{getPercent(object.layoutWidth)}%</div>
-					<DragHorizontal
-						ref={widthRef}
-						value={object.layoutWidth}
-						onMove={(e, v) => onWidthMove(v)}
-						onEnd={(e, v) => onWidthEnd(v)}
+				<div className="value">
+					<Switch
+						className="big"
+						value={object.layoutWidth == 1}
+						onChange={onFullWidthChange}
 						readonly={readonly}
-						iconIsOutside={false}
-						snaps={snaps}
 					/>
 				</div>
 			</div>

@@ -123,6 +123,9 @@ class Dispatcher {
 	 * Cancels the stream and clears the reference.
 	 */
 	stopStream () {
+		window.clearTimeout(this.timeoutStream);
+		this.reconnects = 0;
+
 		if (this.rafId) {
 			cancelAnimationFrame(this.rafId);
 		};
@@ -748,13 +751,19 @@ class Dispatcher {
 
 									if (idx >= 0) {
 										if (key.id == 'relation') {
-											const updateKeys = [];
+											const updateKeys = [ 'isVisible' ];
 
 											for (const f of updateKeys) {
 												if (list[idx][f] != item[f]) {
 													updateData = true;
 													break;
 												};
+											};
+
+											// Preserve existing custom width if update doesn't specify one
+											// (protobuf3 defaults unset int fields to 0)
+											if (!item.width) {
+												item.width = list[idx]?.width || 0;
 											};
 										};
 
@@ -1120,6 +1129,14 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateReactionReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach(subId => {
+						S.Chat.setReadReactionStatus(subId, mapped.ids, mapped.isRead);
+					});
+					break;
+				};
+
 				case 'ChatDelete': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
@@ -1130,14 +1147,71 @@ class Dispatcher {
 
 				case 'ChatUpdateReactions': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+
+					let oldReactions: I.ChatMessageReaction[] = [];
+					let notificationMessage: I.ChatMessage = null;
+
 					mapped.subIds.forEach((subId) => {
 						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
+							if (!notificationMessage) {
+								oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
+								notificationMessage = message;
+							};
 							set(message, { reactions: mapped.reactions });
 						};
 					});
 
-					$(window).trigger('reactionUpdate', [ message ]);
+					// Send OS notification for new reactions in 1:1 spaces
+					if (
+						notificationMessage &&
+						spaceview?.isOneToOne &&
+						!windowIsFocused &&
+						S.Common.isActiveTab &&
+						(notificationMessage.creator == account.id)
+					) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+
+						if (notificationMode != I.NotificationMode.Nothing) {
+							// Find newly added reactions by diffing old and new
+							const newReactions = mapped.reactions as I.ChatMessageReaction[];
+							const addedEmojis: { icon: string; author: string }[] = [];
+
+							for (const nr of newReactions) {
+								const old = oldReactions.find(r => r.icon == nr.icon);
+								const oldAuthors = old ? old.authors : [];
+
+								for (const author of nr.authors) {
+									if ((author != account.id) && !oldAuthors.includes(author)) {
+										addedEmojis.push({ icon: nr.icon, author });
+									};
+								};
+							};
+
+							if (addedEmojis.length) {
+								const { icon, author } = addedEmojis[0];
+								const participantId = U.Space.getParticipantId(spaceId, author);
+								const participant = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), participantId);
+								const authorName = participant && !participant._empty_ ? U.Object.name(participant) : '';
+								const messagePreview = S.Chat.getMessageSimpleText(spaceId, notificationMessage, false);
+
+								if (authorName) {
+									const title = U.String.shorten(spaceview.name, 32);
+									const text = `${icon} to ${U.String.shorten(messagePreview, 48)}`;
+
+									Renderer.send('notification', {
+										id: mapped.id,
+										title,
+										text,
+										cmd: 'openChat',
+										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+									});
+								};
+							};
+						};
+					};
+
+					$(window).trigger('reactionUpdate', [ notificationMessage ]);
 					break;
 				};
 
@@ -1561,7 +1635,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugRequest = config.flagsMw.request;
 		const debugSubscribe = config.flagsMw.subscribe;
-		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds' ];
+		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds', 'ObjectCrossSpaceSearchSubscribe' ];
 
 		if (debugSubscribe && subscribeCommands.includes(type)) {
 			return true;

@@ -17,10 +17,11 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const { data } = S.Membership;
 	const product = data?.getTopProduct();
 	const { space, isOnline } = S.Common;
-	const [ dummy, setDummy ] = useState(0);
+	const [ activeId, setActiveId ] = useState('');
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const param = keyboard.getMatch().params;
+	const currentId = activeId || param.id;
 	const isSpace = page == 'settingsSpace';
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -49,6 +50,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			importExport.unshift({ id: 'importIndex', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
 		};
 
+		const isOwner = U.Space.isMyOwner();
+		const leaveOrRemove = !spaceview.isPersonal ? {
+			id: 'remove',
+			icon: isOwner ? 'remove' : 'leave',
+			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
+			color: 'red',
+		} : null;
+
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
@@ -65,9 +74,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-		].map(s => {
+			leaveOrRemove ? { id: 'delete', isDiv: true, children: [ leaveOrRemove ] } : null,
+		].filter(it => it).map(s => {
 			s.children = s.children.filter(it => it).map((c: any) => {
-				c.name = map[c.id];
+				c.name = map[c.id] || c.name;
 				return c;
 			});
 			return s;
@@ -151,11 +161,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	};
 
 	const onClick = (item) => {
+		if (item.id == 'remove') {
+			Action.removeSpace(S.Common.space, analytics.route.settings);
+		} else
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
+			setActiveId(item.id);
 			Action.openSettings(item.id, analytics.route.settings);
-			setDummy(dummy + 1);
 		};
 	};
 
@@ -196,12 +209,16 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			let name = null;
 			let caption = '';
 
-			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
+			if (item.id == currentId || (item.subPages && item.subPages.includes(currentId))) {
 				cn.push('active');
 			};
 
+			if (item.color) {
+				cn.push(`textColor-${item.color}`);
+			};
+
 			if (item.id == 'account') {
-				if ('index' == param.id) {
+				if ('index' == currentId) {
 					cn.push('active');
 				};
 

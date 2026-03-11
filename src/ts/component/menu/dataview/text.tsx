@@ -4,6 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
 import { I, J, U, S, keyboard } from 'Lib';
+import { line } from 'd3';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -106,12 +107,14 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const { wh } = U.Common.getWindowDimensions();
 		const hh = J.Size.header;
 		const cell = $(`#${U.Common.esc(cellId)}`);
+		const lh = parseInt(cell.find('.name').css('line-height'), 10) || 20;
 
 		raf(() => {
 			const sh = input.get(0).scrollHeight;
 			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell.outerHeight(), sh)));
 
 			obj.css({ height });
+			input.css({ lineHeight: `${lh}px` });
 			position();
 		});
 	};

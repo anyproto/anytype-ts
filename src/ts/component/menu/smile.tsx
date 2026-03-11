@@ -55,14 +55,13 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const storage = storageGet();
 		const { tab, skin, iconColor } = storage;
 
-		rebind();
 		skinRef.current = Number(skin) || 1;
 		iconColorRef.current = Number(iconColor) || 1;
 
 		let t = Tab.Smile;
 		if (tab && tabs.find(it => it.id == tab)) {
 			t = tab;
-		} else 
+		} else
 		if (tabs.length) {
 			t = tabs[0].id;
 		};
@@ -80,6 +79,11 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			unbind();
 		};
 	}, []);
+
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	}, [ tab ]);
 	
 	useEffect(() => {
 		const node = $(nodeRef.current);

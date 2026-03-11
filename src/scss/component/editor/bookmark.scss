@@ -1,9 +1,14 @@
 .editorWrapper.isBookmark {
 	.editorControls { display: none; }
 
-	.bookmarkOgImage { 
-		width: 100%; aspect-ratio: 1.91; background-size: contain; background-position: center; background-repeat: no-repeat; 
-		border-radius: 6px; margin-left: 48px;
+	.bookmarkOgImage {
+		width: 100%; aspect-ratio: 1.91; background-size: cover; background-position: center; background-repeat: no-repeat;
+		border-radius: 6px; margin-left: 48px; position: relative; display: flex; align-items: center; justify-content: center;
+		background-color: var(--color-shape-tertiary);
+
+		&.isLoaded { background-color: transparent; }
+
+		.loaderWrapper { position: absolute; }
 	}
 
 	.bookmarkLink { 

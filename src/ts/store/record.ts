@@ -605,7 +605,8 @@ class RecordStore {
 		const type = S.Record.getTypeById(typeId);
 		const recommended = Relation.getArrayValue(type?.recommendedRelations);
 		const typeRelations = recommended.map(it => this.getRelationById(it)).filter(it => it);
-		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
+		const recommendedSet = new Set(recommended);
+		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommendedSet.has(it.id));
 
 		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
 	};

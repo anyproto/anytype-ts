@@ -64,6 +64,12 @@ class Keyboard {
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
 
+			// Restore editor focus when window regains focus with a from-block menu open
+			// (e.g., OS keyboard layout popup on Linux temporarily steals focus)
+			if (S.Menu.isOpenList([ 'blockAdd', 'blockMention', 'blockEmoji' ])) {
+				focus.apply();
+			};
+
 			// Check if PIN timeout has elapsed since last activity
 			const { pin, pinTime } = S.Common;
 			if (pin && pinTime) {
@@ -84,6 +90,9 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+
+		Renderer.remove('analyticsEvent');
+		Renderer.on('analyticsEvent', (e: any, code: string, data: any) => analytics.event(code, data));
 
 		this.onResize();
 	};
@@ -228,6 +237,8 @@ class Keyboard {
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const route = analytics.route.shortcut;
 		const electron = U.Common.getElectron();
+		const selectedBlockIds = selection?.get(I.SelectType.Block) || [];
+		const selectedRecordIds = selection?.get(I.SelectType.Record) || [];
 
 		if (this.isMainEditor()) {
 			this.shortcut('tableOfContents', e, () => {
@@ -259,11 +270,9 @@ class Keyboard {
 						U.Common.clearSelection();
 						canClose = false;
 					} else
-					if (selection) {
-						const ids = selection?.get(I.SelectType.Block) || [];
-						if (ids.length) {
-							canClose = false;
-						};
+					if (selectedBlockIds.length || selectedRecordIds.length) {
+						selection.clear();
+						canClose = false;
 					};
 				};
 
@@ -274,6 +283,9 @@ class Keyboard {
 					};
 				};
 			} else 
+			if (selectedBlockIds.length || selectedRecordIds.length) {
+				selection.clear();
+			} else
 			if (electron.isFullScreen()) {
 				Renderer.send('toggleFullScreen');
 			} else
@@ -801,11 +813,6 @@ class Keyboard {
 				} else {
 					document.execCommand('redo');
 				};
-				break;
-			};
-
-			case 'analyticsAddTab': {
-				analytics.event('AddTab', { route: analytics.route.navigation });
 				break;
 			};
 
@@ -1911,10 +1918,6 @@ class Keyboard {
 		};
 		if (e.metaKey) {
 			ret.push('cmd');
-		};
-		// Add CapsLock as a modifier if active
-		if (e.getModifierState && e.getModifierState('CapsLock')) {
-			ret.push('capslock');
 		};
 		return ret;
 	};

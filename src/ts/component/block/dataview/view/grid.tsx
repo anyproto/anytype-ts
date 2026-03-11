@@ -314,11 +314,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			return;
 		};
 
-		const ids = relations.map(it => it.relationKey);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const oldIndex = view.relations.findIndex(it => it.relationKey == active.id);
+		const newIndex = view.relations.findIndex(it => it.relationKey == over.id);
 
-		view.relations = arrayMove(relations, oldIndex, newIndex);
+		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
 
 		keyboard.setDragging(false);

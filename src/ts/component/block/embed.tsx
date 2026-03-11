@@ -1,28 +1,64 @@
-import React, { forwardRef, useEffect, useState, useRef, memo } from 'react';
+import React, { Suspense, forwardRef, useEffect, useState, useRef, memo } from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid, MediaExcalidraw } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
-const katex = require('katex');
-const pako = require('pako');
+const MediaMermaid = React.lazy(() => import('Component/util/media/mermaid'));
+const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
 
-require('katex/dist/contrib/mhchem');
+let _katex: any = null;
+let _katexLoading: Promise<any> | null = null;
+let _pako: any = null;
+let _pakoLoading: Promise<any> | null = null;
+let _viz: any = null;
+let _vizLoading: Promise<any> | null = null;
+
+const getKatex = (): any => {
+	if (_katex) return _katex;
+	if (!_katexLoading) {
+		_katexLoading = import('katex').then(m => {
+			_katex = m.default || m;
+			return import('katex/dist/contrib/mhchem');
+		});
+	};
+	return null;
+};
+
+
+const getPako = async (): Promise<any> => {
+	if (_pako) return _pako;
+	if (!_pakoLoading) {
+		_pakoLoading = import('pako').then(m => { _pako = m.default || m; return _pako; });
+	};
+	return _pakoLoading;
+};
+
+const getViz = async (): Promise<any> => {
+	if (_viz) return _viz;
+	if (!_vizLoading) {
+		_vizLoading = import('@viz-js/viz').then(m => {
+			_viz = m.instance;
+			return _viz;
+		});
+	};
+	return _vizLoading;
+};
 
 const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
+	const [ isFullScreen, setIsFullScreen ] = useState(false);
 	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
-	const { width, type } = fields || {};
+	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 	const text = String(content.text || '');
@@ -38,10 +74,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const selection = S.Common.getRef('selectionProvider');
 	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 	const rootRef = useRef(null);
+	const resizeStartRef = useRef({ x: 0, y: 0, w: 0, h: 0 });
+	const scrollTopRef = useRef(0);
 	const isExcalidraw = block.isEmbedExcalidraw();
+
+	const excalidrawCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
+	};
+
+	if (isExcalidraw) {
+		if (fieldHeight) {
+			excalidrawCss.height = Math.max(200, fieldHeight);
+		} else {
+			const el = $(`#selectionTarget-${U.Common.esc(block.id)}`);
+			const containerWidth = el.length ? el.width() : 600;
+			excalidrawCss.height = Math.max(200, containerWidth * (width || 1) * 9 / 16);
+		};
 	};
 
 	if (!text) {
@@ -56,7 +106,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		cn.push('isUnsupported');
 	};
 
-	const init = () => {
+	if (isFullScreen) {
+		cn.push('isFullScreen');
+	};
+
+	const init = async () => {
 		setText(block.content.text);
 		setValue(text);
 		setContent(text);
@@ -432,7 +486,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					sandbox.push('allow-presentation');
 				};
 
-				const onLoad = () => {
+				const onLoad = async () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const sanitizeParam: any = { 
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
@@ -464,6 +518,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
+						const pako = await getPako();
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
 						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
@@ -555,11 +610,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Latex: {
+				const katex = getKatex();
+				if (!katex) {
+					_katexLoading?.then(() => init());
+					break;
+				};
+
 				let html = '';
 
 				try {
-					html = katex.renderToString(text, { 
-						displayMode: true, 
+					html = katex.renderToString(text, {
+						displayMode: true,
 						strict: false,
 						throwOnError: true,
 						output: 'html',
@@ -590,7 +651,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				rootRef.current.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />);
+				rootRef.current.render(
+					<Suspense fallback={<Loader />}>
+						<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />
+					</Suspense>
+				);
 				break;
 			};
 
@@ -603,22 +668,26 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 
 				rootRef.current.render(
-					<MediaExcalidraw
-						data={data}
-						onChange={(elements, appState, files) => {
-							window.clearTimeout(timeoutSaveRef.current);
-							timeoutSaveRef.current = window.setTimeout(() => {
-								C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
-							}, 1000);
-						}}
-						readonly={readonly}
-					/>
+					<Suspense fallback={<Loader />}>
+						<MediaExcalidraw
+							data={data}
+							onChange={(elements, appState, files) => {
+								window.clearTimeout(timeoutSaveRef.current);
+								timeoutSaveRef.current = window.setTimeout(() => {
+									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
+								}, 1000);
+							}}
+							readonly={readonly}
+						/>
+					</Suspense>
 				);
 				break;
 			};
 
 			case I.EmbedProcessor.Graphviz: {
-				viz().then(res => {
+				getViz().then(instance => {
+					return instance();
+				}).then(res => {
 					try {
 						value.html(res.renderSVGElement(text));
 					} catch (e) {
@@ -685,17 +754,27 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const win = $(window);
 		const node = $(nodeRef.current);
 
-		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		
+
+		selection?.clear();
 		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
+
+		if (isExcalidraw) {
+			const media = node.find('.mediaExcalidraw');
+			resizeStartRef.current = {
+				x: e.pageX,
+				y: e.pageY,
+				w: Number(fields.width) || 1,
+				h: media.length ? media.height() : 400,
+			};
+		};
 
 		node.addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
@@ -705,24 +784,32 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const node = $(nodeRef.current);
 		const wrap = node.find('#valueWrap');
-		
+
 		if (!wrap.length) {
 			return;
 		};
 
 		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
+
 		wrap.css({ width: (w * 100) + '%' });
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			const newHeight = Math.max(200, start.h + dy);
+			
+			node.find('#value').css({ height: newHeight });
+		};
 	};
 
 	const onResizeEnd = (e: any, checkMax: boolean) => {
 		const node = $(nodeRef.current);
 		const wrap = node.find('#valueWrap');
-		
+
 		if (!wrap.length) {
 			return;
 		};
@@ -734,15 +821,23 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const win = $(window);
 		const rect = U.Common.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
+
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		node.removeClass('isResizing');
 
+		const newFields: any = { ...fields, width: w };
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			newFields.height = Math.max(200, start.h + dy);
+		};
+
 		C.BlockListSetFields(rootId, [
-			{ blockId: block.id, fields: { ...fields, width: w } },
+			{ blockId: block.id, fields: newFields },
 		]);
 	};
 
@@ -768,11 +863,16 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let select = null;
 	let source = null;
 	let resizeIcon = null;
+	let expandIcon = null;
 	let empty = '';
 	let placeholder = '';
 
-	if (U.Embed.allowBlockResize(processor) && text) {
+	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
 		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+	};
+
+	if (isExcalidraw) {
+		expandIcon = <Icon className="expand withBackground" onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
@@ -846,6 +946,34 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	}, [ isEditing ]);
 
+	useEffect(() => {
+		const container = U.Common.getScrollContainer(isPopup);
+
+		if (isFullScreen) {
+			scrollTopRef.current = container.scrollTop();
+		};
+
+		const onEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				e.stopPropagation();
+				setIsFullScreen(false);
+			};
+		};
+
+		if (isFullScreen) {
+			window.addEventListener('keydown', onEscape, true);
+		};
+
+		return () => {
+			window.removeEventListener('keydown', onEscape, true);
+
+			if (isFullScreen) {
+				container.scrollTop(scrollTopRef.current);
+			};
+		};
+	}, [ isFullScreen ]);
+
 	let tabIndex = -1;
 	let onKeyDownProp;
 	let onKeyUpProp;
@@ -868,6 +996,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			onFocus={onFocusProp}
 		>
 			{source}
+			{expandIcon}
 
 			<div id="valueWrap" className="valueWrap" style={css}>
 				{select ? <div className="selectWrap">{select}</div> : ''}
@@ -882,7 +1011,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
-						<div id="value" onMouseDown={onEdit} />
+						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />
 
 						{empty ? <Label text={empty} className="label empty" onMouseDown={onEdit} /> : ''}
 						{resizeIcon}

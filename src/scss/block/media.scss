@@ -29,6 +29,10 @@
 		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
 		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
+		.icon.downloading {
+			width: 28px; height: 28px; right: 8px; top: 8px; position: absolute; z-index: 1; opacity: 1;
+			background-image: url('~img/icon/vault/spinner.svg'); background-size: 28px; animation: rotate 1.2s infinite linear;
+		}
 
 		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-primary); height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
@@ -52,6 +56,12 @@
 					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: var(--color-control-active);
 					display: inline-block; vertical-align: top; flex-shrink: 0;
 				}
+				.icon.downloading {
+					width: 20px; height: 20px; flex-shrink: 0;
+					background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+				}
+
+				&.isDownloading { opacity: 0.6; }
 			}
 
 			.pager { flex-shrink: 0; cursor: default; }

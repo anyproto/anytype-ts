@@ -27,7 +27,6 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		unbind();
 
 		$(window).on('keydown.menu', e => onKeyDown(e));
-		window.setTimeout(() => setActive(), 15);
 
 		const obj = $(`#${getId()}`);
 		obj.on('mouseenter', () => S.Common.clearTimeout('tableOfContents'));
@@ -45,8 +44,12 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			setActive(item, false);
+			setHover(item);
 		};
+	};
+
+	const onMouseLeave = () => {
+		setHover();
 	};
 
 	const onClick = (e: any, item: any) => {
@@ -75,11 +78,13 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	};
 
 	const Item = (item: any) => (
-		<MenuItemVertical 
+		<MenuItemVertical
 			{...item}
+			className={item.id == blockId ? 'isCurrent' : ''}
 			name={<Label text={U.Common.getLatex(item.text)} />}
 			onClick={e => onClick(e, item)}
 			onMouseEnter={e => onMouseEnter(e, item)}
+			onMouseLeave={onMouseLeave}
 			style={{ ...item.style, paddingLeft: 16 + item.depth * 12 }}
 		/>
 	);
@@ -103,7 +108,10 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	useEffect(() => beforePosition());
 
 	useEffect(() => {
-		setActive(items.find(it => it.id == blockId), true);
+		const index = items.findIndex(it => it.id == blockId);
+		if ((index >= 0) && listRef.current) {
+			listRef.current.scrollToRow(index);
+		};
 	}, [ blockId ]);
 
 	useImperativeHandle(ref, () => ({

@@ -14,8 +14,9 @@ import { electronMock } from './lib/web/electronMock';
 
 // Set up global configuration from URL params or defaults
 const urlParams = new URLSearchParams(window.location.search);
+const storedAddress = localStorage.getItem('anytype_serverAddress') || '';
 const serverAddress = urlParams.get('server') ||
-                      localStorage.getItem('anytype_serverAddress') ||
+                      (storedAddress.startsWith('http') ? storedAddress : '') ||
                       'http://127.0.0.1:31008';
 const dataPath = urlParams.get('dataPath') ||
                  localStorage.getItem('anytype_dataPath') ||

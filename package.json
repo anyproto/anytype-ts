@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.54.8-alpha",
+	"version": "0.54.14-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -831,6 +831,10 @@
 		"linux": {
 			"icon": "electron/img/icons",
 			"category": "Utility",
+			"executableName": "anytype",
+			"executableArgs": [
+				"--ozone-platform-hint=auto"
+			],
 			"target": [
 				"AppImage",
 				"deb",
@@ -851,7 +855,13 @@
 					"StartupWMClass": "anytype",
 					"MimeType": "x-scheme-handler/anytype;"
 				}
-			}
+			},
+			"extraFiles": [
+				{
+					"from": "anytype-xwayland.desktop",
+					"to": "anytype-xwayland.desktop"
+				}
+			]
 		},
 		"rpm": {
 			"fpm": [

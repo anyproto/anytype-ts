@@ -157,11 +157,13 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 				};
 
 				element = (
-					<a 
+					<a
 						href={url}
 						ref={innerRef}
-						className={cni.join(' ')} 
-						onClick={onClick} 
+						className={cni.join(' ')}
+						draggable={false}
+						onDragStart={e => e.preventDefault()}
+						onClick={onClick}
 						onMouseDown={onMouseDown}
 						{...U.Common.dataProps({ href: url })}
 					>

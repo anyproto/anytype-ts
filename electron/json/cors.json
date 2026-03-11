@@ -201,7 +201,8 @@
 		"https://*.bcbits.com",
 		"https://*.google-analytics.com",
 		"http://*.openstreetmap.fr",
-		"https://*.gstatic.com"
+		"https://*.gstatic.com",
+		"https://*.jsdelivr.net"
 	],
 
 	"script-src-elem": [

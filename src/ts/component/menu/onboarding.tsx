@@ -67,10 +67,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		if (!highlightElements.length) {
-			highlightElements.push(param.element);
-		};
-
 		if (frame.current) {
 			raf.cancel(frame.current);
 			frame.current = 0;

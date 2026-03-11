@@ -47,7 +47,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return [];
 		};
 
-		return U.Common.objectCopy(view.sorts || []);
+		return U.Common.objectCopy(view.sorts || []).filter((it: any) => {
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		});
 	};
 
 	const getItems = () => {

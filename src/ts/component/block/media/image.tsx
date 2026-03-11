@@ -132,6 +132,8 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		});
 	};
 
+	const isDownloading = S.Common.isDownloading(targetObjectId);
+
 	const handleDownload = () => {
 		Action.downloadFile(targetObjectId, analytics.route.block, block.isFileImage());
 	};
@@ -196,7 +198,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onClick={handleClick} 
 							onError={handleError} 
 						/>
-						<Icon className="download" onClick={handleDownload} />
+						<Icon className={isDownloading ? 'downloading' : 'download'} onClick={handleDownload} />
 						<Icon className="resize" onMouseDown={e => handleResizeStart(e, false)} />
 					</div>
 				);

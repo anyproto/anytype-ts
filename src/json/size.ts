@@ -12,7 +12,7 @@ export default {
 	sidebar: {
 		default: { min: 240, max: 480, default: 336 },
 		left: { 
-			min: 88, max: 480, default: 284, 
+			min: 72, max: 480, default: 284, 
 			threshold: {
 				minimal: 160, 
 				close: 480,
@@ -51,7 +51,7 @@ export default {
 			default: 192,
 			format1: 500,
 
-			min: 48,
+			min: 54,
 			max: 1000,
 			edit: 300,
 			small: 70,

@@ -2421,6 +2421,15 @@ export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callB
 	dispatcher.request(ChatUnreadMessages.name, request, callBack);
 };
 
+export const ChatReadReactions = (objectId: string, orderId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ReadReactions.Request();
+
+	request.setChatobjectid(objectId);
+	request.setOrderid(orderId);
+
+	dispatcher.request(ChatReadReactions.name, request, callBack);
+};
+
 export const ChatReadAll = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.ReadAll.Request();
 

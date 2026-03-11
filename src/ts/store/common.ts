@@ -48,7 +48,6 @@ class CommonStore {
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
-	public analyticsDeviceIdValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -67,9 +66,9 @@ class CommonStore {
 	public isActiveTab = true;
 	public windowIsFocused = true;
 	public routeParam: any = {};
-	public openObjectIds: Map<string, Set<string>> = new Map();
 	public isPinnedValue = false;
 	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+	public downloadingIdsValue: Set<string> = new Set();
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -160,10 +159,10 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
-			analyticsDeviceIdValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
+			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
 			preview: computed,
@@ -182,7 +181,6 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
-			analyticsDeviceId: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -213,7 +211,6 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
-			analyticsDeviceIdSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -221,6 +218,8 @@ class CommonStore {
 			isPinnedSet: action,
 			singleTabSet: action,
 			autoDownloadSet: action,
+			downloadStart: action,
+			downloadDone: action,
 		});
 	};
 
@@ -308,17 +307,6 @@ class CommonStore {
 		let ret = this.fullscreenObjectValue;
 		if (ret === null) {
 			ret = Storage.get('fullscreenObject');
-		};
-		if (ret === undefined) {
-			ret = true;
-		};
-		return ret;
-	};
-
-	get analyticsDeviceId (): boolean {
-		let ret = this.analyticsDeviceIdValue;
-		if (ret === null) {
-			ret = Storage.get('analyticsDeviceId');
 		};
 		if (ret === undefined) {
 			ret = true;
@@ -709,10 +697,6 @@ class CommonStore {
 		this.boolSet('fullscreenObject', v);
 	};
 
-	analyticsDeviceIdSet (v: boolean) {
-		this.boolSet('analyticsDeviceId', v);
-	};
-
 	/**
 	 * Sets the hide sidebar value.
 	 * @param {boolean} v - The hide sidebar value.
@@ -726,6 +710,18 @@ class CommonStore {
 		v = isNaN(n) ? -1 : n;
 		this.autoDownloadValue = v;
 		Storage.set('autoDownload', v);
+	};
+
+	downloadStart (id: string) {
+		this.downloadingIdsValue.add(id);
+	};
+
+	downloadDone (id: string) {
+		this.downloadingIdsValue.delete(id);
+	};
+
+	isDownloading (id: string): boolean {
+		return this.downloadingIdsValue.has(id);
 	};
 
 	/**
@@ -840,6 +836,14 @@ class CommonStore {
 		if (id && ref) {
 			this.refs.set(id, ref);
 		};
+	};
+
+	/**
+	 * Removes a reference by ID.
+	 * @param {string} id - The reference ID.
+	 */
+	refDelete (id: string) {
+		this.refs.delete(id);
 	};
 
 	/**

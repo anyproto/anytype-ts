@@ -143,7 +143,7 @@ a { color: var(--color-text-primary); }
 .block.isSelectionSelected > .wrapContent > .selectionTarget::after,
 .selectionTarget.isKeyboardFocused::after
 {
-	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: var(--color-system-selection);
+	display: block; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background-color: var(--color-system-selection);
 	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;
 }
 

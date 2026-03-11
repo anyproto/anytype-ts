@@ -42,7 +42,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	};
 
 	const onClick = (e: MouseEvent) => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 
