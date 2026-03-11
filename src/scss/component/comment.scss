@@ -11,7 +11,7 @@
 	.commentList { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
 	.commentPost { 
-		padding: 16px; border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: row;
+		padding: 16px; border-radius: 16px; background: var(--color-shape-highlight-light); display: flex; flex-direction: row;
 		gap: 0px 8px; align-items: flex-start; position: relative;
 	}
 	.commentPost {
@@ -44,10 +44,7 @@
 			.hoverActions { opacity: 1; }
 		}
 
-		.repliesToggle {
-			@include text-small; color: var(--color-text-secondary); margin: 8px 0px 0px 40px;
-			user-select: none;
-		}
+		.repliesToggle { @include text-small; color: var(--color-text-secondary); user-select: none; }
 		.repliesToggle:hover { color: var(--color-text-primary); }
 
 		.replyList { margin: 8px 0px 0px 40px; padding-left: 12px; border-left: 2px solid var(--color-shape-secondary); }
@@ -112,7 +109,7 @@
 
 	.commentFormWrap { padding: 0px 0px 12px 0px; border-radius: 16px; }
 	.commentForm {
-		display: flex; flex-direction: column; border-radius: inherit; background-color: var(--color-shape-tertiary);
+		display: flex; flex-direction: column; border-radius: inherit; background-color: var(--color-shape-highlight-light);
 		max-height: 360px; overflow: hidden;
 	}
 	.commentForm.isReply { max-height: 280px; }
@@ -223,18 +220,16 @@
 	.commentEditor-ul { margin: 2px 0px; padding-left: 20px; list-style-type: disc; }
 	.commentEditor-ol { margin: 2px 0px; padding-left: 20px; list-style-type: decimal; }
 	.commentEditor-li { margin: 1px 0px; }
+	.commentEditor-ul:has(> .commentEditor-li-checked, > .commentEditor-li-unchecked) { padding-left: 0px; list-style-type: none; }
 	.commentEditor-li-checked,
-	.commentEditor-li-unchecked {
-		list-style: none; margin: 1px 0px; position: relative; padding-left: 26px;
-	}
+	.commentEditor-li-unchecked { list-style: none; margin: 1px 0px; position: relative; padding-left: 22px; }
 	.commentEditor-li-checked::before,
 	.commentEditor-li-unchecked::before {
-		content: ''; position: absolute; left: 0px; top: 2px;
-		width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--color-shape-secondary);
+		content: ''; position: absolute; left: 0px; top: 0px;
+		width: 20px; height: 20px; background-size: 20px 20px; background-repeat: no-repeat;
 	}
-	.commentEditor-li-checked::before {
-		background: var(--color-control-accent); border-color: var(--color-control-accent);
-	}
+	.commentEditor-li-unchecked::before { background-image: url('~img/icon/marker/checkbox1.svg'); }
+	.commentEditor-li-checked::before { background-image: url('~img/icon/marker/checkbox2.svg'); }
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
 	.commentEditor-divider { margin: 8px 0px; }
@@ -303,12 +298,12 @@
 	.commentCheckbox { display: flex; align-items: flex-start; gap: 0px 6px; margin: 1px 0px; line-height: 20px; }
 	.commentCheckbox {
 		.checkboxMark {
-			width: 16px; height: 16px; min-width: 16px; margin-top: 2px;
-			border-radius: 4px; border: 1.5px solid var(--color-shape-secondary);
+			width: 20px; height: 20px; min-width: 20px;
+			background-image: url('~img/icon/marker/checkbox1.svg'); background-size: 20px 20px; background-repeat: no-repeat;
 		}
 
 		&.isChecked {
-			.checkboxMark { background: var(--color-control-accent); border-color: var(--color-control-accent); }
+			.checkboxMark { background-image: url('~img/icon/marker/checkbox2.svg'); }
 			span { text-decoration: line-through; color: var(--color-text-secondary); }
 		}
 	}

@@ -1194,13 +1194,31 @@ class Dispatcher {
 					let notificationMessage: I.ChatMessage = null;
 
 					mapped.subIds.forEach((subId) => {
-						const message = S.Chat.getMessageById(subId, mapped.id);
-						if (message) {
-							if (!notificationMessage) {
-								oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
-								notificationMessage = message;
+						if (subId.startsWith('comment-')) {
+							const post = S.Comment.getPostById(subId, mapped.id);
+							if (post) {
+								set(post, { reactions: mapped.reactions });
+							} else {
+								// Search in replies
+								const posts = S.Comment.getPosts(subId);
+								for (const p of posts) {
+									const replies = S.Comment.getReplies(p.id);
+									const reply = replies.find(r => r.id == mapped.id);
+									if (reply) {
+										set(reply, { reactions: mapped.reactions });
+										break;
+									};
+								};
 							};
-							set(message, { reactions: mapped.reactions });
+						} else {
+							const message = S.Chat.getMessageById(subId, mapped.id);
+							if (message) {
+								if (!notificationMessage) {
+									oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
+									notificationMessage = message;
+								};
+								set(message, { reactions: mapped.reactions });
+							};
 						};
 					});
 

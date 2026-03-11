@@ -494,6 +494,12 @@ html.themeDark {
 		}
 	}
 
+	/* Comment checkboxes */
+	.commentSection {
+		.commentEditor-li-unchecked::before { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
+		.commentCheckbox .checkboxMark { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
+	}
+
 	@import "./menu";
 	@import "./popup";
 	@import "./page";

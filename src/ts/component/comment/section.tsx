@@ -18,9 +18,10 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isLoaded = useRef(false);
 	const isBottom = useRef(false);
 	const isCreating = useRef(false);
+	const subscribedId = useRef('');
 
 	useEffect(() => {
-		if (discussionId) {
+		if (discussionId && (subscribedId.current != discussionId)) {
 			subscribe(discussionId);
 		};
 
@@ -45,6 +46,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
+
+		subscribedId.current = id;
 
 		C.ChatSubscribeLastMessages(id, POST_LIMIT, sid, (message: any) => {
 			if (message.error.code) {
@@ -86,6 +89,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
+
+		subscribedId.current = '';
 
 		C.ChatUnsubscribe(id, sid);
 		S.Comment.clear(sid);

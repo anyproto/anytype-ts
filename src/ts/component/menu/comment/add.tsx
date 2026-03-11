@@ -83,8 +83,8 @@ const MenuCommentAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				.map(section => ({
 					...section,
 					children: section.children.filter((it: any) =>
-						it.name.toLowerCase().includes(s) ||
-						it.description.toLowerCase().includes(s)
+						(it.name || '').toLowerCase().includes(s) ||
+						(it.description || '').toLowerCase().includes(s)
 					),
 				}))
 				.filter(section => section.children.length > 0);

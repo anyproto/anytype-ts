@@ -5,6 +5,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
@@ -1220,6 +1221,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				/>
 				<HistoryPlugin />
 				<ListPlugin />
+				<CheckListPlugin />
 				<OnChangePlugin onChange={handleChange} />
 				<SubmitPlugin onSubmit={handleSubmit} />
 				<EscapePlugin onCancel={onCancel} />
