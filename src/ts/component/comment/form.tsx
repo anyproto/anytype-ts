@@ -396,6 +396,18 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						<div className="toolbarBtn" onClick={onPlusClick}>
 							<Icon className="plus" />
 						</div>
+
+						<div className="toolbarDivider" />
+
+						<div className="toolbarBtn" onClick={onTextClick}>
+							<Icon className="text" />
+						</div>
+						<div className="toolbarBtn" onClick={onEmojiClick}>
+							<Icon className="emoji" />
+						</div>
+						<div className="toolbarBtn" onClick={onMentionClick}>
+							<Icon className="mention" />
+						</div>
 					</div>
 
 					<div className="toolbarRight">
@@ -405,12 +417,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							</div>
 						) : ''}
 
-						<div
-							className={[ 'btn', 'send', (isDisabled ? 'disabled' : '') ].join(' ')}
-							onClick={onSendClick}
-						>
-							<Icon className="send" />
-						</div>
+						{!isDisabled ? (
+							<div className="btn send" onClick={onSendClick}>
+								<Icon className="send" />
+							</div>
+						) : ''}
 					</div>
 				</div>
 			) : ''}

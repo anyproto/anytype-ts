@@ -365,6 +365,12 @@ export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 	};
 };
 
+export const ObjectAddDiscussion = (response: Rpc.Object.DiscussionAdd.Response) => {
+	return {
+		discussionId: response.getDiscussionid(),
+	};
+};
+
 export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
 	return {
 		details: details(response),

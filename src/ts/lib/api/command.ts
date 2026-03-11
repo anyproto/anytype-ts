@@ -1934,6 +1934,14 @@ export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => voi
 	dispatcher.request(ObjectChatAdd.name, request, callBack);
 };
 
+export const ObjectAddDiscussion = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DiscussionAdd.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request(ObjectAddDiscussion.name, request, callBack);
+};
+
 export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.DateByTimestamp.Request();
 

@@ -561,7 +561,7 @@ class UtilMenu {
 			const setLayouts = U.Object.getSetLayouts();
 			const treeSkipLayouts = setLayouts.
 				concat(U.Object.getFileAndSystemLayouts()).
-				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat, I.ObjectLayout.Discussion ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
