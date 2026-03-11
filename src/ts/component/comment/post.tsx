@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import $ from 'jquery';
 import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
@@ -146,6 +147,7 @@ const CommentPost = observer((props: Props) => {
 	const [ isReplying, setIsReplying ] = useState(false);
 	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
+	const postRef = useRef<HTMLDivElement>(null);
 	const { id, creator, content, createdAt, modifiedAt, replyCount } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
@@ -296,6 +298,54 @@ const CommentPost = observer((props: Props) => {
 		});
 	}, [ targetId, id, replyCount ]);
 
+	const onCopyText = useCallback(() => {
+		const text = parts.map(p => p.text || '').join('\n');
+		U.Common.copyToast('', text);
+	}, [ parts ]);
+
+	const onCopyLink = useCallback(() => {
+		const object = S.Detail.get(rootId, rootId);
+		const spaceObject = U.Space.getSpaceview();
+
+		U.Object.copyLink(object, spaceObject, 'deeplink', '');
+	}, [ rootId ]);
+
+	const onMenuClick = useCallback((e: React.MouseEvent) => {
+		const element = $(e.currentTarget);
+
+		const menuItems: any[] = [];
+
+		if (isSelf) {
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+		};
+
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
+		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), icon: 'link' });
+
+		if (isSelf) {
+			menuItems.push({ isDiv: true });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+		};
+
+		S.Menu.open('select', {
+			element,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options: menuItems,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'edit': onEdit(); break;
+						case 'copyText': onCopyText(); break;
+						case 'copyLink': onCopyLink(); break;
+						case 'delete': onDelete(); break;
+					};
+				},
+			},
+		});
+	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete ]);
+
 	const renderAttachments = () => {
 		const list = (message.attachments || [])
 			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
@@ -311,7 +361,7 @@ const CommentPost = observer((props: Props) => {
 					<Attachment
 						key={item.id}
 						object={item}
-						showAsFile={true}
+						showAsFile={false}
 						onRemove={() => {}}
 					/>
 				))}
@@ -342,41 +392,60 @@ const CommentPost = observer((props: Props) => {
 		);
 	};
 
-	const renderActions = () => {
+	const renderHoverActions = () => {
 		if (isEditing || readonly) {
 			return null;
 		};
 
 		return (
-			<div className="actions">
-				<div className="action" onClick={onReply}>{translate('commentReply')}</div>
-				{isSelf ? (
-					<>
-						<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
-						<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
-					</>
-				) : ''}
+			<div className="hoverActions">
+				<div className="hoverBtn" onClick={onReply}>
+					<Icon className="reply" />
+				</div>
+				<div className="hoverBtn" onClick={onMenuClick}>
+					<Icon className="more" />
+				</div>
+			</div>
+		);
+	};
+
+	const renderRepliesToggle = () => {
+		if (isEditing || !replyCount || isReplying) {
+			return null;
+		};
+
+		const label = replyCount == 1
+			? U.String.sprintf(translate('commentReplyCount'), replyCount)
+			: U.String.sprintf(translate('commentRepliesCount'), replyCount);
+
+		return (
+			<div className="repliesToggle" onClick={onReply}>
+				{label}
 			</div>
 		);
 	};
 
 	return (
-		<div className="commentPost">
-			<div className="head">
-				<IconObject
-					object={{ ...author, layout: I.ObjectLayout.Participant }}
-					size={28}
-				/>
-				<div className="author">
-					<ObjectName object={author} />
-				</div>
-				<div className="date">
-					{U.Date.date('M j, H:i', createdAt)}{editedLabel}
-				</div>
-			</div>
+		<div ref={postRef} className="commentPost">
+			<div className="postInner">
+				<div className="head">
+					<IconObject
+						object={{ ...author, layout: I.ObjectLayout.Participant }}
+						size={28}
+					/>
+					<div className="author">
+						<ObjectName object={author} withBadge={true} />
+					</div>
+					<div className="date">
+						{U.Date.date('M j', createdAt)}{editedLabel}
+					</div>
 
-			{renderContent()}
-			{renderActions()}
+					{renderHoverActions()}
+				</div>
+
+				{renderContent()}
+				{renderRepliesToggle()}
+			</div>
 
 			{replies.length ? (
 				<div className="replyList">
@@ -407,6 +476,7 @@ const CommentPost = observer((props: Props) => {
 					<CommentForm
 						ref={replyFormRef}
 						rootId={rootId}
+						isReply={true}
 						placeholder={translate('commentReplyPlaceholder')}
 						onSubmit={onSubmitReply}
 						onCancel={onCancelReply}

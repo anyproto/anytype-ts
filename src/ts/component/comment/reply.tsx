@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
+import $ from 'jquery';
 import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate } from 'Lib';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
@@ -124,6 +125,45 @@ const CommentReply = observer((props: Props) => {
 		});
 	}, [ targetId, id, parentId ]);
 
+	const onCopyText = useCallback(() => {
+		const text = parts.map(p => p.text || '').join('\n');
+		U.Common.copyToast('', text);
+	}, [ parts ]);
+
+	const onMenuClick = useCallback((e: React.MouseEvent) => {
+		const element = $(e.currentTarget);
+
+		const menuItems: any[] = [];
+
+		if (isSelf) {
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+		};
+
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
+
+		if (isSelf) {
+			menuItems.push({ isDiv: true });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+		};
+
+		S.Menu.open('select', {
+			element,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options: menuItems,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'edit': onEdit(); break;
+						case 'copyText': onCopyText(); break;
+						case 'delete': onDelete(); break;
+					};
+				},
+			},
+		});
+	}, [ isSelf, onEdit, onCopyText, onDelete ]);
+
 	const renderAttachments = () => {
 		const list = (message.attachments || [])
 			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
@@ -139,7 +179,7 @@ const CommentReply = observer((props: Props) => {
 					<Attachment
 						key={item.id}
 						object={item}
-						showAsFile={true}
+						showAsFile={false}
 						onRemove={() => {}}
 					/>
 				))}
@@ -154,6 +194,7 @@ const CommentReply = observer((props: Props) => {
 					rootId={rootId}
 					initialParts={parts}
 					isEdit={true}
+					isReply={true}
 					onSubmit={onSaveEdit}
 					onCancel={onCancelEdit}
 				/>
@@ -170,15 +211,16 @@ const CommentReply = observer((props: Props) => {
 		);
 	};
 
-	const renderActions = () => {
-		if (isEditing || readonly || !isSelf) {
+	const renderHoverActions = () => {
+		if (isEditing || readonly) {
 			return null;
 		};
 
 		return (
-			<div className="actions">
-				<div className="action" onClick={onEdit}>{translate('commentEdit')}</div>
-				<div className="action" onClick={onDelete}>{translate('commentDelete')}</div>
+			<div className="hoverActions">
+				<div className="hoverBtn" onClick={onMenuClick}>
+					<Icon className="more" />
+				</div>
 			</div>
 		);
 	};
@@ -191,15 +233,16 @@ const CommentReply = observer((props: Props) => {
 					size={24}
 				/>
 				<div className="author">
-					<ObjectName object={author} />
+					<ObjectName object={author} withBadge={true} />
 				</div>
 				<div className="date">
-					{U.Date.date('M j, H:i', createdAt)}{editedLabel}
+					{U.Date.date('M j', createdAt)}{editedLabel}
 				</div>
+
+				{renderHoverActions()}
 			</div>
 
 			{renderContent()}
-			{renderActions()}
 		</div>
 	);
 });

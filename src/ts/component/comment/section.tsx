@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard } from 'Lib';
+import { I, C, S, U, keyboard, translate } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
 
@@ -237,21 +237,27 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	return (
 		<div className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-			<CommentList
-				rootId={rootId}
-				targetId={discussionId || targetId}
-				targetType={targetType}
-				readonly={readonly}
-				onLoadMore={onLoadMore}
-			/>
+			<div className="sectionTitle">{translate('commentDiscussion')}</div>
 
-			<CommentForm
-				ref={formRef}
-				rootId={rootId}
-				readonly={readonly}
-				onSubmit={onSubmitPost}
-				onResize={scrollToBottomCheck}
-			/>
+			<div className="commentBody">
+				<CommentList
+					rootId={rootId}
+					targetId={discussionId || targetId}
+					targetType={targetType}
+					readonly={readonly}
+					onLoadMore={onLoadMore}
+				/>
+			</div>
+
+			<div className="commentFormWrap">
+				<CommentForm
+					ref={formRef}
+					rootId={rootId}
+					readonly={readonly}
+					onSubmit={onSubmitPost}
+					onResize={scrollToBottomCheck}
+				/>
+			</div>
 		</div>
 	);
 });

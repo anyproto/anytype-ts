@@ -1,66 +1,131 @@
 @import "~scss/_mixins";
 
-.commentSection { padding: 24px 0px 48px 0px; border-top: 1px solid var(--color-shape-secondary); }
 .commentSection {
-	.commentList { margin: 0px 0px 16px 0px; }
+	display: flex; flex-direction: column; min-height: 200px;
+	padding: 24px 0px 0px 0px; border-top: 1px solid var(--color-shape-secondary);
+}
+.commentSection {
+	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
 
-	.commentPost { padding: 12px 0px; }
+	.commentBody { flex: 1 1 auto; }
+
+	.commentFormWrap { position: sticky; bottom: 0px; z-index: 10; padding: 8px 0px 16px 0px; background: var(--color-bg-primary); }
+
+	.commentList { margin: 0px 0px 8px 0px; }
+
+	.commentPost { padding: 0px 0px 8px 0px; }
 	.commentPost {
-		.head { display: flex; align-items: center; gap: 0px 8px; }
+		.postInner {
+			padding: 16px; border-radius: 16px; background: var(--color-shape-tertiary);
+		}
+
 		.head {
-			.author { font-weight: 600; line-height: 20px; }
-			.date { @include text-small; color: var(--color-text-secondary); line-height: 20px; }
+			display: flex; align-items: center; gap: 0px 8px; position: relative;
+		}
+		.head {
+			.iconObject { flex-shrink: 0; }
+			.author { @include text-paragraph; font-weight: 600; line-height: 20px; }
+			.date { @include text-small; color: var(--color-text-secondary); line-height: 20px; flex-shrink: 0; }
 		}
 
 		.content { margin: 4px 0px 0px 36px; line-height: 22px; word-break: break-word; }
 
-		.actions { margin: 4px 0px 0px 36px; display: flex; gap: 0px 12px; }
-		.actions {
-			.action { @include text-small; color: var(--color-text-secondary); line-height: 20px; user-select: none; }
-			.action:hover { color: var(--color-text-primary); }
+		.hoverActions {
+			display: flex; align-items: center; gap: 0px 2px;
+			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0;
 		}
+		.hoverActions {
+			.hoverBtn {
+				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+				border-radius: 6px; user-select: none;
+			}
+			.hoverBtn:hover { background: var(--color-shape-secondary); }
+			.hoverBtn .icon { width: 20px; height: 20px; }
+			.hoverBtn .icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+			.hoverBtn .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+		}
+
+		&:hover {
+			.hoverActions { opacity: 1; }
+		}
+
+		.repliesToggle {
+			@include text-small; color: var(--color-text-secondary); margin: 8px 0px 0px 36px;
+			user-select: none;
+		}
+		.repliesToggle:hover { color: var(--color-text-primary); }
 
 		.replyList { margin: 8px 0px 0px 36px; padding-left: 12px; border-left: 2px solid var(--color-shape-secondary); }
 		.replyFormWrap { margin: 8px 0px 0px 36px; }
+
+		.commentAttachments { margin: 8px 0px 0px 36px; }
 	}
 
-	.commentReply { padding: 8px 0px; }
+	.commentReply { padding: 8px 0px; position: relative; }
 	.commentReply {
-		.head { display: flex; align-items: center; gap: 0px 6px; }
 		.head {
-			.author { font-weight: 600; @include text-small; line-height: 18px; }
-			.date { @include text-very-small; color: var(--color-text-secondary); line-height: 18px; }
+			display: flex; align-items: center; gap: 0px 6px; position: relative;
+		}
+		.head {
+			.iconObject { flex-shrink: 0; }
+			.author { @include text-small; font-weight: 600; line-height: 18px; }
+			.date { @include text-very-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
 		}
 
 		.content { margin: 2px 0px 0px 30px; @include text-small; line-height: 20px; word-break: break-word; }
 
-		.actions { margin: 2px 0px 0px 30px; display: flex; gap: 0px 10px; }
-		.actions {
-			.action { @include text-very-small; color: var(--color-text-secondary); line-height: 18px; user-select: none; }
-			.action:hover { color: var(--color-text-primary); }
+		.hoverActions {
+			display: flex; align-items: center; gap: 0px 2px;
+			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0;
 		}
+		.hoverActions {
+			.hoverBtn {
+				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+				border-radius: 4px; user-select: none;
+			}
+			.hoverBtn:hover { background: var(--color-shape-secondary); }
+			.hoverBtn .icon { width: 16px; height: 16px; }
+			.hoverBtn .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+		}
+
+		&:hover {
+			.hoverActions { opacity: 1; }
+		}
+
+		.commentAttachments { margin: 4px 0px 0px 30px; }
 	}
 
 	/* ---- Comment Form ---- */
 
 	.commentForm {
-		display: flex; flex-direction: column; border-radius: 16px; background-color: var(--color-shape-tertiary); overflow: hidden;
+		display: flex; flex-direction: column; border-radius: 16px; background-color: var(--color-shape-tertiary);
+		max-height: 360px; overflow: hidden;
+	}
+	.commentForm.isReply {
+		border-radius: 12px; max-height: 280px;
 	}
 	.commentForm {
-		.contentArea { padding: 10px 12px; }
+		.contentArea {
+			padding: 10px 12px; overflow-y: auto; flex: 1 1 auto;
+		}
 
 		.attachmentList {
-			display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0px 0px 0px;
+			display: flex; flex-direction: column; gap: 8px; padding: 8px 0px 0px 0px;
 		}
 		.attachmentList {
 			.attachment {
-				max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary);
-				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
+				width: 100%; border-radius: 12px;
+				border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary);
 			}
+			.attachment .image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; }
+			.attachment .mediaWrapper { max-height: 200px; overflow: hidden; }
+			.attachment.isImage { width: auto; max-width: 100%; height: auto; }
+			.attachment.isImage .mediaWrapper { display: flex; align-items: center; justify-content: center; }
 		}
 
 		.formToolbar {
 			display: flex; align-items: center; justify-content: space-between; padding: 0px 8px 8px 8px;
+			flex-shrink: 0;
 		}
 		.formToolbar {
 			.toolbarLeft { display: flex; align-items: center; gap: 0px 4px; }
@@ -73,13 +138,18 @@
 			.toolbarBtn:hover { background: var(--color-shape-secondary); }
 			.toolbarBtn .icon { width: 20px; height: 20px; }
 			.toolbarBtn .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+			.toolbarBtn .icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
+			.toolbarBtn .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+			.toolbarBtn .icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+
+			.toolbarDivider { width: 1px; height: 20px; background: var(--color-shape-secondary); margin: 0px 4px; }
 
 			.btn.send {
-				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
 				border-radius: 50%; background: var(--color-control-accent); user-select: none; transition: opacity 0.15s ease;
 			}
-			.btn.send .icon.send { width: 16px; height: 16px; }
-			.btn.send.disabled { opacity: 0.3; }
+			.btn.send.isDisabled { opacity: 0.35; pointer-events: none; }
+			.btn.send .icon.send { width: 16px; height: 16px; background-image: url('~img/icon/chat/buttons/send.svg'); }
 
 			.btn.cancel { @include text-small; color: var(--color-text-secondary); user-select: none; }
 			.btn.cancel:hover { color: var(--color-text-primary); }
@@ -175,13 +245,21 @@
 	}
 	.commentCodeBlock code { font-family: inherit; font-size: inherit; }
 
+	/* Rendered attachments in posts */
 	.commentAttachments {
-		display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0px 0px 36px;
+		display: flex; flex-direction: column; gap: 8px;
+	}
+	.commentAttachments {
+		.attachment { width: 100%; border-radius: 12px; border: 1px solid var(--color-shape-secondary); }
+		.attachment .image { max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; }
+		.attachment .mediaWrapper { max-height: 360px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+		.attachment.isImage { width: auto; max-width: 100%; height: auto; }
+		.attachment .remove { display: none; }
 	}
 
 	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); margin: 8px 0px; }
 
-	.commentList { margin: 2px 0px; padding-left: 20px; line-height: 22px; }
+	ul.commentList, ol.commentList { margin: 2px 0px; padding-left: 20px; line-height: 22px; }
 	.commentList li { margin: 1px 0px; }
 	.commentUl { list-style-type: disc; }
 	.commentOl { list-style-type: decimal; }

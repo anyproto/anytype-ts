@@ -1049,7 +1049,11 @@ class Dispatcher {
 					};
 
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
+
+					const commentSubIds = mapped.subIds.filter(id => id.startsWith('comment-'));
+					const chatSubIds = mapped.subIds.filter(id => !id.startsWith('comment-'));
+
+					chatSubIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -1058,6 +1062,23 @@ class Dispatcher {
 						};
 
 						S.Chat.add(subId, idx, message);
+					});
+
+					commentSubIds.forEach(subId => {
+						const commentMsg = {
+							...mapped.message,
+							content: {
+								...mapped.message.content,
+								parts: U.Comment.decodeParts(mapped.message.content),
+							},
+							replyCount: 0,
+						};
+
+						if (mapped.message.replyToMessageId) {
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+						} else {
+							S.Comment.addPost(subId, commentMsg as any);
+						};
 					});
 
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
@@ -1091,8 +1112,25 @@ class Dispatcher {
 
 				case 'ChatUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+
 					mapped.subIds.forEach(subId => {
-						S.Chat.update(subId, mapped.message);
+						if (subId.startsWith('comment-')) {
+							const commentMsg = {
+								id: mapped.message.id,
+								content: {
+									...mapped.message.content,
+									parts: U.Comment.decodeParts(mapped.message.content),
+								},
+							};
+
+							if (mapped.message.replyToMessageId) {
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+							} else {
+								S.Comment.updatePost(subId, commentMsg as any);
+							};
+						} else {
+							S.Chat.update(subId, mapped.message);
+						};
 					});
 
 					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
@@ -1140,7 +1178,11 @@ class Dispatcher {
 				case 'ChatDelete': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.delete(subId, mapped.id);
+						if (subId.startsWith('comment-')) {
+							S.Comment.deletePost(subId, mapped.id);
+						} else {
+							S.Chat.delete(subId, mapped.id);
+						};
 					});
 					break;
 				};

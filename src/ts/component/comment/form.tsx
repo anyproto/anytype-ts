@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, J, S, U, translate } from 'Lib';
+import { I, C, J, S, U, keyboard, translate } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
 import Attachment from 'Component/block/chat/attachment';
 
@@ -10,6 +11,7 @@ interface Props {
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	isEdit?: boolean;
+	isReply?: boolean;
 	readonly?: boolean;
 	onSubmit?: (parts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => void;
 	onCancel?: () => void;
@@ -23,7 +25,7 @@ interface RefProps {
 
 const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { rootId, placeholder, initialParts, isEdit, readonly, onSubmit, onCancel, onResize } = props;
+	const { rootId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const formRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ attachments, setAttachments ] = useState<any[]>([]);
+	const activeFormatsRef = useRef<Record<string, boolean>>({});
 	const electron = U.Common.getElectron();
 
 	useImperativeHandle(ref, () => ({
@@ -139,10 +142,17 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const handleBlur = useCallback(() => {
-		window.setTimeout(() => setIsFocused(false), 200);
+		window.setTimeout(() => {
+			if (S.Menu.isOpen()) {
+				return;
+			};
+			setIsFocused(false);
+		}, 200);
 	}, []);
 
-	const handleSelectionChange = useCallback((hasSelection: boolean, rect: DOMRect | null) => {
+	const handleSelectionChange = useCallback((hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => {
+		activeFormatsRef.current = formats || {};
+
 		if (hasSelection && rect) {
 			openToolbar(rect);
 		} else {
@@ -170,7 +180,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					editorRef.current?.toggleFormat(format);
 				},
 				getActiveFormats: () => {
-					return {};
+					return activeFormatsRef.current;
 				},
 			},
 		});
@@ -251,7 +261,20 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					break;
 				};
 
-				case 'object':
+				case 'object': {
+					keyboard.onSearchPopup('', {
+						data: {
+							skipIds: attachments.map(it => it.id),
+							onObjectSelect: (obj: any) => {
+								const limit = J.Constant.limit.chat.attachments;
+								const newList = [ ...attachments, obj ].slice(0, limit);
+								setAttachments(newList);
+							},
+						},
+					});
+					break;
+				};
+
 				case 'latex':
 				case 'mermaid': {
 					break;
@@ -266,34 +289,106 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		editorRef.current?.focus();
-	}, [ openFilePicker ]);
+	}, [ openFilePicker, attachments ]);
 
-	const onPlusClick = useCallback(() => {
-		const editor = editorRef.current?.getEditor();
-		if (!editor) {
-			return;
-		};
-
-		const rootEl = editor.getRootElement();
-		if (!rootEl) {
-			return;
-		};
-
-		const rect = rootEl.getBoundingClientRect();
-		const win = $(window);
+	const onPlusClick = useCallback((e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
 
 		S.Menu.open('commentAdd', {
-			rect: { x: rect.right, y: rect.bottom + win.scrollTop(), width: 0, height: 0 },
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			offsetY: 4,
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
 			noAnimation: true,
 			data: {
-				editor,
 				onSelect: handleSlashAction,
 			},
 		});
 	}, [ handleSlashAction ]);
+
+	const onTextClick = useCallback((e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const currentStyle = editorRef.current?.getCurrentBlockStyle() || I.TextStyle.Paragraph;
+
+		const options = [
+			{ id: String(I.TextStyle.Paragraph), name: translate('commentToolbarRegular'), icon: 'text' },
+			{ id: String(I.TextStyle.Header1), name: translate('commentToolbarTitle'), icon: 'textHeader textHeader1' },
+			{ id: String(I.TextStyle.Header2), name: translate('commentToolbarHeading'), icon: 'textHeader textHeader2' },
+			{ id: String(I.TextStyle.Header3), name: translate('commentToolbarSubheading'), icon: 'textHeader textHeader3' },
+		];
+
+		for (const option of options) {
+			if (option.id == String(currentStyle)) {
+				(option as any).checkbox = true;
+			};
+		};
+
+		S.Menu.open('select', {
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			noAnimation: true,
+			data: {
+				options,
+				onSelect: (_e: any, item: any) => {
+					editorRef.current?.setBlockStyle(Number(item.id) as I.TextStyle);
+					editorRef.current?.focus();
+				},
+			},
+		});
+	}, []);
+
+	const onEmojiClick = useCallback((e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('smile', {
+			element: $(e.currentTarget),
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Top,
+			offsetY: -4,
+			noAnimation: true,
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: (icon: string) => {
+					editorRef.current?.insertText(icon);
+					editorRef.current?.focus();
+				},
+			},
+		});
+	}, []);
+
+	const onMentionClick = useCallback((e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { space } = S.Common;
+		const participantId = U.Space.getParticipantId(space, S.Auth.account?.id);
+
+		S.Common.filterSet(0, '');
+
+		S.Menu.open('blockMention', {
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			noAnimation: true,
+			data: {
+				pronounId: participantId,
+				marks: [],
+				onChange: (object: any, name: string) => {
+					editorRef.current?.insertText(name);
+					editorRef.current?.focus();
+				},
+			},
+		});
+	}, []);
 
 	const onSendClick = useCallback(() => {
 		if ((isEmpty && !attachments.length) || isLoading) {
@@ -357,6 +452,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const cn = [ 'commentForm' ];
 	if (isEdit) cn.push('isEdit');
+	if (isReply) cn.push('isReply');
 	if (isFocused) cn.push('isFocused');
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
@@ -382,7 +478,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							<Attachment
 								key={item.id}
 								object={item}
-								showAsFile={item.layout !== I.ObjectLayout.Image}
+								showAsFile={true}
 								onRemove={() => onAttachmentRemove(item.id)}
 							/>
 						))}
@@ -393,19 +489,19 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{showToolbar ? (
 				<div className="formToolbar">
 					<div className="toolbarLeft">
-						<div className="toolbarBtn" onClick={onPlusClick}>
+						<div className="toolbarBtn" onMouseDown={onPlusClick}>
 							<Icon className="plus" />
 						</div>
 
 						<div className="toolbarDivider" />
 
-						<div className="toolbarBtn" onClick={onTextClick}>
+						<div className="toolbarBtn" onMouseDown={onTextClick}>
 							<Icon className="text" />
 						</div>
-						<div className="toolbarBtn" onClick={onEmojiClick}>
+						<div className="toolbarBtn" onMouseDown={onEmojiClick}>
 							<Icon className="emoji" />
 						</div>
-						<div className="toolbarBtn" onClick={onMentionClick}>
+						<div className="toolbarBtn" onMouseDown={onMentionClick}>
 							<Icon className="mention" />
 						</div>
 					</div>
@@ -417,11 +513,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							</div>
 						) : ''}
 
-						{!isDisabled ? (
-							<div className="btn send" onClick={onSendClick}>
-								<Icon className="send" />
-							</div>
-						) : ''}
+						<div
+							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+							onClick={onSendClick}
+						>
+							<Icon className="send" />
+						</div>
 					</div>
 				</div>
 			) : ''}

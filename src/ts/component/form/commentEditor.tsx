@@ -93,7 +93,7 @@ interface Props {
 	onEmpty?: (isEmpty: boolean) => void;
 	onFocus?: () => void;
 	onBlur?: () => void;
-	onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null) => void;
+	onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => void;
 };
 
 interface RefProps {
@@ -106,6 +106,7 @@ interface RefProps {
 	getLineCount: () => number;
 	insertBlock: (style: I.TextStyle) => void;
 	insertDivider: () => void;
+	insertText: (text: string) => void;
 	toggleFormat: (format: TextFormatType) => void;
 	setBlockStyle: (style: I.TextStyle) => void;
 	getCurrentBlockStyle: () => I.TextStyle;
@@ -801,7 +802,7 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 	editor.focus();
 };
 
-const SelectionPlugin = ({ onSelectionChange }: { onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null) => void }) => {
+const SelectionPlugin = ({ onSelectionChange }: { onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
@@ -815,7 +816,15 @@ const SelectionPlugin = ({ onSelectionChange }: { onSelectionChange?: (hasSelect
 				};
 
 				const rect = U.Common.getSelectionRect();
-				onSelectionChange?.(true, rect);
+				const formats: Record<string, boolean> = {
+					bold: selection.hasFormat('bold'),
+					italic: selection.hasFormat('italic'),
+					underline: selection.hasFormat('underline'),
+					strikethrough: selection.hasFormat('strikethrough'),
+					code: selection.hasFormat('code'),
+				};
+
+				onSelectionChange?.(true, rect, formats);
 				return false;
 			},
 			COMMAND_PRIORITY_LOW,
@@ -988,6 +997,19 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		},
 
 		insertDivider,
+
+		insertText: (text: string) => {
+			const editor = editorRef.current;
+			if (editor) {
+				editor.update(() => {
+					const selection = $getSelection();
+					if ($isRangeSelection(selection)) {
+						selection.insertText(text);
+					};
+				});
+			};
+		},
+
 		toggleFormat,
 		setBlockStyle,
 		getCurrentBlockStyle,

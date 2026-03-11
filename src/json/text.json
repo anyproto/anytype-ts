@@ -2847,6 +2847,11 @@
 	"commentEdit": "Edit",
 	"commentDelete": "Delete",
 	"commentSend": "Send",
+	"commentCopyText": "Copy text",
+	"commentCopyLink": "Copy link to comment",
+	"commentDiscussion": "Discussion",
+	"commentRepliesCount": "%s replies",
+	"commentReplyCount": "%s reply",
 
 	"commentSlashMenuTitle": "Text Styles",
 	"commentSlashMenuLists": "Lists",
