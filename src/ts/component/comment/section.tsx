@@ -20,6 +20,27 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isBottom = useRef(false);
 	const isCreating = useRef(false);
 	const subscribedId = useRef('');
+	const sectionRef = useRef<HTMLDivElement>(null);
+
+	const resize = useCallback(() => {
+		const node = sectionRef.current;
+		if (!node) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		if (!container.length) {
+			return;
+		};
+
+		const containerEl = container.get(0);
+		const containerRect = containerEl.getBoundingClientRect();
+		const nodeRect = node.getBoundingClientRect();
+		const offset = nodeRect.top - containerRect.top + container.scrollTop();
+		const minHeight = containerEl.clientHeight - offset;
+
+		node.style.minHeight = (minHeight > 200) ? `${minHeight}px` : '';
+	}, [ isPopup ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -36,6 +57,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
 		});
 
+		resize();
+
 		return () => {
 			container.off(`scroll.${ns}`);
 
@@ -44,6 +67,11 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			};
 		};
 	}, [ discussionId ]);
+
+	useEffect(() => {
+		window.addEventListener('resize', resize);
+		return () => window.removeEventListener('resize', resize);
+	}, [ resize ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -243,7 +271,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, []);
 
 	return (
-		<div className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+		<div ref={sectionRef} className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
 			<div className="sectionTitle">{translate('commentDiscussion')}</div>
 
 			<div className="commentBody">
