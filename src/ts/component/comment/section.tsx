@@ -12,14 +12,14 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup } = props;
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
-	const discussionId = object.discussionId || '';
+	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
+	const discussionId = object.discussionId || localDiscussionId || '';
 	const subId = U.Comment.getSubId(targetType, discussionId || targetId);
 	const formRef = useRef<any>(null);
 	const isLoaded = useRef(false);
 	const isBottom = useRef(false);
 	const isCreating = useRef(false);
 	const subscribedId = useRef('');
-	const [ , forceUpdate ] = useState(0);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -175,6 +175,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				};
 			};
 
+			setLocalDiscussionId(id);
 			subscribe(id);
 			callBack(id);
 		});
@@ -222,7 +223,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 				S.Comment.addPost(sid, newPost as any);
 				formRef.current?.clear();
-				forceUpdate(n => n + 1);
 				window.setTimeout(() => scrollToBottom(), 50);
 			});
 		});
