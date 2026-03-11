@@ -1457,6 +1457,11 @@
 	"popupAboutVersion": "Version: %s",
 	"popupAboutCopyright": "Made by Any — a Swiss association",
 
+	"popupUploadTabUpload": "Upload",
+	"popupUploadTabLink": "Link",
+	"popupUploadDropLabel": "Drag file here or Click to upload",
+	"popupUploadLinkPlaceholder": "Paste a link",
+
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",
 	"popupExportIncludeFiles": "Include files",

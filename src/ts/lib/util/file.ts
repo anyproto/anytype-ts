@@ -249,6 +249,30 @@ class UtilFile {
 	};
 
 	/**
+	 * Returns file extensions for the given object layout used for file picker filtering.
+	 * @param {I.ObjectLayout} layout - The object layout.
+	 * @returns {string[]} The file extensions (without dots).
+	 */
+	getExtensionsByLayout (layout: I.ObjectLayout): string[] {
+		switch (layout) {
+			case I.ObjectLayout.Image:
+				return [ 'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico', 'heic', 'heif', 'avif' ];
+
+			case I.ObjectLayout.Video:
+				return [ 'mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v', 'ogv', '3gp' ];
+
+			case I.ObjectLayout.Audio:
+				return [ 'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a', 'aiff', 'aif', 'opus' ];
+
+			case I.ObjectLayout.Pdf:
+				return [ 'pdf' ];
+
+			default:
+				return [];
+		};
+	};
+
+	/**
 	 * Checks if a drag event contains files.
 	 * @param {React.DragEvent} e - The drag event.
 	 * @returns {boolean} True if files are present, false otherwise.

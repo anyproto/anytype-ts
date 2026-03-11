@@ -538,6 +538,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			groupId = 'empty';
 		};
 
+		if (type && U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			const objectId = getObjectId();
+			const details = getDetails(groupId);
+
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, (objects) => {
+				if (isCollection && objects?.length) {
+					// Collection add is handled inside the popup for each file
+				};
+			});
+		} else
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
 			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
@@ -646,6 +656,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const typeId = getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
+					if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+						menuContext?.close();
+						const objectId = getObjectId();
+						const details = getDetails('');
+						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details);
+					} else
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
 						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${U.Common.esc(block.id)}-add-record` });
@@ -1249,7 +1265,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const targetId = getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
