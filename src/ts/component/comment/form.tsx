@@ -548,11 +548,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							</div>
 						</>
 					) : (
-						!isDisabled ? (
-							<div className="btn send" onClick={onSendClick}>
-								<Icon className="send" />
-							</div>
-						) : ''
+						<div
+							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+							onClick={onSendClick}
+						>
+							<Icon className="send" />
+						</div>
 					)}
 					</div>
 				</div>

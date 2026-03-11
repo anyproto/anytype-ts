@@ -128,15 +128,15 @@
 		}
 
 		.formToolbar {
-			display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
-			flex-shrink: 0;
+			display: flex; align-items: center; justify-content: space-between; padding: 4px 8px;
+			flex-shrink: 0; min-height: 36px;
 		}
 		.formToolbar {
-			.toolbarLeft { display: flex; align-items: center; gap: 0px 12px; }
+			.toolbarLeft { display: flex; align-items: center; gap: 0px 4px; }
 			.toolbarRight { display: flex; align-items: center; gap: 0px 8px; }
 
 			.toolbarBtn {
-				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
 				border-radius: 6px; user-select: none;
 			}
 			.toolbarBtn:hover { background: var(--color-shape-secondary); }
@@ -146,12 +146,13 @@
 			.toolbarBtn .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 			.toolbarBtn .icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
 
-			.toolbarDivider { width: 1px; height: 14px; background: var(--color-shape-secondary); }
+			.toolbarDivider { width: 1px; height: 14px; background: var(--color-shape-secondary); margin: 0px 4px; }
 
 			.btn.send {
 				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
 				border-radius: 50%; background: var(--color-system-accent-100); user-select: none;
 			}
+			.btn.send.isDisabled { opacity: 0; pointer-events: none; }
 			.btn.send .icon.send { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/sendWhite.svg'); }
 
 			.btn.save {
