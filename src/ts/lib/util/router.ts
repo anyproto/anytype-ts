@@ -236,7 +236,6 @@ class UtilRouter {
 		};
 
 		S.Menu.closeAllForced();
-		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
