@@ -8,41 +8,36 @@
 	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
 
 	.commentBody { flex: 1 1 auto; }
+	.commentList { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
-	.commentFormWrap { position: sticky; bottom: 0px; z-index: 10; padding: 0px 0px 16px 0px; background: var(--color-bg-primary); }
-
-	.commentList { margin: 0px 0px 8px 0px; }
-
-	.commentPost { padding: 0px 0px 8px 0px; }
+	.commentPost { 
+		padding: 16px; border-radius: 16px; background: var(--color-shape-tertiary); display: flex; flex-direction: row;
+		gap: 0px 8px; align-items: flex-start; position: relative;
+	}
 	.commentPost {
-		.postInner {
-			padding: 16px; border-radius: 16px; background: var(--color-shape-tertiary);
-		}
+		.iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
 
+		.postInner { flex-grow: 1; }
+
+		.head { display: flex; align-items: center; gap: 0px 8px; position: relative; }
 		.head {
-			display: flex; align-items: center; gap: 0px 8px; position: relative;
-		}
-		.head {
-			.iconObject { flex-shrink: 0; }
 			.author { @include text-small; font-weight: 500; line-height: 18px; }
 			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
+			.icon.badge { width: 14px; height: 14px; }
+			.name { display: flex; align-items: center; gap: 0px 4px; }
 		}
 
-		.content { margin: 4px 0px 0px 40px; line-height: 20px; word-break: break-word; }
+		.content { word-break: break-word; }
 
 		.hoverActions {
-			display: flex; align-items: center; gap: 0px 2px;
-			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0;
+			display: flex; align-items: center; gap: 0px 4px; position: absolute; right: 14px; top: 14px;
+			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; z-index: 1;
 		}
 		.hoverActions {
-			.hoverBtn {
-				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-				border-radius: 6px; user-select: none;
-			}
-			.hoverBtn:hover { background: var(--color-shape-secondary); }
-			.hoverBtn .icon { width: 20px; height: 20px; }
-			.hoverBtn .icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-			.hoverBtn .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.withBackground { width: 24px; height: 24px; }
+			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 		}
 
 		&:hover {
@@ -103,8 +98,13 @@
 
 	/* ---- Comment Form ---- */
 
+	.commentFormWrap { 
+		position: sticky; bottom: 0px; z-index: 10; padding: 0px 0px 16px 0px; background: var(--color-bg-primary);
+		border-radius: 16px;
+	}
+
 	.commentForm {
-		display: flex; flex-direction: column; border-radius: 16px; background-color: var(--color-shape-tertiary);
+		display: flex; flex-direction: column; border-radius: inherit; background-color: var(--color-shape-tertiary);
 		max-height: 360px; overflow: hidden;
 	}
 	.commentForm.isReply { max-height: 280px; }
@@ -128,32 +128,28 @@
 		}
 
 		.formToolbar {
-			display: flex; align-items: center; justify-content: space-between; padding: 4px 8px;
+			display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
 			flex-shrink: 0; min-height: 36px;
 		}
 		.formToolbar {
-			.toolbarLeft { display: flex; align-items: center; gap: 0px 4px; }
-			.toolbarRight { display: flex; align-items: center; gap: 0px 8px; }
+			.side { display: flex; align-items: center; gap: 0px 12px; }
 
-			.toolbarBtn {
-				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-				border-radius: 6px; user-select: none;
-			}
-			.toolbarBtn:hover { background: var(--color-shape-secondary); }
-			.toolbarBtn .icon { width: 20px; height: 20px; }
-			.toolbarBtn .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
-			.toolbarBtn .icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
-			.toolbarBtn .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
-			.toolbarBtn .icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+			.icon.withBackground { width: 24px; height: 24px; }
+			.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+			.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
+			.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+			.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
 
-			.toolbarDivider { width: 1px; height: 14px; background: var(--color-shape-secondary); margin: 0px 4px; }
+			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); }
 
 			.btn.send {
-				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
 				border-radius: 50%; background: var(--color-system-accent-100); user-select: none;
 			}
 			.btn.send.isDisabled { opacity: 0; pointer-events: none; }
-			.btn.send .icon.send { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/sendWhite.svg'); }
+			.btn.send {
+				.icon.send { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/sendWhite.svg'); }
+			}
 
 			.btn.save {
 				@include text-small; font-weight: 500; padding: 0px 16px; height: 28px;
@@ -238,16 +234,14 @@
 
 	/* ---- Rendered Post Block Styles ---- */
 
-	.commentH1 { margin: 20px 0px 0px 0px; font-size: 28px; font-weight: 700; line-height: 32px; }
-	.commentH2 { margin: 16px 0px 0px 0px; font-size: 22px; font-weight: 700; line-height: 28px; }
-	.commentH3 { margin: 12px 0px 0px 0px; font-size: 18px; font-weight: 700; line-height: 26px; }
-	.commentParagraph { margin: 0px; line-height: 20px; }
+	.commentH1 { margin: 20px 0px 0px 0px; @include text-header1; }
+	.commentH2 { margin: 16px 0px 0px 0px; @include text-header2; }
+	.commentH3 { margin: 12px 0px 0px 0px; @include text-header3; }
+	.commentParagraph { line-height: 20px; }
 	.commentParagraph + .commentParagraph { margin-top: 8px; }
 
 	.commentBlockquote {
-		margin: 4px 0px; padding: 0px 0px 0px 12px;
-		border-left: 4px solid var(--color-shape-secondary);
-		line-height: 20px;
+		margin: 4px 0px; padding: 0px 0px 0px 12px; border-left: 4px solid var(--color-shape-secondary); line-height: 20px;
 	}
 
 	.commentCodeBlock {

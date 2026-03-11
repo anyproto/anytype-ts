@@ -482,12 +482,9 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				<div className="hoverBtn" onClick={onReply}>
-					<Icon className="reply" />
-				</div>
-				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon className="more" />
-				</div>
+				<Icon className="reaction withBackground" onClick={onReply} />
+				<Icon className="reply withBackground" onClick={onReply} />
+				<Icon className="more withBackground" onClick={onMenuClick} />
 			</div>
 		);
 	};
@@ -510,20 +507,21 @@ const CommentPost = observer((props: Props) => {
 
 	return (
 		<div ref={postRef} className="commentPost">
+			{renderHoverActions()}
+
+			<IconObject
+				object={{ ...author, layout: I.ObjectLayout.Participant }}
+				size={32}
+			/>
+
 			<div className="postInner">
 				<div className="head">
-					<IconObject
-						object={{ ...author, layout: I.ObjectLayout.Participant }}
-						size={32}
-					/>
 					<div className="author">
 						<ObjectName object={author} withBadge={true} />
 					</div>
 					<div className="date">
 						{U.Date.date('M j', createdAt)}{editedLabel}
 					</div>
-
-					{renderHoverActions()}
 				</div>
 
 				{renderContent()}
@@ -568,6 +566,7 @@ const CommentPost = observer((props: Props) => {
 			) : ''}
 		</div>
 	);
+
 });
 
 export default CommentPost;
