@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, Mark, translate } from 'Lib';
+import { I, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
 
@@ -75,11 +75,53 @@ const CommentReply = observer((props: Props) => {
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
+	const contentRef = useRef<HTMLDivElement>(null);
+	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, content, createdAt, modifiedAt } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = U.Comment.decodeParts(content);
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
+	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+
+	// Bind click handlers for mentions and links
+	useEffect(() => {
+		const node = contentRef.current;
+		if (!node || isEditing) {
+			return;
+		};
+
+		const el = $(node);
+
+		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
+			item = $(item);
+			const param = String(item.attr('data-param') || '');
+			if (!param) {
+				return;
+			};
+
+			const object = S.Detail.get(subId, param, []);
+			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
+				e.preventDefault();
+				if (!object._empty_) {
+					U.Object.openEvent(e, object);
+				};
+			});
+		});
+
+		el.find('a').each((_i: number, item: any) => {
+			item = $(item);
+			const href = String(item.attr('href') || item.attr('data-param') || '');
+			if (!href) {
+				return;
+			};
+
+			item.off('click.link').on('click.link', (e: any) => {
+				e.preventDefault();
+				Action.openUrl(href);
+			});
+		});
+	}, [ isEditing, parts, subId ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
@@ -164,23 +206,45 @@ const CommentReply = observer((props: Props) => {
 		});
 	}, [ isSelf, onEdit, onCopyText, onDelete ]);
 
+	const onAttachmentPreview = useCallback((preview: any) => {
+		const data: any = { ...preview };
+		const gallery: any[] = [];
+
+		attachmentRefs.current.forEach((ref) => {
+			const item = ref?.getPreviewItem();
+			if (item) {
+				gallery.push(item);
+			};
+		});
+
+		data.gallery = gallery;
+		data.initialIdx = gallery.findIndex(it => it.src == preview.src);
+
+		S.Popup.open('preview', { data });
+	}, []);
+
 	const renderAttachments = () => {
 		const list = (message.attachments || [])
-			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
+			.map(it => S.Detail.get(subId, it.target))
 			.filter(it => !it._empty_);
 
 		if (!list.length) {
 			return null;
 		};
 
+		attachmentRefs.current = [];
+
 		return (
 			<div className="commentAttachments">
-				{list.map((item: any) => (
+				{list.map((item: any, i: number) => (
 					<Attachment
 						key={item.id}
+						ref={(ref: any) => { if (ref) { attachmentRefs.current[i] = ref; }; }}
 						object={item}
+						subId={subId}
 						showAsFile={false}
 						onRemove={() => {}}
+						onPreview={onAttachmentPreview}
 					/>
 				))}
 			</div>
@@ -203,7 +267,7 @@ const CommentReply = observer((props: Props) => {
 
 		return (
 			<>
-				<div className="content">
+				<div ref={contentRef} className="content">
 					{parts.map((part, i) => renderPart(part, i))}
 				</div>
 				{renderAttachments()}

@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, J, S, U, keyboard, translate } from 'Lib';
+import { I, C, J, S, U, keyboard, translate, Storage } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
 import Attachment from 'Component/block/chat/attachment';
 
@@ -34,8 +34,27 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ attachments, setAttachments ] = useState<any[]>([]);
-	const activeFormatsRef = useRef<Record<string, boolean>>({});
+	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
+	const isDraft = !isEdit && !isReply;
+
+	const saveDraft = useCallback((att?: any[]) => {
+		if (!isDraft) {
+			return;
+		};
+
+		const parts = editorRef.current?.getParts() || [];
+		Storage.setComment(rootId, {
+			parts,
+			attachments: (att || attachments).filter(it => !it.isTmp),
+		});
+	}, [ isDraft, rootId, attachments ]);
+
+	const clearDraft = useCallback(() => {
+		if (isDraft) {
+			Storage.deleteComment(rootId);
+		};
+	}, [ isDraft, rootId ]);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => editorRef.current?.focus(),
@@ -45,6 +64,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			setIsLoading(false);
 			setIsMultiline(false);
 			setAttachments([]);
+			clearDraft();
 		},
 	}));
 
@@ -118,6 +138,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					setIsLoading(false);
 					setIsMultiline(false);
 					setAttachments([]);
+					clearDraft();
 				};
 			});
 		} else {
@@ -128,9 +149,10 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				setIsEmpty(true);
 				setIsLoading(false);
 				setIsMultiline(false);
+				clearDraft();
 			};
 		};
-	}, [ onSubmit, isEdit, isLoading, attachments ]);
+	}, [ onSubmit, isEdit, isLoading, attachments, clearDraft ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -142,49 +164,15 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const handleBlur = useCallback(() => {
+		saveDraft();
+
 		window.setTimeout(() => {
 			if (S.Menu.isOpen()) {
 				return;
 			};
 			setIsFocused(false);
 		}, 200);
-	}, []);
-
-	const handleSelectionChange = useCallback((hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => {
-		activeFormatsRef.current = formats || {};
-
-		if (hasSelection && rect) {
-			openToolbar(rect);
-		} else {
-			S.Menu.close('commentToolbar');
-		};
-	}, []);
-
-	const openToolbar = useCallback((rect: DOMRect) => {
-		if (S.Menu.isOpen('commentToolbar')) {
-			return;
-		};
-
-		const win = $(window);
-
-		S.Menu.open('commentToolbar', {
-			rect: { ...rect, y: rect.y + win.scrollTop(), width: rect.width, height: 0 },
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			offsetY: -8,
-			noAnimation: true,
-			noDimmer: true,
-			passThrough: true,
-			data: {
-				onToggleFormat: (format: string) => {
-					editorRef.current?.toggleFormat(format);
-				},
-				getActiveFormats: () => {
-					return activeFormatsRef.current;
-				},
-			},
-		});
-	}, []);
+	}, [ saveDraft ]);
 
 	const checkMultiline = useCallback(() => {
 		const lineCount = editorRef.current?.getLineCount() || 0;
@@ -382,8 +370,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			data: {
 				pronounId: participantId,
 				marks: [],
+				skipIds: [ S.Auth.account?.id ],
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				],
 				onChange: (object: any, name: string) => {
-					editorRef.current?.insertText(name);
+					editorRef.current?.insertMention(object.id, name.trim());
 					editorRef.current?.focus();
 				},
 			},
@@ -442,6 +434,40 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		return () => wrap.removeEventListener('commentSlashAction', onAction);
 	}, [ handleSlashAction ]);
 
+	// Load draft on mount (only for main posting form)
+	useEffect(() => {
+		if (!isDraft || draftLoadedRef.current) {
+			return;
+		};
+
+		draftLoadedRef.current = true;
+
+		const draft = Storage.getComment(rootId);
+		if (!draft) {
+			return;
+		};
+
+		if (draft.parts && draft.parts.length) {
+			editorRef.current?.setParts(draft.parts);
+
+			const hasText = draft.parts.some((p: I.CommentContentPart) => p.text || (p.type === I.BlockType.Div));
+			if (hasText) {
+				setIsEmpty(false);
+			};
+		};
+
+		if (draft.attachments && draft.attachments.length) {
+			setAttachments(draft.attachments);
+		};
+	}, [ isDraft, rootId ]);
+
+	// Save draft when attachments change
+	useEffect(() => {
+		if (isDraft && draftLoadedRef.current) {
+			saveDraft(attachments);
+		};
+	}, [ isDraft, attachments ]);
+
 	if (readonly) {
 		return null;
 	};
@@ -469,7 +495,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onEmpty={handleEmpty}
 					onFocus={handleFocus}
 					onBlur={handleBlur}
-					onSelectionChange={handleSelectionChange}
+	
 				/>
 
 				{hasAttachments ? (
@@ -507,18 +533,27 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					</div>
 
 					<div className="toolbarRight">
-						{isEdit && onCancel ? (
-							<div className="btn cancel" onClick={onCancel}>
-								{translate('commonCancel')}
+						{isEdit ? (
+						<>
+							{onCancel ? (
+								<div className="btn cancel" onClick={onCancel}>
+									{translate('commonCancel')}
+								</div>
+							) : ''}
+							<div
+								className={[ 'btn', 'save', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+								onClick={onSendClick}
+							>
+								{translate('commonSave')}
 							</div>
-						) : ''}
-
-						<div
-							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
-							onClick={onSendClick}
-						>
-							<Icon className="send" />
-						</div>
+						</>
+					) : (
+						!isDisabled ? (
+							<div className="btn send" onClick={onSendClick}>
+								<Icon className="send" />
+							</div>
+						) : ''
+					)}
 					</div>
 				</div>
 			) : ''}

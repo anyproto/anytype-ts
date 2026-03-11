@@ -27,7 +27,6 @@ import {
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
 	KEY_ESCAPE_COMMAND,
-	SELECTION_CHANGE_COMMAND,
 	createCommand,
 	EditorState,
 	LexicalEditor,
@@ -84,6 +83,63 @@ class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
 
 export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZONTAL_RULE_COMMAND');
 
+class MentionNode extends TextNode {
+
+	__mentionId: string;
+
+	static getType (): string {
+		return 'mention';
+	};
+
+	static clone (node: MentionNode): MentionNode {
+		return new MentionNode(node.__mentionId, node.__text, node.__key);
+	};
+
+	constructor (mentionId: string, text: string, key?: string) {
+		super(text, key);
+		this.__mentionId = mentionId;
+	};
+
+	createDOM (config: any): HTMLElement {
+		const el = super.createDOM(config);
+		el.className = 'commentEditor-mention';
+		return el;
+	};
+
+	updateDOM (prevNode: MentionNode, dom: HTMLElement, config: any): boolean {
+		return false;
+	};
+
+	isToken (): boolean {
+		return true;
+	};
+
+	exportJSON () {
+		return {
+			...super.exportJSON(),
+			type: 'mention',
+			mentionId: this.__mentionId,
+		};
+	};
+
+	static importJSON (json: any): MentionNode {
+		return new MentionNode(json.mentionId, json.text);
+	};
+
+	getMentionId (): string {
+		return this.__mentionId;
+	};
+
+};
+
+function $createMentionNode (mentionId: string, text: string): MentionNode {
+	return new MentionNode(mentionId, text).setMode('token');
+};
+
+function $isMentionNode (node: LexicalNode | null | undefined): node is MentionNode {
+	return node instanceof MentionNode;
+};
+
 interface Props {
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
@@ -93,7 +149,6 @@ interface Props {
 	onEmpty?: (isEmpty: boolean) => void;
 	onFocus?: () => void;
 	onBlur?: () => void;
-	onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => void;
 };
 
 interface RefProps {
@@ -107,6 +162,7 @@ interface RefProps {
 	insertBlock: (style: I.TextStyle) => void;
 	insertDivider: () => void;
 	insertText: (text: string) => void;
+	insertMention: (id: string, name: string) => void;
 	toggleFormat: (format: TextFormatType) => void;
 	setBlockStyle: (style: I.TextStyle) => void;
 	getCurrentBlockStyle: () => I.TextStyle;
@@ -203,6 +259,13 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 		const start = text.length;
 		const end = start + childText.length;
 
+		if ($isMentionNode(child)) {
+			marks.push({
+				type: I.MarkType.Mention,
+				range: { from: start, to: end },
+				param: child.getMentionId(),
+			});
+		} else
 		if ($isTextNode(child)) {
 			marks.push(...extractMarks(child, start, end));
 		};
@@ -357,6 +420,16 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 		const segment = text.slice(from, to);
 
 		if (!segment) {
+			continue;
+		};
+
+		// Check if this segment is a mention
+		const mentionMark = marks.find(m =>
+			(m.type === I.MarkType.Mention) && (m.range.from <= from) && (m.range.to >= to)
+		);
+
+		if (mentionMark) {
+			nodes.push($createMentionNode(mentionMark.param || '', segment));
 			continue;
 		};
 
@@ -802,43 +875,138 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 	editor.focus();
 };
 
-const SelectionPlugin = ({ onSelectionChange }: { onSelectionChange?: (hasSelection: boolean, rect: DOMRect | null, formats?: Record<string, boolean>) => void }) => {
+
+const MentionPlugin = ({ editorId }: { editorId: string }) => {
 	const [ editor ] = useLexicalComposerContext();
+	const prevText = useRef('');
+	const mentionOffset = useRef(-1);
 
 	useEffect(() => {
-		return editor.registerCommand(
-			SELECTION_CHANGE_COMMAND,
-			() => {
+		const removeListener = editor.registerUpdateListener(({ editorState }) => {
+			editorState.read(() => {
 				const selection = $getSelection();
-				if (!$isRangeSelection(selection) || selection.isCollapsed()) {
-					onSelectionChange?.(false, null);
-					return false;
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
 				};
 
-				const rect = U.Common.getSelectionRect();
-				const formats: Record<string, boolean> = {
-					bold: selection.hasFormat('bold'),
-					italic: selection.hasFormat('italic'),
-					underline: selection.hasFormat('underline'),
-					strikethrough: selection.hasFormat('strikethrough'),
-					code: selection.hasFormat('code'),
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node) || $isMentionNode(node)) {
+					prevText.current = '';
+					return;
 				};
 
-				onSelectionChange?.(true, rect, formats);
-				return false;
-			},
-			COMMAND_PRIORITY_LOW,
-		);
-	}, [ editor, onSelectionChange ]);
+				const text = node.getTextContent();
+				const offset = anchor.offset;
+				const menuOpen = S.Menu.isOpen('blockMention');
+
+				// Trigger mention menu on @ character
+				if ((offset > 0) && (text[offset - 1] === '@') && (text !== prevText.current) && !menuOpen) {
+					const charBefore = offset > 1 ? text[offset - 2] : '';
+					if (!charBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(charBefore)) {
+						mentionOffset.current = offset - 1;
+						openMentionMenu(editor, editorId, mentionOffset);
+					};
+				};
+
+				// Update filter text while mention menu is open
+				if (menuOpen && (mentionOffset.current >= 0)) {
+					const filterStart = mentionOffset.current + 1;
+					const filterText = text.slice(filterStart, offset);
+					S.Common.filterSetText(filterText);
+
+					// Close if @ was deleted
+					if ((offset <= mentionOffset.current) || (text[mentionOffset.current] !== '@')) {
+						S.Menu.close('blockMention');
+						mentionOffset.current = -1;
+					};
+				};
+
+				prevText.current = text;
+			});
+		});
+
+		return removeListener;
+	}, [ editor, editorId ]);
 
 	return null;
+};
+
+const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset: React.MutableRefObject<number>) => {
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+	const space = S.Common.space;
+	const participantId = U.Space.getParticipantId(space, S.Auth.account?.id);
+
+	S.Common.filterSet(0, '');
+
+	S.Menu.open('blockMention', {
+		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		vertical: I.MenuDirection.Top,
+		horizontal: I.MenuDirection.Left,
+		offsetY: -4,
+		noAnimation: true,
+		data: {
+			pronounId: participantId,
+			marks: [],
+			skipIds: [ S.Auth.account?.id ],
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+			],
+			onChange: (object: any, name: string) => {
+				editor.update(() => {
+					const selection = $getSelection();
+					if (!$isRangeSelection(selection)) {
+						return;
+					};
+
+					const anchor = selection.anchor;
+					const node = anchor.getNode();
+
+					if ($isTextNode(node)) {
+						const text = node.getTextContent();
+						const atOffset = mentionOffset.current;
+						const cursorOffset = anchor.offset;
+
+						// Remove @ and filter text
+						const before = text.slice(0, atOffset);
+						const after = text.slice(cursorOffset);
+
+						if (before || after) {
+							node.setTextContent(before + after);
+							node.select(before.length, before.length);
+						};
+
+						// Get selection again after text change
+						const newSelection = $getSelection();
+						if ($isRangeSelection(newSelection)) {
+							const trimmedName = name.trim();
+							const mentionNode = $createMentionNode(object.id, trimmedName);
+							newSelection.insertNodes([ mentionNode ]);
+
+							const spaceNode = $createTextNode(' ');
+							mentionNode.insertAfter(spaceNode);
+							spaceNode.select();
+						};
+					};
+				});
+
+				mentionOffset.current = -1;
+				editor.focus();
+			},
+		},
+	});
 };
 
 // ---- Main Component ----
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onFocus, onBlur, onSelectionChange } = props;
+	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onFocus, onBlur } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -1010,6 +1178,23 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			};
 		},
 
+		insertMention: (id: string, name: string) => {
+			const editor = editorRef.current;
+			if (editor) {
+				editor.update(() => {
+					const selection = $getSelection();
+					if ($isRangeSelection(selection)) {
+						const mentionNode = $createMentionNode(id, name);
+						selection.insertNodes([ mentionNode ]);
+
+						const spaceNode = $createTextNode(' ');
+						mentionNode.insertAfter(spaceNode);
+						spaceNode.select();
+					};
+				});
+			};
+		},
+
 		toggleFormat,
 		setBlockStyle,
 		getCurrentBlockStyle,
@@ -1018,7 +1203,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, HorizontalRuleNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, HorizontalRuleNode, MentionNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -1044,7 +1229,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<EditorRefPlugin editorRef={editorRef} />
 				<HorizontalRulePlugin />
 				<SlashMenuPlugin editorId={editorId} />
-				<SelectionPlugin onSelectionChange={onSelectionChange} />
+				<MentionPlugin editorId={editorId} />
 			</div>
 		</LexicalComposer>
 	);

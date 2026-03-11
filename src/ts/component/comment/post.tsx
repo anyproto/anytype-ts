@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, Mark, translate } from 'Lib';
+import { I, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
@@ -148,6 +148,8 @@ const CommentPost = observer((props: Props) => {
 	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
+	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, content, createdAt, modifiedAt, replyCount } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
@@ -155,12 +157,71 @@ const CommentPost = observer((props: Props) => {
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const replies = S.Comment.getReplies(id);
 	const hasMoreReplies = S.Comment.getHasMoreReplies(id);
+	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 
 	useEffect(() => {
 		if (replyCount > 0) {
 			loadReplies(true);
 		};
 	}, [ id, replyCount ]);
+
+	// Bind click handlers for mentions and links in rendered content
+	useEffect(() => {
+		const node = contentRef.current;
+		if (!node || isEditing) {
+			return;
+		};
+
+		const el = $(node);
+
+		// Mentions
+		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
+			item = $(item);
+			const param = String(item.attr('data-param') || '');
+			if (!param) {
+				return;
+			};
+
+			const object = S.Detail.get(subId, param, []);
+			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
+				e.preventDefault();
+				if (!object._empty_) {
+					U.Object.openEvent(e, object);
+				};
+			});
+		});
+
+		// Links
+		el.find('a').each((_i: number, item: any) => {
+			item = $(item);
+			const href = String(item.attr('href') || item.attr('data-param') || '');
+			if (!href) {
+				return;
+			};
+
+			item.off('click.link').on('click.link', (e: any) => {
+				e.preventDefault();
+				Action.openUrl(href);
+			});
+		});
+
+		// Object marks
+		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
+			item = $(item);
+			const param = String(item.attr('data-param') || '');
+			if (!param) {
+				return;
+			};
+
+			const object = S.Detail.get(subId, param, []);
+			item.off('mousedown.object').on('mousedown.object', (e: any) => {
+				e.preventDefault();
+				if (!object._empty_) {
+					U.Object.openEvent(e, object);
+				};
+			});
+		});
+	}, [ isEditing, parts, subId ]);
 
 	const loadReplies = useCallback((initial?: boolean) => {
 		if (!initial && isLoadingReplies) {
@@ -210,7 +271,7 @@ const CommentPost = observer((props: Props) => {
 		setIsEditing(false);
 	}, []);
 
-	const onSaveEdit = useCallback((newParts: I.CommentContentPart[]) => {
+	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
 		const encoded = U.Comment.encodeParts(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
@@ -220,7 +281,6 @@ const CommentPost = observer((props: Props) => {
 		} as any, () => {
 			setIsEditing(false);
 
-			const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 			S.Comment.updatePost(subId, {
 				id,
 				modifiedAt: U.Date.now(),
@@ -233,12 +293,10 @@ const CommentPost = observer((props: Props) => {
 	}, [ targetId, id ]);
 
 	const onDelete = useCallback(() => {
-		const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-
 		C.ChatDeleteMessage(targetId, id, () => {
 			S.Comment.deletePost(subId, id);
 		});
-	}, [ targetId, id ]);
+	}, [ targetId, id, subId ]);
 
 	const onReply = useCallback(() => {
 		setIsReplying(true);
@@ -287,7 +345,6 @@ const CommentPost = observer((props: Props) => {
 
 			S.Comment.addReply(id, newReply as any);
 
-			const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 			S.Comment.updatePost(subId, {
 				id,
 				replyCount: (replyCount || 0) + 1,
@@ -346,23 +403,49 @@ const CommentPost = observer((props: Props) => {
 		});
 	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete ]);
 
-	const renderAttachments = () => {
-		const list = (message.attachments || [])
-			.map(it => S.Detail.get(U.Comment.getSubId(I.CommentTargetType.Object, targetId), it.target))
+	const getAttachments = useCallback((): any[] => {
+		return (message.attachments || [])
+			.map(it => S.Detail.get(subId, it.target))
 			.filter(it => !it._empty_);
+	}, [ message.attachments, subId ]);
+
+	const onAttachmentPreview = useCallback((preview: any) => {
+		const data: any = { ...preview };
+		const gallery: any[] = [];
+
+		attachmentRefs.current.forEach((ref) => {
+			const item = ref?.getPreviewItem();
+			if (item) {
+				gallery.push(item);
+			};
+		});
+
+		data.gallery = gallery;
+		data.initialIdx = gallery.findIndex(it => it.src == preview.src);
+
+		S.Popup.open('preview', { data });
+	}, []);
+
+	const renderAttachments = () => {
+		const list = getAttachments();
 
 		if (!list.length) {
 			return null;
 		};
 
+		attachmentRefs.current = [];
+
 		return (
 			<div className="commentAttachments">
-				{list.map((item: any) => (
+				{list.map((item: any, i: number) => (
 					<Attachment
 						key={item.id}
+						ref={(ref: any) => { if (ref) { attachmentRefs.current[i] = ref; }; }}
 						object={item}
+						subId={subId}
 						showAsFile={false}
 						onRemove={() => {}}
+						onPreview={onAttachmentPreview}
 					/>
 				))}
 			</div>
@@ -384,7 +467,7 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<>
-				<div className="content">
+				<div ref={contentRef} className="content">
 					{renderParts(parts)}
 				</div>
 				{renderAttachments()}
@@ -431,7 +514,7 @@ const CommentPost = observer((props: Props) => {
 				<div className="head">
 					<IconObject
 						object={{ ...author, layout: I.ObjectLayout.Participant }}
-						size={28}
+						size={32}
 					/>
 					<div className="author">
 						<ObjectName object={author} withBadge={true} />
@@ -445,6 +528,19 @@ const CommentPost = observer((props: Props) => {
 
 				{renderContent()}
 				{renderRepliesToggle()}
+
+				{isReplying ? (
+					<div className="replyFormWrap">
+						<CommentForm
+							ref={replyFormRef}
+							rootId={rootId}
+							isReply={true}
+							placeholder={translate('commentReplyPlaceholder')}
+							onSubmit={onSubmitReply}
+							onCancel={onCancelReply}
+						/>
+					</div>
+				) : ''}
 			</div>
 
 			{replies.length ? (
@@ -468,19 +564,6 @@ const CommentPost = observer((props: Props) => {
 							readonly={readonly}
 						/>
 					))}
-				</div>
-			) : ''}
-
-			{isReplying ? (
-				<div className="replyFormWrap">
-					<CommentForm
-						ref={replyFormRef}
-						rootId={rootId}
-						isReply={true}
-						placeholder={translate('commentReplyPlaceholder')}
-						onSubmit={onSubmitReply}
-						onCancel={onCancelReply}
-					/>
 				</div>
 			) : ''}
 		</div>
