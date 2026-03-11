@@ -3,10 +3,11 @@ import $ from 'jquery';
 import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, Mark, translate, Action } from 'Lib';
+import { I, J, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
+import Reaction from 'Component/block/chat/message/reaction';
 
 interface Props {
 	rootId: string;
@@ -150,7 +151,7 @@ const CommentPost = observer((props: Props) => {
 	const postRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
-	const { id, creator, content, createdAt, modifiedAt, replyCount } = message;
+	const { id, creator, content, createdAt, modifiedAt, replyCount, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = U.Comment.decodeParts(content);
@@ -367,6 +368,36 @@ const CommentPost = observer((props: Props) => {
 		U.Object.copyLink(object, spaceObject, 'deeplink', '');
 	}, [ rootId ]);
 
+	const onReactionSelect = useCallback((icon: string) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const hasReaction = reactions.find(it => it.icon == icon);
+		const self = reactions.filter(it => it.authors.includes(account.id));
+
+		if (!hasReaction && ((self.length >= limit.self) || (reactions.length >= limit.all))) {
+			return;
+		};
+
+		C.ChatToggleMessageReaction(targetId, id, icon);
+	}, [ targetId, id, reactions ]);
+
+	const onReaction = useCallback((e: React.MouseEvent) => {
+		S.Menu.open('smile', {
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			noAnimation: true,
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: (icon: string) => {
+					onReactionSelect(icon);
+				},
+			},
+		});
+	}, [ targetId, id, onReactionSelect ]);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = $(e.currentTarget);
 
@@ -475,6 +506,22 @@ const CommentPost = observer((props: Props) => {
 		);
 	};
 
+	const renderReactions = () => {
+		const hasReactions = (reactions || []).length > 0;
+
+		if (!hasReactions) {
+			return null;
+		};
+
+		return (
+			<div className="reactions">
+				{reactions.map((item: any, i: number) => (
+					<Reaction key={i} {...item} onSelect={onReactionSelect} />
+				))}
+			</div>
+		);
+	};
+
 	const renderHoverActions = () => {
 		if (isEditing || readonly) {
 			return null;
@@ -482,7 +529,7 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				<Icon className="reaction withBackground" onClick={onReply} />
+				<Icon className="reaction withBackground" onClick={onReaction} />
 				<Icon className="reply withBackground" onClick={onReply} />
 				<Icon className="more withBackground" onClick={onMenuClick} />
 			</div>
@@ -525,6 +572,7 @@ const CommentPost = observer((props: Props) => {
 				</div>
 
 				{renderContent()}
+				{renderReactions()}
 				{renderRepliesToggle()}
 
 				{isReplying ? (

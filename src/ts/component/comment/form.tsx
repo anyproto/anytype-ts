@@ -514,12 +514,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			{showToolbar ? (
 				<div className="formToolbar">
-					<div className="side left">
-						<Icon className="plus withBackground" />
+					<div className="side left" onMouseDown={e => e.preventDefault()}>
+						<Icon className="plus withBackground" onClick={onPlusClick} />
 						<div className="div" />
-						<Icon className="text withBackground" />
-						<Icon className="emoji withBackground" />
-						<Icon className="mention withBackground" />
+						<Icon className="text withBackground" onClick={onTextClick} />
+						<Icon className="emoji withBackground" onClick={onEmojiClick} />
+						<Icon className="mention withBackground" onClick={onMentionClick} />
 					</div>
 
 					<div className="side right">

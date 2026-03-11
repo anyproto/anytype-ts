@@ -60,6 +60,18 @@
 		}
 
 		.commentAttachments { margin: 8px 0px 0px 40px; }
+
+		.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
+		.reactions {
+			.reaction {
+				display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500;
+				background-color: var(--color-shape-highlight-medium); padding: 5px 6px; flex-shrink: 0;
+			}
+			.reaction:hover { background-color: var(--color-shape-highlight-dark); }
+			.reaction.isSelf { color: #fff; background-color: var(--color-system-accent-100); }
+			.reaction.isMulti { gap: 0px 2px; }
+			.count { min-width: 18px; text-align: center; user-select: none !important; }
+		}
 	}
 
 	.commentReply { padding: 8px 0px; position: relative; }
@@ -98,11 +110,7 @@
 
 	/* ---- Comment Form ---- */
 
-	.commentFormWrap { 
-		position: sticky; bottom: 0px; z-index: 10; padding: 0px 0px 16px 0px; background: var(--color-bg-primary);
-		border-radius: 16px;
-	}
-
+	.commentFormWrap { padding: 0px 0px 12px 0px; border-radius: 16px; }
 	.commentForm {
 		display: flex; flex-direction: column; border-radius: inherit; background-color: var(--color-shape-tertiary);
 		max-height: 360px; overflow: hidden;
@@ -135,7 +143,7 @@
 			.side { display: flex; align-items: center; gap: 0px 12px; }
 
 			.icon.withBackground { width: 24px; height: 24px; }
-			.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+			.icon.plus { border-radius: 50%; background-color: var(--color-shape-secondary); background-size: 16px 16px; background-image: url('~img/icon/chat/buttons/plus.svg'); }
 			.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
 			.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 			.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
