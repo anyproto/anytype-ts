@@ -33,13 +33,15 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			return;
 		};
 
-		const containerEl = container.get(0);
-		const containerRect = containerEl.getBoundingClientRect();
-		const nodeRect = node.getBoundingClientRect();
-		const offset = nodeRect.top - containerRect.top + container.scrollTop();
-		const minHeight = containerEl.clientHeight - offset;
+		// Reset to natural height before measuring
+		node.style.minHeight = '0px';
 
-		node.style.minHeight = (minHeight > 200) ? `${minHeight}px` : '';
+		const containerEl = container.get(0);
+		const containerHeight = containerEl.clientHeight;
+		const scrollHeight = containerEl.scrollHeight;
+		const gap = containerHeight - scrollHeight;
+
+		node.style.minHeight = (gap > 0) ? `${node.offsetHeight + gap}px` : '';
 	}, [ isPopup ]);
 
 	useEffect(() => {
