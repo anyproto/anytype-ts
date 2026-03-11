@@ -1,0 +1,81 @@
+@import "~scss/_mixins";
+
+.sidebarProgress {
+	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 320px;
+	background: var(--color-bg-primary); border-radius: 12px;
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.sidebarProgress {
+	.head {
+		display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;
+		gap: 0px 8px; @include text-common; font-weight: 500; color: var(--color-text-primary);
+	}
+	.head {
+		.icon.arrow {
+			width: 20px; height: 20px; flex-shrink: 0;
+			background-image: url('~img/arrow/sidebarProgress.svg');
+			transform: rotateZ(180deg); transition: transform 0.2s ease;
+		}
+	}
+
+	&.isExpanded {
+		.head {
+			.icon.arrow { transform: rotateZ(0deg); }
+		}
+	}
+
+	.items { display: flex; flex-direction: column; padding: 0px 8px 8px 8px; }
+
+	.item {
+		display: flex; align-items: center; gap: 0px 10px; padding: 6px 4px; border-radius: 8px;
+	}
+	.item {
+		.iconWrap {
+			width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; display: flex;
+			align-items: center; justify-content: center;
+			background: var(--color-shape-highlight-medium);
+		}
+		.iconWrap {
+			.icon.progressType { width: 20px; height: 20px; }
+			.icon.progressType.download { background-image: url('~img/icon/menu/action/import0.svg'); }
+			.icon.progressType.import { background-image: url('~img/icon/menu/action/import0.svg'); }
+			.icon.progressType.export { background-image: url('~img/icon/menu/action/export0.svg'); }
+			.icon.progressType.update { background-image: url('~img/icon/menu/action/download0.svg'); }
+		}
+
+		.info { flex-grow: 1; overflow: hidden; }
+		.info {
+			.name { @include text-overflow-nw; @include text-common; font-weight: 500; color: var(--color-text-primary); }
+			.status { @include text-small; color: var(--color-text-secondary); }
+			.status {
+				.error { color: var(--color-red); }
+			}
+		}
+
+		.spinnerWrap {
+			width: 28px; height: 28px; flex-shrink: 0; position: relative;
+		}
+		.spinnerWrap.withSpinner {
+			&::after {
+				content: ''; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
+				width: 20px; height: 20px;
+				background: url('~img/icon/vault/spinner.svg') 50% 50% no-repeat; background-size: 20px;
+				animation: rotate 0.8s infinite linear;
+				transition: opacity 0.15s ease;
+			}
+
+			.icon.close {
+				position: absolute; left: 0px; top: 0px;
+				width: 28px; height: 28px; background-size: 20px;
+				opacity: 0; transition: opacity 0.15s ease;
+			}
+		}
+
+		&.canCancel:hover {
+			.spinnerWrap.withSpinner {
+				&::after { opacity: 0; }
+				.icon.close { opacity: 1; }
+			}
+		}
+	}
+}
