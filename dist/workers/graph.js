@@ -23,6 +23,7 @@ const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 const maxClusterRadius = 500;
+const timelineDuration = 15000;
 
 const Layout = {
 	Human:		 1,
@@ -106,7 +107,7 @@ let timelineLastTick = 0;
 let timelineVisibleNodeIds = null;
 let timelineAllNodes = null;
 let timelineAllEdges = null;
-const TIMELINE_DURATION = 15000;
+
 
 // PixiJS objects
 let app = null;
@@ -988,7 +989,7 @@ draw = (t) => {
 		const now = performance.now();
 
 		if (timelinePlaying) {
-			const delta = (now - timelineLastTick) / TIMELINE_DURATION * timelineSpeed;
+			const delta = (now - timelineLastTick) / timelineDuration * timelineSpeed;
 			timelinePosition = Math.min(1, timelinePosition + delta);
 
 			if (timelinePosition >= 1) {
