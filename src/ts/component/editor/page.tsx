@@ -2681,6 +2681,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					targetType={I.CommentTargetType.Object}
 					readonly={readonly}
 					isPopup={isPopup}
+					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
 				/>
 			</div>
 		</div>

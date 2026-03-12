@@ -5,12 +5,15 @@ import { I, C, S, U, keyboard, translate } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
 
+const HIGHLIGHT_DURATION = 2000;
+
 const POST_LIMIT = 20;
+const REPLY_LIMIT = 10;
 const SCROLL_THRESHOLD = 16;
 
 const CommentSection = observer((props: I.CommentSectionProps) => {
 
-	const { rootId, targetId, targetType, readonly, isPopup } = props;
+	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
 	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
 	const discussionId = object.discussionId || localDiscussionId || '';
@@ -21,6 +24,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isCreating = useRef(false);
 	const subscribedId = useRef('');
 	const sectionRef = useRef<HTMLDivElement>(null);
+	const messageIdHandled = useRef(false);
+	const listRef = useRef<any>(null);
 
 	const resize = useCallback(() => {
 		const node = sectionRef.current;
@@ -116,6 +121,161 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		};
 	}, [ onMessageAdd ]);
 
+	const scrollToMessage = useCallback((msgId: string) => {
+		window.setTimeout(() => {
+			resize();
+
+			const node = sectionRef.current;
+			if (!node) {
+				return;
+			};
+
+			const el = node.querySelector(`[data-message-id="${msgId}"]`);
+			if (!el) {
+				return;
+			};
+
+			const container = U.Common.getScrollContainer(isPopup);
+			if (!container.length) {
+				return;
+			};
+
+			const containerEl = container.get(0);
+			const elRect = el.getBoundingClientRect();
+			const containerRect = containerEl.getBoundingClientRect();
+			const scrollTop = containerEl.scrollTop + (elRect.top - containerRect.top) - (containerRect.height / 3);
+
+			containerEl.scrollTop = Math.max(0, scrollTop);
+
+			el.classList.add('isHighlighted');
+			window.setTimeout(() => el.classList.remove('isHighlighted'), HIGHLIGHT_DURATION);
+		}, 100);
+	}, [ isPopup, resize ]);
+
+	const handleMessageId = useCallback((discId: string) => {
+		if (!messageId || messageIdHandled.current) {
+			return;
+		};
+
+		messageIdHandled.current = true;
+
+		C.ChatGetMessagesByIds(discId, [ messageId ], (message: any) => {
+			if (message.error.code || !message.messages?.length) {
+				return;
+			};
+
+			const msg = message.messages[0];
+			const sid = U.Comment.getSubId(targetType, discId);
+			const isReply = !!msg.replyToMessageId;
+
+			if (isReply) {
+				// For a reply, check if the parent post is loaded
+				const parentId = msg.replyToMessageId;
+				const posts = S.Comment.getPosts(sid);
+				const parentLoaded = posts.find(it => it.id == parentId);
+
+				if (!parentLoaded) {
+					// Load the parent post first
+					C.ChatGetMessagesByIds(discId, [ parentId ], (parentMessage: any) => {
+						if (parentMessage.error.code || !parentMessage.messages?.length) {
+							return;
+						};
+
+						const parentPost = parentMessage.messages[0];
+
+						// Load posts around the parent
+						loadPostsAroundMessage(discId, sid, parentPost, () => {
+							// Load replies around the target reply
+							loadRepliesAroundMessage(discId, parentId, msg, () => {
+								scrollToMessage(messageId);
+							});
+						});
+					});
+				} else {
+					// Parent is loaded, load replies around the target
+					loadRepliesAroundMessage(discId, parentId, msg, () => {
+						scrollToMessage(messageId);
+					});
+				};
+			} else {
+				// It's a top-level post — check if it's already loaded
+				const posts = S.Comment.getPosts(sid);
+				const postLoaded = posts.find(it => it.id == msg.id);
+
+				if (postLoaded) {
+					scrollToMessage(messageId);
+				} else {
+					loadPostsAroundMessage(discId, sid, msg, () => {
+						scrollToMessage(messageId);
+					});
+				};
+			};
+		});
+	}, [ messageId, targetType, scrollToMessage ]);
+
+	const loadPostsAroundMessage = useCallback((discId: string, sid: string, msg: any, callBack?: () => void) => {
+		// Load posts before the target (older)
+		C.ChatGetMessages(discId, msg.orderId, '', POST_LIMIT, false, (beforeMsg: any) => {
+			if (!beforeMsg.error.code) {
+				const beforePosts = (beforeMsg.messages || [])
+					.filter((it: any) => !it.replyToMessageId)
+					.map((it: any) => ({
+						...it,
+						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
+						replyCount: 0,
+					}));
+
+				loadDeps(beforePosts, () => {
+					S.Comment.prependPosts(sid, beforePosts);
+					S.Comment.setHasMorePosts(sid, beforePosts.length >= POST_LIMIT);
+					callBack?.();
+				});
+			} else {
+				callBack?.();
+			};
+		});
+	}, [ loadDeps ]);
+
+	const loadRepliesAroundMessage = useCallback((discId: string, parentId: string, msg: any, callBack?: () => void) => {
+		// Load replies before the target (older)
+		C.ChatGetMessages(discId, msg.orderId, '', REPLY_LIMIT, false, (beforeMsg: any) => {
+			const beforeReplies = (!beforeMsg.error.code ? beforeMsg.messages || [] : [])
+				.filter((it: any) => it.replyToMessageId == parentId)
+				.map((it: any) => ({
+					...it,
+					content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
+					replyCount: 0,
+				}));
+
+			// Load replies after the target (newer)
+			C.ChatGetMessages(discId, '', msg.orderId, REPLY_LIMIT, false, (afterMsg: any) => {
+				const afterReplies = (!afterMsg.error.code ? afterMsg.messages || [] : [])
+					.filter((it: any) => it.replyToMessageId == parentId)
+					.map((it: any) => ({
+						...it,
+						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
+						replyCount: 0,
+					}));
+
+				// Combine: before + target + after
+				const targetReply = {
+					...msg,
+					content: { ...msg.content, parts: U.Comment.blocksToParts(msg.blocks, msg.content) },
+					replyCount: 0,
+				};
+
+				const allReplies = [ ...beforeReplies, targetReply, ...afterReplies ];
+
+				loadDeps(allReplies, () => {
+					S.Comment.setReplies(parentId, allReplies);
+					S.Comment.setHasMoreReplies(parentId, afterReplies.length >= REPLY_LIMIT);
+					S.Comment.setHasOlderReplies(parentId, beforeReplies.length >= REPLY_LIMIT);
+					callBack?.();
+				});
+			});
+		});
+	}, [ loadDeps ]);
+
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
 
@@ -157,9 +317,10 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				};
 
 				isLoaded.current = true;
+				handleMessageId(id);
 			});
 		});
-	}, [ targetType, loadDeps ]);
+	}, [ targetType, loadDeps, handleMessageId ]);
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);

@@ -190,6 +190,15 @@ npx rspack --config rspack.pixi.config.js
   const isValid = x > 0 && y > 0 && x < maxWidth;
   if (a > b && c < d) { ... }
   ```
+- Collect CSS class lists into a separate `cn` variable before the return statement:
+  ```typescript
+  // Good
+  const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+  return <div className={cn.join(' ')} />;
+
+  // Bad — inline class list arrays hurt readability
+  return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
+  ```
 
 ### Important Patterns
 - All UI text should use `translate()` function for i18n

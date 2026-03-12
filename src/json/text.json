@@ -2841,6 +2841,7 @@
 	"commentReplyPlaceholder": "Write a reply...",
 	"commentLoadMore": "Load more comments",
 	"commentLoadMoreReplies": "Load more replies",
+	"commentLoadPreviousReplies": "Load previous replies",
 	"commentLoading": "Loading...",
 	"commentEdited": "edited",
 	"commentReply": "Reply",

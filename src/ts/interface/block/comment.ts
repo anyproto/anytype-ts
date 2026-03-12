@@ -47,4 +47,5 @@ export interface CommentSectionProps {
 	targetType: CommentTargetType;
 	readonly?: boolean;
 	isPopup?: boolean;
+	messageId?: string;
 };

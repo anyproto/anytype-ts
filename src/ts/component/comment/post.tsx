@@ -198,6 +198,8 @@ const CommentPost = observer((props: Props) => {
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const replies = S.Comment.getReplies(id);
 	const hasMoreReplies = S.Comment.getHasMoreReplies(id);
+	const hasOlderReplies = S.Comment.getHasOlderReplies(id);
+	const [ isLoadingOlderReplies, setIsLoadingOlderReplies ] = useState(false);
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 
 	useEffect(() => {
@@ -326,6 +328,41 @@ const CommentPost = observer((props: Props) => {
 		});
 	}, [ id, targetId, isLoadingReplies, loadDeps ]);
 
+	const loadOlderReplies = useCallback(() => {
+		if (isLoadingOlderReplies) {
+			return;
+		};
+
+		setIsLoadingOlderReplies(true);
+
+		const existing = S.Comment.getReplies(id);
+		const beforeOrderId = existing.length ? existing[0].orderId : '';
+
+		C.ChatGetMessages(targetId, beforeOrderId, '', REPLY_LIMIT, false, (message: any) => {
+			setIsLoadingOlderReplies(false);
+
+			if (message.error.code) {
+				return;
+			};
+
+			const messages = (message.messages || [])
+				.filter((it: any) => it.replyToMessageId == id)
+				.map((it: any) => ({
+					...it,
+					content: {
+						...it.content,
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
+					},
+					replyCount: 0,
+				}));
+
+			loadDeps(messages, () => {
+				S.Comment.prependReplies(id, messages);
+				S.Comment.setHasOlderReplies(id, messages.length >= REPLY_LIMIT);
+			});
+		});
+	}, [ id, targetId, isLoadingOlderReplies, loadDeps ]);
+
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
 	}, []);
@@ -437,8 +474,8 @@ const CommentPost = observer((props: Props) => {
 		const object = S.Detail.get(rootId, rootId);
 		const spaceObject = U.Space.getSpaceview();
 
-		U.Object.copyLink(object, spaceObject, 'deeplink', '');
-	}, [ rootId ]);
+		U.Object.copyLink(object, spaceObject, 'deeplink', '', `&messageId=${id}`);
+	}, [ rootId, id ]);
 
 	const onReactionSelect = useCallback((icon: string) => {
 		const limit = J.Constant.limit.chat.reactions;
@@ -618,8 +655,10 @@ const CommentPost = observer((props: Props) => {
 		);
 	};
 
+	const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+
 	return (
-		<div ref={postRef} className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')}>
+		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
 			{renderHoverActions()}
 
 			<IconObject
@@ -656,12 +695,12 @@ const CommentPost = observer((props: Props) => {
 
 			{replies.length ? (
 				<div className="replyList">
-					{hasMoreReplies ? (
+					{hasOlderReplies ? (
 						<div
-							className={[ 'loadMore', (isLoadingReplies ? 'isLoading' : '') ].join(' ')}
-							onClick={() => loadReplies()}
+							className={[ 'loadMore', (isLoadingOlderReplies ? 'isLoading' : '') ].join(' ')}
+							onClick={loadOlderReplies}
 						>
-							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
+							{isLoadingOlderReplies ? translate('commentLoading') : translate('commentLoadPreviousReplies')}
 						</div>
 					) : ''}
 
@@ -675,6 +714,15 @@ const CommentPost = observer((props: Props) => {
 							readonly={readonly}
 						/>
 					))}
+
+					{hasMoreReplies ? (
+						<div
+							className={[ 'loadMore', (isLoadingReplies ? 'isLoading' : '') ].join(' ')}
+							onClick={() => loadReplies()}
+						>
+							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
+						</div>
+					) : ''}
 				</div>
 			) : ''}
 		</div>

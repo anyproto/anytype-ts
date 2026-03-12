@@ -10,9 +10,11 @@
 	.commentBody { flex: 1 1 auto; }
 	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
-	.commentPost { 
+	.commentPost {
 		padding: 16px; border-radius: 16px; background: var(--color-shape-highlight-light); display: flex; flex-direction: row;
-		gap: 0px 8px; align-items: flex-start; position: relative;
+		gap: 0px 8px; align-items: flex-start; position: relative; transition: background-color 0.3s ease;
+
+		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
 	}
 	.commentPost {
 		.iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
@@ -65,7 +67,11 @@
 		}
 	}
 
-	.commentReply { padding: 8px 0px; position: relative; }
+	.commentReply {
+		padding: 8px 0px; position: relative; transition: background-color 0.3s ease; border-radius: 8px;
+
+		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
+	}
 	.commentReply {
 		.head {
 			display: flex; align-items: center; gap: 0px 6px; position: relative;

@@ -315,7 +315,7 @@ const CommentReply = observer((props: Props) => {
 	};
 
 	return (
-		<div className="commentReply">
+		<div className="commentReply" data-message-id={id}>
 			<div className="head">
 				<IconObject
 					object={{ ...author, layout: I.ObjectLayout.Participant }}

@@ -7,6 +7,7 @@ class CommentStore {
 	public replyMap: Map<string, I.CommentMessage[]> = observable(new Map());
 	private hasMorePostsMap: Map<string, boolean> = observable(new Map());
 	private hasMoreRepliesMap: Map<string, boolean> = observable(new Map());
+	private hasOlderRepliesMap: Map<string, boolean> = observable(new Map());
 
 	constructor () {
 		makeObservable(this, {
@@ -17,12 +18,14 @@ class CommentStore {
 			updatePost: action,
 			deletePost: action,
 			setReplies: action,
+			prependReplies: action,
 			appendReplies: action,
 			addReply: action,
 			updateReply: action,
 			deleteReply: action,
 			setHasMorePosts: action,
 			setHasMoreReplies: action,
+			setHasOlderReplies: action,
 			clear: action,
 			clearAll: action,
 		});
@@ -94,6 +97,15 @@ class CommentStore {
 		this.replyMap.set(parentId, observable.array(list));
 	};
 
+	prependReplies (parentId: string, add: I.CommentMessage[]): void {
+		const ids = new Set(this.getReplies(parentId).map(it => it.id));
+
+		add = (add || []).filter(it => !ids.has(it.id));
+		add = add.map(it => new M.CommentMessage(it));
+
+		this.getReplies(parentId).unshift(...add);
+	};
+
 	appendReplies (parentId: string, add: I.CommentMessage[]): void {
 		const ids = new Set(this.getReplies(parentId).map(it => it.id));
 
@@ -147,11 +159,20 @@ class CommentStore {
 		return this.hasMoreRepliesMap.get(parentId) || false;
 	};
 
+	setHasOlderReplies (parentId: string, value: boolean): void {
+		this.hasOlderRepliesMap.set(parentId, value);
+	};
+
+	getHasOlderReplies (parentId: string): boolean {
+		return this.hasOlderRepliesMap.get(parentId) || false;
+	};
+
 	clear (subId: string): void {
 		const posts = this.getPosts(subId);
 		for (const post of posts) {
 			this.replyMap.delete(post.id);
 			this.hasMoreRepliesMap.delete(post.id);
+			this.hasOlderRepliesMap.delete(post.id);
 		};
 
 		this.postMap.delete(subId);
@@ -163,6 +184,7 @@ class CommentStore {
 		this.replyMap.clear();
 		this.hasMorePostsMap.clear();
 		this.hasMoreRepliesMap.clear();
+		this.hasOlderRepliesMap.clear();
 	};
 
 };
