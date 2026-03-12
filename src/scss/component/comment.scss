@@ -209,13 +209,24 @@
 		display: block; margin: 4px 0px; padding: 12px; background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px; white-space: pre-wrap; tab-size: 4;
 		position: relative;
+
+		.codeToken-comment, .codeToken-prolog, .codeToken-doctype, .codeToken-cdata { color: #708090; }
+		.codeToken-punctuation { color: #999999; }
+		.codeToken-property, .codeToken-tag, .codeToken-boolean, .codeToken-number, .codeToken-constant, .codeToken-symbol, .codeToken-deleted { color: #905; }
+		.codeToken-selector, .codeToken-attr, .codeToken-string, .codeToken-char, .codeToken-builtin, .codeToken-inserted { color: #690; }
+		.codeToken-operator, .codeToken-entity, .codeToken-url { color: #9a6e3a; }
+		.codeToken-atrule, .codeToken-keyword { color: #07a; }
+		.codeToken-function, .codeToken-class { color: #dd4a68; }
+		.codeToken-regex, .codeToken-important, .codeToken-variable { color: #e90; }
+		.codeToken-namespace { opacity: 0.7; }
 	}
-	.commentEditor-codeBlock {
+	.codeLangOverlay {
+		position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1;
+
 		.codeLangBtn {
-			position: absolute; top: 4px; right: 4px; padding: 2px 8px;
+			position: absolute; padding: 2px 8px; pointer-events: auto;
 			@include text-very-small; color: var(--color-text-secondary); font-family: var(--fontFamily);
 			background: var(--color-shape-highlight-medium); border-radius: 4px; user-select: none;
-			z-index: 1;
 		}
 		.codeLangBtn:hover { color: var(--color-text-primary); background: var(--color-shape-highlight-dark); }
 	}
@@ -323,16 +334,6 @@
 }
 
 /* ---- Slash Menu ---- */
-
-.menu.menuCommentAdd { width: var(--menu-width-icon); }
-.menu.menuCommentAdd {
-	.content { max-height: 450px; }
-
-	.commentMenuAdd {
-		.items { max-height: 320px; overflow-y: auto; padding: 4px 0px; }
-		.item.isDisabled { opacity: 0.35; }
-	}
-}
 
 /* ---- Formatting Toolbar ---- */
 

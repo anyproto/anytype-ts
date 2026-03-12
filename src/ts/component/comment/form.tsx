@@ -159,6 +159,10 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkMultiline();
 	}, []);
 
+	const handleChange = useCallback(() => {
+		saveDraft();
+	}, [ saveDraft ]);
+
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
 
@@ -166,7 +170,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			if (formRef.current) {
 				formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 			};
-		}, 50);
+		}, 300);
 	}, []);
 
 	const handleBlur = useCallback(() => {
@@ -275,8 +279,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 		} else
-		if (item.type === I.BlockType.Div) {
+		if ((item.blockType === I.BlockType.Div) || (item.type === I.BlockType.Div)) {
 			editorRef.current?.insertDivider();
+		} else
+		if (item.textStyle !== undefined) {
+			editorRef.current?.setBlockStyle(item.textStyle);
 		} else
 		if (item.style !== undefined) {
 			editorRef.current?.setBlockStyle(item.style);
@@ -289,15 +296,17 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		S.Common.filterSet(0, '');
 		S.Menu.open('commentAdd', {
+			component: 'select',
 			element: $(e.currentTarget),
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
 			noAnimation: true,
 			data: {
-				onSelect: handleSlashAction,
+				sections: U.Menu.getCommentAddSections(),
+				noFilter: true,
+				onSelect: (_e: any, item: any) => handleSlashAction(item),
 			},
 		});
 	}, [ handleSlashAction ]);
@@ -432,7 +441,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const onAction = (e: Event) => {
 			const item = (e as CustomEvent).detail;
-			if (item?.action) {
+			if (item) {
 				handleSlashAction(item);
 			};
 		};
@@ -450,20 +459,25 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		draftLoadedRef.current = true;
 
 		const draft = Storage.getComment(rootId);
-		if (!draft) {
+		const hasParts = draft?.parts && draft.parts.length;
+		const hasAtt = draft?.attachments && draft.attachments.length;
+
+		if (!hasParts && !hasAtt) {
 			return;
 		};
 
-		if (draft.parts && draft.parts.length) {
-			editorRef.current?.setParts(draft.parts);
+		if (hasParts) {
+			window.setTimeout(() => {
+				editorRef.current?.setParts(draft.parts);
 
-			const hasText = draft.parts.some((p: I.CommentContentPart) => p.text || (p.type === I.BlockType.Div));
-			if (hasText) {
-				setIsEmpty(false);
-			};
+				const hasText = draft.parts.some((p: I.CommentContentPart) => p.text || (p.type === I.BlockType.Div));
+				if (hasText) {
+					setIsEmpty(false);
+				};
+			}, 50);
 		};
 
-		if (draft.attachments && draft.attachments.length) {
+		if (hasAtt) {
 			setAttachments(draft.attachments);
 		};
 	}, [ isDraft, rootId ]);
@@ -500,9 +514,9 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onSubmit={handleSubmit}
 					onCancel={onCancel}
 					onEmpty={handleEmpty}
+					onChange={handleChange}
 					onFocus={handleFocus}
 					onBlur={handleBlur}
-	
 				/>
 
 				{hasAttachments ? (

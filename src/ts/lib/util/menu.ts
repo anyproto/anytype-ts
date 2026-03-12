@@ -1293,6 +1293,43 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
+	getCommentAddSections (): any[] {
+		return [
+			{
+				id: 'text', name: translate('commentSlashMenuTitle'),
+				children: [
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, icon: 'textHeader textHeader1', name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, icon: 'textHeader textHeader2', name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, icon: 'textHeader textHeader3', name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+				],
+			},
+			{
+				id: 'list', name: translate('commentSlashMenuLists'),
+				children: [
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, icon: 'textNumbered', name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, icon: 'textBulleted', name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, icon: 'textCheckbox', name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+				],
+			},
+			{
+				id: 'attachments', name: translate('commentSlashMenuAttachments'),
+				children: [
+					{ id: 'image', action: 'image', icon: 'mediaImage', name: translate('commentBlockImage'), description: translate('commentBlockImageDescription') },
+					{ id: 'file', action: 'file', icon: 'mediaFile', name: translate('commentBlockFile'), description: translate('commentBlockFileDescription') },
+					{ id: 'object', action: 'object', icon: 'existing', name: translate('commentBlockObject'), description: translate('commentBlockObjectDescription') },
+				],
+			},
+			{
+				id: 'decorations', name: translate('commentSlashMenuDecorations'),
+				children: [
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'textQuote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'divLine', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+				],
+			},
+		];
+	};
+
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
 		const sort: any[] = [
 			{ name: translate('sidebarObjectSort'), isSection: true },

@@ -10,7 +10,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
-import { CodeNode } from '@lexical/code';
+import { CodeNode, CodeHighlightNode, registerCodeHighlighting, PrismTokenizer } from '@lexical/code';
 import { $isHeadingNode, $createHeadingNode } from '@lexical/rich-text';
 import { $isListNode, $isListItemNode, $createListNode, $createListItemNode, INSERT_UNORDERED_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND } from '@lexical/list';
 import { $isCodeNode, $createCodeNode } from '@lexical/code';
@@ -40,7 +40,7 @@ import {
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
-import { I, J, S, U, keyboard, translate } from 'Lib';
+import { I, J, S, U, keyboard } from 'Lib';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
@@ -150,6 +150,7 @@ interface Props {
 	onSubmit?: (parts: I.CommentContentPart[]) => void;
 	onCancel?: () => void;
 	onEmpty?: (isEmpty: boolean) => void;
+	onChange?: () => void;
 	onFocus?: () => void;
 	onBlur?: () => void;
 };
@@ -180,6 +181,38 @@ const theme = {
 	},
 	quote: 'commentEditor-quote',
 	code: 'commentEditor-codeBlock',
+	codeHighlight: {
+		atrule: 'codeToken-atrule',
+		attr: 'codeToken-attr',
+		boolean: 'codeToken-boolean',
+		builtin: 'codeToken-builtin',
+		cdata: 'codeToken-cdata',
+		char: 'codeToken-char',
+		class: 'codeToken-class',
+		'class-name': 'codeToken-class',
+		comment: 'codeToken-comment',
+		constant: 'codeToken-constant',
+		deleted: 'codeToken-deleted',
+		doctype: 'codeToken-doctype',
+		entity: 'codeToken-entity',
+		function: 'codeToken-function',
+		important: 'codeToken-important',
+		inserted: 'codeToken-inserted',
+		keyword: 'codeToken-keyword',
+		namespace: 'codeToken-namespace',
+		number: 'codeToken-number',
+		operator: 'codeToken-operator',
+		prolog: 'codeToken-prolog',
+		property: 'codeToken-property',
+		punctuation: 'codeToken-punctuation',
+		regex: 'codeToken-regex',
+		selector: 'codeToken-selector',
+		string: 'codeToken-string',
+		symbol: 'codeToken-symbol',
+		tag: 'codeToken-tag',
+		url: 'codeToken-url',
+		variable: 'codeToken-variable',
+	},
 	list: {
 		ul: 'commentEditor-ul',
 		ol: 'commentEditor-ol',
@@ -725,6 +758,21 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 	const slashOffset = useRef(-1);
 	const prevText = useRef('');
 
+	// Block Enter/Escape in editor when slash menu is open — let the menu handle them
+	useEffect(() => {
+		return editor.registerCommand(
+			KEY_ENTER_COMMAND,
+			(e: KeyboardEvent | null) => {
+				if (S.Menu.isOpen('commentAdd')) {
+					e?.preventDefault();
+					return true;
+				};
+				return false;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor ]);
+
 	useEffect(() => {
 		const removeListener = editor.registerUpdateListener(({ editorState }) => {
 			editorState.read(() => {
@@ -737,6 +785,10 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 				const node = anchor.getNode();
 				if (!$isTextNode(node)) {
 					prevText.current = '';
+					if (S.Menu.isOpen('commentAdd')) {
+						S.Menu.close('commentAdd');
+						slashOffset.current = -1;
+					};
 					return;
 				};
 
@@ -749,7 +801,6 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
-						S.Common.filterSet(0, '');
 						openSlashMenu(editor, editorId, slashOffset);
 					};
 				};
@@ -758,9 +809,29 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 				if (menuOpen && (slashOffset.current >= 0)) {
 					const filterStart = slashOffset.current + 1;
 					const filterText = text.slice(filterStart, offset);
-					S.Common.filterSetText(filterText);
 
-					// Close if / was deleted
+					const menu = S.Menu.get('commentAdd');
+					if (menu) {
+						menu.param.data.filter = filterText;
+
+						if (filterText) {
+							const s = filterText.toLowerCase();
+							const allSections = U.Menu.getCommentAddSections();
+							menu.param.data.sections = allSections
+								.map(section => ({
+									...section,
+									children: section.children.filter((it: any) =>
+										(it.name || '').toLowerCase().includes(s) ||
+										(it.description || '').toLowerCase().includes(s)
+									),
+								}))
+								.filter(section => section.children.length > 0);
+						} else {
+							menu.param.data.sections = U.Menu.getCommentAddSections();
+						};
+					};
+
+					// Close if / was deleted or no items match
 					if ((offset <= slashOffset.current) || (text[slashOffset.current] !== '/')) {
 						S.Menu.close('commentAdd');
 						slashOffset.current = -1;
@@ -786,16 +857,23 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	const win = $(window);
 
 	S.Menu.open('commentAdd', {
+		component: 'select',
 		rect: { ...rect, y: rect.y + win.scrollTop() + 4, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Bottom,
 		horizontal: I.MenuDirection.Left,
 		offsetY: 4,
 		noAnimation: true,
+		commonFilter: true,
 		data: {
-			editor,
-			editorId,
-			onSelect: (item: any) => {
-				const filterLen = (S.Common.filter.text || '').length;
+			sections: U.Menu.getCommentAddSections(),
+			noFilter: true,
+			filter: '',
+			noClose: true,
+			onSelect: (_e: any, item: any) => {
+				const menu = S.Menu.get('commentAdd');
+				const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
+
+				S.Menu.close('commentAdd');
 
 				// Remove the slash character and any filter text after it
 				editor.update(() => {
@@ -827,15 +905,21 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					};
 				});
 
-				// Action items (image, file, etc.) are handled by the form
-				if (!item.action) {
-					applyBlockTransform(editor, item);
-				};
-
-				// Dispatch custom event so the form can handle action items
-				const el = document.getElementById(editorId);
-				if (el) {
-					el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: item }));
+				// Handle block transforms and action items
+				if (item.action) {
+					const el = document.getElementById(editorId);
+					if (el) {
+						el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: item.action, embedProcessor: item.embedProcessor } }));
+					};
+				} else
+				if (item.blockType === I.BlockType.Div) {
+					const el = document.getElementById(editorId);
+					if (el) {
+						el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { type: item.blockType } }));
+					};
+				} else
+				if (item.textStyle !== undefined) {
+					applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
 				};
 			},
 		},
@@ -1118,6 +1202,16 @@ const openEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: Rea
 	});
 };
 
+const CodeHighlightPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return registerCodeHighlighting(editor, PrismTokenizer);
+	}, [ editor ]);
+
+	return null;
+};
+
 const CodeExitPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 
@@ -1181,108 +1275,110 @@ const CodeExitPlugin = () => {
 
 const CodeBlockPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
-	const buttonsRef = useRef<Map<string, HTMLElement>>(new Map());
+	const [ codeBlocks, setCodeBlocks ] = React.useState<{ key: string; lang: string }[]>([]);
+	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const getLangLabel = (lang: string): string => {
-			const titles = U.Prism.getTitles();
-			const match = titles.find((t: any) => t.id === lang);
-			return match ? match.name : lang;
-		};
-
-		const addBtn = (element: HTMLElement, nodeKey: string) => {
-			if (buttonsRef.current.has(nodeKey)) {
-				// Update label
-				const btn = buttonsRef.current.get(nodeKey);
-				if (btn) {
-					editor.getEditorState().read(() => {
-						const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
-						if ($isCodeNode(node)) {
-							btn.textContent = getLangLabel(node.getLanguage() || J.Constant.default.codeLang);
-						};
-					});
-				};
-				return;
-			};
-
-			const btn = document.createElement('div');
-			btn.className = 'codeLangBtn';
-			btn.setAttribute('contenteditable', 'false');
-
+		const update = () => {
 			editor.getEditorState().read(() => {
-				const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
-				if ($isCodeNode(node)) {
-					btn.textContent = getLangLabel(node.getLanguage() || J.Constant.default.codeLang);
+				const blocks: { key: string; lang: string }[] = [];
+
+				for (const node of $getRoot().getChildren()) {
+					if ($isCodeNode(node)) {
+						blocks.push({
+							key: node.getKey(),
+							lang: node.getLanguage() || J.Constant.default.codeLang,
+						});
+					};
 				};
-			});
 
-			btn.addEventListener('mousedown', (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-
-				S.Menu.open('select', {
-					element: $(btn),
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Left,
-					offsetY: -4,
-					noAnimation: true,
-					width: 200,
-					data: {
-						options: U.Menu.codeLangOptions(),
-						noFilter: false,
-						onSelect: (_e: any, item: any) => {
-							editor.update(() => {
-								const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
-								if ($isCodeNode(node)) {
-									node.setLanguage(item.id === 'plain' ? null : item.id);
-								};
-							});
-							btn.textContent = getLangLabel(item.id);
-						},
-					},
+				setCodeBlocks(prev => {
+					if ((prev.length === blocks.length) && prev.every((b, i) => (b.key === blocks[i].key) && (b.lang === blocks[i].lang))) {
+						return prev;
+					};
+					return blocks;
 				});
 			});
-
-			element.appendChild(btn);
-			buttonsRef.current.set(nodeKey, btn);
 		};
 
-		const removeBtn = (nodeKey: string) => {
-			const btn = buttonsRef.current.get(nodeKey);
-			if (btn && btn.parentNode) {
-				btn.parentNode.removeChild(btn);
-			};
-			buttonsRef.current.delete(nodeKey);
-		};
-
-		const unregister = editor.registerMutationListener(CodeNode, (mutations) => {
-			for (const [ nodeKey, mutation ] of mutations) {
-				if (mutation === 'destroyed') {
-					removeBtn(nodeKey);
-					continue;
-				};
-
-				const element = editor.getElementByKey(nodeKey);
-				if (element) {
-					addBtn(element, nodeKey);
-				};
-			};
-		});
-
-		return () => {
-			unregister();
-			buttonsRef.current.forEach((_btn, key) => removeBtn(key));
-		};
+		const removeListener = editor.registerUpdateListener(() => update());
+		update();
+		return removeListener;
 	}, [ editor ]);
 
-	return null;
+	const onLangClick = useCallback((e: React.MouseEvent, nodeKey: string) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			noAnimation: true,
+			width: 200,
+			data: {
+				options: U.Menu.codeLangOptions(),
+				noFilter: false,
+				onSelect: (_e: any, item: any) => {
+					editor.update(() => {
+						const node = $getRoot().getChildren().find(n => n.getKey() === nodeKey);
+						if ($isCodeNode(node)) {
+							node.setLanguage(item.id === 'plain' ? null : item.id);
+						};
+					});
+				},
+			},
+		});
+	}, [ editor ]);
+
+	const renderButtons = () => {
+		const container = containerRef.current;
+		if (!container) {
+			return null;
+		};
+
+		const wrapRect = container.parentElement?.getBoundingClientRect();
+		if (!wrapRect) {
+			return null;
+		};
+
+		return codeBlocks.map(block => {
+			const element = editor.getElementByKey(block.key);
+			if (!element) {
+				return null;
+			};
+
+			const rect = element.getBoundingClientRect();
+			const titles = U.Prism.getTitles();
+			const match = titles.find((t: any) => t.id === block.lang);
+			const label = match ? match.name : block.lang;
+
+			return (
+				<div
+					key={block.key}
+					className="codeLangBtn"
+					onMouseDown={e => onLangClick(e, block.key)}
+					style={{
+						position: 'absolute',
+						top: rect.top - wrapRect.top + 4,
+						right: 4,
+					}}
+				>
+					{label}
+				</div>
+			);
+		});
+	};
+
+	return <div ref={containerRef} className="codeLangOverlay">{renderButtons()}</div>;
 };
 
 // ---- Main Component ----
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onFocus, onBlur } = props;
+	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -1309,7 +1405,8 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			isEmptyRef.current = empty;
 			onEmpty?.(empty);
 		};
-	}, [ onEmpty ]);
+		onChange?.();
+	}, [ onEmpty, onChange ]);
 
 	const handleSubmit = useCallback(() => {
 		if (checkEmpty()) {
@@ -1479,7 +1576,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, HorizontalRuleNode, MentionNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -1508,6 +1605,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<SlashMenuPlugin editorId={editorId} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiPlugin editorId={editorId} />
+				<CodeHighlightPlugin />
 				<CodeExitPlugin />
 				<CodeBlockPlugin />
 			</div>
