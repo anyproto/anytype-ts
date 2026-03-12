@@ -105,7 +105,8 @@ powerMonitor.on('resume', () => {
 		Util.send(firstWindow, 'power-event', 'resume');
 	};
 
-	// Delay reload to give GPU process time to recover from suspend
+	// Delay reload to give GPU process time to recover from suspend.
+	// Directly reload all tabs — route is preserved in view.data from initial load.
 	setTimeout(() => {
 		for (const win of WindowManager.list) {
 			if (!win || win.isDestroyed() || !win.views) {
