@@ -4,7 +4,6 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
 import { I, J, U, S, keyboard } from 'Lib';
-import { line } from 'd3';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
