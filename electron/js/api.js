@@ -606,7 +606,10 @@ class Api {
 	reload (win, route) {
 		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
-			view.data = { ...view.data, route };
+			// Only update route if a valid one is provided, otherwise keep the existing route
+			if (route) {
+				view.data = { ...view.data, route };
+			};
 			view.webContents.reload();
 		};
 	};

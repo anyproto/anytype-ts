@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, J, keyboard, Mark, S, translate, U } from 'Lib';
+import { I, keyboard, Mark, S, translate, U } from 'Lib';
 
 const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -16,7 +16,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
 			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
 			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: keyboard.getCaption('textCode') },
+			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 		];
 	};
 
