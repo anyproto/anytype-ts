@@ -154,7 +154,17 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			if (dropEl.length) {
 				data = initNode(dropEl.get(0), 0);
 				if (data) {
+					const dropX = e.pageX || e.clientX || lastKnownCoords.current.x || 0;
 					const dropY = e.pageY || e.clientY || lastKnownCoords.current.y || 0;
+					const col1 = data.x - J.Size.blockMenu / 4;
+					const col2 = data.x + data.width;
+
+					if (dropX && (dropX <= col1)) {
+						position.current = I.BlockPosition.Left;
+					} else
+					if (dropX && (dropX > col2)) {
+						position.current = I.BlockPosition.Right;
+					} else
 					if (dropY && data.height) {
 						position.current = (dropY <= data.y + data.height * 0.5) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 					} else {
@@ -384,7 +394,20 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 						if (dropEl.length) {
 							target = initNode(dropEl.get(0), 0);
 							if (target) {
-								pos = (y <= target.y + target.height * 0.5) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+								const col1 = target.x - J.Size.blockMenu / 4;
+								const col2 = target.x + target.width;
+
+								if (x && (x <= col1)) {
+									pos = I.BlockPosition.Left;
+								} else
+								if (x && (x > col2)) {
+									pos = I.BlockPosition.Right;
+								} else
+								if (y && target.height) {
+									pos = (y <= target.y + target.height * 0.5) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+								} else {
+									pos = I.BlockPosition.Bottom;
+								};
 							};
 						};
 					};
