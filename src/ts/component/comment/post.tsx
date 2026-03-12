@@ -29,6 +29,15 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 		return <hr key={key} className="commentDivider" />;
 	};
 
+	// Embed
+	if ((part.type === I.BlockType.Embed) && part.embed) {
+		return (
+			<pre key={key} className="commentCodeBlock">
+				<code>{part.embed.text}</code>
+			</pre>
+		);
+	};
+
 	// Link (attachment)
 	if ((part.type === I.BlockType.Link) && part.link) {
 		const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;

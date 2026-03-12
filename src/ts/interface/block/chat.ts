@@ -82,12 +82,20 @@ export interface ChatMessage {
 export interface ChatMessageBlock {
 	text?: ChatMessageBlockText;
 	link?: ChatMessageBlockLink;
+	embed?: ChatMessageBlockEmbed;
 };
 
 export interface ChatMessageBlockText {
 	text: string;
 	style: I.TextStyle;
 	marks: I.Mark[];
+	checked?: boolean;
+	lang?: string;
+};
+
+export interface ChatMessageBlockEmbed {
+	text: string;
+	processor: I.EmbedProcessor;
 };
 
 export interface ChatMessageBlockLink {

@@ -777,6 +777,10 @@ export const Mapper = {
 				result.link = Mapper.From.ChatMessageBlockLink(obj.getLink());
 			};
 
+			if (obj.hasEmbed()) {
+				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.getEmbed());
+			};
+
 			return result;
 		},
 
@@ -785,6 +789,15 @@ export const Mapper = {
 				text: obj.getText(),
 				style: obj.getStyle() as number,
 				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+				checked: obj.getChecked(),
+				lang: obj.getLang(),
+			};
+		},
+
+		ChatMessageBlockEmbed (obj: Model.ChatMessage.MessageBlockEmbed): I.ChatMessageBlockEmbed {
+			return {
+				text: obj.getText(),
+				processor: obj.getProcessor() as number,
 			};
 		},
 
@@ -1240,6 +1253,10 @@ export const Mapper = {
 				item.setLink(Mapper.To.ChatMessageBlockLink(obj.link));
 			};
 
+			if (obj.embed) {
+				item.setEmbed(Mapper.To.ChatMessageBlockEmbed(obj.embed));
+			};
+
 			return item;
 		},
 
@@ -1250,6 +1267,14 @@ export const Mapper = {
 			item.setStyle(obj.style as number);
 			item.setMarksList((obj.marks || []).map(Mapper.To.Mark));
 
+			if (obj.checked) {
+				item.setChecked(obj.checked);
+			};
+
+			if (obj.lang) {
+				item.setLang(obj.lang);
+			};
+
 			return item;
 		},
 
@@ -1258,6 +1283,15 @@ export const Mapper = {
 
 			item.setTargetobjectid(obj.targetObjectId);
 			item.setType(obj.type as number);
+
+			return item;
+		},
+
+		ChatMessageBlockEmbed: (obj: I.ChatMessageBlockEmbed) => {
+			const item = new Model.ChatMessage.MessageBlockEmbed();
+
+			item.setText(obj.text);
+			item.setProcessor(obj.processor as number);
 
 			return item;
 		},

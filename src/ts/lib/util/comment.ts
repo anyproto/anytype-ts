@@ -6,20 +6,34 @@ class Comment {
 	 * Converts CommentContentParts into ChatMessageBlocks for the protobuf.
 	 */
 	partsToBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
-		parts = (parts || []).filter(it => it.text || it.link || (it.type != I.BlockType.Text));
+		parts = (parts || []).filter(it => it.text || it.link || it.embed || (it.type != I.BlockType.Text));
 
 		return parts.map(part => {
 			if (part.link) {
 				return { link: part.link };
 			};
 
-			return {
+			if (part.embed) {
+				return { embed: part.embed };
+			};
+
+			const block: I.ChatMessageBlock = {
 				text: {
 					text: part.text || '',
 					style: part.style || I.TextStyle.Paragraph,
 					marks: part.marks || [],
 				},
 			};
+
+			if (part.checked) {
+				block.text.checked = part.checked;
+			};
+
+			if (part.lang) {
+				block.text.lang = part.lang;
+			};
+
+			return block;
 		});
 	};
 
@@ -29,7 +43,7 @@ class Comment {
 	 */
 	blocksToParts (blocks: I.ChatMessageBlock[], content?: I.ChatMessageContent): I.CommentContentPart[] {
 		if (blocks && blocks.length) {
-			return blocks.filter(it => it.text || it.link).map(block => {
+			return blocks.filter(it => it.text || it.link || it.embed).map(block => {
 				if (block.link) {
 					return {
 						style: I.TextStyle.Paragraph,
@@ -40,12 +54,32 @@ class Comment {
 					};
 				};
 
-				return {
+				if (block.embed) {
+					return {
+						style: I.TextStyle.Paragraph,
+						type: I.BlockType.Embed,
+						text: '',
+						marks: [],
+						embed: block.embed,
+					};
+				};
+
+				const part: I.CommentContentPart = {
 					text: block.text.text || '',
 					style: block.text.style || I.TextStyle.Paragraph,
 					type: I.BlockType.Text,
 					marks: block.text.marks || [],
 				};
+
+				if (block.text.checked) {
+					part.checked = block.text.checked;
+				};
+
+				if (block.text.lang) {
+					part.lang = block.text.lang;
+				};
+
+				return part;
 			});
 		};
 

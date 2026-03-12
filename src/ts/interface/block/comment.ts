@@ -16,6 +16,7 @@ export interface CommentContentPart {
 		targetObjectId: string;
 		type: I.ChatMessageBlockLinkType;
 	};
+	embed?: I.ChatMessageBlockEmbed;
 	attachmentData?: any;
 };
 
