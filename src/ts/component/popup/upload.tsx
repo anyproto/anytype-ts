@@ -172,16 +172,19 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const { softLimit, hardLimit } = J.Constant.fileUpload;
 
 		if (totalFiles > hardLimit) {
-			S.Popup.open('confirm', {
-				preventCloseByClick: true,
-				data: {
-					title: translate('popupUploadFolderTooManyTitle'),
-					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
-					textConfirm: translate('commonOk'),
-					canCancel: false,
-					canConfirm: true,
-				},
-			});
+			close();
+			window.setTimeout(() => {
+				S.Popup.open('confirm', {
+					preventCloseByClick: true,
+					data: {
+						title: translate('popupUploadFolderTooManyTitle'),
+						text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
+						textConfirm: translate('commonOk'),
+						canCancel: false,
+						canConfirm: true,
+					},
+				});
+			}, S.Popup.getTimeout());
 			return;
 		};
 
@@ -189,20 +192,23 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const breakdown = formatCountsBreakdown(counts);
 
 		if (totalFiles > softLimit) {
-			S.Popup.open('confirm', {
-				preventCloseByClick: true,
-				data: {
-					title: translate('popupUploadFolderConfirmTitle'),
-					text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
-					textConfirm: translate('commonUpload'),
-					textCancel: translate('commonCancel'),
-					canCancel: true,
-					canConfirm: true,
-					onConfirm: () => {
-						processFolder(trees, extraFiles);
+			close();
+			window.setTimeout(() => {
+				S.Popup.open('confirm', {
+					preventCloseByClick: true,
+					data: {
+						title: translate('popupUploadFolderConfirmTitle'),
+						text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
+						textConfirm: translate('commonUpload'),
+						textCancel: translate('commonCancel'),
+						canCancel: true,
+						canConfirm: true,
+						onConfirm: () => {
+							processFolder(trees, extraFiles);
+						},
 					},
-				},
-			});
+				});
+			}, S.Popup.getTimeout());
 			return;
 		};
 
@@ -210,15 +216,17 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const processFolder = (trees: any[], extraFiles: string[]) => {
-		setIsLoading(true);
-
 		let allFiles: string[] = [].concat(extraFiles);
 		for (const tree of trees) {
 			allFiles = allFiles.concat(U.File.collectFiles(tree));
 		};
 
-		const progressId = `upload-${Date.now()}`;
+		const progressId = `folder-upload-${Date.now()}`;
 		const total = allFiles.length;
+
+		// Close popup immediately — progress panel takes over
+		onUpload?.([]);
+		close();
 
 		S.Progress.add({
 			id: progressId,
@@ -238,10 +246,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const onAllDone = () => {
 			S.Progress.delete(progressId);
-			setIsLoading(false);
 			showUploadToast(counts);
-			onUpload?.(objectIds);
-			close();
 		};
 
 		const createCollectionTree = (tree: any, parentCollectionId: string, onDone: () => void) => {

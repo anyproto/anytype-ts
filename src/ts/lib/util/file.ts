@@ -398,7 +398,7 @@ class UtilFile {
 		const doUpload = () => {
 			const space = S.Common.space;
 			const electron = U.Common.getElectron();
-			const progressId = `upload-${Date.now()}`;
+			const progressId = `folder-upload-${Date.now()}`;
 			const uploadCounts: { [key: string]: number } = {};
 			let completed = 0;
 
