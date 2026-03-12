@@ -226,7 +226,7 @@
 	.commentEditor-li-checked::before { background-image: url('~img/icon/marker/checkbox2.svg'); }
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
-	.commentEditor-attachment { padding: 4px 0px; }
+	.commentEditor-attachment { padding: 8px 8px 4px 0px; }
 	.commentEditor-attachment {
 		.attachment {
 			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
@@ -291,6 +291,41 @@
 
 	.commentEditor-divider { padding: 8px 0px; }
 	.commentEditor-hr { border: none; border-top: 1px solid var(--color-shape-secondary); margin: 0px; }
+
+	.commentEditor-embed { padding: 4px 0px; }
+
+	.commentEmbedPreview {
+		position: relative; border-radius: 8px; border: 1px solid var(--color-shape-tertiary);
+		background: var(--color-bg-primary); overflow: hidden; user-select: none;
+
+		.empty {
+			display: flex; flex-direction: column; align-items: center; justify-content: center;
+			padding: 24px 16px; gap: 4px 0px;
+
+			.processorName { font-weight: 500; }
+			.hint { @include text-small; color: var(--color-text-secondary); }
+		}
+
+		.latexPreview { padding: 12px 16px; overflow-x: auto; }
+
+		.embedIframe {
+			width: 100%; aspect-ratio: 16/9; border: none; display: block;
+		}
+
+		.embedActions {
+			position: absolute; top: 4px; right: 4px; display: flex; gap: 0px 2px;
+			opacity: 0; transition: $transitionAllCommon;
+
+			.icon {
+				width: 28px; height: 28px; border-radius: 6px;
+				background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
+			}
+			.icon.edit { background-image: url('~img/icon/block/edit.svg'); background-size: 20px; }
+			.icon.remove { background-image: url('~img/icon/chat/buttons/remove.svg'); background-size: 8px; }
+		}
+
+		&:hover { .embedActions { opacity: 1; } }
+	}
 
 	/* ---- Rendered Post Block Styles ---- */
 

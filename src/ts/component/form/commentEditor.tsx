@@ -28,8 +28,10 @@ import {
 	BLUR_COMMAND,
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
+	COMMAND_PRIORITY_NORMAL,
 	KEY_ENTER_COMMAND,
 	KEY_ESCAPE_COMMAND,
+	PASTE_COMMAND,
 	createCommand,
 	EditorState,
 	LexicalEditor,
@@ -41,8 +43,9 @@ import {
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
-import { I, J, S, U, keyboard } from 'Lib';
+import { I, J, S, U, keyboard, translate, Storage } from 'Lib';
 import Attachment from 'Component/block/chat/attachment';
+import EmbedPreview from 'Component/comment/embedPreview';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
@@ -167,6 +170,134 @@ function $isAttachmentNode (node: LexicalNode | null | undefined): node is Attac
 	return node instanceof AttachmentNode;
 };
 
+// Embed node — renders an embed block inline in the editor
+export const INSERT_EMBED_COMMAND = createCommand<{ processor: I.EmbedProcessor; text: string }>('INSERT_EMBED_COMMAND');
+export const UPDATE_EMBED_COMMAND = createCommand<{ nodeKey: string; text: string }>('UPDATE_EMBED_COMMAND');
+
+class EmbedNode extends DecoratorNode<JSX.Element> {
+
+	__processor: I.EmbedProcessor;
+	__embedText: string;
+
+	static getType (): string {
+		return 'embed';
+	};
+
+	static clone (node: EmbedNode): EmbedNode {
+		return new EmbedNode(node.__processor, node.__embedText, node.__key);
+	};
+
+	constructor (processor: I.EmbedProcessor, text: string, key?: string) {
+		super(key);
+		this.__processor = processor;
+		this.__embedText = text;
+	};
+
+	createDOM (): HTMLElement {
+		const el = document.createElement('div');
+		el.className = 'commentEditor-embed';
+		return el;
+	};
+
+	updateDOM (): boolean {
+		return false;
+	};
+
+	isIsolated (): boolean {
+		return true;
+	};
+
+	decorate (): JSX.Element {
+		return <EmbedDecorator nodeKey={this.__key} processor={this.__processor} text={this.__embedText} />;
+	};
+
+	exportJSON () {
+		return {
+			type: 'embed',
+			version: 1,
+			processor: this.__processor,
+			embedText: this.__embedText,
+		};
+	};
+
+	static importJSON (json: any): EmbedNode {
+		return new EmbedNode(json.processor, json.embedText);
+	};
+
+	getProcessor (): I.EmbedProcessor {
+		return this.__processor;
+	};
+
+	getEmbedText (): string {
+		return this.__embedText;
+	};
+
+	setEmbedText (text: string): void {
+		const writable = this.getWritable();
+		writable.__embedText = text;
+	};
+
+};
+
+const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; processor: I.EmbedProcessor; text: string }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const processorName = I.EmbedProcessor[processor] || 'Embed';
+
+	const onEdit = useCallback(() => {
+		const el = editor.getElementByKey(nodeKey);
+		if (!el) {
+			return;
+		};
+
+		const rect = el.getBoundingClientRect();
+		const win = $(window);
+
+		S.Menu.open('dataviewText', {
+			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
+			width: Math.max(rect.width, 360),
+			data: {
+				value: text,
+				placeholder: U.String.sprintf(translate('blockEmbedPlaceholder'), processorName),
+				canEdit: true,
+				noResize: true,
+				relationKey: 'url',
+				onChange: (v: string) => {
+					editor.dispatchCommand(UPDATE_EMBED_COMMAND, { nodeKey, text: v });
+				},
+			},
+		});
+	}, [ editor, nodeKey, text, processor ]);
+
+	const onRemove = useCallback(() => {
+		editor.update(() => {
+			const node = $getNodeByKey(nodeKey);
+			if (node) {
+				node.remove();
+			};
+		});
+	}, [ editor, nodeKey ]);
+
+	return (
+		<EmbedPreview
+			processor={processor}
+			text={text}
+			onEdit={onEdit}
+			onRemove={onRemove}
+		/>
+	);
+};
+
+function $createEmbedNode (processor: I.EmbedProcessor, text: string): EmbedNode {
+	return new EmbedNode(processor, text);
+};
+
+function $isEmbedNode (node: LexicalNode | null | undefined): node is EmbedNode {
+	return node instanceof EmbedNode;
+};
+
 class MentionNode extends TextNode {
 
 	__mentionId: string;
@@ -251,6 +382,7 @@ interface RefProps {
 	toggleFormat: (format: TextFormatType) => void;
 	setBlockStyle: (style: I.TextStyle) => void;
 	getCurrentBlockStyle: () => I.TextStyle;
+	insertEmbed: (processor: I.EmbedProcessor, text: string) => void;
 	insertAttachment: (data: any) => void;
 	removeAttachment: (key: string) => void;
 	getAttachments: () => any[];
@@ -421,6 +553,21 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 					text: '',
 					marks: [],
 					attachmentData: data,
+				});
+				continue;
+			};
+
+			// Embed node
+			if (node instanceof EmbedNode) {
+				parts.push({
+					style: I.TextStyle.Paragraph,
+					type: I.BlockType.Embed,
+					text: '',
+					marks: [],
+					embed: {
+						text: node.getEmbedText(),
+						processor: node.getProcessor(),
+					},
 				});
 				continue;
 			};
@@ -616,6 +763,13 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 			// Divider
 			if (part.type === I.BlockType.Div) {
 				root.append(new HorizontalRuleNode());
+				i++;
+				continue;
+			};
+
+			// Embed
+			if ((part.type === I.BlockType.Embed) && part.embed) {
+				root.append($createEmbedNode(part.embed.processor, part.embed.text));
 				i++;
 				continue;
 			};
@@ -1167,6 +1321,201 @@ const AttachmentPlugin = () => {
 	return null;
 };
 
+const EmbedPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		const unregisterInsert = editor.registerCommand(
+			INSERT_EMBED_COMMAND,
+			(data: { processor: I.EmbedProcessor; text: string }) => {
+				editor.update(() => {
+					const root = $getRoot();
+					const embedNode = $createEmbedNode(data.processor, data.text);
+					const lastChild = root.getLastChild();
+
+					if ($isElementNode(lastChild) && (lastChild.getType() === 'paragraph') && !lastChild.getTextContent()) {
+						lastChild.insertBefore(embedNode);
+					} else {
+						root.append(embedNode);
+						const p = $createParagraphNode();
+						root.append(p);
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		const unregisterUpdate = editor.registerCommand(
+			UPDATE_EMBED_COMMAND,
+			(data: { nodeKey: string; text: string }) => {
+				editor.update(() => {
+					const node = $getNodeByKey(data.nodeKey);
+					if ($isEmbedNode(node)) {
+						node.setEmbedText(data.text);
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		return () => {
+			unregisterInsert();
+			unregisterUpdate();
+		};
+	}, [ editor ]);
+
+	return null;
+};
+
+const PasteUrlPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			PASTE_COMMAND,
+			(event: ClipboardEvent) => {
+				const clipboardData = event.clipboardData;
+				if (!clipboardData) {
+					return false;
+				};
+
+				const text = clipboardData.getData('text/plain') || '';
+				if (!text) {
+					return false;
+				};
+
+				const urls = U.String.getUrlsFromText(text);
+				if (!urls.length) {
+					return false;
+				};
+
+				// Check that the entire pasted text is only URLs (with whitespace between)
+				const urlText = urls.map(u => u.value).join('');
+				const stripped = text.replace(/[\s\r\n]+/g, '');
+				if (urlText !== stripped) {
+					return false;
+				};
+
+				// Check if any URL is embed-compatible
+				const hasEmbed = urls.some(u => U.Embed.getProcessorByUrl(u.value) !== null);
+
+				const options: any[] = [
+					{ name: translate('editorPagePasteAsHeader'), isSection: true },
+				];
+
+				if (hasEmbed) {
+					options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
+				};
+
+				options.push({ id: 'link', name: translate('editorPagePasteLink') });
+				options.push({ id: 'cancel', name: translate('editorPagePasteText') });
+
+				const pasteOrder = Storage.get('pasteOptionOrder') || [];
+				if (pasteOrder.length) {
+					const section = options[0];
+					const cancel = options[options.length - 1];
+					const sortable = options.slice(1, -1);
+
+					sortable.sort((a: any, b: any) => {
+						const ai = pasteOrder.indexOf(a.id);
+						const bi = pasteOrder.indexOf(b.id);
+						return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+					});
+
+					options.length = 0;
+					options.push(section, ...sortable, cancel);
+				};
+
+				event.preventDefault();
+
+				const root = editor.getRootElement();
+				const wrap = root?.closest('.commentEditorWrap');
+				const win = $(window);
+
+				S.Menu.open('selectPasteUrl', {
+					component: 'select',
+					element: wrap ? $(wrap) : $(root),
+					recalcRect: () => {
+						const rect = U.Common.getSelectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					},
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					offsetY: 4,
+					noAnimation: true,
+					data: {
+						value: '',
+						options,
+						noFilter: true,
+						onSelect: (_e: any, selected: any) => {
+							const order = (Storage.get('pasteOptionOrder') || []).filter((it: string) => it != selected.id);
+							order.unshift(selected.id);
+							Storage.set('pasteOptionOrder', order);
+
+							switch (selected.id) {
+								case 'embed': {
+									for (const u of urls) {
+										const p = U.Embed.getProcessorByUrl(u.value);
+										if (p !== null) {
+											editor.dispatchCommand(INSERT_EMBED_COMMAND, { processor: p, text: u.value });
+										} else {
+											// Non-embed URLs fall back to text
+											editor.update(() => {
+												const selection = $getSelection();
+												if ($isRangeSelection(selection)) {
+													selection.insertRawText(u.value);
+												};
+											});
+										};
+									};
+									break;
+								};
+
+								case 'link': {
+									editor.update(() => {
+										const selection = $getSelection();
+										if (!$isRangeSelection(selection)) {
+											return;
+										};
+
+										for (const u of urls) {
+											const textNode = $createTextNode(u.value);
+											selection.insertNodes([ textNode ]);
+
+											const space = $createTextNode(' ');
+											selection.insertNodes([ space ]);
+										};
+									});
+									break;
+								};
+
+								case 'cancel': {
+									editor.update(() => {
+										const selection = $getSelection();
+										if ($isRangeSelection(selection)) {
+											selection.insertRawText(text);
+										};
+									});
+									break;
+								};
+							};
+
+							editor.focus();
+						},
+					},
+				});
+
+				return true;
+			},
+			COMMAND_PRIORITY_NORMAL,
+		);
+	}, [ editor ]);
+
+	return null;
+};
+
 const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
@@ -1203,6 +1552,13 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 						S.Menu.close('commentAdd');
 						slashOffset.current = -1;
 					};
+					return;
+				};
+
+				// Don't trigger slash menu inside code blocks
+				const topLevel = node.getTopLevelElementOrThrow();
+				if ($isCodeNode(topLevel)) {
+					prevText.current = node.getTextContent();
 					return;
 				};
 
@@ -1897,7 +2253,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		editor.getEditorState().read(() => {
 			const root = $getRoot();
 			const text = root.getTextContent().trim();
-			const hasAttachments = root.getChildren().some(n => n instanceof AttachmentNode);
+			const hasAttachments = root.getChildren().some(n => (n instanceof AttachmentNode) || (n instanceof EmbedNode));
 			empty = !text && !hasAttachments;
 		});
 
@@ -2077,6 +2433,10 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		setBlockStyle,
 		getCurrentBlockStyle,
 
+		insertEmbed: (processor: I.EmbedProcessor, text: string) => {
+			editorRef.current?.dispatchCommand(INSERT_EMBED_COMMAND, { processor, text });
+		},
+
 		insertAttachment: (data: any) => {
 			editorRef.current?.dispatchCommand(INSERT_ATTACHMENT_COMMAND, data);
 		},
@@ -2121,7 +2481,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, AttachmentNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, AttachmentNode, EmbedNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -2149,6 +2509,8 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<EditorRefPlugin editorRef={editorRef} />
 				<HorizontalRulePlugin />
 				<AttachmentPlugin />
+				<EmbedPlugin />
+				<PasteUrlPlugin />
 				<SlashMenuPlugin editorId={editorId} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiPlugin editorId={editorId} />

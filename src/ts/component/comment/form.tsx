@@ -269,6 +269,39 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	}, []);
 
+	const openEmbedInput = useCallback((processor: I.EmbedProcessor, existingText?: string) => {
+		const processorName = I.EmbedProcessor[processor] || 'Embed';
+
+		const el = formRef.current;
+		if (!el) {
+			return;
+		};
+
+		const rect = el.getBoundingClientRect();
+		const win = $(window);
+
+		S.Menu.open('dataviewText', {
+			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			width: Math.max(rect.width, 360),
+			data: {
+				value: existingText || '',
+				placeholder: U.String.sprintf(translate('blockEmbedPlaceholder'), processorName),
+				canEdit: true,
+				noResize: true,
+				relationKey: 'url',
+				onChange: (v: string) => {
+					if (v) {
+						editorRef.current?.insertEmbed(processor, v);
+						editorRef.current?.focus();
+					};
+				},
+			},
+		});
+	}, []);
+
 	const handleSlashAction = useCallback((item: any) => {
 		if (item.action) {
 			switch (item.action) {
@@ -290,9 +323,15 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					break;
 				};
 
-				case 'create':
-				case 'embed': {
+				case 'create': {
 					// Handled by submenu onOver
+					break;
+				};
+
+				case 'embed': {
+					if (item.embedProcessor !== undefined) {
+						openEmbedInput(item.embedProcessor);
+					};
 					break;
 				};
 			};
@@ -308,7 +347,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		editorRef.current?.focus();
-	}, [ openFilePicker ]);
+	}, [ openFilePicker, openEmbedInput ]);
 
 	const menuContextRef = useRef<any>(null);
 
@@ -389,11 +428,72 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	}, [ handleSlashAction, openFilePicker ]);
 
+	const openPlusMenu = useCallback((element: any) => {
+		const attachments = U.Menu.getCommentAddSections().find(s => s.id === 'attachments');
+		if (!attachments) {
+			return;
+		};
+
+		const children = attachments.children.filter((it: any) => [ 'create', 'object', 'file' ].includes(it.id));
+
+		S.Menu.open('commentAdd', {
+			component: 'select',
+			element,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			noAnimation: true,
+			subIds: [ 'typeSuggest' ],
+			onOpen: (ctx: any) => { menuContextRef.current = ctx; },
+			data: {
+				sections: [{ id: 'attachments', name: '', children }],
+				noFilter: true,
+				noVirtualisation: true,
+				noScroll: true,
+				onOver: (_e: any, item: any) => {
+					if (!item.arrow) {
+						S.Menu.closeAll([ 'typeSuggest' ]);
+						return;
+					};
+
+					const ctx = menuContextRef.current;
+					if (!ctx) {
+						return;
+					};
+
+					if (item.id === 'create') {
+						U.Menu.typeSuggest({
+							element: `#${ctx.getId()} #item-create`,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+							offsetX: ctx.getSize().width,
+							vertical: I.MenuDirection.Center,
+							isSub: true,
+							data: {
+								onAdd: () => ctx?.close(),
+							},
+						}, {}, { noButtons: true }, '', (object: any) => {
+							editorRef.current?.insertAttachment(object);
+							U.Object.openPopup(object);
+							ctx?.close();
+						});
+					};
+				},
+				onSelect: (_e: any, item: any) => {
+					if (item.arrow) {
+						return;
+					};
+					handleSlashAction(item);
+				},
+			},
+		});
+	}, [ handleSlashAction ]);
+
 	const onPlusClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		openCommentAddMenu($(e.currentTarget));
-	}, [ openCommentAddMenu ]);
+		openPlusMenu($(e.currentTarget));
+	}, [ openPlusMenu ]);
 
 	const onSlashClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();

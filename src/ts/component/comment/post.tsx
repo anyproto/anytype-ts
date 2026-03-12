@@ -8,6 +8,7 @@ import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
+import EmbedPreview from './embedPreview';
 
 interface Props {
 	rootId: string;
@@ -32,9 +33,11 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 	// Embed
 	if ((part.type === I.BlockType.Embed) && part.embed) {
 		return (
-			<pre key={key} className="commentCodeBlock">
-				<code>{part.embed.text}</code>
-			</pre>
+			<EmbedPreview
+				key={key}
+				processor={part.embed.processor}
+				text={part.embed.text}
+			/>
 		);
 	};
 
