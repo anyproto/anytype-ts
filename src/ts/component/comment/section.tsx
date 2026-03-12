@@ -137,8 +137,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 				const el = container.get(0);
 				el.scrollTop = el.scrollHeight;
-
-				console.log(el.scrollTop, el.scrollHeight);
 			};
 		}, 0);
 	}, [ isPopup, resize ]);

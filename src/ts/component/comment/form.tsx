@@ -312,14 +312,14 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	}, [ handleSlashAction ]);
 
-	const onTextClick = useCallback((e: React.MouseEvent) => {
+	const onSlashClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const currentStyle = editorRef.current?.getCurrentBlockStyle() || I.TextStyle.Paragraph;
 
 		const options = [
-			{ id: String(I.TextStyle.Paragraph), name: translate('commentToolbarRegular'), icon: 'text' },
+			{ id: String(I.TextStyle.Paragraph), name: translate('commentToolbarRegular'), icon: 'textParagraph' },
 			{ id: String(I.TextStyle.Header1), name: translate('commentToolbarTitle'), icon: 'textHeader textHeader1' },
 			{ id: String(I.TextStyle.Header2), name: translate('commentToolbarHeading'), icon: 'textHeader textHeader2' },
 			{ id: String(I.TextStyle.Header3), name: translate('commentToolbarSubheading'), icon: 'textHeader textHeader3' },
@@ -539,7 +539,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					<div className="side left" onMouseDown={e => e.preventDefault()}>
 						<Icon className="plus withBackground" onClick={onPlusClick} />
 						<div className="div" />
-						<Icon className="text withBackground" onClick={onTextClick} />
+						<Icon className="slash withBackground" onClick={onSlashClick} />
 						<Icon className="emoji withBackground" onClick={onEmojiClick} />
 						<Icon className="mention withBackground" onClick={onMentionClick} />
 					</div>

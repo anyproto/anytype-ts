@@ -17,6 +17,7 @@ import { $isCodeNode, $createCodeNode } from '@lexical/code';
 import {
 	$getRoot,
 	$getSelection,
+	$getNodeByKey,
 	$isRangeSelection,
 	$createParagraphNode,
 	$createTextNode,
@@ -671,7 +672,7 @@ const SelectionToolbarPlugin = () => {
 				const selection = $getSelection();
 
 				if (!$isRangeSelection(selection) || selection.isCollapsed()) {
-					if (S.Menu.isOpen('commentToolbar')) {
+					if (S.Menu.isOpen('commentToolbar') && !S.Menu.isOpen('select') && !S.Menu.isOpen('blockLink')) {
 						S.Menu.close('commentToolbar');
 					};
 					return;
@@ -701,12 +702,190 @@ const SelectionToolbarPlugin = () => {
 					return formats;
 				};
 
+				const getBlockStyle = () => {
+					let style = 'text';
+					editor.getEditorState().read(() => {
+						const sel = $getSelection();
+						if (!$isRangeSelection(sel)) {
+							return;
+						};
+
+						const anchor = sel.anchor.getNode();
+						const parent = anchor.getParent();
+						const topLevel = $isElementNode(parent) ? parent : anchor;
+
+						if ($isHeadingNode(topLevel)) {
+							const tag = topLevel.getTag();
+							switch (tag) {
+								case 'h1': style = 'header1'; break;
+								case 'h2': style = 'header2'; break;
+								case 'h3': style = 'header3'; break;
+							};
+						} else
+						if (topLevel instanceof QuoteNode) {
+							style = 'quote';
+						} else
+						if ($isCodeNode(topLevel)) {
+							style = 'code';
+						} else
+						if ($isListNode(topLevel) || ($isElementNode(parent) && $isListNode(parent))) {
+							const listNode = $isListNode(topLevel) ? topLevel : parent;
+							if ($isListNode(listNode)) {
+								const listType = listNode.getListType();
+								switch (listType) {
+									case 'bullet': style = 'bulleted'; break;
+									case 'number': style = 'numbered'; break;
+									case 'check': style = 'checkbox'; break;
+								};
+							};
+						};
+					});
+					return style;
+				};
+
+				// Save anchor node key so sub-menus can restore selection
+				let savedAnchorKey = '';
+				let savedAnchorOffset = 0;
+				const anchorNode = selection.anchor.getNode();
+				savedAnchorKey = anchorNode.getKey();
+				savedAnchorOffset = selection.anchor.offset;
+
 				const onToggleFormat = (type: string) => {
 					editor.dispatchCommand(FORMAT_TEXT_COMMAND, type as TextFormatType);
 				};
 
+				const onBlockStyle = (textStyle: I.TextStyle) => {
+					editor.focus();
+					editor.update(() => {
+						const node = $getNodeByKey(savedAnchorKey);
+						if (node && $isTextNode(node)) {
+							const offset = Math.min(savedAnchorOffset, node.getTextContentSize());
+							node.select(offset, offset);
+						} else
+						if (node && $isElementNode(node)) {
+							node.selectStart();
+						};
+
+						const selection = $getSelection();
+						if (!$isRangeSelection(selection)) {
+							return;
+						};
+
+						switch (textStyle) {
+							case I.TextStyle.Header1:
+							case I.TextStyle.Header2:
+							case I.TextStyle.Header3: {
+								const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
+								$setBlocksType(selection, () => $createHeadingNode(tag));
+								break;
+							};
+
+							case I.TextStyle.Quote: {
+								$setBlocksType(selection, () => new QuoteNode());
+								break;
+							};
+
+							case I.TextStyle.Code: {
+								$setBlocksType(selection, () => $createCodeNode());
+								break;
+							};
+
+							case I.TextStyle.Bulleted: {
+								editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+								break;
+							};
+
+							case I.TextStyle.Numbered: {
+								editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+								break;
+							};
+
+							case I.TextStyle.Checkbox: {
+								editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+								break;
+							};
+
+							case I.TextStyle.Paragraph: {
+								$setBlocksType(selection, () => $createParagraphNode());
+								break;
+							};
+						};
+					});
+				};
+
+				const onLink = (url: string) => {
+					if (!url) {
+						return;
+					};
+
+					editor.update(() => {
+						const sel = $getSelection();
+						if (!$isRangeSelection(sel)) {
+							return;
+						};
+
+						const nodes = sel.getNodes();
+						const anchor = sel.anchor;
+						const focus = sel.focus;
+
+						const isBackward = sel.isBackward();
+						const startOffset = isBackward ? focus.offset : anchor.offset;
+						const endOffset = isBackward ? anchor.offset : focus.offset;
+						const startNode = isBackward ? focus.getNode() : anchor.getNode();
+						const endNode = isBackward ? anchor.getNode() : focus.getNode();
+
+						for (const node of nodes) {
+							if (!$isTextNode(node)) {
+								continue;
+							};
+
+							let from = 0;
+							let to = node.getTextContentSize();
+
+							if (node.is(startNode)) {
+								from = startOffset;
+							};
+
+							if (node.is(endNode)) {
+								to = endOffset;
+							};
+
+							const text = node.getTextContent();
+							const before = text.slice(0, from);
+							const linkText = text.slice(from, to);
+							const after = text.slice(to);
+
+							if (!linkText) {
+								continue;
+							};
+
+							const parts: TextNode[] = [];
+
+							if (before) {
+								parts.push($createTextNode(before));
+							};
+
+							const linkNode = $createTextNode(linkText);
+							linkNode.setFormat(node.getFormat());
+							parts.push(linkNode);
+
+							if (after) {
+								parts.push($createTextNode(after));
+							};
+
+							const parent = node.getParent();
+							if (parent) {
+								for (const part of parts) {
+									node.insertBefore(part);
+								};
+								node.remove();
+							};
+						};
+					});
+				};
+
 				if (S.Menu.isOpen('commentToolbar')) {
-					S.Menu.updateData('commentToolbar', { getActiveFormats });
+					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle });
 					return;
 				};
 
@@ -726,7 +905,10 @@ const SelectionToolbarPlugin = () => {
 					noAnimation: true,
 					data: {
 						getActiveFormats,
+						getBlockStyle,
 						onToggleFormat,
+						onBlockStyle,
+						onLink,
 					},
 				});
 			});
@@ -1148,40 +1330,49 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],
 			onChange: (object: any, name: string) => {
+				const filterText = String(S.Common.filter.text || '');
+				const filterLen = filterText.length;
+
 				editor.update(() => {
-					const selection = $getSelection();
-					if (!$isRangeSelection(selection)) {
-						return;
+					const root = $getRoot();
+					const children = root.getChildren();
+					let found = false;
+
+					// Find and remove @ + filter text
+					for (const child of children) {
+						if (!$isElementNode(child) || found) {
+							continue;
+						};
+
+						for (const textChild of child.getChildren()) {
+							if (!$isTextNode(textChild) || $isMentionNode(textChild)) {
+								continue;
+							};
+
+							const text = textChild.getTextContent();
+							const offset = mentionOffset.current;
+
+							if ((offset >= 0) && (offset < text.length) && (text[offset] === '@')) {
+								const before = text.slice(0, offset);
+								const after = text.slice(offset + 1 + filterLen);
+								textChild.setTextContent(before + after);
+								textChild.select(before.length, before.length);
+								found = true;
+								break;
+							};
+						};
 					};
 
-					const anchor = selection.anchor;
-					const node = anchor.getNode();
+					// Insert mention node
+					const newSelection = $getSelection();
+					if ($isRangeSelection(newSelection)) {
+						const trimmedName = name.trim();
+						const mentionNode = $createMentionNode(object.id, trimmedName);
+						newSelection.insertNodes([ mentionNode ]);
 
-					if ($isTextNode(node)) {
-						const text = node.getTextContent();
-						const atOffset = mentionOffset.current;
-						const cursorOffset = anchor.offset;
-
-						// Remove @ and filter text
-						const before = text.slice(0, atOffset);
-						const after = text.slice(cursorOffset);
-
-						if (before || after) {
-							node.setTextContent(before + after);
-							node.select(before.length, before.length);
-						};
-
-						// Get selection again after text change
-						const newSelection = $getSelection();
-						if ($isRangeSelection(newSelection)) {
-							const trimmedName = name.trim();
-							const mentionNode = $createMentionNode(object.id, trimmedName);
-							newSelection.insertNodes([ mentionNode ]);
-
-							const spaceNode = $createTextNode(' ');
-							mentionNode.insertAfter(spaceNode);
-							spaceNode.select();
-						};
+						const spaceNode = $createTextNode(' ');
+						mentionNode.insertAfter(spaceNode);
+						spaceNode.select();
 					};
 				});
 
