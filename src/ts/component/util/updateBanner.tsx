@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
 import { I, S, U, J, translate, Renderer, keyboard, Storage, analytics } from 'Lib';
@@ -15,43 +15,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 	const dx = useRef(0);
 	const dy = useRef(0);
 
-	if (!updateVersion) {
-		return null;
-	};
-
-	const onDragStart = (e: any) => {
-		const win = $(window);
-		const offset = $(nodeRef.current).offset();
-
-		dx.current = e.pageX - offset.left;
-		dy.current = e.pageY - offset.top;
-
-		keyboard.disableSelection(true);
-		keyboard.setDragging(true);
-
-		win.off('mousemove.progress mouseup.progress');
-		win.on('mousemove.progress', e => onDragMove(e));
-		win.on('mouseup.progress', e => onDragEnd(e));
-	};
-
-	const onDragMove = (e: any) => {
-		const obj = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY)) || {};
-		const win = $(window);
-		const x = e.pageX - dx.current - win.scrollLeft();
-		const y = e.pageY - dy.current - win.scrollTop();
-
-		setStyle(x, y);
-		Storage.set(STORAGE_KEY, { ...obj, x, y }, Storage.isLocal(STORAGE_KEY));
-	};
-
-	const onDragEnd = (e: any) => {
-		keyboard.disableSelection(false);
-		keyboard.setDragging(false);
-
-		$(window).off('mousemove.progress mouseup.progress');
-	};
-
-	const checkCoords = (x: number, y: number): { x: number, y: number } => {
+	const checkCoords = useCallback((x: number, y: number): { x: number, y: number } => {
 		const { ww, wh } = U.Common.getWindowDimensions();
 
 		width.current = Number(width.current) || 0;
@@ -66,9 +30,15 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		y = Math.min(wh - height.current, y);
 
 		return { x, y };
-	};
+	}, []);
 
-	const resize = () => {
+	const setStyle = useCallback((x: number, y: number) => {
+		const coords = checkCoords(x, y);
+
+		$(nodeRef.current).css({ left: coords.x, top: coords.y, bottom: 'auto' });
+	}, [ checkCoords ]);
+
+	const resize = useCallback(() => {
 		const obj = $(nodeRef.current);
 		const coords = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
@@ -78,13 +48,39 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		if (coords) {
 			setStyle(coords.x, coords.y);
 		};
-	};
+	}, [ setStyle ]);
 
-	const setStyle = (x: number, y: number) => {
-		const coords = checkCoords(x, y);
+	const onDragMove = useCallback((e: any) => {
+		const obj = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY)) || {};
+		const win = $(window);
+		const x = e.pageX - dx.current - win.scrollLeft();
+		const y = e.pageY - dy.current - win.scrollTop();
 
-		$(nodeRef.current).css({ left: coords.x, top: coords.y, bottom: 'auto' });
-	};
+		setStyle(x, y);
+		Storage.set(STORAGE_KEY, { ...obj, x, y }, Storage.isLocal(STORAGE_KEY));
+	}, [ setStyle ]);
+
+	const onDragEnd = useCallback((e: any) => {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+
+		$(window).off('mousemove.progress mouseup.progress');
+	}, []);
+
+	const onDragStart = useCallback((e: any) => {
+		const win = $(window);
+		const offset = $(nodeRef.current).offset();
+
+		dx.current = e.pageX - offset.left;
+		dy.current = e.pageY - offset.top;
+
+		keyboard.disableSelection(true);
+		keyboard.setDragging(true);
+
+		win.off('mousemove.progress mouseup.progress');
+		win.on('mousemove.progress', e => onDragMove(e));
+		win.on('mouseup.progress', e => onDragEnd(e));
+	}, [ onDragMove, onDragEnd ]);
 
 	useEffect(() => {
 		if (updateVersion) {
@@ -93,6 +89,10 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 
 		resize();
 	}, [ updateVersion ]);
+
+	if (!updateVersion) {
+		return null;
+	};
 
 	return (
 		<div ref={nodeRef} className={cn.join(' ')} onMouseDown={onDragStart}>
