@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, J, S, U, keyboard, translate, Storage } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
-import Attachment from 'Component/block/chat/attachment';
 
 interface Props {
 	rootId: string;
@@ -13,7 +12,7 @@ interface Props {
 	isEdit?: boolean;
 	isReply?: boolean;
 	readonly?: boolean;
-	onSubmit?: (parts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => void;
+	onSubmit?: (parts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => void;
 	onCancel?: () => void;
 	onResize?: () => void;
 };
@@ -33,22 +32,22 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
 	const isDraft = !isEdit && !isReply;
 
-	const saveDraft = useCallback((att?: any[]) => {
+	const saveDraft = useCallback(() => {
 		if (!isDraft) {
 			return;
 		};
 
 		const parts = editorRef.current?.getParts() || [];
+		const att = editorRef.current?.getAttachments() || [];
 		Storage.setComment(rootId, {
 			parts,
-			attachments: (att || attachments).filter(it => !it.isTmp),
+			attachments: att.filter(it => !it.isTmp),
 		});
-	}, [ isDraft, rootId, attachments ]);
+	}, [ isDraft, rootId ]);
 
 	const clearDraft = useCallback(() => {
 		if (isDraft) {
@@ -63,35 +62,32 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			setIsEmpty(true);
 			setIsLoading(false);
 			setIsMultiline(false);
-			setAttachments([]);
 			clearDraft();
 		},
 	}));
 
-	const getAttachmentType = useCallback((layout: I.ObjectLayout): I.AttachmentType => {
+	const getLinkType = useCallback((layout: I.ObjectLayout): I.ChatMessageBlockLinkType => {
 		switch (layout) {
-			case I.ObjectLayout.Bookmark: return I.AttachmentType.Link;
-			case I.ObjectLayout.Image: return I.AttachmentType.Image;
-			default: return I.AttachmentType.File;
+			case I.ObjectLayout.Bookmark: return I.ChatMessageBlockLinkType.Bookmark;
+			case I.ObjectLayout.Image: return I.ChatMessageBlockLinkType.Image;
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Pdf:
+			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Video: return I.ChatMessageBlockLinkType.File;
+			default: return I.ChatMessageBlockLinkType.Object;
 		};
 	}, []);
 
-	const uploadFiles = useCallback((list: any[], callBack: (uploaded: I.ChatMessageAttachment[]) => void) => {
-		const files = list.filter(it => it.isTmp);
-		const existing = list.filter(it => !it.isTmp).map(it => ({
-			target: it.id,
-			type: getAttachmentType(it.layout),
-		}));
-
-		if (!files.length) {
-			callBack(existing);
+	const uploadTmpFiles = useCallback((tmpFiles: any[], callBack: (uploadMap: Map<string, string>) => void) => {
+		if (!tmpFiles.length) {
+			callBack(new Map());
 			return;
 		};
 
 		let n = 0;
-		const uploaded: I.ChatMessageAttachment[] = [ ...existing ];
+		const uploadMap = new Map<string, string>();
 
-		for (const item of files) {
+		for (const item of tmpFiles) {
 			C.FileUpload(
 				S.Common.space,
 				'',
@@ -107,14 +103,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
-						uploaded.push({
-							target: message.objectId,
-							type: getAttachmentType(item.layout),
-						});
+						uploadMap.set(item.id, message.objectId);
 					};
 
-					if (n === files.length) {
-						callBack(uploaded);
+					if (n === tmpFiles.length) {
+						callBack(uploadMap);
 					};
 				},
 			);
@@ -128,21 +121,44 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		setIsLoading(true);
 
-		if (attachments.length) {
-			uploadFiles(attachments, (uploaded) => {
-				onSubmit?.(parts, uploaded);
+		// Collect tmp files that need uploading
+		const tmpFiles = parts
+			.filter(p => p.attachmentData?.isTmp)
+			.map(p => p.attachmentData);
 
-				if (!isEdit) {
-					editorRef.current?.clear();
-					setIsEmpty(true);
-					setIsLoading(false);
-					setIsMultiline(false);
-					setAttachments([]);
-					clearDraft();
+		const finalize = (uploadMap: Map<string, string>) => {
+			// Resolve attachment parts into link parts
+			const resolvedParts = parts.map(part => {
+				if (!part.attachmentData) {
+					return part;
 				};
-			});
-		} else {
-			onSubmit?.(parts);
+
+				const data = part.attachmentData;
+				let targetId = data.id;
+
+				if (data.isTmp) {
+					targetId = uploadMap.get(data.id) || '';
+					if (!targetId) {
+						return null;
+					};
+				};
+
+				return {
+					...part,
+					link: {
+						targetObjectId: targetId,
+						type: getLinkType(data.layout),
+					},
+					attachmentData: undefined,
+				};
+			}).filter(Boolean);
+
+			// Collect non-tmp attachment objects for optimistic rendering
+			const attachmentObjects = parts
+				.filter(p => (p.attachmentData && !p.attachmentData.isTmp))
+				.map(p => p.attachmentData);
+
+			onSubmit?.(resolvedParts, undefined, attachmentObjects);
 
 			if (!isEdit) {
 				editorRef.current?.clear();
@@ -152,7 +168,13 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				clearDraft();
 			};
 		};
-	}, [ onSubmit, isEdit, isLoading, attachments, clearDraft ]);
+
+		if (tmpFiles.length) {
+			uploadTmpFiles(tmpFiles, finalize);
+		} else {
+			finalize(new Map());
+		};
+	}, [ onSubmit, isEdit, isLoading, clearDraft, getLinkType, uploadTmpFiles ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -192,9 +214,14 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const addAttachmentFiles = useCallback((files: File[]) => {
 		const limit = J.Constant.limit.chat.attachments;
-		const list: any[] = [];
+		const currentCount = editorRef.current?.getAttachments().length || 0;
+		let remaining = limit - currentCount;
 
 		for (const file of files) {
+			if (remaining <= 0) {
+				break;
+			};
+
 			const path = electron.webFilePath ? electron.webFilePath(file) : '';
 			const mime = file.type || '';
 			const ext = path ? (electron.fileExt ? electron.fileExt(path) : '') : '';
@@ -208,7 +235,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 
-			list.push({
+			editorRef.current?.insertAttachment({
 				id: `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 				name: file.name,
 				layout,
@@ -219,15 +246,10 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				path,
 				file,
 			});
+
+			remaining--;
 		};
-
-		const newList = [ ...attachments, ...list ].slice(0, limit);
-		setAttachments(newList);
-	}, [ attachments ]);
-
-	const onAttachmentRemove = useCallback((id: string) => {
-		setAttachments(attachments.filter(it => it.id !== id));
-	}, [ attachments ]);
+	}, []);
 
 	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
@@ -250,32 +272,27 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const handleSlashAction = useCallback((item: any) => {
 		if (item.action) {
 			switch (item.action) {
-				case 'image': {
-					openFilePicker('image/*');
-					break;
-				};
-
 				case 'file': {
 					openFilePicker();
 					break;
 				};
 
 				case 'object': {
+					const currentAtt = editorRef.current?.getAttachments() || [];
 					keyboard.onSearchPopup('', {
 						data: {
-							skipIds: attachments.map(it => it.id),
+							skipIds: currentAtt.map(it => it.id),
 							onObjectSelect: (obj: any) => {
-								const limit = J.Constant.limit.chat.attachments;
-								const newList = [ ...attachments, obj ].slice(0, limit);
-								setAttachments(newList);
+								editorRef.current?.insertAttachment(obj);
 							},
 						},
 					});
 					break;
 				};
 
-				case 'latex':
-				case 'mermaid': {
+				case 'create':
+				case 'embed': {
+					// Handled by submenu onOver
 					break;
 				};
 			};
@@ -291,61 +308,98 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		editorRef.current?.focus();
-	}, [ openFilePicker, attachments ]);
+	}, [ openFilePicker ]);
+
+	const menuContextRef = useRef<any>(null);
+
+	const openCommentAddMenu = useCallback((element: any) => {
+		S.Menu.open('commentAdd', {
+			component: 'select',
+			element,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -4,
+			noAnimation: true,
+			subIds: [ 'typeSuggest', 'select' ],
+			onOpen: (context: any) => { menuContextRef.current = context; },
+			data: {
+				sections: U.Menu.getCommentAddSections(),
+				noFilter: true,
+				noVirtualisation: true,
+				noScroll: true,
+				onOver: (_e: any, item: any) => {
+					if (!item.arrow) {
+						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
+						return;
+					};
+
+					const context = menuContextRef.current;
+					if (!context) {
+						return;
+					};
+
+					if (item.id === 'create') {
+						U.Menu.typeSuggest({
+							element: `#${context.getId()} #item-create`,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+							offsetX: context.getSize().width,
+							vertical: I.MenuDirection.Center,
+							isSub: true,
+							data: {
+								onAdd: () => context?.close(),
+							},
+						}, {}, { noButtons: true }, '', (object: any) => {
+							editorRef.current?.insertAttachment(object);
+							U.Object.openPopup(object);
+							context?.close();
+						});
+					};
+
+					if (item.id === 'embed') {
+						const embedOptions = U.Menu.getBlockEmbed().map(it => ({
+							...it,
+							action: 'embed',
+							embedProcessor: it.id,
+						}));
+
+						S.Menu.open('select', {
+							element: `#${context.getId()} #item-embed`,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+							offsetX: context.getSize().width,
+							vertical: I.MenuDirection.Center,
+							isSub: true,
+							data: {
+								options: embedOptions,
+								noVirtualisation: true,
+								noScroll: true,
+								onSelect: (_e: any, embedItem: any) => {
+									handleSlashAction(embedItem);
+									context?.close();
+								},
+							},
+						});
+					};
+				},
+				onSelect: (_e: any, item: any) => {
+					handleSlashAction(item);
+				},
+			},
+		});
+	}, [ handleSlashAction, openFilePicker ]);
 
 	const onPlusClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		S.Menu.open('commentAdd', {
-			component: 'select',
-			element: $(e.currentTarget),
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
-			offsetY: -4,
-			noAnimation: true,
-			data: {
-				sections: U.Menu.getCommentAddSections(),
-				noFilter: true,
-				onSelect: (_e: any, item: any) => handleSlashAction(item),
-			},
-		});
-	}, [ handleSlashAction ]);
+		openCommentAddMenu($(e.currentTarget));
+	}, [ openCommentAddMenu ]);
 
 	const onSlashClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		const currentStyle = editorRef.current?.getCurrentBlockStyle() || I.TextStyle.Paragraph;
-
-		const options = [
-			{ id: String(I.TextStyle.Paragraph), name: translate('commentToolbarRegular'), icon: 'textParagraph' },
-			{ id: String(I.TextStyle.Header1), name: translate('commentToolbarTitle'), icon: 'textHeader textHeader1' },
-			{ id: String(I.TextStyle.Header2), name: translate('commentToolbarHeading'), icon: 'textHeader textHeader2' },
-			{ id: String(I.TextStyle.Header3), name: translate('commentToolbarSubheading'), icon: 'textHeader textHeader3' },
-		];
-
-		for (const option of options) {
-			if (option.id == String(currentStyle)) {
-				(option as any).checkbox = true;
-			};
-		};
-
-		S.Menu.open('select', {
-			element: $(e.currentTarget),
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
-			offsetY: -4,
-			noAnimation: true,
-			data: {
-				options,
-				onSelect: (_e: any, item: any) => {
-					editorRef.current?.setBlockStyle(Number(item.id) as I.TextStyle);
-					editorRef.current?.focus();
-				},
-			},
-		});
-	}, []);
+		openCommentAddMenu($(e.currentTarget));
+	}, [ openCommentAddMenu ]);
 
 	const onEmojiClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
@@ -400,7 +454,8 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const onSendClick = useCallback(() => {
-		if ((isEmpty && !attachments.length) || isLoading) {
+		const hasAttachments = (editorRef.current?.getAttachments().length || 0) > 0;
+		if ((isEmpty && !hasAttachments) || isLoading) {
 			return;
 		};
 
@@ -408,7 +463,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (parts) {
 			handleSubmit(parts);
 		};
-	}, [ isEmpty, attachments, isLoading, handleSubmit ]);
+	}, [ isEmpty, isLoading, handleSubmit ]);
 
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
@@ -442,9 +497,18 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const onAction = (e: Event) => {
 			const item = (e as CustomEvent).detail;
-			if (item) {
-				handleSlashAction(item);
+			if (!item) {
+				return;
 			};
+
+			if ((item.action === 'createCallback') && item.object) {
+				editorRef.current?.insertAttachment(item.object);
+				U.Object.openPopup(item.object);
+				editorRef.current?.focus();
+				return;
+			};
+
+			handleSlashAction(item);
 		};
 
 		wrap.addEventListener('commentSlashAction', onAction);
@@ -479,24 +543,20 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		if (hasAtt) {
-			setAttachments(draft.attachments);
+			window.setTimeout(() => {
+				for (const att of draft.attachments) {
+					editorRef.current?.insertAttachment(att);
+				};
+			}, 100);
 		};
 	}, [ isDraft, rootId ]);
-
-	// Save draft when attachments change
-	useEffect(() => {
-		if (isDraft && draftLoadedRef.current) {
-			saveDraft(attachments);
-		};
-	}, [ isDraft, attachments ]);
 
 	if (readonly) {
 		return null;
 	};
 
-	const hasAttachments = attachments.length > 0;
-	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
-	const showToolbar = isFocused || !isEmpty || hasAttachments || isEdit;
+	const isDisabled = isEmpty || isLoading;
+	const showToolbar = isFocused || !isEmpty || isEdit;
 
 	const cn = [ 'commentForm' ];
 	if (isEdit) cn.push('isEdit');
@@ -519,19 +579,6 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onFocus={handleFocus}
 					onBlur={handleBlur}
 				/>
-
-				{hasAttachments ? (
-					<div className="attachmentList">
-						{attachments.map(item => (
-							<Attachment
-								key={item.id}
-								object={item}
-								showAsFile={true}
-								onRemove={() => onAttachmentRemove(item.id)}
-							/>
-						))}
-					</div>
-				) : ''}
 			</div>
 
 			{showToolbar ? (

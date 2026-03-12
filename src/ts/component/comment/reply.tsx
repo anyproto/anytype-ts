@@ -18,11 +18,29 @@ interface Props {
 /**
  * Render a single CommentContentPart to HTML (simplified for replies)
  */
-const renderPart = (part: I.CommentContentPart, index: number): JSX.Element => {
+const renderPart = (part: I.CommentContentPart, index: number, subId?: string): JSX.Element => {
 	const key = `part-${index}`;
 
 	if (part.type === I.BlockType.Div) {
 		return <hr key={key} className="commentDivider" />;
+	};
+
+	// Link (attachment)
+	if ((part.type === I.BlockType.Link) && part.link) {
+		const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;
+		if (!object || object._empty_) {
+			return <React.Fragment key={key} />;
+		};
+
+		return (
+			<div key={key} className="commentAttachments">
+				<Attachment
+					object={object}
+					subId={subId}
+					onRemove={() => {}}
+				/>
+			</div>
+		);
 	};
 
 	const html = U.String.sanitize(Mark.toHtml(part.text || '', part.marks || []));
@@ -275,7 +293,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<>
 				<div ref={contentRef} className="content">
-					{parts.map((part, i) => renderPart(part, i))}
+					{parts.map((part, i) => renderPart(part, i, subId))}
 				</div>
 				{renderAttachments()}
 			</>

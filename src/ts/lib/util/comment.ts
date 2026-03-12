@@ -6,15 +6,21 @@ class Comment {
 	 * Converts CommentContentParts into ChatMessageBlocks for the protobuf.
 	 */
 	partsToBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
-		parts = (parts || []).filter(it => it.text || (it.type != I.BlockType.Text));
+		parts = (parts || []).filter(it => it.text || it.link || (it.type != I.BlockType.Text));
 
-		return parts.map(part => ({
-			text: {
-				text: part.text || '',
-				style: part.style || I.TextStyle.Paragraph,
-				marks: part.marks || [],
-			},
-		}));
+		return parts.map(part => {
+			if (part.link) {
+				return { link: part.link };
+			};
+
+			return {
+				text: {
+					text: part.text || '',
+					style: part.style || I.TextStyle.Paragraph,
+					marks: part.marks || [],
+				},
+			};
+		});
 	};
 
 	/**
@@ -23,12 +29,24 @@ class Comment {
 	 */
 	blocksToParts (blocks: I.ChatMessageBlock[], content?: I.ChatMessageContent): I.CommentContentPart[] {
 		if (blocks && blocks.length) {
-			return blocks.filter(it => it.text).map(block => ({
-				text: block.text.text || '',
-				style: block.text.style || I.TextStyle.Paragraph,
-				type: I.BlockType.Text,
-				marks: block.text.marks || [],
-			}));
+			return blocks.filter(it => it.text || it.link).map(block => {
+				if (block.link) {
+					return {
+						style: I.TextStyle.Paragraph,
+						type: I.BlockType.Link,
+						text: '',
+						marks: [],
+						link: block.link,
+					};
+				};
+
+				return {
+					text: block.text.text || '',
+					style: block.text.style || I.TextStyle.Paragraph,
+					type: I.BlockType.Text,
+					marks: block.text.marks || [],
+				};
+			});
 		};
 
 		// Legacy fallback: try JSON-encoded parts in content.text
@@ -51,6 +69,34 @@ class Comment {
 		};
 
 		return [];
+	};
+
+	/**
+	 * Extracts dependency IDs (attachment targets, mention/object mark params) from messages.
+	 */
+	getDepsIds (messages: any[]): string[] {
+		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
+
+		let attachments: string[] = [];
+		let marks: any[] = [];
+
+		(messages || []).forEach(it => {
+			attachments = attachments.concat((it.attachments || []).map((a: any) => a.target));
+			marks = marks.concat(it.content?.marks || []);
+
+			// Also extract link targets from blocks/parts
+			const parts = it.content?.parts || [];
+			parts.forEach((p: any) => {
+				if (p.link?.targetObjectId) {
+					attachments.push(p.link.targetObjectId);
+				};
+				marks = marks.concat(p.marks || []);
+			});
+		});
+
+		marks = marks.filter(it => markTypes.includes(it.type) && it.param).map(it => it.param);
+
+		return [ ...new Set(attachments.concat(marks).filter(it => it)) ];
 	};
 
 	/**

@@ -75,6 +75,47 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		return () => window.removeEventListener('resize', resize);
 	}, [ resize ]);
 
+	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
+		const ids = U.Comment.getDepsIds(messages);
+
+		if (!ids.length) {
+			callBack?.();
+			return;
+		};
+
+		const sid = U.Comment.getSubId(targetType, discussionId || targetId);
+		const keys = U.Subscription.chatRelationKeys();
+
+		U.Subscription.subscribeIds({
+			ids,
+			subId: sid,
+			keys,
+			noDeps: true,
+			ignoreHidden: true,
+			crossSpace: true,
+		}, callBack);
+	}, [ targetType, discussionId, targetId ]);
+
+	const onMessageAdd = useCallback((e: any, message: any, eventSubIds: string[]) => {
+		if (!eventSubIds.includes(subId)) {
+			return;
+		};
+
+		loadDeps([ message ]);
+	}, [ subId, loadDeps ]);
+
+	useEffect(() => {
+		const ns = 'commentSection';
+		const win = $(window);
+
+		win.on(`messageAdd.${ns}`, onMessageAdd);
+		win.on(`messageUpdate.${ns}`, onMessageAdd);
+
+		return () => {
+			win.off(`messageAdd.${ns} messageUpdate.${ns}`);
+		};
+	}, [ onMessageAdd ]);
+
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
 
@@ -107,16 +148,18 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				post.replyCount = replyCountMap[post.id] || 0;
 			};
 
-			S.Comment.setPosts(sid, posts);
-			S.Comment.setHasMorePosts(sid, posts.length >= POST_LIMIT);
+			loadDeps(messages, () => {
+				S.Comment.setPosts(sid, posts);
+				S.Comment.setHasMorePosts(sid, posts.length >= POST_LIMIT);
 
-			for (const reply of replies) {
-				S.Comment.addReply(reply.replyToMessageId, reply);
-			};
+				for (const reply of replies) {
+					S.Comment.addReply(reply.replyToMessageId, reply);
+				};
 
-			isLoaded.current = true;
+				isLoaded.current = true;
+			});
 		});
-	}, [ targetType ]);
+	}, [ targetType, loadDeps ]);
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -162,9 +205,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		const firstPost = posts[0];
 
 		C.ChatGetMessages(discussionId, firstPost.orderId, '', POST_LIMIT, false, (message: any) => {
-			callBack?.();
-
 			if (message.error.code) {
+				callBack?.();
 				return;
 			};
 
@@ -179,10 +221,13 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					replyCount: 0,
 				}));
 
-			S.Comment.prependPosts(subId, messages);
-			S.Comment.setHasMorePosts(subId, messages.length >= POST_LIMIT);
+			loadDeps(messages, () => {
+				S.Comment.prependPosts(subId, messages);
+				S.Comment.setHasMorePosts(subId, messages.length >= POST_LIMIT);
+				callBack?.();
+			});
 		});
-	}, [ discussionId, subId ]);
+	}, [ discussionId, subId, loadDeps ]);
 
 	const ensureDiscussion = useCallback((callBack: (id: string) => void) => {
 		if (discussionId) {
@@ -217,7 +262,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		});
 	}, [ rootId, discussionId ]);
 
-	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[]) => {
+	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToBlocks(parts);
 		const { account } = S.Auth;
 
@@ -235,6 +280,13 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 		ensureDiscussion((id: string) => {
 			const sid = U.Comment.getSubId(targetType, id);
+
+			// Seed attachment details so optimistic post can render them
+			if (attachmentObjects?.length) {
+				for (const obj of attachmentObjects) {
+					S.Detail.update(sid, { id: obj.id, details: obj }, false);
+				};
+			};
 
 			C.ChatAddMessage(id, msg as any, (response: any) => {
 				if (response.error.code) {

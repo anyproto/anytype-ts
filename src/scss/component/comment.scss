@@ -44,15 +44,11 @@
 			.hoverActions { opacity: 1; }
 		}
 
-		.repliesToggle { @include text-small; color: var(--color-text-secondary); user-select: none; }
-		.repliesToggle:hover { color: var(--color-text-primary); }
-
 		.replyList { margin: 8px 0px 0px 40px; padding-left: 12px; border-left: 2px solid var(--color-shape-secondary); }
 		.replyFormWrap {
-			margin: 12px -16px -16px -16px; padding: 0px;
-			border-top: 1px solid var(--color-shape-secondary);
+			margin: 12px 0px 0px 0px; padding: 0px;
 
-			.commentForm { border-radius: 0px 0px 16px 16px; background-color: transparent; }
+			.commentForm { border-radius: 14px; background-color: var(--color-bg-primary); }
 			.commentForm .contentArea { padding: 8px 12px; }
 		}
 
@@ -116,17 +112,6 @@
 	.commentForm {
 		.contentArea { padding: 10px 12px; overflow-y: auto; flex: 1 1 auto; }
 
-		.attachmentList { display: flex; flex-direction: column; gap: 8px; padding: 8px 0px 0px 0px; }
-		.attachmentList {
-			.attachment {
-				width: 100%; border-radius: 12px; border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary);
-			}
-			.attachment .image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; }
-			.attachment .mediaWrapper { max-height: 200px; overflow: hidden; }
-			.attachment.isImage { width: auto; max-width: 100%; height: auto; }
-			.attachment.isImage .mediaWrapper { display: flex; align-items: center; justify-content: center; }
-		}
-
 		.formToolbar {
 			display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
 			flex-shrink: 0; min-height: 36px;
@@ -176,7 +161,7 @@
 			min-height: 20px; padding: 0px; border: 0px; background-color: transparent;
 			outline: none; line-height: 20px; word-break: break-word;
 		}
-		.commentEditorInput > :first-child { margin-top: 0px; }
+		.commentEditorInput > :first-child { padding-top: 0px; }
 
 		.commentEditorPlaceholder {
 			position: absolute; top: 0px; left: 0px; color: var(--color-text-tertiary);
@@ -193,20 +178,20 @@
 		font-family: 'Plex Mono', monospace; font-size: 0.9em;
 		background: var(--color-shape-tertiary); padding: 1px 4px; border-radius: 4px;
 	}
-	.commentEditor-paragraph { margin: 8px 0px 0px 0px; }
+	.commentEditor-paragraph { padding: 8px 0px 0px 0px; }
 	.commentEditor-mention { color: var(--color-system-accent-100); font-weight: 500; }
 
-	.commentEditor-h1 { margin: 20px 0px 0px 0px; font-size: 28px; font-weight: 700; line-height: 32px; }
-	.commentEditor-h2 { margin: 16px 0px 0px 0px; font-size: 22px; font-weight: 700; line-height: 28px; }
-	.commentEditor-h3 { margin: 12px 0px 0px 0px; font-size: 18px; font-weight: 700; line-height: 26px; }
+	.commentEditor-h1 { padding: 20px 0px 0px 0px; font-size: 28px; font-weight: 700; line-height: 32px; }
+	.commentEditor-h2 { padding: 16px 0px 0px 0px; font-size: 22px; font-weight: 700; line-height: 28px; }
+	.commentEditor-h3 { padding: 12px 0px 0px 0px; font-size: 18px; font-weight: 700; line-height: 26px; }
 
 	.commentEditor-quote {
-		margin: 4px 0px; padding: 0px 0px 0px 12px;
+		padding: 4px 0px 4px 12px;
 		border-left: 4px solid var(--color-shape-secondary);
 	}
 
 	.commentEditor-codeBlock {
-		display: block; margin: 4px 0px; padding: 12px; background: var(--color-shape-highlight-light); border-radius: 8px;
+		display: block; padding: 16px 12px 16px 12px; background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px; white-space: pre-wrap; tab-size: 4;
 		position: relative;
 
@@ -231,12 +216,12 @@
 		.codeLangBtn:hover { color: var(--color-text-primary); background: var(--color-shape-highlight-dark); }
 	}
 
-	.commentEditor-ul { margin: 2px 0px; padding-left: 20px; list-style-type: disc; }
-	.commentEditor-ol { margin: 2px 0px; padding-left: 20px; list-style-type: decimal; }
-	.commentEditor-li { margin: 1px 0px; }
+	.commentEditor-ul { padding: 2px 0px 2px 20px; list-style-type: disc; }
+	.commentEditor-ol { padding: 2px 0px 2px 20px; list-style-type: decimal; }
+	.commentEditor-li { padding: 1px 0px; }
 	.commentEditor-ul:has(> .commentEditor-li-checked, > .commentEditor-li-unchecked) { padding-left: 0px; list-style-type: none; }
 	.commentEditor-li-checked,
-	.commentEditor-li-unchecked { list-style: none; margin: 1px 0px; position: relative; padding-left: 22px; }
+	.commentEditor-li-unchecked { list-style: none; padding: 1px 0px 1px 22px; position: relative; }
 	.commentEditor-li-checked::before,
 	.commentEditor-li-unchecked::before {
 		content: ''; position: absolute; left: 0px; top: 0px;
@@ -246,23 +231,86 @@
 	.commentEditor-li-checked::before { background-image: url('~img/icon/marker/checkbox2.svg'); }
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
-	.commentEditor-divider { margin: 8px 0px; }
+	.commentEditor-attachment { padding: 4px 0px; }
+	.commentEditor-attachment {
+		.attachment {
+			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
+			border-radius: 8px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary);
+			box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
+		}
+		.attachment {
+			.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 12px; width: 100%; }
+			.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
+			.info { flex-grow: 1; width: 100%; }
+			.name { line-height: 20px; font-weight: 500; @include clamp1; }
+			.descr { @include text-small; @include clamp1; color: var(--color-text-secondary); }
+			.icon.syncStatus { display: none; }
+
+			.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; display: block; }
+
+			.mediaWrapper {
+				position: relative; max-height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+				border-radius: 12px; width: 100%; height: 100%;
+			}
+			.mediaWrapper {
+				.blur {
+					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px;
+					background-size: cover; -webkit-filter: blur(64px);
+				}
+			}
+
+			.icon.remove {
+				opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px;
+				background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
+			}
+
+			&.isFile {
+				.iconWrapper { width: 48px; height: 48px; position: relative; }
+				.iconObject { background-color: unset; }
+				.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+				.descr { .bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); } }
+			}
+
+			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; background: unset; border: none; box-shadow: none; }
+			&.withBlur { .image { position: relative; z-index: 1; } }
+
+			&.isBookmark {
+				.inner { display: flex; flex-direction: row; gap: 0px 16px; padding: 12px; width: 100%; }
+				.inner.withImage { .side.right { flex-shrink: 0; } }
+				.link { display: flex; align-items: center; gap: 0px 4px; @include text-small; color: var(--color-text-secondary); }
+				.source { @include clamp1; }
+				.objectName { @include clamp1; font-weight: 500; margin: 4px 0px 0px 0px; }
+				.description { @include text-small; @include clamp2; color: var(--color-text-secondary); margin: 2px 0px 0px 0px; }
+				.img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+			}
+
+			&.isVideo {
+				.mediaWrapper { max-height: 200px; }
+				.mediaVideo { position: relative; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; }
+				video { width: 100%; display: block; object-fit: cover; }
+			}
+			&.isAudio { border: none; background: none; }
+		}
+		.attachment:hover { .icon.remove { opacity: 1; } }
+	}
+
+	.commentEditor-divider { padding: 8px 0px; }
 	.commentEditor-hr { border: none; border-top: 1px solid var(--color-shape-secondary); margin: 0px; }
 
 	/* ---- Rendered Post Block Styles ---- */
 
-	.commentH1 { margin: 20px 0px 0px 0px; @include text-header1; }
-	.commentH2 { margin: 16px 0px 0px 0px; @include text-header2; }
-	.commentH3 { margin: 12px 0px 0px 0px; @include text-header3; }
+	.commentH1 { padding: 20px 0px 0px 0px; @include text-header1; }
+	.commentH2 { padding: 16px 0px 0px 0px; @include text-header2; }
+	.commentH3 { padding: 12px 0px 0px 0px; @include text-header3; }
 	.commentParagraph { line-height: 20px; }
-	.commentParagraph + .commentParagraph { margin-top: 8px; }
+	.commentParagraph + .commentParagraph { padding-top: 8px; }
 
 	.commentBlockquote {
-		margin: 4px 0px; padding: 0px 0px 0px 12px; border-left: 4px solid var(--color-shape-secondary); line-height: 20px;
+		padding: 4px 0px 4px 12px; border-left: 4px solid var(--color-shape-secondary); line-height: 20px;
 	}
 
 	.commentCodeBlock {
-		margin: 4px 0px; padding: 12px; position: relative;
+		padding: 16px 12px 16px 12px; position: relative;
 		background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 		white-space: pre-wrap; tab-size: 4; overflow-x: auto;
@@ -301,22 +349,61 @@
 	/* Rendered attachments in posts */
 	.commentAttachments { display: flex; flex-direction: column; gap: 8px; }
 	.commentAttachments {
-		.attachment { width: 100%; border-radius: 12px; border: 1px solid var(--color-shape-secondary); }
-		.attachment .image { max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; }
-		.attachment .mediaWrapper { max-height: 360px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-		.attachment.isImage { width: auto; max-width: 100%; height: auto; }
-		.attachment .remove { display: none; }
+		.attachment {
+			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
+		}
+		.attachment {
+			.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 12px; width: 100%; }
+			.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
+			.info { flex-grow: 1; width: 100%; }
+			.name { line-height: 20px; font-weight: 500; @include clamp1; }
+			.descr { @include text-small; @include clamp1; color: var(--color-text-secondary); }
+			.image { max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; }
+			.icon.remove { display: none; }
+
+			.mediaWrapper {
+				position: relative; max-height: 360px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+				border-radius: 12px; width: 100%; height: 100%;
+			}
+			.mediaWrapper {
+				.blur { 
+					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px; background-size: cover; 
+					-webkit-filter: blur(64px);
+				}
+			}
+
+			&.isFile {
+				.iconWrapper { width: 48px; height: 48px; position: relative; }
+				.iconObject { background-color: unset; }
+				.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+				.descr { .bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); } }
+			}
+
+			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; }
+			&.isImage {
+				.image { display: block; }
+			}
+
+			&.withBlur {
+				.image { position: relative; z-index: 1; }
+			}
+
+			&.isVideo {
+				.mediaVideo { position: relative; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; }
+				video { width: 100%; display: block; object-fit: cover; }
+			}
+		}
 	}
 
-	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); margin: 8px 0px; }
+	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); padding: 8px 0px; }
 
-	ul.commentList, ol.commentList { margin: 2px 0px; padding-left: 20px; line-height: 20px; }
-	.commentList li { margin: 1px 0px; }
+	ul.commentList, ol.commentList { padding: 2px 0px 2px 20px; line-height: 20px; }
+	.commentList li { padding: 1px 0px; }
 	.commentUl { list-style-type: disc; }
 	.commentOl { list-style-type: decimal; }
 
-	.commentChecklist { margin: 2px 0px; }
-	.commentCheckbox { display: flex; align-items: flex-start; gap: 0px 6px; margin: 1px 0px; line-height: 20px; }
+	.commentChecklist { padding: 2px 0px; }
+	.commentCheckbox { display: flex; align-items: flex-start; gap: 0px 6px; padding: 1px 0px; line-height: 20px; }
 	.commentCheckbox {
 		.checkboxMark {
 			width: 20px; height: 20px; min-width: 20px;
@@ -329,6 +416,6 @@
 		}
 	}
 
-	.content > :first-child { margin-top: 0px; }
+	.content > :first-child { padding-top: 0px; }
 
 }

@@ -42,6 +42,7 @@ import {
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
 import { I, J, S, U, keyboard } from 'Lib';
+import Attachment from 'Component/block/chat/attachment';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
@@ -86,6 +87,85 @@ class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
 };
 
 export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZONTAL_RULE_COMMAND');
+
+// Attachment node — renders ChatAttachment inline in the editor
+export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
+export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
+
+class AttachmentNode extends DecoratorNode<JSX.Element> {
+
+	__attachmentData: any;
+
+	static getType (): string {
+		return 'attachment';
+	};
+
+	static clone (node: AttachmentNode): AttachmentNode {
+		return new AttachmentNode(node.__attachmentData, node.__key);
+	};
+
+	constructor (data: any, key?: string) {
+		super(key);
+		this.__attachmentData = data;
+	};
+
+	createDOM (): HTMLElement {
+		const el = document.createElement('div');
+		el.className = 'commentEditor-attachment';
+		return el;
+	};
+
+	updateDOM (): boolean {
+		return false;
+	};
+
+	isIsolated (): boolean {
+		return true;
+	};
+
+	decorate (): JSX.Element {
+		return <AttachmentDecorator nodeKey={this.__key} data={this.__attachmentData} />;
+	};
+
+	exportJSON () {
+		return {
+			type: 'attachment',
+			version: 1,
+			attachmentData: this.__attachmentData,
+		};
+	};
+
+	static importJSON (json: any): AttachmentNode {
+		return new AttachmentNode(json.attachmentData);
+	};
+
+	getAttachmentData (): any {
+		return this.__attachmentData;
+	};
+
+};
+
+const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const object = { syncStatus: I.SyncStatusObject.Synced, ...data };
+
+	return (
+		<Attachment
+			object={object}
+			onRemove={() => {
+				editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
+			}}
+		/>
+	);
+};
+
+function $createAttachmentNode (data: any): AttachmentNode {
+	return new AttachmentNode(data);
+};
+
+function $isAttachmentNode (node: LexicalNode | null | undefined): node is AttachmentNode {
+	return node instanceof AttachmentNode;
+};
 
 class MentionNode extends TextNode {
 
@@ -171,6 +251,10 @@ interface RefProps {
 	toggleFormat: (format: TextFormatType) => void;
 	setBlockStyle: (style: I.TextStyle) => void;
 	getCurrentBlockStyle: () => I.TextStyle;
+	insertAttachment: (data: any) => void;
+	removeAttachment: (key: string) => void;
+	getAttachments: () => any[];
+	clearAttachments: () => void;
 };
 
 const theme = {
@@ -328,6 +412,19 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 		const children = root.getChildren();
 
 		for (const node of children) {
+			// Attachment node — include as a link part
+			if (node instanceof AttachmentNode) {
+				const data = node.getAttachmentData();
+				parts.push({
+					style: I.TextStyle.Paragraph,
+					type: I.BlockType.Link,
+					text: '',
+					marks: [],
+					attachmentData: data,
+				});
+				continue;
+			};
+
 			// Horizontal rule (decorator)
 			if (node instanceof HorizontalRuleNode) {
 				parts.push({
@@ -1014,6 +1111,55 @@ const HorizontalRulePlugin = () => {
 	return null;
 };
 
+const AttachmentPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		const unregisterInsert = editor.registerCommand(
+			INSERT_ATTACHMENT_COMMAND,
+			(data: any) => {
+				editor.update(() => {
+					const root = $getRoot();
+					const attachmentNode = $createAttachmentNode(data);
+					const lastChild = root.getLastChild();
+
+					// Insert before the last paragraph if it's empty, otherwise append
+					if ($isElementNode(lastChild) && (lastChild.getType() === 'paragraph') && !lastChild.getTextContent()) {
+						lastChild.insertBefore(attachmentNode);
+					} else {
+						root.append(attachmentNode);
+						const p = $createParagraphNode();
+						root.append(p);
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		const unregisterRemove = editor.registerCommand(
+			REMOVE_ATTACHMENT_COMMAND,
+			(nodeKey: string) => {
+				editor.update(() => {
+					const node = $getNodeByKey(nodeKey);
+					if ($isAttachmentNode(node)) {
+						node.remove();
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		return () => {
+			unregisterInsert();
+			unregisterRemove();
+		};
+	}, [ editor ]);
+
+	return null;
+};
+
 const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
@@ -1082,8 +1228,9 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 								.map(section => ({
 									...section,
 									children: section.children.filter((it: any) =>
-										(it.name || '').toLowerCase().includes(s) ||
-										(it.description || '').toLowerCase().includes(s)
+										!it.arrow &&
+										((it.name || '').toLowerCase().includes(s) ||
+										(it.description || '').toLowerCase().includes(s))
 									),
 								}))
 								.filter(section => section.children.length > 0);
@@ -1109,6 +1256,8 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 	return null;
 };
 
+let slashMenuContext: any = null;
+
 const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>) => {
 	const rect = U.Common.getSelectionRect();
 	if (!rect) {
@@ -1116,6 +1265,37 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	};
 
 	const win = $(window);
+
+	const removeSlashText = (filterLen: number) => {
+		editor.update(() => {
+			const root = $getRoot();
+			const children = root.getChildren();
+
+			for (const child of children) {
+				if (!$isElementNode(child)) {
+					continue;
+				};
+
+				for (const textChild of child.getChildren()) {
+					if (!$isTextNode(textChild)) {
+						continue;
+					};
+
+					const text = textChild.getTextContent();
+					const offset = slashOffset.current;
+
+					if ((offset >= 0) && (offset < text.length) && (text[offset] === '/')) {
+						const before = text.slice(0, offset);
+						const after = text.slice(offset + 1 + filterLen);
+						textChild.setTextContent(before + after);
+						textChild.select(before.length, before.length);
+						slashOffset.current = -1;
+						return;
+					};
+				};
+			};
+		});
+	};
 
 	S.Menu.open('commentAdd', {
 		component: 'select',
@@ -1125,46 +1305,92 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 		offsetY: 4,
 		noAnimation: true,
 		commonFilter: true,
+		subIds: [ 'typeSuggest', 'select' ],
+		onOpen: (context: any) => { slashMenuContext = context; },
 		data: {
 			sections: U.Menu.getCommentAddSections(),
 			noFilter: true,
 			filter: '',
 			noClose: true,
+			onOver: (_e: any, item: any) => {
+				if (!item.arrow) {
+					S.Menu.closeAll([ 'typeSuggest', 'select' ]);
+					return;
+				};
+
+				const context = slashMenuContext;
+				if (!context) {
+					return;
+				};
+
+				if (item.id === 'create') {
+					U.Menu.typeSuggest({
+						element: `#${context.getId()} #item-create`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						offsetX: context.getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+						data: {
+							onAdd: () => context?.close(),
+						},
+					}, {}, { noButtons: true }, '', (object: any) => {
+						const menu = S.Menu.get('commentAdd');
+						const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
+						removeSlashText(filterLen);
+
+						const el = document.getElementById(editorId);
+						if (el) {
+							el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: 'createCallback', object } }));
+						};
+						context?.close();
+					});
+				};
+
+				if (item.id === 'embed') {
+					const embedOptions = U.Menu.getBlockEmbed().map(it => ({
+						...it,
+						action: 'embed',
+						embedProcessor: it.id,
+					}));
+
+					S.Menu.open('select', {
+						element: `#${context.getId()} #item-embed`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						offsetX: context.getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+						data: {
+							options: embedOptions,
+							noVirtualisation: true,
+							noScroll: true,
+							onSelect: (_e: any, embedItem: any) => {
+								const menu = S.Menu.get('commentAdd');
+								const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
+
+								S.Menu.close('commentAdd');
+								removeSlashText(filterLen);
+
+								const el = document.getElementById(editorId);
+								if (el) {
+									el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: embedItem.action, embedProcessor: embedItem.embedProcessor } }));
+								};
+							},
+						},
+					});
+				};
+			},
 			onSelect: (_e: any, item: any) => {
+				if (item.arrow) {
+					return;
+				};
+
 				const menu = S.Menu.get('commentAdd');
 				const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
 
 				S.Menu.close('commentAdd');
-
-				// Remove the slash character and any filter text after it
-				editor.update(() => {
-					const root = $getRoot();
-					const children = root.getChildren();
-
-					for (const child of children) {
-						if (!$isElementNode(child)) {
-							continue;
-						};
-
-						for (const textChild of child.getChildren()) {
-							if (!$isTextNode(textChild)) {
-								continue;
-							};
-
-							const text = textChild.getTextContent();
-							const offset = slashOffset.current;
-
-							if ((offset >= 0) && (offset < text.length) && (text[offset] === '/')) {
-								const before = text.slice(0, offset);
-								const after = text.slice(offset + 1 + filterLen);
-								textChild.setTextContent(before + after);
-								textChild.select(before.length, before.length);
-								slashOffset.current = -1;
-								return;
-							};
-						};
-					};
-				});
+				removeSlashText(filterLen);
 
 				// Handle block transforms and action items
 				if (item.action) {
@@ -1664,7 +1890,8 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		editor.getEditorState().read(() => {
 			const root = $getRoot();
 			const text = root.getTextContent().trim();
-			empty = !text;
+			const hasAttachments = root.getChildren().some(n => n instanceof AttachmentNode);
+			empty = !text && !hasAttachments;
 		});
 
 		return empty;
@@ -1842,12 +2069,52 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		toggleFormat,
 		setBlockStyle,
 		getCurrentBlockStyle,
+
+		insertAttachment: (data: any) => {
+			editorRef.current?.dispatchCommand(INSERT_ATTACHMENT_COMMAND, data);
+		},
+
+		removeAttachment: (key: string) => {
+			editorRef.current?.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, key);
+		},
+
+		getAttachments: () => {
+			const editor = editorRef.current;
+			if (!editor) {
+				return [];
+			};
+
+			const result: any[] = [];
+			editor.getEditorState().read(() => {
+				const root = $getRoot();
+				for (const node of root.getChildren()) {
+					if (node instanceof AttachmentNode) {
+						result.push(node.getAttachmentData());
+					};
+				};
+			});
+			return result;
+		},
+
+		clearAttachments: () => {
+			const editor = editorRef.current;
+			if (editor) {
+				editor.update(() => {
+					const root = $getRoot();
+					for (const node of root.getChildren()) {
+						if (node instanceof AttachmentNode) {
+							node.remove();
+						};
+					};
+				});
+			};
+		},
 	}));
 
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, AttachmentNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -1874,6 +2141,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<InitialPartsPlugin parts={initialParts} />
 				<EditorRefPlugin editorRef={editorRef} />
 				<HorizontalRulePlugin />
+				<AttachmentPlugin />
 				<SlashMenuPlugin editorId={editorId} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiPlugin editorId={editorId} />

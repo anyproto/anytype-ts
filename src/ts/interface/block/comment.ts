@@ -12,6 +12,11 @@ export interface CommentContentPart {
 	marks: I.Mark[];
 	checked?: boolean;
 	lang?: string;
+	link?: {
+		targetObjectId: string;
+		type: I.ChatMessageBlockLinkType;
+	};
+	attachmentData?: any;
 };
 
 export interface CommentMessage {

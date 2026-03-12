@@ -21,12 +21,30 @@ const REPLY_LIMIT = 10;
 /**
  * Render a single CommentContentPart to HTML
  */
-const renderPart = (part: I.CommentContentPart, index: number): JSX.Element => {
+const renderPart = (part: I.CommentContentPart, index: number, subId?: string): JSX.Element => {
 	const key = `part-${index}`;
 
 	// Divider
 	if (part.type === I.BlockType.Div) {
 		return <hr key={key} className="commentDivider" />;
+	};
+
+	// Link (attachment)
+	if ((part.type === I.BlockType.Link) && part.link) {
+		const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;
+		if (!object || object._empty_) {
+			return <React.Fragment key={key} />;
+		};
+
+		return (
+			<div key={key} className="commentAttachments">
+				<Attachment
+					object={object}
+					subId={subId}
+					onRemove={() => {}}
+				/>
+			</div>
+		);
 	};
 
 	const html = U.String.sanitize(Mark.toHtml(part.text || '', part.marks || []));
@@ -88,7 +106,7 @@ const renderPart = (part: I.CommentContentPart, index: number): JSX.Element => {
 /**
  * Group consecutive list items and wrap them in appropriate list elements
  */
-const renderParts = (parts: I.CommentContentPart[]): JSX.Element[] => {
+const renderParts = (parts: I.CommentContentPart[], subId?: string): JSX.Element[] => {
 	const elements: JSX.Element[] = [];
 	let i = 0;
 
@@ -133,7 +151,7 @@ const renderParts = (parts: I.CommentContentPart[]): JSX.Element[] => {
 			let j = i;
 
 			while ((j < parts.length) && (parts[j].style === I.TextStyle.Checkbox)) {
-				items.push(renderPart(parts[j], j));
+				items.push(renderPart(parts[j], j, subId));
 				j++;
 			};
 
@@ -142,7 +160,7 @@ const renderParts = (parts: I.CommentContentPart[]): JSX.Element[] => {
 			continue;
 		};
 
-		elements.push(renderPart(part, i));
+		elements.push(renderPart(part, i, subId));
 		i++;
 	};
 
@@ -234,6 +252,26 @@ const CommentPost = observer((props: Props) => {
 		});
 	}, [ isEditing, parts, subId ]);
 
+	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
+		const ids = U.Comment.getDepsIds(messages);
+
+		if (!ids.length) {
+			callBack?.();
+			return;
+		};
+
+		const keys = U.Subscription.chatRelationKeys();
+
+		U.Subscription.subscribeIds({
+			ids,
+			subId,
+			keys,
+			noDeps: true,
+			ignoreHidden: true,
+			crossSpace: true,
+		}, callBack);
+	}, [ subId ]);
+
 	const loadReplies = useCallback((initial?: boolean) => {
 		if (!initial && isLoadingReplies) {
 			return;
@@ -264,15 +302,17 @@ const CommentPost = observer((props: Props) => {
 					replyCount: 0,
 				}));
 
-			if (initial) {
-				S.Comment.setReplies(id, messages);
-			} else {
-				S.Comment.appendReplies(id, messages);
-			};
+			loadDeps(messages, () => {
+				if (initial) {
+					S.Comment.setReplies(id, messages);
+				} else {
+					S.Comment.appendReplies(id, messages);
+				};
 
-			S.Comment.setHasMoreReplies(id, messages.length >= REPLY_LIMIT);
+				S.Comment.setHasMoreReplies(id, messages.length >= REPLY_LIMIT);
+			});
 		});
-	}, [ id, targetId, isLoadingReplies ]);
+	}, [ id, targetId, isLoadingReplies, loadDeps ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
@@ -519,7 +559,7 @@ const CommentPost = observer((props: Props) => {
 		return (
 			<>
 				<div ref={contentRef} className="content">
-					{renderParts(parts)}
+					{renderParts(parts, subId)}
 				</div>
 				{renderAttachments()}
 			</>
@@ -556,22 +596,6 @@ const CommentPost = observer((props: Props) => {
 		);
 	};
 
-	const renderRepliesToggle = () => {
-		if (isEditing || !replyCount || isReplying) {
-			return null;
-		};
-
-		const label = replyCount == 1
-			? U.String.sprintf(translate('commentReplyCount'), replyCount)
-			: U.String.sprintf(translate('commentRepliesCount'), replyCount);
-
-		return (
-			<div className="repliesToggle" onClick={onReply}>
-				{label}
-			</div>
-		);
-	};
-
 	return (
 		<div ref={postRef} className="commentPost">
 			{renderHoverActions()}
@@ -593,7 +617,6 @@ const CommentPost = observer((props: Props) => {
 
 				{renderContent()}
 				{renderReactions()}
-				{renderRepliesToggle()}
 
 				{isReplying ? (
 					<div className="replyFormWrap">
