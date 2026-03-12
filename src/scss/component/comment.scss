@@ -52,8 +52,6 @@
 			.commentForm .contentArea { padding: 8px 12px; }
 		}
 
-		.commentAttachments { margin: 8px 0px 0px 40px; }
-
 		.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center; }
 		.reactions {
 			.reaction {
@@ -97,8 +95,6 @@
 		&:hover {
 			.hoverActions { opacity: 1; }
 		}
-
-		.commentAttachments { margin: 4px 0px 0px 30px; }
 	}
 
 	/* ---- Comment Form ---- */
@@ -109,6 +105,11 @@
 		max-height: 360px; overflow: hidden;
 	}
 	.commentForm.isReply { max-height: 280px; }
+	.commentForm.isEdit { background-color: transparent; max-height: none; overflow: visible; }
+	.commentForm.isEdit {
+		.contentArea { padding: 0px; }
+		.formToolbar { padding: 8px 0px 0px 0px; margin-left: -40px; }
+	}
 	.commentForm {
 		.contentArea { padding: 10px 12px; overflow-y: auto; flex: 1 1 auto; }
 
@@ -136,13 +137,7 @@
 				.icon.send { width: 20px; height: 20px; background-image: url('~img/icon/comment/send.svg'); }
 			}
 
-			.btn.save {
-				@include text-small; font-weight: 500; padding: 0px 16px; height: 28px;
-				display: flex; align-items: center; justify-content: center;
-				border-radius: 14px; background: var(--color-control-accent); color: #fff; user-select: none;
-			}
-			.btn.save:hover { opacity: 0.9; }
-			.btn.save.isDisabled { opacity: 0.35; pointer-events: none; }
+			.btn.save { user-select: none; }
 
 			.btn.cancel { @include text-small; color: var(--color-text-secondary); user-select: none; }
 			.btn.cancel:hover { color: var(--color-text-primary); }
@@ -285,9 +280,9 @@
 			}
 
 			&.isVideo {
-				.mediaWrapper { max-height: 200px; }
+				.mediaWrapper { aspect-ratio: 16/9; max-height: none; height: auto; }
 				.mediaVideo { position: relative; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; }
-				video { width: 100%; display: block; object-fit: cover; }
+				video { width: 100%; height: 100%; display: block; object-fit: cover; }
 			}
 			&.isAudio { border: none; background: none; }
 		}
@@ -389,8 +384,9 @@
 			}
 
 			&.isVideo {
+				.mediaWrapper { aspect-ratio: 16/9; max-height: none; height: auto; }
 				.mediaVideo { position: relative; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; }
-				video { width: 100%; display: block; object-fit: cover; }
+				video { width: 100%; height: 100%; display: block; object-fit: cover; }
 			}
 		}
 	}

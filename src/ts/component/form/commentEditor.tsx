@@ -648,6 +648,13 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 				continue;
 			};
 
+			// Link (attachment)
+			if ((part.type === I.BlockType.Link) && part.attachmentData) {
+				root.append($createAttachmentNode(part.attachmentData));
+				i++;
+				continue;
+			};
+
 			// Lists — group consecutive items of the same list style
 			if ([ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(part.style)) {
 				const listStyle = part.style;

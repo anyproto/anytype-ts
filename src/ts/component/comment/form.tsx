@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Button } from 'Component';
 import { I, C, J, S, U, keyboard, translate, Storage } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
 
@@ -599,12 +599,12 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 									{translate('commonCancel')}
 								</div>
 							) : ''}
-							<div
-								className={[ 'btn', 'save', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+							<Button
+								className={[ 'btn', 'save', 'c28', (isDisabled ? 'disabled' : '') ].join(' ')}
+								color="accent"
+								text={translate('commonSave')}
 								onClick={onSendClick}
-							>
-								{translate('commonSave')}
-							</div>
+							/>
 						</>
 					) : (
 						<div

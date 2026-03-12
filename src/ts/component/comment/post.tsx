@@ -554,10 +554,20 @@ const CommentPost = observer((props: Props) => {
 
 	const renderContent = () => {
 		if (isEditing) {
+			const editParts = parts.map(part => {
+				if ((part.type === I.BlockType.Link) && part.link) {
+					const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;
+					if (object && !object._empty_) {
+						return { ...part, attachmentData: object };
+					};
+				};
+				return part;
+			});
+
 			return (
 				<CommentForm
 					rootId={rootId}
-					initialParts={parts}
+					initialParts={editParts}
 					isEdit={true}
 					onSubmit={onSaveEdit}
 					onCancel={onCancelEdit}
@@ -606,7 +616,7 @@ const CommentPost = observer((props: Props) => {
 	};
 
 	return (
-		<div ref={postRef} className="commentPost">
+		<div ref={postRef} className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')}>
 			{renderHoverActions()}
 
 			<IconObject
