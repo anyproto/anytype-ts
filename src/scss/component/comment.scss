@@ -194,7 +194,7 @@
 		background: var(--color-shape-tertiary); padding: 1px 4px; border-radius: 4px;
 	}
 	.commentEditor-paragraph { margin: 8px 0px 0px 0px; }
-	.commentEditor-mention { color: var(--color-control-accent); font-weight: 500; }
+	.commentEditor-mention { color: var(--color-system-accent-100); font-weight: 500; }
 
 	.commentEditor-h1 { margin: 20px 0px 0px 0px; font-size: 28px; font-weight: 700; line-height: 32px; }
 	.commentEditor-h2 { margin: 16px 0px 0px 0px; font-size: 22px; font-weight: 700; line-height: 28px; }
@@ -281,17 +281,17 @@
 	/* Rendered mention and link styles */
 	.content, .commentParagraph, .commentH1, .commentH2, .commentH3, .commentBlockquote {
 		markupmention {
-			color: var(--color-control-accent); font-weight: 500;
+			color: var(--color-system-accent-100); font-weight: 500;
 
 			smile, .space { display: none; }
 			name { color: inherit; font-weight: inherit; }
 		}
 
-		a { color: var(--color-control-accent); text-decoration: underline; text-decoration-skip-ink: auto; }
+		a { color: var(--color-system-accent-100); text-decoration: underline; text-decoration-skip-ink: auto; }
 		a:hover { text-decoration: none; }
 
 		markupobject {
-			color: var(--color-control-accent); font-weight: 500;
+			color: var(--color-system-accent-100); font-weight: 500;
 
 			smile, .space { display: none; }
 			name { color: inherit; font-weight: inherit; }
@@ -337,14 +337,17 @@
 
 /* ---- Formatting Toolbar ---- */
 
-.menu.menuCommentToolbar {
-	.buttons { display: flex; align-items: center; gap: 0px 2px; }
-	.buttons {
-		.icon {
-			width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
-			user-select: none;
-		}
-		.icon:hover { background: var(--color-shape-tertiary); }
-		.icon.active { background: var(--color-shape-highlight-medium); }
+.menus {
+	.menu.menuCommentToolbar { padding: 0px; height: 44px; transform-origin: 50% 50% !important; }
+	.menu.menuCommentToolbar {
+		.section { padding: 6px 12px; }
+		.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
+		.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+
+		.icon.active.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
+		.icon.active.kbd { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
+		.icon.active.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
+		.icon.active.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+		.icon.active.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
 	}
 }

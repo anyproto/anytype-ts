@@ -662,6 +662,85 @@ const FormattingPlugin = () => {
 	return null;
 };
 
+const SelectionToolbarPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		const removeListener = editor.registerUpdateListener(() => {
+			editor.getEditorState().read(() => {
+				const selection = $getSelection();
+
+				if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+					if (S.Menu.isOpen('commentToolbar')) {
+						S.Menu.close('commentToolbar');
+					};
+					return;
+				};
+
+				const root = editor.getRootElement();
+				if (!root) {
+					return;
+				};
+
+				const win = $(window);
+
+				const getActiveFormats = () => {
+					let formats: any = {};
+					editor.getEditorState().read(() => {
+						const sel = $getSelection();
+						if ($isRangeSelection(sel)) {
+							formats = {
+								bold: sel.hasFormat('bold'),
+								italic: sel.hasFormat('italic'),
+								strikethrough: sel.hasFormat('strikethrough'),
+								underline: sel.hasFormat('underline'),
+								code: sel.hasFormat('code'),
+							};
+						};
+					});
+					return formats;
+				};
+
+				const onToggleFormat = (type: string) => {
+					editor.dispatchCommand(FORMAT_TEXT_COMMAND, type as TextFormatType);
+				};
+
+				if (S.Menu.isOpen('commentToolbar')) {
+					S.Menu.updateData('commentToolbar', { getActiveFormats });
+					return;
+				};
+
+				const wrap = root.closest('.commentEditorWrap');
+
+				S.Menu.open('commentToolbar', {
+					element: wrap ? $(wrap) : $(root),
+					recalcRect: () => {
+						const rect = U.Common.getSelectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					},
+					type: I.MenuType.Horizontal,
+					offsetY: -8,
+					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
+					passThrough: true,
+					noAnimation: true,
+					data: {
+						getActiveFormats,
+						onToggleFormat,
+					},
+				});
+			});
+		});
+
+		return () => {
+			removeListener();
+			S.Menu.close('commentToolbar');
+		};
+	}, [ editor ]);
+
+	return null;
+};
+
 const FocusPlugin = ({ onFocus, onBlur }: { onFocus?: () => void; onBlur?: () => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 
@@ -1059,6 +1138,7 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
+		commonFilter: true,
 		noAnimation: true,
 		data: {
 			pronounId: participantId,
@@ -1598,6 +1678,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<SubmitPlugin onSubmit={handleSubmit} />
 				<EscapePlugin onCancel={onCancel} />
 				<FormattingPlugin />
+				<SelectionToolbarPlugin />
 				<FocusPlugin onFocus={onFocus} onBlur={onBlur} />
 				<InitialPartsPlugin parts={initialParts} />
 				<EditorRefPlugin editorRef={editorRef} />
