@@ -1,5 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { I, S, U, J, Relation } from 'Lib';
+import { I, C, S, U, J, Relation, Preview, translate } from 'Lib';
 import { DragEvent } from 'react';
 
 const SIZE_UNIT = 1024;
@@ -280,6 +280,265 @@ class UtilFile {
 	checkDropFiles (e: DragEvent): boolean {
 		const dt = e.dataTransfer;
 		return ((dt.files && dt.files.length) || (dt.types && dt.types.includes('Files'))) ? true : false;
+	};
+
+	/**
+	 * Recursively scans a directory and returns its tree structure.
+	 * Skips hidden files, known junk, and skip-listed directories.
+	 */
+	scanDirectory (dirPath: string): { name: string; path: string; files: string[]; children: any[]; totalFiles: number } {
+		const electron = U.Common.getElectron();
+		const skipDirs = J.Constant.fileUpload.skipDirs;
+		const dirName = electron.fileName(dirPath);
+
+		const result = {
+			name: dirName,
+			path: dirPath,
+			files: [] as string[],
+			children: [] as any[],
+			totalFiles: 0,
+		};
+
+		const entries: string[] = electron.readDir(dirPath);
+
+		for (let i = 0; i < entries.length; i++) {
+			const entry = entries[i];
+
+			if (entry.startsWith('.') || (entry == 'Thumbs.db')) {
+				continue;
+			};
+
+			const fullPath = electron.filePath(dirPath, entry);
+
+			if (electron.isDirectory(fullPath)) {
+				if (skipDirs.includes(entry)) {
+					continue;
+				};
+
+				const child = this.scanDirectory(fullPath);
+				result.children.push(child);
+				result.totalFiles += child.totalFiles;
+			} else {
+				result.files.push(fullPath);
+				result.totalFiles++;
+			};
+		};
+
+		return result;
+	};
+
+	/**
+	 * Returns a breakdown of file counts by type (image, video, audio, file) for a list of paths.
+	 */
+	getFileCountsByType (paths: string[]): { [key: string]: number } {
+		const electron = U.Common.getElectron();
+		const counts: { [key: string]: number } = {};
+
+		for (const path of paths) {
+			const mime = electron.fileMime(path) || '';
+			const layout = this.layoutByMime(mime);
+			let key = 'file';
+
+			switch (layout) {
+				case I.ObjectLayout.Image: key = 'image'; break;
+				case I.ObjectLayout.Video: key = 'video'; break;
+				case I.ObjectLayout.Audio: key = 'audio'; break;
+			};
+
+			counts[key] = (counts[key] || 0) + 1;
+		};
+
+		return counts;
+	};
+
+	/**
+	 * Collects all file paths from a scanned directory tree.
+	 */
+	collectFiles (tree: any): string[] {
+		let files = [].concat(tree.files);
+
+		for (const child of tree.children) {
+			files = files.concat(this.collectFiles(child));
+		};
+
+		return files;
+	};
+
+	/**
+	 * Uploads folders as collections and inserts link blocks into the editor.
+	 */
+	uploadFolderAsCollection (dirPaths: string[], rootId: string, targetId: string, position: I.BlockPosition) {
+		const trees = dirPaths.map(p => this.scanDirectory(p));
+		let allFiles: string[] = [];
+
+		for (const tree of trees) {
+			allFiles = allFiles.concat(this.collectFiles(tree));
+		};
+
+		const totalFiles = allFiles.length;
+		const { softLimit, hardLimit } = J.Constant.fileUpload;
+
+		if (totalFiles > hardLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderTooManyTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
+					textConfirm: translate('commonOk'),
+					canCancel: false,
+					canConfirm: true,
+				},
+			});
+			return;
+		};
+
+		const counts = this.getFileCountsByType(allFiles);
+		const breakdown = this.formatCountsBreakdown(counts);
+
+		const doUpload = () => {
+			const space = S.Common.space;
+			const electron = U.Common.getElectron();
+			const progressId = `upload-${Date.now()}`;
+			const uploadCounts: { [key: string]: number } = {};
+			let completed = 0;
+
+			S.Progress.add({
+				id: progressId,
+				spaceId: space,
+				type: I.ProgressType.Drop,
+				state: I.ProgressState.Running,
+				current: 0,
+				total: totalFiles,
+				canCancel: false,
+			});
+
+			const createTree = (tree: any, parentColId: string, onDone: (colId: string) => void) => {
+				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
+					if (message.error.code) {
+						onDone('');
+						return;
+					};
+
+					const colId = message.details.id;
+
+					if (parentColId) {
+						C.ObjectCollectionAdd(parentColId, [ colId ]);
+					};
+
+					let pending = tree.files.length + tree.children.length;
+
+					if (!pending) {
+						onDone(colId);
+						return;
+					};
+
+					const check = () => {
+						pending--;
+						if (pending <= 0) {
+							onDone(colId);
+						};
+					};
+
+					for (const filePath of tree.files) {
+						const mime = electron.fileMime(filePath) || '';
+						const fileLayout = this.layoutByMime(mime);
+						const type = U.Object.getFileTypeByLayout(fileLayout);
+						const key = this.layoutToCountKey(fileLayout);
+
+						C.FileUpload(space, '', filePath, type, {}, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
+							completed++;
+							S.Progress.update({ id: progressId, current: completed });
+
+							if (!msg.error.code && msg.objectId) {
+								uploadCounts[key] = (uploadCounts[key] || 0) + 1;
+								C.ObjectCollectionAdd(colId, [ msg.objectId ]);
+							};
+
+							check();
+						});
+					};
+
+					for (const child of tree.children) {
+						createTree(child, colId, () => check());
+					};
+				});
+			};
+
+			let remaining = trees.length;
+			const topCollectionIds: string[] = [];
+
+			for (const tree of trees) {
+				createTree(tree, '', (colId: string) => {
+					if (colId) {
+						topCollectionIds.push(colId);
+					};
+
+					remaining--;
+
+					if (remaining <= 0) {
+						S.Progress.delete(progressId);
+						Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts });
+
+						for (const id of topCollectionIds) {
+							const linkParam = U.Data.getLinkBlockParam(id, I.ObjectLayout.Collection, false);
+							C.BlockCreate(rootId, targetId, position, linkParam);
+						};
+					};
+				});
+			};
+		};
+
+		if (totalFiles > softLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderConfirmTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
+					textConfirm: translate('commonUpload'),
+					textCancel: translate('commonCancel'),
+					canCancel: true,
+					canConfirm: true,
+					onConfirm: doUpload,
+				},
+			});
+			return;
+		};
+
+		doUpload();
+	};
+
+	/**
+	 * Maps an ObjectLayout to a count key string.
+	 */
+	layoutToCountKey (l: I.ObjectLayout): string {
+		switch (l) {
+			case I.ObjectLayout.Image: return 'image';
+			case I.ObjectLayout.Video: return 'video';
+			case I.ObjectLayout.Audio: return 'audio';
+			default: return 'file';
+		};
+	};
+
+	/**
+	 * Formats file counts into a human-readable breakdown string.
+	 */
+	formatCountsBreakdown (counts: { [key: string]: number }): string {
+		const pluralMap = {
+			image: translate('pluralImage'),
+			video: translate('pluralVideo'),
+			audio: translate('pluralAudio'),
+			file: translate('pluralFile'),
+		};
+
+		const parts: string[] = [];
+		for (const key of [ 'image', 'video', 'audio', 'file' ]) {
+			const n = counts[key];
+			if (n > 0) {
+				parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
+			};
+		};
+
+		return parts.join(', ');
 	};
 
 };

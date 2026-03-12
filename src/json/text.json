@@ -1463,6 +1463,10 @@
 	"popupUploadTabLink": "Link",
 	"popupUploadDropLabel": "Drag file here or Click to upload",
 	"popupUploadLinkPlaceholder": "Paste a link",
+	"popupUploadFolderTooManyTitle": "Too many files",
+	"popupUploadFolderTooManyText": "This folder contains %s files. Maximum is %s.",
+	"popupUploadFolderConfirmTitle": "Upload folder",
+	"popupUploadFolderConfirmText": "This folder contains %s. Do you want to upload them all?",
 
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",

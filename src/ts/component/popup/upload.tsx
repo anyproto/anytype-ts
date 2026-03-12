@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent }
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader } from 'Component';
-import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
+import { I, C, J, S, U, translate, Action, analytics, Preview } from 'Lib';
 
 enum Tab {
 	Upload = 0,
@@ -60,17 +60,27 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const electron = U.Common.getElectron();
-		const paths: string[] = [];
+		const filePaths: string[] = [];
+		const dirPaths: string[] = [];
 
 		for (let i = 0; i < files.length; i++) {
 			const path = electron.webFilePath(files[i]);
-			if (path) {
-				paths.push(path);
+			if (!path) {
+				continue;
+			};
+
+			if (electron.isDirectory(path)) {
+				dirPaths.push(path);
+			} else {
+				filePaths.push(path);
 			};
 		};
 
-		if (paths.length) {
-			uploadFiles(paths);
+		if (dirPaths.length) {
+			handleFolderDrop(dirPaths, filePaths);
+		} else
+		if (filePaths.length) {
+			uploadFiles(filePaths);
 		};
 	};
 
@@ -129,6 +139,224 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const showUploadToast = (counts: { [key: string]: number }) => {
 		Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
+	};
+
+	const formatCountsBreakdown = (counts: { [key: string]: number }): string => {
+		const pluralMap = {
+			image: translate('pluralImage'),
+			video: translate('pluralVideo'),
+			audio: translate('pluralAudio'),
+			file: translate('pluralFile'),
+		};
+
+		const parts: string[] = [];
+		for (const key of [ 'image', 'video', 'audio', 'file' ]) {
+			const n = counts[key];
+			if (n > 0) {
+				parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
+			};
+		};
+
+		return parts.join(', ');
+	};
+
+	const handleFolderDrop = (dirPaths: string[], extraFiles: string[]) => {
+		const trees = dirPaths.map(p => U.File.scanDirectory(p));
+		let allFiles = [].concat(extraFiles);
+
+		for (const tree of trees) {
+			allFiles = allFiles.concat(U.File.collectFiles(tree));
+		};
+
+		const totalFiles = allFiles.length;
+		const { softLimit, hardLimit } = J.Constant.fileUpload;
+
+		if (totalFiles > hardLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderTooManyTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
+					textConfirm: translate('commonOk'),
+					canCancel: false,
+					canConfirm: true,
+				},
+			});
+			return;
+		};
+
+		const counts = U.File.getFileCountsByType(allFiles);
+		const breakdown = formatCountsBreakdown(counts);
+
+		if (totalFiles > softLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderConfirmTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
+					textConfirm: translate('commonUpload'),
+					textCancel: translate('commonCancel'),
+					canCancel: true,
+					canConfirm: true,
+					onConfirm: () => {
+						processFolder(trees, extraFiles);
+					},
+				},
+			});
+			return;
+		};
+
+		processFolder(trees, extraFiles);
+	};
+
+	const processFolder = (trees: any[], extraFiles: string[]) => {
+		setIsLoading(true);
+
+		let allFiles: string[] = [].concat(extraFiles);
+		for (const tree of trees) {
+			allFiles = allFiles.concat(U.File.collectFiles(tree));
+		};
+
+		const progressId = `upload-${Date.now()}`;
+		const total = allFiles.length;
+
+		S.Progress.add({
+			id: progressId,
+			spaceId: S.Common.space,
+			type: I.ProgressType.Drop,
+			state: I.ProgressState.Running,
+			current: 0,
+			total,
+			canCancel: false,
+		});
+
+		const space = S.Common.space;
+		const electron = U.Common.getElectron();
+		let completed = 0;
+		const objectIds: string[] = [];
+		const counts: { [key: string]: number } = {};
+
+		const onAllDone = () => {
+			S.Progress.delete(progressId);
+			setIsLoading(false);
+			showUploadToast(counts);
+			onUpload?.(objectIds);
+			close();
+		};
+
+		const createCollectionTree = (tree: any, parentCollectionId: string, onDone: () => void) => {
+			const collType = J.Constant.typeKey.collection;
+
+			C.ObjectCreate({ name: tree.name }, [], '', collType, space, (message: any) => {
+				if (message.error.code) {
+					onDone();
+					return;
+				};
+
+				const colId = message.details.id;
+
+				if (parentCollectionId) {
+					C.ObjectCollectionAdd(parentCollectionId, [ colId ]);
+				};
+
+				if (collectionId) {
+					C.ObjectCollectionAdd(collectionId, [ colId ]);
+				};
+
+				let pending = tree.files.length + tree.children.length;
+
+				if (!pending) {
+					onDone();
+					return;
+				};
+
+				const checkDone = () => {
+					pending--;
+					if (pending <= 0) {
+						onDone();
+					};
+				};
+
+				for (const filePath of tree.files) {
+					const mime = electron.fileMime(filePath) || '';
+					const fileLayout = U.File.layoutByMime(mime);
+					const type = U.Object.getFileTypeByLayout(fileLayout);
+					const key = layoutToCountKey(fileLayout);
+
+					C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
+						completed++;
+						S.Progress.update({ id: progressId, current: completed });
+
+						if (!msg.error.code && msg.objectId) {
+							objectIds.push(msg.objectId);
+							counts[key] = (counts[key] || 0) + 1;
+							C.ObjectCollectionAdd(colId, [ msg.objectId ]);
+						};
+
+						checkDone();
+					});
+				};
+
+				for (const child of tree.children) {
+					createCollectionTree(child, colId, checkDone);
+				};
+			});
+		};
+
+		// Upload extra loose files first
+		let looseRemaining = extraFiles.length;
+
+		const onLooseDone = () => {
+			// Then process folder trees
+			let treeRemaining = trees.length;
+
+			if (!treeRemaining) {
+				onAllDone();
+				return;
+			};
+
+			for (const tree of trees) {
+				createCollectionTree(tree, '', () => {
+					treeRemaining--;
+					if (treeRemaining <= 0) {
+						onAllDone();
+					};
+				});
+			};
+		};
+
+		if (!looseRemaining) {
+			onLooseDone();
+			return;
+		};
+
+		for (const filePath of extraFiles) {
+			const mime = electron.fileMime(filePath) || '';
+			const fileLayout = U.File.layoutByMime(mime);
+			const type = U.Object.getFileTypeByLayout(fileLayout);
+			const key = layoutToCountKey(fileLayout);
+
+			C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
+				completed++;
+				S.Progress.update({ id: progressId, current: completed });
+
+				if (!message.error.code && message.objectId) {
+					objectIds.push(message.objectId);
+					counts[key] = (counts[key] || 0) + 1;
+
+					if (collectionId) {
+						C.ObjectCollectionAdd(collectionId, [ message.objectId ]);
+					};
+				};
+
+				looseRemaining--;
+				if (looseRemaining <= 0) {
+					onLooseDone();
+				};
+			});
+		};
+
+		analytics.event('UploadMedia', { type: fileType });
 	};
 
 	const uploadFiles = (paths: string[]) => {
