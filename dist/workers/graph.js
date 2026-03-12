@@ -1489,9 +1489,18 @@ onDragToSelectEnd = () => {
  * Handles the start of a drag event.
  * @param {Object} param - Drag event data.
  */
-onDragStart = ({ active }) => {
+onDragStart = ({ active, subjectId }) => {
 	if (!active) {
 		restart(0.3);
+	};
+
+	// Pin the dragged node immediately so it doesn't float away
+	if (subjectId) {
+		const d = getNodeById(subjectId);
+		if (d) {
+			d.fx = d.x;
+			d.fy = d.y;
+		};
 	};
 };
 
@@ -1523,9 +1532,18 @@ onDragMove = ({ subjectId, x, y }) => {
  * Handles the end of a drag event.
  * @param {Object} param - Drag end data.
  */
-onDragEnd = ({ active }) => {
+onDragEnd = ({ active, subjectId }) => {
 	if (!active) {
 		simulation.alphaTarget(0);
+	};
+
+	// Release the pinned node so it rejoins the simulation
+	if (subjectId) {
+		const d = getNodeById(subjectId);
+		if (d) {
+			d.fx = null;
+			d.fy = null;
+		};
 	};
 };
 

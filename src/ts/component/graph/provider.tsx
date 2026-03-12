@@ -328,7 +328,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragStart = (e: any) => {
 		isDragging.current = true;
-		send('onDragStart', { active: e.active });
+		send('onDragStart', { active: e.active, subjectId: subject.current?.id });
 	};
 
 	const onDragMove = (e: any) => {
@@ -351,8 +351,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragEnd = (e: any) => {
 		isDragging.current = false;
+		send('onDragEnd', { active: e.active, subjectId: subject.current?.id });
 		subject.current = null;
-		send('onDragEnd', { active: e.active });
 	};
 
 	const onZoomStart = ({ sourceEvent }) => {
