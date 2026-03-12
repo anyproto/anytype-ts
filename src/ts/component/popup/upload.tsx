@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent }
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader } from 'Component';
-import { I, C, S, U, translate, Action, analytics } from 'Lib';
+import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
 
 enum Tab {
 	Upload = 0,
@@ -118,25 +118,47 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const layoutToCountKey = (l: I.ObjectLayout): string => {
+		switch (l) {
+			case I.ObjectLayout.Image: return 'image';
+			case I.ObjectLayout.Video: return 'video';
+			case I.ObjectLayout.Audio: return 'audio';
+			default: return 'file';
+		};
+	};
+
+	const showUploadToast = (counts: { [key: string]: number }) => {
+		Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
+	};
+
 	const uploadFiles = (paths: string[]) => {
 		setIsLoading(true);
 
 		const space = S.Common.space;
+		const electron = U.Common.getElectron();
 		let completed = 0;
 		const objectIds: string[] = [];
+		const counts: { [key: string]: number } = {};
 
 		const cb = () => {
 			setIsLoading(false);
+			showUploadToast(counts);
 			onUpload?.(objectIds);
 			close();
 		};
 
 		for (const path of paths) {
-			C.FileUpload(space, '', path, fileType, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
+			const mime = electron.fileMime(path);
+			const fileLayout = U.File.layoutByMime(mime);
+			const type = U.Object.getFileTypeByLayout(fileLayout);
+			const key = layoutToCountKey(fileLayout);
+
+			C.FileUpload(space, '', path, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
 
 				if (!message.error.code && message.objectId) {
 					objectIds.push(message.objectId);
+					counts[key] = (counts[key] || 0) + 1;
 
 					if (collectionId) {
 						C.ObjectCollectionAdd(collectionId, [ message.objectId ]);
@@ -170,11 +192,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			const objectIds = message.objectId ? [ message.objectId ] : [];
+			const key = layoutToCountKey(layout);
 
 			if (message.objectId && collectionId) {
 				C.ObjectCollectionAdd(collectionId, [ message.objectId ]);
 			};
 
+			showUploadToast({ [key]: 1 });
 			onUpload?.(objectIds);
 			close();
 		});

@@ -8,7 +8,7 @@ import { I, S, U, Preview, Action, translate, keyboard, analytics, sidebar } fro
 const Toast: FC = observer(() => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
-	const { count, action, text, value, object, target, origin, ids, icon } = toast || {};
+	const { count, action, text, value, object, target, origin, ids, icon, uploadCounts } = toast || {};
 
 	let buttons = [];
 	let textObject = null;
@@ -125,6 +125,32 @@ const Toast: FC = observer(() => {
 			buttons = buttons.concat([
 				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
 			]);
+			break;
+		};
+
+		case I.ToastAction.Upload: {
+			if (!uploadCounts) {
+				break;
+			};
+
+			const pluralMap = {
+				image: translate('pluralImage'),
+				video: translate('pluralVideo'),
+				audio: translate('pluralAudio'),
+				file: translate('pluralFile'),
+			};
+
+			const parts: string[] = [];
+			for (const key of [ 'image', 'video', 'audio', 'file' ]) {
+				const n = uploadCounts[key];
+				if (n > 0) {
+					parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
+				};
+			};
+
+			if (parts.length) {
+				textAction = U.String.sprintf(translate('toastUploaded'), parts.join(', '));
+			};
 			break;
 		};
 	};

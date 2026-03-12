@@ -1457,6 +1457,8 @@
 	"popupAboutVersion": "Version: %s",
 	"popupAboutCopyright": "Made by Any — a Swiss association",
 
+	"toastUploaded": "Uploaded %s",
+
 	"popupUploadTabUpload": "Upload",
 	"popupUploadTabLink": "Link",
 	"popupUploadDropLabel": "Drag file here or Click to upload",
