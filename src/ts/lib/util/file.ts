@@ -1,5 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { I, C, S, U, J, Relation, Preview, translate } from 'Lib';
+import { I, C, S, U, J, Relation, Preview, Dataview, translate } from 'Lib';
 import { DragEvent } from 'react';
 
 const SIZE_UNIT = 1024;
@@ -483,6 +483,291 @@ class UtilFile {
 							const linkParam = U.Data.getLinkBlockParam(id, I.ObjectLayout.Collection, false);
 							C.BlockCreate(rootId, targetId, position, linkParam);
 						};
+					};
+				});
+			};
+		};
+
+		if (totalFiles > softLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderConfirmTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
+					textConfirm: translate('commonUpload'),
+					textCancel: translate('commonCancel'),
+					canCancel: true,
+					canConfirm: true,
+					onConfirm: doUpload,
+				},
+			});
+			return;
+		};
+
+		doUpload();
+	};
+
+	/**
+	 * Uploads files into a dataview (set/collection) context with filter-derived properties.
+	 * For type-source sets, shows a mismatch dialog if some files don't match the source type.
+	 * For collections, adds uploaded objects to the collection.
+	 */
+	uploadFilesToDataview (rootId: string, blockId: string, filePaths: string[]) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const objectId = block.getTargetObjectId() || rootId;
+		const isCollection = Dataview.isCollection(rootId, blockId);
+		const meta = S.Record.getMeta(rootId, blockId);
+		const details = Dataview.getDetails(rootId, blockId, objectId, meta.viewId);
+		const sourceTypes = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const sourceLayouts = sourceTypes.map(it => it.recommendedLayout);
+
+		const space = S.Common.space;
+		const electron = U.Common.getElectron();
+		const objectIds: string[] = [];
+		const counts: { [key: string]: number } = {};
+		let completed = 0;
+		let mismatchCount = 0;
+
+		const onAllDone = () => {
+			if (isCollection && objectIds.length) {
+				C.ObjectCollectionAdd(objectId, objectIds);
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
+
+			if ((sourceTypes.length > 0) && (mismatchCount > 0)) {
+				S.Popup.open('confirm', {
+					preventCloseByClick: true,
+					data: {
+						title: translate('popupUploadTypeMismatchTitle'),
+						text: U.String.sprintf(translate('popupUploadTypeMismatchText'), mismatchCount),
+						textConfirm: translate('commonOk'),
+						canCancel: false,
+						canConfirm: true,
+					},
+				});
+			};
+		};
+
+		for (const filePath of filePaths) {
+			const mime = electron.fileMime(filePath) || '';
+			const fileLayout = this.layoutByMime(mime);
+			const type = U.Object.getFileTypeByLayout(fileLayout);
+			const key = this.layoutToCountKey(fileLayout);
+
+			if (sourceTypes.length && !sourceLayouts.includes(fileLayout)) {
+				mismatchCount++;
+			};
+
+			C.FileUpload(space, '', filePath, type, details, false, '', I.ImageKind.Basic, '', '', (message: any) => {
+				completed++;
+
+				if (!message.error.code && message.objectId) {
+					objectIds.push(message.objectId);
+					counts[key] = (counts[key] || 0) + 1;
+				};
+
+				if (completed >= filePaths.length) {
+					onAllDone();
+				};
+			});
+		};
+	};
+
+	/**
+	 * Uploads folders into a dataview (set/collection) context as collections with filter-derived properties.
+	 */
+	uploadFolderToDataview (dirPaths: string[], extraFiles: string[], rootId: string, blockId: string) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const objectId = block.getTargetObjectId() || rootId;
+		const isCollection = Dataview.isCollection(rootId, blockId);
+		const meta = S.Record.getMeta(rootId, blockId);
+		const details = Dataview.getDetails(rootId, blockId, objectId, meta.viewId);
+		const sourceTypes = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const sourceLayouts = sourceTypes.map(it => it.recommendedLayout);
+
+		const trees = dirPaths.map(p => this.scanDirectory(p));
+		let allFiles = [].concat(extraFiles);
+
+		for (const tree of trees) {
+			allFiles = allFiles.concat(this.collectFiles(tree));
+		};
+
+		const totalFiles = allFiles.length;
+		const { softLimit, hardLimit } = J.Constant.fileUpload;
+
+		if (totalFiles > hardLimit) {
+			S.Popup.open('confirm', {
+				preventCloseByClick: true,
+				data: {
+					title: translate('popupUploadFolderTooManyTitle'),
+					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
+					textConfirm: translate('commonOk'),
+					canCancel: false,
+					canConfirm: true,
+				},
+			});
+			return;
+		};
+
+		const fileCounts = this.getFileCountsByType(allFiles);
+		const breakdown = this.formatCountsBreakdown(fileCounts);
+
+		const doUpload = () => {
+			const space = S.Common.space;
+			const electron = U.Common.getElectron();
+			const progressId = `folder-upload-${Date.now()}`;
+			const uploadCounts: { [key: string]: number } = {};
+			let completed = 0;
+			let mismatchCount = 0;
+
+			S.Progress.add({
+				id: progressId,
+				spaceId: space,
+				type: I.ProgressType.Drop,
+				state: I.ProgressState.Running,
+				current: 0,
+				total: totalFiles,
+				canCancel: false,
+			});
+
+			const onAllDone = () => {
+				S.Progress.delete(progressId);
+				Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts });
+
+				if ((sourceTypes.length > 0) && (mismatchCount > 0)) {
+					S.Popup.open('confirm', {
+						preventCloseByClick: true,
+						data: {
+							title: translate('popupUploadTypeMismatchTitle'),
+							text: U.String.sprintf(translate('popupUploadTypeMismatchText'), mismatchCount),
+							textConfirm: translate('commonOk'),
+							canCancel: false,
+							canConfirm: true,
+						},
+					});
+				};
+			};
+
+			const createTree = (tree: any, parentColId: string, onDone: (colId: string) => void) => {
+				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
+					if (message.error.code) {
+						onDone('');
+						return;
+					};
+
+					const colId = message.details.id;
+
+					if (parentColId) {
+						C.ObjectCollectionAdd(parentColId, [ colId ]);
+					};
+
+					if (isCollection) {
+						C.ObjectCollectionAdd(objectId, [ colId ]);
+					};
+
+					let pending = tree.files.length + tree.children.length;
+
+					if (!pending) {
+						onDone(colId);
+						return;
+					};
+
+					const check = () => {
+						pending--;
+						if (pending <= 0) {
+							onDone(colId);
+						};
+					};
+
+					for (const filePath of tree.files) {
+						const mime = electron.fileMime(filePath) || '';
+						const fileLayout = this.layoutByMime(mime);
+						const type = U.Object.getFileTypeByLayout(fileLayout);
+						const key = this.layoutToCountKey(fileLayout);
+
+						if (sourceTypes.length && !sourceLayouts.includes(fileLayout)) {
+							mismatchCount++;
+						};
+
+						C.FileUpload(space, '', filePath, type, details, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
+							completed++;
+							S.Progress.update({ id: progressId, current: completed });
+
+							if (!msg.error.code && msg.objectId) {
+								uploadCounts[key] = (uploadCounts[key] || 0) + 1;
+								C.ObjectCollectionAdd(colId, [ msg.objectId ]);
+							};
+
+							check();
+						});
+					};
+
+					for (const child of tree.children) {
+						createTree(child, colId, () => check());
+					};
+				});
+			};
+
+			// Upload extra loose files first
+			let looseRemaining = extraFiles.length;
+
+			const onLooseDone = () => {
+				let treeRemaining = trees.length;
+
+				if (!treeRemaining) {
+					onAllDone();
+					return;
+				};
+
+				for (const tree of trees) {
+					createTree(tree, '', (colId: string) => {
+						treeRemaining--;
+						if (treeRemaining <= 0) {
+							onAllDone();
+						};
+					});
+				};
+			};
+
+			if (!looseRemaining) {
+				onLooseDone();
+				return;
+			};
+
+			for (const filePath of extraFiles) {
+				const mime = electron.fileMime(filePath) || '';
+				const fileLayout = this.layoutByMime(mime);
+				const type = U.Object.getFileTypeByLayout(fileLayout);
+				const key = this.layoutToCountKey(fileLayout);
+
+				if (sourceTypes.length && !sourceLayouts.includes(fileLayout)) {
+					mismatchCount++;
+				};
+
+				C.FileUpload(space, '', filePath, type, details, false, '', I.ImageKind.Basic, '', '', (message: any) => {
+					completed++;
+					S.Progress.update({ id: progressId, current: completed });
+
+					if (!message.error.code && message.objectId) {
+						uploadCounts[key] = (uploadCounts[key] || 0) + 1;
+
+						if (isCollection) {
+							C.ObjectCollectionAdd(objectId, [ message.objectId ]);
+						};
+					};
+
+					looseRemaining--;
+					if (looseRemaining <= 0) {
+						onLooseDone();
 					};
 				});
 			};

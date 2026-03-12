@@ -208,16 +208,32 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
-			if (filePaths.length) {
-				C.FileDrop(rootId, targetId, position.current, filePaths, () => {
-					if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
-						S.Block.toggle(rootId, targetId, true);
-					};
-				});
-			};
+			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
+			const dvBlock = isSetLayout ? S.Block.getChildren(rootId, rootId, it => it.isDataview())[0] : null;
+			const isDataviewDrop = !!(target && target.isDataview()) || !!dvBlock;
+			const dvBlockId = (target && target.isDataview()) ? targetId : (dvBlock ? dvBlock.id : '');
 
-			if (dirPaths.length) {
-				U.File.uploadFolderAsCollection(dirPaths, rootId, targetId, position.current);
+			if (isDataviewDrop && dvBlockId) {
+				if (filePaths.length || dirPaths.length) {
+					if (filePaths.length && !dirPaths.length) {
+						U.File.uploadFilesToDataview(rootId, dvBlockId, filePaths);
+					} else {
+						U.File.uploadFolderToDataview(dirPaths, filePaths, rootId, dvBlockId);
+					};
+				};
+			} else {
+				if (filePaths.length) {
+					C.FileDrop(rootId, targetId, position.current, filePaths, () => {
+						if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
+							S.Block.toggle(rootId, targetId, true);
+						};
+					});
+				};
+
+				if (dirPaths.length) {
+					U.File.uploadFolderAsCollection(dirPaths, rootId, targetId, position.current);
+				};
 			};
 		} else
 		if (data && canDrop && (position.current != I.BlockPosition.None)) {
