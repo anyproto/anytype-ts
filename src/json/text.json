@@ -98,7 +98,7 @@
 	"commonStrikethrough": "Strikethrough",
 	"commonUnderline": "Underline",
 	"commonLink": "Link",
-	"commonCode": "Code",
+	"commonInlineCode": "Inline Code",
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
