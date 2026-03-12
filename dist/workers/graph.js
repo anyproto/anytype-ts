@@ -252,9 +252,14 @@ initPixi = async () => {
 		resolution: 1,
 		autoDensity: false,
 		preference: 'webgl',
-		powerPreference: 'high-performance',
+		powerPreference: 'default',
+		autoStart: false,
+		sharedTicker: false,
 		hello: false, // Disable console hello message
 	});
+
+	// Stop the PixiJS ticker - we render manually via requestAnimationFrame
+	app.ticker.stop();
 
 	// Create render containers with optimized settings
 	edgesGraphics = new PIXI.Graphics();
