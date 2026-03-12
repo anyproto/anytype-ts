@@ -52,10 +52,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		e.stopPropagation();
 
 		const options = [
-			{ id: 'paragraph', icon: 'textParagraph', name: translate('blockNameParagraph'), style: I.TextStyle.Paragraph },
-			{ id: 'header1', icon: 'textHeader1', name: translate('blockNameHeader1'), style: I.TextStyle.Header1 },
-			{ id: 'header2', icon: 'textHeader2', name: translate('blockNameHeader2'), style: I.TextStyle.Header2 },
-			{ id: 'header3', icon: 'textHeader3', name: translate('blockNameHeader3'), style: I.TextStyle.Header3 },
+			{ id: 'paragraph', icon: 'textParagraph', name: translate('blockNameParagraph'), textStyle: I.TextStyle.Paragraph },
+			{ id: 'header1', icon: 'textHeader1', name: translate('blockNameHeader1'), textStyle: I.TextStyle.Header1 },
+			{ id: 'header2', icon: 'textHeader2', name: translate('blockNameHeader2'), textStyle: I.TextStyle.Header2 },
+			{ id: 'header3', icon: 'textHeader3', name: translate('blockNameHeader3'), textStyle: I.TextStyle.Header3 },
 		];
 
 		S.Menu.open('select', {
@@ -65,10 +65,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			vertical: I.MenuDirection.Top,
 			noAnimation: true,
 			data: {
+				noClose: true,
 				options,
 				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.style);
-					close();
+					onBlockStyle?.(item.textStyle);
 				},
 			},
 		});
@@ -79,9 +79,9 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		e.stopPropagation();
 
 		const options = [
-			{ id: 'bulleted', icon: 'textBulleted', name: translate('blockNameBulleted'), style: I.TextStyle.Bulleted },
-			{ id: 'numbered', icon: 'textNumbered', name: translate('blockNameNumbered'), style: I.TextStyle.Numbered },
-			{ id: 'checkbox', icon: 'textCheckbox', name: translate('blockNameCheckbox'), style: I.TextStyle.Checkbox },
+			{ id: 'bulleted', icon: 'textBulleted', name: translate('blockNameBulleted'), textStyle: I.TextStyle.Bulleted },
+			{ id: 'numbered', icon: 'textNumbered', name: translate('blockNameNumbered'), textStyle: I.TextStyle.Numbered },
+			{ id: 'checkbox', icon: 'textCheckbox', name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
 		];
 
 		S.Menu.open('select', {
@@ -91,10 +91,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			vertical: I.MenuDirection.Top,
 			noAnimation: true,
 			data: {
+				noClose: true,
 				options,
 				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.style);
-					close();
+					onBlockStyle?.(item.textStyle);
 				},
 			},
 		});

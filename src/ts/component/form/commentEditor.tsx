@@ -743,31 +743,28 @@ const SelectionToolbarPlugin = () => {
 					return style;
 				};
 
-				// Save anchor node key so sub-menus can restore selection
-				let savedAnchorKey = '';
-				let savedAnchorOffset = 0;
-				const anchorNode = selection.anchor.getNode();
-				savedAnchorKey = anchorNode.getKey();
-				savedAnchorOffset = selection.anchor.offset;
+				// Save focus (end of selection) so sub-menus can restore cursor position
+				const focusNode = selection.focus.getNode();
+				const savedFocusKey = focusNode.getKey();
+				const savedFocusOffset = selection.focus.offset;
 
 				const onToggleFormat = (type: string) => {
 					editor.dispatchCommand(FORMAT_TEXT_COMMAND, type as TextFormatType);
 				};
 
 				const onBlockStyle = (textStyle: I.TextStyle) => {
-					editor.focus();
 					editor.update(() => {
-						const node = $getNodeByKey(savedAnchorKey);
+						const node = $getNodeByKey(savedFocusKey);
 						if (node && $isTextNode(node)) {
-							const offset = Math.min(savedAnchorOffset, node.getTextContentSize());
+							const offset = Math.min(savedFocusOffset, node.getTextContentSize());
 							node.select(offset, offset);
 						} else
 						if (node && $isElementNode(node)) {
-							node.selectStart();
+							node.selectEnd();
 						};
 
-						const selection = $getSelection();
-						if (!$isRangeSelection(selection)) {
+						const sel = $getSelection();
+						if (!$isRangeSelection(sel)) {
 							return;
 						};
 
@@ -776,17 +773,17 @@ const SelectionToolbarPlugin = () => {
 							case I.TextStyle.Header2:
 							case I.TextStyle.Header3: {
 								const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
-								$setBlocksType(selection, () => $createHeadingNode(tag));
+								$setBlocksType(sel, () => $createHeadingNode(tag));
 								break;
 							};
 
 							case I.TextStyle.Quote: {
-								$setBlocksType(selection, () => new QuoteNode());
+								$setBlocksType(sel, () => new QuoteNode());
 								break;
 							};
 
 							case I.TextStyle.Code: {
-								$setBlocksType(selection, () => $createCodeNode());
+								$setBlocksType(sel, () => $createCodeNode());
 								break;
 							};
 
@@ -806,11 +803,14 @@ const SelectionToolbarPlugin = () => {
 							};
 
 							case I.TextStyle.Paragraph: {
-								$setBlocksType(selection, () => $createParagraphNode());
+								$setBlocksType(sel, () => $createParagraphNode());
 								break;
 							};
 						};
 					});
+
+					S.Menu.closeAll([ 'select', 'commentToolbar' ]);
+					editor.focus();
 				};
 
 				const onLink = (url: string) => {
