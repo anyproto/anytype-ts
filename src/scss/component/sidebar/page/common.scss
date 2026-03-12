@@ -89,6 +89,7 @@
 				&.withToggle { padding-bottom: 0px; }
 				&.withToggle { 
 					.side.right { opacity: 0; transition: opacity 0.2s $easeInQuint; }
+					.icon { pointer-events: none; }
 					.label { font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					
 					.label::before { 
@@ -97,6 +98,7 @@
 					}
 					&.isOpen {
 						.side.right { opacity: 1; }
+						.icon { pointer-events: all; }
 						.label::before { transform: rotateZ(0deg); }
 					}
 				}
