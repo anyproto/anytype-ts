@@ -128,12 +128,18 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ targetType ]);
 
 	const scrollToBottom = useCallback(() => {
-		const container = U.Common.getScrollContainer(isPopup);
-		if (container.length) {
-			isBottom.current = true;
-			container.scrollTop(U.Common.getMaxScrollHeight(isPopup));
-		};
-	}, [ isPopup ]);
+		resize();
+
+		window.setTimeout(() => {
+			const container = U.Common.getScrollContainer(isPopup);
+			if (container.length) {
+				isBottom.current = true;
+
+				const el = container.get(0);
+				el.scrollTop = el.scrollHeight;
+			};
+		}, 0);
+	}, [ isPopup, resize ]);
 
 	const scrollToBottomCheck = useCallback(() => {
 		if (isBottom.current) {
@@ -292,7 +298,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					rootId={rootId}
 					readonly={readonly}
 					onSubmit={onSubmitPost}
-					onResize={scrollToBottomCheck}
+					onResize={scrollToBottom}
 				/>
 			</div>
 		</div>

@@ -412,11 +412,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
 		const node = formRef.current;
-		if (!node || !onResize) {
+		if (!node) {
 			return;
 		};
 
-		const observer = new ResizeObserver(() => onResize());
+		const observer = new ResizeObserver(() => onResize?.());
 
 		observer.observe(node);
 		return () => observer.disconnect();
