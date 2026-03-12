@@ -1069,7 +1069,7 @@ class Dispatcher {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
-								parts: U.Comment.decodeParts(mapped.message.content),
+								parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 							},
 							replyCount: 0,
 						};
@@ -1119,7 +1119,7 @@ class Dispatcher {
 								id: mapped.message.id,
 								content: {
 									...mapped.message.content,
-									parts: U.Comment.decodeParts(mapped.message.content),
+									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
 							};
 

@@ -67,6 +67,7 @@ export interface ChatMessage {
 	attachments: ChatMessageAttachment[];
 	dependencies: Map<string, any>;
 	reactions: ChatMessageReaction[];
+	blocks: ChatMessageBlock[];
 	isSynced: boolean;
 
 	// Internal
@@ -76,6 +77,29 @@ export interface ChatMessage {
 	isReadMention: boolean;
 	isReadReaction: boolean;
 	hasMention: boolean;
+};
+
+export interface ChatMessageBlock {
+	text?: ChatMessageBlockText;
+	link?: ChatMessageBlockLink;
+};
+
+export interface ChatMessageBlockText {
+	text: string;
+	style: I.TextStyle;
+	marks: I.Mark[];
+};
+
+export interface ChatMessageBlockLink {
+	targetObjectId: string;
+	type: ChatMessageBlockLinkType;
+};
+
+export enum ChatMessageBlockLinkType {
+	Object		 = 0,
+	File		 = 1,
+	Image		 = 2,
+	Bookmark	 = 3,
 };
 
 export interface ChatMessageContent {

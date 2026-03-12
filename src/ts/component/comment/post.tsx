@@ -164,7 +164,7 @@ const CommentPost = observer((props: Props) => {
 	const { id, creator, content, createdAt, modifiedAt, replyCount, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
-	const parts = U.Comment.decodeParts(content);
+	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const replies = S.Comment.getReplies(id);
 	const hasMoreReplies = S.Comment.getHasMoreReplies(id);
@@ -259,7 +259,7 @@ const CommentPost = observer((props: Props) => {
 					...it,
 					content: {
 						...it.content,
-						parts: U.Comment.decodeParts(it.content),
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
 					},
 					replyCount: 0,
 				}));
@@ -283,14 +283,15 @@ const CommentPost = observer((props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
-		const encoded = U.Comment.encodeParts(newParts);
+		const blocks = U.Comment.partsToBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
-				text: encoded.text,
-				style: encoded.style,
-				marks: encoded.marks,
+				text: '',
+				style: I.TextStyle.Paragraph,
+				marks: [],
 			},
+			blocks,
 			attachments: message.attachments || [],
 			reactions: message.reactions || [],
 		} as any, () => {
@@ -300,7 +301,9 @@ const CommentPost = observer((props: Props) => {
 				id,
 				modifiedAt: U.Date.now(),
 				content: {
-					...encoded,
+					text: '',
+					style: I.TextStyle.Paragraph,
+					marks: [],
 					parts: newParts,
 				},
 			} as any);
@@ -323,15 +326,16 @@ const CommentPost = observer((props: Props) => {
 	}, []);
 
 	const onSubmitReply = useCallback((newParts: I.CommentContentPart[]) => {
-		const encoded = U.Comment.encodeParts(newParts);
+		const blocks = U.Comment.partsToBlocks(newParts);
 
 		const msg = {
 			replyToMessageId: id,
 			content: {
-				text: encoded.text,
-				style: encoded.style,
-				marks: encoded.marks,
+				text: '',
+				style: I.TextStyle.Paragraph,
+				marks: [],
 			},
+			blocks,
 			attachments: [],
 			reactions: [],
 		};
@@ -349,7 +353,9 @@ const CommentPost = observer((props: Props) => {
 				modifiedAt: 0,
 				replyToMessageId: id,
 				content: {
-					...encoded,
+					text: '',
+					style: I.TextStyle.Paragraph,
+					marks: [],
 					parts: newParts,
 				},
 				attachments: [],

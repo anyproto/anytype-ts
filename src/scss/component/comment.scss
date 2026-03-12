@@ -8,7 +8,7 @@
 	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
 
 	.commentBody { flex: 1 1 auto; }
-	.commentList { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
+	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
 	.commentPost { 
 		padding: 16px; border-radius: 16px; background: var(--color-shape-highlight-light); display: flex; flex-direction: row;

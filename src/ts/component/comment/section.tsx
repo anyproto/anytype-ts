@@ -90,7 +90,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				...it,
 				content: {
 					...it.content,
-					parts: U.Comment.decodeParts(it.content),
+					parts: U.Comment.blocksToParts(it.blocks, it.content),
 				},
 				replyCount: 0,
 			}));
@@ -137,6 +137,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 				const el = container.get(0);
 				el.scrollTop = el.scrollHeight;
+
+				console.log(el.scrollTop, el.scrollHeight);
 			};
 		}, 0);
 	}, [ isPopup, resize ]);
@@ -174,7 +176,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					...it,
 					content: {
 						...it.content,
-						parts: U.Comment.decodeParts(it.content),
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
 					},
 					replyCount: 0,
 				}));
@@ -218,16 +220,17 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ rootId, discussionId ]);
 
 	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[]) => {
-		const encoded = U.Comment.encodeParts(parts);
+		const blocks = U.Comment.partsToBlocks(parts);
 		const { account } = S.Auth;
 
 		const msg = {
 			replyToMessageId: '',
 			content: {
-				text: encoded.text,
-				style: encoded.style,
-				marks: encoded.marks,
+				text: '',
+				style: I.TextStyle.Paragraph,
+				marks: [],
 			},
+			blocks,
 			attachments: messageAttachments || [],
 			reactions: [],
 		};
@@ -248,7 +251,9 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					modifiedAt: 0,
 					replyToMessageId: '',
 					content: {
-						...encoded,
+						text: '',
+						style: I.TextStyle.Paragraph,
+						marks: [],
 						parts,
 					},
 					attachments: messageAttachments || [],

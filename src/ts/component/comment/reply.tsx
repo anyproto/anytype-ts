@@ -80,7 +80,7 @@ const CommentReply = observer((props: Props) => {
 	const { id, creator, content, createdAt, modifiedAt } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
-	const parts = U.Comment.decodeParts(content);
+	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 
@@ -132,14 +132,15 @@ const CommentReply = observer((props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[]) => {
-		const encoded = U.Comment.encodeParts(newParts);
+		const blocks = U.Comment.partsToBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
-				text: encoded.text,
-				style: encoded.style,
-				marks: encoded.marks,
+				text: '',
+				style: I.TextStyle.Paragraph,
+				marks: [],
 			},
+			blocks,
 			attachments: message.attachments || [],
 			reactions: message.reactions || [],
 		} as any, () => {
@@ -149,7 +150,9 @@ const CommentReply = observer((props: Props) => {
 				id,
 				modifiedAt: U.Date.now(),
 				content: {
-					...encoded,
+					text: '',
+					style: I.TextStyle.Paragraph,
+					marks: [],
 					parts: newParts,
 				},
 			} as any);

@@ -29,7 +29,7 @@ const CommentList = observer((props: Props) => {
 	}, [ isLoadingMore, onLoadMore ]);
 
 	return (
-		<div className="commentList">
+		<div className="commentPosts">
 			{hasMore ? (
 				<div
 					className={[ 'loadMore', (isLoadingMore ? 'isLoading' : '') ].join(' ')}

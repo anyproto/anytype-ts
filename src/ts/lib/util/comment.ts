@@ -3,46 +3,54 @@ import { I } from 'Lib';
 class Comment {
 
 	/**
-	 * Encodes parts into ChatMessageContent format for storage via Chat middleware.
-	 * Parts array is serialized as JSON in the text field.
+	 * Converts CommentContentParts into ChatMessageBlocks for the protobuf.
 	 */
-	encodeParts (parts: I.CommentContentPart[]): I.ChatMessageContent {
+	partsToBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
 		parts = (parts || []).filter(it => it.text || (it.type != I.BlockType.Text));
 
-		const text = JSON.stringify({ parts });
-		const style = parts.length ? parts[0].style : I.TextStyle.Paragraph;
-
-		return {
-			text,
-			style,
-			marks: [],
-		};
+		return parts.map(part => ({
+			text: {
+				text: part.text || '',
+				style: part.style || I.TextStyle.Paragraph,
+				marks: part.marks || [],
+			},
+		}));
 	};
 
 	/**
-	 * Decodes ChatMessageContent back into parts.
-	 * Falls back to treating text as plain text if not valid JSON.
+	 * Converts ChatMessageBlocks back into CommentContentParts.
+	 * Falls back to legacy JSON-in-text decoding for backward compatibility.
 	 */
-	decodeParts (content: I.ChatMessageContent): I.CommentContentPart[] {
-		if (!content || !content.text) {
-			return [];
+	blocksToParts (blocks: I.ChatMessageBlock[], content?: I.ChatMessageContent): I.CommentContentPart[] {
+		if (blocks && blocks.length) {
+			return blocks.filter(it => it.text).map(block => ({
+				text: block.text.text || '',
+				style: block.text.style || I.TextStyle.Paragraph,
+				type: I.BlockType.Text,
+				marks: block.text.marks || [],
+			}));
 		};
 
-		try {
-			const parsed = JSON.parse(content.text);
-			if (parsed && Array.isArray(parsed.parts)) {
-				return parsed.parts;
+		// Legacy fallback: try JSON-encoded parts in content.text
+		if (content && content.text) {
+			try {
+				const parsed = JSON.parse(content.text);
+				if (parsed && Array.isArray(parsed.parts)) {
+					return parsed.parts;
+				};
+			} catch (e) {
+				// Not JSON - treat as plain text
 			};
-		} catch (e) {
-			// Not JSON - treat as plain text (backward compat with regular chat messages)
+
+			return [{
+				style: content.style || I.TextStyle.Paragraph,
+				type: I.BlockType.Text,
+				text: content.text,
+				marks: content.marks || [],
+			}];
 		};
 
-		return [{
-			style: content.style || I.TextStyle.Paragraph,
-			type: I.BlockType.Text,
-			text: content.text,
-			marks: content.marks || [],
-		}];
+		return [];
 	};
 
 	/**
