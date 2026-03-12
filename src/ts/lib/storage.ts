@@ -16,6 +16,8 @@ const SPACE_KEYS = new Set([
 	'focus',
 	'openUrl',
 	'graphData',
+	'graphGlobal',
+	'graphDataview',
 	'recentEditMode',
 	'widgetSections',
 ]);
