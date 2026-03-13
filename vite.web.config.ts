@@ -201,6 +201,11 @@ export default defineConfig(({ mode }) => {
 						if (/node_modules\/@excalidraw\//.test(id)) {
 							return 'vendor-excalidraw';
 						}
+						// Prism language components must stay as lazy chunks to preserve
+						// dependency-ordered loading — don't merge into vendor
+						if (/node_modules\/prismjs\/components\//.test(id)) {
+							return;
+						}
 						if (id.includes('node_modules/')) {
 							return 'vendor';
 						}

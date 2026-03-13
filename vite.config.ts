@@ -128,6 +128,11 @@ export default defineConfig(({ mode }) => {
 						if (/node_modules\/@excalidraw\//.test(id)) {
 							return 'vendor-excalidraw';
 						}
+						// Prism language components must stay as lazy chunks to preserve
+						// dependency-ordered loading — don't merge into vendor
+						if (/node_modules\/prismjs\/components\//.test(id)) {
+							return;
+						}
 						if (id.includes('node_modules/')) {
 							return 'vendor';
 						}
@@ -247,6 +252,25 @@ function protobufCjsPlugin(): Plugin {
 	};
 }
 
+const mimeTypes: Record<string, string> = {
+	'.html': 'text/html',
+	'.css': 'text/css',
+	'.js': 'application/javascript',
+	'.json': 'application/json',
+	'.svg': 'image/svg+xml',
+	'.png': 'image/png',
+	'.jpg': 'image/jpeg',
+	'.jpeg': 'image/jpeg',
+	'.gif': 'image/gif',
+	'.webp': 'image/webp',
+	'.woff': 'font/woff',
+	'.woff2': 'font/woff2',
+	'.ttf': 'font/ttf',
+	'.otf': 'font/otf',
+	'.wasm': 'application/wasm',
+	'.ico': 'image/x-icon',
+};
+
 /**
  * Dev server plugin: rewrite /index.html to /src/html/index.html for Vite processing,
  * and serve static files from dist/ (tabs.html, workers, fonts, etc.) to match
@@ -274,6 +298,11 @@ function devServerPlugin(): Plugin {
 				}
 				const distPath = path.resolve(__dirname, 'dist', urlPath.slice(1));
 				if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
+					const ext = path.extname(distPath).toLowerCase();
+					const contentType = mimeTypes[ext];
+					if (contentType) {
+						res.setHeader('Content-Type', contentType);
+					}
 					return res.end(fs.readFileSync(distPath));
 				}
 

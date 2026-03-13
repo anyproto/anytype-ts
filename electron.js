@@ -2702,12 +2702,7 @@ var Api = class {
       try {
         value = await import_keytar.default.getPassword(KEYTAR_SERVICE, key);
         shouldRetry = value === null;
-        if (shouldRetry) {
-          util_default.log("warn", `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
-        }
-        ;
       } catch (err) {
-        util_default.log("error", `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
         shouldRetry = true;
       }
       ;

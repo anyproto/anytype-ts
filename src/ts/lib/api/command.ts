@@ -1,7 +1,7 @@
 import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 'Lib';
 
 export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(InitialSetParameters.name, {
+	dispatcher.request('InitialSetParameters', {
 		platform,
 		version,
 		workDir,
@@ -12,35 +12,35 @@ export const InitialSetParameters = (platform: I.Platform, version: string, work
 };
 
 export const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ProcessCancel.name, { id }, callBack);
+	dispatcher.request('ProcessCancel', { id }, callBack);
 };
 
 export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
-	dispatcher.request(LinkPreview.name, { url }, callBack);
+	dispatcher.request('LinkPreview', { url }, callBack);
 };
 
 // ---------------------- GALLERY ---------------------- //
 
 export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
-	dispatcher.request(GalleryDownloadIndex.name, {}, callBack);
+	dispatcher.request('GalleryDownloadIndex', {}, callBack);
 };
 
 export const GalleryDownloadManifest = (url: string, callBack?: (message: any) => void) => {
-	dispatcher.request(GalleryDownloadManifest.name, { url }, callBack);
+	dispatcher.request('GalleryDownloadManifest', { url }, callBack);
 };
 
 // ---------------------- APP ---------------------- //
 
 export const AppShutdown = (callBack?: (message: any) => void) => {
-	dispatcher.request(AppShutdown.name, {}, callBack);
+	dispatcher.request('AppShutdown', {}, callBack);
 };
 
 export const AppGetVersion = (callBack?: (message: any) => void) => {
-	dispatcher.request(AppGetVersion.name, {}, callBack);
+	dispatcher.request('AppGetVersion', {}, callBack);
 };
 
 export const AppSetDeviceState = (state: I.AppDeviceState, callBack?: (message: any) => void) => {
-	dispatcher.request(AppSetDeviceState.name, {
+	dispatcher.request('AppSetDeviceState', {
 		deviceState: state as number,
 	}, callBack);
 };
@@ -48,25 +48,25 @@ export const AppSetDeviceState = (state: I.AppDeviceState, callBack?: (message: 
 // ---------------------- WALLET ---------------------- //
 
 export const WalletCreate = (path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WalletCreate.name, { rootPath: path }, callBack);
+	dispatcher.request('WalletCreate', { rootPath: path }, callBack);
 };
 
 export const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WalletRecover.name, {
+	dispatcher.request('WalletRecover', {
 		rootPath: path,
 		mnemonic,
 	}, callBack);
 };
 
 export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WalletConvert.name, {
+	dispatcher.request('WalletConvert', {
 		mnemonic,
 		entropy,
 	}, callBack);
 };
 
 export const WalletCreateSession = (mnemonic: string, appKey: string, token: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WalletCreateSession.name, {
+	dispatcher.request('WalletCreateSession', {
 		...(mnemonic ? { mnemonic } : {}),
 		...(appKey ? { appKey } : {}),
 		...(token ? { token } : {}),
@@ -74,35 +74,35 @@ export const WalletCreateSession = (mnemonic: string, appKey: string, token: str
 };
 
 export const WalletCloseSession = (token: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WalletCloseSession.name, { token }, callBack);
+	dispatcher.request('WalletCloseSession', { token }, callBack);
 };
 
 // ---------------------- WORKSPACE ---------------------- //
 
 export const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
-	dispatcher.request(WorkspaceCreate.name, {
+	dispatcher.request('WorkspaceCreate', {
 		details: Encode.struct(details),
 		usecase: usecase as number,
 	}, callBack);
 };
 
 export const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WorkspaceOpen.name, { spaceId }, callBack);
+	dispatcher.request('WorkspaceOpen', { spaceId }, callBack);
 };
 
 export const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(WorkspaceObjectAdd.name, {
+	dispatcher.request('WorkspaceObjectAdd', {
 		spaceId,
 		objectId,
 	}, callBack);
 };
 
 export const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(WorkspaceObjectListRemove.name, { objectIds }, callBack);
+	dispatcher.request('WorkspaceObjectListRemove', { objectIds }, callBack);
 };
 
 export const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
-	dispatcher.request(WorkspaceSetInfo.name, {
+	dispatcher.request('WorkspaceSetInfo', {
 		spaceId,
 		details: Encode.struct(details),
 	}, callBack);
@@ -111,24 +111,24 @@ export const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (messa
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceDelete.name, { spaceId }, callBack);
+	dispatcher.request('SpaceDelete', { spaceId }, callBack);
 };
 
 export const SpaceSetOrder = (id: string, spaceViewOrder: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceSetOrder.name, {
+	dispatcher.request('SpaceSetOrder', {
 		spaceViewId: id,
 		spaceViewOrder,
 	}, callBack);
 };
 
 export const SpaceUnsetOrder = (id: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceUnsetOrder.name, { spaceViewId: id }, callBack);
+	dispatcher.request('SpaceUnsetOrder', { spaceViewId: id }, callBack);
 };
 
 // ---------------------- ACCOUNT ---------------------- //
 
 export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountCreate.name, {
+	dispatcher.request('AccountCreate', {
 		name,
 		avatarLocalPath: avatarPath,
 		storePath,
@@ -141,11 +141,11 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 };
 
 export const AccountRecover = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountRecover.name, {}, callBack);
+	dispatcher.request('AccountRecover', {}, callBack);
 };
 
 export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountSelect.name, {
+	dispatcher.request('AccountSelect', {
 		id,
 		rootPath: path,
 		networkMode: mode as number,
@@ -156,30 +156,30 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 };
 
 export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountMigrate.name, {
+	dispatcher.request('AccountMigrate', {
 		id,
 		rootPath: path,
 	}, callBack);
 };
 
 export const AccountMigrateCancel = (id: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountMigrateCancel.name, { id }, callBack);
+	dispatcher.request('AccountMigrateCancel', { id }, callBack);
 };
 
 export const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountStop.name, { removeData }, callBack);
+	dispatcher.request('AccountStop', { removeData }, callBack);
 };
 
 export const AccountDelete = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountDelete.name, {}, callBack);
+	dispatcher.request('AccountDelete', {}, callBack);
 };
 
 export const AccountRevertDeletion = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountRevertDeletion.name, {}, callBack);
+	dispatcher.request('AccountRevertDeletion', {}, callBack);
 };
 
 export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountRecoverFromLegacyExport.name, {
+	dispatcher.request('AccountRecoverFromLegacyExport', {
 		path,
 		rootPath,
 		icon,
@@ -187,34 +187,34 @@ export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, i
 };
 
 export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountLocalLinkNewChallenge.name, { appName: name }, callBack);
+	dispatcher.request('AccountLocalLinkNewChallenge', { appName: name }, callBack);
 };
 
 export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountLocalLinkSolveChallenge.name, {
+	dispatcher.request('AccountLocalLinkSolveChallenge', {
 		challengeId: id,
 		answer,
 	}, callBack);
 };
 
 export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountLocalLinkListApps.name, {}, callBack);
+	dispatcher.request('AccountLocalLinkListApps', {}, callBack);
 };
 
 export const AccountLocalLinkCreateApp = (app: any, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountLocalLinkCreateApp.name, {
+	dispatcher.request('AccountLocalLinkCreateApp', {
 		app: Mapper.To.AppInfo(app),
 	}, callBack);
 };
 
 export const AccountLocalLinkRevokeApp = (hash: string, callBack?: (message: any) => void) => {
-	dispatcher.request(AccountLocalLinkRevokeApp.name, { appHash: hash }, callBack);
+	dispatcher.request('AccountLocalLinkRevokeApp', { appHash: hash }, callBack);
 };
 
 // ---------------------- FILE ---------------------- //
 
 export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(FileDrop.name, {
+	dispatcher.request('FileDrop', {
 		contextId,
 		dropTargetId: targetId,
 		position: position as number,
@@ -228,7 +228,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 		return;
 	};
 
-	dispatcher.request(FileUpload.name, {
+	dispatcher.request('FileUpload', {
 		spaceId,
 		url,
 		localPath: path,
@@ -243,14 +243,14 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 };
 
 export const FileDownload = (objectId: string, path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(FileDownload.name, {
+	dispatcher.request('FileDownload', {
 		objectId,
 		path,
 	}, callBack);
 };
 
 export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(FileListOffload.name, {
+	dispatcher.request('FileListOffload', {
 		onlyIds: ids,
 		includeNotPinned: notPinned,
 	}, callBack);
@@ -258,26 +258,26 @@ export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (m
 
 
 export const FileNodeUsage = (callBack?: (message: any) => void) => {
-	dispatcher.request(FileNodeUsage.name, {}, callBack);
+	dispatcher.request('FileNodeUsage', {}, callBack);
 };
 
 export const FileReconcile = (callBack?: (message: any) => void) => {
-	dispatcher.request(FileReconcile.name, {}, callBack);
+	dispatcher.request('FileReconcile', {}, callBack);
 };
 
 export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(FileDiscardPreload.name, { fileId }, callBack);
+	dispatcher.request('FileDiscardPreload', { fileId }, callBack);
 };
 
 export const FileSetAutoDownload = (enabled: boolean, wifiOnly: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(FileSetAutoDownload.name, {
+	dispatcher.request('FileSetAutoDownload', {
 		enabled,
 		wifiOnly,
 	}, callBack);
 };
 
 export const FileAutoDownloadSetLimit = (sizeLimitMib: number, callBack?: (message: any) => void) => {
-	dispatcher.request(FileAutoDownloadSetLimit.name, {
+	dispatcher.request('FileAutoDownloadSetLimit', {
 		sizeLimitMebibytes: sizeLimitMib,
 	}, callBack);
 };
@@ -285,13 +285,13 @@ export const FileAutoDownloadSetLimit = (sizeLimitMib: number, callBack?: (messa
 // ---------------------- NAVIGATION ---------------------- //
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(NavigationGetObjectInfoWithLinks.name, { objectId: pageId }, callBack);
+	dispatcher.request('NavigationGetObjectInfoWithLinks', { objectId: pageId }, callBack);
 };
 
 // ---------------------- BLOCK ---------------------- //
 
 export const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockCreate.name, {
+	dispatcher.request('BlockCreate', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -300,7 +300,7 @@ export const BlockCreate = (contextId: string, targetId: string, position: I.Blo
 };
 
 export const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewCreateFromExistingObject.name, {
+	dispatcher.request('BlockDataviewCreateFromExistingObject', {
 		contextId,
 		blockId,
 		targetObjectId,
@@ -308,7 +308,7 @@ export const BlockDataviewCreateFromExistingObject = (contextId: string, blockId
 };
 
 export const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockSetCarriage.name, {
+	dispatcher.request('BlockSetCarriage', {
 		contextId,
 		blockId,
 		range: Mapper.To.Range(range),
@@ -318,7 +318,7 @@ export const BlockSetCarriage = (contextId: string, blockId: string, range: I.Te
 // ---------------------- BLOCK WIDGET ---------------------- //
 
 export const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockWidgetSetTargetId.name, {
+	dispatcher.request('BlockWidgetSetTargetId', {
 		contextId,
 		blockId,
 		targetId,
@@ -326,7 +326,7 @@ export const BlockWidgetSetTargetId = (contextId: string, blockId: string, targe
 };
 
 export const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockWidgetSetLayout.name, {
+	dispatcher.request('BlockWidgetSetLayout', {
 		contextId,
 		blockId,
 		layout: layout as number,
@@ -334,7 +334,7 @@ export const BlockWidgetSetLayout = (contextId: string, blockId: string, layout:
 };
 
 export const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockWidgetSetLimit.name, {
+	dispatcher.request('BlockWidgetSetLimit', {
 		contextId,
 		blockId,
 		limit,
@@ -342,7 +342,7 @@ export const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: n
 };
 
 export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockWidgetSetViewId.name, {
+	dispatcher.request('BlockWidgetSetViewId', {
 		contextId,
 		blockId,
 		viewId,
@@ -350,7 +350,7 @@ export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId:
 };
 
 export const BlockPreview = (html: string, url: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockPreview.name, {
+	dispatcher.request('BlockPreview', {
 		html,
 		url,
 	}, callBack);
@@ -367,7 +367,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 	marks = marks.filter(it => Mark.canSave(it.type));
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
-	dispatcher.request(BlockTextSetText.name, {
+	dispatcher.request('BlockTextSetText', {
 		contextId,
 		blockId,
 		text,
@@ -377,7 +377,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 };
 
 export const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextSetChecked.name, {
+	dispatcher.request('BlockTextSetChecked', {
 		contextId,
 		blockId,
 		checked,
@@ -385,7 +385,7 @@ export const BlockTextSetChecked = (contextId: string, blockId: string, checked:
 };
 
 export const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextSetIcon.name, {
+	dispatcher.request('BlockTextSetIcon', {
 		contextId,
 		blockId,
 		iconEmoji,
@@ -395,7 +395,7 @@ export const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: 
 
 
 export const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockSetFields.name, {
+	dispatcher.request('BlockSetFields', {
 		contextId,
 		blockId,
 		fields: Encode.struct(fields || {}),
@@ -403,7 +403,7 @@ export const BlockSetFields = (contextId: string, blockId: string, fields: any, 
 };
 
 export const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockMerge.name, {
+	dispatcher.request('BlockMerge', {
 		contextId,
 		firstBlockId: blockId1,
 		secondBlockId: blockId2,
@@ -411,7 +411,7 @@ export const BlockMerge = (contextId: string, blockId1: string, blockId2: string
 };
 
 export const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, mode: I.BlockSplitMode, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockSplit.name, {
+	dispatcher.request('BlockSplit', {
 		contextId,
 		blockId,
 		range: Mapper.To.Range(range),
@@ -421,7 +421,7 @@ export const BlockSplit = (contextId: string, blockId: string, range: I.TextRang
 };
 
 export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, templateId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockBookmarkFetch.name, {
+	dispatcher.request('BlockBookmarkFetch', {
 		contextId,
 		blockId,
 		url,
@@ -430,7 +430,7 @@ export const BlockBookmarkFetch = (contextId: string, blockId: string, url: stri
 };
 
 export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, templateId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockBookmarkCreateAndFetch.name, {
+	dispatcher.request('BlockBookmarkCreateAndFetch', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -440,7 +440,7 @@ export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string,
 };
 
 export const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockUpload.name, {
+	dispatcher.request('BlockUpload', {
 		contextId,
 		blockId,
 		url,
@@ -451,7 +451,7 @@ export const BlockUpload = (contextId: string, blockId: string, url: string, pat
 export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
-	dispatcher.request(BlockCopy.name, {
+	dispatcher.request('BlockCopy', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
@@ -461,7 +461,7 @@ export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRan
 export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
-	dispatcher.request(BlockCut.name, {
+	dispatcher.request('BlockCut', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
@@ -471,7 +471,7 @@ export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRang
 export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, url: string, callBack?: (message: any) => void) => {
 	data = U.Common.objectCopy(data);
 
-	dispatcher.request(BlockPaste.name, {
+	dispatcher.request('BlockPaste', {
 		contextId,
 		focusedBlockId: focusedId,
 		selectedTextRange: Mapper.To.Range(range),
@@ -486,7 +486,7 @@ export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRa
 };
 
 export const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListMoveToExistingObject.name, {
+	dispatcher.request('BlockListMoveToExistingObject', {
 		contextId,
 		targetContextId,
 		blockIds,
@@ -496,7 +496,7 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 };
 
 export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, block: Partial<I.Block>, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListConvertToObjects.name, {
+	dispatcher.request('BlockListConvertToObjects', {
 		contextId,
 		blockIds,
 		objectTypeUniqueKey: typeKey,
@@ -506,7 +506,7 @@ export const BlockListConvertToObjects = (contextId: string, blockIds: string[],
 };
 
 export const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListDuplicate.name, {
+	dispatcher.request('BlockListDuplicate', {
 		contextId,
 		targetContextId,
 		blockIds,
@@ -516,7 +516,7 @@ export const BlockListDuplicate = (contextId: string, targetContextId: string, b
 };
 
 export const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListTurnInto.name, {
+	dispatcher.request('BlockListTurnInto', {
 		contextId,
 		blockIds,
 		style: style as number,
@@ -524,7 +524,7 @@ export const BlockListTurnInto = (contextId: string, blockIds: string[], style: 
 };
 
 export const BlockListDelete = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListDelete.name, {
+	dispatcher.request('BlockListDelete', {
 		contextId,
 		blockIds,
 	}, callBack);
@@ -533,7 +533,7 @@ export const BlockListDelete = (contextId: string, blockIds: any[], callBack?: (
 // ---------------------- BLOCK DIV ---------------------- //
 
 export const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDivListSetStyle.name, {
+	dispatcher.request('BlockDivListSetStyle', {
 		contextId,
 		blockIds,
 		style: style as number,
@@ -543,7 +543,7 @@ export const BlockDivListSetStyle = (contextId: string, blockIds: string[], styl
 // ---------------------- BLOCK LATEX ---------------------- //
 
 export const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockLatexSetText.name, {
+	dispatcher.request('BlockLatexSetText', {
 		contextId,
 		blockId,
 		text,
@@ -555,7 +555,7 @@ export const BlockLatexSetText = (contextId: string, blockId: string, text: stri
 export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, block: I.Block, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
-	dispatcher.request(BlockLinkCreateWithObject.name, {
+	dispatcher.request('BlockLinkCreateWithObject', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -569,7 +569,7 @@ export const BlockLinkCreateWithObject = (contextId: string, targetId: string, d
 };
 
 export const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize: I.LinkIconSize, cardStyle: I.LinkCardStyle, description: I.LinkDescription, relations: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockLinkListSetAppearance.name, {
+	dispatcher.request('BlockLinkListSetAppearance', {
 		contextId,
 		blockIds,
 		iconSize: iconSize as number,
@@ -582,7 +582,7 @@ export const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], i
 // ---------------------- BLOCK TABLE ---------------------- //
 
 export const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableCreate.name, {
+	dispatcher.request('BlockTableCreate', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -593,7 +593,7 @@ export const BlockTableCreate = (contextId: string, targetId: string, position: 
 };
 
 export const BlockTableExpand = (contextId: string, targetId: string, rows: number, columns: number, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableExpand.name, {
+	dispatcher.request('BlockTableExpand', {
 		contextId,
 		targetId,
 		rows,
@@ -602,7 +602,7 @@ export const BlockTableExpand = (contextId: string, targetId: string, rows: numb
 };
 
 export const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableSort.name, {
+	dispatcher.request('BlockTableSort', {
 		contextId,
 		columnId,
 		type: type as number,
@@ -610,7 +610,7 @@ export const BlockTableSort = (contextId: string, columnId: string, type: I.Sort
 };
 
 export const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableRowCreate.name, {
+	dispatcher.request('BlockTableRowCreate', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -618,7 +618,7 @@ export const BlockTableRowCreate = (contextId: string, targetId: string, positio
 };
 
 export const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableRowDuplicate.name, {
+	dispatcher.request('BlockTableRowDuplicate', {
 		contextId,
 		blockId,
 		targetId,
@@ -627,21 +627,21 @@ export const BlockTableRowDuplicate = (contextId: string, blockId: string, targe
 };
 
 export const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableRowListFill.name, {
+	dispatcher.request('BlockTableRowListFill', {
 		contextId,
 		blockIds,
 	}, callBack);
 };
 
 export const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableRowListClean.name, {
+	dispatcher.request('BlockTableRowListClean', {
 		contextId,
 		blockIds,
 	}, callBack);
 };
 
 export const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableRowSetHeader.name, {
+	dispatcher.request('BlockTableRowSetHeader', {
 		contextId,
 		targetId,
 		isHeader,
@@ -649,7 +649,7 @@ export const BlockTableRowSetHeader = (contextId: string, targetId: string, isHe
 };
 
 export const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableColumnCreate.name, {
+	dispatcher.request('BlockTableColumnCreate', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -657,14 +657,14 @@ export const BlockTableColumnCreate = (contextId: string, targetId: string, posi
 };
 
 export const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableColumnDelete.name, {
+	dispatcher.request('BlockTableColumnDelete', {
 		contextId,
 		targetId,
 	}, callBack);
 };
 
 export const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableColumnMove.name, {
+	dispatcher.request('BlockTableColumnMove', {
 		contextId,
 		targetId,
 		dropTargetId,
@@ -673,7 +673,7 @@ export const BlockTableColumnMove = (contextId: string, targetId: string, dropTa
 };
 
 export const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableColumnDuplicate.name, {
+	dispatcher.request('BlockTableColumnDuplicate', {
 		contextId,
 		blockId,
 		targetId,
@@ -682,7 +682,7 @@ export const BlockTableColumnDuplicate = (contextId: string, blockId: string, ta
 };
 
 export const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTableColumnListFill.name, {
+	dispatcher.request('BlockTableColumnListFill', {
 		contextId,
 		blockIds,
 	}, callBack);
@@ -691,7 +691,7 @@ export const BlockTableColumnListFill = (contextId: string, blockIds: string[], 
 // ---------------------- BLOCK FILE ---------------------- //
 
 export const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockFileCreateAndUpload.name, {
+	dispatcher.request('BlockFileCreateAndUpload', {
 		contextId,
 		targetId,
 		position: position as number,
@@ -701,7 +701,7 @@ export const BlockFileCreateAndUpload = (contextId: string, targetId: string, po
 };
 
 export const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockFileListSetStyle.name, {
+	dispatcher.request('BlockFileListSetStyle', {
 		contextId,
 		blockIds,
 		style: style as number,
@@ -709,7 +709,7 @@ export const BlockFileListSetStyle = (contextId: string, blockIds: string[], sty
 };
 
 export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockFileSetTargetObjectId.name, {
+	dispatcher.request('BlockFileSetTargetObjectId', {
 		contextId,
 		blockId,
 		objectId,
@@ -719,7 +719,7 @@ export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, o
 // ---------------------- BLOCK TEXT ---------------------- //
 
 export const BlockTextListSetColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextListSetColor.name, {
+	dispatcher.request('BlockTextListSetColor', {
 		contextId,
 		blockIds,
 		color,
@@ -727,7 +727,7 @@ export const BlockTextListSetColor = (contextId: string, blockIds: string[], col
 };
 
 export const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextListSetMark.name, {
+	dispatcher.request('BlockTextListSetMark', {
 		contextId,
 		blockIds,
 		mark: Mapper.To.Mark(mark),
@@ -735,7 +735,7 @@ export const BlockTextListSetMark = (contextId: string, blockIds: string[], mark
 };
 
 export const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextListSetStyle.name, {
+	dispatcher.request('BlockTextListSetStyle', {
 		contextId,
 		blockIds,
 		style: style as number,
@@ -743,14 +743,14 @@ export const BlockTextListSetStyle = (contextId: string, blockIds: string[], sty
 };
 
 export const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextListClearStyle.name, {
+	dispatcher.request('BlockTextListClearStyle', {
 		contextId,
 		blockIds,
 	}, callBack);
 };
 
 export const BlockTextListClearContent = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockTextListClearContent.name, {
+	dispatcher.request('BlockTextListClearContent', {
 		contextId,
 		blockIds,
 	}, callBack);
@@ -759,14 +759,14 @@ export const BlockTextListClearContent = (contextId: string, blockIds: string[],
 export const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map(Mapper.To.Fields);
 
-	dispatcher.request(BlockListSetFields.name, {
+	dispatcher.request('BlockListSetFields', {
 		contextId,
 		blockFields: fields,
 	}, callBack);
 };
 
 export const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListSetBackgroundColor.name, {
+	dispatcher.request('BlockListSetBackgroundColor', {
 		contextId,
 		blockIds,
 		color,
@@ -774,7 +774,7 @@ export const BlockListSetBackgroundColor = (contextId: string, blockIds: string[
 };
 
 export const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockHAlign, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListSetAlign.name, {
+	dispatcher.request('BlockListSetAlign', {
 		contextId,
 		blockIds,
 		align: align as number,
@@ -782,7 +782,7 @@ export const BlockListSetAlign = (contextId: string, blockIds: string[], align: 
 };
 
 export const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align: I.BlockVAlign, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockListSetVerticalAlign.name, {
+	dispatcher.request('BlockListSetVerticalAlign', {
 		contextId,
 		blockIds,
 		verticalAlign: align as number,
@@ -790,7 +790,7 @@ export const BlockListSetVerticalAlign = (contextId: string, blockIds: string[],
 };
 
 export const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, sources: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewCreate.name, {
+	dispatcher.request('BlockDataviewViewCreate', {
 		contextId,
 		blockId,
 		view: Mapper.To.View(view),
@@ -799,7 +799,7 @@ export const BlockDataviewViewCreate = (contextId: string, blockId: string, view
 };
 
 export const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewUpdate.name, {
+	dispatcher.request('BlockDataviewViewUpdate', {
 		contextId,
 		blockId,
 		viewId,
@@ -808,7 +808,7 @@ export const BlockDataviewViewUpdate = (contextId: string, blockId: string, view
 };
 
 export const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewDelete.name, {
+	dispatcher.request('BlockDataviewViewDelete', {
 		contextId,
 		blockId,
 		viewId,
@@ -816,7 +816,7 @@ export const BlockDataviewViewDelete = (contextId: string, blockId: string, view
 };
 
 export const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewSetPosition.name, {
+	dispatcher.request('BlockDataviewViewSetPosition', {
 		contextId,
 		blockId,
 		viewId,
@@ -825,7 +825,7 @@ export const BlockDataviewViewSetPosition = (contextId: string, blockId: string,
 };
 
 export const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewFilterAdd.name, {
+	dispatcher.request('BlockDataviewFilterAdd', {
 		contextId,
 		blockId,
 		viewId,
@@ -834,7 +834,7 @@ export const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewI
 };
 
 export const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewFilterRemove.name, {
+	dispatcher.request('BlockDataviewFilterRemove', {
 		contextId,
 		blockId,
 		viewId,
@@ -843,7 +843,7 @@ export const BlockDataviewFilterRemove = (contextId: string, blockId: string, vi
 };
 
 export const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: string, id: string, filter: I.Filter, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewFilterReplace.name, {
+	dispatcher.request('BlockDataviewFilterReplace', {
 		contextId,
 		blockId,
 		viewId,
@@ -853,7 +853,7 @@ export const BlockDataviewFilterReplace = (contextId: string, blockId: string, v
 };
 
 export const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewFilterSort.name, {
+	dispatcher.request('BlockDataviewFilterSort', {
 		contextId,
 		blockId,
 		viewId,
@@ -862,7 +862,7 @@ export const BlockDataviewFilterSort = (contextId: string, blockId: string, view
 };
 
 export const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string, sort: I.Sort, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewSortAdd.name, {
+	dispatcher.request('BlockDataviewSortAdd', {
 		contextId,
 		blockId,
 		viewId,
@@ -871,7 +871,7 @@ export const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId:
 };
 
 export const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewSortRemove.name, {
+	dispatcher.request('BlockDataviewSortRemove', {
 		contextId,
 		blockId,
 		viewId,
@@ -880,7 +880,7 @@ export const BlockDataviewSortRemove = (contextId: string, blockId: string, view
 };
 
 export const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: string, id: string, sort: I.Sort, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewSortReplace.name, {
+	dispatcher.request('BlockDataviewSortReplace', {
 		contextId,
 		blockId,
 		viewId,
@@ -890,7 +890,7 @@ export const BlockDataviewSortReplace = (contextId: string, blockId: string, vie
 };
 
 export const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewSortSort.name, {
+	dispatcher.request('BlockDataviewSortSort', {
 		contextId,
 		blockId,
 		viewId,
@@ -899,7 +899,7 @@ export const BlockDataviewSortSort = (contextId: string, blockId: string, viewId
 };
 
 export const BlockDataviewViewRelationRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewRelationRemove.name, {
+	dispatcher.request('BlockDataviewViewRelationRemove', {
 		contextId,
 		blockId,
 		viewId,
@@ -908,7 +908,7 @@ export const BlockDataviewViewRelationRemove = (contextId: string, blockId: stri
 };
 
 export const BlockDataviewViewRelationReplace = (contextId: string, blockId: string, viewId: string, relationKey: string, relation: I.ViewRelation, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewRelationReplace.name, {
+	dispatcher.request('BlockDataviewViewRelationReplace', {
 		contextId,
 		blockId,
 		viewId,
@@ -918,7 +918,7 @@ export const BlockDataviewViewRelationReplace = (contextId: string, blockId: str
 };
 
 export const BlockDataviewViewRelationSort = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewRelationSort.name, {
+	dispatcher.request('BlockDataviewViewRelationSort', {
 		contextId,
 		blockId,
 		viewId,
@@ -927,7 +927,7 @@ export const BlockDataviewViewRelationSort = (contextId: string, blockId: string
 };
 
 export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewViewSetActive.name, {
+	dispatcher.request('BlockDataviewViewSetActive', {
 		contextId,
 		blockId,
 		viewId,
@@ -935,7 +935,7 @@ export const BlockDataviewViewSetActive = (contextId: string, blockId: string, v
 };
 
 export const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewGroupOrderUpdate.name, {
+	dispatcher.request('BlockDataviewGroupOrderUpdate', {
 		contextId,
 		blockId,
 		groupOrder: Mapper.To.GroupOrder(order),
@@ -943,7 +943,7 @@ export const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string
 };
 
 export const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orders: any[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewObjectOrderUpdate.name, {
+	dispatcher.request('BlockDataviewObjectOrderUpdate', {
 		contextId,
 		blockId,
 		objectOrders: orders.map(Mapper.To.ObjectOrder),
@@ -951,7 +951,7 @@ export const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: strin
 };
 
 export const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockRelationSetKey.name, {
+	dispatcher.request('BlockRelationSetKey', {
 		contextId,
 		blockId,
 		key: relationKey,
@@ -959,7 +959,7 @@ export const BlockRelationSetKey = (contextId: string, blockId: string, relation
 };
 
 export const BlockDataviewRelationSet = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewRelationSet.name, {
+	dispatcher.request('BlockDataviewRelationSet', {
 		contextId,
 		blockId,
 		relationKeys,
@@ -967,7 +967,7 @@ export const BlockDataviewRelationSet = (contextId: string, blockId: string, rel
 };
 
 export const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewRelationAdd.name, {
+	dispatcher.request('BlockDataviewRelationAdd', {
 		contextId,
 		blockId,
 		relationKeys,
@@ -975,7 +975,7 @@ export const BlockDataviewRelationAdd = (contextId: string, blockId: string, rel
 };
 
 export const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewRelationDelete.name, {
+	dispatcher.request('BlockDataviewRelationDelete', {
 		contextId,
 		blockId,
 		relationKeys,
@@ -983,7 +983,7 @@ export const BlockDataviewRelationDelete = (contextId: string, blockId: string, 
 };
 
 export const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(BlockDataviewSetSource.name, {
+	dispatcher.request('BlockDataviewSetSource', {
 		contextId,
 		blockId,
 		source: sources,
@@ -993,7 +993,7 @@ export const BlockDataviewSetSource = (contextId: string, blockId: string, sourc
 // ---------------------- BLOCK WIDGET ---------------------- //
 
 export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
-	dispatcher.request(BlockCreateWidget.name, {
+	dispatcher.request('BlockCreateWidget', {
 		contextId,
 		targetId,
 		block: Mapper.To.Block(block),
@@ -1006,21 +1006,21 @@ export const BlockCreateWidget = (contextId: string, targetId: string, block: an
 // ---------------------- HISTORY ---------------------- //
 
 export const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(HistoryShowVersion.name, {
+	dispatcher.request('HistoryShowVersion', {
 		objectId,
 		versionId,
 	}, callBack);
 };
 
 export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(HistorySetVersion.name, {
+	dispatcher.request('HistorySetVersion', {
 		objectId,
 		versionId,
 	}, callBack);
 };
 
 export const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
-	dispatcher.request(HistoryGetVersions.name, {
+	dispatcher.request('HistoryGetVersions', {
 		objectId,
 		lastVersionId,
 		limit,
@@ -1028,7 +1028,7 @@ export const HistoryGetVersions = (objectId: string, lastVersionId: string, limi
 };
 
 export const HistoryDiffVersions = (objectId: string, spaceId: string, current: string, previous: string, callBack?: (message: any) => void) => {
-	dispatcher.request(HistoryDiffVersions.name, {
+	dispatcher.request('HistoryDiffVersions', {
 		objectId,
 		spaceId,
 		currentVersion: current,
@@ -1039,34 +1039,34 @@ export const HistoryDiffVersions = (objectId: string, spaceId: string, current: 
 // ---------------------- OBJECT TYPE ---------------------- //
 
 export const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectTypeRelationAdd.name, {
+	dispatcher.request('ObjectTypeRelationAdd', {
 		objectTypeUrl: objectTypeId,
 		relationKeys,
 	}, callBack);
 };
 
 export const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectTypeRelationRemove.name, {
+	dispatcher.request('ObjectTypeRelationRemove', {
 		objectTypeUrl: objectTypeId,
 		relationKeys,
 	}, callBack);
 };
 
 export const ObjectTypeListConflictingRelations = (id: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectTypeListConflictingRelations.name, {
+	dispatcher.request('ObjectTypeListConflictingRelations', {
 		spaceId,
 		typeObjectId: id,
 	}, callBack);
 };
 
 export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectTypeResolveLayoutConflicts.name, {
+	dispatcher.request('ObjectTypeResolveLayoutConflicts', {
 		typeObjectId: id,
 	}, callBack);
 };
 
 export const ObjectTypeSetOrder = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectTypeSetOrder.name, {
+	dispatcher.request('ObjectTypeSetOrder', {
 		spaceId,
 		typeIds: ids,
 	}, callBack);
@@ -1075,7 +1075,7 @@ export const ObjectTypeSetOrder = (spaceId: string, ids: string[], callBack?: (m
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreate.name, {
+	dispatcher.request('ObjectCreate', {
 		details: Encode.struct(details),
 		internalFlags: flags.map(Mapper.To.InternalFlag),
 		templateId,
@@ -1085,7 +1085,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 };
 
 export const ObjectCreateSet = (sources: string[], details: any, templateId: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreateSet.name, {
+	dispatcher.request('ObjectCreateSet', {
 		source: sources,
 		details: Encode.struct(details),
 		templateId,
@@ -1094,7 +1094,7 @@ export const ObjectCreateSet = (sources: string[], details: any, templateId: str
 };
 
 export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, templateId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreateFromUrl.name, {
+	dispatcher.request('ObjectCreateFromUrl', {
 		details: Encode.struct(details),
 		spaceId,
 		objectTypeUniqueKey: typeKey,
@@ -1105,7 +1105,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 };
 
 export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreateBookmark.name, {
+	dispatcher.request('ObjectCreateBookmark', {
 		details: Encode.struct(details),
 		spaceId,
 		templateId,
@@ -1113,7 +1113,7 @@ export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: 
 };
 
 export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreateObjectType.name, {
+	dispatcher.request('ObjectCreateObjectType', {
 		details: Encode.struct(details),
 		internalFlags: flags.map(Mapper.To.InternalFlag),
 		spaceId,
@@ -1123,28 +1123,28 @@ export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spac
 export const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
 
-	dispatcher.request(ObjectCreateRelation.name, {
+	dispatcher.request('ObjectCreateRelation', {
 		details: Encode.struct(details),
 		spaceId,
 	}, callBack);
 };
 
 export const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCreateRelationOption.name, {
+	dispatcher.request('ObjectCreateRelationOption', {
 		details: Encode.struct(details),
 		spaceId,
 	}, callBack);
 };
 
 export const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(RelationListRemoveOption.name, {
+	dispatcher.request('RelationListRemoveOption', {
 		optionIds,
 		checkInObjects,
 	}, callBack);
 };
 
 export const RelationOptionSetOrder = (spaceId: string, relationKey: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(RelationOptionSetOrder.name, {
+	dispatcher.request('RelationOptionSetOrder', {
 		spaceId,
 		relationKey,
 		relationOptionOrder: ids,
@@ -1152,14 +1152,14 @@ export const RelationOptionSetOrder = (spaceId: string, relationKey: string, ids
 };
 
 export const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectBookmarkFetch.name, {
+	dispatcher.request('ObjectBookmarkFetch', {
 		contextId,
 		url,
 	}, callBack);
 };
 
 export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectOpen.name, {
+	dispatcher.request('ObjectOpen', {
 		objectId,
 		traceId,
 		spaceId,
@@ -1180,7 +1180,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 };
 
 export const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectShow.name, {
+	dispatcher.request('ObjectShow', {
 		objectId,
 		traceId,
 		spaceId,
@@ -1194,18 +1194,18 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 };
 
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectClose.name, {
+	dispatcher.request('ObjectClose', {
 		objectId,
 		spaceId,
 	}, callBack);
 };
 
 export const ObjectUndo = (contextId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectUndo.name, { contextId }, callBack);
+	dispatcher.request('ObjectUndo', { contextId }, callBack);
 };
 
 export const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectRedo.name, { contextId }, callBack);
+	dispatcher.request('ObjectRedo', { contextId }, callBack);
 };
 
 export const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, isNewSpace: boolean, callBack?: (message: any) => void) => {
@@ -1249,7 +1249,7 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 
 	};
 
-	dispatcher.request(ObjectImport.name, {
+	dispatcher.request('ObjectImport', {
 		spaceId,
 		snapshots: (snapshots || []).map(Mapper.To.Snapshot),
 		updateExistingObjects: updateExisting,
@@ -1263,18 +1263,18 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 };
 
 export const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectImportNotionValidateToken.name, { token }, callBack);
+	dispatcher.request('ObjectImportNotionValidateToken', { token }, callBack);
 };
 
 export const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectImportUseCase.name, {
+	dispatcher.request('ObjectImportUseCase', {
 		spaceId,
 		usecase,
 	}, callBack);
 };
 
 export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, isAI: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectImportExperience.name, {
+	dispatcher.request('ObjectImportExperience', {
 		spaceId,
 		url,
 		title,
@@ -1284,14 +1284,14 @@ export const ObjectImportExperience = (spaceId: string, url: string, title: stri
 };
 
 export const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectSetObjectType.name, {
+	dispatcher.request('ObjectSetObjectType', {
 		contextId,
 		objectTypeUniqueKey: typeKey,
 	}, callBack);
 };
 
 export const ObjectSetSource = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectSetSource.name, {
+	dispatcher.request('ObjectSetSource', {
 		contextId,
 		source: sources,
 	}, callBack);
@@ -1300,14 +1300,14 @@ export const ObjectSetSource = (contextId: string, sources: string[], callBack?:
 export const ObjectListSetDetails = (objectIds: string[], details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
-	dispatcher.request(ObjectListSetDetails.name, {
+	dispatcher.request('ObjectListSetDetails', {
 		objectIds,
 		details,
 	}, callBack);
 };
 
 export const ObjectListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListModifyDetailValues.name, {
+	dispatcher.request('ObjectListModifyDetailValues', {
 		objectIds,
 		operations: operations.map(it => {
 			const op: any = { relationKey: it.relationKey };
@@ -1330,7 +1330,7 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectSearch.name, {
+	dispatcher.request('ObjectSearch', {
 		spaceId,
 		filters: filters.map(Mapper.To.Filter),
 		sorts: sorts.map(Mapper.To.Sort),
@@ -1344,7 +1344,7 @@ export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort
 export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectSearchWithMeta.name, {
+	dispatcher.request('ObjectSearchWithMeta', {
 		spaceId,
 		filters: filters.map(Mapper.To.Filter),
 		sorts: sorts.map(Mapper.To.Sort),
@@ -1358,7 +1358,7 @@ export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts
 export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectSearchSubscribe.name, {
+	dispatcher.request('ObjectSearchSubscribe', {
 		spaceId,
 		subId,
 		filters: filters.map(Mapper.To.Filter),
@@ -1377,7 +1377,7 @@ export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I
 export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectCrossSpaceSearchSubscribe.name, {
+	dispatcher.request('ObjectCrossSpaceSearchSubscribe', {
 		subId,
 		filters: filters.map(Mapper.To.Filter),
 		sorts: sorts.map(Mapper.To.Sort),
@@ -1389,7 +1389,7 @@ export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter
 };
 
 export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectGroupsSubscribe.name, {
+	dispatcher.request('ObjectGroupsSubscribe', {
 		spaceId,
 		subId,
 		relationKey,
@@ -1402,7 +1402,7 @@ export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKe
 export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[], keys: string[], noDeps: boolean, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectSubscribeIds.name, {
+	dispatcher.request('ObjectSubscribeIds', {
 		spaceId,
 		subId,
 		ids,
@@ -1412,32 +1412,32 @@ export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[]
 };
 
 export const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectSearchUnsubscribe.name, { subIds }, callBack);
+	dispatcher.request('ObjectSearchUnsubscribe', { subIds }, callBack);
 };
 
 export const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectRelationAdd.name, {
+	dispatcher.request('ObjectRelationAdd', {
 		contextId,
 		relationKeys,
 	}, callBack);
 };
 
 export const ObjectRelationDelete = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectRelationDelete.name, {
+	dispatcher.request('ObjectRelationDelete', {
 		contextId,
 		relationKeys,
 	}, callBack);
 };
 
 export const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectRelationAddFeatured.name, {
+	dispatcher.request('ObjectRelationAddFeatured', {
 		contextId,
 		relations: keys,
 	}, callBack);
 };
 
 export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectRelationRemoveFeatured.name, {
+	dispatcher.request('ObjectRelationRemoveFeatured', {
 		contextId,
 		relations: keys,
 	}, callBack);
@@ -1446,7 +1446,7 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], typeEdges: boolean = true, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
-	dispatcher.request(ObjectGraph.name, {
+	dispatcher.request('ObjectGraph', {
 		spaceId,
 		filters: filters.map(Mapper.To.Filter),
 		limit,
@@ -1459,62 +1459,62 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
 };
 
 export const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectToSet.name, {
+	dispatcher.request('ObjectToSet', {
 		contextId,
 		source: sources,
 	}, callBack);
 };
 
 export const ObjectToCollection = (contextId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectToCollection.name, { contextId }, callBack);
+	dispatcher.request('ObjectToCollection', { contextId }, callBack);
 };
 
 export const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectDuplicate.name, { contextId: id }, callBack);
+	dispatcher.request('ObjectDuplicate', { contextId: id }, callBack);
 };
 
 export const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectApplyTemplate.name, {
+	dispatcher.request('ObjectApplyTemplate', {
 		contextId,
 		templateId,
 	}, callBack);
 };
 
 export const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectShareByLink.name, { objectId }, callBack);
+	dispatcher.request('ObjectShareByLink', { objectId }, callBack);
 };
 
 export const ObjectCollectionAdd = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCollectionAdd.name, {
+	dispatcher.request('ObjectCollectionAdd', {
 		contextId,
 		objectIds,
 	}, callBack);
 };
 
 export const ObjectCollectionRemove = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCollectionRemove.name, {
+	dispatcher.request('ObjectCollectionRemove', {
 		contextId,
 		objectIds,
 	}, callBack);
 };
 
 export const ObjectCollectionSort = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectCollectionSort.name, {
+	dispatcher.request('ObjectCollectionSort', {
 		contextId,
 		objectIds,
 	}, callBack);
 };
 
 export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectChatAdd.name, { objectId }, callBack);
+	dispatcher.request('ObjectChatAdd', { objectId }, callBack);
 };
 
 export const ObjectAddDiscussion = (objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectAddDiscussion.name, { objectId }, callBack);
+	dispatcher.request('ObjectAddDiscussion', { objectId }, callBack);
 };
 
 export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectDateByTimestamp.name, {
+	dispatcher.request('ObjectDateByTimestamp', {
 		spaceId,
 		timestamp,
 	}, callBack);
@@ -1523,15 +1523,15 @@ export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBa
 // ---------------------- OBJECT LIST ---------------------- //
 
 export const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListDuplicate.name, { objectIds: ids }, callBack);
+	dispatcher.request('ObjectListDuplicate', { objectIds: ids }, callBack);
 };
 
 export const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListDelete.name, { objectIds: ids }, callBack);
+	dispatcher.request('ObjectListDelete', { objectIds: ids }, callBack);
 };
 
 export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListSetIsArchived.name, {
+	dispatcher.request('ObjectListSetIsArchived', {
 		objectIds: ids,
 		isArchived,
 	}, callBack);
@@ -1539,14 +1539,14 @@ export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, call
 
 
 export const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListSetObjectType.name, {
+	dispatcher.request('ObjectListSetObjectType', {
 		objectIds: ids,
 		objectTypeUniqueKey: typeKey,
 	}, callBack);
 };
 
 export const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(ObjectListExport.name, {
+	dispatcher.request('ObjectListExport', {
 		spaceId,
 		path,
 		objectIds,
@@ -1563,24 +1563,24 @@ export const ObjectListExport = (spaceId: string, path: string, objectIds: strin
 // ---------------------- TEMPLATE ---------------------- //
 
 export const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(TemplateCreateFromObject.name, { contextId }, callBack);
+	dispatcher.request('TemplateCreateFromObject', { contextId }, callBack);
 };
 
 export const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(TemplateExportAll.name, { path }, callBack);
+	dispatcher.request('TemplateExportAll', { path }, callBack);
 };
 
 // ---------------------- UNSPLASH ---------------------- //
 
 export const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
-	dispatcher.request(UnsplashSearch.name, {
+	dispatcher.request('UnsplashSearch', {
 		query,
 		limit,
 	}, callBack);
 };
 
 export const UnsplashDownload = (spaceId: string, id: string, createdInContext: string, createdInContextRef: string, callBack?: (message: any) => void) => {
-	dispatcher.request(UnsplashDownload.name, {
+	dispatcher.request('UnsplashDownload', {
 		spaceId,
 		pictureId: id,
 		createdInContext,
@@ -1591,7 +1591,7 @@ export const UnsplashDownload = (spaceId: string, id: string, createdInContext: 
 // ---------------------- DEBUG ---------------------- //
 
 export const DebugTree = (objectId: string, path: string, unanonymized: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugTree.name, {
+	dispatcher.request('DebugTree', {
 		treeId: objectId,
 		path,
 		unanonymized,
@@ -1599,47 +1599,47 @@ export const DebugTree = (objectId: string, path: string, unanonymized: boolean,
 };
 
 export const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(DebugExportLocalstore.name, {
+	dispatcher.request('DebugExportLocalstore', {
 		path,
 		docIds: ids,
 	}, callBack);
 };
 
 export const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugSpaceSummary.name, { spaceId }, callBack);
+	dispatcher.request('DebugSpaceSummary', { spaceId }, callBack);
 };
 
 export const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugStackGoroutines.name, { path }, callBack);
+	dispatcher.request('DebugStackGoroutines', { path }, callBack);
 };
 
 export const DebugStat = (callBack?: (message: any) => void) => {
-	dispatcher.request(DebugStat.name, {}, callBack);
+	dispatcher.request('DebugStat', {}, callBack);
 };
 
 export const DebugNetCheck = (config: string, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugNetCheck.name, { clientYml: config }, callBack);
+	dispatcher.request('DebugNetCheck', { clientYml: config }, callBack);
 };
 
 export const DebugExportLog = (path: string, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugExportLog.name, { dir: path }, callBack);
+	dispatcher.request('DebugExportLog', { dir: path }, callBack);
 };
 
 export const DebugRunProfiler = (duration: number, callBack?: (message: any) => void) => {
-	dispatcher.request(DebugRunProfiler.name, { durationInSeconds: duration }, callBack);
+	dispatcher.request('DebugRunProfiler', { durationInSeconds: duration }, callBack);
 };
 
 // ---------------------- NOTIFICATION ---------------------- //
 
 export const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
-	dispatcher.request(NotificationList.name, {
+	dispatcher.request('NotificationList', {
 		includeRead,
 		limit,
 	}, callBack);
 };
 
 export const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
-	dispatcher.request(NotificationReply.name, {
+	dispatcher.request('NotificationReply', {
 		ids,
 		actionType: action as number,
 	}, callBack);
@@ -1648,11 +1648,11 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 // ---------------------- PAYMENTS ---------------------- //
 
 export const MembershipCodeGetInfo = (code: string, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipCodeGetInfo.name, { code }, callBack);
+	dispatcher.request('MembershipCodeGetInfo', { code }, callBack);
 };
 
 export const MembershipCodeRedeem = (code: string, name: string, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipCodeRedeem.name, {
+	dispatcher.request('MembershipCodeRedeem', {
 		code,
 		nsName: name,
 		nsNameType: I.NameType.Any as number,
@@ -1662,34 +1662,34 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 // ---------------------- MEMBERSHIP V2 ---------------------- //
 
 export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2GetPortalLink.name, {}, callBack);
+	dispatcher.request('MembershipV2GetPortalLink', {}, callBack);
 };
 
 export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2CartUpdate.name, {
+	dispatcher.request('MembershipV2CartUpdate', {
 		productIds,
 		isYearly,
 	}, callBack);
 };
 
 export const MembershipV2GetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2GetStatus.name, { noCache }, callBack);
+	dispatcher.request('MembershipV2GetStatus', { noCache }, callBack);
 };
 
 export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2GetProducts.name, { noCache }, callBack);
+	dispatcher.request('MembershipV2GetProducts', { noCache }, callBack);
 };
 
 export const MembershipV2AnyNameIsValid = (anyName: string, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2AnyNameIsValid.name, { nsName: anyName }, callBack);
+	dispatcher.request('MembershipV2AnyNameIsValid', { nsName: anyName }, callBack);
 };
 
 export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2AnyNameAllocate.name, { nsName: anyName }, callBack);
+	dispatcher.request('MembershipV2AnyNameAllocate', { nsName: anyName }, callBack);
 };
 
 export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (message: any) => void) => {
-	dispatcher.request(MembershipV2SubscribeToUpdates.name, {
+	dispatcher.request('MembershipV2SubscribeToUpdates', {
 		email,
 		platform: 1, // DESKTOP
 		subscribe: true,
@@ -1699,7 +1699,7 @@ export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (messag
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceInviteGenerate.name, {
+	dispatcher.request('SpaceInviteGenerate', {
 		spaceId,
 		inviteType: inviteType as number || 0,
 		permissions: permissions as number || 0,
@@ -1707,37 +1707,37 @@ export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, 
 };
 
 export const SpaceInviteChange = (spaceId: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceInviteChange.name, {
+	dispatcher.request('SpaceInviteChange', {
 		spaceId,
 		permissions: permissions as number,
 	}, callBack);
 };
 
 export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceInviteView.name, {
+	dispatcher.request('SpaceInviteView', {
 		inviteCid: cid,
 		inviteFileKey: key,
 	}, callBack);
 };
 
 export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceInviteRevoke.name, { spaceId }, callBack);
+	dispatcher.request('SpaceInviteRevoke', { spaceId }, callBack);
 };
 
 export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceInviteGetCurrent.name, { spaceId }, callBack);
+	dispatcher.request('SpaceInviteGetCurrent', { spaceId }, callBack);
 };
 
 export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceStopSharing.name, { spaceId }, callBack);
+	dispatcher.request('SpaceStopSharing', { spaceId }, callBack);
 };
 
 export const SpaceMakeShareable = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceMakeShareable.name, { spaceId }, callBack);
+	dispatcher.request('SpaceMakeShareable', { spaceId }, callBack);
 };
 
 export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceJoin.name, {
+	dispatcher.request('SpaceJoin', {
 		networkId,
 		spaceId,
 		inviteCid: cid,
@@ -1746,11 +1746,11 @@ export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: 
 };
 
 export const SpaceJoinCancel = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceJoinCancel.name, { spaceId }, callBack);
+	dispatcher.request('SpaceJoinCancel', { spaceId }, callBack);
 };
 
 export const SpaceRequestApprove = (spaceId: string, identity: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceRequestApprove.name, {
+	dispatcher.request('SpaceRequestApprove', {
 		spaceId,
 		identity,
 		permissions: permissions as number,
@@ -1758,21 +1758,21 @@ export const SpaceRequestApprove = (spaceId: string, identity: string, permissio
 };
 
 export const SpaceRequestDecline = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceRequestDecline.name, {
+	dispatcher.request('SpaceRequestDecline', {
 		spaceId,
 		identity,
 	}, callBack);
 };
 
 export const SpaceParticipantPermissionsChange = (spaceId: string, changes: any[], callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceParticipantPermissionsChange.name, {
+	dispatcher.request('SpaceParticipantPermissionsChange', {
 		spaceId,
 		changes: changes.map(Mapper.To.ParticipantPermissionChange),
 	}, callBack);
 };
 
 export const SpaceParticipantRemove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(SpaceParticipantRemove.name, {
+	dispatcher.request('SpaceParticipantRemove', {
 		spaceId,
 		identities,
 	}, callBack);
@@ -1780,7 +1780,7 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 
 export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, callBack?: (message: any) => void) => {
 	// Note: Requires middleware branch GO-6168-change-ownership
-	dispatcher.request(SpaceChangeOwnership.name, {
+	dispatcher.request('SpaceChangeOwnership', {
 		spaceId,
 		newOwnerIdentity,
 		oldOwnerPermissions: I.ParticipantPermissions.Writer as number,
@@ -1790,7 +1790,7 @@ export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, 
 // ---------------------- EXTENSION ---------------------- //
 
 export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) => void) => {
-	dispatcher.request(BroadcastPayloadEvent.name, {
+	dispatcher.request('BroadcastPayloadEvent', {
 		payload: JSON.stringify(payload, null, 3),
 	}, callBack);
 };
@@ -1798,20 +1798,20 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 // ---------------------- DEVICES ---------------------- //
 
 export const DeviceList = (callBack?: (message: any) => void) => {
-	dispatcher.request(DeviceList.name, {}, callBack);
+	dispatcher.request('DeviceList', {}, callBack);
 };
 
 // ---------------------- CHAT ---------------------- //
 
 export const ChatAddMessage = (objectId: string, message: any, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatAddMessage.name, {
+	dispatcher.request('ChatAddMessage', {
 		chatObjectId: objectId,
 		message: Mapper.To.ChatMessage(message),
 	}, callBack);
 };
 
 export const ChatEditMessageContent = (objectId: string, messageId: string, message: any, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatEditMessageContent.name, {
+	dispatcher.request('ChatEditMessageContent', {
 		chatObjectId: objectId,
 		messageId,
 		editedMessage: Mapper.To.ChatMessage(message),
@@ -1819,7 +1819,7 @@ export const ChatEditMessageContent = (objectId: string, messageId: string, mess
 };
 
 export const ChatToggleMessageReaction = (objectId: string, messageId: string, emoji: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatToggleMessageReaction.name, {
+	dispatcher.request('ChatToggleMessageReaction', {
 		chatObjectId: objectId,
 		messageId,
 		emoji,
@@ -1827,14 +1827,14 @@ export const ChatToggleMessageReaction = (objectId: string, messageId: string, e
 };
 
 export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatDeleteMessage.name, {
+	dispatcher.request('ChatDeleteMessage', {
 		chatObjectId: objectId,
 		messageId,
 	}, callBack);
 };
 
 export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, includeBoundary: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatGetMessages.name, {
+	dispatcher.request('ChatGetMessages', {
 		chatObjectId: objectId,
 		beforeOrderId,
 		afterOrderId,
@@ -1844,7 +1844,7 @@ export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOr
 };
 
 export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeOrderId: string, lastStateId: string, type: I.ChatReadType, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatReadMessages.name, {
+	dispatcher.request('ChatReadMessages', {
 		chatObjectId: objectId,
 		beforeOrderId,
 		afterOrderId,
@@ -1854,25 +1854,25 @@ export const ChatReadMessages = (objectId: string, afterOrderId: string, beforeO
 };
 
 export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatUnreadMessages.name, {
+	dispatcher.request('ChatUnreadMessages', {
 		chatObjectId: objectId,
 		afterOrderId,
 	}, callBack);
 };
 
 export const ChatReadReactions = (objectId: string, orderId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatReadReactions.name, {
+	dispatcher.request('ChatReadReactions', {
 		chatObjectId: objectId,
 		orderId,
 	}, callBack);
 };
 
 export const ChatReadAll = (callBack?: (message: any) => void) => {
-	dispatcher.request(ChatReadAll.name, {}, callBack);
+	dispatcher.request('ChatReadAll', {}, callBack);
 };
 
 export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatSubscribeLastMessages.name, {
+	dispatcher.request('ChatSubscribeLastMessages', {
 		chatObjectId: objectId,
 		limit,
 		subId,
@@ -1880,25 +1880,25 @@ export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId
 };
 
 export const ChatSubscribeToMessagePreviews = (subId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatSubscribeToMessagePreviews.name, { subId }, callBack);
+	dispatcher.request('ChatSubscribeToMessagePreviews', { subId }, callBack);
 };
 
 export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(ChatUnsubscribe.name, {
+	dispatcher.request('ChatUnsubscribe', {
 		chatObjectId: objectId,
 		subId,
 	}, callBack);
 };
 
 export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(ChatGetMessagesByIds.name, {
+	dispatcher.request('ChatGetMessagesByIds', {
 		chatObjectId: objectId,
 		messageIds: ids,
 	}, callBack);
 };
 
 export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
-	dispatcher.request(ChatSearch.name, {
+	dispatcher.request('ChatSearch', {
 		spaceId,
 		chatId,
 		fullText,
@@ -1909,7 +1909,7 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
-	dispatcher.request(RelationListWithValue.name, {
+	dispatcher.request('RelationListWithValue', {
 		spaceId,
 		value: Encode.value(value),
 	}, callBack);
@@ -1918,7 +1918,7 @@ export const RelationListWithValue = (spaceId: string, value: any, callBack?: (m
 // ---------------------- PUBLISHING ---------------------- //
 
 export const PublishingCreate = (spaceId: string, objectId: string, uri: string, joinSpace: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request(PublishingCreate.name, {
+	dispatcher.request('PublishingCreate', {
 		objectId,
 		spaceId,
 		uri,
@@ -1927,22 +1927,22 @@ export const PublishingCreate = (spaceId: string, objectId: string, uri: string,
 };
 
 export const PublishingRemove = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(PublishingRemove.name, {
+	dispatcher.request('PublishingRemove', {
 		objectId,
 		spaceId,
 	}, callBack);
 };
 
 export const PublishingList = (spaceId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(PublishingList.name, { spaceId }, callBack);
+	dispatcher.request('PublishingList', { spaceId }, callBack);
 };
 
 export const PublishingResolveUri = (uri: string, callBack?: (message: any) => void) => {
-	dispatcher.request(PublishingResolveUri.name, { uri }, callBack);
+	dispatcher.request('PublishingResolveUri', { uri }, callBack);
 };
 
 export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request(PublishingGetStatus.name, {
+	dispatcher.request('PublishingGetStatus', {
 		objectId,
 		spaceId,
 	}, callBack);
@@ -1951,14 +1951,14 @@ export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?
 // ---------------------- PUSH ---------------------- //
 
 export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.NotificationMode, callBack?: (message: any) => void) => {
-	dispatcher.request(PushNotificationSetSpaceMode.name, {
+	dispatcher.request('PushNotificationSetSpaceMode', {
 		spaceId,
 		mode: mode as number,
 	}, callBack);
 };
 
 export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) => {
-	dispatcher.request(PushNotificationSetForceModeIds.name, {
+	dispatcher.request('PushNotificationSetForceModeIds', {
 		spaceId,
 		chatIds: ids,
 		mode: mode as number,
@@ -1966,7 +1966,7 @@ export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], 
 };
 
 export const PushNotificationResetIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
-	dispatcher.request(PushNotificationResetIds.name, {
+	dispatcher.request('PushNotificationResetIds', {
 		spaceId,
 		chatIds: ids,
 	}, callBack);

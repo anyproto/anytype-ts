@@ -362,7 +362,7 @@ export class ServiceClient {
 			MethodType.UNARY,
 			Object as any,
 			Object as any,
-			(request: any) => entry.req.encode(request).finish(),
+			(request: any) => entry.req.encode(entry.req.fromPartial(request)).finish(),
 			(bytes: Uint8Array) => {
 				const res = entry.res.decode(bytes);
 				if (!res.toObject) {
@@ -405,7 +405,7 @@ export class ServiceClient {
 			MethodType.SERVER_STREAMING,
 			Object as any,
 			Object as any,
-			(req: any) => Commands.StreamRequest.encode(req).finish(),
+			(req: any) => Commands.StreamRequest.encode(Commands.StreamRequest.fromPartial(req)).finish(),
 			(bytes: Uint8Array) => {
 				const res = Events.Event.decode(bytes) as any;
 				if (!res.toObject) {

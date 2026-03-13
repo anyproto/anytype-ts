@@ -314,12 +314,7 @@ class Api {
 			try {
 				value = await keytar.getPassword(KEYTAR_SERVICE, key);
 				shouldRetry = (value === null);
-
-				if (shouldRetry) {
-					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
-				};
 			} catch (err: unknown) {
-				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, (err as Error).message);
 				shouldRetry = true;
 			};
 
