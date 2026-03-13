@@ -1239,11 +1239,13 @@ export const Mapper = {
 		ChatMessage: (obj: I.ChatMessage) => {
 			const item: any = {
 				id: obj.id,
-				orderId: obj.orderId,
-				creator: obj.creator,
-				replyToMessageId: obj.replyToMessageId,
+				orderId: obj.orderId || '',
+				creator: obj.creator || '',
+				createdAt: obj.createdAt || 0,
+				modifiedAt: obj.modifiedAt || 0,
+				replyToMessageId: obj.replyToMessageId || '',
 				message: Mapper.To.ChatMessageContent(obj.content),
-				attachments: obj.attachments.map(Mapper.To.ChatMessageAttachment),
+				attachments: (obj.attachments || []).map(Mapper.To.ChatMessageAttachment),
 				reactions: Mapper.To.ChatMessageReaction(obj.reactions),
 			};
 
