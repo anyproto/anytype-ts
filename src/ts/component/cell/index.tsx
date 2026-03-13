@@ -334,7 +334,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						};
 
 						case 'copy': {
-							U.Common.clipboardCopy({ text: value, html: value });
+							U.Common.copyToast(translate('commonLink'), value);
 							analytics.event('RelationUrlCopy');
 							break;
 						};
