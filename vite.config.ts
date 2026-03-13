@@ -20,26 +20,38 @@ export default defineConfig(({ mode }) => {
 
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
-			alias: {
-				dist: path.resolve(__dirname, 'dist'),
-				protobuf: path.resolve(__dirname, 'dist/lib'),
-				json: path.resolve(__dirname, 'src/json'),
-				Lib: path.resolve(__dirname, 'src/ts/lib'),
-				Store: path.resolve(__dirname, 'src/ts/store'),
-				Component: path.resolve(__dirname, 'src/ts/component'),
-				Interface: path.resolve(__dirname, 'src/ts/interface'),
-				Model: path.resolve(__dirname, 'src/ts/model'),
-				Docs: path.resolve(__dirname, 'src/ts/docs'),
-				Hook: path.resolve(__dirname, 'src/ts/hook'),
-				scss: path.resolve(__dirname, 'src/scss'),
-				img: path.resolve(__dirname, 'src/img'),
-				css: path.resolve(__dirname, 'dist/css'),
-				Proto: path.resolve(__dirname, 'middleware'),
-				'mermaid': path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs'),
-				// Webpack-style ~ prefix aliases for SCSS url() references
-				'~font': path.resolve(__dirname, 'dist/font'),
-				'~css': path.resolve(__dirname, 'dist/css'),
-			},
+			alias: [
+				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },
+				{ find: 'protobuf', replacement: path.resolve(__dirname, 'dist/lib') },
+				{ find: 'json', replacement: path.resolve(__dirname, 'src/json') },
+				{ find: 'Lib', replacement: path.resolve(__dirname, 'src/ts/lib') },
+				{ find: 'Store', replacement: path.resolve(__dirname, 'src/ts/store') },
+				{ find: 'Component', replacement: path.resolve(__dirname, 'src/ts/component') },
+				{ find: 'Interface', replacement: path.resolve(__dirname, 'src/ts/interface') },
+				{ find: 'Model', replacement: path.resolve(__dirname, 'src/ts/model') },
+				{ find: 'Docs', replacement: path.resolve(__dirname, 'src/ts/docs') },
+				{ find: 'Hook', replacement: path.resolve(__dirname, 'src/ts/hook') },
+				{ find: 'scss', replacement: path.resolve(__dirname, 'src/scss') },
+				{ find: 'img', replacement: path.resolve(__dirname, 'src/img') },
+				{ find: 'css', replacement: path.resolve(__dirname, 'dist/css') },
+				{ find: 'Proto', replacement: path.resolve(__dirname, 'middleware') },
+				{ find: 'mermaid', replacement: path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs') },
+				// ~img/ URLs: check src/img first, fallback to dist/img
+				{
+					find: /^~img\//,
+					replacement: '',
+					customResolver(source) {
+						const relative = source;
+						const srcPath = path.join(srcImgDir, relative);
+						if (fs.existsSync(srcPath)) return srcPath;
+						const distPath = path.join(distImgDir, relative);
+						if (fs.existsSync(distPath)) return distPath;
+						return srcPath; // fallback
+					},
+				},
+				{ find: '~font', replacement: path.resolve(__dirname, 'dist/font') },
+				{ find: '~css', replacement: path.resolve(__dirname, 'dist/css') },
+			],
 		},
 
 		define: {
@@ -71,9 +83,7 @@ export default defineConfig(({ mode }) => {
 					],
 				},
 			},
-			postcss: {
-				plugins: [imgPostcssPlugin()],
-			},
+			postcss: {},
 		},
 
 		build: {
@@ -86,7 +96,6 @@ export default defineConfig(({ mode }) => {
 				include: [/dist\/lib\//, /node_modules\//],
 				transformMixedEsModules: true,
 			},
-
 			rollupOptions: {
 				input: {
 					main: path.resolve(__dirname, 'src/html/index.html'),
@@ -104,7 +113,7 @@ export default defineConfig(({ mode }) => {
 						if (id.includes('dist/lib/pb/')) {
 							return 'protobuf';
 						}
-						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react)\//.test(id)) {
+						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
 							return 'vendor-react';
 						}
 						if (/node_modules\/(d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)\//.test(id)) {
@@ -166,55 +175,8 @@ export default defineConfig(({ mode }) => {
 	};
 });
 
-/**
- * Fallback resolver for ~img/ paths.
- * The resolve.alias handles ~img → src/img, but some images live in dist/img.
- * This plugin intercepts resolution failures and checks dist/img as fallback.
- */
 const srcImgDir = path.resolve(__dirname, 'src/img');
 const distImgDir = path.resolve(__dirname, 'dist/img');
-
-const projectRoot = __dirname;
-
-/**
- * Resolves an ~img/ relative path by checking src/img first, then dist/img.
- * Returns a project-root-relative path (e.g. '/src/img/...' or '/dist/img/...').
- * Mirrors rspack resolve.modules: ['src', 'dist'].
- */
-function resolveImgUrl(relative: string): string {
-	const srcPath = path.join(srcImgDir, relative);
-	if (fs.existsSync(srcPath)) return '/src/img/' + relative;
-	const distPath = path.join(distImgDir, relative);
-	if (fs.existsSync(distPath)) return '/dist/img/' + relative;
-	return '/src/img/' + relative;
-}
-
-/**
- * PostCSS plugin that rewrites ~img/ URLs in compiled CSS.
- * Runs after SCSS compilation, before Vite's url resolver.
- */
-function imgPostcssPlugin() {
-	return {
-		postcssPlugin: 'img-resolve',
-		Declaration(decl: any) {
-			if (!decl.value.includes('~img/')) return;
-			decl.value = decl.value.replace(/~img\/([^'"\s);#]*)/g, (_match: string, relative: string) => {
-				if (!relative) return '/src/img/';
-				// Check for directory paths (e.g. expanded $themePath)
-				const srcDir = path.join(srcImgDir, relative);
-				if (fs.existsSync(srcDir) && fs.statSync(srcDir).isDirectory()) {
-					return srcDir.slice(projectRoot.length);
-				};
-				const distDir = path.join(distImgDir, relative);
-				if (fs.existsSync(distDir) && fs.statSync(distDir).isDirectory()) {
-					return distDir.slice(projectRoot.length);
-				};
-				return resolveImgUrl(relative);
-			});
-		},
-	};
-}
-imgPostcssPlugin.postcss = true;
 
 /**
  * Transforms CJS protobuf files (dist/lib/pb/) to ESM in dev mode using esbuild.

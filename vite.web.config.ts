@@ -12,38 +12,6 @@ const wasmDir = path.join(pdfjsDistPath, 'wasm');
 const srcImgDir = path.resolve(__dirname, 'src/img');
 const distImgDir = path.resolve(__dirname, 'dist/img');
 
-const projectRoot = __dirname;
-
-function resolveImgUrl(relative: string): string {
-	const srcPath = path.join(srcImgDir, relative);
-	if (fs.existsSync(srcPath)) return '/src/img/' + relative;
-	const distPath = path.join(distImgDir, relative);
-	if (fs.existsSync(distPath)) return '/dist/img/' + relative;
-	return '/src/img/' + relative;
-}
-
-function imgPostcssPlugin() {
-	return {
-		postcssPlugin: 'img-resolve',
-		Declaration(decl: any) {
-			if (!decl.value.includes('~img/')) return;
-			decl.value = decl.value.replace(/~img\/([^'"\s);#]*)/g, (_match: string, relative: string) => {
-				if (!relative) return '/src/img/';
-				const srcDir = path.join(srcImgDir, relative);
-				if (fs.existsSync(srcDir) && fs.statSync(srcDir).isDirectory()) {
-					return srcDir.slice(projectRoot.length);
-				};
-				const distDir = path.join(distImgDir, relative);
-				if (fs.existsSync(distDir) && fs.statSync(distDir).isDirectory()) {
-					return distDir.slice(projectRoot.length);
-				};
-				return resolveImgUrl(relative);
-			});
-		},
-	};
-}
-imgPostcssPlugin.postcss = true;
-
 function webUploadPlugin(): Plugin {
 	const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
@@ -128,26 +96,37 @@ export default defineConfig(({ mode }) => {
 
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
-			alias: {
-				dist: path.resolve(__dirname, 'dist'),
-				protobuf: path.resolve(__dirname, 'dist/lib'),
-				json: path.resolve(__dirname, 'src/json'),
-				Lib: path.resolve(__dirname, 'src/ts/lib'),
-				Store: path.resolve(__dirname, 'src/ts/store'),
-				Component: path.resolve(__dirname, 'src/ts/component'),
-				Interface: path.resolve(__dirname, 'src/ts/interface'),
-				Model: path.resolve(__dirname, 'src/ts/model'),
-				Docs: path.resolve(__dirname, 'src/ts/docs'),
-				Hook: path.resolve(__dirname, 'src/ts/hook'),
-				scss: path.resolve(__dirname, 'src/scss'),
-				img: path.resolve(__dirname, 'src/img'),
-				css: path.resolve(__dirname, 'dist/css'),
-				Proto: path.resolve(__dirname, 'middleware'),
-				'mermaid': path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs'),
-				// Webpack-style ~ prefix aliases for SCSS url() references
-				'~font': path.resolve(__dirname, 'dist/font'),
-				'~css': path.resolve(__dirname, 'dist/css'),
-			},
+			alias: [
+				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },
+				{ find: 'protobuf', replacement: path.resolve(__dirname, 'dist/lib') },
+				{ find: 'json', replacement: path.resolve(__dirname, 'src/json') },
+				{ find: 'Lib', replacement: path.resolve(__dirname, 'src/ts/lib') },
+				{ find: 'Store', replacement: path.resolve(__dirname, 'src/ts/store') },
+				{ find: 'Component', replacement: path.resolve(__dirname, 'src/ts/component') },
+				{ find: 'Interface', replacement: path.resolve(__dirname, 'src/ts/interface') },
+				{ find: 'Model', replacement: path.resolve(__dirname, 'src/ts/model') },
+				{ find: 'Docs', replacement: path.resolve(__dirname, 'src/ts/docs') },
+				{ find: 'Hook', replacement: path.resolve(__dirname, 'src/ts/hook') },
+				{ find: 'scss', replacement: path.resolve(__dirname, 'src/scss') },
+				{ find: 'img', replacement: path.resolve(__dirname, 'src/img') },
+				{ find: 'css', replacement: path.resolve(__dirname, 'dist/css') },
+				{ find: 'Proto', replacement: path.resolve(__dirname, 'middleware') },
+				{ find: 'mermaid', replacement: path.resolve(__dirname, 'node_modules/mermaid/dist/mermaid.esm.mjs') },
+				// ~img/ URLs: check src/img first, fallback to dist/img
+				{
+					find: /^~img\//,
+					replacement: '',
+					customResolver(source) {
+						const srcPath = path.join(srcImgDir, source);
+						if (fs.existsSync(srcPath)) return srcPath;
+						const distPath = path.join(distImgDir, source);
+						if (fs.existsSync(distPath)) return distPath;
+						return srcPath;
+					},
+				},
+				{ find: '~font', replacement: path.resolve(__dirname, 'dist/font') },
+				{ find: '~css', replacement: path.resolve(__dirname, 'dist/css') },
+			],
 		},
 
 		define: {
@@ -178,9 +157,7 @@ export default defineConfig(({ mode }) => {
 					],
 				},
 			},
-			postcss: {
-				plugins: [imgPostcssPlugin()],
-			},
+			postcss: {},
 		},
 
 		build: {
