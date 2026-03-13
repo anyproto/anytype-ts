@@ -7,12 +7,20 @@ import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
+// Prism language plugins expect `Prism` on the global scope
+(window as any).Prism = Prism;
+
+// Load language components sequentially to respect dependency order
+const prismModules = import.meta.glob('/node_modules/prismjs/components/prism-*.js');
+(async () => {
+	for (const lang of U.Prism.components) {
+		const key = `/node_modules/prismjs/components/prism-${lang}.js`;
+		try { await prismModules[key]?.(); } catch (e) {};
+	};
+})();
+
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-};
-
-for (const lang of U.Prism.components) {
-	require(`prismjs/components/prism-${lang}.js`);
 };
 
 const TWIN_PAIRS = {

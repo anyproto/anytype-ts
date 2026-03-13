@@ -1,5 +1,9 @@
 'use strict';
 
+// Suppress EPIPE errors when parent pipe closes during shutdown
+process.stdout?.on?.('error', () => {});
+process.stderr?.on?.('error', () => {});
+
 const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');

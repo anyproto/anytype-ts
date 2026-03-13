@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Generates TypeScript protobuf bindings from .proto files using ts-proto.
+# Called by download-middleware.sh after extracting the release archive,
+# or by update-middleware.sh after copying from a local anytype-heart checkout.
+#
+# Usage:
+#   bash scripts/generate-protos.sh
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROTO_SRC="$ROOT_DIR/dist/lib/protos"
+MIDDLEWARE_DIR="$ROOT_DIR/middleware"
+TS_PROTO_JS="$ROOT_DIR/node_modules/ts-proto/protoc-gen-ts_proto"
+
+if [[ ! -d "$PROTO_SRC" ]]; then
+	echo "Error: Proto source directory not found: $PROTO_SRC"
+	echo "Run update.sh first to fetch middleware."
+	exit 1
+fi
+
+if [[ ! -f "$TS_PROTO_JS" ]]; then
+	echo "Error: ts-proto not found at $TS_PROTO_JS. Run 'bun install' first."
+	exit 1
+fi
+
+if ! command -v protoc &> /dev/null; then
+	echo "Error: protoc not found. Install protobuf compiler."
+	exit 1
+fi
+
+# Create a wrapper that protoc can execute as a plugin.
+IS_WINDOWS=false
+case "$(uname -s)" in
+	MINGW*|MSYS*|CYGWIN*) IS_WINDOWS=true ;;
+esac
+
+if [[ "$IS_WINDOWS" == true ]]; then
+	WRAPPER="$(mktemp -t protoc-plugin-XXXXXX).cmd"
+	WIN_NODE="$(cygpath -w "$(command -v node)")"
+	WIN_SCRIPT="$(cygpath -w "$TS_PROTO_JS")"
+	printf '@"%s" "%s"\r\n' "$WIN_NODE" "$WIN_SCRIPT" > "$WRAPPER"
+else
+	WRAPPER="$(mktemp)"
+	chmod +x "$WRAPPER"
+	printf '#!/usr/bin/env node\nrequire("%s/node_modules/ts-proto/build/src/plugin")\n' "$ROOT_DIR" > "$WRAPPER"
+fi
+
+# Create a temp directory with the proto file structure that matches import paths
+PROTO_ROOT="$(mktemp -d)"
+trap 'rm -rf "$PROTO_ROOT" "$WRAPPER"' EXIT
+
+# pb/protos/ — commands, events, changes, snapshot
+mkdir -p "$PROTO_ROOT/pb/protos"
+cp "$PROTO_SRC/commands.proto" "$PROTO_ROOT/pb/protos/"
+cp "$PROTO_SRC/events.proto" "$PROTO_ROOT/pb/protos/"
+cp "$PROTO_SRC/changes.proto" "$PROTO_ROOT/pb/protos/"
+cp "$PROTO_SRC/snapshot.proto" "$PROTO_ROOT/pb/protos/"
+
+# pkg/lib/pb/model/protos/ — models, localstore
+mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
+cp "$PROTO_SRC/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+cp "$PROTO_SRC/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+
+echo "Generating TypeScript protobuf bindings..."
+
+# Clean previous generated files
+rm -rf "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google"
+
+# Ensure middleware directory exists
+mkdir -p "$MIDDLEWARE_DIR"
+
+# Run protoc with ts-proto
+protoc \
+	--plugin="protoc-gen-ts_proto=$WRAPPER" \
+	--ts_proto_out="$MIDDLEWARE_DIR" \
+	--proto_path="$PROTO_ROOT" \
+	"$PROTO_ROOT/pb/protos/commands.proto" \
+	"$PROTO_ROOT/pb/protos/events.proto" \
+	"$PROTO_ROOT/pb/protos/changes.proto" \
+	"$PROTO_ROOT/pb/protos/snapshot.proto" \
+	"$PROTO_ROOT/pkg/lib/pb/model/protos/models.proto" \
+	"$PROTO_ROOT/pkg/lib/pb/model/protos/localstore.proto"
+
+echo "Generated TypeScript files:"
+find "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google" -name '*.ts' 2>/dev/null | sort
+
+echo "Done!"

@@ -3,6 +3,7 @@ import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import { Action, analytics, C, Dataview, I, J, keyboard, M, Mark, Preview, Relation, S, sidebar, translate, U, Renderer, focus } from 'Lib';
+import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
 
 interface SpaceContextParam {
@@ -811,7 +812,6 @@ class UtilMenu {
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
-		const Locale = require('lib/json/locale.json');
 
 		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });

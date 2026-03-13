@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, EmptySearch } from 'Component';
 import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
-const Diff = require('diff');
+import * as Diff from 'diff';
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
