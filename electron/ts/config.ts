@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import storage from 'electron-json-storage';
 import Util from './util';
+import { AppConfig } from './types';
 
 const version = app.getVersion();
 
@@ -17,10 +18,10 @@ const ALPHA = 'alpha';
 
 class ConfigManager {
 
-	config: Record<string, any> = {};
+	config: AppConfig = {};
 
 	init (callBack?: () => void) {
-		storage.get(CONFIG_NAME, (error: any, data: any) => {
+		storage.get(CONFIG_NAME, (error: Error | null, data: AppConfig) => {
 			this.config = data || {};
 
 			if (undefined === this.config.showMenuBar) {
@@ -48,14 +49,14 @@ class ConfigManager {
 		});
 	};
 
-	set (obj: Record<string, any>, callBack?: (error?: any) => void) {
+	set (obj: Partial<AppConfig>, callBack?: (error?: Error) => void) {
 		this.config = Object.assign(this.config, obj);
 		this.checkChannel();
 		this.checkTheme();
 
 		console.log('[ConfigManager].set:', this.config);
 
-		storage.set(CONFIG_NAME, this.config as any, (error: any) => {
+		storage.set(CONFIG_NAME, this.config as any, (error: Error) => {
 			callBack?.(error);
 		});
 	};

@@ -1,21 +1,22 @@
 import { app } from 'electron';
 import { is } from 'electron-util';
-import { autoUpdater } from 'electron-updater';
+import { autoUpdater, UpdateInfo } from 'electron-updater';
 import ConfigManager from './config';
 import Util from './util';
+import { AppWindow, DownloadProgress } from './types';
 
 const TIMEOUT_UPDATE = 600 * 1000;
 
 class UpdateManager {
 
-	win: any = null;
+	win: AppWindow | null = null;
 	isUpdating: boolean = false;
 	isDownloading: boolean = false;
 	isRelaunching: boolean = false;
 	autoUpdate: boolean = false;
-	timeout: any = 0;
+	timeout: ReturnType<typeof setTimeout> | null = null;
 
-	setWindow (win: any): void {
+	setWindow (win: AppWindow): void {
 		this.win = win;
 	};
 
@@ -36,25 +37,25 @@ class UpdateManager {
 			Util.log('info', 'Checking for update');
 		});
 
-		autoUpdater.on('update-available', (info: any) => {
+		autoUpdater.on('update-available', (info: UpdateInfo) => {
 			this.clearTimeout();
 
 			Util.log('info', `Update available: ${JSON.stringify(info, null, 3)}`);
 			this.download();
 		});
 
-		autoUpdater.on('update-not-available', (info: any) => {
+		autoUpdater.on('update-not-available', (info: UpdateInfo) => {
 			Util.log('info', `Update not available: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 
-		autoUpdater.on('error', (err: any) => {
+		autoUpdater.on('error', (err: Error) => {
 			Util.log(`Error: ${err}`);
 			Util.send(this.win, 'update-error', err, this.autoUpdate, this.isDownloading);
 			this.isDownloading = false;
 		});
 
-		autoUpdater.on('download-progress', (progress: any) => {
+		autoUpdater.on('download-progress', (progress: DownloadProgress) => {
 			this.isUpdating = true;
 
 			const msg = [
@@ -68,7 +69,7 @@ class UpdateManager {
 			Util.send(this.win, 'download-progress', progress);
 		});
 
-		autoUpdater.on('update-downloaded', (info: any) => {
+		autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
 			this.isUpdating = false;
 			this.isDownloading = false;
 
@@ -118,7 +119,7 @@ class UpdateManager {
 			return;
 		};
 
-		autoUpdater.checkForUpdatesAndNotify().catch((err: any) => {
+		autoUpdater.checkForUpdatesAndNotify().catch((err: Error) => {
 			Util.log('info', `checkForUpdatesAndNotify error: ${err}`);
 		});
 

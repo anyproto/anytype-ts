@@ -874,7 +874,7 @@ var UpdateManager = class {
   isDownloading = false;
   isRelaunching = false;
   autoUpdate = false;
-  timeout = 0;
+  timeout = null;
   setWindow(win) {
     this.win = win;
   }
@@ -1024,14 +1024,13 @@ var WindowManager = class {
       titleBarStyle: "hidden-inset"
     }, param);
     param.webPreferences = Object.assign(this.getPreferencesForNewWindow(), param.webPreferences || {});
-    let win = new import_electron6.BrowserWindow(param);
-    remote.enable(win.webContents);
-    win = Object.assign(win, options);
+    const bw = new import_electron6.BrowserWindow(param);
+    remote.enable(bw.webContents);
+    const win = Object.assign(bw, options);
     win.windowId = win.id;
     this.list.add(win);
     win.on("closed", () => {
       this.list.delete(win);
-      win = null;
     });
     win.on("focus", () => {
       update_default.setWindow(win);
@@ -1235,7 +1234,6 @@ var WindowManager = class {
         const ext = cmd.replace(/print/, "").toLowerCase();
         import_electron6.dialog.showSaveDialog(win, {
           buttonLabel: "Export",
-          fileFilter: { extensions: [ext] },
           defaultPath: `${import_electron6.app.getPath("documents")}/${param.name}.${ext}`,
           properties: ["createDirectory", "showOverwriteConfirmation"]
         }).then((result) => {
@@ -1256,18 +1254,16 @@ var WindowManager = class {
   createTab(win, param, options) {
     const id = (0, import_crypto.randomUUID)();
     const { deferLoad, setActive } = options || {};
-    const view = new import_electron6.WebContentsView({
+    const wcv = new import_electron6.WebContentsView({
       webPreferences: {
         ...this.getPreferencesForNewWindow(),
         additionalArguments: [`--tab-id=${id}`, `--win-id=${win.id}`]
       }
     });
     win.views = win.views || [];
-    view.id = id;
+    const view = Object.assign(wcv, { id, data: { ...param }, isLoaded: false });
     win.views.push(view);
     win.activeTabId = win.activeTabId || id;
-    view.data = { ...param };
-    view.isLoaded = false;
     view.webContents.setWindowOpenHandler(({ url }) => {
       api_default.openUrl(win, url);
       return { action: "deny" };
@@ -1629,7 +1625,6 @@ var WindowManager = class {
   getPreferencesForNewWindow() {
     return {
       preload: (0, import_electron_util4.fixPathForAsarUnpack)(import_path4.default.join(util_default.electronPath(), "js", "preload.cjs")),
-      nativeWindowOpen: true,
       contextIsolation: true,
       nodeIntegration: false,
       spellcheck: true,
@@ -1846,7 +1841,7 @@ var MenuManager = class {
           { label: util_default.translate("electronMenuAbout"), click: () => util_default.send(this.win, "popup", "about", {}, true) },
           Separator,
           { role: "hide", label: util_default.translate("electronMenuHide") },
-          { role: "hideothers", label: util_default.translate("electronMenuHideOthers") },
+          { role: "hideOthers", label: util_default.translate("electronMenuHideOthers") },
           { role: "unhide", label: util_default.translate("electronMenuUnhide") },
           { type: "separator", visible: isAllowedUpdate },
           { label: util_default.translate("electronMenuCheckUpdates"), click: () => api_default.updateCheck(this.win), visible: isAllowedUpdate },
@@ -1981,7 +1976,7 @@ var MenuManager = class {
             accelerator: this.getAccelerator("newTab"),
             click: () => {
               const activeView = util_default.getActiveView(this.win);
-              const { isPinned, route, ...data } = activeView?.data || {};
+              const { isPinned, ...data } = activeView?.data || {};
               data.route = "/main/void/dashboard";
               api_default.openTab(this.win, data, { fireAnalytics: true });
             }
@@ -2120,15 +2115,15 @@ var MenuManager = class {
         { label: util_default.translate("electronMenuDevTools"), accelerator: "Alt+CmdOrCtrl+I", click: () => this.getView()?.webContents.toggleDevTools() }
       ]
     });
-    const channels = config_default.getChannels().map((it) => {
-      it.click = () => {
+    const channels = config_default.getChannels().map((it) => ({
+      ...it,
+      click: () => {
         if (!update_default.isUpdating) {
           util_default.send(this.win, "commandGlobal", "releaseChannel", it.id);
         }
         ;
-      };
-      return it;
-    });
+      }
+    }));
     if (channels.length > 1) {
       menuParam.push({ label: util_default.translate("electronMenuVersion"), submenu: channels });
     }

@@ -11,7 +11,7 @@ let maxStdErrChunksBuffer = 10;
 
 class Server {
 
-	cp: any = null;
+	cp: childProcess.ChildProcess | null = null;
 	address: string = '';
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
@@ -108,7 +108,7 @@ class Server {
 		});
 	};
 
-	stop (signal?: string): Promise<any> {
+	stop (signal?: string): Promise<boolean> {
 		signal = String(signal || 'SIGTERM');
 
 		return new Promise((resolve, reject) => {
@@ -125,7 +125,7 @@ class Server {
 					 // it is not possible to handle os signals on windows, so we can't do graceful shutdown on go side
 					this.cp.stdin.write(winShutdownStdinMessage);
 				} else {
-					this.cp.kill(signal);
+					this.cp.kill(signal as NodeJS.Signals);
 				};
 			} else {
 				resolve(true);

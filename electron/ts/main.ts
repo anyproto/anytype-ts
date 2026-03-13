@@ -24,6 +24,7 @@ import WindowManager from './window';
 import Server from './server';
 import Util from './util';
 import Cors from '../json/cors.json';
+import { AppWindow } from './types';
 
 const protocol = 'anytype';
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
@@ -43,7 +44,7 @@ const csp: string[] = [];
 
 let deeplinkingUrl: string = '';
 let waitLibraryPromise: Promise<any> | null = null;
-let mainWindow: BrowserWindow | null = null;
+let mainWindow: AppWindow | null = null;
 let lastPowerEvent: string = 'suspend';
 let isReady: boolean = false;
 
@@ -131,12 +132,12 @@ powerMonitor.on('resume', () => {
 	}, 1500);
 });
 
-ipcMain.on('storeGet', (e: any, key: string) => { e.returnValue = store.get(key); });
-ipcMain.on('storeSet', (e: any, key: string, value: any) => { e.returnValue = store.set(key, value); });
-ipcMain.on('storeDelete', (e: any, key: string) => { e.returnValue = store.delete(key); });
-ipcMain.on('getTheme', (e: any) => { e.returnValue = Util.getTheme(); });
-ipcMain.on('getBgColor', (e: any) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
-ipcMain.on('getConfig', (e: any) => { e.returnValue = ConfigManager.config || {}; });
+ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.get(key); });
+ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = store.set(key, value); });
+ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.delete(key); });
+ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getTheme(); });
+ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
+ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '', false, false);
@@ -171,7 +172,7 @@ function waitForLibraryAndCreateWindows () {
 		global.serverAddress = Server.getAddress();
 		createWindow();
 		isReady = true;
-	}, (err: any) => {
+	}, (err: Error) => {
 		dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
 };
@@ -190,7 +191,7 @@ nativeTheme.on('updated', () => {
 function createWindow () {
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
-	mainWindow.on('close', (e: any) => {
+	mainWindow.on('close', (e: Electron.Event) => {
 		Util.log('info', 'closeMain: ' + (app as any).isQuiting);
 
 		if ((app as any).isQuiting) {
@@ -230,8 +231,8 @@ function createWindow () {
 	Util.registerLinuxProtocolHandler();
 
 	//ipcMain.removeHandler('Api');
-	ipcMain.handle('Api', (e: any, id: number, cmd: string, args: any[]) => {
-		const win = BrowserWindow.fromId(id);
+	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
+		const win = BrowserWindow.fromId(id) as AppWindow | null;
 
 		if (!win) {
 			console.error('[Api] window is not defined', cmd, id);

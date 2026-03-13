@@ -8,6 +8,7 @@ import UpdateManager from './update';
 import WindowManager from './window';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import { AppWindow, TabView } from './types';
 
 const Separator: Electron.MenuItemConstructorOptions = { type: 'separator' };
 
@@ -34,12 +35,12 @@ const DEFAULT_SHORTCUTS: { [key: string]: string[] } = {
 
 class MenuManager {
 
-	win: any = null;
-	menu: any = null;
+	win: AppWindow | null = null;
+	menu: Electron.Menu | null = null;
 	tray: Tray | null = null;
 	shortcuts: { [key: string]: string[] } = {};
 
-	setWindow (win: any): void {
+	setWindow (win: AppWindow): void {
 		this.win = win;
 	};
 
@@ -81,7 +82,7 @@ class MenuManager {
 		return ret.join('+');
 	};
 
-	getView (): any {
+	getView (): TabView | undefined {
 		return Util.getActiveView(this.win);
 	};
 
@@ -97,7 +98,7 @@ class MenuManager {
 		config.debug = config.debug || {};
 		config.flagsMw = config.flagsMw || {};
 
-		const menuParam: any[] = [
+		const menuParam: Electron.MenuItemConstructorOptions[] = [
 			{
 				label: 'Anytype',
 				submenu: [
@@ -106,7 +107,7 @@ class MenuManager {
 					Separator,
 
 					{ role: 'hide', label: Util.translate('electronMenuHide') },
-					{ role: 'hideothers', label: Util.translate('electronMenuHideOthers') },
+					{ role: 'hideOthers', label: Util.translate('electronMenuHideOthers') },
 					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
 					{ type: 'separator', visible: isAllowedUpdate },
@@ -246,7 +247,7 @@ class MenuManager {
 					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => {
 				
 						const activeView = Util.getActiveView(this.win);
-						const { isPinned, route, ...data } = activeView?.data || {};
+						const { isPinned, ...data } = activeView?.data || {};
 
 						data.route = '/main/void/dashboard';
 						Api.openTab(this.win, data, { fireAnalytics: true });
@@ -318,8 +319,8 @@ class MenuManager {
 			json: Util.translate('electronMenuFlagMwJson'),
 		};
 
-		const flagMenu: any[] = [];
-		const flagMwMenu: any[] = [];
+		const flagMenu: Electron.MenuItemConstructorOptions[] = [];
+		const flagMwMenu: Electron.MenuItemConstructorOptions[] = [];
 
 		for (const i in flags) {
 			flagMenu.push({
@@ -360,8 +361,8 @@ class MenuManager {
 				Separator,
 
 				{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-				{ label: Util.translate('electronMenuDebugObject'), click: (item: any, window: any, event: any) => {
-					const unanonymized = event && event.altKey;
+				{ label: Util.translate('electronMenuDebugObject'), click: (item: Electron.MenuItem, window: BrowserWindow | undefined, event: Electron.KeyboardEvent) => {
+					const unanonymized = event && (event as Electron.KeyboardEvent & { altKey?: boolean }).altKey;
 
 					if (unanonymized) {
 						const { dialog } = require('electron');
@@ -394,20 +395,20 @@ class MenuManager {
 			]
 		});
 
-		const channels = ConfigManager.getChannels().map((it: any) => {
-			it.click = () => {
+		const channels = ConfigManager.getChannels().map((it) => ({
+			...it,
+			click: () => {
 				if (!UpdateManager.isUpdating) {
 					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
-			};
-			return it;
-		});
+			},
+		}));
 
 		if (channels.length > 1) {
 			menuParam.push({ label: Util.translate('electronMenuVersion'), submenu: channels });
 		};
 
-		const menuSudo: any = {
+		const menuSudo: Electron.MenuItemConstructorOptions = {
 			label: 'Sudo',
 			submenu: [
 				Separator,
@@ -514,12 +515,12 @@ class MenuManager {
 		};
 	};
 
-	menuSettings (): any[] {
+	menuSettings (): Electron.MenuItemConstructorOptions[] {
 		const { config } = ConfigManager;
 
 		const Locale = JSON.parse(fs.readFileSync(path.join(__dirname, 'dist', 'lib', 'json', 'locale.json'), 'utf8'));
 		const lang = Util.getLang();
-		const langMenu: any[] = [];
+		const langMenu: Electron.MenuItemConstructorOptions[] = [];
 
 		for (const key of Util.enabledLangs()) {
 			langMenu.push({
@@ -585,7 +586,7 @@ class MenuManager {
 					Util.send(this.win, 'commandGlobal', 'createObject');
 				}
 			},
-		].filter(it => it);
+		].filter(it => it) as Electron.MenuItemConstructorOptions[];
 	};
 
 	openSettings (page: string): void {

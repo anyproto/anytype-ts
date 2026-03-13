@@ -1,2 +1,0 @@
-window.__EXTENSION_CHUNKS__ = ["main.js","react.js","vendor.js","pb-commands.js","pb-events.js","protobuf.js","katex.js","pdf.js","mermaid.js","excalidraw.js","pako.js","viz.js"];
-window.__EXTENSION_CSS__ = ["entry.css"];

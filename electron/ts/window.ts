@@ -11,6 +11,7 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, Bounds } from './types';
 
 const port: string = Util.getPort();
 
@@ -26,9 +27,9 @@ const MENU_BAR_HEIGHT = 28;
 
 class WindowManager {
 
-	list: Set<any> = new Set();
+	list: Set<AppWindow> = new Set();
 
-	create (options: any, param: any): any {
+	create (options: Partial<CreateMainOptions> & Record<string, any>, param: Record<string, any>): AppWindow {
 
 		const { showMenuBar } = ConfigManager.config;
 		const theme = Util.getTheme();
@@ -41,18 +42,17 @@ class WindowManager {
 		}, param);
 		param.webPreferences = Object.assign(this.getPreferencesForNewWindow(), param.webPreferences || {});
 
-		let win: any = new BrowserWindow(param);
+		const bw = new BrowserWindow(param);
 
-		remote.enable(win.webContents);
+		remote.enable(bw.webContents);
 
-		win = Object.assign(win, options);
+		const win = Object.assign(bw, options) as AppWindow;
 		win.windowId = win.id;
 
 		this.list.add(win);
 
 		win.on('closed', () => {
 			this.list.delete(win);
-			win = null;
 		});
 
 		win.on('focus', () => {
@@ -74,7 +74,7 @@ class WindowManager {
 
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
-		win.on('swipe', (e: any, direction: string) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
+		win.on('swipe', (e: Electron.Event, direction: string) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
 
 		win.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
 			Api.openUrl(win, url);
@@ -87,12 +87,12 @@ class WindowManager {
 		return win;
 	};
 
-	createMain (options: any): any {
+	createMain (options: CreateMainOptions): AppWindow {
 		const { isChild, initialBounds, initialTabData } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
-		let state: any = {};
-		let param: any = {
+		let state: ReturnType<typeof windowStateKeeper> | Record<string, any> = {};
+		let param: Record<string, any> = {
 			minWidth: MIN_WIDTH,
 			minHeight: MIN_HEIGHT,
 			width: DEFAULT_WIDTH,
@@ -145,7 +145,7 @@ class WindowManager {
 		} else {
 			const { width, height } = this.getScreenSize();
 
-			param = Object.assign(param, this.getWindowPosition(param, width, height));
+			param = Object.assign(param, this.getWindowPosition(param as { width: number; height: number }, width, height));
 		};
 
 		const win = this.create(options, param);
@@ -214,7 +214,7 @@ class WindowManager {
 		return win;
 	};
 
-	createChallenge (options: any): any {
+	createChallenge (options: { challenge: string } & Record<string, any>): AppWindow {
 		console.log('[WindowManager] createChallenge called', options);
 		// Check if challenge window already exists
 		for (const win of this.list) {
@@ -267,7 +267,7 @@ class WindowManager {
 		return ret;
 	};
 
-	closeChallenge (options: any): void {
+	closeChallenge (options: { challenge: string }): void {
 		for (const win of this.list) {
 			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
 				win.close();
@@ -275,7 +275,7 @@ class WindowManager {
 		};
 	};
 
-	command (win: any, cmd: string, param: any): void {
+	command (win: AppWindow, cmd: string, param: Record<string, any>): void {
 		param = param || {};
 
 		switch (cmd) {
@@ -288,15 +288,14 @@ class WindowManager {
 				const ext = cmd.replace(/print/, '').toLowerCase();
 				dialog.showSaveDialog(win, {
 					buttonLabel: 'Export',
-					fileFilter: { extensions: [ ext ] },
 					defaultPath: `${app.getPath('documents')}/${param.name}.${ext}`,
 					properties: [ 'createDirectory', 'showOverwriteConfirmation' ],
-				} as any).then((result: any) => {
+				}).then((result: Electron.SaveDialogReturnValue) => {
 					const fp = result.filePath;
 					if (!fp) {
 						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 					} else {
-						(Util as any)[cmd](win, path.dirname(fp), path.basename(fp), param.options);
+						(Util[cmd as 'printHtml' | 'printPdf'] as Function)(win, path.dirname(fp), path.basename(fp), param.options);
 					};
 				}).catch(() => {
 					Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
@@ -305,11 +304,11 @@ class WindowManager {
 		};
 	};
 
-	createTab (win: any, param: any, options?: any): any {
+	createTab (win: AppWindow, param: TabData, options?: CreateTabOptions): TabView {
 
 		const id = randomUUID();
 		const { deferLoad, setActive } = options || {};
-		const view: any = new WebContentsView({
+		const wcv = new WebContentsView({
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
 				additionalArguments: [ `--tab-id=${id}`, `--win-id=${win.id}` ],
@@ -317,18 +316,16 @@ class WindowManager {
 		});
 
 		win.views = win.views || [];
-		view.id = id;
+		const view = Object.assign(wcv, { id, data: { ...param }, isLoaded: false }) as TabView;
 		win.views.push(view);
 		win.activeTabId = win.activeTabId || id;
-		view.data = { ...param };
-		view.isLoaded = false;
 
 		view.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
 			Api.openUrl(win, url);
 			return { action: 'deny' as const };
 		});
 
-		view.webContents.on('context-menu', (e: any, param: any) => {
+		view.webContents.on('context-menu', (e: Electron.Event, param: Electron.ContextMenuParams) => {
 			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
@@ -338,7 +335,7 @@ class WindowManager {
 			let altKeyPressed = false;
 			let altKeyUsedWithOther = false;
 
-			view.webContents.on('before-input-event', (e: any, input: any) => {
+			view.webContents.on('before-input-event', (e: Electron.Event, input: Electron.Input) => {
 				const { showMenuBar } = ConfigManager.config;
 
 				// Only handle Alt toggle if menu bar is hidden by config
@@ -370,7 +367,7 @@ class WindowManager {
 		// Re-apply tab state after every load (initial and reload after resume)
 		view.webContents.on('did-finish-load', () => {
 			view.isLoaded = true;
-			const hasPinnedTab = win.views && win.views.some((it: any) => it.data && it.data.isPinned);
+			const hasPinnedTab = win.views && win.views.some((it: TabView) => it.data && it.data.isPinned);
 			const isSingleTab = win.views && (win.views.length == 1) && !hasPinnedTab;
 			Util.sendToTab(win, view.id, 'set-single-tab', isSingleTab);
 
@@ -385,7 +382,7 @@ class WindowManager {
 		});
 
 		// Recover from renderer crashes (e.g. GPU process lost after suspend)
-		view.webContents.on('render-process-gone', (e: any, details: any) => {
+		view.webContents.on('render-process-gone', (e: Electron.Event, details: Electron.RenderProcessGoneDetails) => {
 			Util.log('info', `[Window] render-process-gone: ${details.reason}`);
 
 			if (details.reason !== 'clean-exit') {
@@ -416,7 +413,7 @@ class WindowManager {
 		return view;
 	};
 
-	getBounds (win: any): any {
+	getBounds (win: AppWindow): Bounds | null {
 		if (!win || win.isDestroyed()) {
 			return null;
 		};
@@ -424,14 +421,14 @@ class WindowManager {
 		return win.getContentBounds();
 	};
 
-	setActiveTab (win: any, id: string): void {
+	setActiveTab (win: AppWindow, id: string): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
 			return;
 		};
 
-		const view = win.views.find((it: any) => it.id == id);
+		const view = win.views.find((it: TabView) => it.id == id);
 		if (!view) {
 			return;
 		};
@@ -461,14 +458,14 @@ class WindowManager {
 		Util.sendToAllTabs(win, 'set-active-tab', id);
 	};
 
-	updateTab (win: any, id: string, data: any): void {
+	updateTab (win: AppWindow, id: string, data: Partial<TabData>): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
 			return;
 		};
 
-		const view = win.views.find((it: any) => it.id == id);
+		const view = win.views.find((it: TabView) => it.id == id);
 		if (!view) {
 			return;
 		};
@@ -477,15 +474,15 @@ class WindowManager {
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
-	removeTab (win: any, id: string, updateActive: boolean): void {
+	removeTab (win: AppWindow, id: string, updateActive: boolean): void {
 		id = String(id || '');
 
 		if (!id || !win.views || (win.views.length <= 1)) {
 			return;
 		};
 
-		const view = win.views.find((it: any) => it.id == id);
-		const index = win.views.findIndex((it: any) => it.id == id);
+		const view = win.views.find((it: TabView) => it.id == id);
+		const index = win.views.findIndex((it: TabView) => it.id == id);
 
 		if (win.activeTabId == id) {
 			win.contentView.removeChildView(view);
@@ -503,7 +500,7 @@ class WindowManager {
 		// Send close-session to allow renderer to close its session, then destroy the webContents
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			const timeout = 5000; // 5 second timeout
-			let handler: any = null;
+			let handler: ((...args: any[]) => void) | null = null;
 
 			const cleanup = () => {
 				if (handler) {
@@ -520,7 +517,7 @@ class WindowManager {
 			}, timeout);
 
 			// Listen for the tab to signal it's ready to close
-			handler = (event: any, readyTabId: string) => {
+			handler = (event: Electron.Event, readyTabId: string) => {
 				if (readyTabId === id) {
 					clearTimeout(timeoutId);
 					cleanup();
@@ -534,9 +531,9 @@ class WindowManager {
 		};
 	};
 
-	closeActiveTab (win: any): void {
+	closeActiveTab (win: AppWindow): void {
 
-		const activeView = win.views.find((it: any) => it.id == win.activeTabId);
+		const activeView = win.views.find((it: TabView) => it.id == win.activeTabId);
 
 		if (activeView && activeView.data && activeView.data.isPinned) {
 			Api.close(win);
@@ -550,22 +547,22 @@ class WindowManager {
 		};
 	};
 
-	closeOtherWindows (win: any): void {
-		this.list.forEach((it: any) => {
+	closeOtherWindows (win: AppWindow): void {
+		this.list.forEach((it: AppWindow) => {
 			if ((it !== win) && !it.isDestroyed()) {
 				it.close();
 			};
 		});
 	};
 
-	closeOtherTabs (win: any, id: string, forced?: boolean): void {
+	closeOtherTabs (win: AppWindow, id: string, forced?: boolean): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
 			return;
 		};
 
-		const views = win.views.filter((it: any) => {
+		const views = win.views.filter((it: TabView) => {
 			if (it.id == id) {
 				return false;
 			};
@@ -577,21 +574,21 @@ class WindowManager {
 			return true;
 		});
 
-		views.forEach((view: any) => {
+		views.forEach((view: TabView) => {
 			this.removeTab(win, view.id, false);
 		});
 
 		this.setActiveTab(win, id);
 	};
 
-	findTabByRoute (win: any, route: string): any {
+	findTabByRoute (win: AppWindow, route: string): TabView | null {
 		if (!win || !win.views || !route) {
 			return null;
 		};
-		return win.views.find((it: any) => it.data && (it.data.route === route)) || null;
+		return win.views.find((it: TabView) => it.data && (it.data.route === route)) || null;
 	};
 
-	openRouteInTab (win: any, route: string, data: any): void {
+	openRouteInTab (win: AppWindow, route: string, data: Partial<TabData>): void {
 		if (!win || !win.views || !route) {
 			return;
 		};
@@ -604,12 +601,12 @@ class WindowManager {
 		};
 	};
 
-	openSpaceInTab (win: any, spaceId: string, uxType: any): void {
+	openSpaceInTab (win: AppWindow, spaceId: string, uxType: number): void {
 		if (!win || !win.views || !spaceId) {
 			return;
 		};
 
-		const existing = win.views.find((it: any) => it.data && (it.data.spaceId === spaceId));
+		const existing = win.views.find((it: TabView) => it.data && (it.data.spaceId === spaceId));
 		if (existing) {
 			this.setActiveTab(win, existing.id);
 		} else {
@@ -617,14 +614,14 @@ class WindowManager {
 		};
 	};
 
-	pinTab (win: any, id: string): void {
+	pinTab (win: AppWindow, id: string): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
 			return;
 		};
 
-		const view = win.views.find((it: any) => it.id == id);
+		const view = win.views.find((it: TabView) => it.id == id);
 		if (!view) {
 			return;
 		};
@@ -636,7 +633,7 @@ class WindowManager {
 		const index = win.views.indexOf(view);
 		win.views.splice(index, 1);
 
-		const lastPinnedIndex = win.views.reduce((acc: number, v: any, i: number) => (v.data && v.data.isPinned) ? i : acc, -1);
+		const lastPinnedIndex = win.views.reduce((acc: number, v: TabView, i: number) => (v.data && v.data.isPinned) ? i : acc, -1);
 		win.views.splice(lastPinnedIndex + 1, 0, view);
 
 		Util.sendToTab(win, id, 'set-pinned', true);
@@ -644,14 +641,14 @@ class WindowManager {
 		this.updateTabBarVisibility(win);
 	};
 
-	unpinTab (win: any, id: string): void {
+	unpinTab (win: AppWindow, id: string): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
 			return;
 		};
 
-		const view = win.views.find((it: any) => it.id == id);
+		const view = win.views.find((it: TabView) => it.id == id);
 		if (!view) {
 			return;
 		};
@@ -663,7 +660,7 @@ class WindowManager {
 		const index = win.views.indexOf(view);
 		win.views.splice(index, 1);
 
-		const lastPinnedIndex = win.views.reduce((acc: number, v: any, i: number) => (v.data && v.data.isPinned) ? i : acc, -1);
+		const lastPinnedIndex = win.views.reduce((acc: number, v: TabView, i: number) => (v.data && v.data.isPinned) ? i : acc, -1);
 		win.views.splice(lastPinnedIndex + 1, 0, view);
 
 		Util.sendToTab(win, id, 'set-pinned', false);
@@ -671,28 +668,28 @@ class WindowManager {
 		this.updateTabBarVisibility(win);
 	};
 
-	sendUpdateTabs (win: any): void {
+	sendUpdateTabs (win: AppWindow): void {
 
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const hasPinnedTab = win.views && win.views.some((it: any) => it.data && it.data.isPinned);
+		const hasPinnedTab = win.views && win.views.some((it: TabView) => it.data && it.data.isPinned);
 		const isVisible = alwaysShow || hasPinnedTab || (win.views && win.views.length > 1);
 
 		Util.send(win, 'update-tabs',
-			win.views.map((it: any) => ({ id: it.id, data: it.data })),
+			win.views.map((it: TabView) => ({ id: it.id, data: it.data })),
 			win.activeTabId,
 			isVisible
 		);
 	};
 
-	reorderTabs (win: any, tabIds: string[]): void {
+	reorderTabs (win: AppWindow, tabIds: string[]): void {
 		if (!win.views || !tabIds || !tabIds.length) {
 			return;
 		};
 
 		// Reorder the views array based on the new tab order
-		const newViews: any[] = [];
+		const newViews: TabView[] = [];
 		tabIds.forEach((id: string) => {
-			const view = win.views.find((v: any) => v.id == id);
+			const view = win.views.find((v: TabView) => v.id == id);
 			if (view) {
 				newViews.push(view);
 			};
@@ -725,32 +722,31 @@ class WindowManager {
 		this.updateTabBarVisibility(win);
 	};
 
-	nextTab (win: any): void {
+	nextTab (win: AppWindow): void {
 		if (!win.views || (win.views.length <= 1)) {
 			return;
 		};
 
-		const index = win.views.findIndex((it: any) => it.id == win.activeTabId);
+		const index = win.views.findIndex((it: TabView) => it.id == win.activeTabId);
 		const nextIndex = (index + 1) % win.views.length;
 
 		this.setActiveTab(win, win.views[nextIndex].id);
 	};
 
-	prevTab (win: any): void {
+	prevTab (win: AppWindow): void {
 		if (!win.views || (win.views.length <= 1)) {
 			return;
 		};
 
-		const index = win.views.findIndex((it: any) => it.id == win.activeTabId);
+		const index = win.views.findIndex((it: TabView) => it.id == win.activeTabId);
 		const prevIndex = (index - 1 + win.views.length) % win.views.length;
 
 		this.setActiveTab(win, win.views[prevIndex].id);
 	};
 
-	getPreferencesForNewWindow (): any {
+	getPreferencesForNewWindow (): Electron.WebPreferences {
 		return {
 			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
-			nativeWindowOpen: true,
 			contextIsolation: true,
 			nodeIntegration: false,
 			spellcheck: true,
@@ -767,7 +763,7 @@ class WindowManager {
 		return this.getUrlForNewWindow().replace('tabs.html', 'index.html');
 	};
 
-	getWindowPosition (param: any, displayWidth: number, displayHeight: number): { x: number; y: number } {
+	getWindowPosition (param: { width: number; height: number }, displayWidth: number, displayHeight: number): { x: number; y: number } {
 		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		let x = Math.round(displayWidth / 2 - param.width / 2);
@@ -791,7 +787,7 @@ class WindowManager {
 		return { x, y };
 	};
 
-	getTabBarHeight (win: any): number {
+	getTabBarHeight (win: AppWindow): number {
 
 
 
@@ -803,7 +799,7 @@ class WindowManager {
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const configShowMenuBar = ConfigManager.config.showMenuBar;
 		const hasMultipleTabs = win.views && win.views.length > 1;
-		const hasPinnedTab = win.views && win.views.some((it: any) => it.data && it.data.isPinned);
+		const hasPinnedTab = win.views && win.views.some((it: TabView) => it.data && it.data.isPinned);
 		const shouldShowTabs = alwaysShow || hasPinnedTab || hasMultipleTabs;
 
 		// Check for temporary menu bar visibility (Alt key toggle)
@@ -820,7 +816,7 @@ class WindowManager {
 		return height;
 	};
 
-	updateTabBarVisibility (win: any): void {
+	updateTabBarVisibility (win: AppWindow): void {
 		if (!win || win.isDestroyed()) {
 			return;
 		};
@@ -829,7 +825,7 @@ class WindowManager {
 
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && (win.views.length > 1);
-		const hasPinnedTab = win.views && win.views.some((it: any) => it.data && it.data.isPinned);
+		const hasPinnedTab = win.views && win.views.some((it: TabView) => it.data && it.data.isPinned);
 		const isPinCheckRequired = Api.hasPinSet && !Api.isPinChecked;
 		const isVisible = !isPinCheckRequired && (alwaysShow || hasPinnedTab || hasMultipleTabs);
 		const isSingleTab = win.views && (win.views.length == 1) && !hasPinnedTab;
@@ -855,19 +851,19 @@ class WindowManager {
 		};
 	};
 
-	sendToAll (...args: any[]): void {
-		this.list.forEach((it: any) => Util.send(it, ...args));
+	sendToAll (...args: [string, ...any[]]): void {
+		this.list.forEach((it: AppWindow) => Util.send(it, ...args));
 	};
 
-	sendToAllTabs (...args: any[]): void {
-		this.list.forEach((it: any) => Util.sendToAllTabs(it, ...args));
+	sendToAllTabs (...args: [string, ...any[]]): void {
+		this.list.forEach((it: AppWindow) => Util.sendToAllTabs(it, ...args));
 	};
 
 	reloadAll (): void {
 		this.sendToAll('reload');
 	};
 
-	getFirstWindow (): any {
+	getFirstWindow (): AppWindow | undefined {
 		return this.list.values().next().value;
 	};
 
@@ -875,19 +871,19 @@ class WindowManager {
 	 * Saves the current tabs state to storage for restoration on next app start
 	 * @param {BrowserWindow} win - The window to save tabs from
 	 */
-	saveTabs (win: any): void {
+	saveTabs (win: AppWindow): void {
 		if (!win || !win.views || win.isDestroyed()) {
 			return;
 		};
 
 		const store = getSafeStorage();
 
-		const tabsData = win.views.map((view: any) => ({
+		const tabsData = win.views.map((view: TabView) => ({
 			data: view.data || {},
 		}));
 
 		// Find the active tab index
-		const activeIndex = win.views.findIndex((view: any) => view.id === win.activeTabId);
+		const activeIndex = win.views.findIndex((view: TabView) => view.id === win.activeTabId);
 
 		const state = {
 			tabs: tabsData,
@@ -902,7 +898,7 @@ class WindowManager {
 	 * Loads saved tabs state from storage
 	 * @returns {Object|null} The saved tabs state or null if not found
 	 */
-	loadTabs (): any {
+	loadTabs (): SavedTabState | null {
 		const store = getSafeStorage();
 
 		const state = store.get(TABS_STORAGE_KEY);

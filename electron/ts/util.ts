@@ -6,6 +6,7 @@ import fs from 'fs';
 import sanitize from 'sanitize-filename';
 import ConfigManager from './config';
 import Constant from '../json/constant.json';
+import { AppWindow, TabView } from './types';
 
 const protocol = 'anytype';
 
@@ -120,7 +121,7 @@ class Util {
 		return path.join.apply(null, dataPath);
 	};
 
-	send (win: any, ...args: any[]): void {
+	send (win: AppWindow, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.webContents) {
 			return;
 		};
@@ -129,22 +130,22 @@ class Util {
 		this.sendToActiveTab(win, ...args);
 	};
 
-	sendToTab (win: any, tabId: any, ...args: any[]): void {
+	sendToTab (win: AppWindow, tabId: string, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.views) {
 			return;
 		};
 
-		const view = win.views.find((v: any) => v.id == tabId);
+		const view = win.views.find((v: TabView) => v.id == tabId);
 		if (view && view.webContents) {
 			view.webContents.send(...args);
 		};
 	};
 
-	getView (win: any, id: any): any {
-		return win?.views?.find((v: any) => v.id == id);
+	getView (win: AppWindow, id: string): TabView | undefined {
+		return win?.views?.find((v: TabView) => v.id == id);
 	};
 
-	getActiveView (win: any): any {
+	getActiveView (win: AppWindow): TabView | undefined {
 		return this.getView(win, win?.activeTabId);
 	};
 
@@ -165,14 +166,14 @@ class Util {
 		};
 	};
 
-	sendToActiveTab (win: any, ...args: any[]): void {
+	sendToActiveTab (win: AppWindow, ...args: [string, ...any[]]): void {
 		const view = this.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.send(...args);
 		};
 	};
 
-	sendToAllTabs (win: any, ...args: any[]): void {
+	sendToAllTabs (win: AppWindow, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.views) {
 			return;
 		};
@@ -184,7 +185,7 @@ class Util {
 		};
 	};
 
-	printHtml (win: any, exportPath: string, name: string, options: any): void {
+	printHtml (win: AppWindow, exportPath: string, name: string, options: Record<string, any>): void {
 		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
@@ -265,7 +266,7 @@ class Util {
 		});
 	};
 
-	printPdf (win: any, exportPath: string, name: string, options: any): void {
+	printPdf (win: AppWindow, exportPath: string, name: string, options: Electron.PrintToPDFOptions): void {
 		const view = this.getActiveView(win);
 		const webContents = view?.webContents || win.webContents;
 
