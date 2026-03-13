@@ -1533,9 +1533,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current ||
 			v.trim().length ||
-			attachments.length || 
+			attachments.length ||
 			marks.current.length
 		);
 	};
