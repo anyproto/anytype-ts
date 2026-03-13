@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, J, S, U, C, Mark, translate, Action } from 'Lib';
@@ -8,7 +7,7 @@ import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
-import EmbedPreview from './embedPreview';
+import { renderParts } from './render';
 
 interface Props {
 	rootId: string;
@@ -18,166 +17,6 @@ interface Props {
 };
 
 const REPLY_LIMIT = 10;
-
-/**
- * Render a single CommentContentPart to HTML
- */
-const renderPart = (part: I.CommentContentPart, index: number, subId?: string): JSX.Element => {
-	const key = `part-${index}`;
-
-	// Divider
-	if (part.type === I.BlockType.Div) {
-		return <hr key={key} className="commentDivider" />;
-	};
-
-	// Embed
-	if ((part.type === I.BlockType.Embed) && part.embed) {
-		return (
-			<EmbedPreview
-				key={key}
-				processor={part.embed.processor}
-				text={part.embed.text}
-			/>
-		);
-	};
-
-	// Link (attachment)
-	if ((part.type === I.BlockType.Link) && part.link) {
-		const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;
-		if (!object || object._empty_) {
-			return <React.Fragment key={key} />;
-		};
-
-		return (
-			<div key={key} className="commentAttachments">
-				<Attachment
-					object={object}
-					subId={subId}
-					onRemove={() => {}}
-				/>
-			</div>
-		);
-	};
-
-	const html = U.String.sanitize(Mark.toHtml(part.text || '', part.marks || []));
-
-	switch (part.style) {
-		case I.TextStyle.Header1:
-			return <h1 key={key} className="commentH1" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Header2:
-			return <h2 key={key} className="commentH2" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Header3:
-			return <h3 key={key} className="commentH3" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Quote:
-			return <blockquote key={key} className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Code: {
-			const lang = part.lang || 'plain';
-			const grammar = Prism.languages[lang];
-			const text = part.text || '';
-			const highlighted = grammar ? Prism.highlight(text, grammar, lang) : U.String.sanitize(text);
-			const titles = U.Prism.getTitles();
-			const langTitle = titles.find((t: any) => t.id === lang);
-			const langLabel = langTitle ? langTitle.name : (lang !== 'plain' ? lang : '');
-
-			return (
-				<pre key={key} className="commentCodeBlock">
-					{langLabel ? <div className="codeLang">{langLabel}</div> : ''}
-					<code dangerouslySetInnerHTML={{ __html: highlighted }} />
-				</pre>
-			);
-		}
-
-		case I.TextStyle.Bulleted:
-			return <div key={key} className="commentListItem commentBulleted" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Numbered:
-			return <div key={key} className="commentListItem commentNumbered" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Checkbox: {
-			const cn = [ 'commentListItem', 'commentCheckbox' ];
-			if (part.checked) {
-				cn.push('isChecked');
-			};
-			return (
-				<div key={key} className={cn.join(' ')}>
-					<div className="checkboxMark" />
-					<span dangerouslySetInnerHTML={{ __html: html }} />
-				</div>
-			);
-		};
-
-		default:
-			return <p key={key} className="commentParagraph" dangerouslySetInnerHTML={{ __html: html }} />;
-	};
-};
-
-/**
- * Group consecutive list items and wrap them in appropriate list elements
- */
-const renderParts = (parts: I.CommentContentPart[], subId?: string): JSX.Element[] => {
-	const elements: JSX.Element[] = [];
-	let i = 0;
-
-	while (i < parts.length) {
-		const part = parts[i];
-
-		// Group consecutive bulleted items
-		if (part.style === I.TextStyle.Bulleted) {
-			const items: JSX.Element[] = [];
-			let j = i;
-
-			while ((j < parts.length) && (parts[j].style === I.TextStyle.Bulleted)) {
-				const html = U.String.sanitize(Mark.toHtml(parts[j].text || '', parts[j].marks || []));
-				items.push(<li key={`li-${j}`} dangerouslySetInnerHTML={{ __html: html }} />);
-				j++;
-			};
-
-			elements.push(<ul key={`ul-${i}`} className="commentList commentUl">{items}</ul>);
-			i = j;
-			continue;
-		};
-
-		// Group consecutive numbered items
-		if (part.style === I.TextStyle.Numbered) {
-			const items: JSX.Element[] = [];
-			let j = i;
-
-			while ((j < parts.length) && (parts[j].style === I.TextStyle.Numbered)) {
-				const html = U.String.sanitize(Mark.toHtml(parts[j].text || '', parts[j].marks || []));
-				items.push(<li key={`li-${j}`} dangerouslySetInnerHTML={{ __html: html }} />);
-				j++;
-			};
-
-			elements.push(<ol key={`ol-${i}`} className="commentList commentOl">{items}</ol>);
-			i = j;
-			continue;
-		};
-
-		// Group consecutive checkbox items
-		if (part.style === I.TextStyle.Checkbox) {
-			const items: JSX.Element[] = [];
-			let j = i;
-
-			while ((j < parts.length) && (parts[j].style === I.TextStyle.Checkbox)) {
-				items.push(renderPart(parts[j], j, subId));
-				j++;
-			};
-
-			elements.push(<div key={`checklist-${i}`} className="commentChecklist">{items}</div>);
-			i = j;
-			continue;
-		};
-
-		elements.push(renderPart(part, i, subId));
-		i++;
-	};
-
-	return elements;
-};
 
 const CommentPost = observer((props: Props) => {
 
@@ -191,7 +30,7 @@ const CommentPost = observer((props: Props) => {
 	const postRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
-	const { id, creator, content, createdAt, modifiedAt, replyCount, reactions } = message;
+	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
@@ -690,7 +529,7 @@ const CommentPost = observer((props: Props) => {
 							onCancel={onCancelReply}
 						/>
 					</div>
-				) : ''}
+				) : null}
 			</div>
 
 			{replies.length ? (
@@ -702,7 +541,7 @@ const CommentPost = observer((props: Props) => {
 						>
 							{isLoadingOlderReplies ? translate('commentLoading') : translate('commentLoadPreviousReplies')}
 						</div>
-					) : ''}
+					) : null}
 
 					{replies.map(reply => (
 						<CommentReply
@@ -722,9 +561,9 @@ const CommentPost = observer((props: Props) => {
 						>
 							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
 						</div>
-					) : ''}
+					) : null}
 				</div>
-			) : ''}
+			) : null}
 		</div>
 	);
 

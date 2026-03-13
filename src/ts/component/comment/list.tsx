@@ -37,7 +37,7 @@ const CommentList = observer((props: Props) => {
 				>
 					{isLoadingMore ? translate('commentLoading') : translate('commentLoadMore')}
 				</div>
-			) : ''}
+			) : null}
 
 			{posts.map(post => (
 				<CommentPost

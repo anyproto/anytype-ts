@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import * as Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
+import { renderParts } from './render';
 
 interface Props {
 	rootId: string;
@@ -13,78 +13,6 @@ interface Props {
 	parentId: string;
 	message: I.CommentMessage;
 	readonly?: boolean;
-};
-
-/**
- * Render a single CommentContentPart to HTML (simplified for replies)
- */
-const renderPart = (part: I.CommentContentPart, index: number, subId?: string): JSX.Element => {
-	const key = `part-${index}`;
-
-	if (part.type === I.BlockType.Div) {
-		return <hr key={key} className="commentDivider" />;
-	};
-
-	// Link (attachment)
-	if ((part.type === I.BlockType.Link) && part.link) {
-		const object = subId ? S.Detail.get(subId, part.link.targetObjectId) : null;
-		if (!object || object._empty_) {
-			return <React.Fragment key={key} />;
-		};
-
-		return (
-			<div key={key} className="commentAttachments">
-				<Attachment
-					object={object}
-					subId={subId}
-					onRemove={() => {}}
-				/>
-			</div>
-		);
-	};
-
-	const html = U.String.sanitize(Mark.toHtml(part.text || '', part.marks || []));
-
-	switch (part.style) {
-		case I.TextStyle.Header1:
-			return <h1 key={key} className="commentH1" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Header2:
-			return <h2 key={key} className="commentH2" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Header3:
-			return <h3 key={key} className="commentH3" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Quote:
-			return <blockquote key={key} className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Code: {
-			const grammar = Prism.languages.clike || {};
-			const highlighted = Prism.highlight(part.text || '', grammar, 'clike');
-
-			return <pre key={key} className="commentCodeBlock"><code dangerouslySetInnerHTML={{ __html: highlighted }} /></pre>;
-		}
-
-		case I.TextStyle.Bulleted:
-		case I.TextStyle.Numbered:
-			return <div key={key} className="commentListItem" dangerouslySetInnerHTML={{ __html: html }} />;
-
-		case I.TextStyle.Checkbox: {
-			const cn = [ 'commentListItem', 'commentCheckbox' ];
-			if (part.checked) {
-				cn.push('isChecked');
-			};
-			return (
-				<div key={key} className={cn.join(' ')}>
-					<div className="checkboxMark" />
-					<span dangerouslySetInnerHTML={{ __html: html }} />
-				</div>
-			);
-		};
-
-		default:
-			return <p key={key} className="commentParagraph" dangerouslySetInnerHTML={{ __html: html }} />;
-	};
 };
 
 const CommentReply = observer((props: Props) => {
@@ -95,7 +23,7 @@ const CommentReply = observer((props: Props) => {
 	const [ isEditing, setIsEditing ] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
-	const { id, creator, content, createdAt, modifiedAt } = message;
+	const { id, creator, createdAt, modifiedAt } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
@@ -137,6 +65,23 @@ const CommentReply = observer((props: Props) => {
 			item.off('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
 				Action.openUrl(href);
+			});
+		});
+
+		// Object marks
+		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
+			item = $(item);
+			const param = String(item.attr('data-param') || '');
+			if (!param) {
+				return;
+			};
+
+			const object = S.Detail.get(subId, param, []);
+			item.off('mousedown.object').on('mousedown.object', (e: any) => {
+				e.preventDefault();
+				if (!object._empty_) {
+					U.Object.openEvent(e, object);
+				};
 			});
 		});
 	}, [ isEditing, parts, subId ]);
@@ -293,7 +238,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<>
 				<div ref={contentRef} className="content">
-					{parts.map((part, i) => renderPart(part, i, subId))}
+					{renderParts(parts, subId)}
 				</div>
 				{renderAttachments()}
 			</>

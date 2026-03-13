@@ -25,7 +25,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const subscribedId = useRef('');
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const messageIdHandled = useRef(false);
-	const listRef = useRef<any>(null);
 
 	const resize = useCallback(() => {
 		const node = sectionRef.current;

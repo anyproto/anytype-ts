@@ -169,6 +169,7 @@ npx rspack --config rspack.pixi.config.js
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
+- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Code Style
 - Write `else if` with a linebreak before `if`:
