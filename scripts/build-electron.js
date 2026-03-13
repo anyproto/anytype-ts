@@ -7,7 +7,7 @@ const buildOptions = {
 	entryPoints: [path.join(__dirname, '..', 'electron', 'ts', 'main.ts')],
 	bundle: true,
 	platform: 'node',
-	target: 'node20',
+	target: 'node24',
 	format: 'cjs',
 	outfile: path.join(__dirname, '..', 'electron.js'),
 	sourcemap: false,
