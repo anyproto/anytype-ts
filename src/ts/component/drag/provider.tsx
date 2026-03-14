@@ -223,16 +223,14 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 					};
 				};
 			} else {
-				if (filePaths.length) {
-					C.FileDrop(rootId, targetId, position.current, filePaths, () => {
+				const allPaths = filePaths.concat(dirPaths);
+
+				if (allPaths.length) {
+					C.FileDrop(rootId, targetId, position.current, allPaths, () => {
 						if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
 							S.Block.toggle(rootId, targetId, true);
 						};
 					});
-				};
-
-				if (dirPaths.length) {
-					U.File.uploadFolderAsCollection(dirPaths, rootId, targetId, position.current);
 				};
 			};
 		} else
