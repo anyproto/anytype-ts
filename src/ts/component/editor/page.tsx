@@ -2103,10 +2103,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
 
 		if (currentTo && (currentFrom != currentTo) && !currentMark) {
-			const earlyMarkType = isAnytypeObject ? I.MarkType.Object : I.MarkType.Link;
-			const earlyMarkParam = isAnytypeObject ? linkParam.target : url;
-
-			marks.push({ type: earlyMarkType, range, param: earlyMarkParam });
+			marks.push({ type: I.MarkType.Link, range, param: url });
 
 			U.Data.blockSetText(rootId, block.id, block.content.text, marks, true, () => {
 				focus.set(block.id, { from: currentFrom, to: currentTo });
@@ -2230,10 +2227,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 								to = currentTo;
 							};
 
-							const markType = isAnytypeObject ? I.MarkType.Object : I.MarkType.Link;
-							const markParam = isAnytypeObject ? linkParam.target : url;
-
-							marks.push({ type: markType, range: { from: currentFrom, to }, param: markParam });
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
