@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { LayoutPlug } from 'Component';
+import { LayoutPlug, Icon, Label } from 'Component';
 import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
@@ -39,6 +39,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const isCreating = useRef(false);
 	const frame = useRef(0);
 	const timeoutFilter = useRef(0);
+	const timeoutDrag = useRef(0);
 	const editingRecordId = useRef('');
 	const filterRef = useRef('');
 	const viewIdRef = useRef('');
@@ -1643,33 +1644,102 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		);
 	};
 
+	const getEditorWrapper = () => {
+		return $(nodeRef.current).closest('.editorWrapper');
+	};
+
+	const getBlockNode = () => {
+		return $(nodeRef.current).closest('.block.blockDataview');
+	};
+
+	const onFileDragOver = (e: any) => {
+		const oe = e.originalEvent || e;
+		if (!U.File.checkDropFiles(oe)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+
+		const blockNode = getBlockNode();
+		const wrapper = getEditorWrapper();
+		const container = U.Common.getScrollContainer(isPopup);
+		const hoverArea = blockNode.find('.hoverArea');
+
+		if (hoverArea.length && container.length) {
+			const rect = hoverArea.get(0).getBoundingClientRect();
+			const top = rect.bottom;
+			const containerBottom = container.get(0).getBoundingClientRect().bottom;
+			const height = containerBottom - top;
+
+			blockNode.find('.dragOverlay').css({ height });
+		};
+
+		wrapper.addClass('isDraggingOver');
+	};
+
+	const onFileDragLeave = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(() => {
+			getEditorWrapper().removeClass('isDraggingOver');
+		}, 100);
+	};
+
+	const onFileDrop = (e: any) => {
+		window.clearTimeout(timeoutDrag.current);
+		getEditorWrapper().removeClass('isDraggingOver');
+	};
+
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
 		onRecordAdd,
 		resize,
 	}));
-	
+
+	useEffect(() => {
+		if (isInline || readonly) {
+			return;
+		};
+
+		const wrapper = getEditorWrapper();
+		const ns = `.dataviewDrag-${block.id}`;
+
+		wrapper.on(`dragover${ns}`, onFileDragOver);
+		wrapper.on(`dragleave${ns}`, onFileDragLeave);
+		wrapper.on(`drop${ns}`, onFileDrop);
+
+		return () => {
+			wrapper.off(ns);
+			window.clearTimeout(timeoutDrag.current);
+		};
+	}, [ readonly ]);
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			tabIndex={0} 
+			tabIndex={0}
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownHandler} 
-			onKeyUp={onKeyUpHandler} 
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
 			onFocus={onFocus}
 		>
 			<div className="hoverArea">
-				<Controls 
-					ref={controlsRef} 
-					{...props} 
-					{...dataviewProps} 
+				<Controls
+					ref={controlsRef}
+					{...props}
+					{...dataviewProps}
 					onFilterChange={onFilterChange}
 				/>
-				<Selection 
-					ref={selectRef} 
-					{...props} 
-					{...dataviewProps} 
-					multiSelectAction={multiSelectAction} 
+				<Selection
+					ref={selectRef}
+					{...props}
+					{...dataviewProps}
+					multiSelectAction={multiSelectAction}
 				/>
 			</div>
 
@@ -1681,6 +1751,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					onClear={closeFilters}
 				/>
 			) : ''}
+
+			<div className="dragOverlay">
+				<div className="inner">
+					<Icon className="dragState" />
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
 
 			{body}
 		</div>
