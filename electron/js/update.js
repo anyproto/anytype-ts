@@ -12,6 +12,7 @@ class UpdateManager {
 	win = null;
 	isUpdating = false;
 	isDownloading = false;
+	isRelaunching = false;
 	autoUpdate = false;
 	timeout = 0;
 
@@ -135,8 +136,9 @@ class UpdateManager {
 	relaunch () {
 		Util.log('info', 'Relaunch');
 		app.isQuiting = true;
+		this.isRelaunching = true;
 
-		autoUpdater.quitAndInstall();
+		autoUpdater.quitAndInstall(false, true);
 
 		// Safety net: on Linux, quitAndInstall() runs the package install synchronously
 		// via spawnSync (e.g. pkexec dpkg -i). If the install fails (permission denied,

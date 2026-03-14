@@ -334,7 +334,12 @@ app.on('second-instance', (event, argv) => {
 });
 
 app.on('before-quit', e => {
-	Util.log('info', 'before-quit');
+	Util.log('info', 'before-quit, isRelaunching: ' + UpdateManager.isRelaunching);
+
+	if (UpdateManager.isRelaunching) {
+		// Let electron-updater handle the quit and relaunch — do not force exit
+		return;
+	};
 
 	if (app.isQuiting) {
 		app.exit(0);
