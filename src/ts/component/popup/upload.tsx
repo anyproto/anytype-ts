@@ -183,13 +183,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		processFolder(trees, extraFiles);
 	};
 
-	const processFolder = (trees: any[], extraFiles: string[]) => {
+	const processFolder = (trees: ReturnType<typeof U.File.scanDirectory>[], extraFiles: string[]) => {
 		let allFiles: string[] = [].concat(extraFiles);
 		for (const tree of trees) {
 			allFiles = allFiles.concat(U.File.collectFiles(tree));
 		};
 
-		const progressId = `folder-upload-${Date.now()}`;
+		const progressId = U.File.nextProgressId();
 		const total = allFiles.length;
 
 		// Close popup immediately — progress panel takes over
@@ -226,7 +226,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		const createCollectionTree = (tree: any, parentCollectionId: string, onDone: () => void) => {
+		const createCollectionTree = (tree: ReturnType<typeof U.File.scanDirectory>, parentCollectionId: string, onDone: () => void) => {
 			const collType = J.Constant.typeKey.collection;
 
 			C.ObjectCreate({ name: tree.name }, [], '', collType, space, (message: any) => {
@@ -414,7 +414,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		e.preventDefault();
 
 		const url = String(urlRef.current?.getValue() || '').trim();
-		if (!url) {
+		if (!url || !url.match(/^https?:\/\//)) {
 			return;
 		};
 

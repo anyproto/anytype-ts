@@ -11,6 +11,17 @@ const UNITS = {
 	5: 'TB',
 };
 
+interface DirectoryTree {
+	name: string;
+	path: string;
+	files: string[];
+	children: DirectoryTree[];
+	totalFiles: number;
+	depthExceeded: boolean;
+};
+
+const progressCounter = { value: 0 };
+
 class UtilFile {
 
 	/**
@@ -286,17 +297,17 @@ class UtilFile {
 	 * Recursively scans a directory and returns its tree structure.
 	 * Skips hidden files, known junk, and skip-listed directories.
 	 */
-	scanDirectory (dirPath: string, depth: number = 0): { name: string; path: string; files: string[]; children: any[]; totalFiles: number; depthExceeded: boolean } {
+	scanDirectory (dirPath: string, depth: number = 0): DirectoryTree {
 		const electron = U.Common.getElectron();
 		const skipDirs = J.Constant.fileUpload.skipDirs;
 		const maxDepth = J.Constant.fileUpload.maxDepth;
 		const dirName = electron.fileName(dirPath);
 
-		const result = {
+		const result: DirectoryTree = {
 			name: dirName,
 			path: dirPath,
-			files: [] as string[],
-			children: [] as any[],
+			files: [],
+			children: [],
 			totalFiles: 0,
 			depthExceeded: false,
 		};
@@ -365,7 +376,7 @@ class UtilFile {
 	/**
 	 * Collects all file paths from a scanned directory tree.
 	 */
-	collectFiles (tree: any): string[] {
+	collectFiles (tree: DirectoryTree): string[] {
 		let files = [].concat(tree.files);
 
 		for (const child of tree.children) {
@@ -409,7 +420,7 @@ class UtilFile {
 		const doUpload = () => {
 			const space = S.Common.space;
 			const electron = U.Common.getElectron();
-			const progressId = `folder-upload-${Date.now()}`;
+			const progressId = this.nextProgressId();
 			const uploadCounts: { [key: string]: number } = {};
 			let completed = 0;
 			let errorCount = 0;
@@ -425,7 +436,7 @@ class UtilFile {
 				canCancel: false,
 			});
 
-			const createTree = (tree: any, parentColId: string, onDone: (colId: string) => void) => {
+			const createTree = (tree: DirectoryTree, parentColId: string, onDone: (colId: string) => void) => {
 				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
 					if (message.error.code) {
 						onDone('');
@@ -660,7 +671,7 @@ class UtilFile {
 		const doUpload = () => {
 			const space = S.Common.space;
 			const electron = U.Common.getElectron();
-			const progressId = `folder-upload-${Date.now()}`;
+			const progressId = this.nextProgressId();
 			const uploadCounts: { [key: string]: number } = {};
 			let completed = 0;
 			let mismatchCount = 0;
@@ -700,7 +711,7 @@ class UtilFile {
 				};
 			};
 
-			const createTree = (tree: any, parentColId: string, onDone: (colId: string) => void) => {
+			const createTree = (tree: DirectoryTree, parentColId: string, onDone: (colId: string) => void) => {
 				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
 					if (message.error.code) {
 						onDone('');
@@ -884,6 +895,10 @@ class UtilFile {
 	/**
 	 * Shows an error popup when some files failed to upload.
 	 */
+	nextProgressId (): string {
+		return `folder-upload-${++progressCounter.value}`;
+	};
+
 	showDepthExceededWarning () {
 		S.Popup.open('confirm', {
 			preventCloseByClick: true,
