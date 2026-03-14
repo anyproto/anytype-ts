@@ -208,30 +208,16 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
+			const allPaths = filePaths.concat(dirPaths);
 			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
-			const dvBlock = isSetLayout ? S.Block.getChildren(rootId, rootId, it => it.isDataview())[0] : null;
-			const isDataviewDrop = !!(target && target.isDataview()) || !!dvBlock;
-			const dvBlockId = (target && target.isDataview()) ? targetId : (dvBlock ? dvBlock.id : '');
 
-			if (isDataviewDrop && dvBlockId) {
-				if (filePaths.length || dirPaths.length) {
-					if (filePaths.length && !dirPaths.length) {
-						U.File.uploadFilesToDataview(rootId, dvBlockId, filePaths);
-					} else {
-						U.File.uploadFolderToDataview(dirPaths, filePaths, rootId, dvBlockId);
+			if (allPaths.length && !isSetLayout) {
+				C.FileDrop(rootId, targetId, position.current, allPaths, () => {
+					if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
+						S.Block.toggle(rootId, targetId, true);
 					};
-				};
-			} else {
-				const allPaths = filePaths.concat(dirPaths);
-
-				if (allPaths.length) {
-					C.FileDrop(rootId, targetId, position.current, allPaths, () => {
-						if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
-							S.Block.toggle(rootId, targetId, true);
-						};
-					});
-				};
+				});
 			};
 		} else
 		if (data && canDrop && (position.current != I.BlockPosition.None)) {

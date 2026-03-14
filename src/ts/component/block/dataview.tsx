@@ -1699,6 +1699,24 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		e.stopPropagation();
 		window.clearTimeout(timeoutDrag.current);
 		getEditorWrapper().removeClass('isDraggingOver');
+
+		const electron = U.Common.getElectron();
+		const files = e.originalEvent?.dataTransfer?.files;
+		if (!files || !files.length) {
+			return;
+		};
+
+		const paths: string[] = [];
+		for (let i = 0; i < files.length; i++) {
+			const path = electron.webFilePath(files[i]);
+			if (path) {
+				paths.push(path);
+			};
+		};
+
+		if (paths.length) {
+			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths);
+		};
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -1708,7 +1726,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}));
 
 	useEffect(() => {
-		if (isInline || readonly) {
+		if (isInline || readonly || !isCollection) {
 			return;
 		};
 

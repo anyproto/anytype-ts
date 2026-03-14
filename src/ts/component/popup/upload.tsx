@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent }
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader } from 'Component';
-import { I, C, J, S, U, translate, Action, analytics, Preview } from 'Lib';
+import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
 
 enum Tab {
 	Upload = 0,
@@ -76,8 +76,12 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
+		const allPaths = filePaths.concat(dirPaths);
+
 		if (dirPaths.length) {
-			handleFolderDrop(dirPaths, filePaths);
+			onUpload?.([]);
+			close();
+			C.FileDrop(collectionId || '', '', I.BlockPosition.None as number, allPaths);
 		} else
 		if (filePaths.length) {
 			uploadFiles(filePaths);
@@ -126,236 +130,6 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			e.stopPropagation();
 			uploadFiles(paths);
 		};
-	};
-
-	const handleFolderDrop = (dirPaths: string[], extraFiles: string[]) => {
-		const trees = dirPaths.map(p => U.File.scanDirectory(p));
-		let allFiles = [].concat(extraFiles);
-
-		for (const tree of trees) {
-			allFiles = allFiles.concat(U.File.collectFiles(tree));
-		};
-
-		const totalFiles = allFiles.length;
-		const { softLimit, hardLimit } = J.Constant.fileUpload;
-
-		if (totalFiles > hardLimit) {
-			close();
-			window.setTimeout(() => {
-				S.Popup.open('confirm', {
-					preventCloseByClick: true,
-					data: {
-						title: translate('popupUploadFolderTooManyTitle'),
-						text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
-						textConfirm: translate('commonOk'),
-						canCancel: false,
-	
-					},
-				});
-			}, S.Popup.getTimeout());
-			return;
-		};
-
-		const counts = U.File.getFileCountsByType(allFiles);
-		const breakdown = U.File.formatCountsBreakdown(counts);
-
-		if (totalFiles > softLimit) {
-			close();
-			window.setTimeout(() => {
-				S.Popup.open('confirm', {
-					preventCloseByClick: true,
-					data: {
-						title: translate('popupUploadFolderConfirmTitle'),
-						text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
-						textConfirm: translate('commonUpload'),
-						textCancel: translate('commonCancel'),
-						canCancel: true,
-	
-						onConfirm: () => {
-							processFolder(trees, extraFiles);
-						},
-					},
-				});
-			}, S.Popup.getTimeout());
-			return;
-		};
-
-		processFolder(trees, extraFiles);
-	};
-
-	const processFolder = (trees: ReturnType<typeof U.File.scanDirectory>[], extraFiles: string[]) => {
-		let allFiles: string[] = [].concat(extraFiles);
-		for (const tree of trees) {
-			allFiles = allFiles.concat(U.File.collectFiles(tree));
-		};
-
-		const progressId = U.File.nextProgressId();
-		const total = allFiles.length;
-
-		// Close popup immediately — progress panel takes over
-		onUpload?.([]);
-		close();
-
-		S.Progress.add({
-			id: progressId,
-			spaceId: S.Common.space,
-			type: I.ProgressType.Drop,
-			state: I.ProgressState.Running,
-			current: 0,
-			total,
-			canCancel: false,
-		});
-
-		const space = S.Common.space;
-		const electron = U.Common.getElectron();
-		let completed = 0;
-		let errorCount = 0;
-		let lastErrorDescription = '';
-		const objectIds: string[] = [];
-		const counts: { [key: string]: number } = {};
-
-		const onAllDone = () => {
-			S.Progress.delete(progressId);
-			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
-
-			if (errorCount > 0) {
-				U.File.showUploadError(errorCount, lastErrorDescription);
-			} else
-			if (trees.some(t => t.depthExceeded)) {
-				U.File.showDepthExceededWarning();
-			};
-		};
-
-		const createCollectionTree = (tree: ReturnType<typeof U.File.scanDirectory>, parentCollectionId: string, onDone: () => void) => {
-			if (!tree.files.length && !tree.children.length) {
-				onDone();
-				return;
-			};
-
-			const collType = J.Constant.typeKey.collection;
-
-			C.ObjectCreate({ name: tree.name }, [], '', collType, space, (message: any) => {
-				if (message.error.code) {
-					onDone();
-					return;
-				};
-
-				const colId = message.details.id;
-
-				if (parentCollectionId) {
-					C.ObjectCollectionAdd(parentCollectionId, [ colId ]);
-				};
-
-				if (collectionId) {
-					C.ObjectCollectionAdd(collectionId, [ colId ]);
-				};
-
-				let pending = tree.files.length + tree.children.length;
-
-				if (!pending) {
-					onDone();
-					return;
-				};
-
-				const checkDone = () => {
-					pending--;
-					if (pending <= 0) {
-						onDone();
-					};
-				};
-
-				for (const filePath of tree.files) {
-					const mime = electron.fileMime(filePath) || '';
-					const fileLayout = U.File.layoutByMime(mime);
-					const type = U.Object.getFileTypeByLayout(fileLayout);
-					const key = U.File.layoutToCountKey(fileLayout);
-
-					C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
-						completed++;
-						S.Progress.update({ id: progressId, current: completed });
-
-						if (msg.error.code) {
-							errorCount++;
-							if (msg.error.description) {
-								lastErrorDescription = msg.error.description;
-							};
-						} else
-						if (msg.objectId) {
-							objectIds.push(msg.objectId);
-							counts[key] = (counts[key] || 0) + 1;
-							C.ObjectCollectionAdd(colId, [ msg.objectId ]);
-						};
-
-						checkDone();
-					});
-				};
-
-				for (const child of tree.children) {
-					createCollectionTree(child, colId, checkDone);
-				};
-			});
-		};
-
-		// Upload extra loose files first
-		let looseRemaining = extraFiles.length;
-
-		const onLooseDone = () => {
-			// Then process folder trees
-			let treeRemaining = trees.length;
-
-			if (!treeRemaining) {
-				onAllDone();
-				return;
-			};
-
-			for (const tree of trees) {
-				createCollectionTree(tree, '', () => {
-					treeRemaining--;
-					if (treeRemaining <= 0) {
-						onAllDone();
-					};
-				});
-			};
-		};
-
-		if (!looseRemaining) {
-			onLooseDone();
-			return;
-		};
-
-		for (const filePath of extraFiles) {
-			const mime = electron.fileMime(filePath) || '';
-			const fileLayout = U.File.layoutByMime(mime);
-			const type = U.Object.getFileTypeByLayout(fileLayout);
-			const key = U.File.layoutToCountKey(fileLayout);
-
-			C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
-				completed++;
-				S.Progress.update({ id: progressId, current: completed });
-
-				if (message.error.code) {
-					errorCount++;
-					if (message.error.description) {
-						lastErrorDescription = message.error.description;
-					};
-				} else
-				if (message.objectId) {
-					objectIds.push(message.objectId);
-					counts[key] = (counts[key] || 0) + 1;
-
-					if (collectionId) {
-						C.ObjectCollectionAdd(collectionId, [ message.objectId ]);
-					};
-				};
-
-				looseRemaining--;
-				if (looseRemaining <= 0) {
-					onLooseDone();
-				};
-			});
-		};
-
-		analytics.event('UploadMedia', { type: fileType });
 	};
 
 	const uploadFiles = (paths: string[]) => {

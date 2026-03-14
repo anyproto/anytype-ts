@@ -234,11 +234,4 @@ export default {
 	storageKey: {
 		sidebarData: 'sidebarData',
 	},
-
-	fileUpload: {
-		softLimit:	 100,
-		hardLimit:	 5000,
-		maxDepth:	 10,
-		skipDirs:	 [ 'node_modules', '.git', '__pycache__', '.venv', 'build', 'dist', '.svn', '.hg' ],
-	},
 };
