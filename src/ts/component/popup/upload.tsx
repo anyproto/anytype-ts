@@ -128,38 +128,6 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	const layoutToCountKey = (l: I.ObjectLayout): string => {
-		switch (l) {
-			case I.ObjectLayout.Image: return 'image';
-			case I.ObjectLayout.Video: return 'video';
-			case I.ObjectLayout.Audio: return 'audio';
-			default: return 'file';
-		};
-	};
-
-	const showUploadToast = (counts: { [key: string]: number }) => {
-		Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
-	};
-
-	const formatCountsBreakdown = (counts: { [key: string]: number }): string => {
-		const pluralMap = {
-			image: translate('pluralImage'),
-			video: translate('pluralVideo'),
-			audio: translate('pluralAudio'),
-			file: translate('pluralFile'),
-		};
-
-		const parts: string[] = [];
-		for (const key of [ 'image', 'video', 'audio', 'file' ]) {
-			const n = counts[key];
-			if (n > 0) {
-				parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
-			};
-		};
-
-		return parts.join(', ');
-	};
-
 	const handleFolderDrop = (dirPaths: string[], extraFiles: string[]) => {
 		const trees = dirPaths.map(p => U.File.scanDirectory(p));
 		let allFiles = [].concat(extraFiles);
@@ -189,7 +157,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const counts = U.File.getFileCountsByType(allFiles);
-		const breakdown = formatCountsBreakdown(counts);
+		const breakdown = U.File.formatCountsBreakdown(counts);
 
 		if (totalFiles > softLimit) {
 			close();
@@ -248,7 +216,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const onAllDone = () => {
 			S.Progress.delete(progressId);
-			showUploadToast(counts);
+			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
 
 			if (errorCount > 0) {
 				U.File.showUploadError(errorCount, lastErrorDescription);
@@ -295,7 +263,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					const mime = electron.fileMime(filePath) || '';
 					const fileLayout = U.File.layoutByMime(mime);
 					const type = U.Object.getFileTypeByLayout(fileLayout);
-					const key = layoutToCountKey(fileLayout);
+					const key = U.File.layoutToCountKey(fileLayout);
 
 					C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
 						completed++;
@@ -354,7 +322,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const mime = electron.fileMime(filePath) || '';
 			const fileLayout = U.File.layoutByMime(mime);
 			const type = U.Object.getFileTypeByLayout(fileLayout);
-			const key = layoutToCountKey(fileLayout);
+			const key = U.File.layoutToCountKey(fileLayout);
 
 			C.FileUpload(space, '', filePath, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
@@ -398,7 +366,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const cb = () => {
 			setIsLoading(false);
-			showUploadToast(counts);
+			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
 			onUpload?.(objectIds);
 			close();
 
@@ -413,7 +381,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const mime = electron.fileMime(path) || '';
 			const fileLayout = U.File.layoutByMime(mime);
 			const type = U.Object.getFileTypeByLayout(fileLayout);
-			const key = layoutToCountKey(fileLayout);
+			const key = U.File.layoutToCountKey(fileLayout);
 
 			C.FileUpload(space, '', path, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
@@ -464,13 +432,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			const objectIds = message.objectId ? [ message.objectId ] : [];
-			const key = layoutToCountKey(layout);
+			const key = U.File.layoutToCountKey(layout);
 
 			if (message.objectId && collectionId) {
 				C.ObjectCollectionAdd(collectionId, [ message.objectId ]);
 			};
 
-			showUploadToast({ [key]: 1 });
+			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: { [key]: 1 } });
 			onUpload?.(objectIds);
 			close();
 		});

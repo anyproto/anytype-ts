@@ -133,23 +133,9 @@ const Toast: FC = observer(() => {
 				break;
 			};
 
-			const pluralMap = {
-				image: translate('pluralImage'),
-				video: translate('pluralVideo'),
-				audio: translate('pluralAudio'),
-				file: translate('pluralFile'),
-			};
-
-			const parts: string[] = [];
-			for (const key of [ 'image', 'video', 'audio', 'file' ]) {
-				const n = uploadCounts[key];
-				if (n > 0) {
-					parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
-				};
-			};
-
-			if (parts.length) {
-				textAction = U.String.sprintf(translate('toastUploaded'), parts.join(', '));
+			const breakdown = U.File.formatCountsBreakdown(uploadCounts);
+			if (breakdown) {
+				textAction = U.String.sprintf(translate('toastUploaded'), breakdown);
 			};
 			break;
 		};
