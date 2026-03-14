@@ -1854,7 +1854,7 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
 	request.setSetsourceList(sources);
 	request.setIncludetypeedges(typeEdges);
 
-	dispatcher.request(ObjectGraph.name, request, callBack);
+	dispatcher.request('ObjectGraph', request, callBack);
 };
 
 export const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {

@@ -914,12 +914,12 @@ class UtilData {
 	};
 
 	getGraphData (message: any): { nodes: any[]; edges: any[] } {
-		const nodes = message.nodes.map(it => S.Detail.mapper(it)).filter(it => it.type);
+		const nodes = (message.nodes || []).map(it => S.Detail.mapper(it)).filter(it => it.type);
 		const nodeIds = new Set(nodes.map(it => it.id));
 
 		return {
 			nodes,
-			edges: message.edges.filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
+			edges: (message.edges || []).filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
 		};
 	};
 
