@@ -1470,6 +1470,9 @@
 	"popupUploadFolderConfirmText": "This folder contains %s. Do you want to upload them all?",
 	"popupUploadTypeMismatchTitle": "Some files not added to set",
 	"popupUploadTypeMismatchText": "%s uploaded files are of a different type and won't appear in this set",
+	"popupUploadErrorTitle": "%s %s were not uploaded",
+	"popupUploadErrorText": "Please try again",
+	"popupUploadErrorConfirm": "Got it",
 
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",

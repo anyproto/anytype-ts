@@ -401,6 +401,8 @@ class UtilFile {
 			const progressId = `folder-upload-${Date.now()}`;
 			const uploadCounts: { [key: string]: number } = {};
 			let completed = 0;
+			let errorCount = 0;
+			let lastErrorDescription = '';
 
 			S.Progress.add({
 				id: progressId,
@@ -449,7 +451,13 @@ class UtilFile {
 							completed++;
 							S.Progress.update({ id: progressId, current: completed });
 
-							if (!msg.error.code && msg.objectId) {
+							if (msg.error.code) {
+								errorCount++;
+								if (msg.error.description) {
+									lastErrorDescription = msg.error.description;
+								};
+							} else
+							if (msg.objectId) {
 								uploadCounts[key] = (uploadCounts[key] || 0) + 1;
 								C.ObjectCollectionAdd(colId, [ msg.objectId ]);
 							};
@@ -478,6 +486,10 @@ class UtilFile {
 					if (remaining <= 0) {
 						S.Progress.delete(progressId);
 						Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts });
+
+						if (errorCount > 0) {
+							this.showUploadError(errorCount, lastErrorDescription);
+						};
 
 						for (const id of topCollectionIds) {
 							const linkParam = U.Data.getLinkBlockParam(id, I.ObjectLayout.Collection, false);
@@ -531,6 +543,8 @@ class UtilFile {
 		const counts: { [key: string]: number } = {};
 		let completed = 0;
 		let mismatchCount = 0;
+		let errorCount = 0;
+		let lastErrorDescription = '';
 
 		const onAllDone = () => {
 			if (isCollection && objectIds.length) {
@@ -539,6 +553,9 @@ class UtilFile {
 
 			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: counts });
 
+			if (errorCount > 0) {
+				this.showUploadError(errorCount, lastErrorDescription);
+			} else
 			if ((sourceTypes.length > 0) && (mismatchCount > 0)) {
 				S.Popup.open('confirm', {
 					preventCloseByClick: true,
@@ -547,7 +564,6 @@ class UtilFile {
 						text: U.String.sprintf(translate('popupUploadTypeMismatchText'), mismatchCount),
 						textConfirm: translate('commonOk'),
 						canCancel: false,
-						canConfirm: true,
 					},
 				});
 			};
@@ -566,7 +582,13 @@ class UtilFile {
 			C.FileUpload(space, '', filePath, type, details, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
 
-				if (!message.error.code && message.objectId) {
+				if (message.error.code) {
+					errorCount++;
+					if (message.error.description) {
+						lastErrorDescription = message.error.description;
+					};
+				} else
+				if (message.objectId) {
 					objectIds.push(message.objectId);
 					counts[key] = (counts[key] || 0) + 1;
 				};
@@ -628,6 +650,8 @@ class UtilFile {
 			const uploadCounts: { [key: string]: number } = {};
 			let completed = 0;
 			let mismatchCount = 0;
+			let errorCount = 0;
+			let lastErrorDescription = '';
 
 			S.Progress.add({
 				id: progressId,
@@ -643,6 +667,9 @@ class UtilFile {
 				S.Progress.delete(progressId);
 				Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts });
 
+				if (errorCount > 0) {
+					this.showUploadError(errorCount, lastErrorDescription);
+				} else
 				if ((sourceTypes.length > 0) && (mismatchCount > 0)) {
 					S.Popup.open('confirm', {
 						preventCloseByClick: true,
@@ -651,7 +678,6 @@ class UtilFile {
 							text: U.String.sprintf(translate('popupUploadTypeMismatchText'), mismatchCount),
 							textConfirm: translate('commonOk'),
 							canCancel: false,
-							canConfirm: true,
 						},
 					});
 				};
@@ -702,7 +728,13 @@ class UtilFile {
 							completed++;
 							S.Progress.update({ id: progressId, current: completed });
 
-							if (!msg.error.code && msg.objectId) {
+							if (msg.error.code) {
+								errorCount++;
+								if (msg.error.description) {
+									lastErrorDescription = msg.error.description;
+								};
+							} else
+							if (msg.objectId) {
 								uploadCounts[key] = (uploadCounts[key] || 0) + 1;
 								C.ObjectCollectionAdd(colId, [ msg.objectId ]);
 							};
@@ -757,7 +789,13 @@ class UtilFile {
 					completed++;
 					S.Progress.update({ id: progressId, current: completed });
 
-					if (!message.error.code && message.objectId) {
+					if (message.error.code) {
+						errorCount++;
+						if (message.error.description) {
+							lastErrorDescription = message.error.description;
+						};
+					} else
+					if (message.objectId) {
 						uploadCounts[key] = (uploadCounts[key] || 0) + 1;
 
 						if (isCollection) {
@@ -824,6 +862,27 @@ class UtilFile {
 		};
 
 		return parts.join(', ');
+	};
+
+	/**
+	 * Shows an error popup when some files failed to upload.
+	 */
+	showUploadError (errorCount: number, lastErrorDescription?: string) {
+		if (!errorCount) {
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			preventCloseByClick: true,
+			data: {
+				icon: 'error',
+				title: U.String.sprintf(translate('popupUploadErrorTitle'), errorCount, U.Common.plural(errorCount, translate('pluralFile'))),
+				text: lastErrorDescription || translate('popupUploadErrorText'),
+				textConfirm: translate('popupUploadErrorConfirm'),
+				colorConfirm: 'blank',
+				canCancel: false,
+			},
+		});
 	};
 
 };

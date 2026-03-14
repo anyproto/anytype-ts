@@ -241,12 +241,18 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const space = S.Common.space;
 		const electron = U.Common.getElectron();
 		let completed = 0;
+		let errorCount = 0;
+		let lastErrorDescription = '';
 		const objectIds: string[] = [];
 		const counts: { [key: string]: number } = {};
 
 		const onAllDone = () => {
 			S.Progress.delete(progressId);
 			showUploadToast(counts);
+
+			if (errorCount > 0) {
+				U.File.showUploadError(errorCount, lastErrorDescription);
+			};
 		};
 
 		const createCollectionTree = (tree: any, parentCollectionId: string, onDone: () => void) => {
@@ -292,7 +298,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						completed++;
 						S.Progress.update({ id: progressId, current: completed });
 
-						if (!msg.error.code && msg.objectId) {
+						if (msg.error.code) {
+							errorCount++;
+							if (msg.error.description) {
+								lastErrorDescription = msg.error.description;
+							};
+						} else
+						if (msg.objectId) {
 							objectIds.push(msg.objectId);
 							counts[key] = (counts[key] || 0) + 1;
 							C.ObjectCollectionAdd(colId, [ msg.objectId ]);
@@ -345,7 +357,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				completed++;
 				S.Progress.update({ id: progressId, current: completed });
 
-				if (!message.error.code && message.objectId) {
+				if (message.error.code) {
+					errorCount++;
+					if (message.error.description) {
+						lastErrorDescription = message.error.description;
+					};
+				} else
+				if (message.objectId) {
 					objectIds.push(message.objectId);
 					counts[key] = (counts[key] || 0) + 1;
 
@@ -370,6 +388,8 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const space = S.Common.space;
 		const electron = U.Common.getElectron();
 		let completed = 0;
+		let errorCount = 0;
+		let lastErrorDescription = '';
 		const objectIds: string[] = [];
 		const counts: { [key: string]: number } = {};
 
@@ -378,6 +398,12 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			showUploadToast(counts);
 			onUpload?.(objectIds);
 			close();
+
+			if (errorCount > 0) {
+				window.setTimeout(() => {
+					U.File.showUploadError(errorCount, lastErrorDescription);
+				}, S.Popup.getTimeout());
+			};
 		};
 
 		for (const path of paths) {
@@ -389,7 +415,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			C.FileUpload(space, '', path, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
 
-				if (!message.error.code && message.objectId) {
+				if (message.error.code) {
+					errorCount++;
+					if (message.error.description) {
+						lastErrorDescription = message.error.description;
+					};
+				} else
+				if (message.objectId) {
 					objectIds.push(message.objectId);
 					counts[key] = (counts[key] || 0) + 1;
 
@@ -421,6 +453,10 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
+				close();
+				window.setTimeout(() => {
+					U.File.showUploadError(1, message.error.description);
+				}, S.Popup.getTimeout());
 				return;
 			};
 
