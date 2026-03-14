@@ -21,8 +21,8 @@
 		.dropZone {
 			display: flex; flex-direction: column; align-items: center; justify-content: center;
 			min-height: 360px; margin: 12px 16px 16px 16px; border-radius: 8px;
-			border: 2px dashed var(--color-shape-secondary);
-			transition: border-color $transitionCommon, background-color $transitionCommon;
+			border: 0;
+			transition: background-color $transitionCommon;
 
 			.icon.upload {
 				width: 48px; height: 48px; margin: 0px 0px 12px 0px;
@@ -32,11 +32,7 @@
 			.label { @include text-paragraph; color: var(--color-text-secondary); }
 
 			&.isDragging {
-				border-color: var(--color-system-accent-100); background: var(--color-shape-highlight-medium);
-			}
-
-			&:hover {
-				border-color: var(--color-text-secondary);
+				background: var(--color-shape-highlight-medium);
 			}
 		}
 
