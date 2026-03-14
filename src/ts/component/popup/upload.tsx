@@ -76,9 +76,8 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		const allPaths = filePaths.concat(dirPaths);
-
 		if (dirPaths.length) {
+			const allPaths = filePaths.concat(dirPaths);
 			onUpload?.([]);
 			close();
 			C.FileDrop(collectionId || '', '', I.BlockPosition.None as number, allPaths);

@@ -1715,7 +1715,21 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (paths.length) {
-			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths);
+			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths, (message: any) => {
+				if (message.error.code) {
+					S.Popup.open('confirm', {
+						preventCloseByClick: true,
+						data: {
+							icon: 'error',
+							title: translate('commonError'),
+							text: message.error.description || translate('popupUploadErrorText'),
+							textConfirm: translate('popupUploadErrorConfirm'),
+							colorConfirm: 'blank',
+							canCancel: false,
+						},
+					});
+				};
+			});
 		};
 	};
 
