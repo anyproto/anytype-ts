@@ -286,9 +286,10 @@ class UtilFile {
 	 * Recursively scans a directory and returns its tree structure.
 	 * Skips hidden files, known junk, and skip-listed directories.
 	 */
-	scanDirectory (dirPath: string): { name: string; path: string; files: string[]; children: any[]; totalFiles: number } {
+	scanDirectory (dirPath: string, depth: number = 0): { name: string; path: string; files: string[]; children: any[]; totalFiles: number; depthExceeded: boolean } {
 		const electron = U.Common.getElectron();
 		const skipDirs = J.Constant.fileUpload.skipDirs;
+		const maxDepth = J.Constant.fileUpload.maxDepth;
 		const dirName = electron.fileName(dirPath);
 
 		const result = {
@@ -297,6 +298,7 @@ class UtilFile {
 			files: [] as string[],
 			children: [] as any[],
 			totalFiles: 0,
+			depthExceeded: false,
 		};
 
 		const entries: string[] = electron.readDir(dirPath);
@@ -315,9 +317,18 @@ class UtilFile {
 					continue;
 				};
 
-				const child = this.scanDirectory(fullPath);
+				if (depth >= maxDepth) {
+					result.depthExceeded = true;
+					continue;
+				};
+
+				const child = this.scanDirectory(fullPath, depth + 1);
 				result.children.push(child);
 				result.totalFiles += child.totalFiles;
+
+				if (child.depthExceeded) {
+					result.depthExceeded = true;
+				};
 			} else {
 				result.files.push(fullPath);
 				result.totalFiles++;
@@ -489,6 +500,9 @@ class UtilFile {
 
 						if (errorCount > 0) {
 							this.showUploadError(errorCount, lastErrorDescription);
+						} else
+						if (trees.some(t => t.depthExceeded)) {
+							this.showDepthExceededWarning();
 						};
 
 						for (const id of topCollectionIds) {
@@ -680,6 +694,9 @@ class UtilFile {
 							canCancel: false,
 						},
 					});
+				} else
+				if (trees.some(t => t.depthExceeded)) {
+					this.showDepthExceededWarning();
 				};
 			};
 
@@ -867,6 +884,18 @@ class UtilFile {
 	/**
 	 * Shows an error popup when some files failed to upload.
 	 */
+	showDepthExceededWarning () {
+		S.Popup.open('confirm', {
+			preventCloseByClick: true,
+			data: {
+				icon: 'warning',
+				title: translate('popupUploadDepthExceededTitle'),
+				text: translate('popupUploadDepthExceededText'),
+				canCancel: false,
+			},
+		});
+	};
+
 	showUploadError (errorCount: number, lastErrorDescription?: string) {
 		if (!errorCount) {
 			return;

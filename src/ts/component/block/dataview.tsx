@@ -657,6 +657,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const typeId = getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
+					if (!type) {
+						return;
+					};
+
 					if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
 						menuContext?.close();
 						const objectId = getObjectId();

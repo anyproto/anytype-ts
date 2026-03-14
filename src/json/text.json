@@ -1474,6 +1474,8 @@
 	"popupUploadErrorText": "Please try again",
 	"popupUploadErrorConfirm": "Got it",
 	"popupSearchUploadFile": "Add file",
+	"popupUploadDepthExceededTitle": "Maximum directory depth (10) reached",
+	"popupUploadDepthExceededText": "Folders that are deeper in the directory were not added",
 
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",

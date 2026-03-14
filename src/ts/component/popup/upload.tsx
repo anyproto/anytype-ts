@@ -252,6 +252,9 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (errorCount > 0) {
 				U.File.showUploadError(errorCount, lastErrorDescription);
+			} else
+			if (trees.some(t => t.depthExceeded)) {
+				U.File.showDepthExceededWarning();
 			};
 		};
 
@@ -407,7 +410,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		for (const path of paths) {
-			const mime = electron.fileMime(path);
+			const mime = electron.fileMime(path) || '';
 			const fileLayout = U.File.layoutByMime(mime);
 			const type = U.Object.getFileTypeByLayout(fileLayout);
 			const key = layoutToCountKey(fileLayout);
