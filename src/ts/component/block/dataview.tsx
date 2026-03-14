@@ -1695,6 +1695,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onFileDrop = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
 		window.clearTimeout(timeoutDrag.current);
 		getEditorWrapper().removeClass('isDraggingOver');
 	};

@@ -149,7 +149,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
 						textConfirm: translate('commonOk'),
 						canCancel: false,
-						canConfirm: true,
+	
 					},
 				});
 			}, S.Popup.getTimeout());
@@ -170,7 +170,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						textConfirm: translate('commonUpload'),
 						textCancel: translate('commonCancel'),
 						canCancel: true,
-						canConfirm: true,
+	
 						onConfirm: () => {
 							processFolder(trees, extraFiles);
 						},
@@ -227,6 +227,11 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const createCollectionTree = (tree: ReturnType<typeof U.File.scanDirectory>, parentCollectionId: string, onDone: () => void) => {
+			if (!tree.files.length && !tree.children.length) {
+				onDone();
+				return;
+			};
+
 			const collType = J.Constant.typeKey.collection;
 
 			C.ObjectCreate({ name: tree.name }, [], '', collType, space, (message: any) => {

@@ -387,164 +387,6 @@ class UtilFile {
 	};
 
 	/**
-	 * Uploads folders as collections and inserts link blocks into the editor.
-	 */
-	uploadFolderAsCollection (dirPaths: string[], rootId: string, targetId: string, position: I.BlockPosition) {
-		const trees = dirPaths.map(p => this.scanDirectory(p));
-		let allFiles: string[] = [];
-
-		for (const tree of trees) {
-			allFiles = allFiles.concat(this.collectFiles(tree));
-		};
-
-		const totalFiles = allFiles.length;
-		const { softLimit, hardLimit } = J.Constant.fileUpload;
-
-		if (totalFiles > hardLimit) {
-			S.Popup.open('confirm', {
-				preventCloseByClick: true,
-				data: {
-					title: translate('popupUploadFolderTooManyTitle'),
-					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
-					textConfirm: translate('commonOk'),
-					canCancel: false,
-					canConfirm: true,
-				},
-			});
-			return;
-		};
-
-		const counts = this.getFileCountsByType(allFiles);
-		const breakdown = this.formatCountsBreakdown(counts);
-
-		const doUpload = () => {
-			const space = S.Common.space;
-			const electron = U.Common.getElectron();
-			const progressId = this.nextProgressId();
-			const uploadCounts: { [key: string]: number } = {};
-			let completed = 0;
-			let errorCount = 0;
-			let lastErrorDescription = '';
-
-			S.Progress.add({
-				id: progressId,
-				spaceId: space,
-				type: I.ProgressType.Drop,
-				state: I.ProgressState.Running,
-				current: 0,
-				total: totalFiles,
-				canCancel: false,
-			});
-
-			const createTree = (tree: DirectoryTree, parentColId: string, onDone: (colId: string) => void) => {
-				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
-					if (message.error.code) {
-						onDone('');
-						return;
-					};
-
-					const colId = message.details.id;
-
-					if (parentColId) {
-						C.ObjectCollectionAdd(parentColId, [ colId ]);
-					};
-
-					let pending = tree.files.length + tree.children.length;
-
-					if (!pending) {
-						onDone(colId);
-						return;
-					};
-
-					const check = () => {
-						pending--;
-						if (pending <= 0) {
-							onDone(colId);
-						};
-					};
-
-					for (const filePath of tree.files) {
-						const mime = electron.fileMime(filePath) || '';
-						const fileLayout = this.layoutByMime(mime);
-						const type = U.Object.getFileTypeByLayout(fileLayout);
-						const key = this.layoutToCountKey(fileLayout);
-
-						C.FileUpload(space, '', filePath, type, {}, false, '', I.ImageKind.Basic, '', '', (msg: any) => {
-							completed++;
-							S.Progress.update({ id: progressId, current: completed });
-
-							if (msg.error.code) {
-								errorCount++;
-								if (msg.error.description) {
-									lastErrorDescription = msg.error.description;
-								};
-							} else
-							if (msg.objectId) {
-								uploadCounts[key] = (uploadCounts[key] || 0) + 1;
-								C.ObjectCollectionAdd(colId, [ msg.objectId ]);
-							};
-
-							check();
-						});
-					};
-
-					for (const child of tree.children) {
-						createTree(child, colId, () => check());
-					};
-				});
-			};
-
-			let remaining = trees.length;
-			const topCollectionIds: string[] = [];
-
-			for (const tree of trees) {
-				createTree(tree, '', (colId: string) => {
-					if (colId) {
-						topCollectionIds.push(colId);
-					};
-
-					remaining--;
-
-					if (remaining <= 0) {
-						S.Progress.delete(progressId);
-						Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts });
-
-						if (errorCount > 0) {
-							this.showUploadError(errorCount, lastErrorDescription);
-						} else
-						if (trees.some(t => t.depthExceeded)) {
-							this.showDepthExceededWarning();
-						};
-
-						for (const id of topCollectionIds) {
-							const linkParam = U.Data.getLinkBlockParam(id, I.ObjectLayout.Collection, false);
-							C.BlockCreate(rootId, targetId, position, linkParam);
-						};
-					};
-				});
-			};
-		};
-
-		if (totalFiles > softLimit) {
-			S.Popup.open('confirm', {
-				preventCloseByClick: true,
-				data: {
-					title: translate('popupUploadFolderConfirmTitle'),
-					text: U.String.sprintf(translate('popupUploadFolderConfirmText'), breakdown),
-					textConfirm: translate('commonUpload'),
-					textCancel: translate('commonCancel'),
-					canCancel: true,
-					canConfirm: true,
-					onConfirm: doUpload,
-				},
-			});
-			return;
-		};
-
-		doUpload();
-	};
-
-	/**
 	 * Uploads files into a dataview (set/collection) context with filter-derived properties.
 	 * For type-source sets, shows a mismatch dialog if some files don't match the source type.
 	 * For collections, adds uploaded objects to the collection.
@@ -659,7 +501,7 @@ class UtilFile {
 					text: U.String.sprintf(translate('popupUploadFolderTooManyText'), totalFiles, hardLimit),
 					textConfirm: translate('commonOk'),
 					canCancel: false,
-					canConfirm: true,
+
 				},
 			});
 			return;
@@ -712,6 +554,11 @@ class UtilFile {
 			};
 
 			const createTree = (tree: DirectoryTree, parentColId: string, onDone: (colId: string) => void) => {
+				if (!tree.files.length && !tree.children.length) {
+					onDone('');
+					return;
+				};
+
 				C.ObjectCreate({ name: tree.name }, [], '', J.Constant.typeKey.collection, space, (message: any) => {
 					if (message.error.code) {
 						onDone('');
@@ -848,7 +695,7 @@ class UtilFile {
 					textConfirm: translate('commonUpload'),
 					textCancel: translate('commonCancel'),
 					canCancel: true,
-					canConfirm: true,
+
 					onConfirm: doUpload,
 				},
 			});
@@ -904,7 +751,7 @@ class UtilFile {
 			preventCloseByClick: true,
 			data: {
 				icon: 'warning',
-				title: translate('popupUploadDepthExceededTitle'),
+				title: U.String.sprintf(translate('popupUploadDepthExceededTitle'), J.Constant.fileUpload.maxDepth),
 				text: translate('popupUploadDepthExceededText'),
 				canCancel: false,
 			},
