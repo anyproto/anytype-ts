@@ -2018,9 +2018,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
-		const urls = U.String.getUrlsFromText(data.text);
+		const trimmedText = data.text.trim();
+		const urls = U.String.getUrlsFromText(trimmedText);
 
-		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
+		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
 		};
@@ -2090,11 +2091,22 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const route = U.Common.getRouteFromUrl(url);
 
+		let linkParamUrl = url;
+		if (route) {
+			linkParamUrl = `${J.Constant.protocol}://${route}`;
+		};
+
+		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
+		const isAnytypeObject = linkParam.isInside && linkParam.target;
+
 		const marks = U.Common.objectCopy(block.content.marks || []);
 		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
 
 		if (currentTo && (currentFrom != currentTo) && !currentMark) {
-			marks.push({ type: I.MarkType.Link, range, param: url });
+			const earlyMarkType = isAnytypeObject ? I.MarkType.Object : I.MarkType.Link;
+			const earlyMarkParam = isAnytypeObject ? linkParam.target : url;
+
+			marks.push({ type: earlyMarkType, range, param: earlyMarkParam });
 
 			U.Data.blockSetText(rootId, block.id, block.content.text, marks, true, () => {
 				focus.set(block.id, { from: currentFrom, to: currentTo });
@@ -2103,19 +2115,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		let linkParamUrl = url;
-		if (route) {
-			linkParamUrl = `${J.Constant.protocol}://${route}`;
-		};
-
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
 		const length = block.getLength();
 		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
-		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
-		const isAnytypeObject = linkParam.isInside && linkParam.target;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
 		const isSameObject = linkParam.target == rootId;
 		const canObject = isAnytypeObject && isSameSpace && !isSameObject && canBookmark;
@@ -2225,7 +2230,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 								to = currentTo;
 							};
 
-							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
+							const markType = isAnytypeObject ? I.MarkType.Object : I.MarkType.Link;
+							const markParam = isAnytypeObject ? linkParam.target : url;
+
+							marks.push({ type: markType, range: { from: currentFrom, to }, param: markParam });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });

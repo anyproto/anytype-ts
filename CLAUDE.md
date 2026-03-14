@@ -172,6 +172,7 @@ npx rspack --config rspack.pixi.config.js
 - When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Code Style
+- **The project uses tabs for indentation, not spaces.** All TypeScript, TSX, and SCSS files use tab characters.
 - Write `else if` with a linebreak before `if`:
   ```typescript
   if (condition) {

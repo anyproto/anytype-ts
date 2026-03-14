@@ -4,6 +4,8 @@
 	display: flex; flex-direction: column; flex: 1 1 auto; min-height: 200px;
 	padding: 24px 0px 0px 0px; border-top: 1px solid var(--color-shape-secondary);
 
+	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
+
 	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
 
 	.commentBody { flex: 1 1 auto; }
@@ -11,13 +13,15 @@
 
 	.commentPost {
 		padding: 16px; border-radius: 16px; display: flex; flex-direction: row;
-		gap: 0px 8px; align-items: flex-start; position: relative;
+		gap: 0px 8px; align-items: flex-start; position: relative; flex-wrap: wrap;
 		background: var(--color-shape-highlight-light);
 		transition: background-color 0.3s ease;
 
+		.content, .content * { user-select: text !important; }
+
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-		.iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
-		.postInner { flex-grow: 1; }
+		> .iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
+		.postInner { flex-grow: 1; min-width: 0; }
 		.content { word-break: break-word; }
 
 		.head {
@@ -40,13 +44,17 @@
 		}
 
 		&:hover {
-			.hoverActions { opacity: 1; }
+			> .hoverActions { opacity: 1; }
 		}
 
-		.replyList { margin: 8px 0px 0px 40px; padding-left: 12px; border-left: 2px solid var(--color-shape-secondary); }
+		.replyList {
+			width: 100%; margin: 0px; padding: 0px;
+
+			.commentReply + .commentReply { border-top: 1px solid var(--color-shape-secondary); }
+		}
 
 		.replyFormWrap {
-			margin: 12px 0px 0px 0px; padding: 0px;
+			width: 100%; margin: 0px; padding: 0px;
 
 			.commentForm { border-radius: 14px; background-color: var(--color-bg-primary); }
 			.commentForm .contentArea { padding: 8px 12px; }
@@ -69,18 +77,23 @@
 	}
 
 	.commentReply {
-		padding: 8px 0px; position: relative; border-radius: 8px;
+		padding: 20px 0px; position: relative;
 		transition: background-color 0.3s ease;
 
-		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-		.content { margin: 2px 0px 0px 30px; @include text-small; line-height: 20px; word-break: break-word; }
+		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
+
+		.content {
+			margin: 0px 0px 0px 40px; line-height: 20px; word-break: break-word;
+
+			&, * { user-select: text !important; }
+		}
 
 		.head {
-			display: flex; align-items: center; gap: 0px 6px; position: relative;
+			display: flex; align-items: center; gap: 0px 8px; position: relative;
 
 			.iconObject { flex-shrink: 0; }
-			.author { @include text-small; font-weight: 600; line-height: 18px; }
-			.date { @include text-very-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
+			.author { @include text-small; font-weight: 500; line-height: 18px; }
+			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
 		}
 
 		.hoverActions {
@@ -97,7 +110,7 @@
 		}
 
 		&:hover {
-			.hoverActions { opacity: 1; }
+			> .head > .hoverActions { opacity: 1; }
 		}
 	}
 

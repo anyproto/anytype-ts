@@ -264,7 +264,7 @@ const CommentReply = observer((props: Props) => {
 			<div className="head">
 				<IconObject
 					object={{ ...author, layout: I.ObjectLayout.Participant }}
-					size={24}
+					size={32}
 				/>
 				<div className="author">
 					<ObjectName object={author} withBadge={true} />

@@ -275,6 +275,71 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		});
 	}, [ loadDeps ]);
 
+	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+		const PAGE_SIZE = 100;
+
+		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
+				if (message.error.code) {
+					buildTree(accumulated, sid, callBack);
+					return;
+				};
+
+				const batch = (message.messages || []).map((it: any) => ({
+					...it,
+					content: {
+						...it.content,
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
+					},
+				}));
+
+				const all = [ ...accumulated, ...batch ];
+
+				if (batch.length >= PAGE_SIZE) {
+					fetchPage(batch[batch.length - 1].orderId, all);
+				} else {
+					buildTree(all, sid, callBack);
+				};
+			});
+		};
+
+		fetchPage('', []);
+	}, [ loadDeps ]);
+
+	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
+		const posts = messages.filter((it: any) => !it.replyToMessageId);
+		const replies = messages.filter((it: any) => it.replyToMessageId);
+
+		const replyCountMap: Record<string, number> = {};
+		const replyGroups: Record<string, any[]> = {};
+
+		for (const reply of replies) {
+			const pid = reply.replyToMessageId;
+
+			replyCountMap[pid] = (replyCountMap[pid] || 0) + 1;
+
+			if (!replyGroups[pid]) {
+				replyGroups[pid] = [];
+			};
+			replyGroups[pid].push(reply);
+		};
+
+		for (const post of posts) {
+			post.replyCount = replyCountMap[post.id] || 0;
+		};
+
+		loadDeps(messages, () => {
+			S.Comment.setPosts(sid, posts);
+			S.Comment.setHasMorePosts(sid, false);
+
+			for (const [ parentId, groupReplies ] of Object.entries(replyGroups)) {
+				S.Comment.setReplies(parentId, groupReplies);
+			};
+
+			callBack?.();
+		});
+	}, [ loadDeps ]);
+
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
 
@@ -286,40 +351,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const messages = (message.messages || []).map((it: any) => ({
-				...it,
-				content: {
-					...it.content,
-					parts: U.Comment.blocksToParts(it.blocks, it.content),
-				},
-				replyCount: 0,
-			}));
-
-			const posts = messages.filter((it: any) => !it.replyToMessageId);
-			const replies = messages.filter((it: any) => it.replyToMessageId);
-
-			const replyCountMap: Record<string, number> = {};
-			for (const reply of replies) {
-				replyCountMap[reply.replyToMessageId] = (replyCountMap[reply.replyToMessageId] || 0) + 1;
-			};
-
-			for (const post of posts) {
-				post.replyCount = replyCountMap[post.id] || 0;
-			};
-
-			loadDeps(messages, () => {
-				S.Comment.setPosts(sid, posts);
-				S.Comment.setHasMorePosts(sid, posts.length >= POST_LIMIT);
-
-				for (const reply of replies) {
-					S.Comment.addReply(reply.replyToMessageId, reply);
-				};
-
+			fetchAllMessages(id, sid, () => {
 				isLoaded.current = true;
 				handleMessageId(id);
 			});
 		});
-	}, [ targetType, loadDeps, handleMessageId ]);
+	}, [ targetType, fetchAllMessages, handleMessageId ]);
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -481,12 +518,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const onMouseDown = useCallback((e: React.MouseEvent) => {
 		keyboard.disableSelection(true);
-
-		// Allow native text selection inside rendered comment content
-		const target = e.target as HTMLElement;
-		if (target.closest('.content') || target.closest('.commentAttachments')) {
-			keyboard.disableSelection(false);
-		};
 	}, []);
 
 	const onMouseUp = useCallback(() => {

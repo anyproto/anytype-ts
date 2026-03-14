@@ -42,7 +42,9 @@ const CommentPost = observer((props: Props) => {
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
 
 	useEffect(() => {
-		if (replyCount > 0) {
+		const existing = S.Comment.getReplies(id);
+
+		if ((replyCount > 0) && !existing.length) {
 			loadReplies(true);
 		};
 	}, [ id, replyCount ]);
@@ -135,7 +137,7 @@ const CommentPost = observer((props: Props) => {
 		};
 
 		const existing = S.Comment.getReplies(id);
-		const afterOrderId = existing.length ? existing[existing.length - 1].orderId : '';
+		const afterOrderId = initial ? '' : (existing.length ? existing[existing.length - 1].orderId : '');
 
 		C.ChatGetMessages(targetId, '', afterOrderId, REPLY_LIMIT, false, (message: any) => {
 			setIsLoadingReplies(false);
@@ -517,19 +519,6 @@ const CommentPost = observer((props: Props) => {
 
 				{renderContent()}
 				{renderReactions()}
-
-				{isReplying ? (
-					<div className="replyFormWrap">
-						<CommentForm
-							ref={replyFormRef}
-							rootId={rootId}
-							isReply={true}
-							placeholder={translate('commentReplyPlaceholder')}
-							onSubmit={onSubmitReply}
-							onCancel={onCancelReply}
-						/>
-					</div>
-				) : null}
 			</div>
 
 			{replies.length ? (
@@ -562,6 +551,19 @@ const CommentPost = observer((props: Props) => {
 							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
 						</div>
 					) : null}
+				</div>
+			) : null}
+
+			{isReplying ? (
+				<div className="replyFormWrap">
+					<CommentForm
+						ref={replyFormRef}
+						rootId={rootId}
+						isReply={true}
+						placeholder={translate('commentReplyPlaceholder')}
+						onSubmit={onSubmitReply}
+						onCancel={onCancelReply}
+					/>
 				</div>
 			) : null}
 		</div>

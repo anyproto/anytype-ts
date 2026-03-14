@@ -1076,6 +1076,11 @@ class Dispatcher {
 
 						if (mapped.message.replyToMessageId) {
 							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+
+							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
+							if (post) {
+								set(post, { replyCount: (post.replyCount || 0) + 1 });
+							};
 						} else {
 							S.Comment.addPost(subId, commentMsg as any);
 						};
@@ -1179,7 +1184,23 @@ class Dispatcher {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							S.Comment.deletePost(subId, mapped.id);
+							const post = S.Comment.getPostById(subId, mapped.id);
+
+							if (post) {
+								S.Comment.deletePost(subId, mapped.id);
+							} else {
+								const posts = S.Comment.getPosts(subId);
+								for (const p of posts) {
+									const replies = S.Comment.getReplies(p.id);
+									const reply = replies.find(r => r.id == mapped.id);
+
+									if (reply) {
+										S.Comment.deleteReply(p.id, mapped.id);
+										set(p, { replyCount: Math.max(0, (p.replyCount || 0) - 1) });
+										break;
+									};
+								};
+							};
 						} else {
 							S.Chat.delete(subId, mapped.id);
 						};
