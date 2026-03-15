@@ -1674,10 +1674,9 @@ class UtilCommon {
 	};
 
 	applyAutoDownload (value: number) {
-		if (value < 0) {
-			C.FileSetAutoDownload(false, false);
-		} else {
-			C.FileSetAutoDownload(true, false);
+		C.FileSetAutoDownload(value > 0, false);
+		
+		if (value >= 0) {
 			C.FileAutoDownloadSetLimit(value);
 		};
 	};
