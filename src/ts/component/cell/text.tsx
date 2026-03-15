@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
-import { Input, IconObject, ChatCounter } from 'Component';
+import { Input, IconObject, ChatCounter, Icon } from 'Component';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
@@ -190,7 +190,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					break;
 				};
 
-				case I.DateFormat.ShortUS: {
+				case I.DateFormat.ShortUS:
+				case I.DateFormat.MonthAbbrBeforeDay:
+				case I.DateFormat.Long:
+				case I.DateFormat.Default: {
 					mask.push('99.99.9999');
 					ph.push('mm.dd.yyyy');
 					break;
@@ -256,6 +259,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			let content = null;
 
 			if (name) {
+				if (isUrl && shortUrl) {
+					name = U.String.shortUrl(name, true);
+				};
 				if (textLimit) {
 					name = U.String.shorten(name, textLimit);
 				};
@@ -284,8 +290,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			};
 		};
 
-		if (isUrl && shortUrl) {
-			val = val !== null ? U.String.shortUrl(val, true) : '';
+		if (isUrl) {
+			val = val !== null ? val : '';
 		};
 
 		if (isNumber) {
@@ -300,16 +306,20 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	if (isName) {
 		if (!view || (view && !view.hideIcon)) {
-			icon = (
-				<IconObject 
-					id={[ relation.relationKey, record.id ].join('-')} 
-					size={iconSize} 
-					canEdit={canEdit} 
-					object={record} 
-					noClick={true}
-					menuParam={{ offsetY: 4 }}
-				/>
-			);
+			if (S.Common.isDownloading(record.id) && U.Object.isInFileLayouts(record.layout)) {
+				icon = <Icon className="downloading" />;
+			} else {
+				icon = (
+					<IconObject
+						id={[ relation.relationKey, record.id ].join('-')}
+						size={iconSize}
+						canEdit={canEdit}
+						object={record}
+						noClick={true}
+						menuParam={{ offsetY: 4 }}
+					/>
+				);
+			};
 		};
 
 		if (!isEditing) {
@@ -349,7 +359,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 				switch (dateFormat) {
 					case I.DateFormat.ISO: format.push('Y.m.d'); break;
-					case I.DateFormat.ShortUS: format.push('m.d.Y'); break;
+					case I.DateFormat.ShortUS:
+					case I.DateFormat.MonthAbbrBeforeDay:
+					case I.DateFormat.Long:
+					case I.DateFormat.Default: format.push('m.d.Y'); break;
 					default: format.push('d.m.Y'); break;
 				};
 

@@ -73,8 +73,22 @@ class DetailStore {
 	 * @param {any} v - The value.
 	 * @returns {Detail} The created detail item.
 	 */
+	private sanitizeValue (v: any): any {
+		const mid = J.Constant.missingObjectId;
+
+		if (typeof v === 'string') {
+			return v == mid ? '' : v;
+		};
+
+		if (Array.isArray(v)) {
+			return v.filter(it => it != mid);
+		};
+
+		return v;
+	};
+
 	private createListItem (k: string, v: any): Detail {
-		const el = { relationKey: k, value: v, isDeleted: false };
+		const el = { relationKey: k, value: this.sanitizeValue(v), isDeleted: false };
 
 		makeObservable(el, { 
 			value: observable, 
@@ -154,7 +168,7 @@ class DetailStore {
 
 			const el = detailMap.get(k);
 			if (el) {
-				set(el, { value: item.details[k], isDeleted: false });
+				set(el, { value: this.sanitizeValue(item.details[k]), isDeleted: false });
 			} else {
 				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
@@ -222,7 +236,7 @@ class DetailStore {
 				detailMap.delete(k);
 			};
 		} else {
-			map.set(id, new Map());
+			map.delete(id);
 		};
 	};
 
@@ -310,7 +324,9 @@ class DetailStore {
 
 			if (mappedKeys) {
 				for (const k in mappedKeys) {
-					object[k] = object[mappedKeys[k]];
+					if ((object[k] === undefined) && (object[mappedKeys[k]] !== undefined)) {
+						object[k] = object[mappedKeys[k]];
+					};
 				};
 			};
 		};

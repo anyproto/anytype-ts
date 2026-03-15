@@ -70,6 +70,7 @@ class Api {
 
 	pinCheck (win) {
 		WindowManager.sendToAll('pin-check');
+		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	pinSet (win) {
@@ -162,7 +163,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, pinTimeout);
 	};
 
@@ -184,7 +185,7 @@ class Api {
 			};
 
 			this.isPinChecked = false;
-			WindowManager.sendToAll('pin-check');
+			this.pinCheck();
 		}, this.pinTimeValue);
 	};
 
@@ -272,6 +273,10 @@ class Api {
 
 		// Update view bounds
 		WindowManager.updateTabBarVisibility(win);
+	};
+
+	setHideSidebar (win, v) {
+		WindowManager.sendToAllTabs('set-hide-sidebar', v);
 	};
 
 	setAlwaysShowTabs (win, show) {
@@ -375,12 +380,32 @@ class Api {
 
 	openTab (win, data, options) {
 		const { isPinned, ...rest } = data || {};
+		const route = rest.route || '';
+
+		// Check if a pinned tab with this route already exists
+		if (route) {
+			const existing = WindowManager.findTabByRoute(win, route);
+			if (existing && existing.data && existing.data.isPinned) {
+				WindowManager.setActiveTab(win, existing.id);
+				return true;
+			};
+		};
 
 		if (options?.fireAnalytics) {
-			Util.sendToActiveTab(win, 'commandGlobal', 'analyticsAddTab');
+			Util.sendToActiveTab(win, 'analyticsEvent', 'AddTab', { route: 'Navigation' });
 		};
 
 		WindowManager.createTab(win, rest, options);
+		return false;
+	};
+
+	switchToTabByRoute (win, route) {
+		const existing = WindowManager.findTabByRoute(win, route);
+		if (existing && existing.data && existing.data.isPinned) {
+			WindowManager.setActiveTab(win, existing.id);
+			return true;
+		};
+		return false;
 	};
 
 	openTabs (win, tabs) {
@@ -389,6 +414,13 @@ class Api {
 		};
 
 		for (const tab of tabs) {
+			const route = tab.data?.route || '';
+
+			// Skip if a tab with this route already exists
+			if (route && WindowManager.findTabByRoute(win, route)) {
+				continue;
+			};
+
 			WindowManager.createTab(win, tab.data, { setActive: false });
 		};
 	};
@@ -574,7 +606,10 @@ class Api {
 	reload (win, route) {
 		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
-			view.data = { ...view.data, route };
+			// Only update route if a valid one is provided, otherwise keep the existing route
+			if (route) {
+				view.data = { ...view.data, route };
+			};
 			view.webContents.reload();
 		};
 	};
@@ -715,12 +750,18 @@ class Api {
 		if (isPinned) {
 			items.push({
 				label: Util.translate('electronMenuTabUnpin'),
-				click: () => WindowManager.unpinTab(win, tabId),
+				click: () => {
+					WindowManager.unpinTab(win, tabId);
+					Util.sendToActiveTab(win, 'analytics', 'UnpinTab');
+				},
 			});
 		} else {
 			items.push({
 				label: Util.translate('electronMenuTabPin'),
-				click: () => WindowManager.pinTab(win, tabId),
+				click: () => {
+					WindowManager.pinTab(win, tabId);
+					Util.sendToActiveTab(win, 'analytics', 'PinTab');
+				},
 			});
 		};
 

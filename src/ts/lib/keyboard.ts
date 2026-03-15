@@ -64,6 +64,12 @@ class Keyboard {
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
 
+			// Restore editor focus when window regains focus with a from-block menu open
+			// (e.g., OS keyboard layout popup on Linux temporarily steals focus)
+			if (S.Menu.isOpenList([ 'blockAdd', 'blockMention', 'blockEmoji' ])) {
+				focus.apply();
+			};
+
 			// Check if PIN timeout has elapsed since last activity
 			const { pin, pinTime } = S.Common;
 			if (pin && pinTime) {
@@ -84,6 +90,9 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+
+		Renderer.remove('analyticsEvent');
+		Renderer.on('analyticsEvent', (e: any, code: string, data: any) => analytics.event(code, data));
 
 		this.onResize();
 	};
@@ -228,12 +237,15 @@ class Keyboard {
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const route = analytics.route.shortcut;
 		const electron = U.Common.getElectron();
+		const selectedBlockIds = selection?.get(I.SelectType.Block) || [];
+		const selectedRecordIds = selection?.get(I.SelectType.Record) || [];
 
 		if (this.isMainEditor()) {
 			this.shortcut('tableOfContents', e, () => {
 				e.preventDefault();
 
 				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
+				analytics.event('ScreenTableOfContents');
 			});
 		};
 
@@ -258,11 +270,9 @@ class Keyboard {
 						U.Common.clearSelection();
 						canClose = false;
 					} else
-					if (selection) {
-						const ids = selection?.get(I.SelectType.Block) || [];
-						if (ids.length) {
-							canClose = false;
-						};
+					if (selectedBlockIds.length || selectedRecordIds.length) {
+						selection.clear();
+						canClose = false;
 					};
 				};
 
@@ -273,6 +283,9 @@ class Keyboard {
 					};
 				};
 			} else 
+			if (selectedBlockIds.length || selectedRecordIds.length) {
+				selection.clear();
+			} else
 			if (electron.isFullScreen()) {
 				Renderer.send('toggleFullScreen');
 			} else
@@ -376,6 +389,7 @@ class Keyboard {
 						onConfirm: () => U.Common.copyToast('ID', this.getRootId()),
 					}
 				});
+				analytics.event('ScreenObjectId');
 			});
 
 			// Copy page link
@@ -469,7 +483,9 @@ class Keyboard {
 			this.shortcut('pinTab', e, () => {
 				e.preventDefault();
 
-				Renderer.send(S.Common.isPinned ? 'unpinTab' : 'pinTab', S.Common.tabId);
+				const isPinned = S.Common.isPinned;
+				Renderer.send(isPinned ? 'unpinTab' : 'pinTab', S.Common.tabId);
+				analytics.event(isPinned ? 'UnpinTab' : 'PinTab');
 			});
 
 			// Switch space
@@ -639,6 +655,7 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
+		this.closeTocSidebar(isPopup);
 		analytics.event('HistoryBack');
 	};
 
@@ -651,14 +668,15 @@ class Keyboard {
 		};
 
 		if (isPopup) {
-			historyPopup.goForward((match: any) => { 
-				S.Popup.updateData('page', { matchPopup: match }); 
+			historyPopup.goForward((match: any) => {
+				S.Popup.updateData('page', { matchPopup: match });
 			});
 		} else {
 			U.Router.history.goForward();
 		};
 
 		S.Menu.closeAll();
+		this.closeTocSidebar(isPopup);
 		analytics.event('HistoryForward');
 	};
 
@@ -797,11 +815,6 @@ class Keyboard {
 				} else {
 					document.execCommand('redo');
 				};
-				break;
-			};
-
-			case 'analyticsAddTab': {
-				analytics.event('AddTab', { route: analytics.route.navigation });
 				break;
 			};
 
@@ -1320,6 +1333,8 @@ class Keyboard {
 			});
 		};
 
+		analytics.event('ScreenSearchObject');
+
 		S.Menu.closeAll(null, () => {
 			S.Menu.open(menuId, menuParam);
 		});
@@ -1721,6 +1736,12 @@ class Keyboard {
 	/**
 	 * Restores the source object from backup.
 	 */
+	closeTocSidebar (isPopup: boolean) {
+		if (S.Common.getRightSidebarState(isPopup).page == 'object/tableOfContents') {
+			sidebar.rightPanelClose(isPopup, false);
+		};
+	};
+
 	restoreSource () {
 		if (!this.source) {
 			return;
@@ -1906,10 +1927,6 @@ class Keyboard {
 		if (e.metaKey) {
 			ret.push('cmd');
 		};
-		// Add CapsLock as a modifier if active
-		if (e.getModifierState && e.getModifierState('CapsLock')) {
-			ret.push('capslock');
-		};
 		return ret;
 	};
 
@@ -1977,6 +1994,10 @@ class Keyboard {
 		};
 
 		if (res) {
+			if (this.shortcuts[res]) {
+				analytics.event('UseShortcut', { name: res });
+			};
+
 			callBack(res);
 		};
 	};

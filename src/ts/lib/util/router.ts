@@ -158,6 +158,10 @@ class UtilRouter {
 		S.Popup.closeAll();
 		focus.clear(true);
 
+		if (S.Common.getRightSidebarState(false).page == 'object/tableOfContents') {
+			sidebar.rightPanelClose(false, false);
+		};
+
 		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
 			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;
@@ -166,7 +170,7 @@ class UtilRouter {
 		const change = () => {
 			this.history.push(newRoute);
 
-			if (updateTabRoute) {
+			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page)) {
 				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
 			};
 
@@ -232,7 +236,6 @@ class UtilRouter {
 		};
 
 		S.Menu.closeAllForced();
-		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -286,7 +289,7 @@ class UtilRouter {
 							const dataLeft = sidebar.getData(I.SidebarPanel.Left);
 							const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
 
-							if (!((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
+							if (!S.Common.hideSidebar && !((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
 						});

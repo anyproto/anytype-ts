@@ -37,7 +37,8 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isDeleted');
 	};
 
-	const watchedValues = useMemo(() => keys.map(k => record[k]), keys.map(k => record[k]));
+	const valuesKey = keys.map(k => record[k]).join(',');
+	const watchedValues = useMemo(() => keys.map(k => record[k]), [ valuesKey ]);
 
 	useEffect(() => {
 		onUpdate?.();

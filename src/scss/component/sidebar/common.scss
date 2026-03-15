@@ -135,10 +135,4 @@ html.platformMac {
 	}
 }
 
-html:not(.platformMac) {
-	.sidebar.isMinimal {
-		.sidebarPage.pageVault {
-			> .head { display: none; }
-		}
-	}
-}
+@import "./progress";

@@ -700,7 +700,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onCellClick = (e: any, relationKey: string, recordId: string, record?: any) => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 

@@ -42,9 +42,16 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 	};
 
+	const spaceview = U.Space.getSpaceview();
 	const filters: I.Filter[] = [
 		{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 	];
+
+	// In shared spaces, non-owners can only see objects they created
+	if (spaceview.isShared && !U.Space.isMyOwner()) {
+		filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() });
+	};
+
 	const sorts: I.Sort[] = [
 		{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 	];

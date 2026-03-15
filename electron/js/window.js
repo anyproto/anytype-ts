@@ -103,7 +103,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 18, y: 19 };
+			param.trafficLightPosition = { x: 12, y: 19 };
 		} else
 		if (is.windows) {
 			param.frame = false;
@@ -365,8 +365,8 @@ class WindowManager {
 			});
 		};
 
-		// Send initial single tab state when view finishes loading
-		view.webContents.once('did-finish-load', () => {
+		// Re-apply tab state after every load (initial and reload after resume)
+		view.webContents.on('did-finish-load', () => {
 			view.isLoaded = true;
 			const hasPinnedTab = win.views && win.views.some(it => it.data && it.data.isPinned);
 			const isSingleTab = win.views && (win.views.length == 1) && !hasPinnedTab;
@@ -380,6 +380,19 @@ class WindowManager {
 
 			// Also update tab bar visibility in case state changed during loading
 			this.updateTabBarVisibility(win);
+		});
+
+		// Recover from renderer crashes (e.g. GPU process lost after suspend)
+		view.webContents.on('render-process-gone', (e, details) => {
+			Util.log('info', `[Window] render-process-gone: ${details.reason}`);
+
+			if (details.reason !== 'clean-exit') {
+				setTimeout(() => {
+					if (view.webContents && !view.webContents.isDestroyed()) {
+						view.webContents.reload();
+					};
+				}, 500);
+			};
 		});
 
 		remote.enable(view.webContents);
@@ -569,12 +582,19 @@ class WindowManager {
 		this.setActiveTab(win, id);
 	};
 
+	findTabByRoute (win, route) {
+		if (!win || !win.views || !route) {
+			return null;
+		};
+		return win.views.find(it => it.data && (it.data.route === route)) || null;
+	};
+
 	openRouteInTab (win, route, data) {
 		if (!win || !win.views || !route) {
 			return;
 		};
 
-		const existing = win.views.find(it => it.data && (it.data.route === route));
+		const existing = this.findTabByRoute(win, route);
 		if (existing) {
 			this.setActiveTab(win, existing.id);
 		} else {

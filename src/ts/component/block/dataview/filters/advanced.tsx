@@ -33,7 +33,7 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isReadonly');
 	};
 
-	const label = `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
+	const label = U.String.sprintf(translate('commonCountRules'), ruleCount, U.Common.plural(ruleCount, translate('pluralRule')));
 
 	return (
 		<div

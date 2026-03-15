@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, SidebarProgress } from 'Component';
 import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
 
 import PageWidget from './page/widget';
@@ -231,23 +231,24 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
 				{Component ? (
 					<div id={pageId} className={getClassName(componentId)}>
-						<Component 
-							ref={pageRef} 
+						<Component
+							ref={pageRef}
 							page={componentId}
-							{...props} 
+							{...props}
 							getId={() => pageId}
 							sidebarDirection={I.SidebarDirection.Left}
-						/> 
+						/>
 					</div>
 				) : ''}
-				<div 
-					className="resize-h" 
-					draggable={true} 
+				<div
+					className="resize-h"
+					draggable={true}
 					onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
 					onClick={() => onHandleClick(I.SidebarPanel.Left)}
 				>
 					<div className="resize-handle" />
 				</div>
+				<SidebarProgress />
 			</div>
 			
 			<div id="subPageWrapper" ref={subPageWrapperRef} className="subPageWrapper">

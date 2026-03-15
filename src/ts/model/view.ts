@@ -118,7 +118,7 @@ class View implements I.View {
 		const ret = this.getRelations().map(it => {
 			it.relation = S.Record.getRelationByKey(it.relationKey);
 			return it;
-		}).filter(it => it && it.isVisible && it.relation);
+		}).filter(it => it && it.isVisible && it.relation && !it.relation.isArchived && !it.relation.isDeleted);
 		return ret;
 	};
 

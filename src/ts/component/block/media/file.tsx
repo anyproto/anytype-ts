@@ -1,5 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon } from 'Component';
+import { InputWithFile, IconObject, Error, ObjectName, Icon, Loader } from 'Component';
 import { I, S, U, focus, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -9,6 +9,7 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const { id, content } = block;
 	const { state, style, targetObjectId } = content;
 	const object = S.Detail.get(rootId, targetObjectId, []);
+	const isDownloading = S.Common.isDownloading(targetObjectId);
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
 		if (onKeyDown) {
@@ -71,11 +72,15 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				
 			case I.FileState.Done: {
 				element = (
-					<div 
-						className="inner" 
-						onMouseDown={onClick} 
+					<div
+						className={[ 'inner', (isDownloading ? 'isDownloading' : '') ].join(' ')}
+						onMouseDown={onClick}
 					>
-						<IconObject object={object} size={24} />
+						{isDownloading ? (
+							<Icon className="downloading" />
+						) : (
+							<IconObject object={object} size={24} />
+						)}
 						<ObjectName object={object} />
 						<span className="size">{U.File.size(object.sizeInBytes)}</span>
 					</div>

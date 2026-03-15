@@ -46,15 +46,8 @@ app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1')
 app.commandLine.appendSwitch('gtk-version', '3');
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
-if (Util.isWayland()) {
-	if (Util.isKDE()) {
-		// Force XWayland on KDE Plasma to fix global menu DBus integration
-		// Chromium's GlobalMenuBarX11 only works under X11, not native Wayland
-		app.commandLine.appendSwitch('ozone-platform', 'x11');
-	} else {
-		app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
-	};
-};
+// Wayland: ozone-platform is now configured via .desktop files instead of runtime detection
+// Users can choose anytype.desktop (native Wayland) or anytype-xwayland.desktop (XWayland)
 
 // GPU/Hardware acceleration settings
 // Check for --disable-gpu CLI argument or stored setting
@@ -68,14 +61,19 @@ if (disableGpu) {
 	console.log('[GPU] Hardware acceleration disabled');
 };
 
-app.removeAsDefaultProtocolClient(protocol);
+// On Linux, protocol registration is handled by registerLinuxProtocolHandler()
+// which checks for an existing .desktop file before writing. Electron's built-in
+// setAsDefaultProtocolClient would overwrite .desktop files on every launch.
+if (!is.linux) {
+	app.removeAsDefaultProtocolClient(protocol);
 
-if (!process.defaultApp) {
-	app.setAsDefaultProtocolClient(protocol);
+	if (!process.defaultApp) {
+		app.setAsDefaultProtocolClient(protocol);
+	};
 };
 
 if (!is.macos && (process.argv.length >= 2)) {
-	if (process.defaultApp) {
+	if (process.defaultApp && !is.linux) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 	};
 	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
@@ -93,19 +91,35 @@ powerMonitor.on('suspend', () => {
 	};
 });
 
-powerMonitor.on('resume', () => {	
+powerMonitor.on('resume', () => {
 	if (lastPowerEvent == 'resume') {
 		return;
 	};
 
+	lastPowerEvent = 'resume';
+	Util.log('info', '[PowerMonitor] resume');
+
+	// Notify middleware immediately so it can transition to foreground state
 	const firstWindow = WindowManager.getFirstWindow();
 	if (firstWindow) {
 		Util.send(firstWindow, 'power-event', 'resume');
-		lastPowerEvent = 'resume';
 	};
-	
-	WindowManager.sendToAll('reload');
-	Util.log('info', '[PowerMonitor] resume');
+
+	// Delay reload to give GPU process time to recover from suspend.
+	// Directly reload all tabs — route is preserved in view.data from initial load.
+	setTimeout(() => {
+		for (const win of WindowManager.list) {
+			if (!win || win.isDestroyed() || !win.views) {
+				continue;
+			};
+
+			for (const view of win.views) {
+				if (view && view.webContents && !view.webContents.isDestroyed()) {
+					view.webContents.reload();
+				};
+			};
+		};
+	}, 1500);
 });
 
 ipcMain.on('storeGet', (e, key) => { e.returnValue = store.get(key); });
@@ -320,7 +334,12 @@ app.on('second-instance', (event, argv) => {
 });
 
 app.on('before-quit', e => {
-	Util.log('info', 'before-quit');
+	Util.log('info', 'before-quit, isRelaunching: ' + UpdateManager.isRelaunching);
+
+	if (UpdateManager.isRelaunching) {
+		// Let electron-updater handle the quit and relaunch — do not force exit
+		return;
+	};
 
 	if (app.isQuiting) {
 		app.exit(0);

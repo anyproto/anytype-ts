@@ -22,6 +22,7 @@ export interface ChatStateCounter {
 export interface ChatState {
 	messages: ChatStateCounter;
 	mentions: ChatStateCounter;
+	reactionOrderId: string;
 	lastStateId: string;
 	order: number;
 };
@@ -31,18 +32,22 @@ export interface ChatStoreState {
 	messageCounter: number;
 	mentionOrderId: string;
 	mentionCounter: number;
+	reactionOrderId: string;
+	reactionCounter: number;
 	lastStateId: string;
 	order: number;
 };
 
 export interface ChatCounter {
-	mentionCounter: number; 
+	mentionCounter: number;
 	messageCounter: number;
+	reactionCounter: number;
 };
 
 export enum ChatReadType {
 	Message = 0,
 	Mention = 1,
+	Reaction = 2,
 };
 
 export interface ChatMessageReaction {
@@ -69,6 +74,7 @@ export interface ChatMessage {
 	isLast: boolean;
 	isReadMessage: boolean;
 	isReadMention: boolean;
+	isReadReaction: boolean;
 	hasMention: boolean;
 };
 

@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 @import "./editor/controls";
 @import "./editor/help";
+@import "./editor/bookmark";
 
 .editorWrapper { margin: 0px auto; min-width: 300px; }
 .editorWrapper {

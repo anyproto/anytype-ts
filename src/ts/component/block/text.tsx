@@ -162,11 +162,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		html = html.replace(/\n/g, '<br/>');
 
-		// Add extra <br/> at end for code blocks to ensure trailing newlines are visible
+		// Add extra <br/> at end to ensure trailing newlines are visible
 		// (contenteditable collapses a single trailing <br/>)
 		// Only add when focused to avoid extra line when blurred
 		phantomNewlineRef.current = false;
-		if (block.isTextCode() && text.endsWith('\n') && (focused == block.id)) {
+		if (text.endsWith('\n') && (focused == block.id)) {
 			html += '<br/>';
 			phantomNewlineRef.current = true;
 		};
@@ -188,9 +188,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const renderMarkup = () => {
-		renderMentions(rootId, nodeRef.current, marksRef.current, () => text);
-		renderObjects(rootId, nodeRef.current, marksRef.current, () => text, props);
-		renderLinks(rootId, nodeRef.current, marksRef.current, () => text, props);
+		renderMentions(rootId, nodeRef.current, marksRef.current, getTextValue);
+		renderObjects(rootId, nodeRef.current, marksRef.current, getTextValue, props);
+		renderLinks(rootId, nodeRef.current, marksRef.current, getTextValue, props);
 		renderEmoji(nodeRef.current);
 	};
 	
@@ -236,9 +236,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
-		const value = getHtmlValue();
+		let value = getHtmlValue();
+
+		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
+		if (phantomNewlineRef.current) {
+			value = value.replace(/<br\/?>$/, '');
+		};
+
 		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
-		
+
 		return Mark.fromHtml(value, restricted);
 	};
 
@@ -283,19 +289,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'zoomIn' },
 			{ key: 'zoomOut' },
 			{ key: 'zoomReset' },
-			{ key: 'turnBlock0' },
-			{ key: 'turnBlock1' },
-			{ key: 'turnBlock2' },
-			{ key: 'turnBlock3' },
-			{ key: 'turnBlock4' },
-			{ key: 'turnBlock5' },
-			{ key: 'turnBlock6' },
-			{ key: 'turnBlock7' },
-			{ key: 'turnBlock8' },
-			{ key: 'turnBlock9' },
 			{ key: 'menuAction' },
-			{ key: 'indent', preventDefault: true },
-			{ key: 'outdent', preventDefault: true },
 			{ key: 'pageLock' },
 			{ key: `${cmd}+v` },
 			{ key: `${cmd}+c`, preventDefault: true },
@@ -305,6 +299,17 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'theme' },
 		];
 
+		for (let i = 0; i <= 9; i++) {
+			saveKeys.push({ key: `turnBlock${i}`, preventDefault: true });
+		};
+
+		// Non-code blocks: saveKeys handles save + onKeyDown for block indentation.
+		// Code blocks handle indent/outdent separately (tab characters in text).
+		if (!block.isTextCode()) {
+			saveKeys.push({ key: 'indent', preventDefault: true });
+			saveKeys.push({ key: 'outdent', preventDefault: true });
+		};
+
 		if (isInsideTable) {
 			if (!range.to) {
 				saveKeys.push({ key: `arrowleft, arrowup` });
@@ -312,18 +317,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			if (range.to == value.length) {
 				saveKeys.push({ key: `arrowright, arrowdown` });
-			};
-		};
-
-		// For code blocks, indent/outdent are handled explicitly below
-		// to avoid double blockSetText calls (causes extra lines)
-		if (block.isTextCode()) {
-			const skipKeys = [ 'indent', 'outdent' ];
-
-			for (let i = saveKeys.length - 1; i >= 0; i--) {
-				if (skipKeys.includes(saveKeys[i].key)) {
-					saveKeys.splice(i, 1);
-				};
 			};
 		};
 
@@ -377,18 +370,34 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			let pd = true;
+			// Handle shift+enter manually in non-code text blocks to avoid browser
+			// contenteditable bugs (browser can incorrectly split inline elements like
+			// <markupcode> when inserting <br>)
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				pd = false;
-			};
-			if (block.isTextCallout() || block.isTextQuote()) {
-				pd = true;
+				e.preventDefault();
+
+				const insert = '\n';
+				const caret = range.from + insert.length;
+				const newValue = U.String.insert(value, insert, range.from, range.to);
+				const caretRange = { from: caret, to: caret };
+
+				if (range.from != range.to) {
+					marksRef.current = Mark.adjust(marksRef.current, range.from, -(range.to - range.from));
+				};
+				marksRef.current = Mark.adjust(marksRef.current, range.from, insert.length);
+
+				focus.set(block.id, caretRange);
+
+				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
+					focus.apply();
+				});
+
+				ret = true;
+				return;
 			};
 
-			if (pd) {
-				e.preventDefault();
-			};
-			
+			e.preventDefault();
+
 			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 				onKeyDown(e, value, marksRef.current, range, props);
 			});
@@ -399,12 +408,53 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
 			keyboard.disableContextClose(false);
 
+			const isArrowRight = pressed == 'arrowright';
+			const isArrowLeft = pressed == 'arrowleft';
+
 			// When cursor is at model boundary but DOM has ZWS to traverse, let browser handle natively
-			if ((pressed == 'arrowright') && (range.to == value.length) && !editableRef.current?.isAtDomEnd()) {
+			if (isArrowRight && (range.to == value.length) && !editableRef.current?.isAtDomEnd()) {
 				ret = true;
 			} else
-			if ((pressed == 'arrowleft') && !range.from && !editableRef.current?.isAtDomStart()) {
+			if (isArrowLeft && !range.from && !editableRef.current?.isAtDomStart()) {
 				ret = true;
+			};
+
+			// Atomic cursor navigation over emoji/mention marks (skip when menus are open)
+			if (!menuOpen && !menuOpenMention && !menuOpenEmoji && !menuOpenSmile) {
+				const atomicTypes = [ I.MarkType.Emoji, I.MarkType.Mention ];
+				const atomicMarks = (marksRef.current || []).filter(it => atomicTypes.includes(it.type));
+				const isShift = e.shiftKey;
+
+				if (isArrowRight && atomicMarks.length) {
+					const pos = isShift ? range.to : range.from;
+					const mark = atomicMarks.find(it => (it.range.from == pos) && (it.range.to > pos));
+
+					if (mark) {
+						e.preventDefault();
+
+						const newRange = isShift
+							? { from: range.from, to: mark.range.to }
+							: { from: mark.range.to, to: mark.range.to };
+
+						editableRef.current?.setRange(newRange);
+						ret = true;
+					};
+				} else
+				if (isArrowLeft && atomicMarks.length) {
+					const pos = isShift ? range.from : range.to;
+					const mark = atomicMarks.find(it => (it.range.to == pos) && (it.range.from < pos));
+
+					if (mark) {
+						e.preventDefault();
+
+						const newRange = isShift
+							? { from: mark.range.from, to: range.to }
+							: { from: mark.range.from, to: mark.range.from };
+
+						editableRef.current?.setRange(newRange);
+						ret = true;
+					};
+				};
 			};
 		});
 
@@ -421,15 +471,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			});
 		});
 
-		keyboard.shortcut('indent, outdent', e, (pressed: string) => {
-			e.preventDefault();
+		// Code blocks: indent/outdent inserts/removes tab characters in text
+		if (block.isTextCode()) {
+			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
+				e.preventDefault();
 
-			const isOutdent = pressed == 'outdent';
-
-			if (block.isTextCode()) {
+				const isOutdent = pressed == 'outdent';
 				const lineStart = value.lastIndexOf('\n', range.from - 1) + 1;
-				let lineEnd = value.indexOf('\n', range.to);
 
+				let lineEnd = value.indexOf('\n', range.to);
 				if (lineEnd == -1) {
 					lineEnd = value.length;
 				};
@@ -505,16 +555,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
 					focus.apply();
 				});
-			} else
-			if (!isOutdent) {
-				setText(marksRef.current, true, () => {
-					focus.apply();
-					onKeyDown(e, value, marksRef.current, range, props);
-				});
-			};
 
-			ret = true;
-		});
+				ret = true;
+			});
+		};
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range.to) {
@@ -680,6 +724,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const menuOpenEmoji = S.Menu.isOpen('blockEmoji');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
+		const threeSymbolBefore = range ? value[range.from - 3] : '';
+		const isAllowedMenuBase = isAllowedMenu;
 
 		if (range) {
 			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
@@ -688,7 +734,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 		const canOpenMenuLink = !menuOpenMention && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
-		const canOpenMenuEmoji = !menuOpenEmoji && (oneSymbolBefore == ':') && isAllowedMenu;
+		const canOpenMenuEmoji = !menuOpenEmoji && (twoSymbolBefore == ':') && /\S/.test(oneSymbolBefore) && isAllowedMenuBase && (!range || (range.from <= 2) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(threeSymbolBefore));
 
 		preventMenu.current = false;
 
@@ -984,10 +1030,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 
 		let value = getTextValue();
+		const firstChar = value.charAt(range.from - 1);
 
-		value = U.String.cut(value, range.from - 1, range.from);
+		value = U.String.cut(value, range.from - 2, range.from);
 
-		S.Common.filterSet(range.from - 1, '');
+		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
@@ -1060,7 +1107,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						focus.setWithTimeout(block.id, { from: to, to }, 30);
 					});
 				},
-				route: analytics.route.editor,
+				route: analytics.route.shortcut,
 			},
 		});
 	};
@@ -1153,6 +1200,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const onBlurHandler = (e: any) => {
+		// Don't clear focus when a from-block menu is open
+		// (e.g., OS keyboard layout switch triggers window blur on Linux)
+		if (S.Menu.isOpenList([ 'blockAdd', 'blockMention', 'blockEmoji' ])) {
+			return;
+		};
+
 		if (block.isTextTitle() || block.isTextDescription()) {
 			placeholderCheck();
 		} else {
@@ -1404,20 +1457,30 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const range = getRange();
-
-		let html = getHtmlValue();
-
-		if (!/<(font|span)/.test(html)) {
+		if (!/<(font|span)/.test(getHtmlValue())) {
 			return;
 		};
 
+		// Clean browser-inserted font/span tags (e.g. from umlaut/IME input).
+		// Must re-read html AFTER the input is processed (inside raf), otherwise
+		// the cleanup restores pre-input html and undoes the user's edit.
 		raf(() => {
+			let html = getHtmlValue();
+
+			if (!/<(font|span)/.test(html)) {
+				return;
+			};
+
+			const range = getRange();
+
 			html = html.replace(/<\/?font[^>]*>/g, '');
 			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1');
 
 			editableRef.current?.setValue(html);
-			editableRef.current?.setRange(range);
+
+			if (range) {
+				editableRef.current?.setRange(range);
+			};
 		});
 	};
 

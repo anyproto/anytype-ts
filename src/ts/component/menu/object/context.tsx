@@ -43,7 +43,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
+		let pageLink = { id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
@@ -182,10 +182,10 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
 		if (!allowedLinkTo)		 linkTo = null;
+		if (!allowedCollection)	 addCollection = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
 		if (!allowedRelation)	 relation = null;
-		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
 		if (!allowedNotification) {
 			notification = null;
@@ -208,9 +208,9 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		};
 
 		let sections = [
-			{ children: [ open, changeType, relation, pageLink ] },
+			{ children: [ open, changeType, relation ] },
 			{ children: [ pin, notification, editChat, linkTo, addCollection ] },
-			{ children: [ pageCopy, exportObject, unlink, archive ] },
+			{ children: [ pageLink, pageCopy, exportObject, unlink, archive ] },
 			{ children: [ newTab, newWindow ] },
 		];
 
@@ -292,6 +292,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'links', condition: I.FilterCondition.NotIn, value: [ itemId ] },
 					],
 					rootId: itemId,
 					blockId: itemId,
@@ -321,6 +322,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
 						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'links', condition: I.FilterCondition.NotIn, value: [ itemId ] },
 					],
 					rootId: itemId,
 					blockId: itemId,

@@ -9,6 +9,7 @@
 		display: flex; align-items: center; justify-content: center; color: #fff; text-align: center; @include text-very-small; 
 		padding: 0px 4px; font-weight: 500;
 	}
-	.icon.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
+	.icon.mention { background-image: url('~img/icon/counter/mention.svg'); background-size: 10px; }
+	.icon.reaction { background-color: var(--color-red); background-image: url('~img/icon/counter/reaction.svg'); background-size: 10px; }
 	.icon.isMuted { background-color: var(--color-text-tertiary); }
 }

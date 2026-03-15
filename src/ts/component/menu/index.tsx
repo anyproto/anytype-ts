@@ -1078,20 +1078,22 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 					</div>
 				) : ''}
 
+				{param.data?.satellite || ''}
+
 				<div className="content">
-					<Component 
+					<Component
 						ref={childRef}
-						{...props} 
+						{...props}
 						setActive={setActive}
 						setHover={setHover}
 						onKeyDown={onKeyDown}
 						storageGet={storageGet}
 						storageSet={storageSet}
-						getId={getId} 
+						getId={getId}
 						getSize={getSize}
 						getPosition={getPosition}
 						getMaxHeight={getMaxHeight}
-						position={position} 
+						position={position}
 						close={close}
 						/>
 				</div>

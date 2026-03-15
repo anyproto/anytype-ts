@@ -7,7 +7,7 @@ import BodyRow from './list/row';
 import AddRow from './grid/body/add';
 
 const HEIGHT_COMPACT = 32;
-const HEIGHT_REGULAR = 56;
+const HEIGHT_REGULAR = 64;
 
 const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 

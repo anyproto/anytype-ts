@@ -65,12 +65,13 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}, [ spaces, spaces.length ]);
 
 	return (
-		<AnimatePresence mode="popLayout">
+		<AnimatePresence mode="wait">
 			<motion.div
+				key={id}
 				className={cn.join(' ')}
-				{...U.Common.animationProps({
-					transition: { duration: 0.2, delay: 0.1 },
-				})}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1, transition: { duration: 0.12 } }}
+				exit={{ opacity: 0, transition: { duration: 0.08 } }}
 			>
 				<Icon
 					className="vaultToggle withBackground"

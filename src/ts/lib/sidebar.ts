@@ -61,7 +61,7 @@ class Sidebar {
 			let isClosed = (undefined !== data.isClosed) && (panel != I.SidebarPanel.Right) ? Boolean(data.isClosed) : true;
 
 			// When auto-hide is enabled, start with left panels closed to prevent flicker on new tab
-			if (S.Common.hideSidebar && (panel != I.SidebarPanel.Right)) {
+			if (S.Common.hideSidebar && (panel != I.SidebarPanel.Right) && !keyboard.isMainSettings()) {
 				isClosed = true;
 			};
 
@@ -309,7 +309,11 @@ class Sidebar {
 			this.rightPanelClose(isPopup, true);
 		};
 
-		analytics.event(isClosed ? 'ExpandSidebar' : 'CollapseSidebar');
+		if (isClosed && (state?.page == 'object/tableOfContents')) {
+			analytics.event('ScreenTableOfContents');
+		} else {
+			analytics.event(isClosed ? 'ExpandSidebar' : 'CollapseSidebar');
+		};
 		S.Menu.closeAll();
 	};
 
@@ -490,7 +494,8 @@ class Sidebar {
 			this.isAnimating ||
 			!hideSidebar ||
 			!keyboard.isMain() ||
-			!windowIsFocused
+			!windowIsFocused ||
+			keyboard.isMainSettings()
 		) {
 			window.clearTimeout(this.timeoutHover);
 			this.timeoutHover = 0;
@@ -603,7 +608,10 @@ class Sidebar {
 
 		if (animate) {
 			this.setAnimating(true);
-			window.setTimeout(() => this.setAnimating(false), J.Constant.delay.sidebar);
+			window.setTimeout(() => {
+				this.setAnimating(false);
+				$(window).trigger('sidebarResize');
+			}, J.Constant.delay.sidebar);
 		};
 
 		const { config, singleTab } = S.Common;

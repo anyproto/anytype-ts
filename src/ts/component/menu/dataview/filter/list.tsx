@@ -56,7 +56,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				relation: S.Record.getRelationByKey(it.relationKey),
 				isFilter: true,
 			};
-		}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+		}).filter(it => {
+		if (Dataview.isAdvancedFilter(it)) {
+			return true;
+		};
+		return it.relation && !it.relation.isArchived && !it.relation.isDeleted;
+	}).sort((a, b) => {
 			const aAdvanced = Dataview.isAdvancedFilter(a);
 			const bAdvanced = Dataview.isAdvancedFilter(b);
 
@@ -114,7 +119,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getName = (item: any): string => {
 		if (Dataview.isAdvancedFilter(item)) {
 			const ruleCount = item.nestedFilters?.length || 1;
-			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
+			return U.String.sprintf(translate('commonCountRules'), ruleCount, U.Common.plural(ruleCount, translate('pluralRule')));
 		};
 
 		return item.relation?.name || '';

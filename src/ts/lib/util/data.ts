@@ -317,7 +317,10 @@ class UtilData {
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
-						if (route) {
+						const rp = route ? U.Router.getParam(route) : {};
+						const isRestorable = route && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+
+						if (isRestorable) {
 							U.Router.go(route, routeParam);
 						} else {
 							U.Space.openDashboard(routeParam);
@@ -911,12 +914,12 @@ class UtilData {
 	};
 
 	getGraphData (message: any): { nodes: any[]; edges: any[] } {
-		const nodes = message.nodes.map(it => S.Detail.mapper(it)).filter(it => it.type);
+		const nodes = (message.nodes || []).map(it => S.Detail.mapper(it)).filter(it => it.type);
 		const nodeIds = new Set(nodes.map(it => it.id));
 
 		return {
 			nodes,
-			edges: message.edges.filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
+			edges: (message.edges || []).filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
 		};
 	};
 
@@ -1324,10 +1327,10 @@ class UtilData {
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
-				return false;
+				return (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 			};
 
-			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 		});
 	};
 
@@ -1348,7 +1351,7 @@ class UtilData {
 			names.push(`+${more}`);
 		};
 
-		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		return U.String.sprintf(translate('commonObjectTypeList'), U.Common.plural(l, translate('pluralObjectType')), names.join(', '));
 	};
 
 	updateTabsDimmer(popupList?: I.Popup[], menuList?: I.Menu[]) {

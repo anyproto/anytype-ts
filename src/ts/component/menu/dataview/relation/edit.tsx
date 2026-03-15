@@ -320,9 +320,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			};
 
 			case 'remove': {
-				Action.archive([ relation.id ], '', () => {
-					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => close());
-				});
+				Action.archive([ relation.id ], '');
 				break;
 			};
 

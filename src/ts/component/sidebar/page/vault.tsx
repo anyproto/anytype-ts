@@ -241,6 +241,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			withOpenNewTab: true,
 			noMembers: true, 
 			noManage: true,
+			noShare: true,
 			route: analytics.route.vault,
 		});
 	};
@@ -249,6 +250,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const listRef = useRef<List>(null);
 	const filterRef = useRef(null);
 	const timeout = useRef(0);
+	const scrollTopRef = useRef(0);
+	const prevItemsRef = useRef<{ id: string; height: number }[]>([]);
 	const cache = new CellMeasurerCache({
 		defaultHeight: HEIGHT_ITEM,
 		fixedWidth: true,
@@ -356,10 +359,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		setFilter('');
 	};
 
-	const ItemObject = (item: any) => {
+	const ItemObject = forwardRef((item: any, forwardedRef: any) => {
 		if (item.isDiv) {
 			return (
-				<div className="separator" style={item.style}>
+				<div ref={forwardedRef} className="separator" style={item.style}>
 					<div className="inner" />
 				</div>
 			);
@@ -367,7 +370,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.id == 'createSpace') {
 			return (
-				<div className="item add" style={item.style}>
+				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconCreate()}
 				</div>
 			);
@@ -382,12 +385,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
 		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
-		const counter = <ChatCounter spaceId={targetSpaceId} disableMention={vaultIsMinimal} />;
+		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 
 		let chatName = null;
 		let time = null;
 		let last = null;
-		let icons = [];
+		const icons = [];
 
 		if (targetSpaceId == space) {
 			cn.push('active');
@@ -410,7 +413,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId, true) : null;
+		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
 		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter);
 
 		if (lastMessage) {
@@ -481,14 +484,24 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			);
 		};
 
+		const mergedRef = (node: any) => {
+			setNodeRef(node);
+			if (typeof forwardedRef === 'function') {
+				forwardedRef(node);
+			} else
+			if (forwardedRef) {
+				forwardedRef.current = node;
+			};
+		};
+
 		return (
-			<div 
-				ref={setNodeRef}
+			<div
+				ref={mergedRef}
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				{...attributes}
 				{...listeners}
-				style={style} 
+				style={style}
 				onClick={e => onClick(e, item)}
 				onMouseEnter={() => onOver(item)}
 				onMouseLeave={onOut}
@@ -505,7 +518,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				) : ''}
 			</div>
 		);
-	};
+	});
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
@@ -604,6 +617,33 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 	}, []);
 
+	useEffect(() => {
+		const prev = prevItemsRef.current;
+		const currentIds = new Set(items.map(it => it.id));
+
+		if (prev.length && (prev.length > items.length) && (scrollTopRef.current > 0)) {
+			let removedHeightAbove = 0;
+			let accHeight = 0;
+
+			for (const p of prev) {
+				if (p.id && !currentIds.has(p.id) && (accHeight < scrollTopRef.current)) {
+					removedHeightAbove += p.height;
+				};
+				accHeight += p.height;
+			};
+
+			if (removedHeightAbove > 0) {
+				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
+				scrollTopRef.current = newTop;
+
+				const node = getNode();
+				node.find('.ReactVirtualized__Grid').scrollTop(newTop);
+			};
+		};
+
+		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
+	});
+
 	return (
 		<>
 			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
@@ -682,7 +722,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
 											scrollToAlignment="center"
-											onScroll={() => {}}
+											onScroll={({ scrollTop }) => scrollTopRef.current = scrollTop}
 										/>
 									</SortableContext>
 								</DndContext>

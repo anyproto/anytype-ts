@@ -140,6 +140,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
+		const rootId = keyboard.getRootId(isPopup);
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
