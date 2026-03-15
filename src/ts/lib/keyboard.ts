@@ -685,6 +685,7 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
+		this.closeTocSidebar(isPopup);
 		analytics.event('HistoryBack');
 	};
 
@@ -697,14 +698,15 @@ class Keyboard {
 		};
 
 		if (isPopup) {
-			historyPopup.goForward((match: any) => { 
-				S.Popup.updateData('page', { matchPopup: match }); 
+			historyPopup.goForward((match: any) => {
+				S.Popup.updateData('page', { matchPopup: match });
 			});
 		} else {
 			U.Router.history.goForward();
 		};
 
 		S.Menu.closeAll();
+		this.closeTocSidebar(isPopup);
 		analytics.event('HistoryForward');
 	};
 
@@ -1785,6 +1787,12 @@ class Keyboard {
 	/**
 	 * Restores the source object from backup.
 	 */
+	closeTocSidebar (isPopup: boolean) {
+		if (S.Common.getRightSidebarState(isPopup).page == 'object/tableOfContents') {
+			sidebar.rightPanelClose(isPopup, false);
+		};
+	};
+
 	restoreSource () {
 		if (!this.source) {
 			return;

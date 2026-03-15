@@ -334,7 +334,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						};
 
 						case 'copy': {
-							U.Common.clipboardCopy({ text: value, html: value });
+							U.Common.copyToast(translate('commonLink'), value);
 							analytics.event('RelationUrlCopy');
 							break;
 						};
@@ -403,7 +403,9 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			const win = $(window);
 
 			win.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
-				if (!$(e.target).parents(`#${U.Common.esc(cellId)}`).length) {
+				const target = $(e.target);
+
+				if (!target.parents(`#${U.Common.esc(cellId)}`).length && !target.parents('.menus').length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 

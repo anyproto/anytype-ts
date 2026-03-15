@@ -423,26 +423,16 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						break;
 					};
 
-					case 'existingPage': {
+					case 'existingPage':
+					case 'existingFile': {
+						const condition = item.itemId == 'existingPage' ? I.FilterCondition.NotIn : I.FilterCondition.In;
+
 						menuId = 'searchObject';
 						menuParam.data = Object.assign(menuParam.data, {
-							canAdd: true,
 							type: I.NavigationType.Link,
 							withPlural: true,
 							filters: [
-								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() },
-							],
-						});
-						break;
-					};
-
-					case 'existingFile': {
-						menuId = 'searchObject';
-						menuParam.data = Object.assign(menuParam.data, {
-							canAdd: true,
-							type: I.NavigationType.Link,
-							filters: [
-								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+								{ relationKey: 'resolvedLayout', condition, value: U.Object.getFileLayouts() },
 							],
 						});
 						break;

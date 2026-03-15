@@ -1086,7 +1086,7 @@ class CommonStore {
 	 * @returns {I.GraphSettings} The graph settings.
 	 */
 	getGraph (key: string): I.GraphSettings {
-		const stored = Storage.get(key);
+		const stored = U.Common.objectCopy(Storage.get(key));
 		const def = U.Common.objectCopy(this.graphObj);
 		const result = Object.assign(def, stored);
 

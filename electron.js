@@ -91,19 +91,35 @@ powerMonitor.on('suspend', () => {
 	};
 });
 
-powerMonitor.on('resume', () => {	
+powerMonitor.on('resume', () => {
 	if (lastPowerEvent == 'resume') {
 		return;
 	};
 
+	lastPowerEvent = 'resume';
+	Util.log('info', '[PowerMonitor] resume');
+
+	// Notify middleware immediately so it can transition to foreground state
 	const firstWindow = WindowManager.getFirstWindow();
 	if (firstWindow) {
 		Util.send(firstWindow, 'power-event', 'resume');
-		lastPowerEvent = 'resume';
 	};
-	
-	WindowManager.sendToAll('reload');
-	Util.log('info', '[PowerMonitor] resume');
+
+	// Delay reload to give GPU process time to recover from suspend.
+	// Directly reload all tabs — route is preserved in view.data from initial load.
+	setTimeout(() => {
+		for (const win of WindowManager.list) {
+			if (!win || win.isDestroyed() || !win.views) {
+				continue;
+			};
+
+			for (const view of win.views) {
+				if (view && view.webContents && !view.webContents.isDestroyed()) {
+					view.webContents.reload();
+				};
+			};
+		};
+	}, 1500);
 });
 
 ipcMain.on('storeGet', (e, key) => { e.returnValue = store.get(key); });
@@ -318,7 +334,12 @@ app.on('second-instance', (event, argv) => {
 });
 
 app.on('before-quit', e => {
-	Util.log('info', 'before-quit');
+	Util.log('info', 'before-quit, isRelaunching: ' + UpdateManager.isRelaunching);
+
+	if (UpdateManager.isRelaunching) {
+		// Let electron-updater handle the quit and relaunch — do not force exit
+		return;
+	};
 
 	if (app.isQuiting) {
 		app.exit(0);

@@ -12,11 +12,15 @@
 			.cell.isEmpty { display: none; }
 		}
 
+		.wrapContent.bgColor {
+			.listColumn {
+				.blockRelation {
+					.info { padding-left: 8px; }
+				}
+			}
+		}
 		.listColumn {
 			.wrapMenu { display: none; }
-			.blockRelation {
-				.info { padding-left: 8px; }
-			}
 		}
 
 		.listInline { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }

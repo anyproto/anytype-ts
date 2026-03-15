@@ -48,9 +48,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
 
-	const clear = () => {
+	const clearSubscriptionHashes = () => {
 		subscriptionHashes.current = {};
-		branches.current = [];
 	};
 
 	const updateData = () => {
@@ -181,7 +180,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		subscriptionHashes.current[nodeId] = hash;
 
-		U.Subscription.destroyList([ subId ], true, () => {
+		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribeIds({
 				subId,
 				ids: links,
@@ -435,7 +434,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
-			clear();
+			clearSubscriptionHashes();
 			links.current = object.links;
 		};
 

@@ -857,6 +857,7 @@ class Relation {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
+
 		return String(value || '');
 	};
 

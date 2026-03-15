@@ -63,21 +63,22 @@ def main():
             parent = PurePosixPath(parsed.path).parent.as_posix().rstrip("/")
             dir_url = f"{parsed.scheme}://{parsed.netloc}{parent}"
 
-            urls = []
+            urls = set()
             files = data.get("files") or []
+
             for entry in files:
                 name = entry.get("url") or entry.get("name")
                 if not name:
                     continue
-                urls.append(f"{dir_url}/{urllib.parse.quote(name)}")
+                urls.add(f"{dir_url}/{urllib.parse.quote(name)}")
 
             # Fallback: single 'url' field at the root
             if not urls and isinstance(data.get("url"), str):
-                urls.append(f"{dir_url}/{urllib.parse.quote(data['url'])}")
+                urls.add(f"{dir_url}/{urllib.parse.quote(data['url'])}")
 
             if urls:
-                grouped[plat] = urls
-                print(f"[OK] {plat}: {len(urls)} from {url}", file=sys.stderr)
+                grouped[plat] = sorted(urls)
+                print(f"[OK] {plat}: {len(grouped[plat])} from {url}", file=sys.stderr)
             else:
                 print(f"[WARN] {plat}: no assets in {url}", file=sys.stderr)
 
@@ -86,8 +87,8 @@ def main():
             print(f"[INFO] {plat}: skipping {url}: {e}", file=sys.stderr)
 
     # Union without duplicates
-    all_urls = sorted(set(sum(grouped.values(), [])))
-    result = {"win": grouped["win"], "mac": grouped["mac"], "linux": grouped["linux"], "all": all_urls}
+    all_urls = sorted({u for urls in grouped.values() for u in urls})
+    result = {**grouped, "all": all_urls}
 
     # outputs
     outputs = list()
