@@ -44,7 +44,9 @@
 		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium",
 		"start:web": "node scripts/start-web.js",
 		"start:dev-web": "cross-env WEB_OPEN_BROWSER=1 node scripts/start-web.js",
-		"build:web": "vite build --config vite.web.config.ts"
+		"build:web": "vite build --config vite.web.config.ts",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"repository": {
 		"type": "git",
@@ -91,7 +93,8 @@
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^8.54.0",
 		"vite": "^6.3.0",
-		"vite-plugin-static-copy": "^2.3.0"
+		"vite-plugin-static-copy": "^2.3.0",
+		"vitest": "^4.1.0"
 	},
 	"dependencies": {
 		"@bufbuild/protobuf": "^2.11.0",
