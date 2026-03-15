@@ -506,12 +506,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const processed = lines.map((line, i) => {
 						let removed = 0;
 
+						const match = line.match(/^ {1,4}/);
+
 						if (line.startsWith('\t')) {
 							line = line.substring(1);
 							removed = 1;
 						} else
-						if (line.match(/^ {1,4}/)) {
-							const spaces = line.match(/^ {1,4}/)[0].length;
+						if (match) {
+							const spaces = match[0].length;
 							line = line.substring(spaces);
 							removed = spaces;
 						};
