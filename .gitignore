@@ -6,15 +6,9 @@ build.zip
 build/
 addon
 protobuf
-todo.md
-done.md
-commands.md
 .idea
 tools
-docs/*
-!docs/CODE_OF_CONDUCT.md
-!docs/CONTRIBUTING.md
-!docs/SECURITY.md
+docs/local/*
 electron/env.json
 src/json/schema
 licenses.json
