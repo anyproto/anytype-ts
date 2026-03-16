@@ -7,7 +7,7 @@
 
 .header {
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; gap: 0px 8px; }
-	.side.left { padding: 0px 12px; flex-shrink: 0; }
+	.side.left { padding: 0px 12px; flex-shrink: 0; -webkit-app-region: no-drag; }
 	.side.left {
 		.icon:first-child { margin-left: 0px; }
 		.icon:last-child { margin-right: 0px; }
@@ -18,7 +18,7 @@
 			.path, .headerBanner { transition: opacity $transitionCommon; opacity: 0; pointer-events: none; }
 		}
 	}
-	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; }
+	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; -webkit-app-region: no-drag; }
 	.side.right {
 		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
 	}
