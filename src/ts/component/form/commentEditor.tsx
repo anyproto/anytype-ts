@@ -43,6 +43,7 @@ import {
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { I, J, S, U, keyboard, translate, Storage } from 'Lib';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
@@ -90,6 +91,9 @@ class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
 };
 
 export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZONTAL_RULE_COMMAND');
+
+// Link URL storage — maps Lexical node keys to link URLs
+const linkUrlMap = new Map<string, string>();
 
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
@@ -148,9 +152,17 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 
 };
 
-const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) => {
+const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data: any }) => {
 	const [ editor ] = useLexicalComposerContext();
-	const object = { syncStatus: I.SyncStatusObject.Synced, ...data };
+
+	// For real objects (non-tmp), read fresh details from the store
+	let object = { syncStatus: I.SyncStatusObject.Synced, ...data };
+	if (data.id && !data.isTmp) {
+		const details = S.Detail.get(J.Constant.subId.space, data.id, []);
+		if (!details._empty_) {
+			object = { syncStatus: I.SyncStatusObject.Synced, ...details };
+		};
+	};
 
 	return (
 		<Attachment
@@ -160,7 +172,7 @@ const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) 
 			}}
 		/>
 	);
-};
+});
 
 function $createAttachmentNode (data: any): AttachmentNode {
 	return new AttachmentNode(data);
@@ -522,6 +534,25 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 		} else
 		if ($isTextNode(child)) {
 			marks.push(...extractMarks(child, start, end));
+
+			// Check for manually-assigned link URLs
+			const linkData = linkUrlMap.get(child.getKey());
+			if (linkData) {
+				try {
+					const { url: linkUrl, type: linkType } = JSON.parse(linkData);
+					marks.push({
+						type: linkType || I.MarkType.Link,
+						range: { from: start, to: end },
+						param: linkUrl,
+					});
+				} catch (e) {
+					marks.push({
+						type: I.MarkType.Link,
+						range: { from: start, to: end },
+						param: linkData,
+					});
+				};
+			};
 		};
 
 		text += childText;
@@ -1089,10 +1120,12 @@ const SelectionToolbarPlugin = () => {
 					editor.focus();
 				};
 
-				const onLink = (url: string) => {
+				const onLink = (url: string, markType?: I.MarkType) => {
 					if (!url) {
 						return;
 					};
+
+					const type = markType || I.MarkType.Link;
 
 					editor.update(() => {
 						const sel = $getSelection();
@@ -1143,6 +1176,7 @@ const SelectionToolbarPlugin = () => {
 
 							const linkNode = $createTextNode(linkText);
 							linkNode.setFormat(node.getFormat());
+							linkUrlMap.set(linkNode.getKey(), JSON.stringify({ url, type }));
 							parts.push(linkNode);
 
 							if (after) {
@@ -1617,16 +1651,36 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 						if (filterText) {
 							const s = filterText.toLowerCase();
 							const allSections = U.Menu.getCommentAddSections();
-							menu.param.data.sections = allSections
-								.map(section => ({
-									...section,
-									children: section.children.filter((it: any) =>
-										!it.arrow &&
-										((it.name || '').toLowerCase().includes(s) ||
-										(it.description || '').toLowerCase().includes(s))
-									),
-								}))
-								.filter(section => section.children.length > 0);
+							const embedOptions = U.Menu.getBlockEmbed().map((it: any) => ({
+								...it,
+								action: 'embed',
+								embedProcessor: it.id,
+							}));
+							const filtered: any[] = [];
+
+							for (const section of allSections) {
+								const matched = section.children.filter((it: any) => {
+									if (it.arrow) {
+										return false;
+									};
+									return (it.name || '').toLowerCase().includes(s) ||
+										(it.description || '').toLowerCase().includes(s);
+								});
+
+								// Also match embed sub-options
+								if (section.id === 'attachments') {
+									const matchedEmbeds = embedOptions.filter((it: any) =>
+										(it.name || '').toLowerCase().includes(s)
+									);
+									matched.push(...matchedEmbeds);
+								};
+
+								if (matched.length) {
+									filtered.push({ ...section, children: matched });
+								};
+							};
+
+							menu.param.data.sections = filtered;
 						} else {
 							menu.param.data.sections = U.Menu.getCommentAddSections();
 						};
@@ -2390,9 +2444,18 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 					const root = $getRoot();
 					root.clear();
 					const p = $createParagraphNode();
-					p.append($createTextNode(''));
+					const text = $createTextNode('');
+					p.append(text);
 					root.append(p);
+					text.select(0, 0);
+
+					// Reset any active text formats
+					const sel = $getSelection();
+					if ($isRangeSelection(sel)) {
+						sel.format = 0;
+					};
 				});
+				linkUrlMap.clear();
 				isEmptyRef.current = true;
 				onEmpty?.(true);
 			};

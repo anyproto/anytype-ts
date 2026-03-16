@@ -39,8 +39,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			noAnimation: true,
 			data: {
 				filter: activeFormats.linkParam || '',
-				onChange: (_type: I.MarkType, param: string) => {
-					onLink?.(param);
+				onChange: (type: I.MarkType, param: string) => {
+					onLink?.(param, type);
 					close();
 				},
 			},
