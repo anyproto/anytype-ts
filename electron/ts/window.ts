@@ -72,8 +72,17 @@ class WindowManager {
 			});
 		});
 
-		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
-		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
+		win.on('enter-full-screen', () => {
+			win.setMenuBarVisibility(false);
+			win.setAutoHideMenuBar(true);
+			Util.send(win, 'enter-full-screen');
+		});
+		win.on('leave-full-screen', () => {
+			const { showMenuBar } = ConfigManager.config;
+			win.setMenuBarVisibility(showMenuBar);
+			win.setAutoHideMenuBar(!showMenuBar);
+			Util.send(win, 'leave-full-screen');
+		});
 		win.on('swipe', (e: Electron.Event, direction: string) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
 
 		win.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
