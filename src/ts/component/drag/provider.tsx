@@ -213,7 +213,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
 
 			if (allPaths.length && !isSetLayout) {
-				C.FileDrop(rootId, targetId, position.current, allPaths, () => {
+				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
+					U.File.showFileDropError(message);
+
 					if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
 						S.Block.toggle(rootId, targetId, true);
 					};

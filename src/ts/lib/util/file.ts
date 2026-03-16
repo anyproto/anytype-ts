@@ -316,6 +316,24 @@ class UtilFile {
 		return parts.join(', ');
 	};
 
+	showFileDropError (message: any) {
+		if (!message.error.code) {
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			preventCloseByClick: true,
+			data: {
+				icon: 'error',
+				title: translate('commonError'),
+				text: message.error.description || translate('popupUploadErrorText'),
+				textConfirm: translate('popupUploadErrorConfirm'),
+				colorConfirm: 'blank',
+				canCancel: false,
+			},
+		});
+	};
+
 	showUploadError (errorCount: number, lastErrorDescription?: string) {
 		if (!errorCount) {
 			return;

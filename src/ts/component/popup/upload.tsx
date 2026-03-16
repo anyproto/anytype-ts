@@ -80,7 +80,9 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const allPaths = filePaths.concat(dirPaths);
 			onUpload?.([]);
 			close();
-			C.FileDrop(collectionId || '', '', I.BlockPosition.None as number, allPaths);
+			C.FileDrop(collectionId || '', '', I.BlockPosition.None as number, allPaths, (message: any) => {
+				U.File.showFileDropError(message);
+			});
 		} else
 		if (filePaths.length) {
 			uploadFiles(filePaths);

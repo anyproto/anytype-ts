@@ -36,10 +36,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		try { ret = fs.lstatSync(fp).isDirectory(); } catch (e) {};
 		return ret;
 	},
-	readDir: fp => {
-		try { return fs.readdirSync(fp); } catch (e) { return []; };
-	},
-	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
+defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 	getTheme: () => ipcRenderer.sendSync('getTheme'),
 	getBgColor: () => ipcRenderer.sendSync('getBgColor'),
 	getConfig: () => ipcRenderer.sendSync('getConfig'),
