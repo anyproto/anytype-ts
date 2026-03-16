@@ -42,18 +42,11 @@
 
 			.title { @include text-header3; font-weight: 700; }
 
-			.inputRow {
+			.inputWrapper {
 				display: flex; gap: 8px;
 
-				.input {
-					width: 360px; border-radius: 7px;
-					border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary);
-				}
-
-				.button { border-radius: 7px; }
+				.input { width: 360px; }
 			}
 		}
-
-		#loader { border-radius: 12px; }
 	}
 }

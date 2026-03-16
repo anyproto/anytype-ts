@@ -274,10 +274,10 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{tab == Tab.Link ? (
 				<form className="linkForm" onSubmit={onSubmitUrl}>
 					<div className="title">{translate('popupUploadLinkTitle')}</div>
-					<div className="inputRow">
+					<div className="inputWrapper">
 						<Input
 							ref={urlRef}
-							className="c36"
+							className="c36 round"
 							placeholder={translate('popupUploadLinkPlaceholder')}
 							onKeyDown={e => e.stopPropagation()}
 						/>
