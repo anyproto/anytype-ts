@@ -27,26 +27,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const messageIdHandled = useRef(false);
 
 	const resize = useCallback(() => {
-		const node = sectionRef.current;
-		if (!node) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		if (!container.length) {
-			return;
-		};
-
-		// Reset to natural height before measuring
-		node.style.minHeight = '0px';
-
-		const containerEl = container.get(0);
-		const containerHeight = containerEl.clientHeight;
-		const scrollHeight = containerEl.scrollHeight;
-		const gap = containerHeight - scrollHeight;
-
-		node.style.minHeight = (gap > 0) ? `${node.offsetHeight + gap}px` : '';
-	}, [ isPopup ]);
+	}, []);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -544,7 +525,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 					rootId={rootId}
 					readonly={readonly}
 					onSubmit={onSubmitPost}
-					onResize={scrollToBottom}
+					onResize={scrollToBottomCheck}
 				/>
 			</div>
 		</div>

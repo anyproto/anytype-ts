@@ -153,10 +153,31 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			}).filter(Boolean);
 
-			// Collect non-tmp attachment objects for optimistic rendering
-			const attachmentObjects = parts
-				.filter(p => (p.attachmentData && !p.attachmentData.isTmp))
-				.map(p => p.attachmentData);
+			// Collect attachment objects for optimistic rendering
+			const attachmentObjects: any[] = [];
+
+			for (const p of parts) {
+				if (!p.attachmentData) {
+					continue;
+				};
+
+				const data = p.attachmentData;
+
+				if (data.isTmp) {
+					const uploadedId = uploadMap.get(data.id);
+					if (uploadedId) {
+						attachmentObjects.push({
+							id: uploadedId,
+							name: data.name,
+							layout: data.layout,
+							sizeInBytes: data.sizeInBytes,
+							fileExt: data.fileExt,
+						});
+					};
+				} else {
+					attachmentObjects.push(data);
+				};
+			};
 
 			onSubmit?.(resolvedParts, undefined, attachmentObjects);
 
@@ -578,41 +599,20 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		return () => observer.disconnect();
 	}, [ onResize ]);
 
-	// Listen for slash menu action events from the editor's inline slash menu
-	useEffect(() => {
-		const editor = editorRef.current?.getEditor();
-		if (!editor) {
+	// Handle slash menu action events from the editor's inline slash menu
+	const onSlashAction = useCallback((item: any) => {
+		if (!item) {
 			return;
 		};
 
-		const root = editor.getRootElement();
-		if (!root) {
+		if ((item.action === 'createCallback') && item.object) {
+			editorRef.current?.insertAttachment(item.object);
+			U.Object.openPopup(item.object);
+			editorRef.current?.focus();
 			return;
 		};
 
-		const wrap = root.closest('.commentEditorWrap');
-		if (!wrap) {
-			return;
-		};
-
-		const onAction = (e: Event) => {
-			const item = (e as CustomEvent).detail;
-			if (!item) {
-				return;
-			};
-
-			if ((item.action === 'createCallback') && item.object) {
-				editorRef.current?.insertAttachment(item.object);
-				U.Object.openPopup(item.object);
-				editorRef.current?.focus();
-				return;
-			};
-
-			handleSlashAction(item);
-		};
-
-		wrap.addEventListener('commentSlashAction', onAction);
-		return () => wrap.removeEventListener('commentSlashAction', onAction);
+		handleSlashAction(item);
 	}, [ handleSlashAction ]);
 
 	// Load draft on mount (only for main posting form)
@@ -678,6 +678,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onChange={handleChange}
 					onFocus={handleFocus}
 					onBlur={handleBlur}
+					onSlashAction={onSlashAction}
 				/>
 			</div>
 

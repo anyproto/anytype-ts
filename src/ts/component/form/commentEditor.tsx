@@ -365,6 +365,7 @@ interface Props {
 	onChange?: () => void;
 	onFocus?: () => void;
 	onBlur?: () => void;
+	onSlashAction?: (item: any) => void;
 };
 
 interface RefProps {
@@ -524,6 +525,23 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 		};
 
 		text += childText;
+	};
+
+	// Auto-detect URLs in text and add Link marks
+	const urls = U.String.getUrlsFromText(text);
+	for (const url of urls) {
+		const hasOverlap = marks.some(m =>
+			((m.type === I.MarkType.Mention) || (m.type === I.MarkType.Link)) &&
+			(m.range.from < url.to) && (m.range.to > url.from)
+		);
+
+		if (!hasOverlap) {
+			marks.push({
+				type: I.MarkType.Link,
+				range: { from: url.from, to: url.to },
+				param: url.value,
+			});
+		};
 	};
 
 	return { text, marks };
@@ -1247,9 +1265,19 @@ const HorizontalRulePlugin = () => {
 		return editor.registerCommand(
 			INSERT_HORIZONTAL_RULE_COMMAND,
 			() => {
-				const selection = $getSelection();
+				const root = $getRoot();
+				let selection = $getSelection();
+
 				if (!$isRangeSelection(selection)) {
-					return false;
+					const lastChild = root.getLastChild();
+					if (lastChild) {
+						lastChild.selectEnd();
+						selection = $getSelection();
+					};
+
+					if (!$isRangeSelection(selection)) {
+						return false;
+					};
 				};
 
 				const focus = selection.focus;
@@ -1516,10 +1544,12 @@ const PasteUrlPlugin = () => {
 	return null;
 };
 
-const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
+const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlashAction?: (item: any) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
 	const prevText = useRef('');
+	const onSlashActionRef = useRef(onSlashAction);
+	onSlashActionRef.current = onSlashAction;
 
 	// Block Enter/Escape in editor when slash menu is open — let the menu handle them
 	useEffect(() => {
@@ -1571,7 +1601,7 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
-						openSlashMenu(editor, editorId, slashOffset);
+						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef);
 					};
 				};
 
@@ -1621,7 +1651,7 @@ const SlashMenuPlugin = ({ editorId }: { editorId: string }) => {
 
 let slashMenuContext: any = null;
 
-const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>) => {
+const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
 	const rect = U.Common.getSelectionRect();
 	if (!rect) {
 		return;
@@ -1702,10 +1732,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 						const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
 						removeSlashText(filterLen);
 
-						const el = document.getElementById(editorId);
-						if (el) {
-							el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: 'createCallback', object } }));
-						};
+						onSlashActionRef.current?.({ action: 'createCallback', object });
 						context?.close();
 					});
 				};
@@ -1735,10 +1762,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 								S.Menu.close('commentAdd');
 								removeSlashText(filterLen);
 
-								const el = document.getElementById(editorId);
-								if (el) {
-									el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: embedItem.action, embedProcessor: embedItem.embedProcessor } }));
-								};
+								onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });
 							},
 						},
 					});
@@ -1757,16 +1781,10 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 
 				// Handle block transforms and action items
 				if (item.action) {
-					const el = document.getElementById(editorId);
-					if (el) {
-						el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { action: item.action, embedProcessor: item.embedProcessor } }));
-					};
+					onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor });
 				} else
 				if (item.blockType === I.BlockType.Div) {
-					const el = document.getElementById(editorId);
-					if (el) {
-						el.dispatchEvent(new CustomEvent('commentSlashAction', { detail: { type: item.blockType } }));
-					};
+					onSlashActionRef.current?.({ type: item.blockType });
 				} else
 				if (item.textStyle !== undefined) {
 					applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
@@ -2238,7 +2256,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur } = props;
+	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -2511,7 +2529,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<AttachmentPlugin />
 				<EmbedPlugin />
 				<PasteUrlPlugin />
-				<SlashMenuPlugin editorId={editorId} />
+				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiPlugin editorId={editorId} />
 				<CodeHighlightPlugin />

@@ -17,6 +17,11 @@ class Comment {
 				return { embed: part.embed };
 			};
 
+			// Encode dividers as a text block with marker
+			if (part.type == I.BlockType.Div) {
+				return { text: { text: '---', style: I.TextStyle.Paragraph, marks: [] } };
+			};
+
 			const block: I.ChatMessageBlock = {
 				text: {
 					text: part.text || '',
@@ -61,6 +66,16 @@ class Comment {
 						text: '',
 						marks: [],
 						embed: block.embed,
+					};
+				};
+
+				// Decode divider marker
+				if (block.text && (block.text.text === '---') && (!block.text.marks || !block.text.marks.length)) {
+					return {
+						style: I.TextStyle.Paragraph,
+						type: I.BlockType.Div,
+						text: '',
+						marks: [],
 					};
 				};
 

@@ -22,7 +22,7 @@
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
 		> .iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
 		.postInner { flex-grow: 1; min-width: 0; }
-		.content { word-break: break-word; }
+		.content { word-break: break-word; margin: 8px 0px 0px 0px; }
 
 		.head {
 			display: flex; align-items: center; gap: 0px 8px; position: relative;
@@ -83,7 +83,7 @@
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
 		.content {
-			margin: 0px 0px 0px 40px; line-height: 20px; word-break: break-word;
+			margin: 8px 0px 0px 40px; line-height: 20px; word-break: break-word;
 
 			&, * { user-select: text !important; }
 		}
@@ -129,6 +129,12 @@
 		&.isEdit {
 			.contentArea { padding: 0px; }
 			.formToolbar { padding: 8px 0px 0px 0px; margin-left: -40px; }
+		}
+
+		&.isEdit.isReply {
+			max-height: 280px; overflow: hidden;
+
+			.formToolbar { margin-left: 0px; }
 		}
 
 		.contentArea { padding: 10px 12px; overflow-y: auto; flex: 1 1 auto; }

@@ -2546,13 +2546,75 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 	
-	// blockLast replaced by CommentSection
-	const onLastClick = (_e: any) => {};
+	const onLastClick = (e: any) => {
+		const readonly = isReadonly();
+
+		if (readonly) {
+			return;
+		};
+
+		let last = S.Block.getFirstBlock(rootId, -1, it => it.canCreateBlock());
+		let create = false;
+		let length = 0;
+
+		if (last) {
+			const parent = S.Block.getParentLeaf(rootId, last.id);
+
+			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
+				last = null;
+			};
+		};
+
+		if (!last) {
+			create = true;
+		} else {
+			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
+				create = true;
+			} else {
+				length = last.getLength();
+				if (length) {
+					create = true;
+				};
+			};
+		};
+
+		if (create) {
+			blockCreate('', I.BlockPosition.Bottom, { type: I.BlockType.Text });
+		} else {
+			focusSet(last.id, length, length, true);
+		};
+	};
 	
 	const resizePage = (callBack?: () => void) => {
 		raf.cancel(frameResize.current);
 		frameResize.current = raf(() => {
+			const node = $(nodeRef.current);
+			const blocks = node.find('.blocks');
+			const last = node.find('#blockLast');
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
+
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
+
+			if (blocks.length && last.length && scrollContainer.length) {
+				last.css({ height: '' });
+
+				const ct = scrollContainer.offset().top;
+				const ch = scrollContainer.height();
+				const bt = blocks.offset().top;
+				const bh = blocks.outerHeight();
+				const commentSection = node.find('.commentSection');
+				const csh = commentSection.length ? commentSection.outerHeight() : 0;
+
+				let height = ch - ct - bt - bh - csh - 8;
+
+				if (bh > ch) {
+					height = Math.max(ch / 2, height);
+				};
+
+				height = Math.max(J.Size.lastBlock, height);
+				last.css({ height });
+			};
+
 			tocRef.current?.resize?.();
 			callBack?.();
 		});
@@ -2675,8 +2737,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					/>
 				</div>
 
+				<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
+					<div id="blockLast" className="blockLast" onClick={onLastClick} />
+				</DropTarget>
+
 				<TableOfContents ref={tocRef} {...props} />
-				
+
 				<CommentSection
 					rootId={rootId}
 					targetId={rootId}
