@@ -342,8 +342,9 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div className="wrap">
-			<Filter 
-				ref={filterRef} 
+			<Filter
+				ref={filterRef}
+				className="underlined"
 				placeholder={translate('menuBlockLinkFilterPlaceholder')}
 				value={filter}
 				onChange={onFilterChange}

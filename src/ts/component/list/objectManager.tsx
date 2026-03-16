@@ -389,6 +389,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					<div ref={filterWrapperRef} id="filterWrapper" className="filterWrapper">
 						<Filter
 							ref={filterRef}
+							className="underlined"
 							onChange={onFilterChange}
 							onClear={onFilterClear}
 							placeholder={translate('commonSearchPlaceholder')}

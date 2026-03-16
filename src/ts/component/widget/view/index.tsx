@@ -312,7 +312,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined round"
 							icon="search"
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}

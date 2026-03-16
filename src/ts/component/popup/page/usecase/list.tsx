@@ -232,7 +232,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<Title text={translate('popupUsecaseListTitle')} />
 				<Label text={translate('popupUsecaseListText')} />
 
-				<Filter 
+				<Filter
 					ref={filterRef}
 					id="store-filter"
 					icon="search"

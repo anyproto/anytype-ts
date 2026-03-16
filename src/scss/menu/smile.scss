@@ -20,7 +20,7 @@
 
 		.filter.withHead { padding-top: 12px; }
 		.filter {
-			.inner { height: 35px; }
+			.inner { height: 36px; border-radius: 12px; }
 		}
 
 		.body.tabSmile, .body.tabIcon, .body.tabLibrary { display: flex; flex-direction: column; flex-grow: 1; }

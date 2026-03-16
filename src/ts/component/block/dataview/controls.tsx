@@ -584,7 +584,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				<div id="dataviewControlsSideRight" className="side right">
 					<Filter
 						ref={filterRef}
-						placeholder={translate('blockDataviewSearch')} 
+						className="underlined"
+						placeholder={translate('blockDataviewSearch')}
 						icon="search withBackground"
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}

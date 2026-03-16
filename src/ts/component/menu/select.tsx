@@ -348,7 +348,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{withFilter ? (
 				<Filter
 					ref={filterRef}
-					className="outlined round"
 					value={filter}
 					placeholder={placeholder}
 					onChange={onFilterChange}
