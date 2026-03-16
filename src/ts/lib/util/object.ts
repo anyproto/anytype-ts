@@ -642,6 +642,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.Discussion,
 		];
 	};
 
@@ -679,10 +680,11 @@ class UtilObject {
 	};
 
 	excludeFromSet (): I.ObjectLayout[] {
-		return [ 
-			I.ObjectLayout.Option, 
-			I.ObjectLayout.SpaceView, 
+		return [
+			I.ObjectLayout.Option,
+			I.ObjectLayout.SpaceView,
 			I.ObjectLayout.Space,
+			I.ObjectLayout.Discussion,
 		];
 	};
 

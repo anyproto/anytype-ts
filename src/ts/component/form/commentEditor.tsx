@@ -125,6 +125,10 @@ class LinkTextNode extends TextNode {
 	};
 
 	updateDOM (prevNode: LinkTextNode, dom: HTMLElement, config: any): boolean {
+		return super.updateDOM(prevNode as any, dom, config);
+	};
+
+	canInsertTextAfter (): boolean {
 		return false;
 	};
 
