@@ -1464,6 +1464,7 @@
 	"popupUploadDropLabel": "Drag file here or Click to upload",
 	"popupUploadLinkTitle": "Add file link",
 	"popupUploadLinkPlaceholder": "Paste URL",
+	"popupUploadLinkInvalid": "Link is invalid",
 	"popupUploadErrorTitle": "%s %s were not uploaded",
 	"popupUploadErrorText": "Please try again",
 	"popupUploadErrorConfirm": "Got it",

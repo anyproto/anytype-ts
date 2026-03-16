@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Input, Button, Loader } from 'Component';
+import { Icon, Input, Button, Loader, Error } from 'Component';
 import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
 
 enum Tab {
@@ -17,6 +17,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const [ tab, setTab ] = useState(Tab.Upload);
 	const [ isDragging, setIsDragging ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ error, setError ] = useState('');
 	const urlRef = useRef(null);
 	const dragCounter = useRef(0);
 
@@ -195,9 +196,11 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const url = String(urlRef.current?.getValue() || '').trim();
 		if (!url || !url.match(/^https?:\/\//)) {
+			setError(translate('popupUploadLinkInvalid'));
 			return;
 		};
 
+		setError('');
 		setIsLoading(true);
 
 		C.FileUpload(S.Common.space, url, '', fileType, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
@@ -280,6 +283,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						/>
 						<Button className="c36" text={translate('commonUpload')} onClick={onSubmitUrl} />
 					</div>
+					<Error text={error} />
 				</form>
 			) : ''}
 		</div>
