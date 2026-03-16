@@ -42,11 +42,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const parts = editorRef.current?.getParts() || [];
-		const att = editorRef.current?.getAttachments() || [];
-		Storage.setComment(rootId, {
-			parts,
-			attachments: att.filter(it => !it.isTmp),
-		});
+		Storage.setComment(rootId, { parts });
 	}, [ isDraft, rootId ]);
 
 	const clearDraft = useCallback(() => {
@@ -625,30 +621,22 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const draft = Storage.getComment(rootId);
 		const hasParts = draft?.parts && draft.parts.length;
-		const hasAtt = draft?.attachments && draft.attachments.length;
 
-		if (!hasParts && !hasAtt) {
+		if (!hasParts) {
 			return;
 		};
 
-		if (hasParts) {
-			window.setTimeout(() => {
-				editorRef.current?.setParts(draft.parts);
+		window.setTimeout(() => {
+			editorRef.current?.setParts(draft.parts);
 
-				const hasText = draft.parts.some((p: I.CommentContentPart) => p.text || (p.type === I.BlockType.Div));
-				if (hasText) {
-					setIsEmpty(false);
-				};
-			}, 50);
-		};
+			const hasContent = draft.parts.some((p: I.CommentContentPart) =>
+				p.text || (p.type === I.BlockType.Div) || (p.type === I.BlockType.Link) || (p.type === I.BlockType.Embed)
+			);
 
-		if (hasAtt) {
-			window.setTimeout(() => {
-				for (const att of draft.attachments) {
-					editorRef.current?.insertAttachment(att);
-				};
-			}, 100);
-		};
+			if (hasContent) {
+				setIsEmpty(false);
+			};
+		}, 50);
 	}, [ isDraft, rootId ]);
 
 	if (readonly) {
