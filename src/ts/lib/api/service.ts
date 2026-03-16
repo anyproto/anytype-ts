@@ -2,7 +2,7 @@
  * Custom gRPC-web service client using ts-proto MessageFns for serialization.
  * Replaces the generated service_grpc_web_pb.js which depends on old CJS protobuf files.
  *
- * Auto-generated registry: 316 unary methods.
+ * Auto-generated registry: 324 unary methods.
  */
 
 import { GrpcWebClientBase, MethodDescriptor, MethodType } from 'grpc-web';
@@ -17,10 +17,6 @@ interface RegistryEntry {
 }
 
 const registry: Record<string, RegistryEntry> = {
-	AIAutofill: { req: Commands.Rpc_AI_Autofill_Request, res: Commands.Rpc_AI_Autofill_Response },
-	AIListSummary: { req: Commands.Rpc_AI_ListSummary_Request, res: Commands.Rpc_AI_ListSummary_Response },
-	AIObjectCreateFromUrl: { req: Commands.Rpc_AI_ObjectCreateFromUrl_Request, res: Commands.Rpc_AI_ObjectCreateFromUrl_Response },
-	AIWritingTools: { req: Commands.Rpc_AI_WritingTools_Request, res: Commands.Rpc_AI_WritingTools_Response },
 	AccountChangeJsonApiAddr: { req: Commands.Rpc_Account_ChangeJsonApiAddr_Request, res: Commands.Rpc_Account_ChangeJsonApiAddr_Response },
 	AccountChangeNetworkConfigAndRestart: { req: Commands.Rpc_Account_ChangeNetworkConfigAndRestart_Request, res: Commands.Rpc_Account_ChangeNetworkConfigAndRestart_Response },
 	AccountConfigUpdate: { req: Commands.Rpc_Account_ConfigUpdate_Request, res: Commands.Rpc_Account_ConfigUpdate_Response },
@@ -40,6 +36,10 @@ const registry: Record<string, RegistryEntry> = {
 	AccountRevertDeletion: { req: Commands.Rpc_Account_RevertDeletion_Request, res: Commands.Rpc_Account_RevertDeletion_Response },
 	AccountSelect: { req: Commands.Rpc_Account_Select_Request, res: Commands.Rpc_Account_Select_Response },
 	AccountStop: { req: Commands.Rpc_Account_Stop_Request, res: Commands.Rpc_Account_Stop_Response },
+	AIAutofill: { req: Commands.Rpc_AI_Autofill_Request, res: Commands.Rpc_AI_Autofill_Response },
+	AIListSummary: { req: Commands.Rpc_AI_ListSummary_Request, res: Commands.Rpc_AI_ListSummary_Response },
+	AIObjectCreateFromUrl: { req: Commands.Rpc_AI_ObjectCreateFromUrl_Request, res: Commands.Rpc_AI_ObjectCreateFromUrl_Response },
+	AIWritingTools: { req: Commands.Rpc_AI_WritingTools_Request, res: Commands.Rpc_AI_WritingTools_Response },
 	AppGetVersion: { req: Commands.Rpc_App_GetVersion_Request, res: Commands.Rpc_App_GetVersion_Response },
 	AppSetDeviceState: { req: Commands.Rpc_App_SetDeviceState_Request, res: Commands.Rpc_App_SetDeviceState_Response },
 	AppShutdown: { req: Commands.Rpc_App_Shutdown_Request, res: Commands.Rpc_App_Shutdown_Response },
@@ -139,8 +139,12 @@ const registry: Record<string, RegistryEntry> = {
 	ChatEditMessageContent: { req: Commands.Rpc_Chat_EditMessageContent_Request, res: Commands.Rpc_Chat_EditMessageContent_Response },
 	ChatGetMessages: { req: Commands.Rpc_Chat_GetMessages_Request, res: Commands.Rpc_Chat_GetMessages_Response },
 	ChatGetMessagesByIds: { req: Commands.Rpc_Chat_GetMessagesByIds_Request, res: Commands.Rpc_Chat_GetMessagesByIds_Response },
+	ChatGetPinnedMessages: { req: Commands.Rpc_Chat_GetPinnedMessages_Request, res: Commands.Rpc_Chat_GetPinnedMessages_Response },
 	ChatReadAll: { req: Commands.Rpc_Chat_ReadAll_Request, res: Commands.Rpc_Chat_ReadAll_Response },
 	ChatReadMessages: { req: Commands.Rpc_Chat_ReadMessages_Request, res: Commands.Rpc_Chat_ReadMessages_Response },
+	ChatReadReactions: { req: Commands.Rpc_Chat_ReadReactions_Request, res: Commands.Rpc_Chat_ReadReactions_Response },
+	ChatSearch: { req: Commands.Rpc_Chat_Search_Request, res: Commands.Rpc_Chat_Search_Response },
+	ChatSetPinnedMessages: { req: Commands.Rpc_Chat_SetPinnedMessages_Request, res: Commands.Rpc_Chat_SetPinnedMessages_Response },
 	ChatSubscribeLastMessages: { req: Commands.Rpc_Chat_SubscribeLastMessages_Request, res: Commands.Rpc_Chat_SubscribeLastMessages_Response },
 	ChatSubscribeToMessagePreviews: { req: Commands.Rpc_Chat_SubscribeToMessagePreviews_Request, res: Commands.Rpc_Chat_SubscribeToMessagePreviews_Response },
 	ChatToggleMessageReaction: { req: Commands.Rpc_Chat_ToggleMessageReaction_Request, res: Commands.Rpc_Chat_ToggleMessageReaction_Response },
@@ -164,6 +168,7 @@ const registry: Record<string, RegistryEntry> = {
 	DeviceList: { req: Commands.Rpc_Device_List_Request, res: Commands.Rpc_Device_List_Response },
 	DeviceNetworkStateSet: { req: Commands.Rpc_Device_NetworkState_Set_Request, res: Commands.Rpc_Device_NetworkState_Set_Response },
 	DeviceSetName: { req: Commands.Rpc_Device_SetName_Request, res: Commands.Rpc_Device_SetName_Response },
+	FileAutoDownloadSetLimit: { req: Commands.Rpc_File_AutoDownloadSetLimit_Request, res: Commands.Rpc_File_AutoDownloadSetLimit_Response },
 	FileCacheCancelDownload: { req: Commands.Rpc_File_CacheCancelDownload_Request, res: Commands.Rpc_File_CacheCancelDownload_Response },
 	FileCacheDownload: { req: Commands.Rpc_File_CacheDownload_Request, res: Commands.Rpc_File_CacheDownload_Response },
 	FileDiscardPreload: { req: Commands.Rpc_File_DiscardPreload_Request, res: Commands.Rpc_File_DiscardPreload_Response },
@@ -202,6 +207,7 @@ const registry: Record<string, RegistryEntry> = {
 	MembershipV2GetPortalLink: { req: Commands.Rpc_MembershipV2_GetPortalLink_Request, res: Commands.Rpc_MembershipV2_GetPortalLink_Response },
 	MembershipV2GetProducts: { req: Commands.Rpc_MembershipV2_GetProducts_Request, res: Commands.Rpc_MembershipV2_GetProducts_Response },
 	MembershipV2GetStatus: { req: Commands.Rpc_MembershipV2_GetStatus_Request, res: Commands.Rpc_MembershipV2_GetStatus_Response },
+	MembershipV2SubscribeToUpdates: { req: Commands.Rpc_MembershipV2_SubscribeToUpdates_Request, res: Commands.Rpc_MembershipV2_SubscribeToUpdates_Response },
 	MembershipVerifyAppStoreReceipt: { req: Commands.Rpc_Membership_VerifyAppStoreReceipt_Request, res: Commands.Rpc_Membership_VerifyAppStoreReceipt_Response },
 	MembershipVerifyEmailCode: { req: Commands.Rpc_Membership_VerifyEmailCode_Request, res: Commands.Rpc_Membership_VerifyEmailCode_Response },
 	NameServiceResolveAnyId: { req: Commands.Rpc_NameService_ResolveAnyId_Request, res: Commands.Rpc_NameService_ResolveAnyId_Response },
@@ -293,9 +299,11 @@ const registry: Record<string, RegistryEntry> = {
 	PushNotificationSetSpaceMode: { req: Commands.Rpc_PushNotification_SetSpaceMode_Request, res: Commands.Rpc_PushNotification_SetSpaceMode_Response },
 	RelationListRemoveOption: { req: Commands.Rpc_Relation_ListRemoveOption_Request, res: Commands.Rpc_Relation_ListRemoveOption_Response },
 	RelationListWithValue: { req: Commands.Rpc_Relation_ListWithValue_Request, res: Commands.Rpc_Relation_ListWithValue_Response },
-	RelationOptionSetOrder: { req: Commands.Rpc_Relation_Option_SetOrder_Request, res: Commands.Rpc_Relation_Option_SetOrder_Response },
 	RelationOptions: { req: Commands.Rpc_Relation_Options_Request, res: Commands.Rpc_Relation_Options_Response },
+	RelationOptionSetOrder: { req: Commands.Rpc_Relation_Option_SetOrder_Request, res: Commands.Rpc_Relation_Option_SetOrder_Response },
+	SpaceChangeOwnership: { req: Commands.Rpc_Space_ChangeOwnership_Request, res: Commands.Rpc_Space_ChangeOwnership_Response },
 	SpaceDelete: { req: Commands.Rpc_Space_Delete_Request, res: Commands.Rpc_Space_Delete_Response },
+	SpaceDeleteCorruptedBackup: { req: Commands.Rpc_Space_DeleteCorruptedBackup_Request, res: Commands.Rpc_Space_DeleteCorruptedBackup_Response },
 	SpaceInviteChange: { req: Commands.Rpc_Space_InviteChange_Request, res: Commands.Rpc_Space_InviteChange_Response },
 	SpaceInviteGenerate: { req: Commands.Rpc_Space_InviteGenerate_Request, res: Commands.Rpc_Space_InviteGenerate_Response },
 	SpaceInviteGetCurrent: { req: Commands.Rpc_Space_InviteGetCurrent_Request, res: Commands.Rpc_Space_InviteGetCurrent_Response },

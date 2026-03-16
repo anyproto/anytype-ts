@@ -9,13 +9,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-PROTO_SRC="$ROOT_DIR/dist/lib/protos"
+HEART_DIR="$ROOT_DIR/../anytype-heart"
 MIDDLEWARE_DIR="$ROOT_DIR/middleware"
 TS_PROTO_JS="$ROOT_DIR/node_modules/ts-proto/protoc-gen-ts_proto"
 
-if [[ ! -d "$PROTO_SRC" ]]; then
-	echo "Error: Proto source directory not found: $PROTO_SRC"
-	echo "Run update.sh first to fetch middleware."
+if [[ ! -d "$HEART_DIR" ]]; then
+	echo "Error: anytype-heart repo not found at $HEART_DIR"
 	exit 1
 fi
 
@@ -52,15 +51,15 @@ trap 'rm -rf "$PROTO_ROOT" "$WRAPPER"' EXIT
 
 # pb/protos/ — commands, events, changes, snapshot
 mkdir -p "$PROTO_ROOT/pb/protos"
-cp "$PROTO_SRC/commands.proto" "$PROTO_ROOT/pb/protos/"
-cp "$PROTO_SRC/events.proto" "$PROTO_ROOT/pb/protos/"
-cp "$PROTO_SRC/changes.proto" "$PROTO_ROOT/pb/protos/"
-cp "$PROTO_SRC/snapshot.proto" "$PROTO_ROOT/pb/protos/"
+cp "$HEART_DIR/pb/protos/commands.proto" "$PROTO_ROOT/pb/protos/"
+cp "$HEART_DIR/pb/protos/events.proto" "$PROTO_ROOT/pb/protos/"
+cp "$HEART_DIR/pb/protos/changes.proto" "$PROTO_ROOT/pb/protos/"
+cp "$HEART_DIR/pb/protos/snapshot.proto" "$PROTO_ROOT/pb/protos/"
 
 # pkg/lib/pb/model/protos/ — models, localstore
 mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
-cp "$PROTO_SRC/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
-cp "$PROTO_SRC/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+cp "$HEART_DIR/pkg/lib/pb/model/protos/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+cp "$HEART_DIR/pkg/lib/pb/model/protos/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
 
 echo "Generating TypeScript protobuf bindings..."
 
@@ -84,5 +83,8 @@ protoc \
 
 echo "Generated TypeScript files:"
 find "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google" -name '*.ts' 2>/dev/null | sort
+
+echo "Generating service registry..."
+node "$ROOT_DIR/scripts/generate-service-registry.js"
 
 echo "Done!"

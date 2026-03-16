@@ -1047,8 +1047,17 @@ var WindowManager = class {
         ;
       });
     });
-    win.on("enter-full-screen", () => util_default.send(win, "enter-full-screen"));
-    win.on("leave-full-screen", () => util_default.send(win, "leave-full-screen"));
+    win.on("enter-full-screen", () => {
+      win.setMenuBarVisibility(false);
+      win.setAutoHideMenuBar(true);
+      util_default.send(win, "enter-full-screen");
+    });
+    win.on("leave-full-screen", () => {
+      const { showMenuBar: showMenuBar2 } = config_default.config;
+      win.setMenuBarVisibility(showMenuBar2);
+      win.setAutoHideMenuBar(!showMenuBar2);
+      util_default.send(win, "leave-full-screen");
+    });
     win.on("swipe", (e, direction) => util_default.send(win, "commandGlobal", "mouseNavigation", direction));
     win.webContents.setWindowOpenHandler(({ url }) => {
       api_default.openUrl(win, url);
