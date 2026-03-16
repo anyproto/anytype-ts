@@ -263,11 +263,14 @@ const App: FC = () => {
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
 
-		// Validate tab route — don't restore blank/void routes that can't render content
+		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
 		if (route) {
 			const rp = U.Router.getParam(route);
-			if ((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action)) {
+			if (
+				(rp.page == 'auth') ||
+				((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action))
+			) {
 				route = '';
 			};
 		};
