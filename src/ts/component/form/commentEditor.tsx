@@ -31,6 +31,8 @@ import {
 	COMMAND_PRIORITY_NORMAL,
 	KEY_ENTER_COMMAND,
 	KEY_ESCAPE_COMMAND,
+	KEY_BACKSPACE_COMMAND,
+	KEY_DELETE_COMMAND,
 	PASTE_COMMAND,
 	createCommand,
 	EditorState,
@@ -1329,6 +1331,69 @@ const HorizontalRulePlugin = () => {
 			},
 			COMMAND_PRIORITY_LOW,
 		);
+	}, [ editor ]);
+
+	// Delete HR node on backspace when cursor is at start of next paragraph
+	useEffect(() => {
+		const unregisterBackspace = editor.registerCommand(
+			KEY_BACKSPACE_COMMAND,
+			() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return false;
+				};
+
+				const anchor = selection.anchor;
+				if (anchor.offset !== 0) {
+					return false;
+				};
+
+				const node = anchor.getNode();
+				const topLevel = node.getTopLevelElementOrThrow();
+				const prev = topLevel.getPreviousSibling();
+
+				if (prev instanceof HorizontalRuleNode) {
+					prev.remove();
+					return true;
+				};
+
+				return false;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		const unregisterDelete = editor.registerCommand(
+			KEY_DELETE_COMMAND,
+			() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return false;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				const topLevel = node.getTopLevelElementOrThrow();
+
+				if (anchor.offset !== topLevel.getTextContentSize()) {
+					return false;
+				};
+
+				const next = topLevel.getNextSibling();
+
+				if (next instanceof HorizontalRuleNode) {
+					next.remove();
+					return true;
+				};
+
+				return false;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
+		return () => {
+			unregisterBackspace();
+			unregisterDelete();
+		};
 	}, [ editor ]);
 
 	return null;
