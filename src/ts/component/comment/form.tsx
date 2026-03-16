@@ -7,6 +7,7 @@ import CommentEditor from 'Component/form/commentEditor';
 
 interface Props {
 	rootId: string;
+	subId?: string;
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	isEdit?: boolean;
@@ -24,7 +25,7 @@ interface RefProps {
 
 const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { rootId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
+	const { rootId, subId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const formRef = useRef<HTMLDivElement>(null);
@@ -171,7 +172,8 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						});
 					};
 				} else {
-					attachmentObjects.push(data);
+					const fresh = subId ? S.Detail.get(subId, data.id, []) : null;
+					attachmentObjects.push((fresh && !fresh._empty_) ? fresh : data);
 				};
 			};
 
@@ -285,6 +287,21 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			fileInputRef.current.click();
 		};
 	}, []);
+
+	const openObjectPopup = useCallback((object: any) => {
+		U.Object.openPopup(object, {
+			onClose: () => {
+				if (!subId) {
+					return;
+				};
+
+				const details = S.Detail.get(object.id, object.id, []);
+				if (!details._empty_) {
+					S.Detail.update(subId, { id: object.id, details }, false);
+				};
+			},
+		});
+	}, [ subId ]);
 
 	const openEmbedInput = useCallback((processor: I.EmbedProcessor, existingText?: string) => {
 		const processorName = I.EmbedProcessor[processor] || 'Embed';
@@ -407,7 +424,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							},
 						}, {}, { noButtons: true }, '', (object: any) => {
 							editorRef.current?.insertAttachment(object);
-							U.Object.openPopup(object);
+							openObjectPopup(object);
 							context?.close();
 						});
 					};
@@ -443,7 +460,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 		});
-	}, [ handleSlashAction, openFilePicker ]);
+	}, [ handleSlashAction, openFilePicker, openObjectPopup ]);
 
 	const openPlusMenu = useCallback((element: any) => {
 		const attachments = U.Menu.getCommentAddSections().find(s => s.id === 'attachments');
@@ -491,7 +508,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							},
 						}, {}, { noButtons: true }, '', (object: any) => {
 							editorRef.current?.insertAttachment(object);
-							U.Object.openPopup(object);
+							openObjectPopup(object);
 							ctx?.close();
 						});
 					};
@@ -504,7 +521,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 		});
-	}, [ handleSlashAction ]);
+	}, [ handleSlashAction, openObjectPopup ]);
 
 	const onPlusClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
@@ -603,13 +620,13 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if ((item.action === 'createCallback') && item.object) {
 			editorRef.current?.insertAttachment(item.object);
-			U.Object.openPopup(item.object);
+			openObjectPopup(item.object);
 			editorRef.current?.focus();
 			return;
 		};
 
 		handleSlashAction(item);
-	}, [ handleSlashAction ]);
+	}, [ handleSlashAction, openObjectPopup ]);
 
 	// Load draft on mount (only for main posting form)
 	useEffect(() => {
@@ -658,6 +675,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="contentArea">
 				<CommentEditor
 					ref={editorRef}
+					subId={subId}
 					placeholder={placeholder || translate('commentPlaceholder')}
 					initialParts={initialParts}
 					onSubmit={handleSubmit}

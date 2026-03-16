@@ -448,6 +448,7 @@ const CommentPost = observer((props: Props) => {
 			return (
 				<CommentForm
 					rootId={rootId}
+					subId={subId}
 					initialParts={editParts}
 					isEdit={true}
 					onSubmit={onSaveEdit}
@@ -559,6 +560,7 @@ const CommentPost = observer((props: Props) => {
 					<CommentForm
 						ref={replyFormRef}
 						rootId={rootId}
+						subId={subId}
 						isReply={true}
 						placeholder={translate('commentReplyPlaceholder')}
 						onSubmit={onSubmitReply}

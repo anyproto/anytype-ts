@@ -524,6 +524,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				<CommentForm
 					ref={formRef}
 					rootId={rootId}
+					subId={subId}
 					readonly={readonly}
 					onSubmit={onSubmitPost}
 					onResize={scrollToBottomCheck}

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle, useCallback, useEffect } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useCallback, useEffect, createContext, useContext } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -161,6 +161,9 @@ function $isLinkTextNode (node: LexicalNode | null | undefined): node is LinkTex
 	return node instanceof LinkTextNode;
 };
 
+// Context for passing the discussion deps subId to decorator nodes
+export const CommentSubIdContext = createContext<string>('');
+
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
 export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
@@ -220,11 +223,12 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 
 const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data: any }) => {
 	const [ editor ] = useLexicalComposerContext();
+	const subId = useContext(CommentSubIdContext);
 
-	// For real objects (non-tmp), read fresh details from the store
+	// For real objects (non-tmp), read fresh details from the discussion deps subscription
 	let object = { syncStatus: I.SyncStatusObject.Synced, ...data };
-	if (data.id && !data.isTmp) {
-		const details = S.Detail.get(J.Constant.subId.space, data.id, []);
+	if (data.id && !data.isTmp && subId) {
+		const details = S.Detail.get(subId, data.id, []);
 		if (!details._empty_) {
 			object = { syncStatus: I.SyncStatusObject.Synced, ...details };
 		};
@@ -434,6 +438,7 @@ function $isMentionNode (node: LexicalNode | null | undefined): node is MentionN
 };
 
 interface Props {
+	subId?: string;
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	readonly?: boolean;
@@ -2454,7 +2459,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction } = props;
+	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -2714,6 +2719,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	return (
+		<CommentSubIdContext.Provider value={subId || ''}>
 		<LexicalComposer initialConfig={initialConfig}>
 			<div className="commentEditorWrap" id={editorId}>
 				<RichTextPlugin
@@ -2744,6 +2750,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<CodeBlockPlugin />
 			</div>
 		</LexicalComposer>
+		</CommentSubIdContext.Provider>
 	);
 });
 

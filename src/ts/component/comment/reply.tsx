@@ -226,6 +226,7 @@ const CommentReply = observer((props: Props) => {
 			return (
 				<CommentForm
 					rootId={rootId}
+					subId={subId}
 					initialParts={parts}
 					isEdit={true}
 					isReply={true}
