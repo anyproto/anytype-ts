@@ -97,6 +97,70 @@ export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZO
 // Link URL storage — maps Lexical node keys to link URLs
 const linkUrlMap = new Map<string, string>();
 
+class LinkTextNode extends TextNode {
+
+	__linkUrl: string;
+	__markType: I.MarkType;
+
+	static getType (): string {
+		return 'linkText';
+	};
+
+	static clone (node: LinkTextNode): LinkTextNode {
+		const n = new LinkTextNode(node.__linkUrl, node.__markType, node.__text, node.__key);
+		n.__format = node.__format;
+		return n;
+	};
+
+	constructor (linkUrl: string, markType: I.MarkType, text: string, key?: string) {
+		super(text, key);
+		this.__linkUrl = linkUrl;
+		this.__markType = markType;
+	};
+
+	createDOM (config: any): HTMLElement {
+		const el = super.createDOM(config);
+		el.classList.add('commentEditor-link');
+		return el;
+	};
+
+	updateDOM (prevNode: LinkTextNode, dom: HTMLElement, config: any): boolean {
+		return false;
+	};
+
+	exportJSON () {
+		return {
+			...super.exportJSON(),
+			type: 'linkText',
+			linkUrl: this.__linkUrl,
+			markType: this.__markType,
+		};
+	};
+
+	static importJSON (json: any): LinkTextNode {
+		const node = new LinkTextNode(json.linkUrl, json.markType, json.text);
+		node.setFormat(json.format);
+		return node;
+	};
+
+	getLinkUrl (): string {
+		return this.__linkUrl;
+	};
+
+	getMarkType (): I.MarkType {
+		return this.__markType;
+	};
+
+};
+
+function $createLinkTextNode (linkUrl: string, markType: I.MarkType, text: string): LinkTextNode {
+	return new LinkTextNode(linkUrl, markType, text);
+};
+
+function $isLinkTextNode (node: LexicalNode | null | undefined): node is LinkTextNode {
+	return node instanceof LinkTextNode;
+};
+
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
 export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
@@ -534,6 +598,14 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 				param: child.getMentionId(),
 			});
 		} else
+		if ($isLinkTextNode(child)) {
+			marks.push(...extractMarks(child, start, end));
+			marks.push({
+				type: child.getMarkType(),
+				range: { from: start, to: end },
+				param: child.getLinkUrl(),
+			});
+		} else
 		if ($isTextNode(child)) {
 			marks.push(...extractMarks(child, start, end));
 
@@ -767,7 +839,15 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 			continue;
 		};
 
-		const node = $createTextNode(segment);
+		// Check if this segment is a link
+		const linkMark = marks.find(m =>
+			((m.type === I.MarkType.Link) || (m.type === I.MarkType.Object)) &&
+			(m.range.from <= from) && (m.range.to >= to)
+		);
+
+		const node = linkMark
+			? $createLinkTextNode(linkMark.param || '', linkMark.type, segment)
+			: $createTextNode(segment);
 
 		for (const mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to >= to)) {
@@ -1170,15 +1250,14 @@ const SelectionToolbarPlugin = () => {
 								continue;
 							};
 
-							const parts: TextNode[] = [];
+							const parts: (TextNode | LinkTextNode)[] = [];
 
 							if (before) {
 								parts.push($createTextNode(before));
 							};
 
-							const linkNode = $createTextNode(linkText);
+							const linkNode = $createLinkTextNode(url, type, linkText);
 							linkNode.setFormat(node.getFormat());
-							linkUrlMap.set(linkNode.getKey(), JSON.stringify({ url, type }));
 							parts.push(linkNode);
 
 							if (after) {
@@ -2627,7 +2706,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, AttachmentNode, EmbedNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, LinkTextNode, AttachmentNode, EmbedNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},

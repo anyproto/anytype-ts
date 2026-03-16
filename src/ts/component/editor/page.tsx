@@ -2750,6 +2750,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					readonly={readonly}
 					isPopup={isPopup}
 					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+					resize={resizePage}
 				/>
 			</div>
 		</div>

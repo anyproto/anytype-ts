@@ -48,4 +48,5 @@ export interface CommentSectionProps {
 	readonly?: boolean;
 	isPopup?: boolean;
 	messageId?: string;
+	resize?: () => void;
 };

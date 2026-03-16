@@ -27,7 +27,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const messageIdHandled = useRef(false);
 
 	const resize = useCallback(() => {
-	}, []);
+		props.resize?.();
+	}, [ props.resize ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
