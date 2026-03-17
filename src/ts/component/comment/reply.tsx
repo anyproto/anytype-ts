@@ -179,6 +179,7 @@ const CommentReply = observer((props: Props) => {
 		};
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

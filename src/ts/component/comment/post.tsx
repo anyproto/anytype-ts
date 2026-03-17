@@ -364,6 +364,7 @@ const CommentPost = observer((props: Props) => {
 
 	const onReaction = useCallback((e: React.MouseEvent) => {
 		S.Menu.open('smile', {
+			classNameWrap: 'fromBlock',
 			element: $(e.currentTarget),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
@@ -398,6 +399,7 @@ const CommentPost = observer((props: Props) => {
 		};
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

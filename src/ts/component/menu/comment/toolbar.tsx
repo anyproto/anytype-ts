@@ -34,6 +34,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 		S.Menu.open('blockLink', {
 			element: `#${getId()} #button-link`,
+			classNameWrap: 'fromBlock',
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
@@ -59,6 +60,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		];
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element: `#${getId()} #button-style`,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Left,
@@ -85,6 +87,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		];
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element: `#${getId()} #button-list`,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,

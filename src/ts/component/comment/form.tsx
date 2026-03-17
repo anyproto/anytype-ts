@@ -314,6 +314,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const win = $(window);
 
 		S.Menu.open('dataviewText', {
+			classNameWrap: 'fromBlock',
 			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
@@ -386,6 +387,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const openCommentAddMenu = useCallback((element: any) => {
 		S.Menu.open('commentAdd', {
+			classNameWrap: 'fromBlock',
 			component: 'select',
 			element,
 			vertical: I.MenuDirection.Top,
@@ -438,7 +440,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						S.Menu.open('select', {
 							element: `#${context.getId()} #item-embed`,
 							className: 'fixed',
-							classNameWrap: 'fromSidebar',
+							classNameWrap: 'fromBlock',
 							offsetX: context.getSize().width,
 							vertical: I.MenuDirection.Center,
 							isSub: true,
@@ -470,6 +472,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const children = attachments.children.filter((it: any) => [ 'create', 'object', 'file' ].includes(it.id));
 
 		S.Menu.open('commentAdd', {
+			classNameWrap: 'fromBlock',
 			component: 'select',
 			element,
 			vertical: I.MenuDirection.Top,
@@ -539,6 +542,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		S.Menu.open('smile', {
+			classNameWrap: 'fromBlock',
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
@@ -566,6 +570,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		S.Common.filterSet(0, '');
 
 		S.Menu.open('blockMention', {
+			classNameWrap: 'fromBlock',
 			element: $(e.currentTarget),
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,

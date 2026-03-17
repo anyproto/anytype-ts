@@ -339,6 +339,7 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 		const win = $(window);
 
 		S.Menu.open('dataviewText', {
+			classNameWrap: 'fromBlock',
 			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
@@ -1204,6 +1205,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 	const win = $(window);
 
 	S.Menu.open('blockLink', {
+		classNameWrap: 'fromBlock',
 		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
 		horizontal: I.MenuDirection.Center,
 		offsetY: -8,
@@ -1296,6 +1298,7 @@ const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	const wrap = root?.closest('.commentEditorWrap');
 
 	const menuParam: any = {
+		classNameWrap: 'fromBlock',
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -1557,6 +1560,7 @@ const SelectionToolbarPlugin = () => {
 
 				S.Menu.open('commentToolbar', {
 					element: wrap ? $(wrap) : $(root),
+					classNameWrap: 'fromBlock',
 					recalcRect: () => {
 						const rect = U.Common.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1914,6 +1918,7 @@ const PasteUrlPlugin = () => {
 				const win = $(window);
 
 				S.Menu.open('selectPasteUrl', {
+					classNameWrap: 'fromBlock',
 					component: 'select',
 					element: wrap ? $(wrap) : $(root),
 					recalcRect: () => {
@@ -2162,6 +2167,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	};
 
 	S.Menu.open('commentAdd', {
+		classNameWrap: 'fromBlock',
 		component: 'select',
 		rect: { ...rect, y: rect.y + win.scrollTop() + 4, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Bottom,
@@ -2218,7 +2224,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					S.Menu.open('select', {
 						element: `#${context.getId()} #item-embed`,
 						className: 'fixed',
-						classNameWrap: 'fromSidebar',
+						classNameWrap: 'fromBlock',
 						offsetX: context.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
@@ -2394,6 +2400,7 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 	S.Common.filterSet(0, '');
 
 	S.Menu.open('blockMention', {
+		classNameWrap: 'fromBlock',
 		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
@@ -2512,6 +2519,7 @@ const openEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: Rea
 	const win = $(window);
 
 	S.Menu.open('smile', {
+		classNameWrap: 'fromBlock',
 		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
@@ -2660,6 +2668,7 @@ const CodeBlockPlugin = () => {
 		e.stopPropagation();
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element: $(e.currentTarget),
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
