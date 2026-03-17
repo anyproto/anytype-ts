@@ -13,7 +13,7 @@ export default {
 			lime: '#c5efa3',
 		},
 		bg: {
-			grey: '#828282',
+			grey: '#9b9b9b',
 			yellow: '#e9d619',
 			orange: '#fe9a00',
 			red: '#fb592c',
@@ -154,7 +154,7 @@ export default {
 			grey: '#737373',
 			yellow: '#fff085',
 			orange: '#ffb330',
-			red: '#ffa3a2',
+			red: '#ffb6a2',
 			pink: '#fda5d5',
 			purple: '#dab2ff',
 			blue: '#8f9def',
