@@ -1291,14 +1291,11 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 
 const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	const rect = U.Common.getSelectionRect();
-	if (!rect) {
-		return;
-	};
-
 	const win = $(window);
+	const root = editor.getRootElement();
+	const wrap = root?.closest('.commentEditorWrap');
 
-	S.Menu.open('smile', {
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+	const menuParam: any = {
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -1317,7 +1314,15 @@ const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 				editor.focus();
 			},
 		},
-	});
+	};
+
+	if (rect) {
+		menuParam.rect = { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height };
+	} else {
+		menuParam.element = wrap ? $(wrap) : $(root);
+	};
+
+	S.Menu.open('smile', menuParam);
 };
 
 const SelectionToolbarPlugin = () => {

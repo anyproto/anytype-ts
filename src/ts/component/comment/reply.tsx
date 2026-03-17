@@ -94,6 +94,9 @@ const CommentReply = observer((props: Props) => {
 			const smile = item.find('smile');
 
 			if (smile.length) {
+				// Clear native emoji text, keep only the smile mount point
+				item.contents().filter(function () { return this.nodeType === 3; }).remove();
+
 				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
