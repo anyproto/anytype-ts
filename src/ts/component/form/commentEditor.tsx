@@ -1029,7 +1029,7 @@ const EscapePlugin = ({ onCancel }: { onCancel?: () => void }) => {
 	return null;
 };
 
-const FormattingPlugin = () => {
+const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
@@ -1038,13 +1038,38 @@ const FormattingPlugin = () => {
 				return;
 			};
 
+			const key = e.key.toLowerCase();
+
+			// Shift+key shortcuts
+			if (e.shiftKey) {
+				if (key === 's') {
+					e.preventDefault();
+					editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+					return;
+				};
+
+				if (key === 'k') {
+					e.preventDefault();
+					openLinkMenu(editor, editorId);
+					return;
+				};
+			};
+
+			// Cmd/Ctrl+E — emoji picker
+			if (key === 'e') {
+				e.preventDefault();
+				openEmojiPicker(editor, editorId);
+				return;
+			};
+
 			const formatMap: Record<string, TextFormatType> = {
 				b: 'bold',
 				i: 'italic',
 				u: 'underline',
+				l: 'code',
 			};
 
-			const format = formatMap[e.key.toLowerCase()];
+			const format = formatMap[key];
 			if (format) {
 				e.preventDefault();
 				editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
@@ -1056,9 +1081,158 @@ const FormattingPlugin = () => {
 			root.addEventListener('keydown', onKeyDown);
 			return () => root.removeEventListener('keydown', onKeyDown);
 		};
-	}, [ editor ]);
+	}, [ editor, editorId ]);
 
 	return null;
+};
+
+const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
+	let hasLink = false;
+	let linkParam = '';
+
+	editor.getEditorState().read(() => {
+		const selection = $getSelection();
+		if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+			return;
+		};
+
+		const nodes = selection.getNodes();
+		for (const node of nodes) {
+			if (node instanceof LinkTextNode) {
+				hasLink = true;
+				linkParam = node.getLinkUrl();
+				break;
+			};
+		};
+	});
+
+	const wrap = document.getElementById(editorId);
+	if (!wrap) {
+		return;
+	};
+
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+
+	S.Menu.open('blockLink', {
+		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		horizontal: I.MenuDirection.Center,
+		offsetY: -8,
+		noAnimation: true,
+		data: {
+			filter: linkParam,
+			onChange: (type: I.MarkType, param: string) => {
+				if (!param) {
+					return;
+				};
+
+				editor.update(() => {
+					const sel = $getSelection();
+					if (!$isRangeSelection(sel)) {
+						return;
+					};
+
+					const nodes = sel.getNodes();
+					const anchor = sel.anchor;
+					const focus = sel.focus;
+					const isBackward = sel.isBackward();
+					const startOffset = isBackward ? focus.offset : anchor.offset;
+					const endOffset = isBackward ? anchor.offset : focus.offset;
+					const startNode = isBackward ? focus.getNode() : anchor.getNode();
+					const endNode = isBackward ? anchor.getNode() : focus.getNode();
+
+					for (const node of nodes) {
+						if (!$isTextNode(node)) {
+							continue;
+						};
+
+						let from = 0;
+						let to = node.getTextContentSize();
+
+						if (node.is(startNode)) {
+							from = startOffset;
+						};
+
+						if (node.is(endNode)) {
+							to = endOffset;
+						};
+
+						const text = node.getTextContent();
+						const before = text.slice(0, from);
+						const linkText = text.slice(from, to);
+						const after = text.slice(to);
+
+						if (!linkText) {
+							continue;
+						};
+
+						const parts: (TextNode | LinkTextNode)[] = [];
+
+						if (before) {
+							const beforeNode = $createTextNode(before);
+							beforeNode.setFormat(node.getFormat());
+							parts.push(beforeNode);
+						};
+
+						const linkNode = new LinkTextNode(param, type, linkText);
+						linkNode.setFormat(node.getFormat());
+						parts.push(linkNode);
+
+						if (after) {
+							const afterNode = $createTextNode(after);
+							afterNode.setFormat(node.getFormat());
+							parts.push(afterNode);
+						};
+
+						for (const [ i, part ] of parts.entries()) {
+							if (i === 0) {
+								node.replace(part);
+							} else {
+								parts[i - 1].insertAfter(part);
+							};
+						};
+					};
+				});
+
+				editor.focus();
+			},
+		},
+	});
+};
+
+const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+
+	S.Menu.open('smile', {
+		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		vertical: I.MenuDirection.Top,
+		horizontal: I.MenuDirection.Left,
+		offsetY: -4,
+		noAnimation: true,
+		data: {
+			noHead: true,
+			noUpload: true,
+			value: '',
+			onSelect: (icon: string) => {
+				editor.update(() => {
+					const selection = $getSelection();
+					if ($isRangeSelection(selection)) {
+						selection.insertText(icon);
+					};
+				});
+				editor.focus();
+			},
+		},
+	});
 };
 
 const SelectionToolbarPlugin = () => {
@@ -2737,7 +2911,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<OnChangePlugin onChange={handleChange} />
 				<SubmitPlugin onSubmit={handleSubmit} />
 				<EscapePlugin onCancel={onCancel} />
-				<FormattingPlugin />
+				<FormattingPlugin editorId={editorId} />
 				<SelectionToolbarPlugin />
 				<FocusPlugin onFocus={onFocus} onBlur={onBlur} />
 				<InitialPartsPlugin parts={initialParts} />

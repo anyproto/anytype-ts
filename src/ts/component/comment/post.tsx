@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, J, S, U, C, Mark, translate, Action } from 'Lib';
+import { I, J, S, U, C, Mark, translate, Action, analytics } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
@@ -274,6 +274,11 @@ const CommentPost = observer((props: Props) => {
 			if (response.error.code) {
 				return;
 			};
+
+			const hasMention = newParts.some(p => (p.marks || []).some(m => m.type === I.MarkType.Mention));
+			const hasAttachments = newParts.some(p => (p.type === I.BlockType.Link) || (p.type === I.BlockType.Embed));
+
+			analytics.event('ReplyDiscussion', { hasMention, hasAttachments });
 
 			const newReply = {
 				id: response.messageId,

@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard, translate } from 'Lib';
+import { I, C, S, U, keyboard, translate, analytics } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
 
@@ -441,6 +441,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		});
 	}, [ rootId, discussionId ]);
 
+	const getCommentAnalyticsData = useCallback((parts: I.CommentContentPart[]) => {
+		const hasMention = parts.some(p => (p.marks || []).some(m => m.type === I.MarkType.Mention));
+		const hasAttachments = parts.some(p => (p.type === I.BlockType.Link) || (p.type === I.BlockType.Embed));
+		return { hasMention, hasAttachments };
+	}, []);
+
 	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToBlocks(parts);
 		const { account } = S.Auth;
@@ -467,10 +473,20 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				};
 			};
 
+			const isFirstPost = !S.Comment.getPosts(sid).length;
+
 			C.ChatAddMessage(id, msg as any, (response: any) => {
 				if (response.error.code) {
 					return;
 				};
+
+				const analyticsData = getCommentAnalyticsData(parts);
+
+				if (isFirstPost) {
+					analytics.event('StartDiscussion', analyticsData);
+				};
+
+				analytics.event('PostDiscussion', analyticsData);
 
 				const newPost = {
 					id: response.messageId,
@@ -496,7 +512,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				window.setTimeout(() => scrollToBottom(), 50);
 			});
 		});
-	}, [ discussionId, subId, scrollToBottom, ensureDiscussion ]);
+	}, [ discussionId, subId, scrollToBottom, ensureDiscussion, getCommentAnalyticsData ]);
 
 	const onMouseDown = useCallback((e: React.MouseEvent) => {
 		keyboard.disableSelection(true);
