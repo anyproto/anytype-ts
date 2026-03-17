@@ -422,8 +422,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					};
 				};
 
-				if (!parsedCode && code) {
-					pressed.push(code);
+				if (!parsedCode && key) {
+					pressed.push(key);
 				};
 			};
 
