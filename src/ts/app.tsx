@@ -414,23 +414,14 @@ const App: FC = () => {
 						return;
 					};
 
-					C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
+					U.Data.createSession(phrase, '', '', (message: any) => {
 						if (message.error.code) {
-							console.error('[App.onInit] WalletRecover error:', message.error.description);
 							S.Common.redirectSet(route);
 							U.Router.go('/auth/setup/init', routeParam);
 							return;
 						};
 
-						U.Data.createSession(phrase, '', '', (message: any) => {
-							if (message.error.code) {
-								S.Common.redirectSet(route);
-								U.Router.go('/auth/setup/init', routeParam);
-								return;
-							};
-
-							onObtainToken(message.token);
-						});
+						onObtainToken(message.token);
 					});
 				}).catch((err: any) => {
 					console.error('[App] Error retrieving phrase from keychain:', err);
