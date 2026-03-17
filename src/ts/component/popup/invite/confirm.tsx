@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject, Loader } from 'Component';
-import { I, C, S, U, translate, analytics, Action } from 'Lib';
+import { I, C, S, U, translate, analytics, Action, keyboard } from 'Lib';
 
 const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -26,6 +26,9 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				setError(message.error.description);
 				return;
 			};
+
+			const rootId = keyboard.getRootId();
+			U.Data.setTabTitle(rootId, rootId);
 
 			analytics.event('ApproveInviteRequest', { type: permissions });
 			setIsLoading(false);
