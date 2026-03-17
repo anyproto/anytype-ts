@@ -233,25 +233,13 @@
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
 				background: var(--color-text-primary); 
 			}
-			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; background: var(--color-bg-primary); }
-			.inner.bgColor-default::before {
-				content: ''; @include pos-abs-mid; width: 7px; height: 7px; transform: translate3d(-50%, -50%, 0);
-				background: url('~img/icon/menu/colorNone.svg');
-			}
-
 			.inner {
-				&.textColor-default { background-color: var(--color-text-primary) !important; }
-				&.textColor-black { background-color: var(--color-text-primary) !important; }
-				&.textColor-grey { background-color: var(--color-control-active) !important; }
-				&.textColor-yellow { background-color: var(--color-dark-yellow) !important; }
-				&.textColor-orange { background-color: var(--color-dark-orange) !important; }
-				&.textColor-red { background-color: var(--color-dark-red) !important; }
-				&.textColor-pink { background-color: var(--color-dark-pink) !important; }
-				&.textColor-purple { background-color: var(--color-dark-purple) !important; }
-				&.textColor-blue { background-color: var(--color-dark-blue) !important; }
-				&.textColor-ice { background-color: var(--color-dark-ice) !important; }
-				&.textColor-teal { background-color: var(--color-dark-teal) !important; }
-				&.textColor-lime { background-color: var(--color-dark-lime) !important; }
+				&.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; background: var(--color-bg-primary); }
+				&.bgColor-default::before {
+					content: ''; @include pos-abs-mid; width: 7px; height: 7px; transform: translate3d(-50%, -50%, 0);
+					background: url('~img/icon/menu/colorNone.svg');
+				}
+				&.textColor { background-color: currentColor; }
 			}
 		}
 	}
