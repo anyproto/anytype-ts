@@ -42,6 +42,9 @@ const Api = {
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
+		console.log(`[Storage] set: ${key}`, obj, isLocal, electron.storeSet);
+
+
 		if (electron.storeSet && !isLocal) {
 			electron.storeSet(key, obj);
 		} else {

@@ -330,8 +330,11 @@ const App: FC = () => {
 				return;
 			};
 
+			const { networkConfig } = S.Auth;
+			const { mode, path } = networkConfig || {};
+
 			S.Auth.tokenSet(token);
-			C.AccountSelect(accountId, '', 0, '', (message: any) => {
+			C.AccountSelect(accountId, '', mode, path, (message: any) => {
 				if (message.error.code) {
 					console.error('[App.onInit]:', message.error.description);
 					return;
