@@ -318,7 +318,7 @@ class UtilData {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
 						const rp = route ? U.Router.getParam(route) : {};
-						const isRestorable = route && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
 
 						if (isRestorable) {
 							U.Router.go(route, routeParam);

@@ -47,6 +47,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const images = useRef({});
 	const subject = useRef(null);
 	const isDragging = useRef(false);
+	const wasDragging = useRef(false);
 	const isPreviewDisabled = useRef(false);
 	const ids = useRef([]);
 	const zoom = useRef(null);
@@ -180,6 +181,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		.call(zoom.current)
 		.call(zoom.current.transform, d3.zoomIdentity.translate(graphData.zoom.x, graphData.zoom.y).scale(graphData.zoom.k))
 		.on('click', (e: any) => {
+			if (wasDragging.current) {
+				wasDragging.current = false;
+				return;
+			};
+
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
@@ -351,6 +357,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragEnd = (e: any) => {
 		isDragging.current = false;
+		wasDragging.current = true;
 		send('onDragEnd', { active: e.active, subjectId: subject.current?.id });
 		subject.current = null;
 	};

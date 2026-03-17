@@ -263,11 +263,14 @@ const App: FC = () => {
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
 
-		// Validate tab route — don't restore blank/void routes that can't render content
+		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
 		if (route) {
 			const rp = U.Router.getParam(route);
-			if ((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action)) {
+			if (
+				(rp.page == 'auth') ||
+				((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action))
+			) {
 				route = '';
 			};
 		};
@@ -411,14 +414,23 @@ const App: FC = () => {
 						return;
 					};
 
-					U.Data.createSession(phrase, '', '', (message: any) => {
+					C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
 						if (message.error.code) {
+							console.error('[App.onInit] WalletRecover error:', message.error.description);
 							S.Common.redirectSet(route);
 							U.Router.go('/auth/setup/init', routeParam);
 							return;
 						};
 
-						onObtainToken(message.token);
+						U.Data.createSession(phrase, '', '', (message: any) => {
+							if (message.error.code) {
+								S.Common.redirectSet(route);
+								U.Router.go('/auth/setup/init', routeParam);
+								return;
+							};
+
+							onObtainToken(message.token);
+						});
 					});
 				}).catch((err: any) => {
 					console.error('[App] Error retrieving phrase from keychain:', err);
