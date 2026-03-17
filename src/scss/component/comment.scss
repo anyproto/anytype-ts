@@ -21,8 +21,8 @@
 
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
 		> .iconObject { flex-shrink: 0; margin: 2px 0px 0px 0px; }
-		.postInner { flex-grow: 1; min-width: 0; }
-		.content { word-break: break-word; margin: 8px 0px 0px 0px; }
+		.postInner { flex: 1 1 0; min-width: 0; }
+		.content { word-break: break-word; }
 
 		.head {
 			display: flex; align-items: center; gap: 0px 8px; position: relative;
@@ -185,7 +185,7 @@
 			min-height: 20px; padding: 0px; border: 0px; background-color: transparent;
 			outline: none; line-height: 20px; word-break: break-word;
 		}
-		.commentEditorInput > :first-child { padding-top: 0px; }
+		.commentEditorInput > :first-child:not(.commentEditor-codeBlock) { padding-top: 0px; }
 
 		.commentEditorPlaceholder {
 			position: absolute; top: 0px; left: 0px; color: var(--color-text-tertiary);
@@ -216,11 +216,12 @@
 	}
 
 	.commentEditor-codeBlock {
-		display: block; padding: 16px 12px; border-radius: 8px;
+		display: block; padding: 16px 12px; margin: 8px 0px 0px 0px; border-radius: 8px;
 		background: var(--color-shape-highlight-light);
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 		white-space: pre-wrap; tab-size: 4; position: relative;
 	}
+	.commentEditorInput > .commentEditor-codeBlock:first-child { margin-top: 0px; }
 
 	.codeLangOverlay {
 		position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -365,7 +366,7 @@
 	}
 
 	.commentCodeBlock {
-		padding: 16px 12px; position: relative;
+		padding: 16px 12px; margin: 8px 0px 0px 0px; position: relative;
 		background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 		white-space: pre-wrap; tab-size: 4; overflow-x: auto;
@@ -378,6 +379,7 @@
 			background: var(--color-shape-highlight-medium); border-radius: 4px; user-select: none;
 		}
 	}
+	.content > .commentCodeBlock:first-child { margin-top: 0px; }
 
 	/* Rendered mention and link styles */
 	.content, .commentParagraph, .commentH1, .commentH2, .commentH3, .commentBlockquote {
@@ -469,6 +471,6 @@
 		}
 	}
 
-	.content > :first-child { padding-top: 0px; }
+	.content > :first-child:not(.commentCodeBlock) { padding-top: 0px; }
 
 }

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
@@ -83,6 +84,22 @@ const CommentReply = observer((props: Props) => {
 					U.Object.openEvent(e, object);
 				};
 			});
+		});
+
+		// Emoji marks — render as cross-platform images
+		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
+			item = $(item);
+
+			const id = item.attr('data-param');
+			const smile = item.find('smile');
+
+			if (smile.length) {
+				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+				const root = container._reactRoot || createRoot(container);
+
+				container._reactRoot = root;
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+			};
 		});
 	}, [ isEditing, parts, subId ]);
 

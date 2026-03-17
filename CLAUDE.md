@@ -237,6 +237,7 @@ Detailed README files are available throughout the codebase for deeper context o
 - [`src/ts/component/preview/README.md`](src/ts/component/preview/README.md) - Preview cards and tooltips
 - [`src/ts/component/selection/README.md`](src/ts/component/selection/README.md) - Block and text selection handling
 - [`src/ts/component/util/README.md`](src/ts/component/util/README.md) - ~48 reusable utility components
+- [`src/ts/component/comment/README.md`](src/ts/component/comment/README.md) - Comment system: threaded discussions with Lexical editor, rich content parts, reactions
 
 ### Libraries
 - [`src/ts/lib/README.md`](src/ts/lib/README.md) - Core libraries overview (api, util, services, keyboard, storage)

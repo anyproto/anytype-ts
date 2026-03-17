@@ -588,6 +588,40 @@ const extractMarks = (child: TextNode, start: number, end: number): I.Mark[] => 
 };
 
 /**
+ * Detect emoji characters in text and add I.MarkType.Emoji marks with shortcodes.
+ * Uses Unicode property escapes to match emoji sequences (ZWJ, skin tones, flags).
+ */
+const addEmojiMarks = (text: string, marks: I.Mark[]) => {
+	// Match emoji: base emoji optionally followed by variation selectors, ZWJ sequences, skin tones, flags
+	const re = /\p{Extended_Pictographic}(?:\u{FE0F}|\u{200D}\p{Extended_Pictographic}|\u{1F3FB}|\u{1F3FC}|\u{1F3FD}|\u{1F3FE}|\u{1F3FF})*/gu;
+	let match: RegExpExecArray | null;
+
+	while ((match = re.exec(text)) !== null) {
+		const code = U.Smile.getCode(match[0]);
+		if (!code) {
+			continue;
+		};
+
+		const from = match.index;
+		const to = from + match[0].length;
+
+		// Skip if already covered by another mark (mention, etc.)
+		const overlaps = marks.some(m =>
+			(m.type === I.MarkType.Emoji) &&
+			(m.range.from < to) && (m.range.to > from)
+		);
+
+		if (!overlaps) {
+			marks.push({
+				type: I.MarkType.Emoji,
+				range: { from, to },
+				param: code,
+			});
+		};
+	};
+};
+
+/**
  * Extract text and marks from an element node's children
  */
 const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mark[] } => {
@@ -658,7 +692,61 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 		};
 	};
 
+	// Auto-detect emoji in text and add Emoji marks for cross-platform rendering
+	addEmojiMarks(text, marks);
+
 	return { text, marks };
+};
+
+/**
+ * Split a text part on newline boundaries into multiple parts, adjusting mark ranges
+ */
+const splitPartOnNewlines = (part: I.CommentContentPart): I.CommentContentPart[] => {
+	const { text, marks, style, type } = part;
+
+	if (!text || !text.includes('\n')) {
+		return [ part ];
+	};
+
+	const lines = text.split('\n');
+	const result: I.CommentContentPart[] = [];
+	let offset = 0;
+
+	for (const line of lines) {
+		const lineEnd = offset + line.length;
+		const lineMarks: I.Mark[] = [];
+
+		for (const mark of (marks || [])) {
+			const mFrom = mark.range.from;
+			const mTo = mark.range.to;
+
+			// Skip marks that don't overlap this line
+			if ((mTo <= offset) || (mFrom >= lineEnd)) {
+				continue;
+			};
+
+			lineMarks.push({
+				type: mark.type,
+				range: {
+					from: Math.max(0, mFrom - offset),
+					to: Math.min(line.length, mTo - offset),
+				},
+				param: mark.param,
+			});
+		};
+
+		result.push({
+			style,
+			type,
+			text: line,
+			marks: lineMarks,
+		});
+
+		// +1 for the \n character
+		offset = lineEnd + 1;
+	};
+
+	return result;
 };
 
 /**
@@ -724,12 +812,12 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 				const tag = node.getTag();
 				const { text, marks } = extractTextAndMarks(node);
 
-				parts.push({
+				parts.push(...splitPartOnNewlines({
 					style: headingTagToStyle(tag),
 					type: I.BlockType.Text,
 					text,
 					marks,
-				});
+				}));
 				continue;
 			};
 
@@ -737,12 +825,12 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 			if (node.getType() === 'quote') {
 				const { text, marks } = extractTextAndMarks(node);
 
-				parts.push({
+				parts.push(...splitPartOnNewlines({
 					style: I.TextStyle.Quote,
 					type: I.BlockType.Text,
 					text,
 					marks,
-				});
+				}));
 				continue;
 			};
 
@@ -797,12 +885,12 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 			// Paragraph (default)
 			const { text, marks } = extractTextAndMarks(node);
 
-			parts.push({
+			parts.push(...splitPartOnNewlines({
 				style: I.TextStyle.Paragraph,
 				type: I.BlockType.Text,
 				text,
 				marks,
-			});
+			}));
 		};
 	});
 
@@ -1062,18 +1150,15 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 				return;
 			};
 
-			const formatMap: Record<string, TextFormatType> = {
-				b: 'bold',
-				i: 'italic',
-				u: 'underline',
-				l: 'code',
+			// Cmd/Ctrl+L — inline code (not handled by Lexical natively)
+			if (key === 'l') {
+				e.preventDefault();
+				editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+				return;
 			};
 
-			const format = formatMap[key];
-			if (format) {
-				e.preventDefault();
-				editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
-			};
+			// Note: Cmd+B (bold), Cmd+I (italic), Cmd+U (underline) are handled
+			// natively by Lexical's RichTextPlugin — do NOT dispatch here to avoid double-toggle
 		};
 
 		const root = editor.getRootElement();

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
@@ -104,6 +105,22 @@ const CommentPost = observer((props: Props) => {
 					U.Object.openEvent(e, object);
 				};
 			});
+		});
+
+		// Emoji marks — render as cross-platform images
+		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
+			item = $(item);
+
+			const id = item.attr('data-param');
+			const smile = item.find('smile');
+
+			if (smile.length) {
+				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+				const root = container._reactRoot || createRoot(container);
+
+				container._reactRoot = root;
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+			};
 		});
 	}, [ isEditing, parts, subId ]);
 
@@ -255,7 +272,7 @@ const CommentPost = observer((props: Props) => {
 		setIsReplying(false);
 	}, []);
 
-	const onSubmitReply = useCallback((newParts: I.CommentContentPart[]) => {
+	const onSubmitReply = useCallback((newParts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToBlocks(newParts);
 
 		const msg = {
@@ -266,8 +283,15 @@ const CommentPost = observer((props: Props) => {
 				marks: [],
 			},
 			blocks,
-			attachments: [],
+			attachments: messageAttachments || [],
 			reactions: [],
+		};
+
+		// Seed attachment details so optimistic reply can render them
+		if (attachmentObjects?.length) {
+			for (const obj of attachmentObjects) {
+				S.Detail.update(subId, { id: obj.id, details: obj }, false);
+			};
 		};
 
 		C.ChatAddMessage(targetId, msg as any, (response: any) => {
@@ -293,7 +317,7 @@ const CommentPost = observer((props: Props) => {
 					marks: [],
 					parts: newParts,
 				},
-				attachments: [],
+				attachments: messageAttachments || [],
 				reactions: [],
 				isSynced: false,
 				replyCount: 0,
@@ -309,7 +333,7 @@ const CommentPost = observer((props: Props) => {
 			setIsReplying(false);
 			replyFormRef.current?.clear();
 		});
-	}, [ targetId, id, replyCount ]);
+	}, [ targetId, id, subId, replyCount ]);
 
 	const onCopyText = useCallback(() => {
 		const text = parts.map(p => p.text || '').join('\n');

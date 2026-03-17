@@ -202,8 +202,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const handleChange = useCallback(() => {
 		saveDraft();
-		onResize?.();
-	}, [ saveDraft, onResize ]);
+	}, [ saveDraft ]);
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
