@@ -50,6 +50,20 @@ export default {
 			lime: '#5dd400',
 		},
 
+		textColor: {
+			default: '#252525',
+			grey: '#b6b6b6',
+			yellow: '#857a00',
+			orange: '#b66934',
+			red: '#cb360d',
+			pink: '#c6005c',
+			purple: '#8200db',
+			blue: '#3e58eb',
+			ice: '#0069a8',
+			teal: '#00786f',
+			lime: '#497d00',
+		},
+
 		graph: {
 			bg: '#ffffff',
 			link: '#dfddd0',
@@ -133,6 +147,20 @@ export default {
 			ice: '#2aa7ee',
 			teal: '#00bba7',
 			lime: '#5dd400',
+		},
+
+		textColor: {
+			default: '#e1e1e1',
+			grey: '#737373',
+			yellow: '#fff085',
+			orange: '#ffb330',
+			red: '#ffa3a2',
+			pink: '#fda5d5',
+			purple: '#dab2ff',
+			blue: '#8f9def',
+			ice: '#74d4ff',
+			teal: '#96f7e4',
+			lime: '#d8f999',
 		},
 
 		graph: {
