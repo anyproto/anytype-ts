@@ -2606,11 +2606,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
 				let height = ch - ct - bt - bh - csh - 8;
-
-				if (bh > ch) {
-					height = Math.max(ch / 2, height);
-				};
-
 				height = Math.max(J.Size.lastBlock, height);
 				last.css({ height });
 			};

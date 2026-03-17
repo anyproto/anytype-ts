@@ -277,6 +277,36 @@ curl -s -X POST "https://api.linear.app/graphql" \
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
 
+### Linear Workflow After Fixing Issues
+
+After pushing a fix for a Linear issue, always:
+
+1. **Comment on the issue** with a brief description of the fix (what was changed and why).
+2. **Move the issue** to "Waiting for testing" state.
+
+**Comment on an issue:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{commentCreate(input:{issueId:\"<ISSUE_UUID>\",body:\"<comment text>\"}){success}}"}' | jq .
+```
+
+**Move issue to "Waiting for testing":**
+```bash
+# First, find the state ID (one-time per project):
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{workflowStates(filter:{name:{eq:\"Waiting for testing\"}}){nodes{id name}}}"}' | jq .
+
+# Then update the issue:
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{issueUpdate(id:\"<ISSUE_UUID>\",input:{stateId:\"<STATE_UUID>\"}){success}}"}' | jq .
+```
+
 ## Figma MCP Integration
 
 Use the Figma MCP tools to fetch design context and screenshots from Figma files.
