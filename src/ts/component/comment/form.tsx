@@ -480,7 +480,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			subIds: [ 'typeSuggest' ],
 			onOpen: (ctx: any) => { menuContextRef.current = ctx; },
 			data: {
-				sections: [{ id: 'attachments', name: '', children }],
+				options: children,
 				noFilter: true,
 				noVirtualisation: true,
 				noScroll: true,
