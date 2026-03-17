@@ -299,7 +299,7 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	return (
 		<div>
-			<div className="filter isName">
+			<div className="inputWrapper isName">
 				<InputWithLabel
 					ref={nameRef}
 					value={view.name}
