@@ -598,6 +598,13 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	}, [ isEmpty, isLoading, handleSubmit ]);
 
+	// Auto-focus editor when entering edit or reply mode
+	useEffect(() => {
+		if (isEdit || isReply) {
+			window.setTimeout(() => editorRef.current?.focus(), 50);
+		};
+	}, [ isEdit, isReply ]);
+
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
 		const node = formRef.current;

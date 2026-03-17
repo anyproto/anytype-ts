@@ -506,9 +506,11 @@ const CommentPost = observer((props: Props) => {
 			return null;
 		};
 
+		const sorted = [...reactions].sort((a: any, b: any) => (b.authors?.length || 0) - (a.authors?.length || 0));
+
 		return (
 			<div className="reactions">
-				{reactions.map((item: any, i: number) => (
+				{sorted.map((item: any, i: number) => (
 					<Reaction key={i} {...item} onSelect={onReactionSelect} />
 				))}
 			</div>
@@ -520,9 +522,13 @@ const CommentPost = observer((props: Props) => {
 			return null;
 		};
 
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+
 		return (
 			<div className="hoverActions">
-				<Icon className="reaction withBackground" onClick={onReaction} />
+				{canReact ? <Icon className="reaction withBackground" onClick={onReaction} /> : null}
 				<Icon className="reply withBackground" onClick={onReply} />
 				<Icon className="more withBackground" onClick={onMenuClick} />
 			</div>
