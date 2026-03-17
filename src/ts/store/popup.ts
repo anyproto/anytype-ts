@@ -12,8 +12,6 @@ const NO_DIMMER_IDS = [
 	'phrase',
 	'relation',
 	'inviteQr',
-	'inviteRequest',
-	'inviteConfirm',
 ];
 
 class PopupStore {
@@ -196,6 +194,7 @@ class PopupStore {
 				this.popupList = filtered;
 
 				callBack?.();
+				U.Data.updateTabsDimmer();
 				$(window).trigger('resize');
 			}, J.Constant.delay.popup);
 		};
