@@ -964,29 +964,29 @@ export const Mapper = {
 
 		Range: (obj: any) => {
 			return {
-				from: obj.from,
-				to: obj.to,
+				from: Number(obj.from || 0),
+				to: Number(obj.to || 0),
 			};
 		},
 
 		Mark: (obj: any) => {
 			return {
-				type: obj.type,
-				param: obj.param,
+				type: Number(obj.type || 0),
+				param: String(obj.param || ''),
 				range: Mapper.To.Range(obj.range),
 			};
 		},
 
 		Details: (obj: any) => {
 			return {
-				key: obj.key,
+				key: String(obj.key || ''),
 				value: Encode.value(obj.value),
 			};
 		},
 
 		Fields: (obj: any) => {
 			return {
-				blockId: obj.blockId,
+				blockId: String(obj.blockId || ''),
 				fields: Encode.struct(obj.fields || {}),
 			};
 		},
@@ -997,7 +997,7 @@ export const Mapper = {
 
 		BlockLayout: (obj: any) => {
 			return {
-				style: obj.style,
+				style: Number(obj.style || 0),
 			};
 		},
 
@@ -1005,67 +1005,67 @@ export const Mapper = {
 			const marks = (obj.marks || []).map(Mapper.To.Mark);
 
 			return {
-				text: obj.text,
-				style: obj.style,
-				checked: obj.checked,
-				color: obj.color,
+				text: String(obj.text || ''),
+				style: Number(obj.style || 0),
+				checked: Boolean(obj.checked),
+				color: String(obj.color || ''),
 				marks: { marks },
-				iconEmoji: obj.iconEmoji,
-				iconImage: obj.iconImage,
+				iconEmoji: String(obj.iconEmoji || ''),
+				iconImage: String(obj.iconImage || ''),
 			};
 		},
 
 		BlockFile: (obj: any) => {
 			return {
-				targetObjectId: obj.targetObjectId,
-				type: obj.type,
-				addedAt: obj.addedAt,
-				state: obj.state,
-				style: obj.style,
+				targetObjectId: String(obj.targetObjectId || ''),
+				type: Number(obj.type || 0),
+				addedAt: Number(obj.addedAt || 0),
+				state: Number(obj.state || 0),
+				style: Number(obj.style || 0),
 			};
 		},
 
 		BlockBookmark: (obj: any) => {
 			return {
-				targetObjectId: obj.targetObjectId,
-				state: obj.state,
-				url: obj.url,
+				targetObjectId: String(obj.targetObjectId || ''),
+				state: Number(obj.state || 0),
+				url: String(obj.url || ''),
 			};
 		},
 
 		BlockLink: (obj: any) => {
 			return {
-				targetBlockId: obj.targetBlockId,
-				iconSize: obj.iconSize,
-				cardStyle: obj.cardStyle,
-				description: obj.description,
-				relations: obj.relations,
+				targetBlockId: String(obj.targetBlockId || ''),
+				iconSize: Number(obj.iconSize || 0),
+				cardStyle: Number(obj.cardStyle || 0),
+				description: Number(obj.description || 0),
+				relations: obj.relations || [],
 			};
 		},
 
 		BlockDiv: (obj: any) => {
 			return {
-				style: obj.style,
+				style: Number(obj.style || 0),
 			};
 		},
 
 		BlockRelation: (obj: any) => {
 			return {
-				key: obj.key,
+				key: String(obj.key || ''),
 			};
 		},
 
 		BlockLatex: (obj: any) => {
 			return {
-				text: obj.text,
-				processor: obj.processor,
+				text: String(obj.text || ''),
+				processor: Number(obj.processor || 0),
 			};
 		},
 
 		BlockDataview: (obj: any) => {
 			return {
-				TargetObjectId: obj.targetObjectId,
-				isCollection: obj.isCollection,
+				TargetObjectId: String(obj.targetObjectId || ''),
+				isCollection: Boolean(obj.isCollection),
 				views: (obj.views || []).map(Mapper.To.View),
 			};
 		},
@@ -1076,7 +1076,7 @@ export const Mapper = {
 
 		BlockTableRow: (obj: any) => {
 			return {
-				isHeader: obj.isHeader,
+				isHeader: Boolean(obj.isHeader),
 			};
 		},
 
@@ -1090,9 +1090,9 @@ export const Mapper = {
 
 		BlockWidget: (obj: any) => {
 			return {
-				layout: obj.layout,
-				limit: obj.limit,
-				viewId: obj.viewId,
+				layout: Number(obj.layout || 0),
+				limit: Number(obj.limit || 0),
+				viewId: String(obj.viewId || ''),
 			};
 		},
 
@@ -1109,10 +1109,10 @@ export const Mapper = {
 			const contentKey = BLOCK_TYPE_TO_PROP[obj.type];
 
 			const block: any = {
-				id: obj.id,
-				align: obj.hAlign,
-				verticalAlign: obj.vAlign,
-				backgroundColor: obj.bgColor,
+				id: String(obj.id || ''),
+				align: Number(obj.hAlign || 0),
+				verticalAlign: Number(obj.vAlign || 0),
+				backgroundColor: String(obj.bgColor || ''),
 				childrenIds: obj.childrenIds || [],
 				fields: obj.fields ? Encode.struct(obj.fields || {}) : undefined,
 			};
