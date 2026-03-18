@@ -8,7 +8,7 @@ import { I, S, U, Preview, Action, translate, keyboard, analytics, sidebar } fro
 const Toast: FC = observer(() => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
-	const { count, action, text, value, object, target, origin, ids, icon } = toast || {};
+	const { count, action, text, value, object, target, origin, ids, icon, uploadCounts } = toast || {};
 
 	let buttons = [];
 	let textObject = null;
@@ -125,6 +125,18 @@ const Toast: FC = observer(() => {
 			buttons = buttons.concat([
 				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
 			]);
+			break;
+		};
+
+		case I.ToastAction.Upload: {
+			if (!uploadCounts) {
+				break;
+			};
+
+			const breakdown = U.File.formatCountsBreakdown(uploadCounts);
+			if (breakdown) {
+				textAction = U.String.sprintf(translate('toastUploaded'), breakdown);
+			};
 			break;
 		};
 	};

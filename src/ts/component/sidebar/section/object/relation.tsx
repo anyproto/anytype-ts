@@ -53,10 +53,6 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 	const readonly = props.readonly || root?.isLocked();
 	const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 	const hasMore = canEdit && relation.onMore;
-	const container = [ 
-		U.Common.getCellContainer(isPopup ? 'popup' : 'page'),
-		U.Common.getCellContainer('sidebarRight'),
-	].join(', ');
 
 	if (hasMore) {
 		cw.push('hasMore');
@@ -82,7 +78,6 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 					readonly={!canEdit}
 					idPrefix={PREFIX}
 					onCellChange={onCellChange}
-					pageContainer={container}
 					menuParam={{ className: 'fromSidebar fixed', classNameWrap: 'fromSidebar' }}
 				/>
 			</div>

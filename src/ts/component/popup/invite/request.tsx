@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Error, IconObject } from 'Component';
-import { I, C, S, U, translate, analytics, Preview , Action} from 'Lib';
+import { I, C, S, U, translate, analytics, Preview, Action, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
@@ -48,6 +48,9 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				setError(message.error.description);
 				return;
 			};
+
+			const rootId = keyboard.getRootId();
+			U.Data.setTabTitle(rootId, rootId);
 
 			if (invite.inviteType === I.InviteType.WithApprove) {
 				close(() => Action.inviteRequest());

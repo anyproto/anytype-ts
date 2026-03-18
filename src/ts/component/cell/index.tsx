@@ -21,7 +21,7 @@ interface Props extends I.Cell {
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const { 
-		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
+		elementId, relationKey, recordId, getRecord, getView, idPrefix,
 		isInline, menuParam = {}, block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
