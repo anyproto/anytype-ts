@@ -322,7 +322,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<div className="filterWrapper">
 				<Filter
 					ref={filterRef}
-					className="outlined round"
 					placeholder={translate('commonSearch')}
 					value=""
 					icon="search"

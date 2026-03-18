@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I, J, Relation, S, translate, U, sidebar } from 'Lib';
+import { I, Relation, S, translate, U, sidebar } from 'Lib';
 import { EmptyNodes, Title } from 'Component';
 
 interface Props {

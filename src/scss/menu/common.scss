@@ -93,8 +93,6 @@
 		}
 		
 		.inputWrap { padding: 0px 16px 8px 16px; }
-		.input { padding: 0px 8px; }
-		.input:not(.round) { border: 1px solid var(--color-shape-secondary); }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: var(--color-control-active); }
 

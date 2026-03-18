@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
@@ -771,7 +771,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div>
 			<Filter 
 				ref={filterRef}
-				className="outlined round"
 				placeholder={translate('menuBlockActionsFilterActions')}
 				value={filter}
 				onFocus={onFilterFocus} 

@@ -288,7 +288,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Filter
 				ref={filterRef}
 				icon="search"
-				className="outlined round c32"
+				className="c32"
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}
 				focusOnMount={true}

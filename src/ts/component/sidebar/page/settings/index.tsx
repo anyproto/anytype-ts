@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding, Action, analytics, sidebar } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics, } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 

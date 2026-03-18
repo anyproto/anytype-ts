@@ -1,5 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon, Loader } from 'Component';
+import { InputWithFile, IconObject, Error, ObjectName, Icon, } from 'Component';
 import { I, S, U, focus, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 

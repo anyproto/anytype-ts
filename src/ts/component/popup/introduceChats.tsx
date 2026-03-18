@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { Title, Label, Button, Icon, IconObject } from 'Component';
+import { Title, Label, Button, Icon, } from 'Component';
 import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';

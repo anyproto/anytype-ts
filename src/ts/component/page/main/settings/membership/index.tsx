@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Title } from 'Component';
-import { I, S, translate, U } from 'Lib';
+import { I, S, translate, } from 'Lib';
 
 import Intro from './intro';
 import Purchased from './purchased';

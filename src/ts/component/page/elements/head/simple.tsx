@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, sidebar } from 'Lib';
+import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, } from 'Lib';
 
 interface Props {
 	rootId: string;

@@ -159,6 +159,18 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			return;
 		};
 
+		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			U.Menu.onFileUploadPopup(type.recommendedLayout, '', details, (objectIds) => {
+				if (objectIds?.length) {
+					const object = S.Detail.get(S.Common.space, objectIds[0]);
+					if (object) {
+						cb(object);
+					};
+				};
+			}, analytics.route.uploadTypeWidget);
+			return;
+		};
+
 		C.ObjectCreate(details, flags, type.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				cb(message.details);

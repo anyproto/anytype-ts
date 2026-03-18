@@ -6,7 +6,10 @@
 	"scripts": {
 		"precommit": "bunx lint-staged",
 		"typecheck": "bunx tsc --noEmit -p tsconfig.json && bunx tsc --noEmit -p tsconfig.electron.json",
-		"lint": "eslint .",
+		"lint": "bunx biome lint src/ && eslint .",
+		"lint:fix": "bunx biome check --write src/",
+		"format": "bunx biome format --write src/",
+		"format:check": "bunx biome format src/",
 		"release:notes": "node scripts/generate-release-notes.js",
 		"electron": "bunx electron .",
 		"electron-win": "bunx electron.cmd .",
@@ -62,6 +65,7 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.8",
 		"@electron/notarize": "^3.1.1",
 		"@tomjs/electron-devtools-installer": "^4.0.1",
 		"@types/history": "^4.7.8",
@@ -1476,6 +1480,7 @@
 		}
 	},
 	"lint-staged": {
+		"src/**/*.{ts,tsx}": "bunx biome lint --no-errors-on-unmatched",
 		"{src,electron}/**/*.{js,ts,tsx}": "eslint"
 	},
 	"husky": {

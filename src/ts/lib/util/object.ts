@@ -1,4 +1,4 @@
-import route from 'json/route';
+
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 import errorIcon from '../../../img/icon/error.svg?raw';
 

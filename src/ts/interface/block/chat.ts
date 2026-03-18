@@ -1,4 +1,4 @@
-import { index } from 'd3';
+
 import { I } from 'Lib';
 
 export enum ChatButton {

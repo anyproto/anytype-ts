@@ -1615,7 +1615,7 @@ class UtilMenu {
 											cb(object, 0);
 										};
 									};
-								});
+								}, route);
 							}, S.Menu.getTimeout());
 						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
@@ -1650,13 +1650,14 @@ class UtilMenu {
 		check();
 	};
 
-	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void) {
+	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void, route?: string) {
 		S.Popup.open('upload', {
 			data: {
 				layout,
 				collectionId: collectionId || '',
 				details: details || {},
 				onUpload: callBack,
+				route: route || '',
 			},
 		});
 	};
