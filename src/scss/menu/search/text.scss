@@ -21,7 +21,7 @@
 		}
 		.filterContainer {
 			.icon.search { flex-shrink: 0; margin: 0px; }
-			.input { flex-grow: 1; height: 100%; padding: 0px; border: 0px; }
+			.input { flex-grow: 1; height: 100%; padding: 0px; border: 0px; background: none; border-radius: 0px; }
 
 			.cnt {
 				@include text-small; color: var(--color-control-active); white-space: nowrap; flex-shrink: 0;

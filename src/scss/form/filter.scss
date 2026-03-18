@@ -2,9 +2,9 @@
 
 .filter { cursor: text; padding: 0px; }
 .filter {
-	.inner { position: relative; width: 100%; height: 28px; display: flex; align-items: center; gap: 0px 2px; background-color: var(--color-shape-highlight-medium); border-radius: 14px; padding: 0px 6px; }
+	.inner { position: relative; width: 100%; height: 28px; display: flex; align-items: center; gap: 0px 2px; background-color: var(--color-shape-highlight-light-solid); border-radius: 14px; padding: 0px 6px; }
 	.filterInputWrap { position: relative; width: 100%; }
-	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; background: none; }
+	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; background: none !important; border-radius: 0px; }
 
 	.icon { width: 20px; height: 20px; flex-shrink: 0; cursor: default; }
 	.icon.clear { background-image: url('~img/icon/filter/clear-dark0.svg') !important; opacity: 0; }
@@ -23,6 +23,12 @@
 	&.c36 {
 		.inner { height: 36px; border-radius: 18px; }
 	}
+}
+.filter:hover {
+	.inner { background-color: var(--color-shape-highlight-medium); }
+}
+.filter.isFocused {
+	.inner { background-color: var(--color-shape-highlight-medium); }
 }
 .filter.active {
 	.icon.clear { opacity: 1; }
