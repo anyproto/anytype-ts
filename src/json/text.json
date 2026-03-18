@@ -2134,6 +2134,7 @@
 	"toastObjectTypeRemoved": "Object Type <b>%s</b> has been removed from your Library",
 	"toastRelationRemoved": "Property <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was set as default",
+	"toastSetFileDrop": "You cannot directly add files into queries. Try collection instead",
 
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
