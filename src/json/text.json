@@ -1457,6 +1457,19 @@
 	"popupAboutVersion": "Version: %s",
 	"popupAboutCopyright": "Made by Any — a Swiss association",
 
+	"toastUploaded": "Uploaded %s",
+
+	"popupUploadTabUpload": "Upload",
+	"popupUploadTabLink": "Link",
+	"popupUploadDropLabel": "Drag file here or Click to upload",
+	"popupUploadLinkTitle": "Add file link",
+	"popupUploadLinkPlaceholder": "Paste URL",
+	"popupUploadLinkInvalid": "Link is invalid",
+	"popupUploadErrorTitle": "%s %s were not uploaded",
+	"popupUploadErrorText": "Please try again",
+	"popupUploadErrorConfirm": "Got it",
+	"popupSearchUploadFile": "Add file",
+
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",
 	"popupExportIncludeFiles": "Include files",
