@@ -81,6 +81,8 @@
 			.text { @include clamp3; }
 		}
 
+		.markuplink, markupobject { color: var(--color-text-primary); pointer-events: none; }
+
 		&.withAttachment {
 			.text { @include clamp1; display: block; height: var(--line-height-small); }
 			.markuplink { white-space: normal; }
