@@ -75,10 +75,10 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	});
 
 	useEffect(() => {
-		if (!withFilter) {
+		if (!isWithFilter()) {
 			return;
 		};
-		
+
 		n.current = -1;
 		top.current = 0;
 		listRef.current?.scrollToPosition(top.current);
@@ -231,7 +231,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const isWithFilter = () => {
-		if (withFilter) {
+		if (data.withFilter) {
 			return true;
 		};
 
