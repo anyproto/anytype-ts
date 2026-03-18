@@ -240,8 +240,9 @@ class MenuManager {
 					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => {
 						const Api = require('./api.js');
 						const activeView = Util.getActiveView(this.win);
-						const { isPinned, ...data } = activeView?.data || {};
+						const { isPinned, route, ...data } = activeView?.data || {};
 
+						data.route = '/main/void/dashboard';
 						Api.openTab(this.win, data, { fireAnalytics: true });
 					}
 				},
@@ -437,6 +438,18 @@ class MenuManager {
 
 		this.menu = Menu.buildFromTemplate(menuParam);
 		Menu.setApplicationMenu(this.menu);
+	};
+
+	initDock () {
+		if (!is.macos) {
+			return;
+		};
+
+		const WindowManager = require('./window.js');
+
+		app.dock.setMenu(Menu.buildFromTemplate([
+			{ label: Util.translate('electronMenuNewWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+		]));
 	};
 
 	initTray () {

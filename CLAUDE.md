@@ -317,3 +317,11 @@ The QA Engineer skill:
 **Skip** for changes that have no user-facing impact (type refactors, internal utilities, CSS-only tweaks, build config).
 
 **Test suite repo:** `../anytype-desktop-suite` — Playwright E2E tests with Page Object Model, translation-aware selectors, and gRPC server lifecycle management. See its `CLAUDE.md` for test architecture details.
+
+## Code Quality
+
+This is a TypeScript project. Always run typecheck and lint after making changes. Fix any lint issues (unused imports, formatting) before committing.
+
+## UI / CSS
+
+For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values.

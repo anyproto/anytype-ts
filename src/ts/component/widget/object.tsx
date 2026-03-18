@@ -51,7 +51,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -176,7 +176,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
-				element: more,
+				element,
 				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
@@ -196,6 +196,12 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			transition,
 		};
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
+		const spaceview = U.Space.getSpaceview();
+		const itemCn = [ 'item' ];
+
+		if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
+			itemCn.push('isMuted');
+		};
 
 		let icon = null;
 		if (item.icon) {
@@ -213,7 +219,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		return (
 			<div
 				id={`item-${item.id}`}
-				className="item"
+				className={itemCn.join(' ')}
 				ref={setNodeRef}
 				{...attributes}
 				{...listeners}
@@ -227,15 +233,15 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				</div>
 				<div className="side right">
 					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
-					<div className="buttons">
-						{canAdd ? (
+					{canAdd ? (
+						<div className="buttons">
 							<Icon
 								className="plus"
 								tooltipParam={{ text: translate('commonCreateNewObject') }}
 								onClick={e => onCreate(e, item)}
 							/>
-						) : ''}
-					</div>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);

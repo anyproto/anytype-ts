@@ -451,6 +451,12 @@ export const BlockDataviewViewCreate = (response: Rpc.BlockDataview.View.Create.
 	};
 };
 
+export const BlockDataviewFilterAdd = (response: Rpc.BlockDataview.Filter.Add.Response) => {
+	return {
+		filterId: response.getFilterid(),
+	};
+};
+
 export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObject.Response) => {
 	return {
 		blockId: response.getBlockid(),

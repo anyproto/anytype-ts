@@ -20,35 +20,32 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 	const { object, name, action } = data;
 	const [ displayObject, setDisplayObject ] = useState<any>(null);
 	const [ displayObjectType, setDisplayObjectType ] = useState<any>(null);
-	const cancelRef = useRef(false);
+	const loadIdRef = useRef(0);
 
 	useEffect(() => {
-		cancelRef.current = false;
+		const currentLoadId = ++loadIdRef.current;
+
 		setDisplayObject(null);
 		setDisplayObjectType(null);
-		load();
-
-		return () => {
-			cancelRef.current = true;
-		};
+		load(currentLoadId);
 	}, [ object?.id, action, spaceview.targetSpaceId ]);
 
 	useEffect(position);
 
-	const load = () => {
+	const load = (loadId: number) => {
 		const isChat = (object?.layout == I.ObjectLayout.SpaceView) && (spaceview.isOneToOne || spaceview.isChat);
 
 		if (isChat) {
 			setDisplayObject({ layout: I.ObjectLayout.Chat, name: translate('commonMainChat') });
 		} else
 		if (action && name) {
-			objectByAction();
+			objectByAction(loadId);
 		} else {
-			loadObject();
+			loadObject(loadId);
 		};
 	};
 
-	const objectByAction = () => {
+	const objectByAction = (loadId: number) => {
 		const layouts = {
 			navigation: I.ObjectLayout.Navigation,
 			graph: I.ObjectLayout.Graph,
@@ -59,25 +56,25 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 		if (layouts[action]) {
 			setDisplayObject({ layout: layouts[action], name });
 		} else {
-			loadObject();
+			loadObject(loadId);
 		};
 	};
 
-	const loadObject = () => {
+	const loadObject = (loadId: number) => {
 		if (!object || !object.id) {
 			return;
 		};
 		U.Object.getById(object.id, { spaceId: spaceview.targetSpaceId }, (loaded: any) => {
-			if (loaded && !cancelRef.current) {
+			if (loaded && (loadId === loadIdRef.current)) {
 				setDisplayObject(loaded);
-				loadType(loaded.type)
+				loadType(loaded.type, loadId);
 			};
 		});
 	};
 
-	const loadType = (id: string) => {
+	const loadType = (id: string, loadId: number) => {
 		U.Object.getById(id, { spaceId: spaceview.targetSpaceId }, (loaded: any) => {
-			if (loaded && !cancelRef.current) {
+			if (loaded && (loadId === loadIdRef.current)) {
 				setDisplayObjectType(loaded);
 			};
 		});

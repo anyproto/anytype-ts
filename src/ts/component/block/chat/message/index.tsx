@@ -86,8 +86,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	const onReactionAdd = () => {
 		const node = $(nodeRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
-
 		let menuContext = null;
 
 		S.Menu.open('smile', {
@@ -97,12 +95,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 			noFlipX: true,
 			onOpen: context => {
 				node.addClass('hover');
-				container.addClass('over');
 				menuContext = context;
 			},
 			onClose: () => {
 				node.removeClass('hover');
-				container.removeClass('over');
 			},
 			data: {
 				noHead: true,
@@ -236,8 +232,12 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
-	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
+	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
+
+	if (!text && !hasAttachments) {
+		return null;
+	};
 
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);

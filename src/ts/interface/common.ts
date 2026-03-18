@@ -51,6 +51,7 @@ export interface Toast {
 	value?: boolean;
 	ids?: string[];
 	icon?: string;
+	uploadCounts?: { [key: string]: number };
 };
 
 export enum ToastAction {
@@ -64,6 +65,7 @@ export enum ToastAction {
 	Archive 		 = 7,
 	Widget			 = 8,
 	Restore			 = 9,
+	Upload			 = 10,
 };
 
 export interface Option {
@@ -304,6 +306,7 @@ export interface SearchSubscribeParam {
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	ignoreArchived: boolean;
+	ignoreChat: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
 	crossSpace: boolean;

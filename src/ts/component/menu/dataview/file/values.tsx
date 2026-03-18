@@ -118,6 +118,10 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 						};
 
 						case 'download': {
+							if (S.Common.isDownloading(item.id)) {
+								break;
+							};
+
 							let url = '';
 							switch (item.layout) {
 								default: {
@@ -132,7 +136,14 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 							};
 
 							if (url) {
-								Renderer.send('download', url, { saveAs: true });
+								S.Common.downloadStart(item.id);
+
+								const promise = Renderer.send('download', url, { saveAs: true });
+								if (promise && promise.then) {
+									promise.then(() => S.Common.downloadDone(item.id));
+								} else {
+									S.Common.downloadDone(item.id);
+								};
 							};
 							break;
 						};
@@ -162,7 +173,11 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	
 	const File = (item: any) => (
 		<>
-			<IconObject object={item} />
+			{S.Common.isDownloading(item.id) ? (
+				<Icon className="downloading" />
+			) : (
+				<IconObject object={item} />
+			)}
 			<ObjectName object={item} />
 		</>
 	);
@@ -214,7 +229,8 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				{canEdit ? <Icon className="dnd" /> : ''}
 				<div
 					className="clickable"
-					onClick={e => U.Object.openEvent(e, item)}
+					onClick={e => U.Object.openEvent(e, item)} 
+					onAuxClick={e => U.Object.openEvent(e, item)}
 					onContextMenu={e => onMore(e, item)}
 				>
 					{content}

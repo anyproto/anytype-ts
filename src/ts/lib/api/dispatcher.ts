@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observable, set } from 'mobx';
+import { observable, set, runInAction } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
@@ -47,6 +47,10 @@ class Dispatcher {
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
+	eventBuffer: { event: Events.Event, skipDebug: boolean }[] = [];
+	flushScheduled = false;
+	rafId = 0;
+	flushTimerId = 0;
 
 	/**
 	 * Initialize the gRPC client with the middleware server address.
@@ -88,10 +92,16 @@ class Dispatcher {
 		this.stream = this.service.listenSessionEvents(request, null);
 
 		this.stream.on('data', (event) => {
-			try {
-				this.event(event, false, false);
-			} catch (e) {
-				console.error(e);
+			this.eventBuffer.push({ event, skipDebug: false });
+
+			if (!this.flushScheduled) {
+				this.flushScheduled = true;
+
+				if (S.Common.isActiveTab) {
+					this.rafId = requestAnimationFrame(() => this.flushEvents());
+				} else {
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+				};
 			};
 		});
 
@@ -113,6 +123,19 @@ class Dispatcher {
 	 * Cancels the stream and clears the reference.
 	 */
 	stopStream () {
+		window.clearTimeout(this.timeoutStream);
+		this.reconnects = 0;
+
+		if (this.rafId) {
+			cancelAnimationFrame(this.rafId);
+		};
+
+		if (this.flushTimerId) {
+			window.clearTimeout(this.flushTimerId);
+		};
+
+		this.flushEvents();
+
 		if (this.stream) {
 			this.stream.cancel();
 			this.stream = null;
@@ -135,10 +158,38 @@ class Dispatcher {
 		};
 
 		window.clearTimeout(this.timeoutStream);
-		this.timeoutStream = window.setTimeout(() => { 
-			this.startStream(); 
+		this.timeoutStream = window.setTimeout(() => {
+			this.startStream();
 			this.reconnects++;
 		}, t * 1000);
+	};
+
+	/**
+	 * Flush all buffered stream events in a single MobX transaction.
+	 * Events arriving within one animation frame are processed together,
+	 * so MobX reactions fire only once at the end of the batch.
+	 */
+	flushEvents () {
+		this.flushScheduled = false;
+		this.rafId = 0;
+		this.flushTimerId = 0;
+
+		const buffer = this.eventBuffer;
+		this.eventBuffer = [];
+
+		if (!buffer.length) {
+			return;
+		};
+
+		runInAction(() => {
+			for (const item of buffer) {
+				try {
+					this.event(item.event, false, item.skipDebug);
+				} catch (e) {
+					console.error(e);
+				};
+			};
+		});
 	};
 
 	/**
@@ -182,6 +233,7 @@ class Dispatcher {
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
+		runInAction(() => {
 		for (const message of messages) {
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
@@ -699,13 +751,19 @@ class Dispatcher {
 
 									if (idx >= 0) {
 										if (key.id == 'relation') {
-											const updateKeys = [];
+											const updateKeys = [ 'isVisible' ];
 
 											for (const f of updateKeys) {
 												if (list[idx][f] != item[f]) {
 													updateData = true;
 													break;
 												};
+											};
+
+											// Preserve existing custom width if update doesn't specify one
+											// (protobuf3 defaults unset int fields to 0)
+											if (!item.width) {
+												item.width = list[idx]?.width || 0;
 											};
 										};
 
@@ -1071,6 +1129,14 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateReactionReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach(subId => {
+						S.Chat.setReadReactionStatus(subId, mapped.ids, mapped.isRead);
+					});
+					break;
+				};
+
 				case 'ChatDelete': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
@@ -1081,14 +1147,71 @@ class Dispatcher {
 
 				case 'ChatUpdateReactions': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+
+					let oldReactions: I.ChatMessageReaction[] = [];
+					let notificationMessage: I.ChatMessage = null;
+
 					mapped.subIds.forEach((subId) => {
 						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
+							if (!notificationMessage) {
+								oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
+								notificationMessage = message;
+							};
 							set(message, { reactions: mapped.reactions });
 						};
 					});
 
-					$(window).trigger('reactionUpdate', [ message ]);
+					// Send OS notification for new reactions in 1:1 spaces
+					if (
+						notificationMessage &&
+						spaceview?.isOneToOne &&
+						!windowIsFocused &&
+						S.Common.isActiveTab &&
+						(notificationMessage.creator == account.id)
+					) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+
+						if (notificationMode != I.NotificationMode.Nothing) {
+							// Find newly added reactions by diffing old and new
+							const newReactions = mapped.reactions as I.ChatMessageReaction[];
+							const addedEmojis: { icon: string; author: string }[] = [];
+
+							for (const nr of newReactions) {
+								const old = oldReactions.find(r => r.icon == nr.icon);
+								const oldAuthors = old ? old.authors : [];
+
+								for (const author of nr.authors) {
+									if ((author != account.id) && !oldAuthors.includes(author)) {
+										addedEmojis.push({ icon: nr.icon, author });
+									};
+								};
+							};
+
+							if (addedEmojis.length) {
+								const { icon, author } = addedEmojis[0];
+								const participantId = U.Space.getParticipantId(spaceId, author);
+								const participant = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), participantId);
+								const authorName = participant && !participant._empty_ ? U.Object.name(participant) : '';
+								const messagePreview = S.Chat.getMessageSimpleText(spaceId, notificationMessage, false);
+
+								if (authorName) {
+									const title = U.String.shorten(spaceview.name, 32);
+									const text = `${icon} to ${U.String.shorten(messagePreview, 48)}`;
+
+									Renderer.send('notification', {
+										id: mapped.id,
+										title,
+										text,
+										cmd: 'openChat',
+										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+									});
+								};
+							};
+						};
+					};
+
+					$(window).trigger('reactionUpdate', [ notificationMessage ]);
 					break;
 				};
 
@@ -1174,18 +1297,33 @@ class Dispatcher {
 				log(rootId, type, spaceId, data, message.getValueCase());
 			};
 		};
+		});
 
 		window.setTimeout(() => {
-			if (updateParents) {
-				S.Block.updateStructureParents(rootId);
-			};
+			if (S.Common.isActiveTab) {
+				if (updateParents) {
+					S.Block.updateStructureParents(rootId);
+				};
 
-			if (updateNumbers) {
-				S.Block.updateNumbers(rootId);
-			};
+				if (updateNumbers) {
+					S.Block.updateNumbers(rootId);
+				};
 
-			if (updateMarkup) {
-				S.Block.updateMarkup(rootId);
+				if (updateMarkup) {
+					S.Block.updateMarkup(rootId);
+				};
+			} else {
+				if (updateParents) {
+					S.Block.deferredParentUpdates.add(rootId);
+				};
+
+				if (updateNumbers) {
+					S.Block.deferredNumberUpdates.add(rootId);
+				};
+
+				if (updateMarkup) {
+					S.Block.deferredMarkupUpdates.add(rootId);
+				};
 			};
 		});
 	};
@@ -1260,8 +1398,9 @@ class Dispatcher {
 
 			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger('updateDataviewData');
 			};
+
+			$(window).trigger('updateDataviewData');
 		};
 	};
 
@@ -1457,7 +1596,7 @@ class Dispatcher {
 					if (!SKIP_ERRORS.includes(type)) {
 						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
+						//Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 
@@ -1471,7 +1610,7 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					this.event(message.event, true, true);
+					runInAction(() => this.event(message.event, true, true));
 				};
 
 				const middleTime = Math.ceil(t1 - t0);
@@ -1509,7 +1648,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugRequest = config.flagsMw.request;
 		const debugSubscribe = config.flagsMw.subscribe;
-		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds' ];
+		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds', 'ObjectCrossSpaceSearchSubscribe' ];
 
 		if (debugSubscribe && subscribeCommands.includes(type)) {
 			return true;

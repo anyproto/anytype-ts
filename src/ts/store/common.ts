@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
+import { setReactionsPaused } from 'Lib/reactionScheduler';
 
 interface Filter {
 	from: number;
@@ -47,7 +48,6 @@ class CommonStore {
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
-	public analyticsDeviceIdValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -66,9 +66,9 @@ class CommonStore {
 	public isActiveTab = true;
 	public windowIsFocused = true;
 	public routeParam: any = {};
-	public openObjectIds: Map<string, Set<string>> = new Map();
 	public isPinnedValue = false;
 	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+	public downloadingIdsValue: Set<string> = new Set();
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -159,9 +159,10 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
-			analyticsDeviceIdValue: observable,
+			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
+			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
 			preview: computed,
@@ -180,7 +181,6 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
-			analyticsDeviceId: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -211,13 +211,15 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
-			analyticsDeviceIdSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			isActiveTabSet: action,
 			isPinnedSet: action,
 			singleTabSet: action,
 			autoDownloadSet: action,
+			downloadStart: action,
+			downloadDone: action,
 		});
 	};
 
@@ -312,23 +314,27 @@ class CommonStore {
 		return ret;
 	};
 
-	get analyticsDeviceId (): boolean {
-		let ret = this.analyticsDeviceIdValue;
-		if (ret === null) {
-			ret = Storage.get('analyticsDeviceId');
-		};
-		if (ret === undefined) {
-			ret = true;
-		};
-		return ret;
-	};
-
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
 	};
 
-	get autoDownload (): boolean {
-		return this.boolGet('autoDownload');
+	get autoDownload (): number {
+		let ret = this.autoDownloadValue;
+
+		if (ret === null) {
+			ret = Storage.get('autoDownload');
+
+			// Migration: old boolean → new number
+			if (ret === true) {
+				ret = 20;
+			} else
+			if ((ret === false) || (ret === undefined)) {
+				ret = -1;
+			};
+		};
+
+		const n = Number(ret);
+		return isNaN(n) ? -1 : n;
 	};
 
 	get chatCmdSend (): boolean {
@@ -691,10 +697,6 @@ class CommonStore {
 		this.boolSet('fullscreenObject', v);
 	};
 
-	analyticsDeviceIdSet (v: boolean) {
-		this.boolSet('analyticsDeviceId', v);
-	};
-
 	/**
 	 * Sets the hide sidebar value.
 	 * @param {boolean} v - The hide sidebar value.
@@ -703,8 +705,23 @@ class CommonStore {
 		this.boolSet('hideSidebar', v);
 	};
 
-	autoDownloadSet (v: boolean) {
-		this.boolSet('autoDownload', v);
+	autoDownloadSet (v: number) {
+		const n = Number(v);
+		v = isNaN(n) ? -1 : n;
+		this.autoDownloadValue = v;
+		Storage.set('autoDownload', v);
+	};
+
+	downloadStart (id: string) {
+		this.downloadingIdsValue.add(id);
+	};
+
+	downloadDone (id: string) {
+		this.downloadingIdsValue.delete(id);
+	};
+
+	isDownloading (id: string): boolean {
+		return this.downloadingIdsValue.has(id);
 	};
 
 	/**
@@ -795,7 +812,7 @@ class CommonStore {
 	redirectSet (v: string) {
 		const param = U.Router.getParam(v);
 
-		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+		if (param.page == 'auth') {
 			return;
 		};
 
@@ -819,6 +836,14 @@ class CommonStore {
 		if (id && ref) {
 			this.refs.set(id, ref);
 		};
+	};
+
+	/**
+	 * Removes a reference by ID.
+	 * @param {string} id - The reference ID.
+	 */
+	refDelete (id: string) {
+		this.refs.delete(id);
 	};
 
 	/**
@@ -1046,6 +1071,13 @@ class CommonStore {
 	 */
 	isActiveTabSet (v: boolean) {
 		this.isActiveTab = v;
+
+		if (v) {
+			S.Block.flushDeferredUpdates();
+			setReactionsPaused(false);
+		} else {
+			setReactionsPaused(true);
+		};
 	};
 
 	/**
@@ -1054,7 +1086,7 @@ class CommonStore {
 	 * @returns {I.GraphSettings} The graph settings.
 	 */
 	getGraph (key: string): I.GraphSettings {
-		const stored = Storage.get(key);
+		const stored = U.Common.objectCopy(Storage.get(key));
 		const def = U.Common.objectCopy(this.graphObj);
 		const result = Object.assign(def, stored);
 

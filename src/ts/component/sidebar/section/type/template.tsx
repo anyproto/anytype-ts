@@ -29,13 +29,13 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 				return;
 			};
 
-			U.Object.openConfig(null, message.details);
+			U.Object.openPopup(message.details);
 			analytics.event('CreateTemplate', { objectType: rootId });
 		});
 	};
 
 	const onClick = (e: any, item: any) => {
-		U.Object.openConfig(e, item, {
+		U.Object.openPopup(item, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});
 	};
@@ -73,7 +73,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 					templateId,
 					noToast: true,
 					route: '',
-					onDuplicate: object => U.Object.openConfig(null, object, {}),
+					onDuplicate: object => U.Object.openPopup(object),
 					onSetDefault: id => onChange({ defaultTemplateId: id }),
 				},
 			});

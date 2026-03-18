@@ -364,7 +364,7 @@
             .label { display: inline; }
             .label.extend { color: var(--color-red); }
         }
-        .icon {
+        .side.left > .icon {
             width: 44px; height: 44px; border-radius: 5px;
             background-position: 50% 50%; background-repeat: no-repeat; background-size: 24px; background-color: var(--color-shape-highlight-medium);
         }

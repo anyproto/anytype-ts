@@ -49,6 +49,7 @@
 		.info.hasUnread {
 			.label.lastMessage, .label.chatName { color: var(--color-text-primary); }
 		}
+		.nameWrapper { color: var(--color-text-primary); }
 
 		&.noMessages {
 			.info { flex-direction: row; }

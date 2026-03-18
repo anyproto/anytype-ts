@@ -8,7 +8,7 @@ import { I, S, U, J, Relation, keyboard } from 'Lib';
 
 const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
-	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam } = props;
+	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam, viewType } = props;
 	const entryRef = useRef(null);
 	const listRef = useRef(null);
 	const placeholderRef = useRef(null);
@@ -137,7 +137,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${id}`);
+		const cell = $(`#${U.Common.esc(id)}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
 		if (content.length) {
@@ -263,6 +263,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 									className={Relation.selectClassName(relation.format)}
 									onClick={e => onClick(e, item.id)}
 									onRemove={() => onValueRemove(item.id)}
+									isSmall={viewType != I.ViewType.Grid}
 								/>
 							</span>
 						))}
@@ -307,6 +308,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 							className={Relation.selectClassName(relation.format)}
 							onClick={e => onClick(e, item.id)}
 							onContextMenu={e => onContextMenu(e, item)}
+							isSmall={viewType != I.ViewType.Grid}
 						/>
 					))}
 					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
@@ -316,7 +318,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${id}`).toggleClass('isEditing', isEditing);
+		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
 
 		if (isEditing) {
 			placeholderCheck();

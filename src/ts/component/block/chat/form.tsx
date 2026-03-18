@@ -23,6 +23,7 @@ interface Props extends I.BlockComponent {
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
 	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
+	reloadAndScrollToBottom: () => void;
 };
 
 interface RefProps {
@@ -44,9 +45,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages, 
-		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
-		highlightMessage, analyticsChatId,
+		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
+		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
+		highlightMessage, analyticsChatId, reloadAndScrollToBottom,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);
@@ -65,7 +66,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
 	const counters = S.Chat.getState(subId);
-	const mentionCounter = counters.mentionCounter;
+	const { mentionCounter, reactionCounter } = counters;
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
@@ -178,30 +179,33 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
+		const hasMenu = S.Menu.isOpen('blockEmoji') || S.Menu.isOpen('blockMention');
 
 		let value = getTextValue();
 
-		if (chatCmdSend) {
-			keyboard.shortcut(`${cmd}+enter`, e, () => {
-				e.preventDefault();
-				onSend();
-			});
-		} else {
-			keyboard.shortcut(`enter`, e, () => {
-				e.preventDefault();
-				onSend();
-			});
+		if (!hasMenu) {
+			if (chatCmdSend) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					e.preventDefault();
+					onSend();
+				});
+			} else {
+				keyboard.shortcut(`enter`, e, () => {
+					e.preventDefault();
+					onSend();
+				});
 
-			keyboard.shortcut(`${cmd}+enter`, e, () => {
-				e.preventDefault();
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					e.preventDefault();
 
-				if (!value.match(/\r?\n$/)) {
-					value += '\n';
-				};
+					if (!value.match(/\r?\n$/)) {
+						value += '\n';
+					};
 
-				insert('\n', value);
-				scrollToBottom();
-			});
+					insert('\n', value);
+					scrollToBottom();
+				});
+			};
 		};
 
 		keyboard.shortcut('arrowup', e, () => {
@@ -444,8 +448,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			content: res,
 		});
 
-		U.Common.clipboardCopy({ 
-			text: str, 
+		U.Common.clipboardCopy({
+			text: str,
+			html: Mark.toHtml(res.text, res.marks),
 			anytype: {
 				range,
 				blocks: [ block ],
@@ -574,8 +579,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const checkUrls = () => {
 		let text = getTextValue();
-		const urls = U.String.getUrlsFromText(text);
 
+		const urls = U.String.getUrlsFromText(text);
 		if (!urls.length) {
 			return;
 		};
@@ -593,12 +598,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let value = U.String.urlFix(url.value || '');
 			let type = I.MarkType.Link;
+			let fromAnotherSpace = false;
 
 			const route = U.Common.getRouteFromUrl(value);
 			if (route) {
 				const routeParam = U.Router.getParam(route);
 
-				if (routeParam.action == 'object') {
+				if (routeParam.spaceId != space) {
+					fromAnotherSpace = true;
+				};
+
+				if ((routeParam.action == 'object') && (routeParam.spaceId == space)) {
 					value = `${J.Constant.protocol}://${route}`;
 					type = I.MarkType.Object;
 				};
@@ -623,7 +633,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			setMarks(marks.current);
 
-			if (isUrl) {
+			if (isUrl && !fromAnotherSpace) {
 				addBookmark(value, true);
 			};
 		};
@@ -838,44 +848,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		saveState([ ...attachments, ...list ]);
 		historySaveState();
-
-		/*
-		let cnt = 0;
-
-		const preloadIds = new Map<string, string>();
-		const cb = () => {
-			cnt++;
-			if (cnt == list.length) {
-				preloadIds.forEach((preloadId, itemId) => {
-					const item = list.find(it => it.id == itemId);
-
-					if (item) {
-						item.preloadId = preloadId;
-					};
-				});
-
-				saveState([ ...attachments, ...list ]);
-				historySaveState();
-			};
-		};
-
-		list.forEach(item => {
-			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
-				preloadFile(item, (preloadId: string) => {
-					if (preloadId) {
-						preloadIds.set(item.id, preloadId);
-					};
-					cb();
-				});
-			} else {
-				cb()
-			};
-		});
-		*/
-	};
-
-	const preloadFile = (item: any, callBack: (preloadId: string) => void) => {
-		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', 0, rootId, '', (message: any) => callBack(message.preloadFileId));
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -1019,7 +991,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				C.ChatAddMessage(rootId, message, () => {
-					scrollToBottom();
+					reloadAndScrollToBottom();
 					clear();
 
 					analytics.event('SentMessage', { type: messageType, chatId: analyticsChatId});
@@ -1302,11 +1274,33 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					scrollToMessage(target.id, true, true);
 				} else {
 					loadMessagesByOrderId(mentionOrderId, () => {
-						highlightMessage('', mentionOrderId);
+						const loaded = S.Chat.getMessageByOrderId(subId, mentionOrderId);
+						if (loaded) {
+							scrollToMessage(loaded.id, true, true);
+						};
 					});
 				};
 
 				analytics.event('ClickScrollToMention', { chatId: analyticsChatId });
+				break;
+			};
+
+			case I.ChatReadType.Reaction: {
+				const { reactionOrderId } = S.Chat.getState(subId);
+				const target = S.Chat.getMessageByOrderId(subId, reactionOrderId);
+
+				if (target) {
+					scrollToMessage(target.id, true, true);
+				} else {
+					loadMessagesByOrderId(reactionOrderId, () => {
+						const loaded = S.Chat.getMessageByOrderId(subId, reactionOrderId);
+						if (loaded) {
+							scrollToMessage(loaded.id, true, true);
+						};
+					});
+				};
+
+				analytics.event('ClickScrollToReaction', { chatId: analyticsChatId });
 				break;
 			};
 		};
@@ -1539,9 +1533,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current ||
 			v.trim().length ||
-			attachments.length || 
+			attachments.length ||
 			marks.current.length
 		);
 	};
@@ -1902,6 +1895,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="inner">
 				{!isEmpty ? (
 					<div className="navigation">
+						{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
 						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Title, Label, Button, Icon, Switch } from 'Component';
+import { Title, Label, Button, Icon, Select } from 'Component';
 import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -9,6 +9,15 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 	const { localUsage } = spaceStorage;
 	const isLocalNetwork = U.Data.isLocalNetwork();
 	const suffix = isLocalNetwork ? 'LocalOnly' : '';
+	const MiB = 1048576;
+	const autoDownloadOptions = [
+		{ id: '-1', name: translate('commonOff') },
+		{ id: '20', name: U.File.size(20 * MiB) },
+		{ id: '100', name: U.File.size(100 * MiB) },
+		{ id: '250', name: U.File.size(250 * MiB) },
+		{ id: '1024', name: U.File.size(1024 * MiB) },
+		{ id: '0', name: translate('commonUnlimited') },
+	];
 
 	const onOffload = (e: any) => {
 		analytics.event('ScreenFileOffloadWarning');
@@ -78,13 +87,18 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 						</div>
 					</div>
 					<div className="side right">
-						<Switch
-							className="big"
-							value={autoDownload}
-							onChange={(e: any, v: boolean) => {
-								S.Common.autoDownloadSet(v);
-								C.FileSetAutoDownload(v, false);
+						<Select
+							id="autoDownloadLimit"
+							value={String(autoDownload)}
+							options={autoDownloadOptions}
+							onChange={v => {
+								const num = Number(v);
+
+								S.Common.autoDownloadSet(num);
+								U.Common.applyAutoDownload(num);
 							}}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
 					</div>
 				</div>

@@ -16,12 +16,14 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		};
 
 		const object = getObject();
-		const filters = [].concat(view.filters).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId: object.id }));
+		const filters = Dataview.getActiveFilters(view).concat(U.Data.getGraphFilters()).map(it => Dataview.filterMapper(it, { rootId: object.id }));
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const settings = S.Common.getGraph(J.Constant.graphId.dataview);
 
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, settings.typeEdges, (message: any) => {
-			setData(U.Data.getGraphData(message));
+			if (!message.error.code) {
+				setData(U.Data.getGraphData(message));
+			};
 		});
 	};
 

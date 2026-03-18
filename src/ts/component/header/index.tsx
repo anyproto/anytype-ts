@@ -6,6 +6,7 @@ import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
+import HeaderAuthLogout from './auth/logout';
 import HeaderMainObject from './main/object';
 import HeaderMainChat from './main/chat';
 import HeaderMainHistory from './main/history';
@@ -22,6 +23,7 @@ interface Props extends I.HeaderComponent {
 
 const Components = {
 	authIndex:			 HeaderAuthIndex,
+	authLogout:			 HeaderAuthLogout,
 	mainObject:			 HeaderMainObject,
 	mainChat:			 HeaderMainChat,
 	mainHistory:		 HeaderMainHistory,

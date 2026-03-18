@@ -9,8 +9,8 @@
 }
 
 html.themeDark {
-	--color-text-primary: #f8f8f8;
-	--color-text-secondary: #ababab;
+	--color-text-primary: #e1e1e1;
+	--color-text-secondary: #a3a3a3;
 	--color-bg-primary: #171717;
 	--color-shape-primary: #313131;
 	--color-shape-tertiary: #232323;
@@ -90,7 +90,7 @@ body.platform-win32.showMenuBar {
 #tabs::-webkit-scrollbar { display: none; }
 #tabs {
 	.tab {
-		padding: 8px 8px 8px 12px; cursor: default; min-width: 80px; max-width: 204px; flex: 1 1 204px;
+		padding: 8px 8px 8px 12px; cursor: default; min-width: 36px; max-width: 204px; flex: 1 1 204px;
 		color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; position: relative; z-index: 2;
 		transition: color 0.1s ease-in-out; -webkit-app-region: no-drag;
 	}

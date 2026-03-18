@@ -23,6 +23,7 @@ const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 const maxClusterRadius = 500;
+const timelineDuration = 15000;
 
 const Layout = {
 	Human:		 1,
@@ -106,7 +107,7 @@ let timelineLastTick = 0;
 let timelineVisibleNodeIds = null;
 let timelineAllNodes = null;
 let timelineAllEdges = null;
-const TIMELINE_DURATION = 15000;
+
 
 // PixiJS objects
 let app = null;
@@ -251,9 +252,14 @@ initPixi = async () => {
 		resolution: 1,
 		autoDensity: false,
 		preference: 'webgl',
-		powerPreference: 'high-performance',
+		powerPreference: 'default',
+		autoStart: false,
+		sharedTicker: false,
 		hello: false, // Disable console hello message
 	});
+
+	// Stop the PixiJS ticker - we render manually via requestAnimationFrame
+	app.ticker.stop();
 
 	// Create render containers with optimized settings
 	edgesGraphics = new PIXI.Graphics();
@@ -319,6 +325,7 @@ image = ({ src, bitmap }) => {
 		if (app && app.renderer) {
 			const texture = PIXI.Texture.from(bitmap);
 			images[src + '_texture'] = texture;
+			redraw();
 		};
 	};
 };
@@ -987,7 +994,7 @@ draw = (t) => {
 		const now = performance.now();
 
 		if (timelinePlaying) {
-			const delta = (now - timelineLastTick) / TIMELINE_DURATION * timelineSpeed;
+			const delta = (now - timelineLastTick) / timelineDuration * timelineSpeed;
 			timelinePosition = Math.min(1, timelinePosition + delta);
 
 			if (timelinePosition >= 1) {
@@ -1375,7 +1382,7 @@ drawNode = (d) => {
 		const labelScale = 1 / transform.k;
 		label.scale.set(labelScale);
 		label.position.set(d.x, d.y + radius + 4 / transform.k);
-		label.style.fill = io || isSelected ? (isSelected ? parseColor(data.colors.selected) : parseColor(data.colors.highlight)) : parseColor(data.colors.text);
+		label.style.fill = io || isSelected ? (isSelected ? parseColor(data.colors.selected) : parseColor(data.colors.highlight)) : parseColor(d.isMuted ? data.colors.muted : data.colors.text);
 		label.text = d.shortName || '';
 		label.visible = true;
 		label.alpha = alpha;
@@ -1482,9 +1489,18 @@ onDragToSelectEnd = () => {
  * Handles the start of a drag event.
  * @param {Object} param - Drag event data.
  */
-onDragStart = ({ active }) => {
+onDragStart = ({ active, subjectId }) => {
 	if (!active) {
 		restart(0.3);
+	};
+
+	// Pin the dragged node immediately so it doesn't float away
+	if (subjectId) {
+		const d = getNodeById(subjectId);
+		if (d) {
+			d.fx = d.x;
+			d.fy = d.y;
+		};
 	};
 };
 
@@ -1516,9 +1532,18 @@ onDragMove = ({ subjectId, x, y }) => {
  * Handles the end of a drag event.
  * @param {Object} param - Drag end data.
  */
-onDragEnd = ({ active }) => {
+onDragEnd = ({ active, subjectId }) => {
 	if (!active) {
 		simulation.alphaTarget(0);
+	};
+
+	// Release the pinned node so it rejoins the simulation
+	if (subjectId) {
+		const d = getNodeById(subjectId);
+		if (d) {
+			d.fx = null;
+			d.fy = null;
+		};
 	};
 };
 

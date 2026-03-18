@@ -127,6 +127,16 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
+			if (id == 'spaceIndexEmpty') {
+				const dataLeft = sidebar.getData(I.SidebarPanel.Left);
+				const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
+
+				if ((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed) {
+					sidebar.rightPanelClose(isPopup, false);
+					return;
+				};
+			};
+
 			sidebar.leftPanelSubPageOpen(page, false, false);
 		};
 

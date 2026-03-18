@@ -326,7 +326,7 @@ class Util {
 			'[Desktop Entry]',
 			'Name=Anytype',
 			'Comment=Project management and knowledge workspace',
-			`Exec="${execPath}" %u`,
+			`Exec="${execPath}" --ozone-platform-hint=auto %u`,
 			'Terminal=false',
 			'Type=Application',
 			'Icon=anytype',
@@ -336,22 +336,38 @@ class Util {
 			'MimeType=x-scheme-handler/anytype;',
 		].join('\n');
 
-		try {
-			if (!fs.existsSync(desktopFilePath)) {
-				fs.mkdirSync(applicationsDir, { recursive: true });
-				fs.writeFileSync(desktopFilePath, content, 'utf-8');
+		const xwaylandContent = [
+			'[Desktop Entry]',
+			'Name=Anytype (XWayland)',
+			'Comment=Project management and knowledge workspace (XWayland mode)',
+			`Exec="${execPath}" --ozone-platform=x11 %u`,
+			'Terminal=false',
+			'Type=Application',
+			'Icon=anytype',
+			'Categories=Utility;Office;Calendar;ProjectManagement;',
+			'StartupWMClass=anytype',
+			'Keywords=project management;',
+			'MimeType=x-scheme-handler/anytype;',
+			'NoDisplay=true',
+		].join('\n');
 
-				execFile('update-desktop-database', [ applicationsDir ], (err) => {
-					if (err) {
-						this.log('info', `update-desktop-database failed: ${err.message}`);
-					};
-				});
+		const xwaylandFilePath = path.join(applicationsDir, 'anytype-xwayland.desktop');
+
+		try {
+			fs.mkdirSync(applicationsDir, { recursive: true });
+
+			if (!fs.existsSync(desktopFilePath)) {
+				fs.writeFileSync(desktopFilePath, content, 'utf-8');
 
 				execFile('xdg-mime', [ 'default', 'anytype.desktop', 'x-scheme-handler/anytype' ], (err) => {
 					if (err) {
 						this.log('info', `xdg-mime default failed: ${err.message}`);
 					};
 				});
+			};
+
+			if (!fs.existsSync(xwaylandFilePath)) {
+				fs.writeFileSync(xwaylandFilePath, xwaylandContent, 'utf-8');
 			};
 		} catch (e) {
 			this.log('info', `registerLinuxProtocolHandler failed: ${e.message}`);

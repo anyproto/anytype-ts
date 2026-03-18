@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { Icon } from 'Component';
-import { U, S, translate, Action, analytics } from 'Lib';
+import { I, U, S, translate, Action, analytics } from 'Lib';
 
 interface Props {
 	object: any;
@@ -30,6 +30,16 @@ const ObjectName: FC<Props> = ({
 	object = object || {};
 
 	const { layout, snippet, isDeleted, globalName } = object;
+	const cn = [ className ];
+
+	if (U.Object.isChatLayout(layout)) {
+		const spaceview = U.Space.getSpaceview();
+		const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
+
+		if (chatMode == I.NotificationMode.Nothing) {
+			cn.push('isMuted');
+		};
+	};
 
 	let name = String(object.name || '');
 	let empty = null;
@@ -92,8 +102,8 @@ const ObjectName: FC<Props> = ({
 	};
 
 	return (
-		<div 
-			className={className} 
+		<div
+			className={cn.join(' ')}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseEnter={onMouseEnter} 

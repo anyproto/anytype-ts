@@ -28,6 +28,12 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		$(`#${getId()}`).off('click');
 	};
 
+	const beforePosition = () => {
+		const obj = $(`#${getId()}`);
+
+		obj.toggleClass('withFilter', !noFilter);
+	};
+
 	const onKeyDownHandler = (e: any) => {
 		if (keyboard.isComposition) {
 			return;
@@ -103,6 +109,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		getListRef: () => optionSelectRef.current?.getListRef(),
 		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
 		onSortEnd: (result: any) => optionSelectRef.current?.onSortEnd?.(result),
+		beforePosition,
 	}), []);
 
 	return (

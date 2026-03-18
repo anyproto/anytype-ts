@@ -124,6 +124,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const hasMoreRef = useRef(true);
 	const timeoutFilterRef = useRef(0);
 	const objectFilterRef = useRef('');
+	const initialValueRef = useRef<string[]>([...value]);
 
 	const isObjectMode = !!searchParam;
 
@@ -236,6 +237,14 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 	};
 
+	const sortByInitialValue = (items: SelectItem[]): SelectItem[] => {
+		const iv = initialValueRef.current;
+		return [
+			...items.filter(it => iv.includes(it.id)),
+			...items.filter(it => !iv.includes(it.id)),
+		];
+	};
+
 	const getObjectItems = (): SelectItem[] => {
 		if (!searchParam) {
 			return [];
@@ -264,6 +273,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					});
 				};
 			};
+		} else {
+			items = sortByInitialValue(items);
 		};
 
 		return items.concat(ret);
@@ -297,6 +308,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					name: U.String.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), filter),
 				});
 			};
+		} else {
+			items = sortByInitialValue(items);
 		};
 
 		return items.concat(ret);
@@ -723,7 +736,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect && isSelected ? <Icon className="chk" /> : ''}
+					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -768,7 +781,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			>
 				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon className={isSelected ? 'chk' : 'chk empty'} /> : ''}
+					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />

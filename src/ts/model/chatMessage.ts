@@ -65,6 +65,7 @@ class ChatMessage implements I.ChatMessage {
 	isLast = false;
 	isReadMessage = false;
 	isReadMention = false;
+	isReadReaction = false;
 	hasMention = false;
 	isSynced = false;
 	isPinned = false;
@@ -86,6 +87,7 @@ class ChatMessage implements I.ChatMessage {
 		this.isLast = Boolean(props.isLast);
 		this.isReadMessage = Boolean(props.isReadMessage);
 		this.isReadMention = Boolean(props.isReadMention);
+		this.isReadReaction = Boolean(props.isReadReaction);
 		this.hasMention = Boolean(props.hasMention);
 		this.isSynced = Boolean(props.isSynced);
 		this.isPinned = Boolean(props.isPinned);
@@ -113,6 +115,7 @@ class ChatMessage implements I.ChatMessage {
 			reactions: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
+			isReadReaction: observable,
 			hasMention: observable,
 			isSynced: observable,
 			isPinned: observable,

@@ -36,7 +36,9 @@ class UtilSpace {
 		S.Common.setLeftSidebarState('vault', 'widget');
 
 		const dataLeft = sidebar.getData(I.SidebarPanel.Left);
-		if (!(dataLeft.isClosed && dataLeft.savedClosed)) {
+		const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
+
+		if (!S.Common.hideSidebar && !((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
 			sidebar.leftPanelSubPageOpen('widget', false, false);
 		};
 	};

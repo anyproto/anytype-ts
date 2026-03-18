@@ -116,7 +116,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			if (v) {
 				values.filterTypes = values.filterTypes.filter(it => it != id);
 			} else {
-				values.filterTypes.push(id);
+				values.filterTypes = [ ...values.filterTypes, id ];
 			};
 
 			save(values);

@@ -185,11 +185,10 @@ class MenuStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 
-		const filtered = this.menuList.filter(it => it.id != id);
-		U.Data.updateTabsDimmer(null, filtered);
+		U.Data.updateTabsDimmer(null, this.menuList.filter(it => it.id != id));
 
 		const onTimeout = () => {
-			this.menuList = filtered;
+			this.menuList = this.menuList.filter(it => it.id != id);
 
 			onClose?.();
 			callBack?.();

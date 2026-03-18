@@ -87,8 +87,13 @@ class UtilSubscription {
 		const filters = U.Common.objectCopy(param.filters || []);
 		
 		let skipLayouts = [];
+		let ignoreChat = param.ignoreChat;
 
-		if (spaceview.isChat || spaceview.isOneToOne) {
+		if (undefined === ignoreChat) {
+			ignoreChat = spaceview.isChat || spaceview.isOneToOne;
+		};
+
+		if (ignoreChat) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
@@ -738,6 +743,14 @@ class UtilSubscription {
 	 */
 	destroyAll (callBack?: () => void): void {
 		this.destroyList([ ...this.map.keys() ], true, callBack);
+	};
+
+	/**
+	 * Clears all internal subscription state immediately without making gRPC calls.
+	 */
+	clear (): void {
+		this.map.clear();
+		this.spaceSubIds.clear();
 	};
 
 	/**

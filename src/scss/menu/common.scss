@@ -223,6 +223,9 @@
 
 		.line { height: 1px; margin: 8px 16px 7px 16px; background: var(--color-shape-secondary); }
 		.sectionName { padding: 5px 16px; @include text-small; color: var(--color-text-secondary); font-weight: 500; @include text-overflow-nw; }
+		.sectionName {
+			> .name { @include text-overflow-nw; }
+		}
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after { content: ""; height: 1px; margin: 8px 16px 0px 16px; background: var(--color-shape-secondary); display: block; }
@@ -233,6 +236,12 @@
 		.section > .name:empty { display: none; }
 		.section > .inputWrap { padding-bottom: 0px; }
 		.section.noLine::after { display: none; }
+
+		.section.settingsText {
+			.item.withCaption {
+				.caption { @include text-common; }
+			}
+		}
 
 		.input-drag-horizontal {
 			.back { background-color: var(--color-shape-secondary); }

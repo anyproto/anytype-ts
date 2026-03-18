@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, C, S, U, Relation, keyboard, translate, analytics, Dataview } from 'Lib';
+import { I, C, S, U, Relation, keyboard, translate, analytics, Dataview, J } from 'Lib';
 import { MenuItemVertical, Icon, Label } from 'Component';
 
 const HEIGHT_ITEM = 28;
@@ -56,7 +56,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				relation: S.Record.getRelationByKey(it.relationKey),
 				isFilter: true,
 			};
-		}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+		}).filter(it => {
+		if (Dataview.isAdvancedFilter(it)) {
+			return true;
+		};
+		return it.relation && !it.relation.isArchived && !it.relation.isDeleted;
+	}).sort((a, b) => {
 			const aAdvanced = Dataview.isAdvancedFilter(a);
 			const bAdvanced = Dataview.isAdvancedFilter(b);
 
@@ -114,7 +119,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getName = (item: any): string => {
 		if (Dataview.isAdvancedFilter(item)) {
 			const ruleCount = item.nestedFilters?.length || 1;
-			return `${ruleCount} ${U.Common.plural(ruleCount, translate('pluralRule'))}`;
+			return U.String.sprintf(translate('commonCountRules'), ruleCount, U.Common.plural(ruleCount, translate('pluralRule')));
 		};
 
 		return item.relation?.name || '';
@@ -294,7 +299,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const view = getView();
 		const object = getTarget();
 
-		Dataview.addFilter(rootId, blockId, view.id, filter, () => {
+		Dataview.addFilter(rootId, blockId, view.id, filter, (message: any) => {
 			loadData(view.id, 0, false);
 
 			analytics.event('AddFilter', {
@@ -302,6 +307,10 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				objectType: object.type,
 				embedType: analytics.embedType(isInline),
 			});
+
+			if (message.filterId) {
+				window.setTimeout(() => onClick(null, { ...filter, id: message.filterId }), J.Constant.delay.menu);
+			};
 		});
 	};
 

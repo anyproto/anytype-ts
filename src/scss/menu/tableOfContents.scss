@@ -11,7 +11,7 @@
 			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
 
-			&.active::before { background: var(--color-shape-highlight-medium) !important; }
+			&.isCurrent::before { background: var(--color-shape-highlight-medium) !important; }
 		}
 
 		#item-sidebar { @include text-small; font-weight: 500; color: var(--color-text-secondary); }

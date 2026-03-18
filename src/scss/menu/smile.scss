@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuSmile { width: var(--menu-width-large); user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; padding-bottom: 0px; max-height: unset; height: 404px; }
+		.content { overflow: visible; padding: 12px 0px 0px 0px; max-height: unset; height: 412px; }
 		.wrap { display: flex; flex-direction: column; height: 100%; }
 		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 

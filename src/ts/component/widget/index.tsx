@@ -199,6 +199,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
+		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, cb);
+			return;
+		};
+
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
 				element: `#widget-${U.Common.esc(block.id)} ${param.element}`,
@@ -212,10 +217,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 				U.Menu.onBookmarkMenu(menuParam, cb);
-			} else 
+			} else
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
 				U.Menu.onChatMenu(menuParam, route, cb);
-			}; 
+			};
 			return;
 		};
 
@@ -475,7 +480,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const rootId = getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
-			const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Participant);
+			const layouts = [ I.ObjectLayout.Participant ];
 			const setOf = Relation.getArrayValue(object.setOf);
 			const isCollection = U.Object.isCollectionLayout(object.layout);
 
@@ -572,6 +577,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				subId,
 				allowedNewTab: true,
 				openAfterDuplicate: true,
+				allowedCollection: true,
 			},
 		};
 
@@ -592,8 +598,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const onClickHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		if (e.button) {
+		
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 

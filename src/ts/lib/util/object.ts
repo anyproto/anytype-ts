@@ -190,7 +190,7 @@ class UtilObject {
 		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
-	openRoute (object: any, param?: Partial<I.RouteParam>) {
+	async openRoute (object: any, param?: Partial<I.RouteParam>) {
 		if (!object) {
 			return;
 		};
@@ -203,21 +203,30 @@ class UtilObject {
 			return;
 		};
 
+		const route = this.route(object);
+		const switched = await Renderer.send('switchToTabByRoute', route);
+		if (switched) {
+			return;
+		};
+
 		keyboard.setSource(null);
-		U.Router.go(this.route(object), param);
+		U.Router.go(route, param);
 	};
 
 	openWindow (object: any) {
 		Renderer.send('openWindow', this.route(object), S.Auth.token);
+		analytics.event('OpenNewWindow');
 	};
 
-	openTab (object: any, analyticsRoute?: string) {
+	async openTab (object: any, analyticsRoute?: string) {
 		if (!object) {
 			return;
 		};
 
-		Renderer.send('openTab', this.getTabData(object), { setActive: false });
-		analytics.event('AddTab', { objectType: object.type, route: analyticsRoute });
+		const switched = await Renderer.send('openTab', this.getTabData(object), { setActive: false });
+		if (!switched) {
+			analytics.event('AddTab', { objectType: object.type, route: analyticsRoute });
+		};
 	};
 
 	openTabs (objects: any[], analyticsRoute?: string) {
@@ -253,6 +262,10 @@ class UtilObject {
 
 		if (routes.length) {
 			Renderer.send('openWindows', routes, token);
+
+			for (const _route of routes) {
+				analytics.event('OpenNewWindow');
+			};
 		};
 	};
 
@@ -469,6 +482,10 @@ class UtilObject {
 			param.ignoreHidden = false;
 		};
 
+		if (undefined === param.ignoreChat) {
+			param.ignoreChat = false;
+		};
+
 		U.Subscription.search(param, (message: any) => {
 			callBack?.((message.records || []).filter(it => !it._empty_));
 		});
@@ -572,6 +589,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Image;
 	};
 
+	isVideoOrAudioLayout (layout: I.ObjectLayout): boolean {
+		return [ I.ObjectLayout.Video, I.ObjectLayout.Audio ].includes(layout);
+	};
+
 	isDateLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Date;
 	};
@@ -601,7 +622,7 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(this.getFileLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {

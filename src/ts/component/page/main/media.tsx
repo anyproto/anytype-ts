@@ -109,7 +109,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const onDownload = () => {
 		const block = getBlock();
 		if (block) {
-			Action.downloadFile(block.getTargetObjectId(), analytics.route.media, block.isFileImage());
+			const targetObjectId = block.getTargetObjectId();
+
+			if (S.Common.isDownloading(targetObjectId)) {
+				return;
+			};
+
+			Action.downloadFile(targetObjectId, analytics.route.media, block.isFileImage());
 		};
 	};
 
@@ -237,7 +243,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 								/>
 
 								<div className="buttons">
-									<Button text={translate('commonDownload')} color="blank" className="c36" onClick={onDownload} />
+									<Button
+										text={S.Common.isDownloading(file.getTargetObjectId()) ? translate('commonDownloading') : translate('commonDownload')}
+										icon={S.Common.isDownloading(file.getTargetObjectId()) ? 'downloading' : ''}
+										color="blank"
+										className={[ 'c36', (S.Common.isDownloading(file.getTargetObjectId()) ? 'disabled' : '') ].join(' ')}
+										onClick={onDownload}
+									/>
 								</div>
 							</div>
 

@@ -28,7 +28,7 @@ class Dataview {
 			};
 		};
 
-		relations = U.Common.objectCopy(relations).filter(it => it);
+		relations = U.Common.objectCopy(relations).filter(it => it && !it.isArchived && !it.isDeleted);
 
 		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
@@ -80,9 +80,7 @@ class Dataview {
 	 */
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
-			if (!message.error.code) {
-				this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
-			};
+			this.viewRelationAdd(rootId, blockId, relationKey, index, view, callBack);
 		});
 	};
 
@@ -214,7 +212,18 @@ class Dataview {
 	 * @returns {I.Filter[]} Array of filter objects.
 	 */
 	getActiveFilters (view: I.View): I.Filter[] {
-		return U.Common.objectCopy(view.filters).filter(it => Relation.isFilterActive(it));
+		return U.Common.objectCopy(view.filters).filter(it => {
+			if (!Relation.isFilterActive(it)) {
+				return false;
+			};
+
+			if (it.operator != I.FilterOperator.None) {
+				return true;
+			};
+
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		});
 	};
 
 	/**
@@ -391,7 +400,10 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const filters = view.filters.map(it => this.filterMapper(it, { rootId }));
+		const filters = view.filters.filter(it => {
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		}).map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
@@ -1168,7 +1180,7 @@ class Dataview {
 	 * @param {any} filter - The filter to add.
 	 * @param {function} [callBack] - Optional callback after adding.
 	 */
-	addFilter (rootId: string, blockId: string, viewId: string, filter: any, callBack?: () => void) {
+	addFilter (rootId: string, blockId: string, viewId: string, filter: any, callBack?: (message: any) => void) {
 		Storage.toggleViewFilter(rootId, viewId, true);
 
 		C.BlockDataviewFilterAdd(rootId, blockId, viewId, filter, callBack);

@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Frame, Title, Error, Pin } from 'Component';
+import { Frame, Title, Error, Pin, Header } from 'Component';
 import { I, S, U, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -44,16 +44,19 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	}, []);
 
 	return (
-		<Frame>
-			<Title text={translate('authPinCheckTitle')} />
-			<Pin 
-				ref={pinRef}
-				expectedPin={pin} 
-				onSuccess={onSuccess} 
-				onError={onError} 
-			/>
-			<Error text={error} />
-		</Frame>
+		<>
+			<Header component="authLogout" />
+			<Frame>
+				<Title text={translate('authPinCheckTitle')} />
+				<Pin 
+					ref={pinRef}
+					expectedPin={pin} 
+					onSuccess={onSuccess} 
+					onError={onError} 
+				/>
+				<Error text={error} />
+			</Frame>
+		</>
 	);
 
 }));

@@ -231,7 +231,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${id}`);
+		const cell = $(`#${U.Common.esc(id)}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
 		if (content.length) {
@@ -341,7 +341,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = $(`#${id}`);
+		const cell = $(`#${U.Common.esc(id)}`);
 		const value = getItems();
 
 		if (isEditing) {

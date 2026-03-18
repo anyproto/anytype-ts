@@ -80,7 +80,10 @@ class UtilDate {
 				break;
 			};
 
-			case I.DateFormat.ShortUS: {
+			case I.DateFormat.ShortUS:
+			case I.DateFormat.MonthAbbrBeforeDay:
+			case I.DateFormat.Long:
+			case I.DateFormat.Default: {
 				[ m, d, y ] = String(date || '').split('.');
 				break;
 			};

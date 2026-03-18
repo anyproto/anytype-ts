@@ -14,19 +14,17 @@
             .icon.more { display: none; }
         }
 
-        &.withCheckbox {
-            .clickable { width: calc(100% - 24px); }
+        .icon.checkbox {
+            width: 18px; height: 18px; flex-shrink: 0;
+            background-image: url('~img/icon/menu/checkbox0.svg');
         }
+        .icon.checkbox.active { background-image: url('~img/icon/menu/checkbox1.svg'); }
 
         &:hover, &.hover {
             .clickable { width: calc(100% - 28px); }
             .buttons {
                 .icon.more { display: block; }
             }
-        }
-
-        &.withCheckbox:hover, &.withCheckbox.hover {
-            .clickable { width: calc(100% - 50px); }
         }
 
         &.add {
@@ -42,14 +40,9 @@
         }
     }
 
-    &.canEdit.canSelect {
-        .item {
-            .buttons,
-            .icon.chk { right: 14px; }
-
-            &:hover, &.hover {
-                .icon.chk { right: 40px; }
-            }
+    &:not(.canEdit) {
+        .item:hover, .item.hover {
+            .clickable { width: 100%; }
         }
     }
 }

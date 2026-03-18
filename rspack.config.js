@@ -155,19 +155,120 @@ module.exports = (env, argv) => {
 		].filter(Boolean),
 	};
 
+	// Track compilation hash for ETag-based caching in dev server
+	let appCompilationHash = '';
+
 	// App config: keeps Excalidraw
 	const appConfig = {
 		name: 'app',
 		...base,
 		entry: {
-			app: { 
-				import: './src/ts/entry.tsx', 
+			app: {
+				import: './src/ts/entry.tsx',
 				filename: 'js/main.js',
 			},
 		},
+		output: {
+			path: path.resolve(__dirname, 'dist'),
+			publicPath: process.env.WEBPACK_SERVE ? '/' : './',
+			chunkFilename: 'js/chunks/[name].js',
+		},
+		optimization: {
+			...base.optimization,
+			splitChunks: {
+				chunks: 'all',
+				cacheGroups: {
+					protobuf: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]/,
+						name: 'protobuf',
+						chunks: 'all',
+						priority: 30,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorReact: {
+						test: /[\\/]node_modules[\\/](react|react-dom|scheduler|mobx|mobx-react)[\\/]/,
+						name: 'vendor-react',
+						chunks: 'all',
+						priority: 28,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorD3: {
+						test: /[\\/]node_modules[\\/](d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)[\\/]/,
+						name: 'vendor-d3',
+						chunks: 'all',
+						priority: 27,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorMermaid: {
+						test: /[\\/]node_modules[\\/](mermaid|@mermaid-js|elkjs|cytoscape|cytoscape-[a-z-]+|cose-base|layout-base|avsdf-base|roughjs|dagre|graphlib|path-data-parser|points-on-curve|points-on-path)[\\/]/,
+						name: 'vendor-mermaid',
+						chunks: 'all',
+						priority: 26,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorSentry: {
+						test: /[\\/]node_modules[\\/]@sentry[\\/]/,
+						name: 'vendor-sentry',
+						chunks: 'all',
+						priority: 25,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorExcalidraw: {
+						test: /[\\/]node_modules[\\/]@excalidraw[\\/]/,
+						name: 'vendor-excalidraw',
+						chunks: 'all',
+						priority: 24,
+						filename: 'js/chunks/[name].js',
+					},
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendor',
+						chunks: 'all',
+						priority: 20,
+						filename: 'js/chunks/[name].js',
+					},
+				},
+			},
+		},
+		plugins: [
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
+			new rspack.HtmlRspackPlugin({
+				template: path.resolve(__dirname, 'src/html/index.html'),
+				filename: 'index.html',
+				inject: 'head',
+				scriptLoading: 'defer',
+			}),
+			{
+				apply(compiler) {
+					compiler.hooks.done.tap('CompilationHashPlugin', (stats) => {
+						appCompilationHash = stats.hash || Date.now().toString();
+					});
+				}
+			},
+		],
 		devServer: {
 			hot: true,
 			static: ['dist'],
+			setupMiddlewares: (middlewares) => {
+				middlewares.unshift({
+					name: 'etag-cache',
+					middleware: (req, res, next) => {
+						if (req.method === 'GET' && /\.(js|css)$/.test(req.url) && !req.url.includes('.hot-update.')) {
+							const etag = `"${appCompilationHash}"`;
+
+							if (req.headers['if-none-match'] === etag) {
+								res.writeHead(304);
+								return res.end();
+							};
+
+							res.setHeader('ETag', etag);
+							res.setHeader('Cache-Control', 'no-cache');
+						};
+						next();
+					},
+				});
+				return middlewares;
+			},
 			watchFiles: {
 				paths: ['src'],
 				options: {
@@ -210,11 +311,39 @@ module.exports = (env, argv) => {
 			cssChunkFilename: 'extension/css/chunks/[name].css',
 		},
 
-		// Override CSS rules to use CSS extraction instead of style-loader
+		// Override rules: disable React Refresh for extension, use CSS extraction, inline dynamic imports
 		module: {
 			...base.module,
+			parser: {
+				javascript: {
+					dynamicImportMode: 'eager',
+				},
+			},
 			rules: [
-				...base.module.rules.filter(rule => !rule.test?.toString().includes('css')),
+				...base.module.rules
+					.filter(rule => !rule.test?.toString().includes('css'))
+					.map(rule => {
+						// Disable React Refresh transform for extension builds (both .ts and .tsx rules)
+						if (rule.loader === 'builtin:swc-loader') {
+							return {
+								...rule,
+								options: {
+									...rule.options,
+									jsc: {
+										...rule.options?.jsc,
+										transform: {
+											...rule.options?.jsc?.transform,
+											react: {
+												...rule.options?.jsc?.transform?.react,
+												refresh: false,
+											},
+										},
+									},
+								},
+							};
+						}
+						return rule;
+					}),
 				{
 					test: /\.s?css$/,
 					use: [
@@ -312,15 +441,16 @@ module.exports = (env, argv) => {
 				'd3': path.resolve(__dirname, 'src/stubs/d3.js'),
 				'react-pdf': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
 				'pdfjs-dist': path.resolve(__dirname, 'src/stubs/pdfjs.js'),
-				'katex': path.resolve(__dirname, 'src/stubs/katex.js'),
+				'katex$': path.resolve(__dirname, 'src/stubs/katex.js'),
+				'katex/dist/contrib/mhchem': path.resolve(__dirname, 'src/stubs/katex.js'),
 				'pako': path.resolve(__dirname, 'src/stubs/pako.js'),
 				'prismjs': path.resolve(__dirname, 'src/stubs/prismjs.js'),
 			},
 		},
 
 		plugins: [
-			// Filter out LimitChunkCountPlugin to allow code splitting
-			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
+			// Filter out LimitChunkCountPlugin (allow code splitting) and ReactRefreshPlugin (not needed for extension)
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin) && !(p instanceof ReactRefreshPlugin)),
 			new rspack.CssExtractRspackPlugin({
 				filename: 'extension/css/chunks/[name].css',
 				chunkFilename: 'extension/css/chunks/[name].css',
@@ -366,11 +496,6 @@ module.exports = (env, argv) => {
 				import: './src/ts/entry.web.tsx',
 				filename: 'js/main.js',
 			},
-		},
-
-		output: {
-			path: path.resolve(__dirname, 'dist-web'),
-			publicPath: '/',
 		},
 
 		devServer: {
@@ -475,16 +600,80 @@ module.exports = (env, argv) => {
 			},
 		},
 
+		output: {
+			path: path.resolve(__dirname, 'dist-web'),
+			publicPath: '/',
+			chunkFilename: 'js/chunks/[name].js',
+		},
+
+		optimization: {
+			...base.optimization,
+			splitChunks: {
+				chunks: 'all',
+				cacheGroups: {
+					protobuf: {
+						test: /[\\/]dist[\\/]lib[\\/]pb[\\/]/,
+						name: 'protobuf',
+						chunks: 'all',
+						priority: 30,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorReact: {
+						test: /[\\/]node_modules[\\/](react|react-dom|scheduler|mobx|mobx-react)[\\/]/,
+						name: 'vendor-react',
+						chunks: 'all',
+						priority: 28,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorD3: {
+						test: /[\\/]node_modules[\\/](d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)[\\/]/,
+						name: 'vendor-d3',
+						chunks: 'all',
+						priority: 27,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorMermaid: {
+						test: /[\\/]node_modules[\\/](mermaid|@mermaid-js|elkjs|cytoscape|cytoscape-[a-z-]+|cose-base|layout-base|avsdf-base|roughjs|dagre|graphlib|path-data-parser|points-on-curve|points-on-path)[\\/]/,
+						name: 'vendor-mermaid',
+						chunks: 'all',
+						priority: 26,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorSentry: {
+						test: /[\\/]node_modules[\\/]@sentry[\\/]/,
+						name: 'vendor-sentry',
+						chunks: 'all',
+						priority: 25,
+						filename: 'js/chunks/[name].js',
+					},
+					vendorExcalidraw: {
+						test: /[\\/]node_modules[\\/]@excalidraw[\\/]/,
+						name: 'vendor-excalidraw',
+						chunks: 'all',
+						priority: 24,
+						filename: 'js/chunks/[name].js',
+					},
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendor',
+						chunks: 'all',
+						priority: 20,
+						filename: 'js/chunks/[name].js',
+					},
+				},
+			},
+		},
+
 		plugins: [
-			...base.plugins,
+			...base.plugins.filter(p => !(p instanceof rspack.optimize.LimitChunkCountPlugin)),
 			new rspack.DefinePlugin({
 				__IS_WEB__: 'true',
 			}),
 			new rspack.HtmlRspackPlugin({
 				template: path.resolve(__dirname, 'dist/index.web.html'),
 				filename: 'index.html',
-				inject: 'body',
-				scriptLoading: 'blocking',
+				inject: 'head',
+				scriptLoading: 'defer',
 			}),
 		],
 	};

@@ -16,8 +16,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, position, getId, close, setHover, getMaxHeight } = props;
 	const { data } = param;
-	const { 
-		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd, 
+	const {
+		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd,
 		canSelectInitial, onSelect, onContext, noClose, noScroll, maxHeight, noFilter, onSwitch, buttons = [],
 		useMaxWindowHeight,
 	} = data;
@@ -199,19 +199,15 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const mh = useMaxWindowHeight ? getMaxHeight?.(keyboard.isPopup()) || 0 : maxHeight;
 
 		if (!noScroll) {
-			let height = 0;
-			if (withFilter) {
-				height += 52;
-			};
-			if (!withFilter) {
-				height += 16;
-			};
-
+			let height = withFilter ? 52 : 16;
 			if (!items.length) {
 				height += HEIGHT_ITEM;
 			} else {
 				height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 			};
+
+			height += buttons.length ? 16 : 0;
+			height = buttons.reduce((res: number, current: any) => res + getRowHeight(current), height);
 
 			height = Math.min(mh || 370, height);
 			height = Math.max(44, height);
@@ -350,7 +346,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<>
 			{withFilter ? (
-				<Filter 
+				<Filter
 					ref={filterRef}
 					className="outlined round"
 					value={filter}

@@ -82,6 +82,20 @@ $(() => {
 			};
 		});
 
+		const hideMenuBar = () => {
+			body.removeClass('showMenuBar altVisible');
+			electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+		};
+
+		const showMenuBar = () => {
+			body.addClass('showMenuBar altVisible');
+			electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
+		};
+
+		const toggleMenuBar = () => {
+			body.hasClass('altVisible') ? hideMenuBar() : showMenuBar();
+		};
+
 		doc.on('keyup', (e) => {
 			if (e.key !== 'Alt') {
 				return;
@@ -89,15 +103,7 @@ $(() => {
 
 			// Only toggle if Alt was pressed alone (not as modifier)
 			if (altKeyPressed && !altKeyUsedWithOther && menuBarHiddenByConfig) {
-				const isCurrentlyVisible = body.hasClass('altVisible');
-
-				if (isCurrentlyVisible) {
-					body.removeClass('showMenuBar altVisible');
-					electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
-				} else {
-					body.addClass('showMenuBar altVisible');
-					electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
-				};
+				toggleMenuBar();
 			};
 
 			altKeyPressed = false;
@@ -112,24 +118,21 @@ $(() => {
 
 			const target = $(e.target);
 			if (!target.closest('#menuBar').length) {
-				body.removeClass('showMenuBar altVisible');
-				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+				hideMenuBar();
 			};
 		});
 
 		// Hide menu bar on window blur
 		win.on('blur', () => {
 			if (body.hasClass('altVisible')) {
-				body.removeClass('showMenuBar altVisible');
-				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+				hideMenuBar();
 			};
 		});
 
 		// Hide menu bar on Escape key
 		doc.on('keydown', (e) => {
 			if ((e.key === 'Escape') && body.hasClass('altVisible')) {
-				body.removeClass('showMenuBar altVisible');
-				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
+				hideMenuBar();
 			};
 		});
 
@@ -139,15 +142,7 @@ $(() => {
 				return;
 			};
 
-			const isCurrentlyVisible = body.hasClass('altVisible');
-
-			if (isCurrentlyVisible) {
-				body.removeClass('showMenuBar altVisible');
-				electron.Api(winId, 'setMenuBarTemporaryVisibility', false);
-			} else {
-				body.addClass('showMenuBar altVisible');
-				electron.Api(winId, 'setMenuBarTemporaryVisibility', true);
-			};
+			toggleMenuBar();
 		});
 	}
 
@@ -234,9 +229,7 @@ $(() => {
 
 		const title = String(item.data.title || 'New tab');
 		const isPinned = Boolean(item.data.isPinned);
-		const icon = isPinned
-			? String(item.data.spaceIcon || item.data.icon || '')
-			: String(item.data.icon || '');
+		const icon = String(item.data.icon || '');
 		const layout = Number(item.data.layout) || 0;
 		const uxType = Number(item.data.uxType) || 0;
 		const isImage = Boolean(item.data.isImage);
@@ -334,9 +327,10 @@ $(() => {
 
 		tab.off('click').on('click', () => {
 			const activeTab = tabsData.find(it => it.id == activeId);
-			const { isPinned, ...data } = activeTab?.data || {};
+			const { isPinned, route, ...data } = activeTab?.data || {};
 
-			electron.Api(winId, 'openTab', data, { setActive: true, fireAnalytics: true });
+			data.route = '/main/void/dashboard';
+			electron.Api(winId, 'openTab', [data, { setActive: true, fireAnalytics: true }]);
 		});
 
 		return tab;

@@ -504,13 +504,6 @@ class Relation {
 			return (filter.nestedFilters || []).some(it => this.isFilterActive(it));
 		};
 
-		const relation = S.Record.getRelationByKey(relationKey);
-		if (!relation) {
-			return false;
-		};
-
-		const { format } = relation;
-
 		// None condition is always inactive
 		if (condition == I.FilterCondition.None) {
 			return false;
@@ -522,7 +515,12 @@ class Relation {
 		};
 
 
-		if (format == I.RelationType.Date) {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return false;
+		};
+
+		if (this.isDate(relation.format)) {
 			// Date condition In
 			if (condition == I.FilterCondition.In) {
 				return true;
@@ -532,7 +530,7 @@ class Relation {
 			if (![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
 				return true;
 			};
-		}
+		};
 
 		// For all other conditions, check if value is present
 		return this.isFilterValueSet(value);
@@ -621,9 +619,9 @@ class Relation {
 	 */
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const ret: any[] = [];
-		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => {
 			const relation = S.Record.getRelationByKey(it.relationKey);
-			return !!relation;
+			return relation && !relation.isArchived && !relation.isDeleted;
 		});
 
 		relations.forEach((it: I.ViewRelation) => {
@@ -859,6 +857,7 @@ class Relation {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
+
 		return String(value || '');
 	};
 

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, U, S, translate, analytics, keyboard } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
+import ChatCounter from 'Component/util/chatCounter';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -18,6 +19,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
 	const rootId = keyboard.getRootId();
+	const workspace = S.Detail.get(S.Block.workspace, S.Block.workspace, [ 'chatId' ]);
+	const chatId = workspace.chatId;
 
 	const icon = (
 		<IconObject
@@ -68,12 +71,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const onArrow = (e: MouseEvent) => {
 		e.stopPropagation();
 
-		U.Menu.typeSuggest({ 
+		analytics.event('ScreenSelectType');
+
+		U.Menu.typeSuggest({
 			element: '#button-create-arrow',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: 4,
-		}, {}, { 
+		}, {}, {
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
@@ -87,7 +92,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-		}, { route });
+		}, {
+			route,
+			withDelete: true,
+		});
 	};
 
 	let content = null;
@@ -144,8 +152,9 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
 							<Icon className={item.id} />
 							<Label text={item.name} />
+							{item.id == 'chat' ? <ChatCounter chatId={chatId} /> : ''}
 							{item.withArrow ? (
-								<Icon 
+								<Icon
 									id={`button-${item.id}-arrow`}
 									className="arrow withBackground"
 									onClick={onArrow}

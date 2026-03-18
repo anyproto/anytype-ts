@@ -47,6 +47,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const images = useRef({});
 	const subject = useRef(null);
 	const isDragging = useRef(false);
+	const wasDragging = useRef(false);
 	const isPreviewDisabled = useRef(false);
 	const ids = useRef([]);
 	const zoom = useRef(null);
@@ -153,8 +154,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		worker.current.onerror = (e: any) => console.log(e);
 		worker.current.addEventListener('message', onMessage);
 
-		send('init', { 
-			canvas: transfer, 
+		send('init', {
+			canvas: transfer,
 			width,
 			height,
 			density,
@@ -180,6 +181,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		.call(zoom.current)
 		.call(zoom.current.transform, d3.zoomIdentity.translate(graphData.zoom.x, graphData.zoom.y).scale(graphData.zoom.k))
 		.on('click', (e: any) => {
+			if (wasDragging.current) {
+				wasDragging.current = false;
+				return;
+			};
+
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
@@ -237,6 +243,13 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
+		};
+
+		if (U.Object.isChatLayout(d.layout)) {
+			const spaceview = U.Space.getSpaceview();
+			const chatMode = U.Object.getChatNotificationMode(spaceview, d.id);
+
+			d.isMuted = chatMode == I.NotificationMode.Nothing;
 		};
 
 		return d;
@@ -321,7 +334,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragStart = (e: any) => {
 		isDragging.current = true;
-		send('onDragStart', { active: e.active });
+		send('onDragStart', { active: e.active, subjectId: subject.current?.id });
 	};
 
 	const onDragMove = (e: any) => {
@@ -344,8 +357,9 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragEnd = (e: any) => {
 		isDragging.current = false;
+		wasDragging.current = true;
+		send('onDragEnd', { active: e.active, subjectId: subject.current?.id });
 		subject.current = null;
-		send('onDragEnd', { active: e.active });
 	};
 
 	const onZoomStart = ({ sourceEvent }) => {

@@ -29,8 +29,8 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			archived:			 Boolean(options.archived),
 			json:				 (undefined === options.json) ? true : Boolean(options.json),
 			landscape:			 Boolean(options.landscape),
-			printBackground:	 Boolean(options.printBackground),
 			pageSize:			 String(options.pageSize || 'A4'),
+			background:			 (undefined === options.background) ? (S.Common.getThemeClass() ? 'dark' : '') : String(options.background),
 		});
 	};
 
@@ -69,7 +69,6 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	const theme = S.Common.getThemeClass();
 	const formats = getFormats();
 
 	const pageSize = [
@@ -157,13 +156,19 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			]);
 			break;
 
-		case I.ExportType.Pdf:
+		case I.ExportType.Pdf: {
+			const backgroundOptions = [
+				{ id: '', name: translate('popupExportBackgroundLight') },
+				{ id: 'dark', name: translate('popupExportBackgroundDark') },
+			];
+
 			items = items.concat([
 				{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 				{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
-				(!theme ? { id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' } : null),
+				{ id: 'background', name: translate('popupExportBackground'), control: 'select', options: backgroundOptions },
 			]);
 			break;
+		}
 	};
 
 	items = items.filter(it => it);

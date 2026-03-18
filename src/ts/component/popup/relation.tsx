@@ -300,7 +300,6 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							idPrefix={ID_PREFIX}
 							onCellChange={onCellChange}
 							getView={view ? (() => view): null}
-							pageContainer={U.Common.getCellContainer('popupRelation')}
 							menuParam={{ 
 								className: 'fromBlockRelation', 
 								classNameWrap: 'fromPopup',

@@ -97,4 +97,5 @@
 	}
 
 	.block.blockRelation > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
+	.block.blockRelation > .wrapContent.bgColor > .selectionTarget > .dropTarget .info { padding-left: 8px; }
 }

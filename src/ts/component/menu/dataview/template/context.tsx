@@ -59,7 +59,7 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 			};
 
 			case 'edit': {
-				U.Object.openConfig(null, template, {
+				U.Object.openPopup(template, {
 					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
 				});
 

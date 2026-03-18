@@ -119,9 +119,9 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			const object = S.Detail.get(state.rootId, state.rootId);
 
 			if (
-				U.Object.isTypeOrRelationLayout(object.layout) || 
+				U.Object.isTypeOrRelationLayout(object.layout) ||
 				(
-					(spaceview.isChat || spaceview.isOneToOne) && 
+					(spaceview.isChat || spaceview.isOneToOne) &&
 					(U.Object.isChatLayout(object.layout) || U.Object.isSpaceLayout(object.layout))
 				)
 			) {
