@@ -3,7 +3,7 @@ import $, { get } from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
-import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation, translate } from 'Lib';
 
 interface Props {
 	children?: ReactNode;
@@ -222,6 +222,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
 
+			if (allPaths.length && isSetLayout) {
+				Preview.toastShow({ text: translate('toastSetFileDrop') });
+			} else
 			if (allPaths.length && !isSetLayout) {
 				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
