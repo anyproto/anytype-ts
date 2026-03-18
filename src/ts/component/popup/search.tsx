@@ -560,7 +560,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					case 'upload': {
 						close();
 						window.setTimeout(() => {
-							U.Menu.onFileUploadPopup(I.ObjectLayout.File);
+							U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, undefined, analytics.route.uploadGlobalMenu);
 						}, S.Popup.getTimeout());
 						break;
 					};
