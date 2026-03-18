@@ -200,7 +200,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
-			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, cb);
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, cb, analytics.route.uploadTypeWidget);
 			return;
 		};
 

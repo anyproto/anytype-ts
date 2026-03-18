@@ -167,7 +167,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 						cb(object);
 					};
 				};
-			});
+			}, analytics.route.uploadTypeWidget);
 			return;
 		};
 
