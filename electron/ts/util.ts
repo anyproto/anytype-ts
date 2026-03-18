@@ -1,12 +1,14 @@
-const { app, shell, nativeTheme } = require('electron');
-const { is } = require('electron-util');
-const logger = require('electron-log');
-const path = require('path');
-const fs = require('fs');
-const sanitize = require('sanitize-filename');
+import { app, shell, nativeTheme, BrowserWindow } from 'electron';
+import { is } from 'electron-util';
+import logger from 'electron-log';
+import path from 'path';
+import fs from 'fs';
+import sanitize from 'sanitize-filename';
+import ConfigManager from './config';
+import Constant from '../json/constant.json';
+import { AppWindow, TabView } from './types';
+
 const protocol = 'anytype';
-const ConfigManager = require('./config.js');
-const Constant = require('../json/constant.json');
 
 logger.initialize();
 logger.transports.console.level = 'error';
@@ -14,49 +16,49 @@ logger.transports.file.resolvePathFn = () => path.join(app.getPath('userData'), 
 
 class Util {
 
-	appPath = '';
+	appPath: string = '';
 
-	setAppPath (value) {
+	setAppPath (value: string): void {
 		this.appPath = value;
 	};
 
-	mkDir (value) {
+	mkDir (value: string): void {
 		if (value) {
 			try { fs.mkdirSync(value); } catch (e) {};
 		};
 	};
 
-	getLogger () {
+	getLogger (): any {
 		return logger;
 	};
 
-	getPort () {
+	getPort (): string {
 		return process.env.SERVER_PORT || '8080';
 	};
 
-	log (method, text) {
+	log (method: string, ...args: any[]): void {
 		if (!logger[method]) {
 			method = 'info';
 		};
 
-		logger[method](text);
-		console.log(text);
+		logger[method](...args);
+		console.log(...args);
 	};
 
-	dateForFile() {
+	dateForFile(): string {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
 	// MacOs 12.2 (M1): always returns false regardless current color theme
-	isDarkTheme () {
+	isDarkTheme (): boolean {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 	};
 
-	getRouteFromUrl (url) {
+	getRouteFromUrl (url: string): string {
 		return String(url || '').replace(`${protocol}://`, '/');
 	};
 
-	getTheme () {
+	getTheme (): string {
 		const theme = ConfigManager.config.theme;
 
 		switch (theme) {
@@ -68,7 +70,7 @@ class Util {
 		};
 	};
 
-	getBgColor (theme) {
+	getBgColor (theme: string): string {
 		theme = String(theme || '');
 
 		const bg = {
@@ -78,32 +80,32 @@ class Util {
 		return bg[theme];
 	};
 
-	electronPath () {
+	electronPath (): string {
 		return path.join(this.appPath, 'electron');
 	};
 
-	imagePath () {
+	imagePath (): string {
 		return path.join(this.electronPath(), 'img');
 	};
 
-	userPath () {
+	userPath (): string {
 		return app.getPath('userData');
 	};
 
-	logPath () {
+	logPath (): string {
 		const dir = path.join(this.userPath(), 'logs');
 		this.createPath(dir);
 		return dir;
 	};
 
-	createPath (dir) {
+	createPath (dir: string): void {
 		try { fs.mkdirSync(dir); } catch (e) {};
 	};
 
-	dataPath () {
+	dataPath (): string {
 		const { channel } = ConfigManager.config;
 		const envPath = process.env.DATA_PATH;
-		const dataPath = [];
+		const dataPath: string[] = [];
 
 		if (envPath) {
 			this.mkDir(envPath);
@@ -119,7 +121,7 @@ class Util {
 		return path.join.apply(null, dataPath);
 	};
 
-	send (win, ...args) {
+	send (win: AppWindow, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.webContents) {
 			return;
 		};
@@ -128,28 +130,28 @@ class Util {
 		this.sendToActiveTab(win, ...args);
 	};
 
-	sendToTab (win, tabId, ...args) {
+	sendToTab (win: AppWindow, tabId: string, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.views) {
 			return;
 		};
 
-		const view = win.views.find(v => v.id == tabId);
+		const view = win.views.find((v: TabView) => v.id == tabId);
 		if (view && view.webContents) {
 			view.webContents.send(...args);
 		};
 	};
 
-	getView (win, id) {
-		return win?.views?.find(v => v.id == id);
+	getView (win: AppWindow, id: string): TabView | undefined {
+		return win?.views?.find((v: TabView) => v.id == id);
 	};
 
-	getActiveView (win) {
+	getActiveView (win: AppWindow): TabView | undefined {
 		return this.getView(win, win?.activeTabId);
 	};
 
-	setNativeThemeSource () {
+	setNativeThemeSource (): void {
 		const { theme } = ConfigManager.config;
-		
+
 		switch (theme) {
 			case 'system':
 			case 'dark': {
@@ -164,14 +166,14 @@ class Util {
 		};
 	};
 
-	sendToActiveTab (win, ...args) {
+	sendToActiveTab (win: AppWindow, ...args: [string, ...any[]]): void {
 		const view = this.getActiveView(win);
 		if (view && view.webContents) {
 			view.webContents.send(...args);
 		};
 	};
 
-	sendToAllTabs (win, ...args) {
+	sendToAllTabs (win: AppWindow, ...args: [string, ...any[]]): void {
 		if (!win || win.isDestroyed() || !win.views) {
 			return;
 		};
@@ -183,7 +185,7 @@ class Util {
 		};
 	};
 
-	printHtml (win, exportPath, name, options) {
+	printHtml (win: AppWindow, exportPath: string, name: string, options: Record<string, any>): void {
 		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
@@ -197,10 +199,10 @@ class Util {
 
 			// Replace files loaded by url and copy them in page folder
 			try {
-				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
+				content = content.replace(/'(file:\/\/[^']+)'/g, function (s: string, p: string, o: number) {
 					const a = p.split('app.asar/dist/');
 
-					let name = a[1].split('/');
+					let name: any = a[1].split('/');
 					name = name[name.length - 1];
 
 					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
@@ -222,7 +224,7 @@ class Util {
 
 				let replaceJs = '';
 				let replaceCss = '';
-				
+
 				const replaceMeta = `
 					<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 				`;
@@ -243,7 +245,7 @@ class Util {
 			} catch (e) {
 				this.log('info', e);
 			};
-			
+
 			fs.writeFileSync(exportName, content);
 
 			try {
@@ -253,22 +255,22 @@ class Util {
 				this.log('info', e);
 			};
 
-			shell.openPath(exportPath).catch(err => { 
+			shell.openPath(exportPath).catch(err => {
 				this.log('info', err);
 			});
 
 			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
-		}).catch(err => { 
+		}).catch(err => {
 			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
-			this.log('info', err); 
+			this.log('info', err);
 		});
 	};
 
-	printPdf (win, exportPath, name, options) {
+	printPdf (win: AppWindow, exportPath: string, name: string, options: Electron.PrintToPDFOptions): void {
 		const view = this.getActiveView(win);
 		const webContents = view?.webContents || win.webContents;
 
-		webContents.printToPDF(options).then(data => {
+		webContents.printToPDF(options).then((data: Buffer) => {
 			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
 				if (!error) {
 					shell.openPath(exportPath).catch(err => this.log('info', err));
@@ -284,33 +286,34 @@ class Util {
 		});
 	};
 
-	fileName (name) {
+	fileName (name: string): string {
 		return sanitize(String(name || 'untitled').trim());
 	};
 
-	getLang () {
+	getLang (): string {
 		return ConfigManager.config.interfaceLang || 'en-US';
 	};
 
-	enabledLangs () {
-		return Constant.enabledLangs || [];
+	enabledLangs (): string[] {
+		return (Constant as any).enabledLangs || [];
 	};
 
-	translate (key) {
+	translate (key: string): string {
 		const lang = this.getLang();
-		const defaultData = require(`../../dist/lib/json/lang/en-US.json`);
+		const langDir = path.join(__dirname, 'dist', 'lib', 'json', 'lang');
+		const defaultData = JSON.parse(fs.readFileSync(path.join(langDir, 'en-US.json'), 'utf8'));
 
-		let data = {};
-		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
+		let data: Record<string, string> = {};
+		try { data = JSON.parse(fs.readFileSync(path.join(langDir, `${lang}.json`), 'utf8')); } catch(e) {};
 
-		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+		return data[key] || defaultData[key] || `\u26a0\ufe0f${key}\u26a0\ufe0f`;
 	};
 
-	defaultUserDataPath () {
+	defaultUserDataPath (): string {
 		return path.join(app.getPath('appData'), app.getName());
 	};
 
-	registerLinuxProtocolHandler () {
+	registerLinuxProtocolHandler (): void {
 		if (!is.linux) {
 			return;
 		};
@@ -359,7 +362,7 @@ class Util {
 			if (!fs.existsSync(desktopFilePath)) {
 				fs.writeFileSync(desktopFilePath, content, 'utf-8');
 
-				execFile('xdg-mime', [ 'default', 'anytype.desktop', 'x-scheme-handler/anytype' ], (err) => {
+				execFile('xdg-mime', [ 'default', 'anytype.desktop', 'x-scheme-handler/anytype' ], (err: any) => {
 					if (err) {
 						this.log('info', `xdg-mime default failed: ${err.message}`);
 					};
@@ -369,21 +372,21 @@ class Util {
 			if (!fs.existsSync(xwaylandFilePath)) {
 				fs.writeFileSync(xwaylandFilePath, xwaylandContent, 'utf-8');
 			};
-		} catch (e) {
+		} catch (e: any) {
 			this.log('info', `registerLinuxProtocolHandler failed: ${e.message}`);
 		};
 	};
 
-	isWayland () {
+	isWayland (): boolean {
 		return is.linux && (process.env.XDG_SESSION_TYPE === 'wayland');
 	};
 
-	isKDE () {
+	isKDE (): boolean {
 		const desktop = (process.env.XDG_CURRENT_DESKTOP || '').toLowerCase();
 		return desktop.split(':').includes('kde');
 	};
 
-	getCss () {
+	getCss (): string {
 		const cssPath = path.join(this.userPath(), 'custom.css');
 		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
 
@@ -392,4 +395,4 @@ class Util {
 
 };
 
-module.exports = new Util();
+export default new Util();

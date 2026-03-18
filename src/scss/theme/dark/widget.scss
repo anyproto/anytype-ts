@@ -1,48 +1,48 @@
 .widget {
-	.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse0.svg'); }
-	.icon.options { background-image: url('#{$themePath}/icon/widget/options0.svg'); }
-	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus0.svg'); }
+	.icon.back { background-image: url('~img/theme/dark/icon/widget/back0.svg'); }
+	.icon.collapse { background-image: url('~img/theme/dark/icon/widget/collapse0.svg'); }
+	.icon.options { background-image: url('~img/theme/dark/icon/widget/options0.svg'); }
+	.icon.plus { background-image: url('~img/theme/dark/icon/widget/plus0.svg'); }
 
 	.iconWrap:hover,
 	.iconWrap.active {
-		.icon.back { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-		.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse1.svg'); }
-		.icon.options { background-image: url('#{$themePath}/icon/widget/options1.svg'); }
-		.icon.plus { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
+		.icon.back { background-image: url('~img/theme/dark/icon/widget/back1.svg'); }
+		.icon.collapse { background-image: url('~img/theme/dark/icon/widget/collapse1.svg'); }
+		.icon.options { background-image: url('~img/theme/dark/icon/widget/options1.svg'); }
+		.icon.plus { background-image: url('~img/theme/dark/icon/widget/plus1.svg'); }
 	}
 
-	.icon.remove .inner { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
+	.icon.remove .inner { background-image: url('~img/theme/dark/icon/widget/remove.svg'); }
 
 	.item {
 		.buttons {
-			.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg') !important; }
-			.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg') !important; }
+			.icon.more { background-image: url('~img/theme/dark/icon/menu/action/more0.svg') !important; }
+			.icon.more:hover { background-image: url('~img/theme/dark/icon/menu/action/more1.svg') !important; }
 		}
 	}
 
 	.counters {
-		.icon.count.mention { background-image: url('#{$themePath}/icon/widget/mention.svg'); }
+		.icon.count.mention { background-image: url('~img/theme/dark/icon/widget/mention.svg'); }
 	}
 
-	#button-show-all:after { background-image: url('#{$themePath}/arrow/showAll.svg'); }
+	#button-show-all:after { background-image: url('~img/theme/dark/arrow/showAll.svg'); }
 }
 
 .widget.widgetSpace {
-	.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
+	.icon.arrow { background-image: url('~img/theme/dark/arrow/select/space.svg'); }
 }
 
 .widget.widgetTree {
-	.icon.set { background-image: url('#{$themePath}/icon/widget/set.svg'); }
-	.icon.blank { background-image: url('#{$themePath}/icon/widget/blank.svg'); }
+	.icon.set { background-image: url('~img/theme/dark/icon/widget/set.svg'); }
+	.icon.blank { background-image: url('~img/theme/dark/icon/widget/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
 .widget.widgetObject {
 	.item {
 		.buttons {
-			.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
-			.icon.plus:hover, .icon.plus.hover { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/menu/action/more1.svg'); }
+			.icon.plus:hover, .icon.plus.hover { background-image: url('~img/theme/dark/icon/widget/plus1.svg'); }
 		}
 	}
 
@@ -52,7 +52,7 @@
 .widget.widgetView {
 	#viewSelect {
 		.select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/widget.svg') !important; }
 		}
 	}
 
@@ -72,15 +72,15 @@
 		.group {
 			.clickable {
 				.icon.arrow {  background-image: url('~img/arrow/select/light.svg'); }
-				.icon.plus { background-image: url('#{$themePath}/icon/widget/plus0.svg'); }
-				.icon.plus:hover { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
+				.icon.plus { background-image: url('~img/theme/dark/icon/widget/plus0.svg'); }
+				.icon.plus:hover { background-image: url('~img/theme/dark/icon/widget/plus1.svg'); }
 			}
 		}
 	}
 
 	.viewCalendar {
 		.dateSelect {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); }
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/dateSelect.svg'); }
 		}
 	}
 }

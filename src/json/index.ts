@@ -11,9 +11,9 @@ import Menu from './menu';
 import Size from './size';
 import * as Shortcut from './shortcut';
 
-const Emoji = require('./emoji.json');
-const Latex = require('./latex.json');
-const Icon = require('./icon.json');
+import Emoji from './emoji.json';
+import Latex from './latex.json';
+import Icon from './icon.json';
 
 export {
 	Constant,

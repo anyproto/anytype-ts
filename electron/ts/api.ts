@@ -1,51 +1,52 @@
-const { app, shell, BrowserWindow, Menu, Notification, ipcMain, session } = require('electron');
-const { is } = require('electron-util');
-const fs = require('fs');
-const path = require('path');
-const keytar = require('keytar');
-const { download } = require('electron-dl');
-const { exec, execFile } = require('child_process');
-const checkDiskSpace = require('check-disk-space').default;
+import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session } from 'electron';
+import { is } from 'electron-util';
+import fs from 'fs';
+import path from 'path';
+import keytar from 'keytar';
+import { download } from 'electron-dl';
+import { exec, execFile } from 'child_process';
+import checkDiskSpace from 'check-disk-space';
 
-const MenuManager = require('./menu.js');
-const ConfigManager = require('./config.js');
-const WindowManager = require('./window.js');
-const UpdateManager = require('./update.js');
-const Server = require('./server.js');
-const Util = require('./util.js');
-const { getSafeStorage } = require('./safeStorage.js');
+import MenuManager from './menu';
+import ConfigManager from './config';
+import WindowManager from './window';
+import UpdateManager from './update';
+import Server from './server';
+import Util from './util';
+import { getSafeStorage } from './safeStorage';
+import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	isPinChecked = false;
-	hasPinSet = false;
-	lastActivityTime = Date.now();
-	notificationCallbacks = new Map();
-	shownNotificationIds = new Set();
-	pinTimer = null;
-	pinTimeValue = 0;
+	isPinChecked: boolean = false;
+	hasPinSet: boolean = false;
+	lastActivityTime: number = Date.now();
+	notificationCallbacks: Map<string, Function> = new Map();
+	shownNotificationIds: Set<string> = new Set();
+	pinTimer: ReturnType<typeof setTimeout> | null = null;
+	pinTimeValue: number = 0;
 
 	// Commands that should only be processed from the active tab.
 	// Each tab has its own gRPC session/stream, so events like PayloadBroadcast
 	// and notifications arrive in every tab independently. Without this guard,
 	// the active tab would receive duplicate IPC messages (once per tab).
-	activeTabOnly = new Set([ 'payloadBroadcast', 'notification' ]);
+	activeTabOnly: Set<string> = new Set([ 'payloadBroadcast', 'notification' ]);
 
-	getInitData (win, tabId) {
+	getInitData (win: AppWindow, tabId: string): Record<string, any> {
 		let route = win.route || '';
 
 		win.route = '';
 
 		// Try to get route from active tab data
 		if (!route && tabId && win.views && (win.views.length > 0)) {
-			const tab = win.views.find(it => it.id == tabId);
+			const tab = win.views.find((it: TabView) => it.id == tabId);
 
 			route = tab?.data?.route || '';
 		};
 
-		const tab = tabId ? (win.views || []).find(it => it.id == tabId) : null;
+		const tab = tabId ? (win.views || []).find((it: TabView) => it.id == tabId) : null;
 
 		return {
 			id: win.id,
@@ -60,28 +61,28 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: Util.getCss(),
 			activeTabId: win.activeTabId,
-			isSingleTab: win.views && (win.views.length == 1) && !win.views.some(it => it.data && it.data.isPinned),
+			isSingleTab: win.views && (win.views.length == 1) && !win.views.some((it: TabView) => it.data && it.data.isPinned),
 		};
 	};
 
-	logout (win) {
+	logout (win: AppWindow): void {
 		WindowManager.sendToAll('logout');
 	};
 
-	pinCheck (win) {
+	pinCheck (win?: AppWindow): void {
 		WindowManager.sendToAll('pin-check');
-		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
+		WindowManager.list.forEach((w: AppWindow) => WindowManager.updateTabBarVisibility(w));
 	};
 
-	pinSet (win) {
+	pinSet (win: AppWindow): void {
 		WindowManager.sendToAll('pin-set');
 	};
 
-	pinRemove (win) {
+	pinRemove (win: AppWindow): void {
 		WindowManager.sendToAll('pin-remove');
 	};
 
-	paste (win) {
+	paste (win: AppWindow): void {
 		if (!win || win.isDestroyed()) {
 			return;
 		};
@@ -92,7 +93,7 @@ class Api {
 		};
 	};
 
-	setConfig (win, config, callBack) {
+	setConfig (win: AppWindow, config: Partial<AppConfig>, callBack?: () => void): void {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
@@ -105,7 +106,7 @@ class Api {
 		});
 	};
 
-	setPinChecked (win, isPinChecked, pinTimeout, hasPinSet) {
+	setPinChecked (win: AppWindow, isPinChecked: boolean, pinTimeout: number, hasPinSet?: boolean): void {
 		this.isPinChecked = isPinChecked;
 		if (hasPinSet !== undefined) {
 			this.hasPinSet = hasPinSet;
@@ -120,17 +121,17 @@ class Api {
 		};
 
 		// Update tab bar visibility for all windows when PIN state changes
-		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
+		WindowManager.list.forEach((w: AppWindow) => WindowManager.updateTabBarVisibility(w));
 	};
 
-	setHasPinSet (win, hasPinSet) {
+	setHasPinSet (win: AppWindow, hasPinSet: boolean): void {
 		this.hasPinSet = hasPinSet;
 
 		// Update tab bar visibility for all windows when PIN state changes
-		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
+		WindowManager.list.forEach((w: AppWindow) => WindowManager.updateTabBarVisibility(w));
 	};
 
-	checkPinTimeout (win, pinTimeout) {
+	checkPinTimeout (win: AppWindow, pinTimeout: number): void {
 		if (!this.isPinChecked || !pinTimeout) {
 			return;
 		};
@@ -148,7 +149,7 @@ class Api {
 	 * @param {BrowserWindow} win - The window (not used, for API consistency)
 	 * @param {number} pinTimeout - Timeout in milliseconds
 	 */
-	startPinTimer (win, pinTimeout) {
+	startPinTimer (win: AppWindow, pinTimeout: number): void {
 		if (!pinTimeout || !this.isPinChecked) {
 			return;
 		};
@@ -171,7 +172,7 @@ class Api {
 	 * Resets the pin timer due to user activity.
 	 * Called from any renderer when user activity is detected.
 	 */
-	resetPinTimer (win) {
+	resetPinTimer (win: AppWindow): void {
 		if (!this.isPinChecked || !this.pinTimeValue) {
 			return;
 		};
@@ -193,33 +194,33 @@ class Api {
 	 * Stops the pin timer.
 	 * Called when pin is disabled or user logs out.
 	 */
-	stopPinTimer (win) {
+	stopPinTimer (win?: AppWindow): void {
 		if (this.pinTimer) {
 			clearTimeout(this.pinTimer);
 			this.pinTimer = null;
 		};
 	};
 
-	setTheme (win, theme) {
+	setTheme (win: AppWindow, theme: string): void {
 		this.setConfig(win, { theme });
 
 		Util.setNativeThemeSource();
 
 		const resolvedTheme = Util.getTheme();
 		this.setBackground(win, resolvedTheme);
-		
+
 		WindowManager.sendToAll('set-theme', theme);
 		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
-	setBackground (win, theme) {
+	setBackground (win: AppWindow | null, theme: string): void {
 		const useTransparent = Util.isWayland() && !Util.isKDE();
 		const bgColor = useTransparent ? '#00000000' : Util.getBgColor(theme);
 
 		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
 	};
 
-	setZoom (win, zoom) {
+	setZoom (win: AppWindow, zoom: number): void {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
 
@@ -231,14 +232,14 @@ class Api {
 		this.setConfig(win, { zoom });
 	};
 
-	setHideTray (win, show) {
+	setHideTray (win: AppWindow, show: boolean): void {
 		ConfigManager.set({ hideTray: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 			this.initMenu(win);
 		});
 	};
 
-	setMenuBarVisibility (win, show) {
+	setMenuBarVisibility (win: AppWindow, show: boolean): void {
 		ConfigManager.set({ showMenuBar: show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
@@ -257,7 +258,7 @@ class Api {
 	};
 
 	// Temporary menu bar visibility for Alt key toggle (doesn't persist to config)
-	setMenuBarTemporaryVisibility (win, show) {
+	setMenuBarTemporaryVisibility (win: AppWindow, show: boolean): void {
 		const { config } = ConfigManager;
 
 		// Only allow temporary show when menu bar is hidden by config
@@ -275,50 +276,45 @@ class Api {
 		WindowManager.updateTabBarVisibility(win);
 	};
 
-	setHideSidebar (win, v) {
+	setHideSidebar (win: AppWindow, v: boolean): void {
 		WindowManager.sendToAllTabs('set-hide-sidebar', v);
 	};
 
-	setAlwaysShowTabs (win, show) {
+	setAlwaysShowTabs (win: AppWindow, show: boolean): void {
 		this.setConfig(win, { alwaysShowTabs: show }, () => {
 			WindowManager.updateTabBarVisibility(win);
 		});
 	};
 
-	setHardwareAcceleration (win, enabled) {
+	setHardwareAcceleration (win: AppWindow, enabled: boolean): void {
 		const store = getSafeStorage();
 
 		store.set('hardwareAcceleration', enabled);
 		this.setConfig(win, { hardwareAcceleration: enabled }, () => this.exit(win, '', true, false));
 	};
 
-	spellcheckAdd (win, s) {
+	spellcheckAdd (win: AppWindow, s: string): void {
 		win.webContents.session.addWordToSpellCheckerDictionary(s);
 	};
 
-	keytarSet (win, key, value) {
+	keytarSet (win: AppWindow, key: string, value: string): void {
 		if (key && value) {
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
 	};
 
-	async keytarGet (win, key) {
+	async keytarGet (win: AppWindow, key: string): Promise<string | null> {
 		const maxRetries = is.windows ? 3 : 1;
 		const retryDelay = 500; // ms
 
 		for (let attempt = 1; attempt <= maxRetries; attempt++) {
-			let value = null;
+			let value: string | null = null;
 			let shouldRetry = false;
 
 			try {
 				value = await keytar.getPassword(KEYTAR_SERVICE, key);
 				shouldRetry = (value === null);
-
-				if (shouldRetry) {
-					Util.log('warn', `[Api].keytarGet: Got null for key "${key}", attempt ${attempt}/${maxRetries}`);
-				};
-			} catch (err) {
-				Util.log('error', `[Api].keytarGet: Error for key "${key}", attempt ${attempt}/${maxRetries}:`, err.message);
+			} catch (err: unknown) {
 				shouldRetry = true;
 			};
 
@@ -334,41 +330,41 @@ class Api {
 		return null;
 	};
 
-	keytarDelete (win, key) {
+	keytarDelete (win: AppWindow, key: string): void {
 		keytar.deletePassword(KEYTAR_SERVICE, key);
 	};
 
-	updateCheck (win) {
-		if (this.isPinChecked || !this.account) {
+	updateCheck (win: AppWindow): void {
+		if (this.isPinChecked || !(this as any).account) {
 			UpdateManager.checkUpdate(false);
 		};
 	};
 
-	updateDownload (win) {
+	updateDownload (win: AppWindow): void {
 		UpdateManager.download();
 	};
 
-	updateConfirm (win) {
+	updateConfirm (win: AppWindow): void {
 		this.exit(win, '', true, true);
 	};
 
-	updateCancel (win) {
+	updateCancel (win: AppWindow): void {
 		UpdateManager.cancel();
 	};
 
-	async download (win, url, options) {
+	async download (win: AppWindow, url: string, options: Record<string, any>): Promise<void> {
 		await download(win, url, options);
 	};
 
-	winCommand (win, cmd, param) {
+	winCommand (win: AppWindow, cmd: string, param: Record<string, any>): void {
 		WindowManager.command(win, cmd, param);
 	};
 
-	openWindow (win, route, token) {
+	openWindow (win: AppWindow, route: string, token: string): void {
 		WindowManager.createMain({ route, token, isChild: true });
 	};
 
-	openWindows (win, routes, token) {
+	openWindows (win: AppWindow, routes: string[], token: string): void {
 		if (!routes || !routes.length) {
 			return;
 		};
@@ -378,7 +374,7 @@ class Api {
 		};
 	};
 
-	openTab (win, data, options) {
+	openTab (win: AppWindow, data: TabData & Record<string, any>, options?: CreateTabOptions): boolean {
 		const { isPinned, ...rest } = data || {};
 		const route = rest.route || '';
 
@@ -399,7 +395,7 @@ class Api {
 		return false;
 	};
 
-	switchToTabByRoute (win, route) {
+	switchToTabByRoute (win: AppWindow, route: string): boolean {
 		const existing = WindowManager.findTabByRoute(win, route);
 		if (existing && existing.data && existing.data.isPinned) {
 			WindowManager.setActiveTab(win, existing.id);
@@ -408,7 +404,7 @@ class Api {
 		return false;
 	};
 
-	openTabs (win, tabs) {
+	openTabs (win: AppWindow, tabs: { data?: TabData }[]): void {
 		if (!tabs || !tabs.length) {
 			return;
 		};
@@ -425,11 +421,11 @@ class Api {
 		};
 	};
 
-	openUrl (win, url) {
+	openUrl (win: AppWindow, url: string): void {
 		shell.openExternal(url);
 	};
 
-	openPath (win, fp) {
+	openPath (win: AppWindow, fp: string): void {
 		if (!fp || !fs.existsSync(fp)) {
 			Util.log('error', '[Api].openPath: Invalid path:', fp);
 			return;
@@ -443,14 +439,14 @@ class Api {
 					Util.log('error', '[Api].openPath error:', err);
 				};
 			});
-		} else 
+		} else
 		if (is.windows) {
 			exec(`start "" "${fp}"`, { shell: 'cmd.exe' }, (err) => {
 				if (err) {
 					Util.log('error', '[Api].openPath error:', err);
 				};
 			});
-		} else 
+		} else
 		if (is.linux) {
 			execFile('xdg-open', [ fp ], (err) => {
 				if (err) {
@@ -460,14 +456,14 @@ class Api {
 		};
 	};
 
-	shutdown (win, relaunch, isUpdate) {
+	shutdown (win: AppWindow, relaunch: boolean, isUpdate: boolean): void {
 		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
 
 		// Flush browser localStorage to disk before exiting
 		try {
 			session.defaultSession.flushStorageData();
-		} catch (e) {
-			console.error('[Api].shutdown: Failed to flush storage data:', e.message);
+		} catch (e: unknown) {
+			console.error('[Api].shutdown: Failed to flush storage data:', (e as Error).message);
 		};
 
 		if (relaunch) {
@@ -482,12 +478,12 @@ class Api {
 		};
 	};
 
-	exit (win, signal, relaunch, isUpdate) {
-		if (app.isQuiting) {
+	exit (win: AppWindow | null, signal: string, relaunch: boolean, isUpdate?: boolean): void {
+		if ((app as any).isQuiting) {
 			return;
 		};
 
-		app.isQuiting = true;
+		(app as any).isQuiting = true;
 
 		// Save tabs before closing
 		WindowManager.saveTabs(win);
@@ -510,20 +506,20 @@ class Api {
 	 * @param {BrowserWindow} win - The window
 	 * @returns {Promise} Resolves when all sessions are closed
 	 */
-	closeAllTabSessions (win) {
+	closeAllTabSessions (win: AppWindow | null): Promise<void[]> {
 		if (!win || win.isDestroyed() || !win.views || win.views.length === 0) {
-			return Promise.resolve();
+			return Promise.resolve([]);
 		};
 
 		const timeout = 5000; // 5 second timeout per tab
-		const promises = win.views.map(view => {
-			return new Promise(resolve => {
+		const promises = win.views.map((view: TabView) => {
+			return new Promise<void>(resolve => {
 				if (!view.webContents || view.webContents.isDestroyed()) {
 					resolve();
 					return;
 				};
 
-				let handler = null;
+				let handler: ((event: Electron.IpcMainEvent, readyTabId: string) => void) | null = null;
 
 				const cleanup = () => {
 					if (handler) {
@@ -538,7 +534,7 @@ class Api {
 				}, timeout);
 
 				// Listen for the tab to signal it's ready to close
-				handler = (event, readyTabId) => {
+				handler = (event: Electron.IpcMainEvent, readyTabId: string) => {
 					if (readyTabId === view.id) {
 						clearTimeout(timeoutId);
 						cleanup();
@@ -555,26 +551,26 @@ class Api {
 		return Promise.all(promises);
 	};
 
-	setChannel (win, id) {
-		UpdateManager.setChannel(id); 
+	setChannel (win: AppWindow, id: string): void {
+		UpdateManager.setChannel(id);
 		this.setConfig(win, { channel: id }, () => {
 			this.initMenu(win);
 		});
 	};
 
-	setInterfaceLang (win, lang) {
+	setInterfaceLang (win: AppWindow, lang: string): void {
 		ConfigManager.set({ interfaceLang: lang }, () => {
 			WindowManager.reloadAll();
 			this.initMenu(win);
 		});
 	};
 
-	initMenu (win) {
+	initMenu (win: AppWindow): void {
 		MenuManager.initMenu();
 		MenuManager.initTray();
 	};
 
-	setSpellingLang (win, languages) {
+	setSpellingLang (win: AppWindow, languages: string[]): void {
 		languages = languages || [];
 
 		win.webContents.session.setSpellCheckerLanguages(languages);
@@ -583,27 +579,27 @@ class Api {
 		this.setConfig(win, { languages });
 	};
 
-	setBadge (win, t) {
+	setBadge (win: AppWindow, t: string): void {
 		if (is.macos) {
 			app.dock.setBadge(t);
 		};
 	};
 
-	setUserDataPath (win, p) {
+	setUserDataPath (win: AppWindow, p: string): void {
 		this.setConfig(win, { userDataPath: p });
 		app.setPath('userData', p);
 		WindowManager.sendToAll('data-path', Util.dataPath());
 	};
 
-	showChallenge (win, param) {
-		WindowManager.createChallenge(param);
+	showChallenge (win: AppWindow, param: Record<string, any>): void {
+		WindowManager.createChallenge(param as { challenge: string } & Record<string, any>);
 	};
 
-	hideChallenge (win, param) {
-		WindowManager.closeChallenge(param);
+	hideChallenge (win: AppWindow, param: Record<string, any>): void {
+		WindowManager.closeChallenge(param as { challenge: string });
 	};
 
-	reload (win, route) {
+	reload (win: AppWindow, route: string): void {
 		const view = Util.getActiveView(win);
 		if (view && view.webContents && !view.webContents.isDestroyed()) {
 			// Only update route if a valid one is provided, otherwise keep the existing route
@@ -614,7 +610,7 @@ class Api {
 		};
 	};
 
-	moveNetworkConfig (win, src) {
+	moveNetworkConfig (win: AppWindow, src: string): { error?: string; path?: string } {
 		if (!path.extname(src).match(/yml|yaml/i)) {
 			return { error: `Invalid file extension: ${path.extname(src)}. Required YAML` };
 		};
@@ -623,26 +619,26 @@ class Api {
 		try {
 			fs.copyFileSync(src, dst);
 			return { path: dst };
-		} catch (e) {
-			return { error: e.message };
+		} catch (e: unknown) {
+			return { error: (e as Error).message };
 		};
 	};
 
-	shortcutExport (win, dst, data) {
+	shortcutExport (win: AppWindow, dst: string, data: Record<string, any>): void {
 		try {
 			fs.writeFileSync(path.join(dst, 'shortcut.json'), JSON.stringify(data, null, '\t'), 'utf8');
 		} catch (err) {};
 	};
 
-	shortcutImport (win, src) {
-		let data = {};
+	shortcutImport (win: AppWindow, src: string): Record<string, any> {
+		let data: Record<string, any> = {};
 		if (fs.existsSync(src)) {
 			try { data = JSON.parse(fs.readFileSync(src, 'utf8')); } catch (err) {};
 		};
 		return data;
 	};
 
-	focusWindow (win) {
+	focusWindow (win: AppWindow): void {
 		if (!win || win.isDestroyed()) {
 			return;
 		};
@@ -653,99 +649,99 @@ class Api {
 		win.setAlwaysOnTop(false);
 	};
 
-	async checkDiskSpace (win) {
+	async checkDiskSpace (win: AppWindow): Promise<Record<string, any>> {
 		return await checkDiskSpace(app.getPath('userData'));
 	};
 
-	async linuxDistro (win) {
+	async linuxDistro (win: AppWindow): Promise<{ name: string; version: string }> {
 		const load = require('linux-distro');
-		return await load().catch(err => {
+		return await load().catch((err: Error) => {
 			Util.log('error', `[Api].linuxDistro: ${err.message}`);
 			return { name: 'Unknown', version: 'Unknown' };
 		});
 	};
 
-	menu (win) {
+	menu (win: AppWindow): void {
 		MenuManager.menu.popup({ x: 12, y: 44 });
 	};
 
-	minimize (win) {
+	minimize (win: AppWindow): void {
 		win.minimize();
 	};
 
-	maximize (win) {
+	maximize (win: AppWindow): void {
 		win.isMaximized() ? win.unmaximize() : win.maximize();
 	};
 
-	close (win) {
+	close (win: AppWindow): void {
 		win.close();
 	};
 
-	toggleFullScreen (win) {
+	toggleFullScreen (win: AppWindow): void {
 		win.setFullScreen(!win.isFullScreen());
 	};
 
-	getTabs (win) {
-		const ConfigManager = require('./config.js');
+	getTabs (win: AppWindow): { tabs: { id: string; data: TabData }[]; id: string; isVisible: boolean } {
+
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
 		const hasMultipleTabs = win.views && win.views.length > 1;
 
 		return {
-			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })),
+			tabs: (win.views || []).map((it: TabView) => ({ id: it.id, data: it.data })),
 			id: win.activeTabId || win.views?.[0]?.id,
 			isVisible: alwaysShow || hasMultipleTabs,
 		};
 	};
 
-	setActiveTab (win, id) {
+	setActiveTab (win: AppWindow, id: string): void {
 		WindowManager.setActiveTab(win, id);
 	};
 
-	getTab (win, id) {
-		const view = (win.views || []).find(it => it.id == id);
+	getTab (win: AppWindow, id: string): { id: string; data: TabData } | null {
+		const view = (win.views || []).find((it: TabView) => it.id == id);
 		return view ? { id: view.id, data: view.data } : null;
 	};
 
-	updateTab (win, id, data) {
+	updateTab (win: AppWindow, id: string, data: Partial<TabData>): void {
 		WindowManager.updateTab(win, id, data);
 	};
 
-	removeTab (win, id, updateActive) {
+	removeTab (win: AppWindow, id: string, updateActive: boolean): void {
 		WindowManager.removeTab(win, id, updateActive);
 	};
 
-	closeOtherWindows (win) {
+	closeOtherWindows (win: AppWindow): void {
 		WindowManager.closeOtherWindows(win);
 	};
 
-	closeOtherTabs (win, id, forced) {
+	closeOtherTabs (win: AppWindow, id: string, forced: boolean): void {
 		WindowManager.closeOtherTabs(win, id, forced);
 	};
 
-	openRouteInTab (win, route, data) {
+	openRouteInTab (win: AppWindow, route: string, data: Partial<TabData>): void {
 		WindowManager.openRouteInTab(win, route, data);
 	};
 
-	openSpaceInTab (win, spaceId, uxType) {
+	openSpaceInTab (win: AppWindow, spaceId: string, uxType: number): void {
 		WindowManager.openSpaceInTab(win, spaceId, uxType);
 	};
 
-	pinTab (win, id) {
+	pinTab (win: AppWindow, id: string): void {
 		WindowManager.pinTab(win, id);
 	};
 
-	unpinTab (win, id) {
+	unpinTab (win: AppWindow, id: string): void {
 		WindowManager.unpinTab(win, id);
 	};
 
-	showTabContextMenu (win, param) {
+	showTabContextMenu (win: AppWindow, param: { tabId: string; isPinned?: boolean }): void {
 		const { tabId, isPinned } = param || {};
 
 		if (!tabId) {
 			return;
 		};
 
-		const items = [];
+		const items: Electron.MenuItemConstructorOptions[] = [];
 
 		if (isPinned) {
 			items.push({
@@ -787,30 +783,30 @@ class Api {
 			callback: () => {
 				Util.send(win, 'tab-context-menu-closed');
 			},
-		});
+		} as any);
 	};
 
-	reorderTabs (win, tabIds) {
+	reorderTabs (win: AppWindow, tabIds: string[]): void {
 		WindowManager.reorderTabs(win, tabIds);
 	};
 
-	tabShowTooltip (win, data) {
+	tabShowTooltip (win: AppWindow, data: Record<string, any>): void {
 		Util.sendToActiveTab(win, 'tab-show-tooltip', data);
 	};
 
-	tabHideTooltip (win) {
+	tabHideTooltip (win: AppWindow): void {
 		Util.sendToActiveTab(win, 'tab-hide-tooltip');
 	};
 
-	setTabsDimmer (win, show) {
+	setTabsDimmer (win: AppWindow, show: boolean): void {
 		Util.send(win, 'set-tabs-dimmer', show);
 	};
 
-	getWindowBounds (win) {
+	getWindowBounds (win: AppWindow): Bounds | null {
 		return WindowManager.getBounds(win);
 	};
 
-	getCursorScreenPoint (win) {
+	getCursorScreenPoint (win: AppWindow): { x: number; y: number } {
 		const { screen } = require('electron');
 		return screen.getCursorScreenPoint();
 	};
@@ -820,7 +816,7 @@ class Api {
 	 * @param {BrowserWindow} win - Source window
 	 * @param {Object} param - Parameters { tabId, mouseX, mouseY }
 	 */
-	detachTab (win, param) {
+	detachTab (win: AppWindow, param: { tabId: string; mouseX: number; mouseY: number }): void {
 		const { tabId, mouseX, mouseY } = param || {};
 
 		if (!tabId || !win || !win.views) {
@@ -833,7 +829,7 @@ class Api {
 		};
 
 		// Find the tab to detach
-		const tab = win.views.find(it => it.id == tabId);
+		const tab = win.views.find((it: TabView) => it.id == tabId);
 		if (!tab) {
 			return;
 		};
@@ -860,7 +856,7 @@ class Api {
 	 * @param {BrowserWindow} excludeWin - Window to exclude from search
 	 * @returns {BrowserWindow|null}
 	 */
-	getWindowAtPoint (x, y, excludeWin) {
+	getWindowAtPoint (x: number, y: number, excludeWin: AppWindow): AppWindow | null {
 		for (const win of WindowManager.list) {
 			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
 				continue;
@@ -887,7 +883,7 @@ class Api {
 	 * @param {string} tabId - Tab ID to transfer
 	 * @param {Object} tabData - Tab data
 	 */
-	transferTabToWindow (sourceWin, targetWin, tabId, tabData) {
+	transferTabToWindow (sourceWin: AppWindow, targetWin: AppWindow, tabId: string, tabData: TabData): void {
 		// Create tab in target window first
 		WindowManager.createTab(targetWin, tabData, { setActive: true });
 
@@ -909,7 +905,7 @@ class Api {
 	 * @param {number} mouseX - Mouse X screen coordinate
 	 * @param {number} mouseY - Mouse Y screen coordinate
 	 */
-	createWindowFromTab (sourceWin, tabId, tabData, mouseX, mouseY) {
+	createWindowFromTab (sourceWin: AppWindow, tabId: string, tabData: TabData, mouseX: number, mouseY: number): void {
 		// Get source window size
 		const sourceBounds = WindowManager.getBounds(sourceWin);
 		const width = sourceBounds?.width;
@@ -932,7 +928,7 @@ class Api {
 		}, 100);
 	};
 
-	notification (win, param) {
+	notification (win: AppWindow, param: { id?: string; title?: string; text?: string; cmd?: string; payload?: any }): void {
 		const { id, title, text, cmd, payload } = param || {};
 
 		if (!text) {
@@ -967,14 +963,14 @@ class Api {
 		notification.show();
 	};
 
-	payloadBroadcast (win, payload) {
+	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {
 		if (payload.type == 'openObject') {
 			this.focusWindow(win);
 		};
-		
+
 		Util.sendToActiveTab(win, 'payload-broadcast', payload);
 	};
 
 };
 
-module.exports = new Api();
+export default new Api();

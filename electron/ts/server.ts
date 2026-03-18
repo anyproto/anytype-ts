@@ -1,17 +1,23 @@
-'use strict';
-const path = require('path');
-const childProcess = require('child_process');
-const fs = require('fs');
+import path from 'path';
+import childProcess from 'child_process';
+import fs from 'fs';
+import { app, dialog, shell } from 'electron';
+import Util from './util';
+
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
-const { app, dialog, shell } = require('electron');
-const Util = require('./util.js');
 const winShutdownStdinMessage = 'shutdown\n';
 
 let maxStdErrChunksBuffer = 10;
 
 class Server {
 
-	start (binPath, workingDir) {
+	cp: childProcess.ChildProcess | null = null;
+	address: string = '';
+	isRunning: boolean = false;
+	stopTriggered: boolean = false;
+	lastErrors: string[] = [];
+
+	start (binPath: string, workingDir: string): Promise<boolean> {
 		console.log('[Server]: start', binPath, workingDir);
 
 		const logPath = Util.logPath();
@@ -27,20 +33,20 @@ class Server {
 					if (!process.stdout.isTTY) {
 						env['GOLOG_FILE'] = path.join(logPath, `anytype_${Util.dateForFile()}.log`);
 					};
-					
+
 					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
-				} catch (err) {
+				} catch (err: any) {
 					console.error('[Server] Process start error: ', err.toString());
 					reject(err);
 				};
-				
-				this.cp.on('error', err => {
+
+				this.cp.on('error', (err: any) => {
 					this.isRunning = false;
 					console.error('[Server] Failed to start server: ', err.toString());
 					reject(err);
 				});
-				
-				this.cp.stdout.on('data', data => {
+
+				this.cp.stdout.on('data', (data: Buffer) => {
 					const str = data.toString();
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
@@ -56,53 +62,53 @@ class Server {
 					console.log(str);
 				});
 
-				this.cp.stderr.on('data', data => {
+				this.cp.stderr.on('data', (data: Buffer) => {
 					const chunk = data.toString();
-					
+
 					// max chunk size is 8192 bytes
 					// https://github.com/nodejs/node/issues/12921
 					// https://nodejs.org/api/buffer.html#buffer_class_property_buffer_poolsize
-					
+
 					if (chunk.length > 8000) {
 						// in case we've got a crash lets change the max buffer to collect the whole stack trace
 						maxStdErrChunksBuffer = 2048; // 2048x8192 = 16 Mb max
 					};
-					
+
 					if (!this.lastErrors) {
 						this.lastErrors = [];
-					} else 
+					} else
 					if (this.lastErrors.length >= maxStdErrChunksBuffer) {
 						this.lastErrors.shift();
 					};
-					
+
 					this.lastErrors.push(chunk);
 					console.log(chunk);
 				});
-				
+
 				this.cp.on('exit', () => {
 					if (this.stopTriggered) {
 						return;
 					};
-					
+
 					this.isRunning = false;
-					
+
 					const log = path.join(logPath, `crash_${Util.dateForFile()}.log`);
 					try {
 						fs.writeFileSync(log, this.lastErrors.join('\n'), 'utf-8');
 					} catch(e) {
 						console.log('[Server]: Failed to save log file', log);
 					};
-					
+
 					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers by creating issue at https://community.anytype.io');
 					shell.showItemInFolder(log);
-					
+
 					app.exit(0);
 				});
 			});
 		});
 	};
-	
-	stop (signal) {
+
+	stop (signal?: string): Promise<boolean> {
 		signal = String(signal || 'SIGTERM');
 
 		return new Promise((resolve, reject) => {
@@ -113,28 +119,28 @@ class Server {
 					this.isRunning = false;
 					this.cp = null;
 				});
-				
+
 				this.stopTriggered = true;
  				if (process.platform === 'win32') {
 					 // it is not possible to handle os signals on windows, so we can't do graceful shutdown on go side
 					this.cp.stdin.write(winShutdownStdinMessage);
 				} else {
-					this.cp.kill(signal);
+					this.cp.kill(signal as NodeJS.Signals);
 				};
 			} else {
-				resolve();
+				resolve(true);
 			};
 		});
 	};
 
-	getAddress () {
+	getAddress (): string {
 		return this.address;
 	};
-	
-	setAddress (address) {
+
+	setAddress (address: string): void {
 		this.address = address;
 	};
-	
+
 };
 
-module.exports = new Server();
+export default new Server();

@@ -1,13 +1,18 @@
-const { app, shell, Menu, Tray } = require('electron');
-const { is, fixPathForAsarUnpack } = require('electron-util');
-const fs = require('fs');
-const path = require('path');
-const ConfigManager = require('./config.js');
-const Util = require('./util.js');
-const { getSafeStorage } = require('./safeStorage.js');
-const Separator = { type: 'separator' };
+import { app, shell, Menu, Tray, BrowserWindow, dialog } from 'electron';
+import { is, fixPathForAsarUnpack } from 'electron-util';
+import fs from 'fs';
+import path from 'path';
+import Api from './api';
+import ConfigManager from './config';
+import UpdateManager from './update';
+import WindowManager from './window';
+import Util from './util';
+import { getSafeStorage } from './safeStorage';
+import { AppWindow, TabView } from './types';
 
-const DEFAULT_SHORTCUTS = {
+const Separator: Electron.MenuItemConstructorOptions = { type: 'separator' };
+
+const DEFAULT_SHORTCUTS: { [key: string]: string[] } = {
 	createObject: [ 'CmdOrCtrl', 'N' ],
 	undo: [ 'CmdOrCtrl', 'Z' ],
 	redo: [ 'CmdOrCtrl', 'Shift', 'Z' ],
@@ -30,18 +35,20 @@ const DEFAULT_SHORTCUTS = {
 
 class MenuManager {
 
-	win = null;
-	menu = null;
-	tray = null;
-	setWindow (win) {
+	win: AppWindow | null = null;
+	menu: Electron.Menu | null = null;
+	tray: Tray | null = null;
+	shortcuts: { [key: string]: string[] } = {};
+
+	setWindow (win: AppWindow): void {
 		this.win = win;
 	};
 
-	initShortcuts () {
+	initShortcuts (): void {
 		this.shortcuts = getSafeStorage().get('shortcuts') || {};
 	};
 
-	getAccelerator (id) {
+	getAccelerator (id: string): string {
 		let keys = this.shortcuts[id];
 
 		if (undefined === keys) {
@@ -50,8 +57,8 @@ class MenuManager {
 
 		keys = keys || [];
 
-		const arrowKeys = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
-		const ret = [];
+		const arrowKeys: { [key: string]: string } = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
+		const ret: string[] = [];
 		for (const key of keys) {
 			const keyLower = key.toLowerCase();
 			if ((keyLower == 'ctrl') || (keyLower == 'cmd')) {
@@ -75,23 +82,23 @@ class MenuManager {
 		return ret.join('+');
 	};
 
-	getView () {
+	getView (): TabView | undefined {
 		return Util.getActiveView(this.win);
 	};
 
-	initMenu () {
+	initMenu (): void {
 		this.initShortcuts();
 
 		const { config } = ConfigManager;
-		const Api = require('./api.js');
-		const WindowManager = require('./window.js');
-		const UpdateManager = require('./update.js');
+
+
+
 		const isAllowedUpdate = UpdateManager.isAllowed();
 
 		config.debug = config.debug || {};
 		config.flagsMw = config.flagsMw || {};
 
-		const menuParam = [
+		const menuParam: Electron.MenuItemConstructorOptions[] = [
 			{
 				label: 'Anytype',
 				submenu: [
@@ -100,7 +107,7 @@ class MenuManager {
 					Separator,
 
 					{ role: 'hide', label: Util.translate('electronMenuHide') },
-					{ role: 'hideothers', label: Util.translate('electronMenuHideOthers') },
+					{ role: 'hideOthers', label: Util.translate('electronMenuHideOthers') },
 					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
 					{ type: 'separator', visible: isAllowedUpdate },
@@ -129,13 +136,13 @@ class MenuManager {
 
 					Separator,
 
-					{ 
+					{
 						label: Util.translate('electronMenuOpen'), submenu: [
 							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
 							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
 							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
 							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
-							{ 
+							{
 								label: Util.translate('electronMenuCustomCss'),
 								click: () => {
 									const fp = path.join(Util.userPath(), 'custom.css');
@@ -147,12 +154,12 @@ class MenuManager {
 									shell.openPath(fp);
 								},
 							},
-						] 
+						]
 					},
 
 					Separator,
 
-					{ 
+					{
 						label: Util.translate('electronMenuApplyCustomCss'), type: 'checkbox', checked: !config.disableCss,
 						click: () => {
 							config.disableCss = !config.disableCss;
@@ -184,7 +191,7 @@ class MenuManager {
 				submenu: [
 					{
 						label: Util.translate('electronMenuUndo'), accelerator: this.getAccelerator('undo'),
-						click: () => { 
+						click: () => {
 							if (this.win) {
 								this.getView().webContents.undo();
 								Util.send(this.win, 'commandGlobal', 'undo');
@@ -206,7 +213,7 @@ class MenuManager {
 					{ label: Util.translate('electronMenuCopy'), role: 'copy' },
 					{ label: Util.translate('electronMenuCut'), role: 'cut' },
 					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
-					{ 
+					{
 						label: Util.translate('electronMenuPastePlain'), accelerator: 'CmdOrCtrl+Shift+V',
 						click: () => {
 							if (is.macos) {
@@ -238,9 +245,9 @@ class MenuManager {
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => {
-						const Api = require('./api.js');
+				
 						const activeView = Util.getActiveView(this.win);
-						const { isPinned, route, ...data } = activeView?.data || {};
+						const { isPinned, ...data } = activeView?.data || {};
 
 						data.route = '/main/void/dashboard';
 						Api.openTab(this.win, data, { fireAnalytics: true });
@@ -259,11 +266,11 @@ class MenuManager {
 						label: Util.translate('electronMenuFullScreen'), accelerator: this.getAccelerator('toggleFullScreen'), type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => Api.toggleFullScreen(this.win),
 					},
-					{ 
+					{
 						label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => {
 							this.win.reload();
 							this.getView().webContents.reload();
-						}, 
+						},
 					}
 				]
 			},
@@ -296,13 +303,13 @@ class MenuManager {
 			},
 		];
 
-		const flags = { 
-			ui: Util.translate('electronMenuFlagInterface'), 
-			hiddenObject: Util.translate('electronMenuFlagHidden'), 
+		const flags: { [key: string]: string } = {
+			ui: Util.translate('electronMenuFlagInterface'),
+			hiddenObject: Util.translate('electronMenuFlagHidden'),
 			analytics: Util.translate('electronMenuFlagAnalytics'),
 		};
 
-		const flagsMw = {
+		const flagsMw: { [key: string]: string } = {
 			request: Util.translate('electronMenuFlagMwRequest'),
 			subscribe: Util.translate('electronMenuFlagMwSubscribe'),
 			event: Util.translate('electronMenuFlagMwEvent'),
@@ -312,8 +319,8 @@ class MenuManager {
 			json: Util.translate('electronMenuFlagMwJson'),
 		};
 
-		const flagMenu = [];
-		const flagMwMenu = [];
+		const flagMenu: Electron.MenuItemConstructorOptions[] = [];
+		const flagMwMenu: Electron.MenuItemConstructorOptions[] = [];
 
 		for (const i in flags) {
 			flagMenu.push({
@@ -354,9 +361,9 @@ class MenuManager {
 				Separator,
 
 				{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-				{ label: Util.translate('electronMenuDebugObject'), click: (item, window, event) => {
-					const unanonymized = event && event.altKey;
-					
+				{ label: Util.translate('electronMenuDebugObject'), click: (item: Electron.MenuItem, window: BrowserWindow | undefined, event: Electron.KeyboardEvent) => {
+					const unanonymized = event && (event as Electron.KeyboardEvent & { altKey?: boolean }).altKey;
+
 					if (unanonymized) {
 						const { dialog } = require('electron');
 						const result = dialog.showMessageBoxSync(this.win, {
@@ -367,12 +374,12 @@ class MenuManager {
 							message: 'You are exporting this object and all its history of changes without anonymization.',
 							detail: 'This file will contain sensitive data. Only proceed if you understand the privacy implications.'
 						});
-						
+
 						if (!result) {
 							return; // User clicked Cancel
 						};
 					};
-					
+
 					Util.send(this.win, 'commandGlobal', 'debugTree', { unanonymized });
 				}},
 				{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
@@ -388,20 +395,20 @@ class MenuManager {
 			]
 		});
 
-		const channels = ConfigManager.getChannels().map(it => {
-			it.click = () => { 
+		const channels = ConfigManager.getChannels().map((it) => ({
+			...it,
+			click: () => {
 				if (!UpdateManager.isUpdating) {
 					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
-			};
-			return it;
-		}); 
+			},
+		}));
 
 		if (channels.length > 1) {
 			menuParam.push({ label: Util.translate('electronMenuVersion'), submenu: channels });
 		};
 
-		const menuSudo = { 
+		const menuSudo: Electron.MenuItemConstructorOptions = {
 			label: 'Sudo',
 			submenu: [
 				Separator,
@@ -440,23 +447,23 @@ class MenuManager {
 		Menu.setApplicationMenu(this.menu);
 	};
 
-	initDock () {
+	initDock (): void {
 		if (!is.macos) {
 			return;
 		};
 
-		const WindowManager = require('./window.js');
+
 
 		app.dock.setMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuNewWindow'), click: () => WindowManager.createMain({ isChild: true }) },
 		]));
 	};
 
-	initTray () {
+	initTray (): void {
 		const { config } = ConfigManager;
-		const WindowManager = require('./window.js');
-		const Api = require('./api.js');
-		const UpdateManager = require('./update.js');
+
+
+
 		const isAllowedUpdate = UpdateManager.isAllowed();
 
 		this.destroy();
@@ -480,7 +487,7 @@ class MenuManager {
 
 			{ label: Util.translate('electronMenuCheckUpdates'), click: () => { this.winShow(); Api.updateCheck(this.win); }, visible: isAllowedUpdate },
 			{ label: Util.translate('commonSettings'), submenu: this.menuSettings() },
-			
+
 			Separator,
 
 			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
@@ -496,24 +503,24 @@ class MenuManager {
 		});
 	};
 
-	winShow () {
+	winShow (): void {
 		if (this.win && !this.win.isDestroyed()) {
 			this.win.show();
 		};
 	};
 
-	winHide () {
+	winHide (): void {
 		if (this.win && !this.win.isDestroyed()) {
 			this.win.hide();
 		};
 	};
 
-	menuSettings () {
+	menuSettings (): Electron.MenuItemConstructorOptions[] {
 		const { config } = ConfigManager;
-		const Api = require('./api.js');
-		const Locale = require('../../dist/lib/json/locale.json');
+
+		const Locale = JSON.parse(fs.readFileSync(path.join(__dirname, 'dist', 'lib', 'json', 'locale.json'), 'utf8'));
 		const lang = Util.getLang();
-		const langMenu = [];
+		const langMenu: Electron.MenuItemConstructorOptions[] = [];
 
 		for (const key of Util.enabledLangs()) {
 			langMenu.push({
@@ -523,43 +530,43 @@ class MenuManager {
 		};
 
 		return [
-			{ 
-				label: Util.translate('electronMenuAccountSettings'), click: () => { 
-					this.winShow(); 
-					this.openSettings('account'); 
+			{
+				label: Util.translate('electronMenuAccountSettings'), click: () => {
+					this.winShow();
+					this.openSettings('account');
 				}
 			},
-			{ 
-				label: Util.translate('electronMenuSpaceSettings'), click: () => { 
-					this.winShow(); 
+			{
+				label: Util.translate('electronMenuSpaceSettings'), click: () => {
+					this.winShow();
 					this.openSettings('spaceIndex');
 				}
 			},
 
 			Separator,
 
-			{ 
-				label: Util.translate('electronMenuImport'), click: () => { 
-					this.winShow(); 
+			{
+				label: Util.translate('electronMenuImport'), click: () => {
+					this.winShow();
 					this.openSettings('importIndex');
-				} 
+				}
 			},
-			{ 
-				label: Util.translate('electronMenuExport'), click: () => { 
-					this.winShow(); 
+			{
+				label: Util.translate('electronMenuExport'), click: () => {
+					this.winShow();
 					this.openSettings('exportIndex');
-				} 
+				}
 			},
 
 			{ label: Util.translate('electronMenuLanguage'), submenu: langMenu },
-			
+
 			Separator,
 
-			{ 
-				label: Util.translate('electronMenuShowTray'), type: 'checkbox', checked: !config.hideTray, click: () => { 
+			{
+				label: Util.translate('electronMenuShowTray'), type: 'checkbox', checked: !config.hideTray, click: () => {
 					Api.setConfig(this.win, { hideTray: !config.hideTray });
 					this.initTray();
-				} 
+				}
 			},
 
 			(is.windows || is.linux) ? {
@@ -573,24 +580,24 @@ class MenuManager {
 
 			Separator,
 
-			{ 
-				label: Util.translate('commonNewObject'), accelerator:this.getAccelerator('createObject'), click: () => { 
+			{
+				label: Util.translate('commonNewObject'), accelerator:this.getAccelerator('createObject'), click: () => {
 					this.winShow();
-					Util.send(this.win, 'commandGlobal', 'createObject'); 
-				} 
+					Util.send(this.win, 'commandGlobal', 'createObject');
+				}
 			},
-		].filter(it => it);
+		].filter(it => it) as Electron.MenuItemConstructorOptions[];
 	};
 
-	openSettings (page) {
-		const Api = require('./api.js');
+	openSettings (page: string): void {
+
 
 		if (!Api.hasPinSet || Api.isPinChecked) {
 			Util.send(this.win, 'route', `/main/settings/${page}`);
 		};
 	};
 
-	updateTrayIcon () {
+	updateTrayIcon (): void {
 		if (this.tray && this.tray.setImage) {
 			const icon = this.getTrayIcon();
 			if (icon) {
@@ -599,25 +606,25 @@ class MenuManager {
 		};
 	};
 
-	getTrayIcon () {
+	getTrayIcon (): string {
 		let icon = '';
 
 		if (is.windows) {
 			icon = path.join('icons', '256x256.ico');
-		} else 
+		} else
 		if (is.linux) {
 			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP || '';
 			const panelAlwaysDark = env.includes('GNOME') || (env == 'Unity'); // for GNOME shell env, including ubuntu -- the panel is always dark
 
             if (panelAlwaysDark) {
                 icon = 'iconTrayWhite.png';
-            } else 
+            } else
 			if (Util.getTheme() == 'dark') {
                 icon = 'iconTrayWhite.png';
             } else {
                 icon = 'iconTrayBlack.png';
             };
-		} else 
+		} else
 		if (is.macos) {
 			icon = `iconTrayTemplate.png`;
 		};
@@ -625,7 +632,7 @@ class MenuManager {
 		return icon ? fixPathForAsarUnpack(path.join(Util.imagePath(), icon)) : '';
 	};
 
-	destroy () {
+	destroy (): void {
 		if (this.tray && !this.tray.isDestroyed()) {
 			this.tray.destroy();
 			this.tray = null;
@@ -634,4 +641,4 @@ class MenuManager {
 
 };
 
-module.exports = new MenuManager();
+export default new MenuManager();

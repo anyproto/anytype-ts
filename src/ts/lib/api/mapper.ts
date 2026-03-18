@@ -1,146 +1,227 @@
 import { I, M, U, Encode, Decode } from 'Lib';
-import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import Events from 'dist/lib/pb/protos/events_pb';
 
 /**
  * Mapper provides bidirectional conversion between protobuf messages
  * and TypeScript interfaces.
  *
- * Structure:
- * - Type mapping functions (BlockType, BoardGroupType, etc.) - Convert protobuf enums to app types
- * - From: Converts protobuf messages TO TypeScript objects (used when receiving data)
- * - To: Converts TypeScript objects TO protobuf messages (used when sending data)
+ * With ts-proto bindings, protobuf messages are plain JS objects.
+ * - From: Converts received protobuf objects to app TypeScript interfaces
+ * - To: Converts app TypeScript objects to protobuf-shaped plain objects
  * - Event: Specialized mappers for real-time event processing
- *
- * Usage:
- * - Mapper.From.Block(protoBlock) - Convert received block to TS interface
- * - Mapper.To.Block(tsBlock) - Convert TS block to protobuf for sending
- * - Mapper.Event.Type(valueCase) - Get event type string from protobuf enum
  */
+
+/**
+ * Maps ts-proto Block optional property names to application BlockType values.
+ */
+const PROP_TO_BLOCK_TYPE: Record<string, I.BlockType> = {
+	smartblock: I.BlockType.Page,
+	text: I.BlockType.Text,
+	file: I.BlockType.File,
+	layout: I.BlockType.Layout,
+	div: I.BlockType.Div,
+	bookmark: I.BlockType.Bookmark,
+	link: I.BlockType.Link,
+	dataview: I.BlockType.Dataview,
+	relation: I.BlockType.Relation,
+	featuredRelations: I.BlockType.Featured,
+	latex: I.BlockType.Embed,
+	table: I.BlockType.Table,
+	tableColumn: I.BlockType.TableColumn,
+	tableRow: I.BlockType.TableRow,
+	tableOfContents: I.BlockType.TableOfContents,
+	widget: I.BlockType.Widget,
+	chat: I.BlockType.Chat,
+};
+
+/**
+ * Reverse mapping: application BlockType string to ts-proto property name.
+ */
+const BLOCK_TYPE_TO_PROP: Record<string, string> = {};
+for (const [prop, blockType] of Object.entries(PROP_TO_BLOCK_TYPE)) {
+	BLOCK_TYPE_TO_PROP[blockType] = prop;
+};
+
+/**
+ * Maps ts-proto Event_Message property names to event type strings.
+ * Property names must match the ts-proto generated interface exactly.
+ */
+const EVENT_PROP_MAP: [string, string][] = [
+	[ 'accountShow', 'AccountShow' ],
+	[ 'accountDetails', 'AccountDetails' ],
+	[ 'accountConfigUpdate', 'AccountConfigUpdate' ],
+	[ 'accountUpdate', 'AccountUpdate' ],
+	[ 'accountLinkChallenge', 'AccountLinkChallenge' ],
+	[ 'accountLinkChallengeHide', 'AccountLinkChallengeHide' ],
+
+	[ 'blockAdd', 'BlockAdd' ],
+	[ 'blockDelete', 'BlockDelete' ],
+	[ 'blockSetFields', 'BlockSetFields' ],
+	[ 'blockSetChildrenIds', 'BlockSetChildrenIds' ],
+	[ 'blockSetBackgroundColor', 'BlockSetBackgroundColor' ],
+	[ 'blockSetText', 'BlockSetText' ],
+	[ 'blockSetFile', 'BlockSetFile' ],
+	[ 'blockSetLink', 'BlockSetLink' ],
+	[ 'blockSetBookmark', 'BlockSetBookmark' ],
+	[ 'blockSetAlign', 'BlockSetAlign' ],
+	[ 'blockSetVerticalAlign', 'BlockSetVerticalAlign' ],
+	[ 'blockSetDiv', 'BlockSetDiv' ],
+	[ 'blockSetRelation', 'BlockSetRelation' ],
+	[ 'blockSetLatex', 'BlockSetLatex' ],
+	[ 'blockSetTableRow', 'BlockSetTableRow' ],
+	[ 'blockSetWidget', 'BlockSetWidget' ],
+
+	[ 'blockDataviewViewSet', 'BlockDataviewViewSet' ],
+	[ 'blockDataviewViewUpdate', 'BlockDataviewViewUpdate' ],
+	[ 'blockDataviewViewDelete', 'BlockDataviewViewDelete' ],
+	[ 'blockDataviewViewOrder', 'BlockDataviewViewOrder' ],
+	[ 'blockDataviewTargetObjectIdSet', 'BlockDataviewTargetObjectIdSet' ],
+	[ 'blockDataviewIsCollectionSet', 'BlockDataviewIsCollectionSet' ],
+	[ 'blockDataviewRelationSet', 'BlockDataviewRelationSet' ],
+	[ 'blockDataviewRelationDelete', 'BlockDataviewRelationDelete' ],
+	[ 'blockDataViewGroupOrderUpdate', 'BlockDataviewGroupOrderUpdate' ],
+	[ 'blockDataViewObjectOrderUpdate', 'BlockDataviewObjectOrderUpdate' ],
+
+	[ 'subscriptionAdd', 'SubscriptionAdd' ],
+	[ 'subscriptionRemove', 'SubscriptionRemove' ],
+	[ 'subscriptionPosition', 'SubscriptionPosition' ],
+	[ 'subscriptionCounters', 'SubscriptionCounters' ],
+	[ 'subscriptionGroups', 'SubscriptionGroups' ],
+
+	[ 'objectRemove', 'ObjectRemove' ],
+	[ 'objectDetailsSet', 'ObjectDetailsSet' ],
+	[ 'objectDetailsAmend', 'ObjectDetailsAmend' ],
+	[ 'objectDetailsUnset', 'ObjectDetailsUnset' ],
+	[ 'objectRelationsAmend', 'ObjectRelationsAmend' ],
+	[ 'objectRelationsRemove', 'ObjectRelationsRemove' ],
+	[ 'objectRestrictionsSet', 'ObjectRestrictionsSet' ],
+	[ 'objectClose', 'objectClose' ],
+
+	[ 'fileSpaceUsage', 'FileSpaceUsage' ],
+	[ 'fileLocalUsage', 'FileLocalUsage' ],
+	[ 'fileLimitReached', 'FileLimitReached' ],
+	[ 'fileLimitUpdated', 'FileLimitUpdated' ],
+
+	[ 'notificationSend', 'NotificationSend' ],
+	[ 'notificationUpdate', 'NotificationUpdate' ],
+
+	[ 'payloadBroadcast', 'PayloadBroadcast' ],
+
+	[ 'processNew', 'ProcessNew' ],
+	[ 'processUpdate', 'ProcessUpdate' ],
+	[ 'processDone', 'ProcessDone' ],
+
+	[ 'threadStatus', 'ThreadStatus' ],
+	[ 'spaceSyncStatusUpdate', 'SpaceSyncStatusUpdate' ],
+	[ 'p2pStatusUpdate', 'P2PStatusUpdate' ],
+
+	[ 'importFinish', 'ImportFinish' ],
+
+	[ 'chatAdd', 'ChatAdd' ],
+	[ 'chatUpdate', 'ChatUpdate' ],
+	[ 'chatDelete', 'ChatDelete' ],
+	[ 'chatUpdateReactions', 'ChatUpdateReactions' ],
+	[ 'chatStateUpdate', 'ChatStateUpdate' ],
+	[ 'chatUpdateMessageReadStatus', 'ChatUpdateMessageReadStatus' ],
+	[ 'chatUpdateMentionReadStatus', 'ChatUpdateMentionReadStatus' ],
+	[ 'chatUpdateMessageSyncStatus', 'ChatUpdateMessageSyncStatus' ],
+
+	[ 'membershipV2Update', 'MembershipV2Update' ],
+	[ 'membershipV2ProductsUpdate', 'MembershipV2ProductsUpdate' ],
+];
+
 export const Mapper = {
 
 	/**
-	 * Convert protobuf Block.ContentCase enum to application BlockType.
-	 * @param v - The protobuf content case value
-	 * @returns The corresponding I.BlockType enum value
+	 * Detect BlockType from a ts-proto Block object's optional content properties.
 	 */
-	BlockType: (v: Model.Block.ContentCase): I.BlockType => {
-		const V = Model.Block.ContentCase;
-
-		let t = I.BlockType.Empty;
-		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
-		if (v == V.TEXT)				 t = I.BlockType.Text;
-		if (v == V.FILE)				 t = I.BlockType.File;
-		if (v == V.LAYOUT)				 t = I.BlockType.Layout;
-		if (v == V.DIV)					 t = I.BlockType.Div;
-		if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
-		if (v == V.LINK)				 t = I.BlockType.Link;
-		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
-		if (v == V.RELATION)			 t = I.BlockType.Relation;
-		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-		if (v == V.LATEX)				 t = I.BlockType.Embed;
-		if (v == V.TABLE)				 t = I.BlockType.Table;
-		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
-		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
-		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
-		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
-		if (v == V.CHAT)				 t = I.BlockType.Chat;
-		return t;
+	BlockType: (obj: any): I.BlockType => {
+		for (const prop in PROP_TO_BLOCK_TYPE) {
+			if (obj[prop] !== undefined) {
+				return PROP_TO_BLOCK_TYPE[prop];
+			};
+		};
+		return I.BlockType.Empty;
 	},
 
-	BoardGroupType (v: Model.Block.Content.Dataview.Group.ValueCase) {
-		const V = Model.Block.Content.Dataview.Group.ValueCase;
-
-		let t = '';
-		if (v == V.STATUS)	 t = 'status';
-		if (v == V.TAG)		 t = 'tag';
-		if (v == V.CHECKBOX) t = 'checkbox';
-		if (v == V.DATE)	 t = 'date';
-		return t;
+	BoardGroupType (obj: any): string {
+		if (obj.status !== undefined) return 'status';
+		if (obj.tag !== undefined) return 'tag';
+		if (obj.checkbox !== undefined) return 'checkbox';
+		if (obj.date !== undefined) return 'date';
+		return '';
 	},
 
-	NotificationPayload (v: Model.Notification.PayloadCase) {
-		const V = Model.Notification.PayloadCase;
-
-		let t = '';
-		if (v == V.IMPORT)			 t = 'import';
-		if (v == V.EXPORT)			 t = 'export';
-		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
-		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
-		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
-		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
-		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
-		if (v == V.PARTICIPANTREQUESTDECLINE) t = 'participantRequestDecline';
-		if (v == V.PARTICIPANTPERMISSIONSCHANGE) t = 'participantPermissionsChange';
-
-		return t;
+	NotificationPayload (obj: any): string {
+		if (obj.import !== undefined) return 'import';
+		if (obj.export !== undefined) return 'export';
+		if (obj.galleryImport !== undefined) return 'galleryImport';
+		if (obj.requestToJoin !== undefined) return 'requestToJoin';
+		if (obj.requestToLeave !== undefined) return 'requestToLeave';
+		if (obj.participantRequestApproved !== undefined) return 'participantRequestApproved';
+		if (obj.participantRemove !== undefined) return 'participantRemove';
+		if (obj.participantRequestDecline !== undefined) return 'participantRequestDecline';
+		if (obj.participantPermissionsChange !== undefined) return 'participantPermissionsChange';
+		return '';
 	},
 
-	ProcessType (v: Events.Model.Process.MessageCase) {
-		const V = Events.Model.Process.MessageCase;
-
-		let t = '';
-		if (v == V.DROPFILES)		 t = 'dropFiles';
-		if (v == V.IMPORT)			 t = 'import';
-		if (v == V.EXPORT)			 t = 'export';
-		if (v == V.SAVEFILE)		 t = 'saveFile';
-		if (v == V.MIGRATION)		 t = 'migration';
-
-		return t;
+	ProcessType (obj: any): string {
+		if (obj.dropFiles !== undefined) return 'dropFiles';
+		if (obj.import !== undefined) return 'import';
+		if (obj.export !== undefined) return 'export';
+		if (obj.saveFile !== undefined) return 'saveFile';
+		if (obj.migration !== undefined) return 'migration';
+		return '';
 	},
 
 	/**
 	 * From: Converters for transforming protobuf messages TO TypeScript objects.
 	 * Used when receiving data from the middleware.
-	 * Each method takes a protobuf message and returns a plain JS/TS object.
 	 */
 	From: {
 
-		/** Convert Account protobuf to I.Account interface */
-		Account: (obj: Model.Account): I.Account => {
+		Account: (obj: any): I.Account => {
 			return {
-				id: obj.getId(),
-				info: obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
-				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
-				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+				id: obj.id,
+				info: obj.info ? Mapper.From.AccountInfo(obj.info) : null,
+				config: obj.config ? Mapper.From.AccountConfig(obj.config) : null,
+				status: obj.status ? Mapper.From.AccountStatus(obj.status) : null,
 			};
 		},
 
-		AccountInfo: (obj: Model.Account.Info): I.AccountInfo => {
+		AccountInfo: (obj: any): I.AccountInfo => {
 			return {
-				profileObjectId: obj.getProfileobjectid(),
-				gatewayUrl: obj.getGatewayurl(),
-				deviceId: obj.getDeviceid(),
-				accountSpaceId: obj.getAccountspaceid(),
-				techSpaceId: obj.getTechspaceid(),
-				spaceViewId: obj.getSpaceviewid(),
-				widgetsId: obj.getWidgetsid(),
-				analyticsId: obj.getAnalyticsid(),
-				networkId: obj.getNetworkid(),
-				workspaceObjectId: obj.getWorkspaceobjectid(),
-				ethereumAddress: obj.getEthereumaddress(),
-				metadataKey: obj.getMetadatakey(),
+				profileObjectId: obj.profileObjectId,
+				gatewayUrl: obj.gatewayUrl,
+				deviceId: obj.deviceId,
+				accountSpaceId: obj.accountSpaceId,
+				techSpaceId: obj.techSpaceId,
+				spaceViewId: obj.spaceViewId,
+				widgetsId: obj.widgetsId,
+				analyticsId: obj.analyticsId,
+				networkId: obj.networkId,
+				workspaceObjectId: obj.workspaceObjectId,
+				ethereumAddress: obj.ethereumAddress,
+				metadataKey: obj.metadataKey,
 			};
 		},
 
-		AccountConfig: (obj: Model.Account.Config): I.AccountConfig => {
+		AccountConfig: (obj: any): I.AccountConfig => {
 			return {};
 		},
 
-		AccountStatus: (obj: Model.Account.Status): I.AccountStatus => {
+		AccountStatus: (obj: any): I.AccountStatus => {
 			return {
-				type: obj.getStatustype() as number,
-				date: obj.getDeletiondate(),
+				type: obj.statusType as number,
+				date: obj.deletionDate,
 			};
 		},
-		
+
 		ObjectInfo: (obj: any): I.PageInfo => {
 			return {
-				id: obj.getId(),
-				details: Decode.struct(obj.getDetails()),
-				snippet: obj.getSnippet(),
-				hasInboundLinks: obj.getHasinboundlinks(),
+				id: obj.id,
+				details: Decode.struct(obj.details),
+				snippet: obj.snippet,
+				hasInboundLinks: obj.hasInboundLinks,
 			};
 		},
 
@@ -148,36 +229,36 @@ export const Mapper = {
 			return Decode.struct(obj);
 		},
 
-		Range: (obj: Model.Range): I.TextRange => {
+		Range: (obj: any): I.TextRange => {
 			return {
-				from: obj.getFrom(),
-				to: obj.getTo(),
+				from: obj.from,
+				to: obj.to,
 			};
 		},
 
-		Mark: (obj: Model.Block.Content.Text.Mark): I.Mark => {
+		Mark: (obj: any): I.Mark => {
 			return {
-				type: obj.getType() as number,
-				param: obj.getParam(),
-				range: Mapper.From.Range(obj.getRange()),
+				type: obj.type as number,
+				param: obj.param,
+				range: Mapper.From.Range(obj.range),
 			};
 		},
 
-		PreviewLink: (obj: Model.LinkPreview) => {
+		PreviewLink: (obj: any) => {
 			return {
-				type: obj.getType(),
-				title: obj.getTitle(),
-				description: obj.getDescription(),
-				faviconUrl: obj.getFaviconurl(),
-				imageUrl: obj.getImageurl(),
-				url: obj.getUrl(),
+				type: obj.type,
+				title: obj.title,
+				description: obj.description,
+				faviconUrl: obj.faviconUrl,
+				imageUrl: obj.imageUrl,
+				url: obj.url,
 			};
 		},
 
 		Details: (obj: any): any => {
 			return {
-				id: obj.getId(),
-				details: Decode.struct(obj.getDetails()),
+				id: obj.id,
+				details: Decode.struct(obj.details),
 			};
 		},
 
@@ -189,86 +270,86 @@ export const Mapper = {
 			return {};
 		},
 
-		BlockLayout: (obj: Model.Block.Content.Layout) => {
+		BlockLayout: (obj: any) => {
 			return {
-				style: obj.getStyle(),
+				style: obj.style,
 			};
 		},
 
-		BlockDiv: (obj: Model.Block.Content.Div) => {
+		BlockDiv: (obj: any) => {
 			return {
-				style: obj.getStyle(),
+				style: obj.style,
 			};
 		},
 
-		BlockLink: (obj: Model.Block.Content.Link) => {
+		BlockLink: (obj: any) => {
 			return {
-				targetBlockId: obj.getTargetblockid(),
-				iconSize: obj.getIconsize(),
-				cardStyle: obj.getCardstyle(),
-				description: obj.getDescription(),
-				relations: obj.getRelationsList() || [],
+				targetBlockId: obj.targetBlockId,
+				iconSize: obj.iconSize,
+				cardStyle: obj.cardStyle,
+				description: obj.description,
+				relations: obj.relations || [],
 			};
 		},
 
-		BlockBookmark: (obj: Model.Block.Content.Bookmark) => {
+		BlockBookmark: (obj: any) => {
 			return {
-				targetObjectId: obj.getTargetobjectid(),
-				state: obj.getState(),
-				url: obj.getUrl(),
+				targetObjectId: obj.targetObjectId,
+				state: obj.state,
+				url: obj.url,
 			};
 		},
 
-		BlockText: (obj: Model.Block.Content.Text) => {
+		BlockText: (obj: any) => {
 			let marks = [];
-			if (obj.hasMarks()) {
-				marks = (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark);
+			if (obj.marks) {
+				marks = (obj.marks.marks || []).map(Mapper.From.Mark);
 			};
 
 			return {
-				text: obj.getText(),
-				style: obj.getStyle(),
-				checked: obj.getChecked(),
-				color: obj.getColor(),
+				text: obj.text,
+				style: obj.style,
+				checked: obj.checked,
+				color: obj.color,
 				marks,
-				iconEmoji: obj.getIconemoji(),
-				iconImage: obj.getIconimage(),
+				iconEmoji: obj.iconEmoji,
+				iconImage: obj.iconImage,
 			};
 		},
 
-		BlockFile: (obj: Model.Block.Content.File) => {
+		BlockFile: (obj: any) => {
 			return {
-				targetObjectId: obj.getTargetobjectid(),
-				type: obj.getType(),
-				style: obj.getStyle(),
-				addedAt: obj.getAddedat(),
-				state: obj.getState(),
+				targetObjectId: obj.targetObjectId,
+				type: obj.type,
+				style: obj.style,
+				addedAt: obj.addedAt,
+				state: obj.state,
 			};
 		},
 
-		BlockDataview: (obj: Model.Block.Content.Dataview) => {
+		BlockDataview: (obj: any) => {
 			return {
-				sources: obj.getSourceList(),
-				viewId: obj.getActiveview(),
-				views: (obj.getViewsList() || []).map(Mapper.From.View),
-				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
-				targetObjectId: obj.getTargetobjectid(),
-				isCollection: obj.getIscollection(),
+				sources: obj.source || [],
+				viewId: obj.activeView,
+				views: (obj.views || []).map(Mapper.From.View),
+				relationLinks: (obj.relationLinks || []).map(Mapper.From.RelationLink),
+				groupOrder: (obj.groupOrders || []).map(Mapper.From.GroupOrder),
+				objectOrder: (obj.objectOrders || []).map(Mapper.From.ObjectOrder),
+				targetObjectId: obj.TargetObjectId,
+				isCollection: obj.isCollection,
 			};
 		},
 
-		BlockRelation: (obj: Model.Block.Content.Relation) => {
+		BlockRelation: (obj: any) => {
 			return {
-				key: obj.getKey(),
+				key: obj.key,
 			};
 		},
 
-		BlockLatex: (obj: Model.Block.Content.Latex) => {
+		BlockLatex: (obj: any) => {
 			return {
-				text: obj.getText(),
-				processor: obj.getProcessor(),
+				text: obj.text,
+				processor: obj.processor,
 			};
 		},
 
@@ -279,23 +360,23 @@ export const Mapper = {
 		BlockTable: () => {
 			return {};
 		},
-	
+
 		BlockTableColumn: () => {
 			return {};
 		},
 
-		BlockTableRow: (obj: Model.Block.Content.TableRow) => {
+		BlockTableRow: (obj: any) => {
 			return {
-				isHeader: obj.getIsheader(),
+				isHeader: obj.isHeader,
 			};
 		},
 
-		BlockWidget: (obj: Model.Block.Content.Widget) => {
+		BlockWidget: (obj: any) => {
 			return {
-				layout: obj.getLayout(),
-				limit: obj.getLimit(),
-				viewId: obj.getViewid(),
-				autoAdded: obj.getAutoadded(),
+				layout: obj.layout,
+				limit: obj.limit,
+				viewId: obj.viewId,
+				autoAdded: obj.autoAdded,
 			};
 		},
 
@@ -303,211 +384,219 @@ export const Mapper = {
 			return {};
 		},
 
-		Block: (obj: Model.Block): I.Block => {
-			const cc = obj.getContentCase();
-			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = `get${U.String.ucFirst(type)}`;
+		Block: (obj: any): I.Block => {
+			let type = I.BlockType.Empty;
+			let contentObj = {};
+
+			for (const prop in PROP_TO_BLOCK_TYPE) {
+				if (obj[prop] !== undefined) {
+					type = PROP_TO_BLOCK_TYPE[prop];
+					contentObj = obj[prop];
+					break;
+				};
+			};
+
 			const fm = U.String.toUpperCamelCase(`block-${type}`);
-			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
-				id: obj.getId(),
+				id: obj.id,
 				type: type,
-				childrenIds: obj.getChildrenidsList() || [],
-				fields: Decode.struct(obj.getFields()) || {},
-				hAlign: obj.getAlign() as number,
-				vAlign: obj.getVerticalalign() as number,
-				bgColor: obj.getBackgroundcolor(),
+				childrenIds: obj.childrenIds || [],
+				fields: Decode.struct(obj.fields) || {},
+				hAlign: obj.align as number,
+				vAlign: obj.verticalAlign as number,
+				bgColor: obj.backgroundColor,
 				content: {} as any,
 			};
 
 			if (Mapper.From[fm]) {
-				item.content = Mapper.From[fm](content);
+				item.content = Mapper.From[fm](contentObj);
 			} else {
-				console.log('[Mapper] From does not exist: ', fm, cc);
+				console.log('[Mapper] From does not exist: ', fm);
 			};
 			return item;
 		},
 
 		Restrictions: (obj: any): any => {
 			return {
-				object: obj ? obj.getObjectList() || [] : [],
-				dataview: obj ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
+				object: obj ? obj.object || [] : [],
+				dataview: obj ? (obj.dataview || []).map(Mapper.From.RestrictionsDataview) : [],
 			};
 		},
 
 		RestrictionsDataview: (obj: any): any => {
 			return {
-				blockId: obj.getBlockid(),
-				restrictions: obj.getRestrictionsList() || [],
+				blockId: obj.blockId,
+				restrictions: obj.restrictions || [],
 			};
 		},
 
-		RelationLink: (obj: Model.RelationLink): any => {
+		RelationLink: (obj: any): any => {
 			return {
-				relationKey: obj.getKey(),
-				format: obj.getFormat(),
+				relationKey: obj.key,
+				format: obj.format,
 			};
 		},
 
-		View: (obj: Model.Block.Content.Dataview.View): I.View => {
+		View: (obj: any): I.View => {
 			return Object.assign({
-				id: obj.getId(),
-				sorts: obj.getSortsList().map(Mapper.From.Sort),
-				filters: obj.getFiltersList().map(Mapper.From.Filter),
-				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
+				id: obj.id,
+				sorts: (obj.sorts || []).map(Mapper.From.Sort),
+				filters: (obj.filters || []).map(Mapper.From.Filter),
+				relations: (obj.relations || []).map(Mapper.From.ViewRelation),
 			}, Mapper.From.ViewFields(obj));
 		},
 
 		ViewFields: (obj: any): any => {
 			return {
-				type: obj.getType(),
-				name: obj.getName(),
-				coverRelationKey: obj.getCoverrelationkey(),
-				coverFit: obj.getCoverfit(),
-				cardSize: obj.getCardsize(),
-				hideIcon: obj.getHideicon(),
-				groupRelationKey: obj.getGrouprelationkey(),
-				endRelationKey: obj.getEndrelationkey(),
-				wrapContent: obj.getWrapcontent(),
-				listSize: obj.getListsize(),
-				groupBackgroundColors: obj.getGroupbackgroundcolors(),
-				pageLimit: obj.getPagelimit(),
-				defaultTemplateId: obj.getDefaulttemplateid(),
-				defaultTypeId: obj.getDefaultobjecttypeid(),
+				type: obj.type,
+				name: obj.name,
+				coverRelationKey: obj.coverRelationKey,
+				coverFit: obj.coverFit,
+				cardSize: obj.cardSize,
+				hideIcon: obj.hideIcon,
+				groupRelationKey: obj.groupRelationKey,
+				endRelationKey: obj.endRelationKey,
+				wrapContent: obj.wrapContent,
+				listSize: obj.listSize,
+				groupBackgroundColors: obj.groupBackgroundColors,
+				pageLimit: obj.pageLimit,
+				defaultTemplateId: obj.defaultTemplateId,
+				defaultTypeId: obj.defaultObjectTypeId,
 			};
 		},
 
-		ViewRelation: (obj: Model.Block.Content.Dataview.Relation) => {
+		ViewRelation: (obj: any) => {
 			return {
-				relationKey: obj.getKey(),
-				isVisible: obj.getIsvisible(),
-				width: obj.getWidth(),
-				formulaType: obj.getFormula(),
-				align: obj.getAlign(),
+				relationKey: obj.key,
+				isVisible: obj.isVisible,
+				width: obj.width,
+				formulaType: obj.formula,
+				align: obj.align,
 			};
 		},
 
-		Filter: (obj: Model.Block.Content.Dataview.Filter): I.Filter => {
+		Filter: (obj: any): I.Filter => {
 			return {
-				id: obj.getId(),
-				relationKey: obj.getRelationkey(),
-				operator: obj.getOperator() as number,
-				condition: obj.getCondition() as number,
-				quickOption: obj.getQuickoption() as number,
-				value: obj.hasValue() ? Decode.value(obj.getValue()) : null,
-				nestedFilters: (obj.getNestedfiltersList() || []).map(Mapper.From.Filter),
+				id: obj.id,
+				relationKey: obj.RelationKey,
+				operator: obj.operator as number,
+				condition: obj.condition as number,
+				quickOption: obj.quickOption as number,
+				value: (obj.value !== undefined) ? Decode.value(obj.value) : null,
+				nestedFilters: (obj.nestedFilters || []).map(Mapper.From.Filter),
 			};
 		},
 
-		Sort: (obj: Model.Block.Content.Dataview.Sort): I.Sort => {
+		Sort: (obj: any): I.Sort => {
 			return {
-				id: obj.getId(),
-				relationKey: obj.getRelationkey(),
-				type: obj.getType() as number,
-				customOrder: (obj.getCustomorderList() || []).map(Decode.value),
-				empty: obj.getEmptyplacement() as number,
+				id: obj.id,
+				relationKey: obj.RelationKey,
+				type: obj.type as number,
+				customOrder: (obj.customOrder || []).map(Decode.value),
+				empty: obj.emptyPlacement as number,
 			};
 		},
 
-		HistoryVersion: (obj: Rpc.History.Version): I.HistoryVersion => {
+		HistoryVersion: (obj: any): I.HistoryVersion => {
 			return {
-				id: obj.getId(),
-				authorId: obj.getAuthorid(),
-				groupId: obj.getGroupid(),
-				time: obj.getTime(),
+				id: obj.id,
+				authorId: obj.authorId,
+				groupId: obj.groupId,
+				time: obj.time,
 			};
 		},
 
-		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
+		GraphEdge: (obj: any) => {
 			return {
-				type: obj.getType(),
-				source: obj.getSource(),
-				target: obj.getTarget(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				iconImage: obj.getIconimage(),
-				iconEmoji: obj.getIconemoji(),
-				isHidden: obj.getHidden(),
+				type: obj.type,
+				source: obj.source,
+				target: obj.target,
+				name: obj.name,
+				description: obj.description,
+				iconImage: obj.iconImage,
+				iconEmoji: obj.iconEmoji,
+				isHidden: obj.hidden,
 			};
 		},
 
-		UnsplashPicture: (obj: Rpc.Unsplash.Search.Response.Picture) => {
+		UnsplashPicture: (obj: any) => {
 			return {
-				id: obj.getId(),
-				url: obj.getUrl(),
-				artist: obj.getArtist(),
-				artistUrl: obj.getArtisturl(),
+				id: obj.id,
+				url: obj.url,
+				artist: obj.artist,
+				artistUrl: obj.artistUrl,
 			};
 		},
 
-		ObjectView: (obj: Model.ObjectView) => {
+		ObjectView: (obj: any) => {
 			return {
-				rootId: obj.getRootid(),
-				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
-				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
-				participants: (obj.getBlockparticipantsList() || []).map(it => ({
-					blockId: it.getBlockid(),
-					participantId: it.getParticipantid(),
+				rootId: obj.rootId,
+				blocks: (obj.blocks || []).map(Mapper.From.Block),
+				details: (obj.details || []).map(Mapper.From.Details),
+				restrictions: Mapper.From.Restrictions(obj.restrictions),
+				participants: (obj.blockParticipants || []).map((it: any) => ({
+					blockId: it.blockId,
+					participantId: it.participantId,
 				})),
 			};
 		},
 
 		BoardGroup: (obj: any): I.BoardGroup => {
-			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const fn = `get${U.String.ucFirst(type)}`;
-			const field = obj[fn] ? obj[fn]() : null;
+			const type = Mapper.BoardGroupType(obj);
+
+			let field = null;
+			if (type) {
+				field = obj[type];
+			};
 
 			let value: any = null;
-
 			if (field) {
 				switch (type) {
-					case 'status':	 value = field.getId(); break;
-					case 'tag':		 value = field.getIdsList(); break;
-					case 'checkbox': value = field.getChecked(); break;
+					case 'status':	 value = field.id; break;
+					case 'tag':		 value = field.ids; break;
+					case 'checkbox': value = field.checked; break;
 				};
 			};
 
-			return { 
-				id: obj.getId(),
+			return {
+				id: obj.id,
 				value,
 			};
 		},
 
-		GroupOrder: (obj: Model.Block.Content.Dataview.GroupOrder) => {
+		GroupOrder: (obj: any) => {
 			return {
-				viewId: obj.getViewid(),
-				groups: (obj.getViewgroupsList() || []).map((it: any) => {
+				viewId: obj.viewId,
+				groups: (obj.viewGroups || []).map((it: any) => {
 					return {
-						groupId: it.getGroupid(),
-						index: it.getIndex(),
-						isHidden: it.getHidden(),
-						bgColor: it.getBackgroundcolor(),
+						groupId: it.groupId,
+						index: it.index,
+						isHidden: it.hidden,
+						bgColor: it.backgroundColor,
 					};
 				}),
 			};
 		},
 
-		ObjectOrder: (obj: Model.Block.Content.Dataview.ObjectOrder) => {
+		ObjectOrder: (obj: any) => {
 			return {
-				viewId: obj.getViewid(),
-				groupId: obj.getGroupid(),
-				objectIds: obj.getObjectidsList() || [],
+				viewId: obj.viewId,
+				groupId: obj.groupId,
+				objectIds: obj.objectIds || [],
 			};
 		},
 
 		ObjectSearchWithMeta: (obj: any) => {
 			return {
-				...Decode.struct(obj.getDetails()),
-				metaList: (obj.getMetaList() || []).map(Mapper.From.MetaList),
+				...Decode.struct(obj.details),
+				metaList: (obj.meta || []).map(Mapper.From.MetaList),
 			};
 		},
 
-		Notification: (obj: Model.Notification): I.Notification => {
-			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const fn = `get${U.String.ucFirst(type)}`;
-			const field = obj[fn] ? obj[fn]() : null;
-			
+		Notification: (obj: any): I.Notification => {
+			const type = Mapper.NotificationPayload(obj);
+			const field = type ? obj[type] : null;
+
 			let payload: any = {};
 
 			if (field) {
@@ -516,26 +605,26 @@ export const Mapper = {
 					case I.NotificationType.Import:
 					case I.NotificationType.Gallery: {
 						payload = Object.assign(payload, {
-							processId: field.getProcessid(),
-							errorCode: field.getErrorcode(),
-							spaceId: field.getSpaceid(),
-							name: field.getName(),
+							processId: field.processId,
+							errorCode: field.errorCode,
+							spaceId: field.spaceId,
+							name: field.name,
 						});
 
 						if (type == I.NotificationType.Import) {
-							payload.importType = field.getImporttype();
+							payload.importType = field.importType;
 						};
 
 						if (type == I.NotificationType.Gallery) {
-							payload.spaceName = field.getSpacename();
+							payload.spaceName = field.spaceName;
 						};
 						break;
 					};
 
 					case I.NotificationType.Export: {
 						payload = Object.assign(payload, {
-							errorCode: field.getErrorcode(),
-							exportType: field.getExporttype(),
+							errorCode: field.errorCode,
+							exportType: field.exportType,
 						});
 						break;
 					};
@@ -543,11 +632,11 @@ export const Mapper = {
 					case I.NotificationType.Join:
 					case I.NotificationType.Remove: {
 						payload = Object.assign(payload, {
-							spaceId: field.getSpaceid(),
-							spaceName: field.getSpacename(),
-							identity: field.getIdentity(),
-							identityName: field.getIdentityname(),
-							identityIcon: field.getIdentityicon(),
+							spaceId: field.spaceId,
+							spaceName: field.spaceName,
+							identity: field.identity,
+							identityName: field.identityName,
+							identityIcon: field.identityIcon,
 						});
 						break;
 					};
@@ -555,17 +644,17 @@ export const Mapper = {
 					case I.NotificationType.Permission:
 					case I.NotificationType.Approve: {
 						payload = Object.assign(payload, {
-							spaceId: field.getSpaceid(),
-							spaceName: field.getSpacename(),
-							permissions: field.getPermissions(),
+							spaceId: field.spaceId,
+							spaceName: field.spaceName,
+							permissions: field.permissions,
 						});
 						break;
 					};
 
 					case I.NotificationType.Decline: {
 						payload = Object.assign(payload, {
-							spaceId: field.getSpaceid(),
-							spaceName: field.getSpacename(),
+							spaceId: field.spaceId,
+							spaceName: field.spaceName,
 						});
 						break;
 					};
@@ -574,291 +663,292 @@ export const Mapper = {
 			};
 
 			return {
-				id: obj.getId(),
-				createTime: obj.getCreatetime(),
-				status: obj.getStatus() as number,
-				isLocal: obj.getIslocal(),
+				id: obj.id,
+				createTime: obj.createTime,
+				status: obj.status as number,
+				isLocal: obj.isLocal,
 				type: type as I.NotificationType,
 				payload,
 			};
 		},
 
-		Manifest: (obj: Model.ManifestInfo) => {
+		Manifest: (obj: any) => {
 			return {
-				id: obj.getId(),
-				schema: obj.getSchema(),
-				name: obj.getName(),
-				author: obj.getAuthor(),
-				license: obj.getLicense(),
-				title: obj.getTitle(),
-				description: obj.getDescription(),
-				downloadLink: obj.getDownloadlink(),
-				size: obj.getFilesize(),
-				screenshots: obj.getScreenshotsList() || [],
-				categories: obj.getCategoriesList() || [],
+				id: obj.id,
+				schema: obj.schema,
+				name: obj.name,
+				author: obj.author,
+				license: obj.license,
+				title: obj.title,
+				description: obj.description,
+				downloadLink: obj.downloadLink,
+				size: obj.fileSize,
+				screenshots: obj.screenshots || [],
+				categories: obj.categories || [],
 			};
 		},
 
-		MembershipAmount: (obj: Model.MembershipV2.Amount): I.MembershipAmount => {
+		MembershipAmount: (obj: any): I.MembershipAmount => {
 			return {
-				currency: obj.getCurrency(),
-				amountCents: obj.getAmountcents(),
+				currency: obj.currency,
+				amountCents: obj.amountCents,
 			};
 		},
 
-		MembershipProduct: (obj: Model.MembershipV2.Product): I.MembershipProduct => {
-			const features = obj.getFeatures();
+		MembershipProduct: (obj: any): I.MembershipProduct => {
+			const features = obj.features || {};
 
 			return {
-				id: obj.getId(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				isTopLevel: obj.getIstoplevel(),
-				isIntro: obj.getIsintro(),
-				isHidden: obj.getIshidden(),
-				color: obj.getColorstr(),
-				offer: obj.getOffer(),
-				pricesYearly: (obj.getPricesyearlyList() || []).map(Mapper.From.MembershipAmount),
-				pricesMonthly: (obj.getPricesmonthlyList() || []).map(Mapper.From.MembershipAmount),
+				id: obj.id,
+				name: obj.name,
+				description: obj.description,
+				isTopLevel: obj.isTopLevel,
+				isIntro: obj.isIntro,
+				isHidden: obj.isHidden,
+				color: obj.colorStr,
+				offer: obj.offer,
+				pricesYearly: (obj.pricesYearly || []).map(Mapper.From.MembershipAmount),
+				pricesMonthly: (obj.pricesMonthly || []).map(Mapper.From.MembershipAmount),
 				features: {
-					storageBytes: features.getStoragebytes(),
-					spaceReaders: features.getSpacereaders(),
-					spaceWriters: features.getSpacewriters(),
-					sharedSpaces: features.getSharedspaces(),
-					privateSpaces: features.getPrivatespaces(),
-					teamSeats: features.getTeamseats(),
-					anyNameCount: features.getAnynamecount(),
-					anyNameMinLen: features.getAnynameminlen(),
+					storageBytes: features.storageBytes,
+					spaceReaders: features.spaceReaders,
+					spaceWriters: features.spaceWriters,
+					sharedSpaces: features.sharedSpaces,
+					privateSpaces: features.privateSpaces,
+					teamSeats: features.teamSeats,
+					anyNameCount: features.anyNameCount,
+					anyNameMinLen: features.anyNameMinLen,
 				},
 			};
 		},
 
-		MembershipData: (obj: Model.MembershipV2.Data): I.MembershipData => {
-			const invoice = obj.getNextinvoice();
+		MembershipData: (obj: any): I.MembershipData => {
+			const invoice = obj.nextInvoice;
 
 			const ret: any = {
-				products: (obj.getProductsList() || []).map(it => {
-					const info = it.getPurchaseinfo();
+				products: (obj.products || []).map((it: any) => {
+					const info = it.purchaseInfo || {};
 
 					return {
-						product: Mapper.From.MembershipProduct(it.getProduct()),
+						product: Mapper.From.MembershipProduct(it.product || {}),
 						info: {
-							dateStarted: info.getDatestarted(),
-							dateEnds: info.getDateends(),
-							isAutoRenew: info.getIsautorenew(),
-							period: info.getPeriod(),
+							dateStarted: info.dateStarted,
+							dateEnds: info.dateEnds,
+							isAutoRenew: info.isAutoRenew,
+							period: info.period,
 						},
-						status: it.getProductstatus().getStatus() as number,
+						status: (it.productStatus || {}).status as number,
 					};
 				}),
-				teamOwnerId: obj.getTeamownerid(),
-				paymentProvider: obj.getPaymentprovider() as number,
+				teamOwnerId: obj.teamOwnerID,
+				paymentProvider: obj.paymentProvider as number,
 			};
 
 			if (invoice) {
 				ret.nextInvoice = {
-					date: invoice.getDate(),
-					total: invoice.hasTotal() ? Mapper.From.MembershipAmount(invoice.getTotal()) : null,
+					date: invoice.date,
+					total: invoice.total ? Mapper.From.MembershipAmount(invoice.total) : null,
 				};
 			};
 
 			return ret;
 		},
 
-		Process: (obj: Events.Model.Process) => {
-			const type = Mapper.ProcessType(obj.getMessageCase());
+		Process: (obj: any) => {
+			const type = Mapper.ProcessType(obj);
 
 			return {
-				id: obj.getId(),
-				state: obj.getState() as number,
+				id: obj.id,
+				state: obj.state as number,
 				type,
-				spaceId: obj.getSpaceid(),
-				progress: Mapper.From.Progress(obj.getProgress()),
-				error: obj.getError(),
+				spaceId: obj.spaceId,
+				progress: Mapper.From.Progress(obj.progress || {}),
+				error: obj.error,
 			};
 		},
 
-		Progress: (obj: Events.Model.Process.Progress) => {
+		Progress: (obj: any) => {
 			return {
-				done: obj.getDone(),
-				total: obj.getTotal(),
-				message: obj.getMessage(),
+				done: obj.done,
+				total: obj.total,
+				message: obj.message,
 			};
 		},
 
-		MetaList: (obj: Model.Search.Meta): any => {
+		MetaList: (obj: any): any => {
 			return {
-				highlight: obj.getHighlight(),
-				blockId: obj.getBlockid(),
-				relationKey: obj.getRelationkey(),
-				relationDetails: Decode.struct(obj.getRelationdetails()),
-				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+				highlight: obj.highlight,
+				blockId: obj.blockId,
+				relationKey: obj.relationKey,
+				relationDetails: Decode.struct(obj.relationDetails),
+				ranges: (obj.highlightRanges || []).map(Mapper.From.Range),
 			};
 		},
 
-		DeviceInfo: (obj: Model.DeviceInfo): any => {
+		DeviceInfo: (obj: any): any => {
 			return {
-				id: obj.getId(),
-				name: obj.getName(),
-				addDate: obj.getAdddate(),
-				isConnected: obj.getIsconnected(),
-				archived: obj.getArchived()
+				id: obj.id,
+				name: obj.name,
+				addDate: obj.addDate,
+				isConnected: obj.isConnected,
+				archived: obj.archived,
 			};
 		},
 
-		ChatMessage: (obj: Model.ChatMessage): Partial<I.ChatMessage> => {
+		ChatMessage: (obj: any): Partial<I.ChatMessage> => {
 			return {
-				id: obj.getId(),
-				orderId: obj.getOrderid(),
-				creator: obj.getCreator(),
-				createdAt: obj.getCreatedat(),
-				modifiedAt: obj.getModifiedat(),
-				replyToMessageId: obj.getReplytomessageid(),
-				content: Mapper.From.ChatMessageContent(obj.getMessage()),
-				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
-				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
-				blocks: (obj.getBlocksList() || []).map(Mapper.From.ChatMessageBlock),
-				isReadMessage: obj.getRead(),
-				isReadMention: obj.getMentionread(),
-				isReadReaction: !obj.getUnreadreaction(),
-				hasMention: obj.getHasmention(),
-				isSynced: obj.getSynced(),
+				id: obj.id,
+				orderId: obj.orderId,
+				creator: obj.creator,
+				createdAt: obj.createdAt,
+				modifiedAt: obj.modifiedAt,
+				replyToMessageId: obj.replyToMessageId,
+				content: Mapper.From.ChatMessageContent(obj.message || {}),
+				attachments: (obj.attachments || []).map(Mapper.From.ChatMessageAttachment),
+				reactions: Mapper.From.ChatMessageReaction(obj.reactions),
+				blocks: (obj.blocks || []).map(Mapper.From.ChatMessageBlock),
+				isReadMessage: obj.read,
+				isReadMention: obj.mentionRead,
+				isReadReaction: !obj.unreadReaction,
+				hasMention: obj.hasMention,
+				isSynced: obj.synced,
 			};
 		},
 
-		ChatState: (obj: Model.ChatState): I.ChatState => {
+		ChatState: (obj: any): I.ChatState => {
 			return {
-				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
-				mentions: Mapper.From.ChatStateUnreadMessages(obj.getMentions()),
-				reactionOrderId: obj.getUnreadreactionorderid(),
-				lastStateId: obj.getLaststateid(),
-				order: obj.getOrder(),
+				messages: Mapper.From.ChatStateUnreadMessages(obj.messages || {}),
+				mentions: Mapper.From.ChatStateUnreadMessages(obj.mentions || {}),
+				reactionOrderId: obj.unreadReactionOrderId,
+				lastStateId: obj.lastStateId,
+				order: obj.order,
 			};
 		},
 
-		ChatPreview: (obj: Rpc.Chat.SubscribeToMessagePreviews.Response.ChatPreview): any => {
-			const dependencies = new Map((obj.getDependenciesList() || []).map(dep => {
+		ChatPreview: (obj: any): any => {
+			const dependencies = new Map((obj.dependencies || []).map((dep: any) => {
 				const decoded: any = Decode.struct(dep);
 				return [ decoded.id, decoded ];
 			}));
 
 			return {
-				spaceId: obj.getSpaceid(),
-				chatId: obj.getChatobjectid(),
-				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
-				state: obj.hasState() ? Mapper.From.ChatState(obj.getState()) : null,
+				spaceId: obj.spaceId,
+				chatId: obj.chatObjectId,
+				message: obj.message ? Mapper.From.ChatMessage(obj.message) : null,
+				state: obj.state ? Mapper.From.ChatState(obj.state) : null,
 				dependencies,
 			};
 		},
 
 		ChatStateUnreadMessages (obj: any): I.ChatStateCounter {
 			return {
-				orderId: obj.getOldestorderid(),
-				counter: obj.getCounter(),
+				orderId: obj.oldestOrderId,
+				counter: obj.counter,
 			};
 		},
 
-		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
+		ChatMessageContent (obj: any): I.ChatMessageContent {
 			return {
-				text: obj.getText(),
-				style: obj.getStyle() as number,
-				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+				text: obj.text,
+				style: obj.style as number,
+				marks: (obj.marks || []).map(Mapper.From.Mark),
 			};
 		},
 
-		ChatMessageBlock (obj: Model.ChatMessage.MessageBlock): I.ChatMessageBlock {
+		ChatMessageBlock (obj: any): I.ChatMessageBlock {
 			const result: I.ChatMessageBlock = {};
 
-			if (obj.hasText()) {
-				result.text = Mapper.From.ChatMessageBlockText(obj.getText());
+			if (obj.text !== undefined) {
+				result.text = Mapper.From.ChatMessageBlockText(obj.text);
 			};
 
-			if (obj.hasLink()) {
-				result.link = Mapper.From.ChatMessageBlockLink(obj.getLink());
+			if (obj.link !== undefined) {
+				result.link = Mapper.From.ChatMessageBlockLink(obj.link);
 			};
 
-			if (obj.hasEmbed()) {
-				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.getEmbed());
+			if (obj.embed !== undefined) {
+				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.embed);
 			};
 
 			return result;
 		},
 
-		ChatMessageBlockText (obj: Model.ChatMessage.MessageBlockText): I.ChatMessageBlockText {
+		ChatMessageBlockText (obj: any): I.ChatMessageBlockText {
 			return {
-				text: obj.getText(),
-				style: obj.getStyle() as number,
-				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
-				checked: obj.getChecked(),
-				lang: obj.getLang(),
+				text: obj.text,
+				style: obj.style as number,
+				marks: (obj.marks || []).map(Mapper.From.Mark),
+				checked: obj.checked,
+				lang: obj.lang,
 			};
 		},
 
-		ChatMessageBlockEmbed (obj: Model.ChatMessage.MessageBlockEmbed): I.ChatMessageBlockEmbed {
+		ChatMessageBlockEmbed (obj: any): I.ChatMessageBlockEmbed {
 			return {
-				text: obj.getText(),
-				processor: obj.getProcessor() as number,
+				text: obj.text,
+				processor: obj.processor as number,
 			};
 		},
 
-		ChatMessageBlockLink (obj: Model.ChatMessage.MessageBlockLink): I.ChatMessageBlockLink {
+		ChatMessageBlockLink (obj: any): I.ChatMessageBlockLink {
 			return {
-				targetObjectId: obj.getTargetobjectid(),
-				type: obj.getType() as number,
+				targetObjectId: obj.targetObjectId,
+				type: obj.type as number,
 			};
 		},
 
-		ChatMessageAttachment (obj: Model.ChatMessage.Attachment): I.ChatMessageAttachment {
+		ChatMessageAttachment (obj: any): I.ChatMessageAttachment {
 			return {
-				target: obj.getTarget(),
-				type: obj.getType() as number,
+				target: obj.target,
+				type: obj.type as number,
 			};
 		},
 
-		ChatMessageReaction (obj: Model.ChatMessage.Reactions): I.ChatMessageReaction[] {
+		ChatMessageReaction (obj: any): I.ChatMessageReaction[] {
 			const reactions = [];
+			const map = obj?.reactions || {};
 
-			obj.getReactionsMap().forEach((identityList, emoji) => {
-				reactions.push({ icon: emoji, authors: identityList.getIdsList() });
-			});
+			for (const [ emoji, identityList ] of Object.entries(map)) {
+				reactions.push({ icon: emoji, authors: (identityList as any)?.ids || [] });
+			};
 
 			return reactions;
 		},
 
 		ChatSearchResult: (obj: any): any => {
 			return {
-				chatId: obj.getChatid(),
-				messageId: obj.getMessageid(),
-				score: obj.getScore(),
-				highlight: obj.getHighlight(),
-				highlightRanges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
-				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+				chatId: obj.chatId,
+				messageId: obj.messageId,
+				score: obj.score,
+				highlight: obj.highlight,
+				highlightRanges: (obj.highlightRanges || []).map(Mapper.From.Range),
+				message: obj.message ? Mapper.From.ChatMessage(obj.message) : null,
 			};
 		},
 
-		PublishState: (obj: Rpc.Publishing.PublishState): any => {
+		PublishState: (obj: any): any => {
 			return {
-				spaceId: obj.getSpaceid(),
-				objectId: obj.getObjectid(),
-				uri: obj.getUri(),
-				status: obj.getStatus() as number,
-				version: obj.getVersion(),
-				timestamp: obj.getTimestamp(),
-				size: obj.getSize(),
-				details: Decode.struct(obj.getDetails()),
-				joinSpace: obj.getJoinspace(),
+				spaceId: obj.spaceId,
+				objectId: obj.objectId,
+				uri: obj.uri,
+				status: obj.status as number,
+				version: obj.version,
+				timestamp: obj.timestamp,
+				size: obj.size,
+				details: Decode.struct(obj.details),
+				joinSpace: obj.joinSpace,
 			};
 		},
 
-		AppInfo: (obj: Model.Account.Auth.AppInfo): I.AppInfo => {
+		AppInfo: (obj: any): I.AppInfo => {
 			return {
-				hash: obj.getApphash(),
-				apiKey: obj.getAppkey(),
-				name: obj.getAppname(),
-				createdAt: obj.getCreatedat(),
-				expireAt: obj.getExpireat(),
-				scope: obj.getScope() as number,
-				isActive: obj.getIsactive(),
+				hash: obj.appHash,
+				apiKey: obj.appKey,
+				name: obj.appName,
+				createdAt: obj.createdAt,
+				expireAt: obj.expireAt,
+				scope: obj.scope as number,
+				isActive: obj.isActive,
 			};
 		},
 
@@ -868,362 +958,300 @@ export const Mapper = {
 
 	/**
 	 * To: Converters for transforming TypeScript objects TO protobuf messages.
-	 * Used when sending data to the middleware.
-	 * Each method takes a plain JS/TS object and returns a protobuf message instance.
+	 * With ts-proto, these return plain objects matching the protobuf interface shape.
 	 */
 	To: {
 
-		/** Convert text range to protobuf Range */
 		Range: (obj: any) => {
-			const item = new Model.Range();
-
-			item.setFrom(obj.from);
-			item.setTo(obj.to);
-
-			return item;
+			return {
+				from: obj.from,
+				to: obj.to,
+			};
 		},
 
 		Mark: (obj: any) => {
-			const item = new Model.Block.Content.Text.Mark();
-
-			item.setType(obj.type);
-			item.setParam(obj.param);
-			item.setRange(Mapper.To.Range(obj.range));
-
-			return item;
+			return {
+				type: obj.type,
+				param: obj.param,
+				range: Mapper.To.Range(obj.range),
+			};
 		},
 
 		Details: (obj: any) => {
-			const item = new Model.Detail();
-
-			item.setKey(obj.key);
-			item.setValue(Encode.value(obj.value));
-
-			return item;
+			return {
+				key: obj.key,
+				value: Encode.value(obj.value),
+			};
 		},
 
 		Fields: (obj: any) => {
-			const item = new Rpc.Block.ListSetFields.Request.BlockField();
-
-			item.setBlockid(obj.blockId);
-			item.setFields(Encode.struct(obj.fields || {}));
-
-			return item;
+			return {
+				blockId: obj.blockId,
+				fields: Encode.struct(obj.fields || {}),
+			};
 		},
 
 		BlockFeatured: () => {
-			return new Model.Block.Content.FeaturedRelations();
+			return {};
 		},
 
 		BlockLayout: (obj: any) => {
-			const content = new Model.Block.Content.Layout();
-			
-			content.setStyle(obj.style);
-
-			return content;
+			return {
+				style: obj.style,
+			};
 		},
 
 		BlockText: (obj: any) => {
 			const marks = (obj.marks || []).map(Mapper.To.Mark);
-			const content = new Model.Block.Content.Text();
 
-			content.setText(obj.text);
-			content.setStyle(obj.style);
-			content.setChecked(obj.checked);
-			content.setColor(obj.color);
-			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
-			content.setIconemoji(obj.iconEmoji);
-			content.setIconimage(obj.iconImage);
-
-			return content;
+			return {
+				text: obj.text,
+				style: obj.style,
+				checked: obj.checked,
+				color: obj.color,
+				marks: { marks },
+				iconEmoji: obj.iconEmoji,
+				iconImage: obj.iconImage,
+			};
 		},
 
 		BlockFile: (obj: any) => {
-			const content = new Model.Block.Content.File();
-	
-			content.setTargetobjectid(obj.targetObjectId);
-			content.setType(obj.type);
-			content.setAddedat(obj.addedAt);
-			content.setState(obj.state);
-			content.setStyle(obj.style);
-			content.setTargetobjectid(obj.targetObjectId);
-
-			return content;
+			return {
+				targetObjectId: obj.targetObjectId,
+				type: obj.type,
+				addedAt: obj.addedAt,
+				state: obj.state,
+				style: obj.style,
+			};
 		},
 
 		BlockBookmark: (obj: any) => {
-			const content = new Model.Block.Content.Bookmark();
-	
-			content.setTargetobjectid(obj.targetObjectId);
-			content.setState(obj.state);
-			content.setUrl(obj.url);
-
-			return content;
+			return {
+				targetObjectId: obj.targetObjectId,
+				state: obj.state,
+				url: obj.url,
+			};
 		},
 
 		BlockLink: (obj: any) => {
-			const content = new Model.Block.Content.Link();
-	
-			content.setTargetblockid(obj.targetBlockId);
-			content.setIconsize(obj.iconSize);
-			content.setCardstyle(obj.cardStyle);
-			content.setDescription(obj.description);
-			content.setRelationsList(obj.relations);
-
-			return content;
+			return {
+				targetBlockId: obj.targetBlockId,
+				iconSize: obj.iconSize,
+				cardStyle: obj.cardStyle,
+				description: obj.description,
+				relations: obj.relations,
+			};
 		},
 
 		BlockDiv: (obj: any) => {
-			const content = new Model.Block.Content.Div();
-
-			content.setStyle(obj.style);
-
-			return content;
+			return {
+				style: obj.style,
+			};
 		},
 
 		BlockRelation: (obj: any) => {
-			const content = new Model.Block.Content.Relation();
-
-			content.setKey(obj.key);
-
-			return content;
+			return {
+				key: obj.key,
+			};
 		},
 
 		BlockLatex: (obj: any) => {
-			const content = new Model.Block.Content.Latex();
-	
-			content.setText(obj.text);
-			content.setProcessor(obj.processor);
-
-			return content;
+			return {
+				text: obj.text,
+				processor: obj.processor,
+			};
 		},
 
 		BlockDataview: (obj: any) => {
-			const content = new Model.Block.Content.Dataview();
-
-			content.setTargetobjectid(obj.targetObjectId);
-			content.setIscollection(obj.isCollection);
-			content.setViewsList((obj.views || []).map(Mapper.To.View));
-	
-			return content;
+			return {
+				TargetObjectId: obj.targetObjectId,
+				isCollection: obj.isCollection,
+				views: (obj.views || []).map(Mapper.To.View),
+			};
 		},
 
 		BlockTable: () => {
-			const content = new Model.Block.Content.Table();
-
-			return content;
+			return {};
 		},
 
 		BlockTableRow: (obj: any) => {
-			const content = new Model.Block.Content.TableRow();
-
-			content.setIsheader(obj.isHeader);
-
-			return content;
+			return {
+				isHeader: obj.isHeader,
+			};
 		},
 
 		BlockTableColumn: () => {
-			const content = new Model.Block.Content.TableColumn();
-
-			return content;
+			return {};
 		},
 
 		BlockTableOfContents: () => {
-			const content = new Model.Block.Content.TableOfContents();
-	
-			return content;
+			return {};
 		},
 
 		BlockWidget: (obj: any) => {
-			const content = new Model.Block.Content.Widget();
-			
-			content.setLayout(obj.layout);
-			content.setLimit(obj.limit);
-			content.setViewid(obj.viewId);
-
-			return content;
+			return {
+				layout: obj.layout,
+				limit: obj.limit,
+				viewId: obj.viewId,
+			};
 		},
 
 		BlockChat: (obj: any) => {
-			const content = new Model.Block.Content.Chat();
-			
-			return content;
+			return {};
 		},
 
 		Block: (obj: any) => {
 			obj = obj || {};
 			obj.type = String(obj.type || I.BlockType.Empty);
 			obj.content = U.Common.objectCopy(obj.content || {});
-	
-			const block = new Model.Block();
-	
-			block.setId(obj.id);
-			block.setAlign(obj.hAlign);
-			block.setVerticalalign(obj.vAlign);
-			block.setBackgroundcolor(obj.bgColor);
-	
-			if (obj.childrenIds) {
-				block.setChildrenidsList(obj.childrenIds);
-			};
-	
-			if (obj.fields) {
-				block.setFields(Encode.struct(obj.fields || {}));
-			};
 
-			const fb = U.String.toCamelCase(`set-${obj.type.toLowerCase()}`);
 			const fm = U.String.toUpperCamelCase(`block-${obj.type}`);
+			const contentKey = BLOCK_TYPE_TO_PROP[obj.type];
 
-			if (block[fb] && Mapper.To[fm]) {
-				block[fb](Mapper.To[fm](obj.content));
+			const block: any = {
+				id: obj.id,
+				align: obj.hAlign,
+				verticalAlign: obj.vAlign,
+				backgroundColor: obj.bgColor,
+				childrenIds: obj.childrenIds || [],
+				fields: obj.fields ? Encode.struct(obj.fields || {}) : undefined,
+			};
+
+			if (contentKey && Mapper.To[fm]) {
+				block[contentKey] = Mapper.To[fm](obj.content);
 			} else {
-				console.log('[Mapper] Block method or To method do not exist: ', fb, fm);
+				console.log('[Mapper] Block content key or To method do not exist: ', contentKey, fm);
 			};
 
 			return block;
 		},
 
 		ViewRelation: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.Relation();
-
-			item.setKey(obj.relationKey);
-			item.setIsvisible(obj.isVisible);
-			item.setWidth(obj.width);
-			item.setFormula(obj.formulaType);
-			item.setAlign(obj.align as number);
-
-			return item;
+			return {
+				key: obj.relationKey,
+				isVisible: obj.isVisible,
+				width: obj.width,
+				formula: obj.formulaType,
+				align: obj.align as number,
+			};
 		},
 
 		Filter: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.Filter();
-			
-			item.setId(obj.id);
-			item.setRelationkey(obj.relationKey);
-			item.setFormat(obj.format);
-			item.setOperator(obj.operator);
-			item.setCondition(obj.condition);
-			item.setQuickoption(obj.quickOption);
-			item.setValue(Encode.value(obj.value));
-			item.setIncludetime(obj.includeTime);
-			item.setNestedfiltersList((obj.nestedFilters || []).map(Mapper.To.Filter));
-
-			return item;
+			return {
+				id: obj.id || '',
+				RelationKey: obj.relationKey || '',
+				format: obj.format || 0,
+				operator: obj.operator || 0,
+				condition: obj.condition || 0,
+				quickOption: obj.quickOption || 0,
+				value: Encode.value(obj.value),
+				includeTime: obj.includeTime || false,
+				nestedFilters: (obj.nestedFilters || []).map(Mapper.To.Filter),
+			};
 		},
 
 		Sort: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.Sort();
-
-			item.setId(obj.id);
-			item.setRelationkey(obj.relationKey);
-			item.setType(obj.type);
-			item.setCustomorderList((obj.customOrder || []).map(Encode.value));
-			item.setFormat(obj.format);
-			item.setIncludetime(obj.includeTime);
-			item.setEmptyplacement(obj.empty);
-
-			return item;
+			return {
+				id: obj.id || '',
+				RelationKey: obj.relationKey || '',
+				type: obj.type || 0,
+				customOrder: (obj.customOrder || []).map(Encode.value),
+				format: obj.format || 0,
+				includeTime: obj.includeTime || false,
+				emptyPlacement: obj.empty || 0,
+			};
 		},
 
 		View: (obj: I.View) => {
 			obj = new M.View(U.Common.objectCopy(obj));
-			
-			const item = new Model.Block.Content.Dataview.View();
 
-			item.setId(obj.id);
-			item.setName(obj.name);
-			item.setType(obj.type as any);
-			item.setCoverrelationkey(obj.coverRelationKey);
-			item.setGrouprelationkey(obj.groupRelationKey);
-			item.setEndrelationkey(obj.endRelationKey);
-			item.setWrapcontent(obj.wrapContent);
-			item.setListsize(obj.listSize as any);
-			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
-			item.setCoverfit(obj.coverFit);
-			item.setCardsize(obj.cardSize as any);
-			item.setHideicon(obj.hideIcon);
-			item.setPagelimit(obj.pageLimit);
-			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
-			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
-			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
-			item.setDefaulttemplateid(obj.defaultTemplateId);
-			item.setDefaultobjecttypeid(obj.defaultTypeId);
-
-			return item;
+			return {
+				id: obj.id,
+				name: obj.name,
+				type: obj.type as any,
+				coverRelationKey: obj.coverRelationKey,
+				groupRelationKey: obj.groupRelationKey,
+				endRelationKey: obj.endRelationKey,
+				wrapContent: obj.wrapContent,
+				listSize: obj.listSize as any,
+				groupBackgroundColors: obj.groupBackgroundColors,
+				coverFit: obj.coverFit,
+				cardSize: obj.cardSize as any,
+				hideIcon: obj.hideIcon,
+				pageLimit: obj.pageLimit,
+				relations: obj.relations.map(Mapper.To.ViewRelation),
+				filters: obj.filters.map(Mapper.To.Filter),
+				sorts: obj.sorts.map(Mapper.To.Sort),
+				defaultTemplateId: obj.defaultTemplateId,
+				defaultObjectTypeId: obj.defaultTypeId,
+			};
 		},
 
 		PasteFile: (obj: any) => {
-			const item = new Rpc.Block.Paste.Request.File();
-
-			item.setName(obj.name);
-			item.setLocalpath(obj.path);
-
-			return item;
+			return {
+				name: obj.name,
+				localPath: obj.path,
+			};
 		},
 
 		GroupOrder: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.GroupOrder();
-
-			item.setViewid(obj.viewId);
-			item.setViewgroupsList(obj.groups.map((it: any) => {
-				const el = new Model.Block.Content.Dataview.ViewGroup();
-
-				el.setGroupid(it.groupId);
-				el.setIndex(it.index);
-				el.setHidden(it.isHidden);
-				el.setBackgroundcolor(it.bgColor);
-
-				return el;
-			}));
-
-			return item;
+			return {
+				viewId: obj.viewId,
+				viewGroups: obj.groups.map((it: any) => {
+					return {
+						groupId: it.groupId,
+						index: it.index,
+						hidden: it.isHidden,
+						backgroundColor: it.bgColor,
+					};
+				}),
+			};
 		},
 
 		ObjectOrder: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.ObjectOrder();
-
-			item.setViewid(obj.viewId);
-			item.setGroupid(obj.groupId);
-			item.setObjectidsList(obj.objectIds);
-
-			return item;
+			return {
+				viewId: obj.viewId,
+				groupId: obj.groupId,
+				objectIds: obj.objectIds,
+			};
 		},
 
 		InternalFlag: (value: I.ObjectFlag) => {
-			const item = new Model.InternalFlag();
-
-			item.setValue(value as any);
-
-			return item;
+			return {
+				value: value as any,
+			};
 		},
 
 		Snapshot: (obj: any) => {
-			const item = new Rpc.Object.Import.Request.Snapshot();
-
-			item.setId(obj.id);
-			item.setSnapshot(obj.snapshot);
-
-			return item;
+			return {
+				id: obj.id,
+				snapshot: obj.snapshot,
+			};
 		},
 
 		ParticipantPermissionChange: (obj: any) => {
-			const item = new Model.ParticipantPermissionChange();
-
-			item.setIdentity(obj.identity);
-			item.setPerms(obj.permissions);
-
-			return item;
+			return {
+				identity: obj.identity,
+				perms: obj.permissions,
+			};
 		},
 
 		ChatMessage: (obj: I.ChatMessage) => {
-			const item = new Model.ChatMessage();
+			const item: any = {
+				id: obj.id,
+				orderId: obj.orderId || '',
+				creator: obj.creator || '',
+				createdAt: obj.createdAt || 0,
+				modifiedAt: obj.modifiedAt || 0,
+				replyToMessageId: obj.replyToMessageId || '',
+				message: Mapper.To.ChatMessageContent(obj.content),
+				attachments: (obj.attachments || []).map(Mapper.To.ChatMessageAttachment),
+				reactions: Mapper.To.ChatMessageReaction(obj.reactions),
+			};
 
-			item.setId(obj.id);
-			item.setOrderid(obj.orderId);
-			item.setCreator(obj.creator);
-			item.setReplytomessageid(obj.replyToMessageId);
-			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
-			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
-			item.setReactions(Mapper.To.ChatMessageReaction(obj.reactions));
+			if (obj.blocks && obj.blocks.length) {
+				item.blocks = obj.blocks.map(Mapper.To.ChatMessageBlock);
+			};
 
 			if (obj.blocks && obj.blocks.length) {
 				item.setBlocksList(obj.blocks.map(Mapper.To.ChatMessageBlock));
@@ -1233,107 +1261,92 @@ export const Mapper = {
 		},
 
 		ChatMessageContent: (obj: I.ChatMessageContent) => {
-			const item = new Model.ChatMessage.MessageContent();
-
-			item.setText(obj.text);
-			item.setStyle(obj.style as number);
-			item.setMarksList(obj.marks.map(Mapper.To.Mark));
-
-			return item;
+			return {
+				text: obj.text,
+				style: obj.style as number,
+				marks: obj.marks.map(Mapper.To.Mark),
+			};
 		},
 
 		ChatMessageBlock: (obj: I.ChatMessageBlock) => {
-			const item = new Model.ChatMessage.MessageBlock();
+			const item: any = {};
 
 			if (obj.text) {
-				item.setText(Mapper.To.ChatMessageBlockText(obj.text));
+				item.text = Mapper.To.ChatMessageBlockText(obj.text);
 			};
 
 			if (obj.link) {
-				item.setLink(Mapper.To.ChatMessageBlockLink(obj.link));
+				item.link = Mapper.To.ChatMessageBlockLink(obj.link);
 			};
 
 			if (obj.embed) {
-				item.setEmbed(Mapper.To.ChatMessageBlockEmbed(obj.embed));
+				item.embed = Mapper.To.ChatMessageBlockEmbed(obj.embed);
 			};
 
 			return item;
 		},
 
 		ChatMessageBlockText: (obj: I.ChatMessageBlockText) => {
-			const item = new Model.ChatMessage.MessageBlockText();
-
-			item.setText(obj.text);
-			item.setStyle(obj.style as number);
-			item.setMarksList((obj.marks || []).map(Mapper.To.Mark));
+			const item: any = {
+				text: obj.text,
+				style: obj.style as number,
+				marks: (obj.marks || []).map(Mapper.To.Mark),
+			};
 
 			if (obj.checked) {
-				item.setChecked(obj.checked);
+				item.checked = obj.checked;
 			};
 
 			if (obj.lang) {
-				item.setLang(obj.lang);
+				item.lang = obj.lang;
 			};
 
 			return item;
 		},
 
 		ChatMessageBlockLink: (obj: I.ChatMessageBlockLink) => {
-			const item = new Model.ChatMessage.MessageBlockLink();
-
-			item.setTargetobjectid(obj.targetObjectId);
-			item.setType(obj.type as number);
-
-			return item;
+			return {
+				targetObjectId: obj.targetObjectId,
+				type: obj.type as number,
+			};
 		},
 
 		ChatMessageBlockEmbed: (obj: I.ChatMessageBlockEmbed) => {
-			const item = new Model.ChatMessage.MessageBlockEmbed();
-
-			item.setText(obj.text);
-			item.setProcessor(obj.processor as number);
-
-			return item;
+			return {
+				text: obj.text,
+				processor: obj.processor as number,
+			};
 		},
 
 		ChatMessageAttachment: (obj: I.ChatMessageAttachment) => {
-			const item = new Model.ChatMessage.Attachment();
-
-			item.setTarget(obj.target);
-			item.setType(obj.type as number);
-
-			return item;
+			return {
+				target: obj.target,
+				type: obj.type as number,
+			};
 		},
 
 		ChatMessageReaction: (map: any) => {
-			const reactions = new Model.ChatMessage.Reactions();
+			const reactions: Record<string, any> = {};
 
-			(map || []).forEach(it => {
-				const identities = new Model.ChatMessage.Reactions.IdentityList();
-
-				identities.setIdsList(it.authors);
-				reactions.getReactionsMap().set(it.icon, identities);
+			(map || []).forEach((it: any) => {
+				reactions[it.icon] = { ids: it.authors };
 			});
 
-			return reactions;
+			return { reactions };
 		},
 
 		AppInfo: (obj: any) => {
-			const item = new Model.Account.Auth.AppInfo();
-
-			item.setAppname(obj.name);
-			item.setScope(obj.scope as number);
-
-			return item;
+			return {
+				appName: obj.name,
+				scope: obj.scope as number,
+			};
 		},
 
-		SearchSort : (obj: any): any => {
-			const item = new Model.Search.Message.Sort();
-
-			item.setKey(obj.key);
-			item.setType(obj.type as number);
-
-			return item;
+		SearchSort: (obj: any): any => {
+			return {
+				key: obj.key,
+				type: obj.type as number,
+			};
 		},
 
 	},
@@ -1342,385 +1355,301 @@ export const Mapper = {
 	 * Event: Specialized mappers for processing real-time events from middleware.
 	 * These handle the conversion of streaming event messages.
 	 *
-	 * - Type(): Maps event value case to string type name
-	 * - Data(): Extracts spaceId and event data
+	 * - Type(): Detects event type from ts-proto optional message properties
+	 * - Data(): Extracts event type and data from a message
 	 * - [EventName](): Individual event type processors
 	 */
 	Event: {
 
 		/**
-		 * Convert event ValueCase enum to human-readable event type string.
-		 * @param v - The protobuf event value case number
-		 * @returns Event type name (e.g., 'BlockAdd', 'ObjectDetailsSet')
+		 * Detect event type by checking which optional property is set on the message.
 		 */
-		Type (v: number): string {
-			const V = Events.Event.Message.ValueCase;
-
-			let t = '';
-			if (v == V.ACCOUNTSHOW)					 t = 'AccountShow';
-			if (v == V.ACCOUNTDETAILS)				 t = 'AccountDetails';
-			if (v == V.ACCOUNTUPDATE)				 t = 'AccountUpdate';
-			if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'AccountConfigUpdate';
-			if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'AccountLinkChallenge';
-			if (v == V.ACCOUNTLINKCHALLENGEHIDE)	 t = 'AccountLinkChallengeHide';
-
-			if (v == V.BLOCKADD)					 t = 'BlockAdd';
-			if (v == V.BLOCKDELETE)					 t = 'BlockDelete';
-			if (v == V.BLOCKSETFIELDS)				 t = 'BlockSetFields';
-			if (v == V.BLOCKSETCHILDRENIDS)			 t = 'BlockSetChildrenIds';
-			if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'BlockSetBackgroundColor';
-			if (v == V.BLOCKSETTEXT)				 t = 'BlockSetText';
-			if (v == V.BLOCKSETFILE)				 t = 'BlockSetFile';
-			if (v == V.BLOCKSETLINK)				 t = 'BlockSetLink';
-			if (v == V.BLOCKSETBOOKMARK)			 t = 'BlockSetBookmark';
-			if (v == V.BLOCKSETALIGN)				 t = 'BlockSetAlign';
-			if (v == V.BLOCKSETVERTICALALIGN)		 t = 'BlockSetVerticalAlign';
-			if (v == V.BLOCKSETDIV)					 t = 'BlockSetDiv';
-			if (v == V.BLOCKSETRELATION)			 t = 'BlockSetRelation';
-			if (v == V.BLOCKSETLATEX)				 t = 'BlockSetLatex';
-			if (v == V.BLOCKSETTABLEROW)			 t = 'BlockSetTableRow';
-			if (v == V.BLOCKSETWIDGET)				 t = 'BlockSetWidget';
-
-			if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'BlockDataviewViewSet';
-			if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'BlockDataviewViewUpdate';
-			if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'BlockDataviewViewDelete';
-			if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'BlockDataviewViewOrder';
-
-			if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'BlockDataviewTargetObjectIdSet';
-			if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'BlockDataviewIsCollectionSet';
-
-			if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'BlockDataviewRelationSet';
-			if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'BlockDataviewRelationDelete';
-			if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'BlockDataviewGroupOrderUpdate';
-			if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'BlockDataviewObjectOrderUpdate';
-
-			if (v == V.SUBSCRIPTIONADD)				 t = 'SubscriptionAdd';
-			if (v == V.SUBSCRIPTIONREMOVE)			 t = 'SubscriptionRemove';
-			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'SubscriptionPosition';
-			if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'SubscriptionCounters';
-			if (v == V.SUBSCRIPTIONGROUPS)			 t = 'SubscriptionGroups';
-
-			if (v == V.OBJECTREMOVE)				 t = 'ObjectRemove';
-			if (v == V.OBJECTDETAILSSET)			 t = 'ObjectDetailsSet';
-			if (v == V.OBJECTDETAILSAMEND)			 t = 'ObjectDetailsAmend';
-			if (v == V.OBJECTDETAILSUNSET)			 t = 'ObjectDetailsUnset';
-			if (v == V.OBJECTRELATIONSAMEND)		 t = 'ObjectRelationsAmend';
-			if (v == V.OBJECTRELATIONSREMOVE)		 t = 'ObjectRelationsRemove';
-			if (v == V.OBJECTRESTRICTIONSSET)		 t = 'ObjectRestrictionsSet';
-			if (v == V.OBJECTCLOSE)					 t = 'objectClose';
-
-			if (v == V.FILESPACEUSAGE)				 t = 'FileSpaceUsage';
-			if (v == V.FILELOCALUSAGE)				 t = 'FileLocalUsage';
-			if (v == V.FILELIMITREACHED)			 t = 'FileLimitReached';
-			if (v == V.FILELIMITUPDATED)			 t = 'FileLimitUpdated';
-
-			if (v == V.NOTIFICATIONSEND)			 t = 'NotificationSend';
-			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
-
-			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
-
-			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
-			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
-			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
-
-			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
-			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
-			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
-
-			if (v == V.IMPORTFINISH)				 t = 'ImportFinish';
-
-			if (v == V.CHATADD)						 t = 'ChatAdd';
-			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
-			if (v == V.CHATDELETE)					 t = 'ChatDelete';
-			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
-			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
-			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
-			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
-			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
-			if (v == V.CHATUPDATEREACTIONREADSTATUS)	 t = 'ChatUpdateReactionReadStatus';
-
-			if (v == V.MEMBERSHIPV2UPDATE)			 t = 'MembershipV2Update';
-			if (v == V.MEMBERSHIPV2PRODUCTSUPDATE)	 t = 'MembershipV2ProductsUpdate';
-
-			return t;
+		Type (message: any): string {
+			for (const [ prop, type ] of EVENT_PROP_MAP) {
+				if (message[prop] !== undefined) {
+					return type;
+				};
+			};
+			return '';
 		},
 
-		Data (e: any) {
-			const type = Mapper.Event.Type(e.getValueCase());
-			const fn = `get${U.String.ucFirst(type)}`;
-			const data = e[fn] ? e[fn]() : {};
+		/**
+		 * Extract event type and data from a ts-proto Event_Message.
+		 */
+		Data (message: any): { type: string; data: any } {
+			for (const [ prop, type ] of EVENT_PROP_MAP) {
+				if (message[prop] !== undefined) {
+					return { type, data: message[prop] };
+				};
+			};
+			return { type: '', data: {} };
+		},
 
+		AccountShow: (obj: any) => {
 			return {
-				spaceId: e.getSpaceid(),
-				data,
+				account: Mapper.From.Account(obj.account || {}),
 			};
 		},
 
-		AccountShow: (obj: Events.Event.Account.Show) => {
+		AccountUpdate: (obj: any) => {
 			return {
-				account: Mapper.From.Account(obj.getAccount()),
+				status: Mapper.From.AccountStatus(obj.status || {}),
 			};
 		},
 
-		AccountUpdate: (obj: Events.Event.Account.Update) => {
+		AccountConfigUpdate: (obj: any) => {
 			return {
-				status: Mapper.From.AccountStatus(obj.getStatus()),
+				config: Mapper.From.AccountConfig(obj.config || {}),
 			};
 		},
 
-		AccountConfigUpdate: (obj: Events.Event.Account.Config.Update) => {
+		AccountLinkChallenge: (obj: any) => {
 			return {
-				config: Mapper.From.AccountConfig(obj.getConfig()),
+				challenge: obj.challenge,
 			};
 		},
 
-		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
+		AccountLinkChallengeHide: (obj: any) => {
 			return {
-				challenge: obj.getChallenge(),
+				challenge: obj.challenge,
 			};
 		},
 
-		AccountLinkChallengeHide: (obj: Events.Event.Account.LinkChallengeHide) => {
+		ObjectRelationsAmend: (obj: any) => {
 			return {
-				challenge: obj.getChallenge(),
+				id: obj.id,
+				relations: (obj.relationLinks || []).map(Mapper.From.RelationLink),
 			};
 		},
 
-		ObjectRelationsAmend: (obj: Events.Event.Object.Relations.Amend) => {
+		ObjectRelationsRemove: (obj: any) => {
 			return {
-				id: obj.getId(),
-				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				id: obj.id,
+				relationKeys: obj.relationKeys || [],
 			};
 		},
 
-		ObjectRelationsRemove: (obj: Events.Event.Object.Relations.Remove) => {
+		ObjectRestrictionsSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				relationKeys: obj.getRelationkeysList() || [],
+				restrictions: Mapper.From.Restrictions(obj.restrictions),
 			};
 		},
 
-		ObjectRestrictionsSet: (obj: Events.Event.Object.Restrictions.Set) => {
+		FileSpaceUsage: (obj: any) => {
 			return {
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				spaceId: obj.spaceId,
+				bytesUsage: obj.bytesUsage,
 			};
 		},
 
-		FileSpaceUsage: (obj: Events.Event.File.SpaceUsage) => {
+		FileLocalUsage: (obj: any) => {
 			return {
-				spaceId: obj.getSpaceid(),
-				bytesUsage: obj.getBytesusage(),
+				localUsage: obj.localBytesUsage,
 			};
 		},
 
-		FileLocalUsage: (obj: Events.Event.File.LocalUsage) => {
+		FileLimitUpdated: (obj: any) => {
 			return {
-				localUsage: obj.getLocalbytesusage(),
+				bytesLimit: obj.bytesLimit,
 			};
 		},
 
-		FileLimitUpdated: (obj: Events.Event.File.LimitUpdated) => {
+		BlockAdd: (obj: any) => {
 			return {
-				bytesLimit: obj.getByteslimit(),
+				blocks: (obj.blocks || []).map(Mapper.From.Block),
 			};
 		},
 
-		BlockAdd: (obj: Events.Event.Block.Add) => {
+		BlockDelete: (obj: any) => {
 			return {
-				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+				blockIds: obj.blockIds || [],
 			};
 		},
 
-		BlockDelete: (obj: Events.Event.Block.Delete) => {
+		BlockSetChildrenIds: (obj: any) => {
 			return {
-				blockIds: obj.getBlockidsList() || [],
+				id: obj.id,
+				childrenIds: obj.childrenIds || [],
 			};
 		},
 
-		BlockSetChildrenIds: (obj: Events.Event.Block.Set.ChildrenIds) => {
+		BlockSetFields: (obj: any) => {
 			return {
-				id: obj.getId(),
-				childrenIds: obj.getChildrenidsList() || [],
+				id: obj.id,
+				fields: obj.fields ? Decode.struct(obj.fields) : {},
 			};
 		},
 
-		BlockSetFields: (obj: Events.Event.Block.Set.Fields) => {
+		BlockSetLink: (obj: any) => {
 			return {
-				id: obj.getId(),
-				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : {},
+				id: obj.id,
+				targetBlockId: obj.targetBlockId ? obj.targetBlockId.value : null,
+				cardStyle: obj.cardStyle ? obj.cardStyle.value : null,
+				iconSize: obj.iconSize ? obj.iconSize.value : null,
+				description: obj.description ? obj.description.value : null,
+				relations: obj.relations ? obj.relations.value || [] : null,
+				fields: obj.fields ? Decode.struct(obj.fields.value) : null,
 			};
 		},
 
-		BlockSetLink: (obj: Events.Event.Block.Set.Link) => {
+		BlockSetText: (obj: any) => {
 			return {
-				id: obj.getId(),
-				targetBlockId: obj.hasTargetblockid() ? obj.getTargetblockid().getValue() : null,
-				cardStyle: obj.hasCardstyle() ? obj.getCardstyle().getValue() : null,
-				iconSize: obj.hasIconsize() ? obj.getIconsize().getValue() : null,
-				description: obj.hasDescription() ? obj.getDescription().getValue() : null,
-				relations: obj.hasRelations() ? obj.getRelations().getValueList() || [] : null,
-				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : null,
+				id: obj.id,
+				text: obj.text ? obj.text.value : null,
+				style: obj.style ? obj.style.value : null,
+				checked: obj.checked ? obj.checked.value : null,
+				color: obj.color ? obj.color.value : null,
+				iconEmoji: obj.iconEmoji ? obj.iconEmoji.value : null,
+				iconImage: obj.iconImage ? obj.iconImage.value : null,
+				marks: obj.marks ? (obj.marks.value?.marks || []).map(Mapper.From.Mark) : null,
 			};
 		},
 
-		BlockSetText: (obj: Events.Event.Block.Set.Text) => {
+		BlockSetDiv: (obj: any) => {
 			return {
-				id: obj.getId(),
-				text: obj.hasText() ? obj.getText().getValue() : null,
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
-				checked: obj.hasChecked() ? obj.getChecked().getValue() : null,
-				color: obj.hasColor() ? obj.getColor().getValue() : null,
-				iconEmoji: obj.hasIconemoji() ? obj.getIconemoji().getValue() : null,
-				iconImage: obj.hasIconimage() ? obj.getIconimage().getValue() : null,
-				marks: obj.hasMarks() ? (obj.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark) : null,
+				id: obj.id,
+				style: obj.style ? obj.style.value : null,
 			};
 		},
 
-		BlockSetDiv: (obj: Events.Event.Block.Set.Div) => {
+		BlockDataviewTargetObjectIdSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				id: obj.id,
+				targetObjectId: obj.targetObjectId,
 			};
 		},
 
-		BlockDataviewTargetObjectIdSet: (obj: Events.Event.Block.Dataview.TargetObjectIdSet) => {
+		BlockDataviewIsCollectionSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.getTargetobjectid(),
+				id: obj.id,
+				isCollection: obj.value,
 			};
 		},
 
-		BlockDataviewIsCollectionSet: (obj: Events.Event.Block.Dataview.IsCollectionSet) => {
+		BlockSetWidget: (obj: any) => {
 			return {
-				id: obj.getId(),
-				isCollection: obj.getValue(),
+				id: obj.id,
+				layout: obj.layout ? obj.layout.value : null,
+				limit: obj.limit ? obj.limit.value : null,
+				viewId: obj.viewId ? obj.viewId.value : null,
 			};
 		},
 
-		BlockSetWidget: (obj: Events.Event.Block.Set.Widget) => {
+		BlockSetFile: (obj: any) => {
 			return {
-				id: obj.getId(),
-				layout: obj.hasLayout() ? obj.getLayout().getValue() : null,
-				limit: obj.hasLimit() ? obj.getLimit().getValue() : null,
-				viewId: obj.hasViewid() ? obj.getViewid().getValue() : null,
+				id: obj.id,
+				targetObjectId: obj.targetObjectId ? obj.targetObjectId.value : null,
+				type: obj.type ? obj.type.value : null,
+				style: obj.style ? obj.style.value : null,
+				state: obj.state ? obj.state.value : null,
 			};
 		},
 
-		BlockSetFile: (obj: Events.Event.Block.Set.File) => {
+		BlockSetBookmark: (obj: any) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
-				type: obj.hasType() ? obj.getType().getValue() : null,
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
-				state: obj.hasState() ? obj.getState().getValue() : null,
+				id: obj.id,
+				targetObjectId: obj.targetObjectId ? obj.targetObjectId.value : null,
+				state: obj.state ? obj.state.value : null,
 			};
 		},
 
-		BlockSetBookmark: (obj: Events.Event.Block.Set.Bookmark) => {
+		BlockSetBackgroundColor: (obj: any) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
-				state: obj.hasState() ? obj.getState().getValue() : null,
+				id: obj.id,
+				bgColor: obj.backgroundColor,
 			};
 		},
 
-		BlockSetBackgroundColor: (obj: Events.Event.Block.Set.BackgroundColor) => {
+		BlockSetAlign: (obj: any) => {
 			return {
-				id: obj.getId(),
-				bgColor: obj.getBackgroundcolor(),
+				id: obj.id,
+				align: obj.align,
 			};
 		},
 
-		BlockSetAlign: (obj: Events.Event.Block.Set.Align) => {
+		BlockSetVerticalAlign: (obj: any) => {
 			return {
-				id: obj.getId(),
-				align: obj.getAlign(),
+				id: obj.id,
+				align: obj.verticalAlign,
 			};
 		},
 
-		BlockSetVerticalAlign: (obj: Events.Event.Block.Set.VerticalAlign) => {
+		BlockSetRelation: (obj: any) => {
 			return {
-				id: obj.getId(),
-				align: obj.getVerticalalign(),
+				id: obj.id,
+				key: obj.key ? obj.key.value : null,
 			};
 		},
 
-		BlockSetRelation: (obj: Events.Event.Block.Set.Relation) => {
+		BlockSetLatex: (obj: any) => {
 			return {
-				id: obj.getId(),
-				key: obj.hasKey() ? obj.getKey().getValue() : null,
+				id: obj.id,
+				text: obj.text ? obj.text.value : null,
 			};
 		},
 
-		BlockSetLatex: (obj: Events.Event.Block.Set.Latex) => {
+		BlockSetTableRow: (obj: any) => {
 			return {
-				id: obj.getId(),
-				text: obj.hasText() ? obj.getText().getValue() : null,
+				id: obj.id,
+				isHeader: obj.isHeader ? obj.isHeader.value : null,
 			};
 		},
 
-		BlockSetTableRow: (obj: Events.Event.Block.Set.TableRow) => {
+		BlockDataviewViewSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				isHeader: obj.hasIsheader() ? obj.getIsheader().getValue() : null,
+				id: obj.id,
+				view: Mapper.From.View(obj.view || {}),
 			};
 		},
 
-		BlockDataviewViewSet: (obj: Events.Event.Block.Dataview.ViewSet) => {
-			return {
-				id: obj.getId(),
-				view: Mapper.From.View(obj.getView()),
-			};
-		},
-
-		BlockDataviewViewUpdate: (obj: Events.Event.Block.Dataview.ViewUpdate) => {
-			const ret = {
-				id: obj.getId(),
-				viewId: obj.getViewid(),
-				fields: obj.hasFields() ? Mapper.From.ViewFields(obj.getFields()) : null,
+		BlockDataviewViewUpdate: (obj: any) => {
+			const ret: any = {
+				id: obj.id,
+				viewId: obj.viewId,
+				fields: obj.fields ? Mapper.From.ViewFields(obj.fields) : null,
 			};
 
-			const keys = [ 
+			const keys = [
 				{ id: 'filter', field: 'filters', mapper: 'Filter' },
 				{ id: 'sort', field: 'sorts', mapper: 'Sort' },
 				{ id: 'relation', field: 'relations', mapper: 'ViewRelation' },
 			];
 
 			keys.forEach(key => {
-				const items = obj[U.String.toCamelCase(`get-${key.id}-list`)]() || [];
+				const items = obj[key.id] || [];
 
 				ret[key.field] = [];
 
-				items.forEach(item => {
-					if (item.hasAdd()) {
-						const op = item.getAdd();
-						const afterId = op.getAfterid();
-						const items = (op.getItemsList() || []).map(Mapper.From[key.mapper]);
+				items.forEach((item: any) => {
+					if (item.add !== undefined) {
+						const op = item.add;
+						const afterId = op.afterId;
+						const items = (op.items || []).map(Mapper.From[key.mapper]);
 
 						ret[key.field].push({ add: { afterId, items } });
 					};
 
-					if (item.hasMove()) {
-						const op = item.getMove();
-						const afterId = op.getAfterid();
-						const ids = op.getIdsList() || [];
+					if (item.move !== undefined) {
+						const op = item.move;
+						const afterId = op.afterId;
+						const ids = op.ids || [];
 
 						ret[key.field].push({ move: { afterId, ids } });
 					};
 
-					if (item.hasUpdate()) {
-						const op = item.getUpdate();
+					if (item.update !== undefined) {
+						const op = item.update;
 
-						if (op.hasItem()) {
-							const item = Mapper.From[key.mapper](op.getItem());
+						if (op.item !== undefined) {
+							const item = Mapper.From[key.mapper](op.item);
 
-							ret[key.field].push({ update: { id: op.getId(), item } });
+							ret[key.field].push({ update: { id: op.id, item } });
 						};
 					};
 
-					if (item.hasRemove()) {
-						const op = item.getRemove();
-						const ids = op.getIdsList() || [];
+					if (item.remove !== undefined) {
+						const op = item.remove;
+						const ids = op.ids || [];
 
 						ret[key.field].push({ remove: { ids } });
 					};
@@ -1730,273 +1659,273 @@ export const Mapper = {
 			return ret;
 		},
 
-		BlockDataviewViewDelete: (obj: Events.Event.Block.Dataview.ViewDelete) => {
+		BlockDataviewViewDelete: (obj: any) => {
 			return {
-				id: obj.getId(),
-				viewId: obj.getViewid(),
+				id: obj.id,
+				viewId: obj.viewId,
 			};
 		},
 
-		BlockDataviewViewOrder: (obj: Events.Event.Block.Dataview.ViewOrder) => {
+		BlockDataviewViewOrder: (obj: any) => {
 			return {
-				id: obj.getId(),
-				viewIds: obj.getViewidsList() || [],
+				id: obj.id,
+				viewIds: obj.viewIds || [],
 			};
 		},
 
-		BlockDataviewRelationDelete: (obj: Events.Event.Block.Dataview.RelationDelete) => {
+		BlockDataviewRelationDelete: (obj: any) => {
 			return {
-				id: obj.getId(),
-				relationKeys: obj.getRelationkeysList() || [],
+				id: obj.id,
+				relationKeys: obj.relationKeys || [],
 			};
 		},
 
-		BlockDataviewRelationSet: (obj: Events.Event.Block.Dataview.RelationSet) => {
+		BlockDataviewRelationSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				id: obj.id,
+				relations: (obj.relationLinks || []).map(Mapper.From.RelationLink),
 			};
 		},
 
-		BlockDataviewGroupOrderUpdate: (obj: Events.Event.Block.Dataview.GroupOrderUpdate) => {
+		BlockDataviewGroupOrderUpdate: (obj: any) => {
 			return {
-				id: obj.getId(),
-				groupOrder: obj.hasGrouporder() ? Mapper.From.GroupOrder(obj.getGrouporder()) : null,
+				id: obj.id,
+				groupOrder: obj.groupOrder ? Mapper.From.GroupOrder(obj.groupOrder) : null,
 			};
 		},
 
-		BlockDataviewObjectOrderUpdate: (obj: Events.Event.Block.Dataview.ObjectOrderUpdate) => {
+		BlockDataviewObjectOrderUpdate: (obj: any) => {
 			return {
-				id: obj.getId(),
-				groupId: obj.getGroupid(),
-				viewId: obj.getViewid(),
-				changes: (obj.getSlicechangesList() || []).map(it => {
+				id: obj.id,
+				groupId: obj.groupId,
+				viewId: obj.viewId,
+				changes: (obj.sliceChanges || []).map((it: any) => {
 					return {
-						operation: it.getOp(),
-						ids: it.getIdsList() || [],
-						afterId: it.getAfterid(),
+						operation: it.op,
+						ids: it.ids || [],
+						afterId: it.afterId,
 					};
 				})
 			};
 		},
 
-		ObjectDetailsSet: (obj: Events.Event.Object.Details.Set) => {
+		ObjectDetailsSet: (obj: any) => {
 			return {
-				id: obj.getId(),
-				subIds: obj.getSubidsList() || [],
-				details: Decode.struct(obj.getDetails()),
+				id: obj.id,
+				subIds: obj.subIds || [],
+				details: Decode.struct(obj.details),
 			};
 		},
 
-		ObjectDetailsAmend: (obj: Events.Event.Object.Details.Amend) => {
+		ObjectDetailsAmend: (obj: any) => {
 			const details = {};
 
-			(obj.getDetailsList() || []).forEach(it => {
-				details[it.getKey()] = Decode.value(it.getValue());
+			(obj.details || []).forEach((it: any) => {
+				details[it.key] = Decode.value(it.value);
 			});
 
 			return {
-				id: obj.getId(),
-				subIds: obj.getSubidsList() || [],
+				id: obj.id,
+				subIds: obj.subIds || [],
 				details,
 			};
 		},
 
-		ObjectDetailsUnset: (obj: Events.Event.Object.Details.Unset) => {
+		ObjectDetailsUnset: (obj: any) => {
 			return {
-				id: obj.getId(),
-				subIds: obj.getSubidsList() || [],
-				keys: obj.getKeysList() || [],
+				id: obj.id,
+				subIds: obj.subIds || [],
+				keys: obj.keys || [],
 			};
 		},
 
-		SubscriptionAdd: (obj: Events.Event.Object.Subscription.Add) => {
+		SubscriptionAdd: (obj: any) => {
 			return {
-				id: obj.getId(),
-				afterId: obj.getAfterid(),
-				subId: obj.getSubid(),
+				id: obj.id,
+				afterId: obj.afterId,
+				subId: obj.subId,
 			};
 		},
 
-		SubscriptionRemove: (obj: Events.Event.Object.Subscription.Remove) => {
+		SubscriptionRemove: (obj: any) => {
 			return {
-				id: obj.getId(),
-				subId: obj.getSubid(),
+				id: obj.id,
+				subId: obj.subId,
 			};
 		},
 
-		SubscriptionPosition: (obj: Events.Event.Object.Subscription.Position) => {
+		SubscriptionPosition: (obj: any) => {
 			return {
-				id: obj.getId(),
-				afterId: obj.getAfterid(),
-				subId: obj.getSubid(),
+				id: obj.id,
+				afterId: obj.afterId,
+				subId: obj.subId,
 			};
 		},
 
-		SubscriptionCounters: (obj: Events.Event.Object.Subscription.Counters) => {
+		SubscriptionCounters: (obj: any) => {
 			return {
-				total: obj.getTotal(),
-				subId: obj.getSubid(),
+				total: obj.total,
+				subId: obj.subId,
 			};
 		},
 
-		SubscriptionGroups: (obj: Events.Event.Object.Subscription.Groups) => {
+		SubscriptionGroups: (obj: any) => {
 			return {
-				subId: obj.getSubid(),
-				group: Mapper.From.BoardGroup(obj.getGroup()),
-				remove: obj.getRemove(),
+				subId: obj.subId,
+				group: Mapper.From.BoardGroup(obj.group || {}),
+				remove: obj.remove,
 			};
 		},
 
-		NotificationSend: (obj: Events.Event.Notification.Send) => {
+		NotificationSend: (obj: any) => {
 			return {
-				notification: Mapper.From.Notification(obj.getNotification()),
+				notification: Mapper.From.Notification(obj.notification || {}),
 			};
 		},
 
-		NotificationUpdate: (obj: Events.Event.Notification.Update) => {
+		NotificationUpdate: (obj: any) => {
 			return {
-				notification: Mapper.From.Notification(obj.getNotification()),
+				notification: Mapper.From.Notification(obj.notification || {}),
 			};
 		},
 
-		PayloadBroadcast: (obj: Events.Event.Payload.Broadcast) => {
+		PayloadBroadcast: (obj: any) => {
 			return {
-				payload: obj.getPayload(),
+				payload: obj.payload,
 			};
 		},
 
-		ProcessNew: (obj: Events.Event.Process.New) => {
+		ProcessNew: (obj: any) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process || {}),
 			};
 		},
 
-		ProcessUpdate: (obj: Events.Event.Process.Update) => {
+		ProcessUpdate: (obj: any) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process || {}),
 			};
 		},
 
-		ProcessDone: (obj: Events.Event.Process.Done) => {
+		ProcessDone: (obj: any) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process || {}),
 			};
 		},
 
-		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+		SpaceSyncStatusUpdate: (obj: any) => {
 			return {
-				id: obj.getId(),
-				error: obj.getError(),
-				network: obj.getNetwork(),
-				status: obj.getStatus(),
-				syncingCounter: obj.getSyncingobjectscounter(),
-				notSyncedCounter: obj.getNotsyncedfilescounter()
+				id: obj.id,
+				error: obj.error,
+				network: obj.network,
+				status: obj.status,
+				syncingCounter: obj.syncingObjectsCounter,
+				notSyncedCounter: obj.notSyncedFilesCounter,
 			};
 		},
 
-		P2PStatusUpdate: (obj: Events.Event.P2PStatus.Update) => {
+		P2PStatusUpdate: (obj: any) => {
 			return {
-				id: obj.getSpaceid(),
-				p2p: obj.getStatus(),
-				devicesCounter: obj.getDevicescounter(),
+				id: obj.spaceId,
+				p2p: obj.status,
+				devicesCounter: obj.devicesCounter,
 			};
 		},
 
-		ImportFinish: (obj: Events.Event.Import.Finish) => {
+		ImportFinish: (obj: any) => {
 			return {
-				collectionId: obj.getRootcollectionid(),
-				count: obj.getObjectscount(),
-				type: obj.getImporttype(),
+				collectionId: obj.rootCollectionID,
+				count: obj.objectsCount,
+				type: obj.importType,
 			};
 		},
 
-		ChatAdd: (obj: Events.Event.Chat.Add) => {
-			const dependencies = new Map((obj.getDependenciesList() || []).map(dep => {
+		ChatAdd: (obj: any) => {
+			const dependencies = new Map((obj.dependencies || []).map((dep: any) => {
 				const decoded: any = Decode.struct(dep);
 				return [ decoded.id, decoded ];
 			}));
 
 			return {
-				id: obj.getId(),
-				orderId: obj.getOrderid(),
-				message: Mapper.From.ChatMessage(obj.getMessage()),
-				subIds: obj.getSubidsList(),
+				id: obj.id,
+				orderId: obj.orderId,
+				message: Mapper.From.ChatMessage(obj.message || {}),
+				subIds: obj.subIds || [],
 				dependencies,
 			};
 		},
 
-		ChatUpdate: (obj: Events.Event.Chat.Update) => {
+		ChatUpdate: (obj: any) => {
 			return {
-				id: obj.getId(),
-				message: Mapper.From.ChatMessage(obj.getMessage()),
-				subIds: obj.getSubidsList(),
+				id: obj.id,
+				message: Mapper.From.ChatMessage(obj.message || {}),
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatDelete: (obj: Events.Event.Chat.Delete) => {
+		ChatDelete: (obj: any) => {
 			return {
-				id: obj.getId(),
-				subIds: obj.getSubidsList(),
+				id: obj.id,
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatUpdateReactions: (obj: Events.Event.Chat.UpdateReactions) => {
+		ChatUpdateReactions: (obj: any) => {
 			return {
-				id: obj.getId(),
-				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
-				subIds: obj.getSubidsList(),
+				id: obj.id,
+				reactions: Mapper.From.ChatMessageReaction(obj.reactions),
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatStateUpdate: (obj: Events.Event.Chat.UpdateState) => {
+		ChatStateUpdate: (obj: any) => {
 			return {
-				state: Mapper.From.ChatState(obj.getState()),
-				subIds: obj.getSubidsList(),
+				state: Mapper.From.ChatState(obj.state || {}),
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatUpdateMessageReadStatus: (obj: Events.Event.Chat.UpdateMessageReadStatus) => {
+		ChatUpdateMessageReadStatus: (obj: any) => {
 			return {
-				ids: obj.getIdsList(),
-				isRead: obj.getIsread(),
-				subIds: obj.getSubidsList(),
+				ids: obj.ids || [],
+				isRead: obj.isRead,
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatUpdateMentionReadStatus: (obj: Events.Event.Chat.UpdateMentionReadStatus) => {
+		ChatUpdateMentionReadStatus: (obj: any) => {
 			return {
-				ids: obj.getIdsList(),
-				isRead: obj.getIsread(),
-				subIds: obj.getSubidsList(),
+				ids: obj.ids || [],
+				isRead: obj.isRead,
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatUpdateMessageSyncStatus: (obj: Events.Event.Chat.UpdateMessageSyncStatus) => {
+		ChatUpdateMessageSyncStatus: (obj: any) => {
 			return {
-				ids: obj.getIdsList(),
-				isSynced: obj.getIssynced(),
-				subIds: obj.getSubidsList(),
+				ids: obj.ids || [],
+				isSynced: obj.isSynced,
+				subIds: obj.subIds || [],
 			};
 		},
 
-		ChatUpdateReactionReadStatus: (obj: Events.Event.Chat.UpdateReactionReadStatus) => {
+		ChatUpdateReactionReadStatus: (obj: any) => {
 			return {
-				ids: obj.getIdsList(),
-				isRead: !obj.getIsunread(),
-				subIds: obj.getSubidsList(),
+				ids: obj.ids || [],
+				isRead: !obj.isUnread,
+				subIds: obj.subIds || [],
 			};
 		},
 
-		MembershipV2Update: (obj: Events.Event.MembershipV2.Update) => {
+		MembershipV2Update: (obj: any) => {
 			return {
-				data: Mapper.From.MembershipData(obj.getData()),
+				data: Mapper.From.MembershipData(obj.data || {}),
 			};
 		},
 
-		MembershipV2ProductsUpdate: (obj: Events.Event.MembershipV2.ProductsUpdate) => {
+		MembershipV2ProductsUpdate: (obj: any) => {
 			return {
-				products: (obj.getProductsList() || []).map(Mapper.From.MembershipProduct),
+				products: (obj.products || []).map(Mapper.From.MembershipProduct),
 			};
 		},
 

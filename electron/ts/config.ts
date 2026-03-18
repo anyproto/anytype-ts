@@ -1,5 +1,8 @@
-const { app } = require('electron');
-const storage = require('electron-json-storage');
+import { app } from 'electron';
+import storage from 'electron-json-storage';
+import Util from './util';
+import { AppConfig } from './types';
+
 const version = app.getVersion();
 
 const ChannelSettings = [
@@ -15,10 +18,10 @@ const ALPHA = 'alpha';
 
 class ConfigManager {
 
-	config = {};
+	config: AppConfig = {};
 
-	init (callBack) {
-		storage.get(CONFIG_NAME, (error, data) => {
+	init (callBack?: () => void) {
+		storage.get(CONFIG_NAME, (error: Error | null, data: AppConfig) => {
 			this.config = data || {};
 
 			if (undefined === this.config.showMenuBar) {
@@ -46,14 +49,14 @@ class ConfigManager {
 		});
 	};
 
-	set (obj, callBack) {
+	set (obj: Partial<AppConfig>, callBack?: (error?: Error) => void) {
 		this.config = Object.assign(this.config, obj);
 		this.checkChannel();
 		this.checkTheme();
 
 		console.log('[ConfigManager].set:', this.config);
 
-		storage.set(CONFIG_NAME, this.config, (error) => {
+		storage.set(CONFIG_NAME, this.config as any, (error: Error) => {
 			callBack?.(error);
 		});
 	};
@@ -83,10 +86,8 @@ class ConfigManager {
 	};
 
 	getChannels () {
-		const Util = require('./util.js');
-
 		let channels = ChannelSettings.map((it) => {
-			return { id: it.id, label: Util.translate(it.lang), type: 'radio', checked: (this.config.channel == it.id) };
+			return { id: it.id, label: Util.translate(it.lang), type: 'radio' as const, checked: (this.config.channel == it.id) };
 		});
 		if (!this.config.sudo && !version.match('alpha')) {
 			channels = channels.filter(it => it.id != 'alpha');
@@ -96,4 +97,4 @@ class ConfigManager {
 
 };
 
-module.exports = new ConfigManager();
+export default new ConfigManager();

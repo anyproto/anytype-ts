@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
+import target from 'Component/selection/target';
+import TextJson from 'json/text.json';
 
 const ALLOWED_KATEX = ['\\url', '\\href', '\\includegraphics'];
 
@@ -977,9 +979,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = U.String.toCamelCase(`error-${command}${code}`);
-		const Text = require('json/text.json');
-
-		return Text[id] ? translate(id) : description;
+		return (TextJson as any)[id] ? translate(id) : description;
 	};
 
 	/**
@@ -1329,8 +1329,9 @@ class UtilCommon {
 
 		let ret = '';
 		try {
-			const chunk = src.split('base64,')[1];
-			const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+			const decoded = src.includes('base64,')
+				? atob(src.split('base64,')[1]).replace(/_COLOR_VAR_/g, fill)
+				: src.replace(/_COLOR_VAR_/g, fill);
 			const obj = $(decoded);
 			const attr: any = {};
 
@@ -1673,10 +1674,9 @@ class UtilCommon {
 	};
 
 	applyAutoDownload (value: number) {
-		if (value < 0) {
-			C.FileSetAutoDownload(false, false);
-		} else {
-			C.FileSetAutoDownload(true, false);
+		C.FileSetAutoDownload(value > 0, false);
+		
+		if (value >= 0) {
 			C.FileAutoDownloadSetLimit(value);
 		};
 	};

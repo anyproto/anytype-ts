@@ -47,7 +47,8 @@ Just want to try it? Grab the latest installer from the [releases page](https://
 
 Also install:
 
-- **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
+- **Bun ≥ 1.1** (package manager & runtime) — [bun.sh](https://bun.sh)
+- **Node.js ≥ 20** (Electron tooling still requires Node)
 - **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
 
 On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
@@ -55,10 +56,10 @@ On ARM systems, node package `keytar` needs to be rebuilt during installation, s
 ## 🏗 Building from Source
 
 ```bash
-# 1 – Clone & install JS deps
+# 1 – Clone & install dependencies
 git clone https://github.com/anyproto/anytype-ts.git
 cd anytype-ts
-npm ci               # or: pnpm i --frozen-lockfile
+bun install
 
 # 2 – Fetch / build middleware & protobuf bindings
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
@@ -68,8 +69,8 @@ git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
 make install-dev-js && cd ../anytype-ts
 
 # 4 – Build the Electron desktop app
-npm run update:locale
-npm run dist:mac      # or dist:win / dist:linux
+bun run update:locale
+bun run dist:mac      # or dist:win / dist:linux
 ```
 
 ### Environment flags
@@ -82,29 +83,46 @@ npm run dist:mac      # or dist:win / dist:linux
 
 ## 🧑‍💻 Development Workflow
 
-You can either run the helper (from *anytype‑heart*) separately or just launch the client with hot‑reload:
+Start the dev server with hot‑reload (builds Electron bundle, starts Vite, then launches Electron):
 
 ```bash
-anytypeHelper &       # or ./bin/anytypeHelper
-npm run start:dev     # Windows: npm run start:dev-win
+bun run start:dev     # Windows: bun run start:dev-win
 ```
 
-For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
+When you close Electron, the Vite dev server is automatically stopped.
 
-Optional env vars:
-
-| Name         | Purpose                                  |
-|--------------|-------------------------------------------|
-| `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
-| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
-
-### Web Clipper extension Development
-
-Switch manifest before testing/packaging the addon for different browsers using the following scripts:
+For browser-based development without Electron:
 
 ```bash
-npm run ext:manifest:firefox
-npm run ext:manifest:chromium
+bun run start:web
+```
+
+See [Web Mode](./src/ts/lib/web/README.md) for details.
+
+### Useful commands
+
+```bash
+bun run build         # Production build (Vite)
+bun run build:dev     # Development build (Vite)
+bun run typecheck     # TypeScript type checking
+bun run lint          # Run linters (Biome + ESLint)
+```
+
+### Environment variables
+
+| Name         | Purpose                                           |
+|--------------|---------------------------------------------------|
+| `SERVER_PORT`| Vite dev server port (default: `8080`)             |
+| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`            |
+
+### Web Clipper Extension
+
+Build and switch manifest for different browsers:
+
+```bash
+bun run build:ext
+bun run ext:manifest:firefox
+bun run ext:manifest:chromium
 ```
 
 ## 🌍 Localisation
@@ -112,7 +130,7 @@ npm run ext:manifest:chromium
 Translations live on [Crowdin](https://crowdin.com/project/anytype-desktop). Pull the latest locale files with:
 
 ```bash
-npm run update:locale
+bun run update:locale
 ```
 
 

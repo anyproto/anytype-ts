@@ -2,12 +2,11 @@
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
-import Commands from 'dist/lib/pb/protos/commands_pb';
-import Events from 'dist/lib/pb/protos/events_pb';
-import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, } from 'Lib';
+import type { Event, Event_Message } from 'Proto/pb/protos/events';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
 import * as Response from './response';
-import { ClientReadableStream } from 'grpc-web';
+import type { ClientReadableStream } from 'grpc-web';
+import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 
 const SORT_IDS = [
@@ -42,12 +41,12 @@ const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'Spac
  */
 class Dispatcher {
 
-	service: Service.ClientCommandsClient = null;
-	stream: ClientReadableStream<Events.Event> = null;
+	service: ServiceClient = null;
+	stream: ClientReadableStream<Event> = null;
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
-	eventBuffer: { event: Events.Event, skipDebug: boolean }[] = [];
+	eventBuffer: { event: Event, skipDebug: boolean }[] = [];
 	flushScheduled = false;
 	rafId = 0;
 	flushTimerId = 0;
@@ -65,7 +64,7 @@ class Dispatcher {
 			return;
 		};
 
-		this.service = new Service.ClientCommandsClient(address, null, {
+		this.service = new ServiceClient(address, null, {
 			unaryInterceptors,
 			streamInterceptors,
 		});
@@ -84,12 +83,9 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 
-		const request = new Commands.StreamRequest();
-		request.setToken(S.Auth.token);
-
 		this.stopStream();
 
-		this.stream = this.service.listenSessionEvents(request, null);
+		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
 
 		this.stream.on('data', (event) => {
 			this.eventBuffer.push({ event, skipDebug: false });
@@ -201,11 +197,11 @@ class Dispatcher {
 	 * @param isSync - Whether this is a synchronous event (from a command response)
 	 * @param skipDebug - Whether to skip debug logging for this event
 	 */
-	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
+	event (event: Event, isSync: boolean, skipDebug: boolean) {
 		const { config, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
-		const traceId = event.getTraceid();
-		const ctx: string[] = [ event.getContextid() ];
+		const traceId = event.traceId;
+		const ctx: string[] = [ event.contextId ];
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
 
@@ -214,16 +210,16 @@ class Dispatcher {
 		};
 
 		const rootId = ctx.join('-');
-		const messages = event.getMessagesList() || [];
-		const log = (rootId: string, type: string, spaceId: string, data: any, valueCase: any) => {
+		const messages = event.messages || [];
+		const log = (rootId: string, type: string, spaceId: string, data: any) => {
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId, spaceId);
 			if (!type) {
-				console.error('Event not found for valueCase', valueCase);
+				console.error('Event not found for type', type);
 			};
 
-			if (data && data.toObject) {
-				const d = U.Common.objectClear(data.toObject());
-				console.log(debugJson ? JSON.stringify(d, null, 3) : d); 
+			if (data) {
+				const d = U.Common.objectClear(data);
+				console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 			};
 		};
 
@@ -235,8 +231,8 @@ class Dispatcher {
 
 		runInAction(() => {
 		for (const message of messages) {
-			const type = Mapper.Event.Type(message.getValueCase());
-			const { spaceId, data } = Mapper.Event.Data(message);
+			const { type, data } = Mapper.Event.Data(message);
+			const spaceId = message.spaceId || '';
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
 			if (!mapped) {
@@ -1362,7 +1358,7 @@ class Dispatcher {
 			};
 
 			if (needLog) {
-				log(rootId, type, spaceId, data, message.getValueCase());
+				log(rootId, type, spaceId, data);
 			};
 		};
 		});
@@ -1523,8 +1519,8 @@ class Dispatcher {
 	 * @returns Negative if c1 should come first, positive if c2 should come first
 	 */
 	sort (c1: any, c2: any) {
-		const t1 = Mapper.Event.Type(c1.getValueCase());
-		const t2 = Mapper.Event.Type(c2.getValueCase());
+		const t1 = Mapper.Event.Type(c1);
+		const t2 = Mapper.Event.Type(c2);
 		const idx1 = SORT_IDS.findIndex(it => it == t1);
 		const idx2 = SORT_IDS.findIndex(it => it == t2);
 
@@ -1608,31 +1604,22 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugJson = config.flagsMw.json;
-		const ct = U.String.toCamelCase(type);
 		const t0 = performance.now();
 		const needLog = this.needRequestLog(type);
 
-		if (!this.service[ct]) {
-			console.error('[Dispatcher.request] Service not found: ', type);
-			callBack?.({ error: { code: 0, description: 'Unknown command' } });
-			return;
-		};
-
 		let t1 = 0;
 		let t2 = 0;
-		let d = null;
 
 		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = U.Common.objectClear(data.toObject());
+			const d = U.Common.objectClear(data);
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
-			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+			this.service.request(type, data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
-					//Sentry.captureMessage(`${type}: msg: ${error.message}`);
 					callBack?.({ error: { code: error.code, description: error.message } });
 					return;
 				};
@@ -1643,21 +1630,16 @@ class Dispatcher {
 
 				t1 = performance.now();
 
-				if (error) {
-					console.error('Error', error.code, error.description);
-					return;
-				};
-
-				const err = response.getError();
-				const code = err ? err.getCode() : 0;
-				const description = err ? err.getDescription() : '';
+				const err = response.error;
+				const code = err ? err.code : 0;
+				const description = err ? err.description : '';
 
 				let message: any = {};
 				if (!code && Response[type]) {
 					message = Response[type](response);
 				};
 
-				message.event = response.getEvent ? response.getEvent() : null;
+				message.event = response.event || null;
 				message.error = { code, description };
 
 				if (message.error.code) {
@@ -1673,7 +1655,7 @@ class Dispatcher {
 
 				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					d = U.Common.objectClear(response.toObject());
+					const d = U.Common.objectClear(response);
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 
@@ -1687,7 +1669,7 @@ class Dispatcher {
 				callBack?.(message);
 
 				t2 = performance.now();
-				
+
 				const renderTime = Math.ceil(t2 - t1);
 				const totalTime = middleTime + renderTime;
 

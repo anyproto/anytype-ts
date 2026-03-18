@@ -1,7 +1,7 @@
 
 import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
-const Diff = require('diff');
+import * as Diff from 'diff';
 
 class Action {
 

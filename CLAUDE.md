@@ -5,26 +5,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Core Commands
-- `npm run start:dev` - Start development with hot reload (macOS/Linux)
-- `npm run start:dev-win` - Start development with hot reload (Windows)
-- `npm run build` - Production build
-- `npm run build:dev` - Development build
-- `npm run typecheck` - Run TypeScript type checking
-- `npm run lint` - Run ESLint
+- `bun run start:dev` - Start development with hot reload (macOS/Linux)
+- `bun run start:dev-win` - Start development with hot reload (Windows)
+- `bun run build` - Production build (Vite)
+- `bun run build:dev` - Development build (Vite)
+- `bun run build:ext` - Extension build (Vite)
+- `bun run build:pixi` - Build PixiJS worker bundle (Vite)
+- `bun run typecheck` - Run TypeScript type checking
+- `bun run lint` - Run ESLint
 
 ### Testing and Quality
-- `npm run precommit` - Run pre-commit checks (lint-staged)
-- Always run `npm run typecheck` and `npm run lint` after making changes
+- `bun run precommit` - Run pre-commit checks (lint-staged)
+- Always run `bun run typecheck` and `bun run lint` after making changes
 
 ### Distribution
-- `npm run dist:mac` - Build macOS distribution
-- `npm run dist:win` - Build Windows distribution
-- `npm run dist:linux` - Build Linux distribution
+- `bun run dist:mac` - Build macOS distribution
+- `bun run dist:win` - Build Windows distribution
+- `bun run dist:linux` - Build Linux distribution
 
 ### Testing Builds
 To test a build on macOS without code signing:
 ```bash
-ELECTRON_SKIP_NOTARIZE=1 npm run dist:mac
+ELECTRON_SKIP_NOTARIZE=1 bun run dist:mac
 ```
 
 The build output is in `dist/mac-arm64` (or `dist/mac` for x64). You can run the app directly from terminal:
@@ -33,7 +35,7 @@ The build output is in `dist/mac-arm64` (or `dist/mac` for x64). You can run the
 ```
 
 ### Build Dependencies
-Dependencies included in the packaged app are whitelisted. The `npm run build:deps` script auto-detects required dependencies, but if some are missing at runtime, explicitly add them to `package.deps.json`.
+Dependencies included in the packaged app are whitelisted. The `bun run build:deps` script (using esbuild) auto-detects required dependencies, but if some are missing at runtime, explicitly add them to `package.deps.json`.
 
 ### Development Setup
 Before development, you need the anytype-heart middleware:
@@ -111,7 +113,7 @@ The graph view uses a Web Worker with PixiJS WebGL rendering for performance:
 **Files:**
 - `src/ts/component/graph/provider.tsx` - React component, D3 zoom/drag, image loading
 - `dist/workers/graph.js` - Web Worker with D3 force simulation + PixiJS WebGL rendering
-- `dist/workers/lib/pixi.min.js` - Bundled PixiJS for worker (built from `rspack.pixi.config.js`)
+- `dist/workers/lib/pixi.min.js` - Bundled PixiJS for worker (built from `vite.worker.config.ts`)
 
 **Architecture:**
 - OffscreenCanvas transferred to worker for off-main-thread rendering
@@ -141,7 +143,7 @@ The graph view uses a Web Worker with PixiJS WebGL rendering for performance:
 
 **Building the PixiJS worker bundle:**
 ```bash
-npx rspack --config rspack.pixi.config.js
+bun run build:pixi
 ```
 
 ## Development Workflow
@@ -158,10 +160,10 @@ npx rspack --config rspack.pixi.config.js
 - **Styles**: SCSS files in `src/scss/` (organized to match components)
 - **Assets**: Images and icons in `src/img/`
 - **Configuration**: Electron config in `electron/`
-- **Build**: Rspack configuration in `rspack.config.js`
+- **Build**: Vite configuration in `vite.config.ts` (app), `vite.extension.config.ts` (extension), `vite.web.config.ts` (web), `vite.worker.config.ts` (PixiJS worker)
 
 ### Key Development Notes
-- Uses Rspack for bundling (faster Webpack alternative)
+- Uses Vite for bundling (esbuild dev, Rollup production) with bun as package manager
 - TypeScript with React 17
 - MobX for state management
 - Custom block-based editor system
@@ -262,7 +264,7 @@ Detailed README files are available throughout the codebase for deeper context o
 
 ## Web Mode Development
 
-Run in browser without Electron: `npm run start:web` (starts anytypeHelper + dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
+Run in browser without Electron: `bun run start:web` (starts anytypeHelper + Vite dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `src/ts/lib/web/README.md` for details.
 
 ## Linear API Integration
 

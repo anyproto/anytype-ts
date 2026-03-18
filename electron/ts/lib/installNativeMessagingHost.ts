@@ -1,4 +1,4 @@
-/* 
+/*
 
 - This file is responsible for installing the native messaging host manifest file in the correct location for each browser on each platform.
 - It is idempotent, meaning it can run multiple times without causing any problems.
@@ -8,30 +8,30 @@
 
 */
 
-const fs = require('fs');
-const { userInfo, homedir } = require('os');
-const { app } = require('electron');
-const path = require('path');
-const util = require('util');
-const { fixPathForAsarUnpack, is } = require('electron-util');
+import fs from 'fs';
+import { userInfo, homedir } from 'os';
+import { app } from 'electron';
+import path from 'path';
+import util from 'util';
+import { fixPathForAsarUnpack, is } from 'electron-util';
 
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
-const EXTENSION_IDS = [ 
-	'jbnammhjiplhpjfncnlejjjejghimdkf', 
-	'jkmhmgghdjjbafmkgjmplhemjjnkligf', 
+const EXTENSION_IDS = [
+	'jbnammhjiplhpjfncnlejjjejghimdkf',
+	'jkmhmgghdjjbafmkgjmplhemjjnkligf',
 	'lcamkcmpcofgmbmloefimnelnjpcdpfn',
  ];
 const GECKO_ID = 'anytype@anytype.io';
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
-const getManifestPath = () => {
+const getManifestPath = (): string => {
 	const fn = `nativeMessagingHost${is.windows ? '.exe' : ''}`;
-	return path.join(fixPathForAsarUnpack(__dirname), '..', '..', '..', 'dist', fn);
+	return path.join(fixPathForAsarUnpack(__dirname), 'dist', fn);
 };
 
-const getHomeDir = () => {
+const getHomeDir = (): string => {
 	if (process.platform === 'darwin') {
 		return userInfo().homedir;
 	} else {
@@ -39,7 +39,7 @@ const getHomeDir = () => {
 	};
 };
 
-const installNativeMessagingHost = () => {
+export const installNativeMessagingHost = (): void => {
 	const { platform } = process;
 
 	switch (platform) {
@@ -63,8 +63,8 @@ const installNativeMessagingHost = () => {
 };
 
 // Firefox uses allowed_extensions, Chromium-based browsers use allowed_origins
-const buildManifestForBrowserKey = (key) => {
-	const base = {
+const buildManifestForBrowserKey = (key: string): any => {
+	const base: any = {
 		name: APP_NAME,
 		description: 'Anytype desktop <-> web clipper bridge',
 		type: 'stdio',
@@ -80,7 +80,7 @@ const buildManifestForBrowserKey = (key) => {
 	return base;
 };
 
-const installToMacOS = () => {
+const installToMacOS = (): void => {
 	const dirs = getDarwinDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
@@ -93,7 +93,7 @@ const installToMacOS = () => {
 	};
 };
 
-const getLinuxNativeMessagingDirName = (key) => {
+const getLinuxNativeMessagingDirName = (key: string): string => {
 	if (key === 'Firefox') {
 		return 'native-messaging-hosts';
 	} else {
@@ -101,7 +101,7 @@ const getLinuxNativeMessagingDirName = (key) => {
 	};
 };
 
-const installToLinux = () => {
+const installToLinux = (): void => {
 	const dirs = getLinuxDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
@@ -115,7 +115,7 @@ const installToLinux = () => {
 	};
 };
 
-const installToWindows = () => {
+const installToWindows = (): void => {
 	const dir = path.join(USER_PATH, 'browsers');
 
 	const chromeManifestPath = path.join(dir, 'chrome.json');
@@ -143,7 +143,7 @@ const installToWindows = () => {
 	);
 };
 
-const getRegeditInstance = () => {
+const getRegeditInstance = (): any => {
 	// eslint-disable-next-line
 	const regedit = require('regedit');
 	regedit.setExternalVBSLocation(
@@ -152,7 +152,7 @@ const getRegeditInstance = () => {
 	return regedit;
 };
 
-const createWindowsRegistry = async (check, location, jsonFile) => {
+const createWindowsRegistry = async (check: string, location: string, jsonFile: string): Promise<void> => {
 	const regedit = getRegeditInstance();
 	const list = util.promisify(regedit.list);
 	const createKey = util.promisify(regedit.createKey);
@@ -172,7 +172,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 		await createKey(location);
 
 		// Insert path to manifest
-		const obj = {};
+		const obj: any = {};
 		obj[location] = {
 			default: {
 				value: jsonFile,
@@ -186,7 +186,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 	};
 };
 
-const getLinuxDirectory = () => {
+const getLinuxDirectory = (): Record<string, string> => {
 	const home = path.join(getHomeDir(), '.config');
 
 	/* eslint-disable no-useless-escape */
@@ -201,7 +201,7 @@ const getLinuxDirectory = () => {
 	};
 };
 
-const getDarwinDirectory = () => {
+const getDarwinDirectory = (): Record<string, string> => {
 	const home = path.join(getHomeDir(), 'Library', 'Application Support');
 
 	/* eslint-disable no-useless-escape */
@@ -223,7 +223,7 @@ const getDarwinDirectory = () => {
 	/* eslint-enable no-useless-escape */
 };
 
-const writeManifest = (dst, data) => {
+const writeManifest = (dst: string, data: any): void => {
 	try {
 		if (!fs.existsSync(path.dirname(dst))) {
 			fs.mkdirSync(path.dirname(dst), { recursive: true });
@@ -236,5 +236,3 @@ const writeManifest = (dst, data) => {
 	};
 
 };
-
-module.exports = { installNativeMessagingHost };

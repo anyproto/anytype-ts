@@ -1,19 +1,22 @@
-'use strict';
-
-const { app } = require('electron');
-const fs = require('fs');
-const path = require('path');
+import { app } from 'electron';
+import fs from 'fs';
+import path from 'path';
 
 class SafeStorage {
 
-	constructor (filePath) {
+	filePath: string;
+	tmpPath: string;
+	bakPath: string;
+	data: Record<string, any>;
+
+	constructor (filePath: string) {
 		this.filePath = filePath;
 		this.tmpPath = filePath + '.tmp';
 		this.bakPath = filePath + '.bak';
 		this.data = this._load();
 	};
 
-	_load () {
+	_load (): Record<string, any> {
 		// Check for orphaned temp file (process died during _writeAtomic after fsync but before rename)
 		if (fs.existsSync(this.tmpPath)) {
 			const tmp = this._readJson(this.tmpPath);
@@ -24,7 +27,7 @@ class SafeStorage {
 				try {
 					fs.renameSync(this.tmpPath, this.filePath);
 					return tmp;
-				} catch (e) {
+				} catch (e: any) {
 					console.error('[SafeStorage] Failed to recover from temp file:', e.message);
 				};
 			} else {
@@ -49,7 +52,7 @@ class SafeStorage {
 			// Restore backup as main file
 			try {
 				this._writeAtomic(backup);
-			} catch (e) {
+			} catch (e: any) {
 				console.error('[SafeStorage] Failed to restore backup to main file:', e.message);
 			};
 
@@ -60,7 +63,7 @@ class SafeStorage {
 		return {};
 	};
 
-	_readJson (fp) {
+	_readJson (fp: string): Record<string, any> | null {
 		try {
 			const raw = fs.readFileSync(fp, 'utf8');
 			return JSON.parse(raw);
@@ -72,12 +75,12 @@ class SafeStorage {
 	_save () {
 		try {
 			this._writeAtomic(this.data);
-		} catch (e) {
+		} catch (e: any) {
 			console.error('[SafeStorage] Failed to save:', e.message);
 		};
 	};
 
-	_writeAtomic (data) {
+	_writeAtomic (data: Record<string, any>) {
 		const json = JSON.stringify(data, null, '\t');
 
 		// Write to temp file and fsync
@@ -90,7 +93,7 @@ class SafeStorage {
 		if (fs.existsSync(this.filePath)) {
 			try {
 				fs.copyFileSync(this.filePath, this.bakPath);
-			} catch (e) {
+			} catch (e: any) {
 				console.error('[SafeStorage] Failed to create backup:', e.message);
 			};
 		};
@@ -99,7 +102,7 @@ class SafeStorage {
 		fs.renameSync(this.tmpPath, this.filePath);
 	};
 
-	get (key) {
+	get (key?: string) {
 		if (key === undefined) {
 			return { ...this.data };
 		};
@@ -107,17 +110,17 @@ class SafeStorage {
 		return this.data[key];
 	};
 
-	set (key, value) {
+	set (key: string | Record<string, any>, value?: any) {
 		if ((typeof key === 'object') && (value === undefined)) {
 			Object.assign(this.data, key);
 		} else {
-			this.data[key] = value;
+			this.data[key as string] = value;
 		};
 
 		this._save();
 	};
 
-	delete (key) {
+	delete (key: string) {
 		delete this.data[key];
 		this._save();
 	};
@@ -133,9 +136,9 @@ class SafeStorage {
 
 };
 
-let instance = null;
+let instance: SafeStorage | null = null;
 
-function getSafeStorage () {
+export function getSafeStorage (): SafeStorage {
 	if (!instance) {
 		const suffix = app.isPackaged ? '' : 'dev';
 		const name = [ 'localStorage', suffix ].join('-') + '.json';
@@ -147,4 +150,4 @@ function getSafeStorage () {
 	return instance;
 };
 
-module.exports = { SafeStorage, getSafeStorage };
+export { SafeStorage };
