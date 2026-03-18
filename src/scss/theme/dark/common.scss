@@ -38,35 +38,45 @@ html.themeDark {
 
 	/* Color */
 
-	--color-very-light-yellow: #242317;
-	--color-light-yellow: #55500d;
+	--color-very-light-yellow: #332f07;
+	--color-light-yellow: #6c630f;
+	--color-dark-yellow: #fff085;
 
-	--color-very-light-orange: #262117;
-	--color-light-orange: #5f430a;
+	--color-very-light-orange: #481e04;
+	--color-light-orange: #7b3306;
+	--color-dark-orange: #ffb330;
 
-	--color-very-light-red: #2d1d18;
-	--color-light-red: #74321e;
+	--color-very-light-red: #ffede9;
+	--color-light-red: #82181a;
+	--color-dark-red: #ffb6a2;
 
-	--color-very-light-pink: #2d1926;
-	--color-light-pink: #712055;
+	--color-very-light-pink: #510427;
+	--color-light-pink: #861043;
+	--color-dark-pink: #fda5d5;
 
-	--color-very-light-purple: #281c2c;
-	--color-light-purple: #542663;
+	--color-very-light-purple: #340557;
+	--color-light-purple: #59168b;
+	--color-dark-purple: #dab2ff;
 
-	--color-very-light-blue: #1e2131;
-	--color-light-blue: #20295c;
+	--color-very-light-blue: #15205c;
+	--color-light-blue: #22307e;
+	--color-dark-blue: #8f9def;
 
-	--color-very-light-ice: #17252d;
-	--color-light-ice: #19465f;
+	--color-very-light-ice: #052f4a;
+	--color-light-ice: #024a70;
+	--color-dark-ice: #74d4ff;
 
-	--color-very-light-teal: #162827;
-	--color-light-teal: #16534e;
+	--color-very-light-teal: #022f2e;
+	--color-light-teal: #0b4f4a;
+	--color-dark-teal: #96f7e4;
 
-	--color-very-light-lime: #202919;
-	--color-light-lime: #36551d;
+	--color-very-light-lime: #192e03;
+	--color-light-lime: #35530e;
+	--color-dark-lime: #d8f999;
 
-	--color-very-light-grey: #232323;
-	--color-light-grey: #3c3c3c;
+	--color-very-light-grey: #292929;
+	--color-light-grey: #414141;
+	--color-dark-grey: #a3a3a3;
 
 	/* Tag */
 
@@ -492,6 +502,12 @@ html.themeDark {
 				.icon.arrow { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
 			}
 		}
+	}
+
+	/* Comment checkboxes */
+	.commentSection {
+		.commentEditor-li-unchecked::before { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
+		.commentCheckbox .checkboxMark { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
 	}
 
 	@import "./menu";

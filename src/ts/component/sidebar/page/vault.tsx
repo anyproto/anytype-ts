@@ -445,7 +445,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
-		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter);
+		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
 			const { createdAt, creator, isSynced } = lastMessage;

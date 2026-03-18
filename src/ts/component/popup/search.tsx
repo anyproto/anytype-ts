@@ -483,6 +483,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
 			items.push({ id: 'add', name, icon: 'plus', shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
+			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), icon: 'plus', isSmall: true });
 		};
 
 		return items.map(it => {
@@ -552,6 +553,14 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				switch (item.id) {
 					case 'add': {
 						pageCreate(filter);
+						break;
+					};
+
+					case 'upload': {
+						close();
+						window.setTimeout(() => {
+							U.Menu.onFileUploadPopup(I.ObjectLayout.File);
+						}, S.Popup.getTimeout());
 						break;
 					};
 

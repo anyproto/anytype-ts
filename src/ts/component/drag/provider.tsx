@@ -200,21 +200,37 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		};
 
 		if (isFileDrop) {
-			const paths: string[] = [];
+			const filePaths: string[] = [];
+			const dirPaths: string[] = [];
+
 			for (const file of dataTransfer.files) {
 				const path = electron.webFilePath(file);
-				if (path) {
-					paths.push(path);
+				if (!path) {
+					continue;
+				};
+
+				if (electron.isDirectory(path)) {
+					dirPaths.push(path);
+				} else {
+					filePaths.push(path);
 				};
 			};
 
-			console.log('[DragProvider].onDrop paths', paths);
+			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
-			C.FileDrop(rootId, targetId, position.current, paths, () => {
-				if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
-					S.Block.toggle(rootId, targetId, true);
-				};
-			});
+			const allPaths = filePaths.concat(dirPaths);
+			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
+
+			if (allPaths.length && !isSetLayout) {
+				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
+					U.File.showFileDropError(message);
+
+					if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
+						S.Block.toggle(rootId, targetId, true);
+					};
+				});
+			};
 		} else
 		if (data && canDrop && (position.current != I.BlockPosition.None)) {
 			onDrop(e, data.dropType, targetId, position.current);

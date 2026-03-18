@@ -26,6 +26,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const listRef = useRef(null);
 	const n = useRef(-1);
 	const top = useRef(0);
+	const prevItemKeys = useRef('');
 	const sections = data.sections || [];
 
 	useEffect(() => {
@@ -38,7 +39,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let active = value ? items.find(it => it.id == value) : null;
 		if (!active && items.length && !withFilter) {
-			active = items[0];
+			active = items.find(it => !it.isSection && !it.isDiv) || items[0];
 		};
 
 		if (active && !active.isInitial) {
@@ -55,7 +56,22 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			focus();
 		};
 
+		// Re-select first item when items change (e.g. external filtering)
+		const currentItems = getItems(false);
+		const itemKeys = currentItems.map(it => it.id).join(',');
+
+		if (itemKeys !== prevItemKeys.current) {
+			prevItemKeys.current = itemKeys;
+
+			const first = currentItems.find(it => !it.isSection && !it.isDiv);
+			if (first) {
+				n.current = currentItems.indexOf(first);
+				window.setTimeout(() => setActive(first, false), 0);
+			};
+		};
+
 		beforePosition();
+		position();
 	});
 
 	useEffect(() => {
@@ -162,6 +178,50 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.withDescription) return HEIGHT_DESCRIPTION;
 		if (item.isBig) return HEIGHT_ITEM_BIG;
 		return HEIGHT_ITEM;
+	};
+
+	const scrollToRow = (_items: any[], index: number) => {
+		if (!listRef.current) {
+			return;
+		};
+
+		const item = _items[index];
+		if (!item) {
+			return;
+		};
+
+		// Use the full rendered list (with sections) to calculate offsets
+		const all = getItems(true);
+		const rowIndex = all.findIndex(it => it.id == item.id);
+
+		if (rowIndex < 0) {
+			return;
+		};
+
+		const listHeight = listRef.current.props.height;
+		const itemHeight = getRowHeight(all[rowIndex]);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < all.length; ++i) {
+			const h = getRowHeight(all[i]);
+
+			if (i < rowIndex) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		offset = Math.max(0, offset);
+		listRef.current.scrollToPosition(offset);
 	};
 
 	const onScroll = ({ scrollTop }) => {
@@ -341,6 +401,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		updateOptions,
 		onSwitch,
 		beforePosition,
+		scrollToRow,
 	}));
 	
 	return (

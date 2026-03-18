@@ -60,6 +60,7 @@ class ChatMessage implements I.ChatMessage {
 	attachments: I.ChatMessageAttachment[] = [];
 	dependencies: Map<string, any> = new Map();
 	reactions = [];
+	blocks: I.ChatMessageBlock[] = [];
 
 	isFirst = false;
 	isLast = false;
@@ -82,6 +83,7 @@ class ChatMessage implements I.ChatMessage {
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
 		this.dependencies = props.dependencies || new Map();
 		this.reactions = props.reactions || [];
+		this.blocks = Array.isArray(props.blocks) ? props.blocks : [];
 		this.isFirst = Boolean(props.isFirst);
 		this.isLast = Boolean(props.isLast);
 		this.isReadMessage = Boolean(props.isReadMessage);
@@ -111,6 +113,7 @@ class ChatMessage implements I.ChatMessage {
 			attachments: observable,
 			dependencies: observable,
 			reactions: observable,
+			blocks: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
 			isReadReaction: observable,

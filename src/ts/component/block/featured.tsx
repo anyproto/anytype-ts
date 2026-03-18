@@ -717,7 +717,6 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 									relationKey={relation.relationKey}
 									getRecord={() => object}
 									viewType={I.ViewType.Grid}
-									pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 									size={size}
 									iconSize={iconSize}
 									readonly={!canEdit}

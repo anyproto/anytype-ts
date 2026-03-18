@@ -561,7 +561,7 @@ class UtilMenu {
 			const setLayouts = U.Object.getSetLayouts();
 			const treeSkipLayouts = setLayouts.
 				concat(U.Object.getFileAndSystemLayouts()).
-				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat, I.ObjectLayout.Discussion ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
@@ -1293,6 +1293,44 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
+	getCommentAddSections (): any[] {
+		return [
+			{
+				id: 'text', name: translate('commentSlashMenuTitle'),
+				children: [
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, icon: 'comment-header1', name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, icon: 'comment-header2', name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, icon: 'comment-header3', name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+				],
+			},
+			{
+				id: 'list', name: translate('commentSlashMenuLists'),
+				children: [
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, icon: 'comment-numbered', name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, icon: 'comment-bulleted', name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, icon: 'comment-checkbox', name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+				],
+			},
+			{
+				id: 'attachments', name: translate('commentSlashMenuAttachments'),
+				children: [
+					{ id: 'create', action: 'create', icon: 'comment-createObject', name: translate('commonNewObject'), arrow: true },
+					{ id: 'object', action: 'object', icon: 'comment-plus', name: translate('spaceExisting') },
+					{ id: 'file', action: 'file', icon: 'comment-uploadComputer', name: translate('commonUploadComputer') },
+					{ id: 'embed', action: 'embed', icon: 'comment-embed', name: translate('commentSlashMenuEmbed'), arrow: true },
+				],
+			},
+			{
+				id: 'decorations', name: translate('commentSlashMenuDecorations'),
+				children: [
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'comment-quote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'comment-divider', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'comment-code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+				],
+			},
+		];
+	};
+
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
 		const sort: any[] = [
 			{ name: translate('sidebarObjectSort'), isSection: true },
@@ -1566,6 +1604,20 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
+						if (U.Object.getFileLayouts().includes(item.recommendedLayout)) {
+							this.menuContext?.close();
+
+							window.setTimeout(() => {
+								this.onFileUploadPopup(item.recommendedLayout, '', details, (objectIds) => {
+									if (objectIds?.length) {
+										const object = S.Detail.get(S.Common.space, objectIds[0]);
+										if (object) {
+											cb(object, 0);
+										};
+									};
+								});
+							}, S.Menu.getTimeout());
+						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
@@ -1596,6 +1648,17 @@ class UtilMenu {
 		};
 
 		check();
+	};
+
+	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void) {
+		S.Popup.open('upload', {
+			data: {
+				layout,
+				collectionId: collectionId || '',
+				details: details || {},
+				onUpload: callBack,
+			},
+		});
 	};
 
 	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {

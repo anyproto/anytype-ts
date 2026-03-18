@@ -315,6 +315,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	request.setPosition(position as number);
 	request.setLocalfilepathsList(paths);
 	request.setStyle(S.Common.fileStyle as number);
+	request.setSpaceid(S.Common.space);
 
 	dispatcher.request('FileDrop', request, callBack);
 };
@@ -1932,6 +1933,14 @@ export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => voi
 	request.setObjectid(objectId);
 
 	dispatcher.request('ObjectChatAdd', request, callBack);
+};
+
+export const ObjectAddDiscussion = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DiscussionAdd.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request(ObjectAddDiscussion.name, request, callBack);
 };
 
 export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {

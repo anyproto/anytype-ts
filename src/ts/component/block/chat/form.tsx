@@ -718,8 +718,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onEmoji = () => {
 		S.Menu.open('smile', {
 			element: `#button-${U.Common.esc(block.id)}-emoji`,
-			horizontal: I.MenuDirection.Right,
 			...caretMenuParam(),
+			horizontal: I.MenuDirection.Right,
+			recalcRect: undefined,
 			data: {
 				noHead: true,
 				noUpload: true,

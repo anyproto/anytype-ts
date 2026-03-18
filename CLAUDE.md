@@ -169,8 +169,10 @@ npx rspack --config rspack.pixi.config.js
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
+- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Code Style
+- **The project uses tabs for indentation, not spaces.** All TypeScript, TSX, and SCSS files use tab characters.
 - Write `else if` with a linebreak before `if`:
   ```typescript
   if (condition) {
@@ -189,6 +191,15 @@ npx rspack --config rspack.pixi.config.js
   // Bad
   const isValid = x > 0 && y > 0 && x < maxWidth;
   if (a > b && c < d) { ... }
+  ```
+- Collect CSS class lists into a separate `cn` variable before the return statement:
+  ```typescript
+  // Good
+  const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+  return <div className={cn.join(' ')} />;
+
+  // Bad — inline class list arrays hurt readability
+  return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
 
 ### Important Patterns
@@ -266,6 +277,36 @@ curl -s -X POST "https://api.linear.app/graphql" \
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
 
+### Linear Workflow After Fixing Issues
+
+After pushing a fix for a Linear issue, always:
+
+1. **Comment on the issue** with a brief description of the fix (what was changed and why).
+2. **Move the issue** to "Waiting for testing" state.
+
+**Comment on an issue:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{commentCreate(input:{issueId:\"<ISSUE_UUID>\",body:\"<comment text>\"}){success}}"}' | jq .
+```
+
+**Move issue to "Waiting for testing":**
+```bash
+# First, find the state ID (one-time per project):
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{workflowStates(filter:{name:{eq:\"Waiting for testing\"}}){nodes{id name}}}"}' | jq .
+
+# Then update the issue:
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{issueUpdate(id:\"<ISSUE_UUID>\",input:{stateId:\"<STATE_UUID>\"}){success}}"}' | jq .
+```
+
 ## Figma MCP Integration
 
 Use the Figma MCP tools to fetch design context and screenshots from Figma files.
@@ -317,3 +358,11 @@ The QA Engineer skill:
 **Skip** for changes that have no user-facing impact (type refactors, internal utilities, CSS-only tweaks, build config).
 
 **Test suite repo:** `../anytype-desktop-suite` — Playwright E2E tests with Page Object Model, translation-aware selectors, and gRPC server lifecycle management. See its `CLAUDE.md` for test architecture details.
+
+## Code Quality
+
+This is a TypeScript project. Always run typecheck and lint after making changes. Fix any lint issues (unused imports, formatting) before committing.
+
+## UI / CSS
+
+For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values.

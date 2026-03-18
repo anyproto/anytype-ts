@@ -1049,7 +1049,11 @@ class Dispatcher {
 					};
 
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
+
+					const commentSubIds = mapped.subIds.filter(id => id.startsWith('comment-'));
+					const chatSubIds = mapped.subIds.filter(id => !id.startsWith('comment-'));
+
+					chatSubIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -1058,6 +1062,28 @@ class Dispatcher {
 						};
 
 						S.Chat.add(subId, idx, message);
+					});
+
+					commentSubIds.forEach(subId => {
+						const commentMsg = {
+							...mapped.message,
+							content: {
+								...mapped.message.content,
+								parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
+							},
+							replyCount: 0,
+						};
+
+						if (mapped.message.replyToMessageId) {
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+
+							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
+							if (post) {
+								set(post, { replyCount: (post.replyCount || 0) + 1 });
+							};
+						} else {
+							S.Comment.addPost(subId, commentMsg as any);
+						};
 					});
 
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
@@ -1091,8 +1117,25 @@ class Dispatcher {
 
 				case 'ChatUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+
 					mapped.subIds.forEach(subId => {
-						S.Chat.update(subId, mapped.message);
+						if (subId.startsWith('comment-')) {
+							const commentMsg = {
+								id: mapped.message.id,
+								content: {
+									...mapped.message.content,
+									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
+								},
+							};
+
+							if (mapped.message.replyToMessageId) {
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+							} else {
+								S.Comment.updatePost(subId, commentMsg as any);
+							};
+						} else {
+							S.Chat.update(subId, mapped.message);
+						};
 					});
 
 					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
@@ -1140,7 +1183,27 @@ class Dispatcher {
 				case 'ChatDelete': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.delete(subId, mapped.id);
+						if (subId.startsWith('comment-')) {
+							const post = S.Comment.getPostById(subId, mapped.id);
+
+							if (post) {
+								S.Comment.deletePost(subId, mapped.id);
+							} else {
+								const posts = S.Comment.getPosts(subId);
+								for (const p of posts) {
+									const replies = S.Comment.getReplies(p.id);
+									const reply = replies.find(r => r.id == mapped.id);
+
+									if (reply) {
+										S.Comment.deleteReply(p.id, mapped.id);
+										set(p, { replyCount: Math.max(0, (p.replyCount || 0) - 1) });
+										break;
+									};
+								};
+							};
+						} else {
+							S.Chat.delete(subId, mapped.id);
+						};
 					});
 					break;
 				};
@@ -1152,13 +1215,31 @@ class Dispatcher {
 					let notificationMessage: I.ChatMessage = null;
 
 					mapped.subIds.forEach((subId) => {
-						const message = S.Chat.getMessageById(subId, mapped.id);
-						if (message) {
-							if (!notificationMessage) {
-								oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
-								notificationMessage = message;
+						if (subId.startsWith('comment-')) {
+							const post = S.Comment.getPostById(subId, mapped.id);
+							if (post) {
+								set(post, { reactions: mapped.reactions });
+							} else {
+								// Search in replies
+								const posts = S.Comment.getPosts(subId);
+								for (const p of posts) {
+									const replies = S.Comment.getReplies(p.id);
+									const reply = replies.find(r => r.id == mapped.id);
+									if (reply) {
+										set(reply, { reactions: mapped.reactions });
+										break;
+									};
+								};
 							};
-							set(message, { reactions: mapped.reactions });
+						} else {
+							const message = S.Chat.getMessageById(subId, mapped.id);
+							if (message) {
+								if (!notificationMessage) {
+									oldReactions = (message.reactions || []).map(r => ({ icon: r.icon, authors: [ ...r.authors ] }));
+									notificationMessage = message;
+								};
+								set(message, { reactions: mapped.reactions });
+							};
 						};
 					});
 
@@ -1583,7 +1664,7 @@ class Dispatcher {
 					if (!SKIP_ERRORS.includes(type)) {
 						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
+						//Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 

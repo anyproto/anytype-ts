@@ -205,8 +205,8 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
-							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
+							<Icon id={`button-${id}-more`} className="more withBackground" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
+							{isAllowedObject ? <Icon className="add withBackground" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
 						</div>
 					</div>
 

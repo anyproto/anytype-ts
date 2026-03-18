@@ -131,7 +131,6 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 						readonly={readonly || !allowedValue}
 						idPrefix={idPrefix}
 						onCellChange={onCellChange}
-						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						menuParam={{ 
 							className: 'fromBlockRelation', 
 							classNameWrap: 'fromBlock',
