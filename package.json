@@ -6,7 +6,10 @@
 	"scripts": {
 		"precommit": "npx lint-staged",
 		"typecheck": "npx tsc --noEmit -p tsconfig.json",
-		"lint": "eslint .",
+		"lint": "npx biome lint src/ && eslint .",
+		"lint:fix": "npx biome check --write src/",
+		"format": "npx biome format --write src/",
+		"format:check": "npx biome format src/",
 		"release:notes": "node scripts/generate-release-notes.js",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
@@ -58,6 +61,7 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.8",
 		"@electron/notarize": "^3.1.0",
 		"@rsdoctor/rspack-plugin": "^1.3.4",
 		"@rspack/cli": "^1.7.8",
@@ -877,6 +881,7 @@
 		}
 	},
 	"lint-staged": {
+		"src/**/*.{ts,tsx}": "npx biome lint --no-errors-on-unmatched",
 		"{src,electron}/**/*.{js,ts,tsx}": "eslint"
 	},
 	"husky": {

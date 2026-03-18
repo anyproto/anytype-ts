@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, Button, QR } from 'Component';
-import { I, U, S, translate, J, Renderer } from 'Lib';
+import { I, U, S, translate, Renderer } from 'Lib';
 import $ from 'jquery';
 
 const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {

@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, Label } from 'Component';
-import { U, I, translate, S } from 'Lib';
+import { U, I, translate, } from 'Lib';
 
 interface Props {
 	spaceview?: any;

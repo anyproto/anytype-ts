@@ -1,11 +1,11 @@
-import * as Sentry from '@sentry/browser';
+
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';

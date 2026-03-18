@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
-import { I, C, S, U, J, translate, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, analytics, } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

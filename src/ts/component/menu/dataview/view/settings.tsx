@@ -1,7 +1,7 @@
-import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, Key, translate, Dataview } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate, Dataview } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 
 const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {

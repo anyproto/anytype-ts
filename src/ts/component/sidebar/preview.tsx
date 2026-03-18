@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
-import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
+import { I, S, U, Relation, translate, sidebar } from 'Lib';
 
 interface RefProps {
 	update: (object: any) => void;

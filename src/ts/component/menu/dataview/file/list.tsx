@@ -2,9 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Loader, EmptySearch, ObjectName, ObjectType } from 'Component';
+import { Filter, MenuItemVertical, EmptySearch, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
-import { set } from 'lodash';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;

@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { Title, Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
-import { I, keyboard, translate, Storage, J } from 'Lib';
+import { Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
+import { I, keyboard, translate, Storage, } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {

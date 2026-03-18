@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
-import { t } from '@excalidraw/excalidraw/types/i18n';
 
 interface SidebarData {
 	width: number;

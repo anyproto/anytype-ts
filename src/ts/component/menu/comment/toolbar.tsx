@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, keyboard, translate } from 'Lib';

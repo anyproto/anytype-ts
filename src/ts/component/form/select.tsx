@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, U, Relation, Preview } from 'Lib';
+import { I, S, Relation, Preview } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {

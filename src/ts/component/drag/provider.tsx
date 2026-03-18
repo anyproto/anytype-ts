@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode } from 'react';
-import $, { get } from 'jquery';
+import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';

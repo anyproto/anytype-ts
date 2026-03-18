@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEven
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Label, Icon } from 'Component';
+import { Filter, MenuItemVertical, Icon } from 'Component';
 import { I, U, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;

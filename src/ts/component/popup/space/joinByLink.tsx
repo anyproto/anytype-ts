@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error, Icon, Input } from 'Component';
 import { I, U, translate } from 'Lib';

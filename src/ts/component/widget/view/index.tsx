@@ -10,7 +10,6 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
-import { get } from 'jquery';
 
 interface WidgetViewRefProps {
 	updateData: () => void;

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
-import { I, C, S, U, Storage, translate, keyboard } from 'Lib';
+import { I, C, S, U, Storage, translate, } from 'Lib';
 
 const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

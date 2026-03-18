@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, C, Action, translate, analytics } from 'Lib';
+import { I, S, U, C, Action, translate, analytics } from 'Lib';
 
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

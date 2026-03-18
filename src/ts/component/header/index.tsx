@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
