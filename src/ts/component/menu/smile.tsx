@@ -889,7 +889,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<Filter 
 			ref={filterRef}
 			value={filter}
-			className={[ 'outlined', 'round', (!noHead ? 'withHead' : '') ].join(' ')}
+			className={!noHead ? 'withHead' : ''}
 			onChange={e => onKeyUp(e, false)} 
 			focusOnMount={true}
 		/>

@@ -232,7 +232,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		<div className="wrap">
 			<Filter
 				ref={filterInputRef}
-				className="outlined round"
 				placeholder={translate('commonFilterObjects')}
 				value={filter}
 				onChange={onFilterChange} 
