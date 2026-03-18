@@ -1424,7 +1424,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
 		const win = $(window);
-		const pageContainer = getPageContainer();
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
@@ -1436,11 +1435,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			editingRecordId.current = '';
 		};
 
-		if (nameRef) {
-			nameRef.onBlur();
-		};
-
-		$(pageContainer).trigger('mousedown');
+		nameRef?.onBlur();
 	};
 
 	const multiSelectAction = (id: string) => {
@@ -1487,10 +1482,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			controlsRef.current?.resize?.();
 			viewRef.current?.resize?.();
 		});
-	};
-
-	const getPageContainer = () => {
-		return U.Common.getCellContainer(isPopup ? 'popup' : 'page');
 	};
 
 	if (!views.length) {
@@ -1613,7 +1604,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					onRefRecord={(ref: any, id: string) => recordRefs.current.set(id, ref)}
 					{...props}
 					{...dataviewProps}
-					pageContainer={getPageContainer()}
 					onCellClick={onCellClick}
 					onCellChange={onCellChange}
 					onContext={onContext}
