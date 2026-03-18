@@ -94,7 +94,7 @@ class UtilSubscription {
 		};
 
 		if (ignoreChat) {
-			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
 		};
 
 		if (skipLayouts.length) {

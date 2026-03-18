@@ -1030,10 +1030,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 
 		let value = getTextValue();
+		
 		const firstChar = value.charAt(range.from - 1);
 
 		value = U.String.cut(value, range.from - 2, range.from);
-
 		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {

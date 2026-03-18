@@ -47,7 +47,8 @@ class UtilObject {
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.ChatOld:
-			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Chat:
+			case I.ObjectLayout.Discussion:	 r = 'chat'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
@@ -582,7 +583,7 @@ class UtilObject {
 	};
 
 	isChatLayout (layout: I.ObjectLayout): boolean {
-		return layout == I.ObjectLayout.Chat;
+		return [ I.ObjectLayout.Chat, I.ObjectLayout.Discussion ].includes(layout);
 	};
 
 	isImageLayout (layout: I.ObjectLayout): boolean {
@@ -626,7 +627,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Discussion, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -641,6 +642,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.Discussion,
 		];
 	};
 
@@ -678,10 +680,11 @@ class UtilObject {
 	};
 
 	excludeFromSet (): I.ObjectLayout[] {
-		return [ 
-			I.ObjectLayout.Option, 
-			I.ObjectLayout.SpaceView, 
+		return [
+			I.ObjectLayout.Option,
+			I.ObjectLayout.SpaceView,
 			I.ObjectLayout.Space,
+			I.ObjectLayout.Discussion,
 		];
 	};
 
@@ -1004,7 +1007,8 @@ class UtilObject {
 			switch (layout) {
 				default: id = 'page'; break;
 				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat: id = 'chat'; break;
+				case I.ObjectLayout.Chat:
+				case I.ObjectLayout.Discussion: id = 'chat'; break;
 				case I.ObjectLayout.Collection: id = 'collection'; break;
 				case I.ObjectLayout.Set: id = 'set'; break;
 				case I.ObjectLayout.Date: id = 'date'; break;

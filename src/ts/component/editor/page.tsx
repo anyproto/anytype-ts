@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Deleted, DropTarget, EditorControls } from 'Component';
+import { Icon, Deleted, DropTarget, EditorControls, CommentSection } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -2018,9 +2018,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
-		const urls = U.String.getUrlsFromText(data.text);
+		const trimmedText = data.text.trim();
+		const urls = U.String.getUrlsFromText(trimmedText);
 
-		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
+		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
 		};
@@ -2090,6 +2091,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const route = U.Common.getRouteFromUrl(url);
 
+		let linkParamUrl = url;
+		if (route) {
+			linkParamUrl = `${J.Constant.protocol}://${route}`;
+		};
+
+		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
+		const isAnytypeObject = linkParam.isInside && linkParam.target;
+
 		const marks = U.Common.objectCopy(block.content.marks || []);
 		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
 
@@ -2103,19 +2112,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		let linkParamUrl = url;
-		if (route) {
-			linkParamUrl = `${J.Constant.protocol}://${route}`;
-		};
-
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
 		const length = block.getLength();
 		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
-		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
-		const isAnytypeObject = linkParam.isInside && linkParam.target;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
 		const isSameObject = linkParam.target == rootId;
 		const canObject = isAnytypeObject && isSameSpace && !isSameObject && canBookmark;
@@ -2600,13 +2602,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const ch = scrollContainer.height();
 				const bt = blocks.offset().top;
 				const bh = blocks.outerHeight();
+				const commentSection = node.find('.commentSection');
+				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
-				let height = ch - ct - bt - bh;
-
-				if (bh > ch) {
-					height = Math.max(ch / 2, height);
-				};
-
+				let height = ch - ct - bt - bh - csh - 8;
 				height = Math.max(J.Size.lastBlock, height);
 				last.css({ height });
 			};
@@ -2733,11 +2732,23 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					/>
 				</div>
 
-				<TableOfContents ref={tocRef} {...props} />
-				
 				<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
 					<div id="blockLast" className="blockLast" onClick={onLastClick} />
 				</DropTarget>
+
+				<TableOfContents ref={tocRef} {...props} />
+
+				{S.Common.config.experimental ? (
+				<CommentSection
+					rootId={rootId}
+					targetId={rootId}
+					targetType={I.CommentTargetType.Object}
+					readonly={readonly}
+					isPopup={isPopup}
+					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+					resize={resizePage}
+				/>
+			) : ''}
 			</div>
 		</div>
 	);

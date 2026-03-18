@@ -717,6 +717,7 @@ export const Mapper = {
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.ChatMessageBlock),
 				isReadMessage: obj.getRead(),
 				isReadMention: obj.getMentionread(),
 				isReadReaction: !obj.getUnreadreaction(),
@@ -762,6 +763,48 @@ export const Mapper = {
 				text: obj.getText(),
 				style: obj.getStyle() as number,
 				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+			};
+		},
+
+		ChatMessageBlock (obj: Model.ChatMessage.MessageBlock): I.ChatMessageBlock {
+			const result: I.ChatMessageBlock = {};
+
+			if (obj.hasText()) {
+				result.text = Mapper.From.ChatMessageBlockText(obj.getText());
+			};
+
+			if (obj.hasLink()) {
+				result.link = Mapper.From.ChatMessageBlockLink(obj.getLink());
+			};
+
+			if (obj.hasEmbed()) {
+				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.getEmbed());
+			};
+
+			return result;
+		},
+
+		ChatMessageBlockText (obj: Model.ChatMessage.MessageBlockText): I.ChatMessageBlockText {
+			return {
+				text: obj.getText(),
+				style: obj.getStyle() as number,
+				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+				checked: obj.getChecked(),
+				lang: obj.getLang(),
+			};
+		},
+
+		ChatMessageBlockEmbed (obj: Model.ChatMessage.MessageBlockEmbed): I.ChatMessageBlockEmbed {
+			return {
+				text: obj.getText(),
+				processor: obj.getProcessor() as number,
+			};
+		},
+
+		ChatMessageBlockLink (obj: Model.ChatMessage.MessageBlockLink): I.ChatMessageBlockLink {
+			return {
+				targetObjectId: obj.getTargetobjectid(),
+				type: obj.getType() as number,
 			};
 		},
 
@@ -1182,6 +1225,10 @@ export const Mapper = {
 			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
 			item.setReactions(Mapper.To.ChatMessageReaction(obj.reactions));
 
+			if (obj.blocks && obj.blocks.length) {
+				item.setBlocksList(obj.blocks.map(Mapper.To.ChatMessageBlock));
+			};
+
 			return item;
 		},
 
@@ -1191,6 +1238,60 @@ export const Mapper = {
 			item.setText(obj.text);
 			item.setStyle(obj.style as number);
 			item.setMarksList(obj.marks.map(Mapper.To.Mark));
+
+			return item;
+		},
+
+		ChatMessageBlock: (obj: I.ChatMessageBlock) => {
+			const item = new Model.ChatMessage.MessageBlock();
+
+			if (obj.text) {
+				item.setText(Mapper.To.ChatMessageBlockText(obj.text));
+			};
+
+			if (obj.link) {
+				item.setLink(Mapper.To.ChatMessageBlockLink(obj.link));
+			};
+
+			if (obj.embed) {
+				item.setEmbed(Mapper.To.ChatMessageBlockEmbed(obj.embed));
+			};
+
+			return item;
+		},
+
+		ChatMessageBlockText: (obj: I.ChatMessageBlockText) => {
+			const item = new Model.ChatMessage.MessageBlockText();
+
+			item.setText(obj.text);
+			item.setStyle(obj.style as number);
+			item.setMarksList((obj.marks || []).map(Mapper.To.Mark));
+
+			if (obj.checked) {
+				item.setChecked(obj.checked);
+			};
+
+			if (obj.lang) {
+				item.setLang(obj.lang);
+			};
+
+			return item;
+		},
+
+		ChatMessageBlockLink: (obj: I.ChatMessageBlockLink) => {
+			const item = new Model.ChatMessage.MessageBlockLink();
+
+			item.setTargetobjectid(obj.targetObjectId);
+			item.setType(obj.type as number);
+
+			return item;
+		},
+
+		ChatMessageBlockEmbed: (obj: I.ChatMessageBlockEmbed) => {
+			const item = new Model.ChatMessage.MessageBlockEmbed();
+
+			item.setText(obj.text);
+			item.setProcessor(obj.processor as number);
 
 			return item;
 		},

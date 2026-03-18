@@ -479,6 +479,15 @@ class RecordStore {
 	};
 
 	/**
+	 * Gets the discussion type object.
+	 * @private
+	 * @returns {any|null} The discussion type object or null.
+	 */
+	getDiscussionType () {
+		return this.getTypeByKey(J.Constant.typeKey.discussion);
+	};
+
+	/**
 	 * Gets the space type object.
 	 * @private
 	 * @returns {any|null} The space type object or null.
