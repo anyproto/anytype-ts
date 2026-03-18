@@ -70,7 +70,7 @@ class PopupStore {
 			this.popupList.push({ id, param });
 		};
 
-		window.setTimeout(() => U.Data.updateTabsDimmer(), 50);
+		U.Data.updateTabsDimmer();
 		Preview.previewHide(true);
 	};
 
@@ -196,6 +196,7 @@ class PopupStore {
 				this.popupList = filtered;
 
 				callBack?.();
+				U.Data.updateTabsDimmer();
 				$(window).trigger('resize');
 			}, J.Constant.delay.popup);
 		};

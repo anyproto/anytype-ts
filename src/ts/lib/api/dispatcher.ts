@@ -1664,7 +1664,7 @@ class Dispatcher {
 					if (!SKIP_ERRORS.includes(type)) {
 						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
-						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
+						//Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 
