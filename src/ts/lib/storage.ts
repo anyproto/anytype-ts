@@ -12,6 +12,7 @@ const SPACE_KEYS = new Set([
 	'scroll',
 	'defaultType',
 	'chat',
+	'comment',
 	'popupSearch',
 	'focus',
 	'openUrl',
@@ -660,6 +661,47 @@ class Storage {
 	getChat (id: string) {
 		const map = this.get('chat', this.isLocal('chat')) || {};
 		return map[id] || {};
+	};
+
+	/**
+	 * Sets comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 * @param {any} obj - The comment draft data to set.
+	 */
+	setComment (id: string, obj: any) {
+		if (!id) {
+			return;
+		};
+
+		const map = this.get('comment', this.isLocal('comment')) || {};
+
+		map[id] = Object.assign(map[id] || {}, obj);
+		this.set('comment', map, this.isLocal('comment'));
+	};
+
+	/**
+	 * Gets comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 * @returns {any} The comment draft data.
+	 */
+	getComment (id: string) {
+		const map = this.get('comment', this.isLocal('comment')) || {};
+		return map[id] || {};
+	};
+
+	/**
+	 * Deletes comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 */
+	deleteComment (id: string) {
+		if (!id) {
+			return;
+		};
+
+		const map = this.get('comment', this.isLocal('comment')) || {};
+
+		delete map[id];
+		this.set('comment', map, this.isLocal('comment'));
 	};
 
 	/**

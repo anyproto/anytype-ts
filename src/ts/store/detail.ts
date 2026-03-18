@@ -504,6 +504,7 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.chatId = Relation.getStringValue(object.chatId);
+		object.discussionId = Relation.getStringValue(object.discussionId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 		object.spacePushNotificationMode = Number(object.spacePushNotificationMode) || I.NotificationMode.All;
