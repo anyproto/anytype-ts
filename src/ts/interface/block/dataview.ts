@@ -169,7 +169,6 @@ export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;
 	readonly: boolean;
-	pageContainer?: string;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;
@@ -274,7 +273,6 @@ export interface Cell {
 	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
-	pageContainer?: string;
 	isInline?: boolean;
 	size?: number;
 	iconSize?: number;

@@ -2,7 +2,7 @@
  * Custom gRPC-web service client using ts-proto MessageFns for serialization.
  * Replaces the generated service_grpc_web_pb.js which depends on old CJS protobuf files.
  *
- * Auto-generated registry: 324 unary methods.
+ * Auto-generated registry: 325 unary methods.
  */
 
 import { GrpcWebClientBase, MethodDescriptor, MethodType } from 'grpc-web';
@@ -218,6 +218,7 @@ const registry: Record<string, RegistryEntry> = {
 	NotificationList: { req: Commands.Rpc_Notification_List_Request, res: Commands.Rpc_Notification_List_Response },
 	NotificationReply: { req: Commands.Rpc_Notification_Reply_Request, res: Commands.Rpc_Notification_Reply_Response },
 	NotificationTest: { req: Commands.Rpc_Notification_Test_Request, res: Commands.Rpc_Notification_Test_Response },
+	ObjectAddDiscussion: { req: Commands.Rpc_Object_DiscussionAdd_Request, res: Commands.Rpc_Object_DiscussionAdd_Response },
 	ObjectApplyTemplate: { req: Commands.Rpc_Object_ApplyTemplate_Request, res: Commands.Rpc_Object_ApplyTemplate_Response },
 	ObjectBookmarkFetch: { req: Commands.Rpc_Object_BookmarkFetch_Request, res: Commands.Rpc_Object_BookmarkFetch_Response },
 	ObjectChatAdd: { req: Commands.Rpc_Object_ChatAdd_Request, res: Commands.Rpc_Object_ChatAdd_Response },

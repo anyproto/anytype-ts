@@ -1566,6 +1566,20 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
+						if (U.Object.getFileLayouts().includes(item.recommendedLayout)) {
+							this.menuContext?.close();
+
+							window.setTimeout(() => {
+								this.onFileUploadPopup(item.recommendedLayout, '', details, (objectIds) => {
+									if (objectIds?.length) {
+										const object = S.Detail.get(S.Common.space, objectIds[0]);
+										if (object) {
+											cb(object, 0);
+										};
+									};
+								});
+							}, S.Menu.getTimeout());
+						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
@@ -1596,6 +1610,17 @@ class UtilMenu {
 		};
 
 		check();
+	};
+
+	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void) {
+		S.Popup.open('upload', {
+			data: {
+				layout,
+				collectionId: collectionId || '',
+				details: details || {},
+				onUpload: callBack,
+			},
+		});
 	};
 
 	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {

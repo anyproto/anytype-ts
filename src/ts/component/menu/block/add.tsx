@@ -722,7 +722,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
 							viewType={I.ViewType.Grid}
 							idPrefix={getId()}
-							pageContainer={U.Common.getCellContainer('menuBlockAdd')}
 							readonly={true}
 							canOpen={false}
 							placeholder={translate('placeholderCellCommon')}

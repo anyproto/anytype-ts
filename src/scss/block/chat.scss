@@ -42,6 +42,20 @@
 			smile, .space { display: none; }
 		}
 
+		.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
+
+		markupmention {
+			name { color: var(--color-system-accent-100); font-weight: 500; border-bottom: 0px; }
+		}
+
+		.message.isSelf {
+			.markuplink, markupobject { color: var(--color-text-white60); }
+
+			markupmention {
+				name { color: var(--color-text-white60); }
+			}
+		}
+
 		@import "./chat/attachment";
 		@import "./chat/message";
 		@import "./chat/form";

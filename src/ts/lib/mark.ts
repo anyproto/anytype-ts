@@ -1032,11 +1032,40 @@ class Mark {
 	};
 
 	/**
+	 * Build a flat text representation of the element's DOM that includes
+	 * BR elements as \n characters, matching how selection-ranges counts them.
+	 * textContent alone omits BRs, causing offset mismatches.
+	 */
+	getDomText (el: HTMLElement): string {
+		const parts: string[] = [];
+		const walk = (node: Node) => {
+			if (node.nodeType === Node.TEXT_NODE) {
+				parts.push(node.textContent || '');
+			} else
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if ((node as HTMLElement).tagName === 'BR') {
+					parts.push('\n');
+				} else {
+					for (let i = 0; i < node.childNodes.length; i++) {
+						walk(node.childNodes[i]);
+					};
+				};
+			};
+		};
+
+		for (let i = 0; i < el.childNodes.length; i++) {
+			walk(el.childNodes[i]);
+		};
+
+		return parts.join('');
+	};
+
+	/**
 	 * Convert a DOM text offset (with ZWS) to model text offset (without ZWS).
-	 * Scans the element's textContent for ZWS characters and subtracts them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and subtracts them.
 	 */
 	domToModel (domOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 
 		for (let i = 0; i < domOffset && i < text.length; i++) {
@@ -1050,10 +1079,10 @@ class Mark {
 
 	/**
 	 * Convert a model text offset (without ZWS) to DOM text offset (with ZWS).
-	 * Scans the element's textContent for ZWS characters and adds them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and adds them.
 	 */
 	modelToDom (modelOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 		let dom = 0;
 

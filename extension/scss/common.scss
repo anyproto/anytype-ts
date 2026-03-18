@@ -34,22 +34,23 @@ html.anytypeWebclipper-auth {
 
 	/* System */
 
-	--color-system-accent-100: #ffb522;
-	--color-system-accent-50: #ffd15b;
-	--color-system-accent-25: #ffee94;
+	--color-system-accent-125: #105aef;
+	--color-system-accent-100: #377aff;
+	--color-system-accent-50: #699bff;
+	--color-system-accent-25: #9bbcff;
 	--color-system-selection: rgba(24, 163, 241, 0.15);
 	--color-system-drop-zone: rgba(255, 187, 44, 0.25);
 
 	/* Color */
 
-	--color-yellow: #ecd91b;
-	--color-orange: #ffb522;
-	--color-red: #f55522;
-	--color-pink: #e51ca0;
-	--color-purple: #ab50cc;
+	--color-yellow: #e9d619;
+	--color-orange: #fe9a00;
+	--color-red: #fb592c;
+	--color-pink: #f6339a;
+	--color-purple: #ad46ff;
 	--color-blue: #3e58eb;
 	--color-ice: #2aa7ee;
-	--color-teal: #0fc8ba;
+	--color-teal: #00bba7;
 	--color-lime: #5dd400;
 
 	/* Tag */
@@ -67,10 +68,10 @@ html.anytypeWebclipper-auth {
 
 	--color-bg-tag-grey: #e3e3e3;
 	--color-bg-tag-yellow: #f4eb91;
-	--color-bg-tag-orange: #fcdc9c;
+	--color-bg-tag-orange: #ffd6a7;
 	--color-bg-tag-red: #fcd1c3;
-	--color-bg-tag-pink: #f8c2e5;
-	--color-bg-tag-purple: #e8d0f1;
+	--color-bg-tag-pink: #fccee8;
+	--color-bg-tag-purple: #e9d4ff;
 	--color-bg-tag-blue: #cbd2fa;
 	--color-bg-tag-ice: #b2dff9;
 	--color-bg-tag-teal: #a9ebe6;
@@ -82,16 +83,16 @@ html.anytypeWebclipper-auth {
 	--color-light-yellow: #f4eb91;
 
 	--color-very-light-orange: #fff2d7;
-	--color-light-orange: #fcdc9c;
+	--color-light-orange: #ffd6a7;
 
-	--color-very-light-red: #fee7e0;
+	--color-very-light-red: #ffe2e2;
 	--color-light-red: #fcd1c3;
 
-	--color-very-light-pink: #fbdff2;
-	--color-light-pink: #f8c2e5;
+	--color-very-light-pink: #fce7f3;
+	--color-light-pink: #fccee8;
 
-	--color-very-light-purple: #f3e7f8;
-	--color-light-purple: #e8d0f1;
+	--color-very-light-purple: #f3e8ff;
+	--color-light-purple: #e9d4ff;
 
 	--color-very-light-blue: #e4e8fc;
 	--color-light-blue: #cbd2fa;
@@ -102,7 +103,7 @@ html.anytypeWebclipper-auth {
 	--color-very-light-teal: #d9f6f4;
 	--color-light-teal: #a9ebe6;
 
-	--color-very-light-lime: #e5f8d6;
+	--color-very-light-lime: #ecfcca;
 	--color-light-lime: #c5efa3;
 
 	--color-very-light-grey: #f2f2f2;
@@ -252,35 +253,35 @@ html.anytypeWebclipper-auth {
 
 		/* Color */
 
-		--color-very-light-yellow: #242317;
-		--color-light-yellow: #55500d;
+		--color-very-light-yellow: #332f07;
+		--color-light-yellow: #6c630f;
 
-		--color-very-light-orange: #262117;
-		--color-light-orange: #5f430a;
+		--color-very-light-orange: #481e04;
+		--color-light-orange: #7b3306;
 
-		--color-very-light-red: #2d1d18;
-		--color-light-red: #74321e;
+		--color-very-light-red: #ffede9;
+		--color-light-red: #82181a;
 
-		--color-very-light-pink: #2d1926;
-		--color-light-pink: #712055;
+		--color-very-light-pink: #510427;
+		--color-light-pink: #861043;
 
-		--color-very-light-purple: #281c2c;
-		--color-light-purple: #542663;
+		--color-very-light-purple: #340557;
+		--color-light-purple: #59168b;
 
-		--color-very-light-blue: #1e2131;
-		--color-light-blue: #20295c;
+		--color-very-light-blue: #15205c;
+		--color-light-blue: #22307e;
 
-		--color-very-light-ice: #17252d;
-		--color-light-ice: #19465f;
+		--color-very-light-ice: #052f4a;
+		--color-light-ice: #024a70;
 
-		--color-very-light-teal: #162827;
-		--color-light-teal: #16534e;
+		--color-very-light-teal: #022f2e;
+		--color-light-teal: #0b4f4a;
 
-		--color-very-light-lime: #202919;
-		--color-light-lime: #36551d;
+		--color-very-light-lime: #192e03;
+		--color-light-lime: #35530e;
 
-		--color-very-light-grey: #232323;
-		--color-light-grey: #3c3c3c;
+		--color-very-light-grey: #292929;
+		--color-light-grey: #414141;
 
 		/* Tag */
 		--color-tag-grey: var(--color-text-secondary);

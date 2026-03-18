@@ -83,7 +83,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	};
 
 	const getToggle = () => {
-		const c = J.Theme[themeClass]?.color[colorValue];
+		const c = J.Theme[themeClass]?.textColor[colorValue];
 
 		const svg = `
 			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

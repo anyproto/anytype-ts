@@ -220,6 +220,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 		position: position as number,
 		localFilePaths: paths,
 		style: S.Common.fileStyle as number,
+		spaceId: S.Common.space,
 	}, callBack);
 };
 
