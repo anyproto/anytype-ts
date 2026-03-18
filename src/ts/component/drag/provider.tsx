@@ -229,6 +229,16 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
 
+					if (!message.error.code) {
+						if (filePaths.length) {
+							analytics.event('UploadFile', { route: analytics.route.uploadDnDEditor, count: filePaths.length });
+						};
+
+						if (dirPaths.length) {
+							analytics.event('CreateCollectionFromFolder', { route: analytics.route.uploadDnDEditor, filesCount: filePaths.length });
+						};
+					};
+
 					if (target && (target.canToggle()) && (position.current == I.BlockPosition.InnerFirst)) {
 						S.Block.toggle(rootId, targetId, true);
 					};
