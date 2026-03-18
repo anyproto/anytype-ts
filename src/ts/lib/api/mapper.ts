@@ -1253,6 +1253,10 @@ export const Mapper = {
 				item.blocks = obj.blocks.map(Mapper.To.ChatMessageBlock);
 			};
 
+			if (obj.blocks && obj.blocks.length) {
+				item.setBlocksList(obj.blocks.map(Mapper.To.ChatMessageBlock));
+			};
+
 			return item;
 		},
 

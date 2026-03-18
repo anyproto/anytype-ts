@@ -1514,6 +1514,14 @@ export const ObjectAddDiscussion = (objectId: string, callBack?: (message: any) 
 	dispatcher.request('ObjectAddDiscussion', { objectId }, callBack);
 };
 
+export const ObjectAddDiscussion = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.DiscussionAdd.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request(ObjectAddDiscussion.name, request, callBack);
+};
+
 export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBack?: (message: any) => void) => {
 	dispatcher.request('ObjectDateByTimestamp', {
 		spaceId,

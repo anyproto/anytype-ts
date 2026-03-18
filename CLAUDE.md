@@ -171,8 +171,10 @@ bun run build:pixi
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
+- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Code Style
+- **The project uses tabs for indentation, not spaces.** All TypeScript, TSX, and SCSS files use tab characters.
 - Write `else if` with a linebreak before `if`:
   ```typescript
   if (condition) {
@@ -191,6 +193,15 @@ bun run build:pixi
   // Bad
   const isValid = x > 0 && y > 0 && x < maxWidth;
   if (a > b && c < d) { ... }
+  ```
+- Collect CSS class lists into a separate `cn` variable before the return statement:
+  ```typescript
+  // Good
+  const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+  return <div className={cn.join(' ')} />;
+
+  // Bad — inline class list arrays hurt readability
+  return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
 
 ### Important Patterns
@@ -228,6 +239,7 @@ Detailed README files are available throughout the codebase for deeper context o
 - [`src/ts/component/preview/README.md`](src/ts/component/preview/README.md) - Preview cards and tooltips
 - [`src/ts/component/selection/README.md`](src/ts/component/selection/README.md) - Block and text selection handling
 - [`src/ts/component/util/README.md`](src/ts/component/util/README.md) - ~48 reusable utility components
+- [`src/ts/component/comment/README.md`](src/ts/component/comment/README.md) - Comment system: threaded discussions with Lexical editor, rich content parts, reactions
 
 ### Libraries
 - [`src/ts/lib/README.md`](src/ts/lib/README.md) - Core libraries overview (api, util, services, keyboard, storage)
@@ -267,6 +279,36 @@ curl -s -X POST "https://api.linear.app/graphql" \
 ```
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
+
+### Linear Workflow After Fixing Issues
+
+After pushing a fix for a Linear issue, always:
+
+1. **Comment on the issue** with a brief description of the fix (what was changed and why).
+2. **Move the issue** to "Waiting for testing" state.
+
+**Comment on an issue:**
+```bash
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{commentCreate(input:{issueId:\"<ISSUE_UUID>\",body:\"<comment text>\"}){success}}"}' | jq .
+```
+
+**Move issue to "Waiting for testing":**
+```bash
+# First, find the state ID (one-time per project):
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"query{workflowStates(filter:{name:{eq:\"Waiting for testing\"}}){nodes{id name}}}"}' | jq .
+
+# Then update the issue:
+curl -s -X POST "https://api.linear.app/graphql" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: $(printenv LINEAR_API_KEY)" \
+  --data '{"query":"mutation{issueUpdate(id:\"<ISSUE_UUID>\",input:{stateId:\"<STATE_UUID>\"}){success}}"}' | jq .
+```
 
 ## Figma MCP Integration
 

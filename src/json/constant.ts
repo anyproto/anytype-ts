@@ -166,6 +166,7 @@ export default {
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
 		chatDerived:	 'ot-chatDerived',
+		discussion:		 'ot-discussion',
 		project:		 'ot-project',
 		human:			 'ot-human',
 		participant:	 'ot-participant',

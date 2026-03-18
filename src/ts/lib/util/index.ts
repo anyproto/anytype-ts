@@ -13,6 +13,7 @@ import Prism from './prism';
 import Subscription from './subscription';
 import String from './string';
 import StickyScrollbar from './stickyScrollbar';
+import Comment from './comment';
 
 export {
 	Common,
@@ -30,4 +31,5 @@ export {
 	Subscription,
 	String,
 	StickyScrollbar,
+	Comment,
 };
