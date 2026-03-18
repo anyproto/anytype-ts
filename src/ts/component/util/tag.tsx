@@ -7,6 +7,7 @@ interface Props {
 	className?: string;
 	color?: string;
 	canEdit?: boolean;
+	isSmall?: boolean;
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
 	onContextMenu?(e: any): void;
@@ -18,6 +19,7 @@ const Tag: FC<Props> = ({
 	className = '',
 	color = '',
 	canEdit = false,
+	isSmall = false,
 	onClick,
 	onRemove,
 	onContextMenu,
@@ -25,12 +27,15 @@ const Tag: FC<Props> = ({
 
 	const nodeRef = useRef(null);
 	const cn = [ 'tagItem', 'textColor', `textColor-${color || 'default'}` ];
-	
+
 	if (className) {
 		cn.push(className);
 	};
 	if (canEdit) {
 		cn.push('canEdit');
+	};
+	if (isSmall) {
+		cn.push('isSmall');
 	};
 
 	const onRemoveHandler = (e: MouseEvent) => {
