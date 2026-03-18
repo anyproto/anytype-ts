@@ -25,6 +25,8 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 - [Prerequisites](#-prerequisites)
 - [Building from Source](#-building-from-source)
 - [Development Workflow](#-development-workflow)
+  - [Updating Middleware](#updating-middleware)
+  - [Updating Protobuf Bindings](#updating-protobuf-bindings)
 - [Localisation](#-localisation)
 - [Contributing](#-contributing)
 - [Community & Support](#-community--support)
@@ -97,7 +99,7 @@ For browser-based development without Electron:
 bun run start:web
 ```
 
-See [Web Mode](./src/ts/lib/web/README.md) for details.
+See [Web Mode](./docs/src/ts/lib/web/README.md) for details.
 
 ### Useful commands
 
@@ -124,6 +126,34 @@ bun run build:ext
 bun run ext:manifest:firefox
 bun run ext:manifest:chromium
 ```
+
+### Updating Middleware
+
+The middleware version is pinned in `middleware.version`. To fetch a pre-built middleware binary and its protobuf/JSON assets:
+
+```bash
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
+```
+
+This downloads the `anytype-heart` release matching the version in `middleware.version`, extracts the `anytypeHelper` binary into `dist/`, and copies protobuf definitions and generated JSON into `dist/lib/`.
+
+For CI environments (requires GitHub credentials):
+
+```bash
+./update-ci.sh --user=<GITHUB_USER> --token=<GITHUB_TOKEN> --os=<OS> --arch=<ARCH> --middleware-version=<VERSION>
+```
+
+### Updating Protobuf Bindings
+
+To regenerate TypeScript protobuf bindings from a local [anytype-heart](https://github.com/anyproto/anytype-heart) checkout (expected at `../anytype-heart`):
+
+```bash
+bun run generate:protos
+```
+
+**Prerequisites:** `protoc` (protobuf compiler) must be installed, and `bun install` must have been run (for `ts-proto`).
+
+This reads `.proto` files from `../anytype-heart`, generates TypeScript bindings into `middleware/`, and creates a service registry.
 
 ## 🌍 Localisation
 
