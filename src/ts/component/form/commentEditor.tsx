@@ -2559,6 +2559,273 @@ const openEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: Rea
 	});
 };
 
+const MarkdownSequences: { pattern: RegExp; style: I.TextStyle }[] = [
+	{ pattern: /^\[]\s$/,		style: I.TextStyle.Checkbox },
+	{ pattern: /^###\s$/,		style: I.TextStyle.Header3 },
+	{ pattern: /^##\s$/,		style: I.TextStyle.Header2 },
+	{ pattern: /^#\s$/,		style: I.TextStyle.Header1 },
+	{ pattern: /^[*\-+]\s$/,	style: I.TextStyle.Bulleted },
+	{ pattern: /^1\.\s$/,		style: I.TextStyle.Numbered },
+	{ pattern: /^"\s$/,		style: I.TextStyle.Quote },
+	{ pattern: /^>\s$/,		style: I.TextStyle.Quote },
+	{ pattern: /^```$/,			style: I.TextStyle.Code },
+];
+
+const MarkdownPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+	const prevText = useRef('');
+
+	useEffect(() => {
+		const removeListener = editor.registerUpdateListener(({ editorState }) => {
+			editorState.read(() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node)) {
+					prevText.current = '';
+					return;
+				};
+
+				const topLevel = node.getTopLevelElementOrThrow();
+
+				// Only apply to plain paragraph nodes
+				if (!($isElementNode(topLevel) && topLevel.getType() === 'paragraph')) {
+					prevText.current = node.getTextContent();
+					return;
+				};
+
+				const text = node.getTextContent();
+
+				// Only trigger when new text was added
+				if (text === prevText.current) {
+					prevText.current = text;
+					return;
+				};
+
+				for (const { pattern, style } of MarkdownSequences) {
+					if (!pattern.test(text)) {
+						continue;
+					};
+
+					const remaining = (style === I.TextStyle.Code) ? '' : text.replace(pattern, '');
+
+					editor.update(() => {
+						// Remove the markdown prefix
+						node.setTextContent(remaining);
+
+						const sel = $getSelection();
+						if (!$isRangeSelection(sel)) {
+							return;
+						};
+
+						// Place cursor at start
+						node.select(0, 0);
+
+						applyBlockTransform(editor, { style });
+					});
+
+					prevText.current = '';
+					return;
+				};
+
+				prevText.current = text;
+			});
+		});
+
+		return removeListener;
+	}, [ editor ]);
+
+	return null;
+};
+
+const InlineMarkdownPatterns: { reg: RegExp; format?: TextFormatType; isLink?: boolean }[] = [
+	{ reg: /(?:^|[\s(\[{])(`[^`]+`)$/, format: 'code' },
+	{ reg: /(?:^|[\s(\[{])(\*\*[^*]+\*\*)$/, format: 'bold' },
+	{ reg: /(?:^|[\s(\[{])(__[^_]+__)$/, format: 'bold' },
+	{ reg: /(?:^|[\s(\[{])(~~[^~]+~~)$/, format: 'strikethrough' },
+	{ reg: /(?:^|[\s(\[{])(\*[^*]+\*)$/, format: 'italic' },
+	{ reg: /(?:^|[\s(\[{])(_[^_]+_)$/, format: 'italic' },
+	{ reg: /(?:^|[\s(\[{])(\[[^\]]+\]\([^)]+\))$/, isLink: true },
+];
+
+const InlineMarkdownPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+	const prevText = useRef('');
+
+	useEffect(() => {
+		const removeListener = editor.registerUpdateListener(({ editorState, prevEditorState }) => {
+			editorState.read(() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node) || $isMentionNode(node) || (node instanceof LinkTextNode)) {
+					prevText.current = '';
+					return;
+				};
+
+				// Don't apply inside code blocks
+				const topLevel = node.getTopLevelElementOrThrow();
+				if ($isCodeNode(topLevel)) {
+					prevText.current = node.getTextContent();
+					return;
+				};
+
+				const text = node.getTextContent();
+				const offset = anchor.offset;
+
+				if (text === prevText.current) {
+					prevText.current = text;
+					return;
+				};
+
+				// Only check the text up to cursor
+				const textToCursor = text.slice(0, offset);
+
+				for (const { reg, format, isLink } of InlineMarkdownPatterns) {
+					const match = textToCursor.match(reg);
+					if (!match) {
+						continue;
+					};
+
+					const fullMatch = match[1];
+					const matchStart = textToCursor.lastIndexOf(fullMatch);
+
+					if (isLink) {
+						// Parse [text](url)
+						const linkMatch = fullMatch.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+						if (!linkMatch) {
+							continue;
+						};
+
+						const linkText = linkMatch[1];
+						const linkUrl = linkMatch[2];
+
+						editor.update(() => {
+							const before = text.slice(0, matchStart);
+							const after = text.slice(matchStart + fullMatch.length);
+
+							node.setTextContent(before + after);
+
+							const linkNode = new LinkTextNode(linkUrl, I.MarkType.Link, linkText);
+							linkNode.setFormat(node.getFormat());
+
+							if (before) {
+								const beforeNode = $createTextNode(before);
+								beforeNode.setFormat(node.getFormat());
+								node.replace(beforeNode);
+								beforeNode.insertAfter(linkNode);
+
+								if (after) {
+									const afterNode = $createTextNode(after);
+									afterNode.setFormat(node.getFormat());
+									linkNode.insertAfter(afterNode);
+									afterNode.select(0, 0);
+								} else {
+									const spaceNode = $createTextNode(' ');
+									linkNode.insertAfter(spaceNode);
+									spaceNode.select(1, 1);
+								};
+							} else {
+								node.replace(linkNode);
+
+								if (after) {
+									const afterNode = $createTextNode(after);
+									afterNode.setFormat(node.getFormat());
+									linkNode.insertAfter(afterNode);
+									afterNode.select(0, 0);
+								} else {
+									const spaceNode = $createTextNode(' ');
+									linkNode.insertAfter(spaceNode);
+									spaceNode.select(1, 1);
+								};
+							};
+						});
+
+						prevText.current = '';
+						return;
+					};
+
+					// Inline formatting (bold, italic, code, strikethrough)
+					const delimLen = (fullMatch.startsWith('**') || fullMatch.startsWith('__') || fullMatch.startsWith('~~')) ? 2 : 1;
+					const inner = fullMatch.slice(delimLen, -delimLen);
+
+					if (!inner || !inner.trim()) {
+						continue;
+					};
+
+					editor.update(() => {
+						const before = text.slice(0, matchStart);
+						const after = text.slice(matchStart + fullMatch.length);
+						const newText = before + inner + after;
+
+						node.setTextContent(newText);
+
+						// Split into: before (plain) + inner (formatted) + after (plain)
+						const parts: TextNode[] = [];
+						let cursorNode: TextNode = node;
+
+						if (before) {
+							const beforeNode = $createTextNode(before);
+							beforeNode.setFormat(node.getFormat());
+							parts.push(beforeNode);
+						};
+
+						const formattedNode = $createTextNode(inner);
+						formattedNode.setFormat(node.getFormat());
+						formattedNode.toggleFormat(format);
+						parts.push(formattedNode);
+						cursorNode = formattedNode;
+
+						if (after) {
+							const afterNode = $createTextNode(after);
+							afterNode.setFormat(node.getFormat());
+							parts.push(afterNode);
+							cursorNode = afterNode;
+						};
+
+						if (parts.length > 0) {
+							const first = parts[0];
+							node.replace(first);
+
+							let prev = first;
+							for (let i = 1; i < parts.length; i++) {
+								prev.insertAfter(parts[i]);
+								prev = parts[i];
+							};
+
+							if (after) {
+								cursorNode.select(0, 0);
+							} else {
+								// Place cursor at end of formatted node, add trailing space
+								const spaceNode = $createTextNode(' ');
+								cursorNode.insertAfter(spaceNode);
+								spaceNode.select(1, 1);
+							};
+						};
+					});
+
+					prevText.current = '';
+					return;
+				};
+
+				prevText.current = text;
+			});
+		});
+
+		return removeListener;
+	}, [ editor ]);
+
+	return null;
+};
+
 const CodeHighlightPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 
@@ -3022,6 +3289,8 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiPlugin editorId={editorId} />
+				<MarkdownPlugin />
+				<InlineMarkdownPlugin />
 				<CodeHighlightPlugin />
 				<CodeExitPlugin />
 				<CodeBlockPlugin />
