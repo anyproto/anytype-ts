@@ -48,7 +48,7 @@ var USER_PATH = import_electron.app.getPath("userData");
 var EXE_PATH = import_electron.app.getPath("exe");
 var getManifestPath = () => {
   const fn = `nativeMessagingHost${import_electron_util.is.windows ? ".exe" : ""}`;
-  return import_path.default.join((0, import_electron_util.fixPathForAsarUnpack)(__dirname), "..", "..", "..", "dist", fn);
+  return import_path.default.join((0, import_electron_util.fixPathForAsarUnpack)(__dirname), "dist", fn);
 };
 var getHomeDir = () => {
   if (process.platform === "darwin") {

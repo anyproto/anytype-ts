@@ -28,7 +28,7 @@ const EXE_PATH = app.getPath('exe');
 
 const getManifestPath = (): string => {
 	const fn = `nativeMessagingHost${is.windows ? '.exe' : ''}`;
-	return path.join(fixPathForAsarUnpack(__dirname), '..', '..', '..', 'dist', fn);
+	return path.join(fixPathForAsarUnpack(__dirname), 'dist', fn);
 };
 
 const getHomeDir = (): string => {
