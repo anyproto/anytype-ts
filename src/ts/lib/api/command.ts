@@ -82,7 +82,7 @@ export const WalletCloseSession = (token: string, callBack?: (message: any) => v
 export const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	dispatcher.request('WorkspaceCreate', {
 		details: Encode.struct(details),
-		usecase: usecase as number,
+		useCase: usecase as number,
 	}, callBack);
 };
 
@@ -1270,7 +1270,7 @@ export const ObjectImportNotionValidateToken = (token: string, callBack?: (messa
 export const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (message: any) => void) => {
 	dispatcher.request('ObjectImportUseCase', {
 		spaceId,
-		usecase,
+		useCase: usecase,
 	}, callBack);
 };
 
