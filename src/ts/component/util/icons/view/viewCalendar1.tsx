@@ -1,0 +1,19 @@
+import React from 'react';
+import type { IconSvgProps } from '../../iconRegistry';
+
+export function ViewCalendar1Icon({ size, color: _color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 56 56" fill="none">
+			<rect x="10.5625" y="13" width="34" height="30" rx="3" fill="#9BBCFF"/>
+			<rect x="10.5625" y="13" width="34" height="30" rx="3" stroke="#377AFF" strokeWidth="2"/>
+			<rect x="10.5625" y="21" width="34" height="1" fill="#377AFF"/>
+			<rect x="25" y="25.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="33" y="25.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="17" y="30.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="25" y="35.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="33" y="30.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="17" y="35.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+			<rect x="25" y="30.5" width="5" height="3" rx="0.5" stroke="#377AFF"/>
+		</svg>
+	);
+}

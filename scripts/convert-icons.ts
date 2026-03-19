@@ -1,595 +1,528 @@
 /**
- * Convert all SVG icons into inline React icon components.
+ * Convert SVG icons into inline React icon components, organized by visual packs.
  *
  * Usage: bun scripts/convert-icons.ts
  *
- * Reads SVGs from src/img/icon/, converts them to React components,
- * writes to src/ts/component/util/icons/, and generates the registry.
+ * Reads SVGs from src/img/icon/, converts them to React components organized
+ * into packs (action, embed, relation, view), and generates per-pack indexes
+ * + a central registry.
+ *
+ * Features:
+ * - SVG → JSX conversion (attributes, colors, sizing)
+ * - Proper code formatting with tab indentation
+ * - Deduplication: identical SVG content shares one component, others become aliases
+ * - Monochrome color replacement with {color} prop
+ *
+ * Excluded: type/default/ icons (ionicons loaded at runtime via import.meta.glob)
  */
 
-import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readdir, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { existsSync } from 'node:fs';
 
 const ROOT = join(import.meta.dir, '..');
 const SRC_DIR = join(ROOT, 'src/img/icon');
-const OUT_DIR = join(ROOT, 'src/ts/component/util/icons');
+const ICONS_DIR = join(ROOT, 'src/ts/component/util/icons');
 
-// Monochrome fills/strokes to replace with the color prop
-const MONO_COLORS = new Set([
+// ── Pack definitions ────────────────────────────────────────────────────────
+
+/** Icon packs. Order matters — first match wins. */
+const PACKS: { name: string; match: (relPath: string) => boolean }[] = [
+	{ name: 'embed',    match: (p) => p.includes('/embed/') },
+	{ name: 'relation', match: (p) => p.startsWith('relation/default/') },
+	{ name: 'view',     match: (p) => p.startsWith('dataview/layout/') || p.startsWith('dataview/view/') },
+	{ name: 'action',   match: () => true }, // catch-all: 20×20 grey icons
+];
+
+/** Directories to skip entirely (loaded via import.meta.glob at runtime). */
+const SKIP_DIRS = new Set(['type/default', 'type']);
+
+// ── Color handling ──────────────────────────────────────────────────────────
+
+/** Monochrome fills/strokes to replace with the {color} prop. */
+const MONO_COLORS = [
 	'#9B9B9B', '#9b9b9b',
 	'#B6B6B6', '#b6b6b6',
 	'#252525',
 	'#A7A7A7', '#a7a7a7',
 	'#A09F92', '#a09f92',
-	'black',
-	'white',
+	'black', 'white',
 	'_COLOR_VAR_',
-]);
+];
 
-// Colors that should NOT be replaced (semantic/accent/brand colors)
-const KEEP_COLORS = new Set([
-	'none',
-	'#377AFF',   // accent blue
-	'#F55522',   // red/error
-	'#5DD400',   // green/success
-	'#FFB522',   // yellow/warning
-	'#2AA7EE',   // light blue
-	'#3E58EB',   // dark blue
-	'#AB50CC',   // purple
-	'#06B6F2',   // cyan
-	'#9BBCFF',   // light accent
-	'#DCDCDC',   // light grey (border)
-	'#FF0000',   // youtube red
-	'#FF6600',   // soundcloud orange
-	'#1DB954',   // spotify green
-	'#DA1884',   // figma pink
-	'#F76655',   // figma red
-	'#FF7237',   // figma orange
-	'#0ACF83',   // figma green
-	'#A259FF',   // figma purple
-	'#1ABCFE',   // figma blue
-	'#1DA1F2',   // twitter blue
-	'#0088CC',   // telegram blue
-	'#FF4500',   // reddit orange
-]);
+// ── Naming helpers ──────────────────────────────────────────────────────────
 
-/** Convert a hyphenated string to camelCase: "filter-clear" → "filterClear". */
 function hyphenToCamel(str: string): string {
 	return str.replace(/-([a-zA-Z0-9])/g, (_m, c: string) => c.toUpperCase());
 }
 
-/** Convert a file path like "menu/action/more1.svg" to a camelCase icon name.
- *  Uses all path segments to ensure uniqueness. */
-function pathToFullName(relPath: string): string {
-	const withoutExt = relPath.replace(/\.svg$/, '');
-	const parts = withoutExt.split('/');
+function capitalize(str: string): string {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-	return parts
+/** Build a camelCase icon name from a file path and pack. */
+function buildIconName(relPath: string, pack: string): string {
+	const fileName = hyphenToCamel(relPath.replace(/\.svg$/, '').split('/').pop()!);
+
+	if (pack === 'relation') return 'relation' + capitalize(fileName);
+	if (pack === 'view') return 'view' + capitalize(fileName);
+	return fileName;
+}
+
+/** Build a full-path fallback name for collision resolution. */
+function buildFullPathName(relPath: string): string {
+	return relPath
+		.replace(/\.svg$/, '')
+		.split('/')
 		.map((part, i) => {
 			const clean = hyphenToCamel(part);
-			if (i === 0) {
-				return clean;
-			}
-			return clean.charAt(0).toUpperCase() + clean.slice(1);
+			return i === 0 ? clean : capitalize(clean);
 		})
 		.join('');
 }
 
-/** Get just the filename (no directory) as camelCase. */
-function fileBaseName(relPath: string): string {
-	const withoutExt = relPath.replace(/\.svg$/, '');
-	const parts = withoutExt.split('/');
-	return hyphenToCamel(parts[parts.length - 1]);
-}
+// ── SVG → JSX conversion ───────────────────────────────────────────────────
 
-/** Convert a camelCase name to PascalCase for component name. */
-function toPascalCase(name: string): string {
-	return name.charAt(0).toUpperCase() + name.slice(1);
-}
+/** SVG attribute name mappings (kebab → camelCase for JSX). */
+const JSX_ATTR_MAP: Record<string, string> = {
+	'fill-rule': 'fillRule',
+	'clip-rule': 'clipRule',
+	'clip-path': 'clipPath',
+	'fill-opacity': 'fillOpacity',
+	'stroke-width': 'strokeWidth',
+	'stroke-linecap': 'strokeLinecap',
+	'stroke-linejoin': 'strokeLinejoin',
+	'stroke-dasharray': 'strokeDasharray',
+	'stroke-dashoffset': 'strokeDashoffset',
+	'stroke-miterlimit': 'strokeMiterlimit',
+	'stroke-opacity': 'strokeOpacity',
+	'stop-color': 'stopColor',
+	'stop-opacity': 'stopOpacity',
+	'xmlns:xlink': 'xmlnsXlink',
+	'xlink:href': 'xlinkHref',
+};
 
-/** Replace monochrome color values with {color} prop reference. */
-function convertSvgContent(svg: string): string {
-	let result = svg;
+function convertSvgToJsx(svg: string): string {
+	let r = svg;
 
-	// Strip XML declaration
-	result = result.replace(/<\?xml[^?]*\?>\s*/g, '');
+	// Strip non-JSX content
+	r = r.replace(/<\?xml[^?]*\?>\s*/g, '');
+	r = r.replace(/<!--[\s\S]*?-->/g, '');
+	r = r.replace(/<style[\s\S]*?<\/style>/g, '');
+	r = r.replace(/ style="[^"]*"/g, '');
+	r = r.replace(/ xml:space="[^"]*"/g, '');
+	r = r.replace(/ version="[^"]*"/g, '');
+	r = r.replace(/ x="0px"/g, '');
+	r = r.replace(/ y="0px"/g, '');
+	r = r.replace(/ xmlns="[^"]*"/g, '');
+	r = r.replace(/ xmlns:xlink="[^"]*"/g, '');
 
-	// Strip XML comments (invalid in JSX)
-	result = result.replace(/<!--[\s\S]*?-->/g, '');
+	// class → className
+	r = r.replaceAll(' class="', ' className="');
 
-	// Strip <style> blocks (can't be used in JSX SVG)
-	result = result.replace(/<style[\s\S]*?<\/style>/g, '');
-
-	// Strip inline style attributes (not JSX-safe)
-	result = result.replace(/ style="[^"]*"/g, '');
-
-	// Strip xml:space, version, id on root svg
-	result = result.replace(/ xml:space="[^"]*"/g, '');
-	result = result.replace(/ version="[^"]*"/g, '');
-	result = result.replace(/ x="0px"/g, '');
-	result = result.replace(/ y="0px"/g, '');
-
-	// Convert class= to className=
-	result = result.replaceAll(' class="', ' className="');
-
-	// Replace monochrome fill/stroke values
+	// Monochrome color → {color} prop
 	for (const mono of MONO_COLORS) {
-		result = result.replaceAll(`fill="${mono}"`, 'fill={color}');
-		result = result.replaceAll(`stroke="${mono}"`, 'stroke={color}');
+		r = r.replaceAll(`fill="${mono}"`, 'fill={color}');
+		r = r.replaceAll(`stroke="${mono}"`, 'stroke={color}');
 	}
 
-	// Convert SVG attributes to JSX (kebab-case → camelCase)
-	result = result.replaceAll('fill-rule=', 'fillRule=');
-	result = result.replaceAll('clip-rule=', 'clipRule=');
-	result = result.replaceAll('clip-path=', 'clipPath=');
-	result = result.replaceAll('fill-opacity=', 'fillOpacity=');
-	result = result.replaceAll('stroke-width=', 'strokeWidth=');
-	result = result.replaceAll('stroke-linecap=', 'strokeLinecap=');
-	result = result.replaceAll('stroke-linejoin=', 'strokeLinejoin=');
-	result = result.replaceAll('stroke-dasharray=', 'strokeDasharray=');
-	result = result.replaceAll('stroke-dashoffset=', 'strokeDashoffset=');
-	result = result.replaceAll('stroke-miterlimit=', 'strokeMiterlimit=');
-	result = result.replaceAll('stroke-opacity=', 'strokeOpacity=');
-	result = result.replaceAll('stop-color=', 'stopColor=');
-	result = result.replaceAll('stop-opacity=', 'stopOpacity=');
-	result = result.replaceAll('xmlns:xlink=', 'xmlnsXlink=');
-	result = result.replaceAll('xlink:href=', 'xlinkHref=');
-
-	// Remove xmlns attributes since React doesn't need them
-	result = result.replace(/ xmlns="[^"]*"/g, '');
-	result = result.replace(/ xmlns:xlink="[^"]*"/g, '');
-
-	// Replace width/height on root svg tag with size prop
-	result = result.replace(
-		/(<svg[^>]*?)width="[^"]*"([^>]*?)height="[^"]*"/,
-		'$1width={size}$2height={size}',
-	);
-
-	// Add size to SVGs that have viewBox but no width/height
-	if (!result.includes('{size}') && result.includes('viewBox=')) {
-		result = result.replace(
-			/<svg\s+viewBox="/,
-			'<svg width={size} height={size} viewBox="',
-		);
+	// SVG attributes → JSX camelCase
+	for (const [from, to] of Object.entries(JSX_ATTR_MAP)) {
+		r = r.replaceAll(`${from}=`, `${to}=`);
 	}
 
-	// Add aria-hidden="true" to all SVGs
-	result = result.replace(/<svg /, '<svg aria-hidden="true" ');
+	// width/height → {size} prop (handle both orderings)
+	r = r.replace(/(<svg[^>]*?)width="[^"]*"([^>]*?)height="[^"]*"/, '$1width={size}$2height={size}');
+	if (!r.includes('{size}')) {
+		r = r.replace(/(<svg[^>]*?)height="[^"]*"([^>]*?)width="[^"]*"/, '$1height={size}$2width={size}');
+	}
+	if (!r.includes('{size}') && r.includes('viewBox=')) {
+		r = r.replace(/<svg\s+viewBox="/, '<svg width={size} height={size} viewBox="');
+	}
 
-	return result;
+	// aria-hidden
+	r = r.replace(/<svg /, '<svg aria-hidden="true" ');
+
+	return r;
 }
 
-/** Recursively collect all SVG files with relative paths. */
+/** Indent SVG JSX with tabs for clean formatting. */
+function formatSvgJsx(jsx: string): string {
+	const lines = jsx.trim().split('\n');
+	const formatted: string[] = [];
+	let depth = 0;
+
+	for (const rawLine of lines) {
+		const line = rawLine.trim();
+		if (!line) continue;
+
+		// Decrease depth for closing tags
+		if (line.startsWith('</') || (line.startsWith('<') && line.endsWith('/>'))) {
+			// Self-closing or closing tag — don't decrease for self-closing
+			if (line.startsWith('</')) depth = Math.max(0, depth - 1);
+		}
+
+		formatted.push('\t'.repeat(depth + 2) + line);
+
+		// Increase depth for opening tags (not self-closing, not closing)
+		if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>') && !line.includes('</')) {
+			depth++;
+		}
+	}
+
+	return formatted.join('\n');
+}
+
+// ── Component generation ────────────────────────────────────────────────────
+
+function generateComponent(componentName: string, formattedSvg: string): string {
+	const usesColor = formattedSvg.includes('{color}');
+	const usesSize = formattedSvg.includes('{size}');
+
+	const sizeParam = usesSize ? 'size' : 'size: _size';
+	const colorParam = usesColor ? 'color' : 'color: _color';
+
+	return [
+		`import React from 'react';`,
+		`import type { IconSvgProps } from '../../iconRegistry';`,
+		``,
+		`export function ${componentName}({ ${sizeParam}, ${colorParam} }: IconSvgProps) {`,
+		`\treturn (`,
+		formattedSvg,
+		`\t);`,
+		`}`,
+		``,
+	].join('\n');
+}
+
+// ── File system helpers ─────────────────────────────────────────────────────
+
 async function collectSvgs(dir: string, base: string = dir): Promise<{ relPath: string; fullPath: string }[]> {
 	const entries = await readdir(dir, { withFileTypes: true });
 	const results: { relPath: string; fullPath: string }[] = [];
 
 	for (const entry of entries) {
 		const fullPath = join(dir, entry.name);
+		const rel = relative(base, fullPath);
+
 		if (entry.isDirectory()) {
-			results.push(...await collectSvgs(fullPath, base));
+			if (!SKIP_DIRS.has(rel)) {
+				results.push(...await collectSvgs(fullPath, base));
+			}
 		} else if (entry.name.endsWith('.svg')) {
-			results.push({ relPath: relative(base, fullPath), fullPath });
+			results.push({ relPath: rel, fullPath });
 		}
 	}
 
 	return results;
 }
 
-/** Generate a single icon component file. */
-function generateComponent(componentName: string, svgJsx: string): string {
-	const usesColor = svgJsx.includes('{color}');
-	const usesSize = svgJsx.includes('{size}');
+// ── Main ────────────────────────────────────────────────────────────────────
 
-	const params: string[] = [];
-	params.push(usesSize ? 'size' : 'size: _size');
-	params.push(usesColor ? 'color' : 'color: _color');
-
-	return `import React from 'react';
-import type { IconSvgProps } from '../iconRegistry';
-
-export function ${componentName}({ ${params.join(', ')} }: IconSvgProps) {
-	return (
-		${svgJsx.trim()}
-	);
-}
-`;
-}
-
-// Priority: top-level > menu/action > sidebar > header > widget > everything else
-const DIR_PRIORITY: Record<string, number> = {
-	'': 10,
-	'menu/action': 9,
-	'menu/action/block': 8,
-	'sidebar': 8,
-	'header': 7,
-	'widget': 6,
-	'widget/button': 6,
-	'widget/system': 6,
-	'navigation': 5,
-	'dataview/button': 4,
-	'settings': 4,
-	'menu': 3,
-	'popup/search': 3,
-	'popup/settings': 3,
-	'chat/buttons': 2,
-	'type/default': 1,
-};
-
-function dirPriority(relPath: string): number {
-	const parts = relPath.split('/');
-	const dir = parts.slice(0, -1).join('/');
-	return DIR_PRIORITY[dir] ?? 2;
+interface IconEntry {
+	name: string;
+	componentName: string;
+	pack: string;
 }
 
 async function main() {
-	console.log('Collecting SVG files...');
+	console.log('Collecting SVG files (excluding type/default)...');
 	const svgs = await collectSvgs(SRC_DIR);
+	// Sort so *0.svg comes before *1.svg (default state before hover state)
+	svgs.sort((a, b) => a.relPath.localeCompare(b.relPath));
 	console.log(`Found ${svgs.length} SVG files`);
 
-	// Ensure output directory exists
-	if (!existsSync(OUT_DIR)) {
-		await mkdir(OUT_DIR, { recursive: true });
+	// Clean output directory
+	if (existsSync(ICONS_DIR)) {
+		await rm(ICONS_DIR, { recursive: true });
 	}
 
-	// Phase 1: detect short-name collisions and assign winners by priority
-	const shortNameBest = new Map<string, { relPath: string; priority: number }>();
-	for (const { relPath } of svgs) {
-		const short = fileBaseName(relPath);
-		const priority = dirPriority(relPath);
-		const existing = shortNameBest.get(short);
-		if (!existing || priority > existing.priority) {
-			shortNameBest.set(short, { relPath, priority });
-		}
+	// ── Phase 1: Read all SVGs and convert to JSX ────────────────────────
+
+	interface SvgCandidate {
+		relPath: string;
+		fullPath: string;
+		pack: string;
+		iconName: string;
+		svgJsx: string; // converted, not yet formatted
 	}
 
-	// Track all icon names for registry generation
-	const icons: { name: string; componentName: string; fileName: string }[] = [];
-	const seenNames = new Map<string, string>();
-	const seenNamesLower = new Map<string, string>();
-
-	// Forced name overrides for specific directories
-	const FORCED_NAMES: Record<string, (file: string) => string> = {
-		'relation/default': (file) => 'relation' + file.charAt(0).toUpperCase() + file.slice(1),
-	};
+	const candidates: SvgCandidate[] = [];
 
 	for (const { relPath, fullPath } of svgs) {
-		const short = fileBaseName(relPath);
-		const best = shortNameBest.get(short);
-
-		// Check forced naming first
-		const parts = relPath.split('/');
-		const dir = parts.slice(0, -1).join('/');
-		const fileBase = parts[parts.length - 1].replace(/\.svg$/, '');
-		const forcedFn = FORCED_NAMES[dir];
-
-		const iconName = forcedFn
-			? forcedFn(hyphenToCamel(fileBase))
-			: (best && best.relPath === relPath)
-				? short
-				: pathToFullName(relPath);
-		const componentName = toPascalCase(iconName) + 'Icon';
-		const fileName = iconName;
-
-		// Check for name collisions
-		if (seenNames.has(iconName)) {
-			console.warn(`  SKIP duplicate name "${iconName}": ${relPath} (already from ${seenNames.get(iconName)})`);
-			continue;
+		// Assign to pack
+		let pack = 'action';
+		for (const p of PACKS) {
+			if (p.match(relPath)) {
+				pack = p.name;
+				break;
+			}
 		}
-		const lowerName = iconName.toLowerCase();
-		if (seenNamesLower.has(lowerName)) {
-			console.warn(`  SKIP case-collision "${iconName}": ${relPath} (collides with ${seenNamesLower.get(lowerName)})`);
-			continue;
-		}
-		seenNames.set(iconName, relPath);
-		seenNamesLower.set(lowerName, iconName);
 
-		// Read and convert SVG
+		// Read and convert
 		const svgRaw = await readFile(fullPath, 'utf-8');
 		if (!svgRaw.trim() || !svgRaw.includes('<svg')) {
 			console.warn(`  SKIP empty/invalid SVG: ${relPath}`);
 			continue;
 		}
-		const svgJsx = convertSvgContent(svgRaw);
-		const component = generateComponent(componentName, svgJsx);
 
-		const outPath = join(OUT_DIR, `${fileName}.tsx`);
-		await writeFile(outPath, component);
+		const svgJsx = convertSvgToJsx(svgRaw);
+		const iconName = buildIconName(relPath, pack);
 
-		icons.push({ name: iconName, componentName, fileName });
+		candidates.push({ relPath, fullPath, pack, iconName, svgJsx });
 	}
 
-	// Sort icons alphabetically
-	icons.sort((a, b) => a.name.localeCompare(b.name));
+	/** Normalize SVG content for dedup comparison (strip whitespace differences). */
+	const normalizeSvg = (jsx: string) => jsx.trim().replace(/\s+/g, ' ');
 
-	// Aliases: map CSS class names used in the codebase to generated icon names
-	const ALIASES: Record<string, string> = {
-		// Forward is back rotated
-		forward: 'back',
-		// Menu action icons — CSS uses bare names, files are *0.svg
-		turn: 'turn0',
-		move: 'move0',
-		comment: 'comment0',
-		copy: 'copy0',
-		pin: 'pin0',
-		unpin: 'unpin0',
-		mute: 'mute0',
-		unmute: 'unmute0',
-		remove: 'remove0',
-		more: 'more0',
-		advanced: 'more0',
-		download: 'download0',
-		upload: 'upload0',
-		rename: 'rename0',
-		replace: 'replace0',
-		add: 'add0',
-		duplicate: 'duplicate0',
-		embed: 'embed0',
-		undo: 'undo0',
-		redo: 'redo0',
-		print: 'print0',
-		history: 'history0',
-		search: 'search0',
-		restore: 'restore0',
-		customize: 'customize0',
-		clear: 'clear0',
-		clock: 'clock0',
-		settings: 'settings0',
-		source: 'source0',
-		editText: 'editText0',
-		resize: 'resize0',
-		template: 'template0',
-		fav: 'fav0',
-		unfav: 'unfav0',
-		highlight: 'highlight0',
-		share: 'share0',
-		export: 'export0',
-		pageLock: 'pageLock0',
-		pageUnlock: 'pageUnlock0',
-		sort: 'sort0',
-		reload: 'reload0',
-		store: 'store0',
-		pencil: 'pencil0',
-		createWidget: 'createWidget0',
-		clipboard: 'clipboard0',
-		image: 'image0',
-		time: 'time0',
-		collection: 'collection0',
-		set: 'set0',
-		import: 'import0',
-		editType: 'editType0',
-		editChat: 'editChat0',
-		openSidebar: 'sidebar0',
-		notification: 'notification0',
-		members: 'members0',
-		inviteMembers: 'inviteMembers0',
-		copyLink: 'copyLink0',
-		qr: 'qr0',
-		bin: 'bin0',
-		manage: 'manage0',
-		newTab: 'newTab0',
-		newWindow: 'newWindow0',
-		group: 'group0',
-		pageLink: 'pageLink0',
-		createObject: 'createObject0',
-		uploadComputer: 'uploadComputer0',
-		object: 'object0',
-		folder: 'folder0',
-		folderBlank: 'folderBlank0',
-		// Mark icons
-		bold: 'bold0',
-		italic: 'italic0',
-		strike: 'strike0',
-		link: 'link0',
-		kbd: 'code0',
-		underline: 'underline0',
-		// Date
-		date: 'date0',
-		// Chat button icons
-		'chat-reaction': 'reaction0',
-		'chat-reply': 'reply0',
-		'chat-copy': 'chatButtonsCopy0',
-		'chat-link': 'link0',
-		'chat-pencil': 'chatButtonsPencil0',
-		// Embed icons — CSS uses "embed-youtube", auto-resolver makes "embedYoutube",
-		// but registry has "blockEmbedYoutube" from menu/action/block/embed/ path
-		embedYoutube: 'blockEmbedYoutube',
-		embedVimeo: 'blockEmbedVimeo',
-		embedGoogleMaps: 'blockEmbedGoogleMaps',
-		embedSoundcloud: 'blockEmbedSoundcloud',
-		embedChart: 'blockEmbedChart',
-		embedMiro: 'blockEmbedMiro',
-		embedFigma: 'blockEmbedFigma',
-		embedBilibili: 'blockEmbedBilibili',
-		embedCodepen: 'blockEmbedCodepen',
-		embedFacebook: 'blockEmbedFacebook',
-		embedGithubGist: 'blockEmbedGithubGist',
-		embedGraphviz: 'blockEmbedGraphviz',
-		embedInstagram: 'blockEmbedInstagram',
-		embedKroki: 'blockEmbedKroki',
-		embedOpenStreetMap: 'blockEmbedOpenStreetMap',
-		embedReddit: 'blockEmbedReddit',
-		embedTelegram: 'blockEmbedTelegram',
-		embedTwitter: 'blockEmbedTwitter',
-		embedExcalidraw: 'blockEmbedExcalidraw',
-		embedSketchfab: 'blockEmbedSketchfab',
-		embedDrawio: 'blockEmbedDrawio',
-		embedImage: 'blockEmbedImage',
-		embedSpotify: 'blockEmbedSpotify',
-		embedBandcamp: 'blockEmbedBandcamp',
-		embedAppleMusic: 'blockEmbedAppleMusic',
-		embedLatex: 'blockEmbedLatex',
-		embedMermaid: 'blockEmbedMermaid',
-		// Text block icons — CSS uses "textParagraph", registry has "paragraph" etc.
-		textParagraph: 'paragraph',
-		textHeader1: 'header',
-		textHeader2: 'header',
-		textHeader3: 'header',
-		textQuote: 'quote',
-		textCallout: 'callout',
-		textBulleted: 'bulleted',
-		textCheckbox: 'menuActionBlockTextCheckbox',
-		textNumbered: 'numbered',
-		textToggle: 'toggle',
-		textToggleHeader1: 'toggleHeader',
-		textToggleHeader2: 'toggleHeader',
-		textToggleHeader3: 'toggleHeader',
-		// Div icons
-		divLine: 'line',
-		divDot: 'dot',
-		// Media icons
-		mediaFile: 'menuActionBlockMediaFile',
-		mediaImage: 'menuActionBlockMediaImage',
-		mediaVideo: 'video',
-		mediaAudio: 'audio',
-		mediaPdf: 'pdf',
-		// Table icons
-		tableOfContents: 'tableOfContents',
-		// Alignment icons — CSS uses "align left", auto-resolver gets "align"
-		// These need the full names
-		// Widget icons — CSS uses "widget-0", "widget-1", etc.
-		'widget-star': 'widgetSystemPin',
-		// Relation icons
-		'relation-filter': 'filter',
-		'relation-sort0': 'menuRelationSort',
-		'relation-sort1': 'menuRelationSort',
-		'relation-hide': 'menuRelationHide',
-		'relation-insert-left': 'insert',
-		'relation-insert-right': 'insert',
-		// Help icons
-		'help-bell': 'bell',
-		'help-keyboard': 'keyboard',
-		'help-share': 'share0',
-		'help-community': 'community',
-		'help-tutorial': 'tutorial',
-		'help-contact': 'contact',
-		'help-developer': 'developer',
-		'help-more': 'menuHelpMore',
-		// Comment slash menu icons
-		'comment-header1': 'header1',
-		'comment-header2': 'header2',
-		'comment-header3': 'header3',
-		'comment-numbered': 'numbered',
-		'comment-bulleted': 'bulleted',
-		'comment-checkbox': 'checkbox',
-		'comment-createObject': 'createObject0',
-		'comment-plus': 'plus',
-		'comment-uploadComputer': 'uploadComputer0',
-		'comment-embed': 'embed0',
-		'comment-quote': 'quote',
-		'comment-divider': 'line',
-		'comment-code': 'code',
-		// Import icons — CSS uses "import-notion", auto-resolver makes "importNotion"
-		importNotion: 'notion',
-		importMarkdown: 'markdown',
-		importHtml: 'html',
-		importText: 'text',
-		importCsv: 'csv',
-		importProtobuf: 'protobuf',
-		importObsidian: 'obsidian',
-		// Settings icons — CSS uses "settings-personal", auto-resolver makes "settingsPersonal"
-		// Many short names won out (personal, storage, etc.) but some didn't
-		settingsSpace: 'overview',
-		settingsNotifications: 'pushOn',
-		settingsLogout: 'logOut',
-		settingsLeave: 'leave',
-		// Sidebar icons
-		'sidebar-all': 'menuSidebarAll',
-		'sidebar-sidebar': 'sidebar',
-		'sidebar-focus': 'focus',
-		// Clipboard icons
-		'clipboard-copy': 'menuActionClipboardCopy',
-		'clipboard-cut': 'cut',
-		'clipboard-paste': 'paste',
-		// Cover icons
-		coverChange: 'change',
-		coverPosition: 'position',
-		// Link style icons
-		linkStyle0: 'style0',
-		linkStyle1: 'style1',
-		linkStyle2: 'style2',
-		// Filter template icons
-		'filterTemplate-object': 'filterTemplateObject',
-		'filterTemplate-participant': 'user',
-		// Advanced filter
-		advancedFilter: 'filter0',
-		// Checkbox icons in menus
-		// Valign icons
-		'valign-top': 'top',
-		'valign-middle': 'middle',
-		'valign-bottom': 'bottom',
-	};
+	// ── Phase 2: Resolve name collisions ─────────────────────────────────
 
-	// Generate index.ts with all registrations
-	const imports = icons
-		.map((i) => `import { ${i.componentName} } from './${i.fileName}';`)
-		.join('\n');
+	// Group by short name to find collisions
+	const byName = new Map<string, SvgCandidate[]>();
+	for (const c of candidates) {
+		if (!byName.has(c.iconName)) byName.set(c.iconName, []);
+		byName.get(c.iconName)!.push(c);
+	}
 
-	const registrations = icons
-		.map((i) => `registerIcon('${i.name}', ${i.componentName});`)
-		.join('\n');
+	// Resolve collisions: when two different SVGs get the same name,
+	// use full-path names for all colliders
+	for (const [name, group] of byName) {
+		if (group.length <= 1) continue;
 
-	// Build alias registrations
-	const aliasLines: string[] = [];
-	const aliasNames: string[] = [];
-	for (const [alias, target] of Object.entries(ALIASES)) {
-		const targetIcon = icons.find((i) => i.name === target);
-		if (targetIcon) {
-			aliasLines.push(`registerIcon('${alias}', ${targetIcon.componentName});`);
-			aliasNames.push(alias);
-		} else {
-			console.warn(`  ALIAS skip: '${alias}' → '${target}' (target not found)`);
+		// Check if all SVGs in the group are actually identical content
+		const uniqueContent = new Set(group.map((c) => normalizeSvg(c.svgJsx)));
+		if (uniqueContent.size === 1) {
+			// All identical — keep the first, dedup the rest (handled in phase 3)
+			continue;
+		}
+
+		// Different content with same name — rename to full-path names
+		for (const c of group) {
+			c.iconName = buildFullPathName(c.relPath);
 		}
 	}
 
-	const indexContent = `/**
- * Icon registration — auto-generated by scripts/convert-icons.ts
- *
- * Imports every icon component and registers it with the icon registry.
- * Import this module once at app startup (e.g., in entry.tsx).
- */
-import { registerIcon } from '../iconRegistry';
+	// ── Phase 3: Deduplicate identical SVG content ───────────────────────
 
-${imports}
+	const globalNames = new Map<string, string>(); // name → source
+	const globalNamesLower = new Map<string, string>();
+	const svgHashToIcon = new Map<string, IconEntry>(); // normalized svgJsx → first icon entry
+	const allIcons: IconEntry[] = [];
+	const dedupAliases: { alias: string; target: string }[] = [];
+	const packFiles = new Map<string, { fileName: string; content: string }[]>();
 
-${registrations}
+	for (const c of candidates) {
+		const { iconName, svgJsx, pack } = c;
 
-// Aliases — convenience names pointing to existing icon components
-${aliasLines.join('\n')}
-`;
+		// Check name uniqueness
+		if (globalNames.has(iconName)) {
+			// Might be identical content → dedup alias, or true collision → skip
+			const existing = svgHashToIcon.get(normalizeSvg(svgJsx));
+			if (existing) {
+				dedupAliases.push({ alias: iconName, target: existing.name });
+			} else {
+				console.warn(`  SKIP duplicate "${iconName}": ${c.relPath} (already from ${globalNames.get(iconName)})`);
+			}
+			continue;
+		}
 
-	await writeFile(join(OUT_DIR, 'index.ts'), indexContent);
+		const lower = iconName.toLowerCase();
+		if (globalNamesLower.has(lower) && globalNamesLower.get(lower) !== iconName) {
+			console.warn(`  SKIP case-collision "${iconName}": ${c.relPath} (collides with ${globalNamesLower.get(lower)})`);
+			continue;
+		}
 
-	// Combine icon names + alias names for the type
-	const allNames = [...new Set([...icons.map((i) => i.name), ...aliasNames])].sort();
+		// Check if this SVG content was already generated under a different name
+		const normalizedKey = normalizeSvg(svgJsx);
+		const existingIcon = svgHashToIcon.get(normalizedKey);
+		if (existingIcon) {
+			// Same content, different name → register as alias
+			dedupAliases.push({ alias: iconName, target: existingIcon.name });
+			globalNames.set(iconName, `dedup→${existingIcon.name}`);
+			globalNamesLower.set(lower, iconName);
+			continue;
+		}
 
-	// Auto-generate iconRegistry.ts with the full IconName type
-	const iconNameUnion = allNames.map((n) => `\t| '${n}'`).join('\n');
-	const registryContent = `import type { ComponentType } from 'react';
+		// New unique icon — generate component
+		const componentName = capitalize(iconName) + 'Icon';
+		const formattedSvg = formatSvgJsx(svgJsx);
+		const componentContent = generateComponent(componentName, formattedSvg);
 
-/** Props passed to every SVG icon component. */
-export interface IconSvgProps {
-	size: number;
-	color: string;
-	className?: string;
-}
+		const entry: IconEntry = { name: iconName, componentName, pack };
+		allIcons.push(entry);
+		svgHashToIcon.set(normalizeSvg(svgJsx), entry);
+		globalNames.set(iconName, `${pack}/${c.relPath}`);
+		globalNamesLower.set(lower, iconName);
 
-/** Union of all registered icon keys. Auto-generated by scripts/convert-icons.ts */
-export type IconName =
-${iconNameUnion};
+		if (!packFiles.has(pack)) packFiles.set(pack, []);
+		packFiles.get(pack)!.push({ fileName: iconName, content: componentContent });
+	}
 
-/** Registry mapping icon names to their SVG components. */
-export const iconRegistry = new Map<IconName, ComponentType<IconSvgProps>>();
+	// ── Phase 4: Write files ─────────────────────────────────────────────
 
-/** Register an icon component under a unique key. */
-export function registerIcon(name: IconName, component: ComponentType<IconSvgProps>) {
-	iconRegistry.set(name, component);
-}
-`;
-	await writeFile(join(ROOT, 'src/ts/component/util/iconRegistry.ts'), registryContent);
-	console.log(`\nGenerated ${icons.length} icon components + ${aliasNames.length} aliases`);
-	console.log(`Total: ${allNames.length} icon names`);
+	// Write component files per pack
+	for (const [pack, files] of packFiles) {
+		const packDir = join(ICONS_DIR, pack);
+		await mkdir(packDir, { recursive: true });
+
+		for (const { fileName, content } of files) {
+			await writeFile(join(packDir, `${fileName}.tsx`), content);
+		}
+	}
+
+	// ── Phase 5: Manual aliases ──────────────────────────────────────────
+
+	const MANUAL_ALIASES: Record<string, string> = {
+		// Bare name → *0.svg variant (the 0/1 pattern: 0 = default, 1 = hover)
+		turn: 'turn0', move: 'move0', comment: 'comment0', copy: 'copy0',
+		pin: 'pin0', unpin: 'unpin0', mute: 'mute0', unmute: 'unmute0',
+		remove: 'remove0', more: 'more0', advanced: 'more0',
+		download: 'download0', upload: 'upload0', rename: 'rename0',
+		replace: 'replace0', add: 'add0', duplicate: 'duplicate0',
+		embed: 'embed0', undo: 'undo0', redo: 'redo0', print: 'print0',
+		history: 'history0', search: 'search0', restore: 'restore0',
+		customize: 'customize0', clear: 'clear0', clock: 'clock0',
+		settings: 'settings0', source: 'source0', editText: 'editText0',
+		resize: 'resize0', template: 'template0', fav: 'fav0', unfav: 'unfav0',
+		highlight: 'highlight0', share: 'share0', export: 'export0',
+		pageLock: 'pageLock0', pageUnlock: 'pageUnlock0', sort: 'sort0',
+		reload: 'reload0', store: 'store0', pencil: 'pencil0',
+		createWidget: 'createWidget0', clipboard: 'clipboard0',
+		image: 'image0', time: 'time0', collection: 'collection0',
+		set: 'set0', import: 'import0', editType: 'editType0',
+		editChat: 'editChat0', openSidebar: 'sidebar0',
+		notification: 'notification0', members: 'members0',
+		inviteMembers: 'inviteMembers0', copyLink: 'copyLink0',
+		qr: 'qr0', bin: 'bin0', manage: 'manage0',
+		newTab: 'newTab0', newWindow: 'newWindow0', group: 'group0',
+		pageLink: 'pageLink0', createObject: 'createObject0',
+		uploadComputer: 'uploadComputer0', object: 'object0',
+		folder: 'folder0', folderBlank: 'folderBlank0',
+		bold: 'bold0', italic: 'italic0', strike: 'strike0',
+		link: 'link0', kbd: 'code0', underline: 'underline0',
+		date: 'date0',
+	};
+
+	// Merge manual + dedup aliases, resolving targets to real icons
+	const allAliases = new Map<string, string>();
+
+	for (const { alias, target } of dedupAliases) {
+		if (!allIcons.find((i) => i.name === alias)) {
+			allAliases.set(alias, target);
+		}
+	}
+
+	for (const [alias, target] of Object.entries(MANUAL_ALIASES)) {
+		if (!globalNames.has(alias) || globalNames.get(alias)!.startsWith('dedup→')) {
+			const realIcon = allIcons.find((i) => i.name === target);
+			if (realIcon) {
+				allAliases.set(alias, target);
+			}
+		}
+	}
+
+	// ── Phase 6: Generate index files ────────────────────────────────────
+
+	// Group icons by pack
+	const packIconMap = new Map<string, IconEntry[]>();
+	for (const icon of allIcons) {
+		if (!packIconMap.has(icon.pack)) packIconMap.set(icon.pack, []);
+		packIconMap.get(icon.pack)!.push(icon);
+	}
+
+	for (const [pack, icons] of packIconMap) {
+		icons.sort((a, b) => a.name.localeCompare(b.name));
+
+		const imports = icons
+			.map((i) => `import { ${i.componentName} } from './${i.name}';`)
+			.join('\n');
+
+		const registrations = icons
+			.map((i) => `registerIcon('${i.name}', ${i.componentName});`)
+			.join('\n');
+
+		// Aliases that point to icons in this pack
+		const aliasLines: string[] = [];
+		for (const [alias, target] of allAliases) {
+			const targetIcon = icons.find((i) => i.name === target);
+			if (targetIcon) {
+				aliasLines.push(`registerIcon('${alias}', ${targetIcon.componentName});`);
+			}
+		}
+
+		const sections = [
+			`/**\n * Icon pack: ${pack} — auto-generated by scripts/convert-icons.ts\n */`,
+			`import { registerIcon } from '../../iconRegistry';`,
+			'',
+			imports,
+			'',
+			registrations,
+		];
+
+		if (aliasLines.length) {
+			aliasLines.sort();
+			sections.push('', '// Aliases', ...aliasLines);
+		}
+
+		sections.push('');
+		await writeFile(join(ICONS_DIR, pack, 'index.ts'), sections.join('\n'));
+	}
+
+	// Root index
+	const packs = [...packIconMap.keys()].sort();
+	await writeFile(join(ICONS_DIR, 'index.ts'), [
+		'/**',
+		' * Icon registration — auto-generated by scripts/convert-icons.ts',
+		' * Import this module once at app startup.',
+		' */',
+		...packs.map((p) => `import './${p}';`),
+		'',
+	].join('\n'));
+
+	// ── Phase 7: Generate iconRegistry.ts ────────────────────────────────
+
+	const allNames = [
+		...new Set([
+			...allIcons.map((i) => i.name),
+			...allAliases.keys(),
+		]),
+	].sort();
+
+	const registryContent = [
+		`import type { ComponentType } from 'react';`,
+		``,
+		`/** Props passed to every SVG icon component. */`,
+		`export interface IconSvgProps {`,
+		`\tsize: number;`,
+		`\tcolor: string;`,
+		`}`,
+		``,
+		`/** Union of all registered icon keys. Auto-generated by scripts/convert-icons.ts */`,
+		`export type IconName =`,
+		...allNames.map((n) => `\t| '${n}'`),
+		`;`,
+		``,
+		`/** Registry mapping icon names to their SVG components. */`,
+		`export const iconRegistry = new Map<IconName, ComponentType<IconSvgProps>>();`,
+		``,
+		`/** Register an icon component under a unique key. */`,
+		`export function registerIcon(name: IconName, component: ComponentType<IconSvgProps>) {`,
+		`\ticonRegistry.set(name, component);`,
+		`}`,
+		``,
+	].join('\n');
+
+	await writeFile(join(ICONS_DIR, '..', 'iconRegistry.ts'), registryContent);
+
+	// ── Summary ──────────────────────────────────────────────────────────
+
+	console.log('\n=== Icon Packs ===');
+	for (const [pack, icons] of packIconMap) {
+		console.log(`  ${pack}: ${icons.length} components`);
+	}
+	console.log(`  Deduplicated: ${dedupAliases.length} identical icons → aliases`);
+	console.log(`  Manual aliases: ${allAliases.size - dedupAliases.length}`);
+	console.log(`\nTotal: ${allIcons.length} unique components, ${allNames.length} registered names`);
 }
 
 main().catch(console.error);
