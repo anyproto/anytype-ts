@@ -166,8 +166,8 @@ export default defineConfig(({ mode }) => {
 
 			viteStaticCopy({
 				targets: [
-					{ src: path.join(cMapsDir, '*'), dest: 'cmaps' },
-					{ src: path.join(wasmDir, '*'), dest: 'wasm' },
+					{ src: path.join(cMapsDir, '*').replace(/\\/g, '/'), dest: 'cmaps' },
+					{ src: path.join(wasmDir, '*').replace(/\\/g, '/'), dest: 'wasm' },
 				],
 			}),
 		],
