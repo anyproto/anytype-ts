@@ -5,8 +5,8 @@
 }
 
 .cell.isEditing { border-radius: 2px; }
-.cell.isEditing {
-	.input-text { padding: 0px; height: 20px; background: none; border: 0px; border-radius: 0px; }
+.cell.isEditing, .cellContent.isEditing {
+	.input { padding: 0px; height: 20px; background: none; border: 0px; border-radius: 0px; }
 	.icon.edit { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
