@@ -3317,7 +3317,8 @@ var cors_default = {
     "https://*.gstatic.com",
     "https://*.twimg.com",
     "https://*.twitter.com",
-    "https://*.fbcdn.net"
+    "https://*.fbcdn.net",
+    "https://*.googleapis.com"
   ],
   "media-src": [
     "'self'",
@@ -3350,7 +3351,8 @@ var cors_default = {
     "https://*.redditstatic.com",
     "https://*.redd.it",
     "https://*.redditmedia.com",
-    "https://*.gstatic.com"
+    "https://*.gstatic.com",
+    "https://*.googleapis.com"
   ],
   "style-src": [
     "'unsafe-inline'",
@@ -3477,7 +3479,8 @@ var cors_default = {
     "https://*.google-analytics.com",
     "http://*.openstreetmap.fr",
     "https://*.gstatic.com",
-    "https://*.jsdelivr.net"
+    "https://*.jsdelivr.net",
+    "https://*.withgoogle.com"
   ],
   "script-src-elem": [
     "file://*",
