@@ -1,4 +1,4 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle, MouseEvent } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
@@ -11,7 +11,7 @@ interface ButtonProps {
 	arrow?: boolean;
 	text?: string;
 	active?: boolean;
-	color?: string;
+	color?: 'black' | 'blank' | 'accent' | 'red' | 'dark';
 	className?: string;
 	tooltipParam?: Partial<I.TooltipParam>;
 	dataset?: Record<string, string>;
@@ -51,6 +51,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ color, setColor ] = useState(initialColor);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
+
+	useEffect(() => setColor(initialColor), [ initialColor ]);
 	const cn = [ 'button', color, className ];
 
 	let content = null;
