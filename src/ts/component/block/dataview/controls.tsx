@@ -459,7 +459,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const ButtonItem = (item: any) => {
 		const elementId = `button-${block.id}-${item.id}`;
-		const cn = [ `btn-${item.id}`, 'withBackground' ];
+		const cn = [ `btn-${item.id}` ];
 
 		if (item.on) {
 			cn.push('on');
@@ -467,8 +467,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		return (
 			<Icon
-				id={elementId} 
-				className={cn.join(' ')}
+				id={elementId}
+				className={cn.join(' ')} withBackground={true}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>
@@ -572,7 +572,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								{allowedView ? (
 									<Icon 
 										id={`button-${block.id}-view-add`} 
-										className="plus withBackground" 
+										className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -586,7 +586,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						ref={filterRef}
 						className="underlined"
 						placeholder={translate('blockDataviewSearch')}
-						icon="search withBackground"
+						iconParam={{ className: 'search', withBackground: true }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}
 						onIconClick={onFilterShow}

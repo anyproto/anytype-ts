@@ -278,16 +278,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const iconCreate = () => {
-		const cn = [ 'plus' ];
-
-		if (!vaultIsMinimal) {
-			cn.push('withBackground');
-		};
-
 		return (
 			<Icon
 				id="button-create-space"
-				className={cn.join(' ')}
+				className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -660,7 +654,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<>
 							{iconCreate()}
 							<Icon 
-								className="toggle withBackground"
+								className="toggle" withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -677,7 +671,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						icon="search"
+						iconParam={{ className: 'search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}

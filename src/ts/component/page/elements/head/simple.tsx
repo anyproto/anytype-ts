@@ -355,9 +355,9 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon className="arrow left withBackground" onClick={() => changeDate(-1)} />
-				<Icon className="arrow right withBackground" onClick={() => changeDate(1)}/>
-				<Icon id="calendar-icon" className="calendar withBackground" onClick={onCalendar} />
+				<Icon className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
+				<Icon className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
+				<Icon id="calendar-icon" className="calendar" withBackground={true} onClick={onCalendar} />
 			</>
 		);
 	};

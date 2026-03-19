@@ -495,7 +495,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					{valueContent}
 				</div>
 
-				{!readonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+				{!readonly ? <Icon className="more" withBackground={true} onClick={onMore} /> : ''}
 			</div>
 		</div>
 	);

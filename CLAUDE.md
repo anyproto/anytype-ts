@@ -204,6 +204,10 @@ bun run build:pixi
   return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
 
+### Storybook
+- All new components should be added to Storybook automatically
+- Component variations should be implemented as separate props, not as className strings. For example, use `withBackground` as a boolean prop instead of passing `'withBackground'` via className — this makes components work properly with Storybook controls
+
 ### Important Patterns
 - All UI text should use `translate()` function for i18n
 - Translation keys are defined in `src/json/text.json` (source of truth). Files in `dist/lib/json/lang/` are generated — do not edit them directly

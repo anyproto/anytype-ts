@@ -42,7 +42,7 @@ const Banner: FC<Props> = ({
 				{button ? <Button text={button} size={28} color={buttonColor} onClick={onClick} /> : ''}
 			</div>
 
-			<Icon className="close withBackground" onClick={onCloseHandler} />
+			<Icon className="close" withBackground={true} onClick={onCloseHandler} />
 		</div>
 	);
 };

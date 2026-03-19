@@ -291,7 +291,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 
 	let icon = null;
 	if (targetObjectId && !isCollection) {
-		icon = <Icon id="head-source-select" className="source withBackground" onClick={onSource} />;
+		icon = <Icon id="head-source-select" className="source" withBackground={true} onClick={onSource} />;
 	} else {
 		icon = <div id="head-source-select" />;
 	};

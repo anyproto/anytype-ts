@@ -235,7 +235,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<Filter
 					ref={filterRef}
 					id="store-filter"
-					icon="search"
+					iconParam={{ className: 'search' }}
 					placeholder={translate('commonSearchPlaceholder')}
 					onChange={onFilterChange}
 					onClear={onFilterClear}

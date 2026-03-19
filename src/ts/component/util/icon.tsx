@@ -8,6 +8,7 @@ interface Props {
 	icon?: string;
 	className?: string;
 	arrow?: boolean;
+	withBackground?: boolean;
 	tooltipParam?: Partial<I.TooltipParam>;
 	inner?: any;
 	draggable?: boolean;
@@ -30,6 +31,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	icon = '',
 	className = '',
 	arrow = false,
+	withBackground = false,
 	tooltipParam = {},
 	inner = null,
 	draggable = false,
@@ -97,7 +99,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 				ref={ref || nodeRef}
 				id={id} 
 				draggable={draggable} 
-				className={[ 'icon', className ].join(' ')} 
+				className={[ 'icon', className, (withBackground ? 'withBackground' : '') ].join(' ')}
 				style={style}
 				onMouseDown={onMouseDownHandler} 
 				onMouseEnter={onMouseEnterHandler} 

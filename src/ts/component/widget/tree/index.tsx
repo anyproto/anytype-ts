@@ -306,7 +306,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							icon="search"
+							iconParam={{ className: 'search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 						/>

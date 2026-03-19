@@ -616,7 +616,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							readonly={isReadonly}
 						/>
 					</div>
-					{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+					{!isReadonly ? <Icon className="more" withBackground={true} onClick={onMore} /> : ''}
 				</div>
 			) : ''}
 

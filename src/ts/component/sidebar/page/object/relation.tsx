@@ -203,7 +203,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 					if ((id == 'local') && allowObjectDetails && !readonly && !isTemplate) {
 						button = (
 							<Icon 
-								className="plus withBackground" 
+								className="plus" withBackground={true}
 								tooltipParam={{ text: translate('commonAddRelation') }}
 								onClick={onAdd}
 							/>

@@ -281,13 +281,13 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="side left" />
 				<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
 				<div className="side right">
-					<Icon className="close withBackground" onClick={e => close()} />
+					<Icon className="close" withBackground={true} onClick={e => close()} />
 				</div>
 			</div>
 
 			<Filter
 				ref={filterRef}
-				icon="search"
+				iconParam={{ className: 'search' }}
 				className="c32"
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}

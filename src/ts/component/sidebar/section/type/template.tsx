@@ -137,7 +137,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 				{!readonly ? (
 					<Icon 
 						id="section-relation-plus" 
-						className="plus withBackground" 
+						className="plus" withBackground={true}
 						tooltipParam={{ text: translate('commonAddTemplate') }}
 						onClick={e => onAdd()} 
 					/>

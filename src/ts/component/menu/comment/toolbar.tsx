@@ -122,7 +122,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section first">
 				<Icon
 					id="button-style"
-					className={[ styleIcon, 'blockStyle', 'withBackground' ].join(' ')}
+					className={[ styleIcon, 'blockStyle' ].join(' ')} withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }}
 					onMouseDown={onStyleClick}
@@ -131,7 +131,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 			<div className="section">
 				{markActions.map((action) => {
-					const cn = [ action.icon, 'withBackground' ];
+					const cn = [ action.icon ];
 					if (activeFormats[action.type]) {
 						cn.push('active');
 					};
@@ -140,7 +140,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 						<Icon
 							id={`button-${action.type}`}
 							key={action.type}
-							className={cn.join(' ')}
+							className={cn.join(' ')} withBackground={true}
 							tooltipParam={{ text: action.name, caption: action.caption }}
 							onMouseDown={e => onMark(e, action.type)}
 						/>
@@ -150,7 +150,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 			<div className="section">
 				{extraActions.map((action) => {
-					const cn = [ action.icon, 'withBackground' ];
+					const cn = [ action.icon ];
 					if (action.isActive) {
 						cn.push('active');
 					};
@@ -159,7 +159,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 						<Icon
 							id={`button-${action.id}`}
 							key={action.id}
-							className={cn.join(' ')}
+							className={cn.join(' ')} withBackground={true}
 							tooltipParam={{ text: action.name, caption: action.caption }}
 							onMouseDown={action.onClick}
 						/>
@@ -170,7 +170,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section last">
 				<Icon
 					id="button-list"
-					className={[ 'list', 'blockStyle', 'withBackground' ].join(' ')}
+					className={[ 'list', 'blockStyle' ].join(' ')} withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('blockNameBulleted') }}
 					onMouseDown={onListClick}
