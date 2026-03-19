@@ -711,7 +711,7 @@ class UtilCommon {
 				param[k] = v;
 			});
 
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] invalid URL params:', e); };
 		return param;
 	};
 
@@ -1353,7 +1353,7 @@ class UtilCommon {
 			};
 			
 			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] SVG encoding failed:', e); };
 
 		iconCache.set(key, ret);
 		return ret;
@@ -1409,7 +1409,7 @@ class UtilCommon {
 				};
 
 			};
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] URL parsing failed:', e); };
 
 		return ret;
 	};

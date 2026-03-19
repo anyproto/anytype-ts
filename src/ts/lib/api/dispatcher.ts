@@ -182,7 +182,7 @@ class Dispatcher {
 				try {
 					this.event(item.event, false, item.skipDebug);
 				} catch (e) {
-					console.error(e);
+					console.error('[Dispatcher] event processing failed:', e);
 				};
 			};
 		});
@@ -1024,7 +1024,7 @@ class Dispatcher {
 					};
 
 					let payload: any = {};
-					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
+					try { payload = JSON.parse(mapped.payload); } catch (e) { console.warn('[Dispatcher] payload parse failed:', e); };
 
 					Renderer.send('payloadBroadcast', payload);
 					break;

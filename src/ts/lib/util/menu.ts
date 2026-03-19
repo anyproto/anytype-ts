@@ -618,7 +618,7 @@ class UtilMenu {
 				return w;
 			};
 
-			if (s.toLowerCase() == f.toLowerCase()) {
+			if (s.toLowerCase() === f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
@@ -636,7 +636,7 @@ class UtilMenu {
 
 				let ret = false;
 
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
+				if (c.isBlock && (c.type === I.BlockType.Table)) {
 					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
 					if (match) {
 						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
@@ -1436,7 +1436,7 @@ class UtilMenu {
 
 		const getClipboardData = async () => {
 			let ret = [];
-			try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+			try { ret = await navigator.clipboard.read(); } catch (e) { console.warn('[Menu] clipboard read failed:', e); };
 			return ret;
 		};
 

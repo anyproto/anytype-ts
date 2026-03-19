@@ -611,11 +611,11 @@ export const Mapper = {
 							name: field.name,
 						});
 
-						if (type == I.NotificationType.Import) {
+						if (type === I.NotificationType.Import) {
 							payload.importType = field.importType;
 						};
 
-						if (type == I.NotificationType.Gallery) {
+						if (type === I.NotificationType.Gallery) {
 							payload.spaceName = field.spaceName;
 						};
 						break;

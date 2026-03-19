@@ -83,16 +83,16 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'createObject', name: translate('commonCreateObject') };
 			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefault') };
-			searchText.name = translate('menuObjectSearchInTemplate')
+			searchText.name = translate('menuObjectSearchInTemplate');
 		} else {
 			template = { id: 'templateCreate', icon: 'template', name: translate('menuObjectUseAsTemplate') };
 		};
 
 		if (block) {
 			if (block.isLocked()) {
-				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: isTemplate ?  translate('menuObjectUnlockTemplate') : translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
+				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: isTemplate ? translate('menuObjectUnlockTemplate') : translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
 			} else {
-				pageLock = { id: 'pageLock', icon: 'pageLock', name: isTemplate ?  translate('menuObjectLockTemplate') : translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
+				pageLock = { id: 'pageLock', icon: 'pageLock', name: isTemplate ? translate('menuObjectLockTemplate') : translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
 			};
 		};
 

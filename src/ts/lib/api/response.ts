@@ -86,7 +86,7 @@ export const DebugSpaceSummary = (response: any) => {
 
 export const DebugStat = (response: any) => {
 	let res = {};
-	try { res = JSON.parse(response.jsonStat); } catch (e) { /**/ };
+	try { res = JSON.parse(response.jsonStat); } catch (e) { console.warn('[Response] JSON parse failed:', e); };
 	return res;
 };
 

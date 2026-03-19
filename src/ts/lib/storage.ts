@@ -90,7 +90,7 @@ const Api = {
 		try {
 			ret = JSON.parse(s);
 		} catch (e) {
-			console.error(e);
+			console.error('[Storage] JSON parse failed:', e);
 		};
 		return ret;
 	},
@@ -476,7 +476,7 @@ class Storage {
 			obj[key][rootId] = Number(scroll) || 0;
 
 			this.set('scroll', obj, this.isLocal('scroll'));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Storage] scroll save failed:', e); };
 		return obj;
 	};
 

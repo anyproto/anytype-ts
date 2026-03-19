@@ -67,7 +67,7 @@ class Relation {
 			};
 
 			svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(decoded)));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Relation] SVG encoding failed:', e); };
 
 		return svg;
 	};
