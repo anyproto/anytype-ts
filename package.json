@@ -27,6 +27,7 @@
 		"build:nmh": "go build -o dist/nativeMessagingHost ./go/nativeMessagingHost.go",
 		"build:nmh-win": "go build -o dist/nativeMessagingHost.exe ./go/nativeMessagingHost.go",
 		"build:pixi": "vite build --config vite.worker.config.ts",
+		"generate:icons": "bun scripts/convert-icons.ts",
 		"generate:protos": "bash scripts/generate-protos.sh",
 		"dist:mac": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",

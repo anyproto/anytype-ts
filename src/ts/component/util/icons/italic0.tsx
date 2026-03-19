@@ -1,0 +1,11 @@
+import React from 'react';
+import type { IconSvgProps } from '../iconRegistry';
+
+export function Italic0Icon({ size, color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none">
+<path d="M12.0999 3.9999C12.0999 4.60742 11.6074 5.0999 10.9999 5.0999C10.3924 5.0999 9.8999 4.60742 9.8999 3.9999C9.8999 3.39239 10.3924 2.8999 10.9999 2.8999C11.6074 2.8999 12.0999 3.39239 12.0999 3.9999Z" fill={color}/>
+<path d="M11.3394 7H9.6462L8 17H9.69318L11.3394 7Z" fill={color}/>
+</svg>
+	);
+}

@@ -39,7 +39,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					id="void-button-create-space" 
 					onClick={onClick} 
 					color="accent" 
-					className="c36" 
+					size={36}
 					text={translate('commonCreateSpace')}
 				/>
 			);

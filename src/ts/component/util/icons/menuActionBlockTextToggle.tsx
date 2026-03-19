@@ -1,0 +1,10 @@
+import React from 'react';
+import type { IconSvgProps } from '../iconRegistry';
+
+export function MenuActionBlockTextToggleIcon({ size, color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none">
+    <path fillRule="evenodd" clipRule="evenodd" d="M7.56306 4.55806C7.80714 4.31398 8.20287 4.31398 8.44695 4.55806L13.8889 10L8.44695 15.4419C8.20287 15.686 7.80714 15.686 7.56306 15.4419C7.31899 15.1979 7.31899 14.8021 7.56306 14.5581L12.1211 10L7.56306 5.44194C7.31899 5.19786 7.31899 4.80214 7.56306 4.55806Z" fill={color}/>
+</svg>
+	);
+}

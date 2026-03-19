@@ -89,6 +89,11 @@ html.themeDark {
 	--color-system-accent-25: #18346e;
 	--color-system-selection: rgba(55, 122, 255, 0.25);
 
+	/* Icon */
+
+	--color-icon: #a09f92;
+	--color-icon-hover: #e1e1e1;
+
 	/* Common */
 
 	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }

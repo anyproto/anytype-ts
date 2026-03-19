@@ -621,7 +621,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					</div>
 					<div className="errorActions">
 						<Button 
-							className="c28 primary" 
+							size={28}
+							className="primary" 
 							text={translate('commonRetry')} 
 							onClick={() => {
 								// Just trigger connect, don't reset error
@@ -631,7 +632,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						/>
 
 						<Button 
-							className="c28 secondary" 
+							size={28}
+							className="secondary" 
 							text={translate('commonClose')} 
 							onClick={() => onClose(true)} 
 						/>

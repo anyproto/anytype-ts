@@ -52,7 +52,7 @@ const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<Button 
 							text={translate('commonBack')} 
 							color="blank" 
-							className="c36" 
+							size={36} 
 							onClick={() => U.Space.openDashboardOrVoid()} 
 						/>
 					</div>

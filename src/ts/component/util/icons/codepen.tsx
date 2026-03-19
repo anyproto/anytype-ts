@@ -1,0 +1,10 @@
+import React from 'react';
+import type { IconSvgProps } from '../iconRegistry';
+
+export function CodepenIcon({ size, color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none">
+    <path d="M3 12.3545L10 17M3 12.3545V7.64545M3 12.3545L10 7.64545M10 17L17 12.3545M10 17V12.3545M17 12.3545V7.64545M17 12.3545L10 7.64545M17 7.64545L10 3M17 7.64545L10 12.2909L3 7.64545M10 3L3 7.64545M10 3V7.64545" stroke={color} strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+	);
+}

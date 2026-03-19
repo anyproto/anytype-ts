@@ -268,14 +268,15 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 					<Button 
 						color="blank" 
 						text={translate('commonCancel')}
-						className="c28"
+						size={28}
 						onClick={onCancel}
 					/>
 
 					<Button 
 						ref={buttonSaveRef} 
 						text={type ? translate('commonSave') : translate('commonCreate')}
-						className="c28 disabled"
+						className="disabled"
+						size={28}
 						onClick={onSave}
 					/>
 				</div>

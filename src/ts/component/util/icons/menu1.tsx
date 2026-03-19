@@ -1,0 +1,11 @@
+import React from 'react';
+import type { IconSvgProps } from '../iconRegistry';
+
+export function Menu1Icon({ size, color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none">
+<rect x="9.25" y="3.03027" width="1.5" height="14" rx="0.75" fill={color}/>
+<path d="M16.25 9.28027C16.6642 9.28027 17 9.61606 17 10.0303C17 10.4445 16.6642 10.7803 16.25 10.7803H3.75C3.33579 10.7803 3 10.4445 3 10.0303C3 9.61606 3.33579 9.28027 3.75 9.28027H16.25Z" fill={color}/>
+</svg>
+	);
+}
