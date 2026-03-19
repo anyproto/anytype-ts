@@ -9,7 +9,7 @@ const os = require('os');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
 
-const webPort = process.env.WEB_PORT || 9090;
+const webPort = process.env.WEB_PORT || 3030;
 const openBrowserAuto = process.env.WEB_OPEN_BROWSER === '1' || process.env.WEB_OPEN_BROWSER === 'true';
 
 // Use the same Application Support / AppData folder as Electron

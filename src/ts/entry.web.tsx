@@ -28,6 +28,12 @@ if (dataPath) {
 	localStorage.setItem('anytype_dataPath', dataPath);
 }
 
+// Clean config params from URL, keep the pathname
+if (urlParams.has('server') || urlParams.has('dataPath')) {
+	const cleanUrl = window.location.pathname || '/';
+	window.history.replaceState({}, '', cleanUrl);
+}
+
 // Configure the global config object
 (window as any).AnytypeGlobalConfig = {
 	serverAddress,
