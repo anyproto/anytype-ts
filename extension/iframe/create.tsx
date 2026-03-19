@@ -155,8 +155,8 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					</div>
 				</div>
 				<div className="side right">
-					<Button text="Cancel" color="blank" className="c32" onClick={onClose} />
-					<Button text="Save" color="pink" className="c32" onClick={onSave} />
+					<Button text="Cancel" color="blank" size={32} onClick={onClose} />
+					<Button text="Save" color="pink" size={32} onClick={onSave} />
 				</div>
 			</div>
 

@@ -32,7 +32,7 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 				<Label className="usage" text={U.String.sprintf(translate('upsellBannerSpaceUsageText'), mySharedSpaces.length)} />
 				<Label className="upsell" text={translate('upsellBannerSpaceUpsellText')} />
 			</div>
-			<Button text={translate('commonUpgrade')} color="black" className="c28" onClick={onClick} />
+			<Button text={translate('commonUpgrade')} color="black" size={28} onClick={onClick} />
 		</div>
 	);
 

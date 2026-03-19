@@ -61,7 +61,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
 				<Label className="upsell" text={upsellText} />
 			</div>
-			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} /> : ''}
+			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} size={28} onClick={onClick} /> : ''}
 		</div>
 	);
 

@@ -24,7 +24,7 @@ const PageMainSettingsImportObsidian = observer(forwardRef<I.PageRef, I.PageSett
 			<Label className="description" text={translate('popupSettingsImportObsidianDescription')} />
 
 			<div className="inputWrapper flex">
-				<Button text={translate('popupSettingsImportFiles')} className="c36" onClick={onImport} />
+				<Button text={translate('popupSettingsImportFiles')} size={36} onClick={onImport} />
 			</div>
 
 			<Error text={error} />

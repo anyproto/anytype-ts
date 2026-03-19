@@ -3,6 +3,8 @@ import $ from 'jquery';
 import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
 
+type ButtonSize = 16 | 28 | 32 | 36 | 40 | 48;
+
 interface ButtonProps {
 	id?: string;
 	type?: string;
@@ -11,7 +13,8 @@ interface ButtonProps {
 	arrow?: boolean;
 	text?: string;
 	active?: boolean;
-	color?: 'black' | 'blank' | 'accent' | 'red' | 'dark';
+	size?: ButtonSize;
+	color?: string;
 	className?: string;
 	tooltipParam?: Partial<I.TooltipParam>;
 	dataset?: Record<string, string>;
@@ -38,6 +41,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	icon,
 	arrow,
 	text = '',
+	size,
 	color: initialColor = 'black',
 	className = '',
 	tooltipParam = {},
@@ -53,7 +57,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 
 	useEffect(() => setColor(initialColor), [ initialColor ]);
-	const cn = [ 'button', color, className ];
+	const cn = [ 'button', color, className, (size ? `size${size}` : '') ];
 
 	let content = null;
 

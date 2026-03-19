@@ -656,7 +656,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					let buttons = null;
 					if (isSectionType) {
 						if (canWrite) {
-							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
+							buttons = <Button icon="plus" color="blank" size={28} text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 						};
 					} else 
 					if (!isSectionUnread) {

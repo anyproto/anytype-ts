@@ -324,8 +324,8 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="line" />
 
 			<div className="buttons">
-				<Button text="Save" className="c28" onClick={save} />
-				<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
+				<Button text="Save" size={28} onClick={save} />
+				<Button text="Cancel" size={28} color="blank" onClick={() => close()} />
 			</div>
 
 			<Error text={error} />

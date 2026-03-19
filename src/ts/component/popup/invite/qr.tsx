@@ -34,7 +34,7 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			<div className="buttons">
-				<Button text={translate('commonSaveAsFile')} className="c36" color="blank" onClick={onDownload} />
+				<Button text={translate('commonSaveAsFile')} size={36} color="blank" onClick={onDownload} />
 			</div>
 		</div>
 	);

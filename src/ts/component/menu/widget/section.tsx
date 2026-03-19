@@ -222,7 +222,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 				</DndContext>
 			</div>
 
-			<Button onClick={() => close()} color="accent" className="c40" text={translate('commonDone')} />
+			<Button onClick={() => close()} color="accent" size={40} text={translate('commonDone')} />
 		</div>
 	);
 

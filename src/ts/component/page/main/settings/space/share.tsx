@@ -249,7 +249,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 								onClick={() => inputRef.current?.select()} 
 							/>
 						</div>
-						<Button onClick={onCopy} className="c36" color="black" text={translate('commonCopy')} />
+						<Button onClick={onCopy} size={36} color="black" text={translate('commonCopy')} />
 					</div>
 				) : ''}
 			</div>

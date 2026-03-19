@@ -83,10 +83,10 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 				<div className="buttons">
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} color="accent" className="c48" onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} color="accent" size={48} onClick={onRegister} />
 					</div>
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" className="c48" onClick={onLogin} />
+						<Button text={translate('authSelectLogin')} color="blank" size={48} onClick={onLogin} />
 					</div>
 				</div>
 

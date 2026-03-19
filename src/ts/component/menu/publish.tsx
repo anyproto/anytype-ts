@@ -229,7 +229,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{showIncentive ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
-					<Button className="c28" color="accent" text={translate('commonUpgrade')} onClick={onUpgrade} />
+					<Button size={28} color="accent" text={translate('commonUpgrade')} onClick={onUpgrade} />
 				</div>
 			) : ''}
 
@@ -238,7 +238,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<>
 						{isStatusLoading ? <Loader /> : (
 							<>
-								{buttons.map((item, i) => <Button key={i} {...item} className="c36" />)}
+								{buttons.map((item, i) => <Button key={i} {...item} size={36} />)}
 							</>
 						)}
 					</>
