@@ -17,7 +17,8 @@
 
 .switch.active { background: var(--color-text-secondary); }
 .switch.green.active { background: var(--color-lime); }
-.switch.orange.active { background: var(--color-system-accent-50); }
+.switch.orange.active { background: var(--color-orange); }
+.switch.blue.active { background: var(--color-system-accent-50); }
 .switch.isReadonly { cursor: default; }
 
 .switch.active {

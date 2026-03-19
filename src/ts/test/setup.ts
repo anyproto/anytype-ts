@@ -70,7 +70,15 @@ vi.mock('Lib', () => {
 			ISO: 4, Long: 5, Nordic: 6, European: 7, Default: 8,
 		},
 		TimeFormat: { H12: 0, H24: 1 },
-		ObjectLayout: { Note: 1, Page: 2, File: 6, Image: 7, Video: 9, Audio: 10 },
+		ObjectLayout: {
+			Page: 0, Human: 1, Task: 2, Set: 3, Type: 4, Relation: 5, File: 6,
+			Dashboard: 7, Image: 8, Note: 9, Space: 10, Bookmark: 11, OptionList: 12,
+			Option: 13, Collection: 14, Audio: 15, Video: 16, Date: 17, SpaceView: 18,
+			Participant: 19, Pdf: 20, ChatOld: 21, Chat: 22, Discussion: 27,
+			Empty: 100, Navigation: 101, Graph: 102, History: 103, Archive: 104,
+			Block: 105, Settings: 106,
+		},
+		CommentTargetType: { Object: 0, Block: 1 },
 		BlockType: {
 			Empty: '', Page: 'page', Dataview: 'dataview', Layout: 'layout', Text: 'text',
 			File: 'file', Bookmark: 'bookmark', IconPage: 'iconPage', IconUser: 'iconUser',
@@ -203,6 +211,19 @@ vi.mock('Lib', () => {
 				return true;
 			},
 			compareJSON: (o1: any, o2: any): boolean => JSON.stringify(o1) === JSON.stringify(o2),
+			safeDecodeUri: (s: any) => {
+				try { return decodeURIComponent(String(s || '')); } catch { return String(s || ''); }
+			},
+			searchParam: (search: string) => {
+				const params: any = {};
+				if (!search) return params;
+				search.split('&').forEach(pair => {
+					const [key, value] = pair.split('=');
+					if (key) params[key] = value || '';
+				});
+				return params;
+			},
+			getElectron: () => ({}),
 		},
 		Date: {
 			date: (format: string, timestamp: number) => {

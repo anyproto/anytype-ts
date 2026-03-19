@@ -34,3 +34,4 @@ dist/js/chunks/
 /windows/
 .aider*
 .env
+storybook-static/
