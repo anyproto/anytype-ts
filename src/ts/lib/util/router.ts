@@ -240,7 +240,7 @@ class UtilRouter {
 				return;
 			};
 
-			this.go('/main/blank', { 
+			this.go('/main/blank', {
 				updateTabRoute: false,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
