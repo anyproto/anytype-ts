@@ -35,3 +35,9 @@ dist/js/chunks/
 .aider*
 .env
 storybook-static/
+
+# generated json files
+dist/lib/json/internalRelations.json
+dist/lib/json/internalTypes.json
+dist/lib/json/systemRelations.json
+dist/lib/json/systemTypes.json
