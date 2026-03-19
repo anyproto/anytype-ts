@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Scope: `src/ts/` full codebase audit
+> Generated: 2026-03-15 | Updated: 2026-03-19 | Scope: `src/ts/` full codebase audit
 
 ---
 
@@ -109,8 +109,8 @@ export type DropType = '' | 'block' | 'menu' | 'relation';
 
 ### 3.3 Loose Equality (`==`)
 
-- **`lib/api/mapper.ts:28-49`** — Uses `==` for 15+ enum comparisons in a non-exhaustive if-chain
-- **`lib/util/menu.ts:620`** — `s.toLowerCase() == f.toLowerCase()`
+- ~~**`lib/api/mapper.ts`** — `==` in notification type comparisons~~ ✅ Fixed (2026-03-19)
+- ~~**`lib/util/menu.ts`** — `s.toLowerCase() == f.toLowerCase()` and block type comparison~~ ✅ Fixed (2026-03-19)
 
 ---
 
@@ -118,22 +118,17 @@ export type DropType = '' | 'block' | 'menu' | 'relation';
 
 ### 4.1 Silent Error Swallowing (Empty Catch Blocks)
 
-Pattern: `try { ... } catch (e) { /**/ }` — suppresses all exceptions silently.
+~~All empty `catch (e) { /**/ }` blocks replaced with contextual `console.warn`/`console.error` logging.~~ ✅ Fixed (2026-03-19)
 
-| File | Lines |
-|------|-------|
-| `lib/util/embed.ts` | 130, 188, 263, 329, 380, 390, 401 |
-| `lib/util/common.ts` | 713, 1356, 1412 |
-| `lib/util/menu.ts` | 1401 |
-| `lib/api/response.ts` | 94 (silent JSON parse failure) |
-| `lib/api/dispatcher.ts` | 1017 (silent JSON parse) |
-| `lib/relation.ts` | 58 |
-| `lib/storage.ts` | 478 |
+Files fixed: `embed.ts` (7), `common.ts` (3), `menu.ts` (1), `response.ts` (1), `dispatcher.ts` (1), `relation.ts` (1), `storage.ts` (1)
 
 ### 4.2 Log-Only Error Handling
 
-- `lib/storage.ts:91-93` — `console.error(e)` then continues
-- `lib/api/dispatcher.ts:189` — `console.error(e)` without context
+~~`console.error(e)` calls missing context — added module tags.~~ ✅ Fixed (2026-03-19)
+
+Files fixed: `storage.ts` (JSON parse), `dispatcher.ts` (event processing)
+
+**Remaining:**
 - `lib/web/electronMock.ts:83,476` — `console.warn`/`console.error` then continues
 
 ---
@@ -269,7 +264,7 @@ Four different event handling patterns coexist:
 
 ## 10. Inconsistent Patterns
 
-- **Equality:** `==` vs `===` (mapper.ts uses loose, most code uses strict)
+- ~~**Equality:** `==` vs `===` (mapper.ts uses loose, most code uses strict)~~ ✅ Fixed (2026-03-19)
 - **Null checks:** Mix of `!value`, `value == null`, `value === undefined`, `undefined !== value`
 - **Optional chaining:** Used inconsistently — some files use `?.`, others use manual null checks
 - **State updates:** MobX `.set()` vs direct property assignment vs computed getters with transforms
@@ -289,7 +284,7 @@ Four different event handling patterns coexist:
 | Type `data?: any` in MenuParam interface | interface/menu.ts + all menu consumers | L |
 | Type store getters (config, etc.) | store/common.ts, store/detail.ts | S |
 | Add null checks to `.match()` and `.split()[n]` patterns | string.ts, mark.ts, embed.ts, dispatcher.ts, relation.ts | M |
-| Replace loose `==` with strict `===` | mapper.ts, menu.ts | S |
+| ~~Replace loose `==` with strict `===`~~ | ~~mapper.ts, menu.ts~~ | ~~S~~ ✅ |
 
 ### Phase 2: Error Handling (Low Risk, Medium Impact)
 
@@ -297,8 +292,8 @@ Four different event handling patterns coexist:
 
 | Task | Files | Effort |
 |------|-------|--------|
-| Replace empty catch blocks with logging or explicit no-ops | embed.ts, common.ts, response.ts, dispatcher.ts | S |
-| Add error context to console.error calls | storage.ts, dispatcher.ts | S |
+| ~~Replace empty catch blocks with logging or explicit no-ops~~ | ~~embed.ts, common.ts, response.ts, dispatcher.ts, relation.ts, menu.ts, storage.ts~~ | ~~S~~ ✅ |
+| ~~Add error context to console.error calls~~ | ~~storage.ts, dispatcher.ts~~ | ~~S~~ ✅ |
 | Create consistent error handling patterns | New error utility | M |
 
 ### Phase 3: God File Decomposition (Medium Risk, High Impact)
