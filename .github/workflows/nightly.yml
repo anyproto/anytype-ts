@@ -329,7 +329,7 @@ jobs:
         shell: bash
         run: |
           patch go/nativeMessagingHost.go < nightly/patches/nativeMessagingHost.go.patch
-          patch electron/js/lib/installNativeMessagingHost.js < nightly/patches/installNativeMessagingHost.js.patch
+          patch electron/ts/lib/installNativeMessagingHost.ts < nightly/patches/installNativeMessagingHost.ts.patch
           rsync -a nightly/electron/ electron/
 
       - name: Update Addon only AMD
