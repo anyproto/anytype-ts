@@ -27,7 +27,7 @@ const Tag: FC<Props> = ({
 
 	const nodeRef = useRef(null);
 	const c = color || 'default';
-	const cn = [ 'tagItem', 'textColor', `textColor-${c}` ];
+	const cn = [ 'tagItem', 'textColor', `textColor-${c}`, 'bgColor', `bgColor-${c}` ];
 
 	if (className) {
 		cn.push(className);
