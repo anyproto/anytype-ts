@@ -1050,6 +1050,17 @@ class UtilObject {
 		return src;
 	};
 
+	chatHasUnread (spaceId: string, chatId: string): boolean {
+		const counters = S.Chat.getChatCounters(spaceId, chatId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		const mode = this.getChatNotificationMode(spaceview, chatId);
+
+		return (
+			((mode == I.NotificationMode.All) && !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter)) ||
+			((mode == I.NotificationMode.Mentions) && !!counters.mentionCounter)
+		);
+	};
+
 	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
 		if (!spaceview) {
 			return I.NotificationMode.All;
