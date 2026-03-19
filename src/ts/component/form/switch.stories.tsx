@@ -8,7 +8,7 @@ const meta: Meta<typeof Switch> = {
 	argTypes: {
 		color: {
 			control: 'select',
-			options: ['blue', 'orange', 'green'],
+			options: ['grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime'],
 		},
 	},
 };

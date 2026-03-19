@@ -3,7 +3,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 interface Props {
 	id?: string;
 	value?: boolean;
-	color?: 'blue' | 'orange' | 'green';
+	color?: 'grey' | 'yellow' | 'orange' | 'red' | 'pink' | 'purple' | 'blue' | 'ice' | 'teal' | 'lime';
 	className?: string;
 	readonly?: boolean;
 	onChange?(e: any, value: boolean): void;
