@@ -205,6 +205,8 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		};
 	};
 
+	const recordIdxMap = new Map(records.map((id, i) => [ id, i ]));
+
 	const cardItem = (id: string) => {
 		if (id == 'add-record') {
 			return (
@@ -222,7 +224,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 					{...props} 
 					getCoverObject={getCoverObject}
 					recordId={id}
-					recordIdx={records.indexOf(id)}
+					recordIdx={recordIdxMap.get(id)}
 				/>
 			);
 		};

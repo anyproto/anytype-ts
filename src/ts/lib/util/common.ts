@@ -408,8 +408,8 @@ class UtilCommon {
 	 */
 	mapToObject (list: any[], field: string) {
 		const obj: any = {};
-		for (let i = 0; i < list.length; i++) {
-			obj[list[i][field]] = list[i];
+		for (const item of list) {
+			obj[item[field]] = item;
 		};
 		return obj;
 	};
@@ -420,11 +420,7 @@ class UtilCommon {
 	 * @returns {any[]} The flattened array.
 	 */
 	unmap (map: any) {
-		let ret: any[] = [];
-		for (const field in map) {
-			ret = ret.concat(map[field]);
-		};
-		return ret;
+		return Object.values(map).flat();
 	};
 	
 	/**

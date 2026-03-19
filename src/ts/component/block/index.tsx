@@ -368,12 +368,12 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		let c = 0;
 		let num = 0;
 
-		for (const i in children) {
+		for (let i = 0; i < children.length; i++) {
 			const child = children[i];
 
 			c += child.fields.width || 1 / length;
 			if ((p >= c * width - sm / 2) && (p <= c * width + sm / 2)) {
-				num = Number(i) + 1;
+				num = i + 1;
 				break;
 			};
 		};
