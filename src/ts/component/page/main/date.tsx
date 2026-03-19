@@ -216,7 +216,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 								key={item.relationKey}
 								active={relationKey == item.relationKey}
 								color="blank"
-								className="c36"
+								size={28}
 								onClick={() => onCategoryClick(item.relationKey)}
 								icon={icon}
 								text={item.name}

@@ -741,7 +741,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							type="input" 
 							text={translate(relation ? 'commonSave' : 'commonCreate')} 
 							color="blank" 
-							className="c28"
+							size={28}
 						/>
 					</div>
 				</div>

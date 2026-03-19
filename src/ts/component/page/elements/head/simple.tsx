@@ -315,7 +315,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 					<Button
 						id="button-layout"
 						color="blank"
-						className="c28 resetLayout"
+						size={28}
+						className="resetLayout"
 						onClick={onLayout}
 					/>
 				);
@@ -327,7 +328,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						id="button-template" 
 						text={translate('commonTemplates')} 
 						color="blank" 
-						className="c28" 
+						size={28}
 						onClick={onTemplates} 
 					/>
 				);
@@ -338,7 +339,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 					<Button 
 						id="button-edit" 
 						color="blank" 
-						className="c28" 
+						size={28}
 						text={translate('commonEditType')} 
 						onClick={() => U.Object.editType(rootId, isPopup)}
 					/>

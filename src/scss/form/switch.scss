@@ -8,19 +8,26 @@
 	.inner { 
 		width: 12px; height: 12px; border-radius: 100%; background: var(--color-bg-primary); position: absolute; left: 2px; top: 2px;
 		transition: $transitionAllCommon; box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.1);
-	}	
-}
-.switch.big { width: 40px; height: 24px; border-radius: 24px; }
-.switch.big {
-	.inner { width: 20px; height: 20px; }
-}
+	}
 
-.switch.active { background: var(--color-text-secondary); }
-.switch.green.active { background: var(--color-lime); }
-.switch.orange.active { background: var(--color-orange); }
-.switch.blue.active { background: var(--color-system-accent-50); }
-.switch.isReadonly { cursor: default; }
+	&.big { width: 40px; height: 24px; border-radius: 24px; }
+	&.big {
+		.inner { width: 20px; height: 20px; }
+	}
 
-.switch.active {
-	.inner { left: auto; right: 2px; }
+	&.active { background: var(--color-text-secondary); }
+	&.active {
+		.inner { left: auto; right: 2px; }
+
+		&.grey { background: var(--color-control-active); }
+		&.yellow { background: var(--color-yellow); }
+		&.orange { background: var(--color-orange); }
+		&.red { background: var(--color-red); }
+		&.pink { background: var(--color-pink); }
+		&.purple { background: var(--color-purple); }
+		&.blue { background: var(--color-system-accent-50); }
+		&.ice { background: var(--color-ice); }
+		&.teal { background: var(--color-teal); }
+		&.lime { background: var(--color-lime); }
+	}
 }

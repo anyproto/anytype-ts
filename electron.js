@@ -1721,7 +1721,7 @@ var WindowManager = class {
     this.list.forEach((it) => util_default.sendToAllTabs(it, ...args));
   }
   reloadAll() {
-    this.sendToAll("reload");
+    this.sendToAllTabs("reload");
   }
   getFirstWindow() {
     return this.list.values().next().value;
@@ -2504,17 +2504,17 @@ var Api = class {
     };
   }
   logout(win) {
-    window_default.sendToAll("logout");
+    window_default.sendToAllTabs("logout");
   }
   pinCheck(win) {
-    window_default.sendToAll("pin-check");
+    window_default.sendToAllTabs("pin-check");
     window_default.list.forEach((w) => window_default.updateTabBarVisibility(w));
   }
   pinSet(win) {
-    window_default.sendToAll("pin-set");
+    window_default.sendToAllTabs("pin-set");
   }
   pinRemove(win) {
-    window_default.sendToAll("pin-remove");
+    window_default.sendToAllTabs("pin-remove");
   }
   paste(win) {
     if (!win || win.isDestroyed()) {
@@ -2762,6 +2762,10 @@ var Api = class {
     ;
   }
   openTab(win, data, options) {
+    if (this.hasPinSet && !this.isPinChecked) {
+      return false;
+    }
+    ;
     const { isPinned, ...rest } = data || {};
     const route = rest.route || "";
     if (route) {
@@ -2950,7 +2954,7 @@ var Api = class {
   setUserDataPath(win, p) {
     this.setConfig(win, { userDataPath: p });
     import_electron9.app.setPath("userData", p);
-    window_default.sendToAll("data-path", util_default.dataPath());
+    window_default.sendToAllTabs("data-path", util_default.dataPath());
   }
   showChallenge(win, param) {
     window_default.createChallenge(param);
