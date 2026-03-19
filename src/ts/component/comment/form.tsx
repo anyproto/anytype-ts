@@ -42,7 +42,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const parts = editorRef.current?.getParts() || [];
+		const parts = (editorRef.current?.getParts() || []).filter(p => !p.attachmentData?.isTmp);
 		Storage.setComment(rootId, { parts });
 	}, [ isDraft, rootId ]);
 
@@ -553,7 +553,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				noUpload: true,
 				value: '',
 				onSelect: (icon: string) => {
-					editorRef.current?.insertText(icon);
+					editorRef.current?.insertEmoji(icon);
 					editorRef.current?.focus();
 				},
 			},
@@ -696,6 +696,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					onFocus={handleFocus}
 					onBlur={handleBlur}
 					onSlashAction={onSlashAction}
+					onPasteFiles={addAttachmentFiles}
 				/>
 			</div>
 

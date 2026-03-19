@@ -47,6 +47,7 @@ import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, J, S, U, keyboard, translate, Storage } from 'Lib';
+import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
 
@@ -93,6 +94,73 @@ class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
 };
 
 export const INSERT_HORIZONTAL_RULE_COMMAND = createCommand<void>('INSERT_HORIZONTAL_RULE_COMMAND');
+
+// Inline emoji node — renders as cross-platform IconObject image
+class EmojiNode extends DecoratorNode<JSX.Element> {
+
+	__emoji: string;
+	__code: string;
+
+	static getType (): string {
+		return 'emoji';
+	};
+
+	static clone (node: EmojiNode): EmojiNode {
+		return new EmojiNode(node.__emoji, node.__code, node.__key);
+	};
+
+	constructor (emoji: string, code: string, key?: string) {
+		super(key);
+		this.__emoji = emoji;
+		this.__code = code;
+	};
+
+	createDOM (): HTMLElement {
+		const span = document.createElement('span');
+		span.className = 'commentEditor-emoji';
+		return span;
+	};
+
+	updateDOM (): boolean {
+		return false;
+	};
+
+	isInline (): boolean {
+		return true;
+	};
+
+	getTextContent (): string {
+		return this.__emoji;
+	};
+
+	getEmoji (): string {
+		return this.__emoji;
+	};
+
+	getCode (): string {
+		return this.__code;
+	};
+
+	decorate (): JSX.Element {
+		return <IconObject size={20} iconSize={20} object={{ iconEmoji: this.__code }} />;
+	};
+
+	exportJSON () {
+		return {
+			type: 'emoji',
+			version: 1,
+			emoji: this.__emoji,
+			code: this.__code,
+		};
+	};
+
+	static importJSON (json: any): EmojiNode {
+		return new EmojiNode(json.emoji, json.code);
+	};
+
+};
+
+const INSERT_EMOJI_COMMAND = createCommand<{ emoji: string; code: string }>('INSERT_EMOJI_COMMAND');
 
 // Link URL storage — maps Lexical node keys to link URLs
 const linkUrlMap = new Map<string, string>();
@@ -454,6 +522,7 @@ interface Props {
 	onFocus?: () => void;
 	onBlur?: () => void;
 	onSlashAction?: (item: any) => void;
+	onPasteFiles?: (files: File[]) => void;
 };
 
 interface RefProps {
@@ -471,6 +540,7 @@ interface RefProps {
 	toggleFormat: (format: TextFormatType) => void;
 	setBlockStyle: (style: I.TextStyle) => void;
 	getCurrentBlockStyle: () => I.TextStyle;
+	insertEmoji: (icon: string) => void;
 	insertEmbed: (processor: I.EmbedProcessor, text: string) => void;
 	insertAttachment: (data: any) => void;
 	removeAttachment: (key: string) => void;
@@ -635,6 +705,13 @@ const extractTextAndMarks = (element: ElementNode): { text: string; marks: I.Mar
 		const start = text.length;
 		const end = start + childText.length;
 
+		if (child instanceof EmojiNode) {
+			marks.push({
+				type: I.MarkType.Emoji,
+				range: { from: start, to: end },
+				param: child.getCode(),
+			});
+		} else
 		if ($isMentionNode(child)) {
 			marks.push({
 				type: I.MarkType.Mention,
@@ -934,6 +1011,16 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 
 		if (mentionMark) {
 			nodes.push($createMentionNode(mentionMark.param || '', segment));
+			continue;
+		};
+
+		// Check if this segment is an emoji
+		const emojiMark = marks.find(m =>
+			(m.type === I.MarkType.Emoji) && (m.range.from <= from) && (m.range.to >= to)
+		);
+
+		if (emojiMark) {
+			nodes.push(new EmojiNode(segment, emojiMark.param || ''));
 			continue;
 		};
 
@@ -1308,12 +1395,17 @@ const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 			noUpload: true,
 			value: '',
 			onSelect: (icon: string) => {
-				editor.update(() => {
-					const selection = $getSelection();
-					if ($isRangeSelection(selection)) {
-						selection.insertText(icon);
-					};
-				});
+				const code = U.Smile.getCode(icon);
+				if (code) {
+					editor.dispatchCommand(INSERT_EMOJI_COMMAND, { emoji: icon, code });
+				} else {
+					editor.update(() => {
+						const selection = $getSelection();
+						if ($isRangeSelection(selection)) {
+							selection.insertText(icon);
+						};
+					});
+				};
 				editor.focus();
 			},
 		},
@@ -2000,6 +2092,40 @@ const PasteUrlPlugin = () => {
 	return null;
 };
 
+const PasteImagePlugin = ({ onPasteFiles }: { onPasteFiles?: (files: File[]) => void }) => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		if (!onPasteFiles) {
+			return;
+		};
+
+		return editor.registerCommand(
+			PASTE_COMMAND,
+			(event: ClipboardEvent) => {
+				const clipboardData = event.clipboardData;
+				if (!clipboardData) {
+					return false;
+				};
+
+				const files = U.Common.getDataTransferFiles(Array.from(clipboardData.items));
+				const imageFiles = files.filter((f: File) => f.type && f.type.startsWith('image/'));
+
+				if (!imageFiles.length) {
+					return false;
+				};
+
+				event.preventDefault();
+				onPasteFiles(imageFiles);
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor, onPasteFiles ]);
+
+	return null;
+};
+
 const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlashAction?: (item: any) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
@@ -2468,95 +2594,25 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 	});
 };
 
-const EmojiPlugin = ({ editorId }: { editorId: string }) => {
+const EmojiCommandPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
-	const prevText = useRef('');
-	const colonOffset = useRef(-1);
 
 	useEffect(() => {
-		const removeListener = editor.registerUpdateListener(({ editorState }) => {
-			editorState.read(() => {
+		return editor.registerCommand(
+			INSERT_EMOJI_COMMAND,
+			({ emoji, code }) => {
 				const selection = $getSelection();
-				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
-					return;
+				if ($isRangeSelection(selection)) {
+					const emojiNode = new EmojiNode(emoji, code);
+					selection.insertNodes([ emojiNode ]);
 				};
-
-				const anchor = selection.anchor;
-				const node = anchor.getNode();
-				if (!$isTextNode(node) || $isMentionNode(node)) {
-					prevText.current = '';
-					return;
-				};
-
-				const text = node.getTextContent();
-				const offset = anchor.offset;
-				const menuOpen = S.Menu.isOpen('smile');
-
-				if ((offset > 0) && (text[offset - 1] === ':') && (text !== prevText.current) && !menuOpen) {
-					const charBefore = offset > 1 ? text[offset - 2] : '';
-					if (!charBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(charBefore)) {
-						colonOffset.current = offset - 1;
-						openEmojiMenu(editor, editorId, colonOffset);
-					};
-				};
-
-				prevText.current = text;
-			});
-		});
-
-		return removeListener;
-	}, [ editor, editorId ]);
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor ]);
 
 	return null;
-};
-
-const openEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: React.MutableRefObject<number>) => {
-	const rect = U.Common.getSelectionRect();
-	if (!rect) {
-		return;
-	};
-
-	const win = $(window);
-
-	S.Menu.open('smile', {
-		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
-		vertical: I.MenuDirection.Top,
-		horizontal: I.MenuDirection.Left,
-		offsetY: -4,
-		noAnimation: true,
-		data: {
-			noHead: true,
-			noUpload: true,
-			value: '',
-			onSelect: (icon: string) => {
-				editor.update(() => {
-					const selection = $getSelection();
-					if (!$isRangeSelection(selection)) {
-						return;
-					};
-
-					const anchor = selection.anchor;
-					const node = anchor.getNode();
-
-					if ($isTextNode(node)) {
-						const text = node.getTextContent();
-						const offset = colonOffset.current;
-
-						if ((offset >= 0) && (text[offset] === ':')) {
-							const before = text.slice(0, offset);
-							const after = text.slice(offset + 1);
-							node.setTextContent(before + icon + after);
-							node.select(before.length + icon.length, before.length + icon.length);
-						};
-					};
-				});
-
-				colonOffset.current = -1;
-				editor.focus();
-			},
-		},
-	});
 };
 
 const MarkdownSequences: { pattern: RegExp; style: I.TextStyle }[] = [
@@ -3003,7 +3059,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction } = props;
+	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -3207,6 +3263,20 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 		setBlockStyle,
 		getCurrentBlockStyle,
 
+		insertEmoji: (icon: string) => {
+			const code = U.Smile.getCode(icon);
+			if (code) {
+				editorRef.current?.dispatchCommand(INSERT_EMOJI_COMMAND, { emoji: icon, code });
+			} else {
+				editorRef.current?.update(() => {
+					const selection = $getSelection();
+					if ($isRangeSelection(selection)) {
+						selection.insertText(icon);
+					};
+				});
+			};
+		},
+
 		insertEmbed: (processor: I.EmbedProcessor, text: string) => {
 			editorRef.current?.dispatchCommand(INSERT_EMBED_COMMAND, { processor, text });
 		},
@@ -3255,7 +3325,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, LinkTextNode, AttachmentNode, EmbedNode ],
+		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, LinkTextNode, AttachmentNode, EmbedNode, EmojiNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},
@@ -3286,9 +3356,10 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<AttachmentPlugin />
 				<EmbedPlugin />
 				<PasteUrlPlugin />
+				<PasteImagePlugin onPasteFiles={onPasteFiles} />
 				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />
-				<EmojiPlugin editorId={editorId} />
+				<EmojiCommandPlugin />
 				<MarkdownPlugin />
 				<InlineMarkdownPlugin />
 				<CodeHighlightPlugin />
