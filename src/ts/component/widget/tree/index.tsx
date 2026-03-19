@@ -46,8 +46,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
 
-	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
-
 	const clearSubscriptionHashes = () => {
 		subscriptionHashes.current = {};
 	};

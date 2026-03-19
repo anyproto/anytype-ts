@@ -246,7 +246,10 @@
 					> .flex { position: static; }
 					> .flex {
 						#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; padding: 16px; }
-						#value * { background: none; }
+						#value {
+							* { background: none; }
+							.title { @include text-common; font-weight: 400; }
+						}
 
 						.additional { 
 							position: absolute; top: 8px; left: 0px; z-index: 3; display: flex; padding: 0px 16px; width: 100%; 
