@@ -601,7 +601,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 							<Button
 								id={`button-${block.id}-add-record`}
 								color="accent"
-								className="addRecord c28"
+								className="addRecord"
+								size={28}
 								tooltipParam={{ text: tooltip }}
 								text={translate('commonNew')}
 								onClick={e => onRecordAdd(e, -1)}
@@ -610,7 +611,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								<Button
 									id={`button-${block.id}-add-record-select`}
 									color="accent"
-									className="select c28"
+									className="select"
+									size={28}
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}
 								/>

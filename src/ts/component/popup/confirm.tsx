@@ -176,13 +176,13 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			{confirmMessage ? (
 				<div className="confirmMessage">
-					<Input type="text" ref={inputRef} className={`c${buttonSize}`} placeholder={confirmMessage} />
+					<Input type="text" ref={inputRef} size={buttonSize} placeholder={confirmMessage} />
 				</div>
 			) : ''}
 
 			<div className="buttons">
-				{canConfirm ? <Button text={textConfirm} color={colorConfirm} className={`c${buttonSize}`} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
-				{canCancel ? <Button text={textCancel} color={colorCancel} className={`c${buttonSize}`} onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canConfirm ? <Button text={textConfirm} color={colorConfirm} size={buttonSize} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canCancel ? <Button text={textCancel} color={colorCancel} size={buttonSize} onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
 			</div>
 
 			<Error text={errorText} />
