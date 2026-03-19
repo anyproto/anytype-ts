@@ -269,16 +269,6 @@ const App: FC = () => {
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
 
-		// Web deep link: use browser URL path as route (first load only,
-		// skip on HMR re-renders to avoid re-triggering auth/space switch)
-		if (!route && window.isWebVersion && !(window as any).__WEB_ROUTE_LOADED__) {
-			const initialPath = window.location.pathname;
-			if (initialPath && (initialPath !== '/')) {
-				route = initialPath;
-			}
-		}
-		(window as any).__WEB_ROUTE_LOADED__ = true;
-
 		if (route) {
 			const rp = U.Router.getParam(route);
 			if (
