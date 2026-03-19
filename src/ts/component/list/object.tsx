@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
-import { I, C, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 
 interface Column {
 	relationKey: string;

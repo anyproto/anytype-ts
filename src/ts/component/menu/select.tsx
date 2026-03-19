@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEven
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Label, Icon } from 'Component';
+import { Filter, MenuItemVertical, Icon } from 'Component';
 import { I, U, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
@@ -75,10 +75,10 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	});
 
 	useEffect(() => {
-		if (!withFilter) {
+		if (!isWithFilter()) {
 			return;
 		};
-		
+
 		n.current = -1;
 		top.current = 0;
 		listRef.current?.scrollToPosition(top.current);
@@ -231,7 +231,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const isWithFilter = () => {
-		if (withFilter) {
+		if (data.withFilter) {
 			return true;
 		};
 
@@ -409,7 +409,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{withFilter ? (
 				<Filter
 					ref={filterRef}
-					className="outlined round"
 					value={filter}
 					placeholder={placeholder}
 					onChange={onFilterChange}

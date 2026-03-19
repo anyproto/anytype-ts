@@ -4,6 +4,13 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
+import ghostIcon from 'img/icon/ghost.svg';
+import objCheckbox0 from 'img/icon/object/checkbox0.svg';
+import objCheckbox1 from 'img/icon/object/checkbox1.svg';
+import objCheckbox2 from 'img/icon/object/checkbox2.svg';
+import objCheckbox1Dark from 'img/theme/dark/icon/object/checkbox1.svg';
+import errorIconSvg from 'img/icon/error.svg?raw';
+
 interface Props {
 	id?: string;
 	layout?: I.ObjectLayout;
@@ -94,18 +101,18 @@ const FontSize = {
 	128: 72,
 };
 
-const Ghost = require('img/icon/ghost.svg');
+const Ghost = ghostIcon;
 
 const CheckboxTask = {
 	'': {
-		0: require('img/icon/object/checkbox0.svg'),
-		1: require('img/icon/object/checkbox1.svg'),
-		2: require('img/icon/object/checkbox2.svg'),
+		0: objCheckbox0,
+		1: objCheckbox1,
+		2: objCheckbox2,
 	},
 	dark: {
-		0: require('img/icon/object/checkbox0.svg'),
-		1: require('img/theme/dark/icon/object/checkbox1.svg'),
-		2: require('img/icon/object/checkbox2.svg'),
+		0: objCheckbox0,
+		1: objCheckbox1Dark,
+		2: objCheckbox2,
 	},
 };
 
@@ -438,7 +445,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const img = $('<img />');
 
 		img.attr({ 
-			src: U.Common.updateSvg(require('img/icon/error.svg'), { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
+			src: U.Common.updateSvg(errorIconSvg, { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
 			class: `iconError c${IconSize[size]}`,
 		});
 		node.append(img).addClass('withImageError');

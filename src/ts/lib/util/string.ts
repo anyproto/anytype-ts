@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
-import { I, U, Mark } from 'Lib';
+import { U, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;

@@ -153,7 +153,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 							<Label text={translate('menuDataviewCreateBookmarkContent')} />
 						</div>
 						<div className="side right">
-							<Button type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
+							<Button type="input" size={28} text={translate('commonCreate')} onClick={onSubmit} />
 						</div>
 					</div>
 				</>

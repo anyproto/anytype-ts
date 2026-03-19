@@ -558,7 +558,6 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		filterElement = (
 			<Filter 
 				ref={filterRef}
-				className="outlined round"
 				value={filter}
 				onChange={onFilterChange} 
 				focusOnMount={true}

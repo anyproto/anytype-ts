@@ -62,8 +62,8 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 		buttons = (
 			<div className="buttons">
-				<Button text={translate('commonCopy')} className="c36" onClick={onCopy} />
-				<Button text={translate('commonClose')} className="c36" color="blank" onClick={() => close()} />
+				<Button text={translate('commonCopy')} size={36} onClick={onCopy} />
+				<Button text={translate('commonClose')} size={36} color="blank" onClick={() => close()} />
 			</div>
 		);
 	} else {
@@ -80,8 +80,8 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 		buttons = (
 			<div className="buttons">
-				<Button text={translate('commonCreate')} className="c36" onClick={onSubmit} />
-				<Button text={translate('commonCancel')} className="c36" color="blank" onClick={() => close()} />
+				<Button text={translate('commonCreate')} size={36} onClick={onSubmit} />
+				<Button text={translate('commonCancel')} size={36} color="blank" onClick={() => close()} />
 			</div>
 		);
 	};

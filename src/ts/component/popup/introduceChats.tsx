@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { Title, Label, Button, Icon, IconObject } from 'Component';
+import { Title, Label, Button, Icon, } from 'Component';
 import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
@@ -59,7 +59,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 				<div className="text">
 					<Title text={translate('onboardingChatsTitle')} />
 					<Label text={translate('onboardingChatsDescription')} />
-					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c48" />
+					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} size={48} />
 				</div>
 
 				<div className="grad" />
@@ -76,7 +76,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 									<Label className="description hidden" text={translate(`onboardingChatsSlide${idx}Text`)} />
 									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
 								</>
-							) : <Button onClick={() => close()} className="c36" text={translate('commonSeeUpdates')} />}
+							) : <Button onClick={() => close()} size={36} text={translate('commonSeeUpdates')} />}
 						</div>
 					))}
 				</div>

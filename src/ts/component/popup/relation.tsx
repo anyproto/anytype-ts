@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, EmptySearch } from 'Component';
 import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
-const Diff = require('diff');
+import * as Diff from 'diff';
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
@@ -324,8 +324,8 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="line" />
 
 			<div className="buttons">
-				<Button text="Save" className="c28" onClick={save} />
-				<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
+				<Button text="Save" size={28} onClick={save} />
+				<Button text="Cancel" size={28} color="blank" onClick={() => close()} />
 			</div>
 
 			<Error text={error} />

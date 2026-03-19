@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { Title, Icon, Label, Button, Phrase } from 'Component';
-import { I, keyboard, translate, Storage, S, Renderer, C, analytics, U, sidebar } from 'Lib';
+import { Title, Label, Button, Phrase } from 'Component';
+import { I, keyboard, translate, S, Renderer, C, analytics, U, } from 'Lib';
 
 const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -129,8 +129,8 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			<div ref={buttonsRef} className="buttons">
-				<Button text={translate('commonShowKey')} color="black" className="c36" onClick={onCopy} onMouseEnter={onMouseEnter} />
-				<Button text={translate('popupLogoutLogoutButton')} color="red" className="c36" onClick={onLogout} onMouseEnter={onMouseEnter} />
+				<Button text={translate('commonShowKey')} color="black" size={36} onClick={onCopy} onMouseEnter={onMouseEnter} />
+				<Button text={translate('popupLogoutLogoutButton')} color="red" size={36} onClick={onLogout} onMouseEnter={onMouseEnter} />
 			</div>
 		</div>
 	);

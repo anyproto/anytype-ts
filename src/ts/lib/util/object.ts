@@ -1,7 +1,30 @@
-import route from 'json/route';
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
-const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
+import errorIcon from '../../../img/icon/error.svg?raw';
+
+const typeIconModules = import.meta.glob([
+	'../../../img/icon/type/default/*.svg',
+	'/dist/img/icon/type/default/*.svg',
+], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const typeIcons = (key: string): string => {
+	const name = key.replace('./', '');
+	for (const path of Object.keys(typeIconModules)) {
+		if (path.endsWith(`/${name}`)) return typeIconModules[path];
+	};
+	throw new Error(`Cannot find icon: ${key}`);
+};
+
+const defaultIconModules = import.meta.glob([
+	'../../../img/icon/default/*.svg',
+	'/dist/img/icon/default/*.svg',
+], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const getDefaultIcon = (id: string): string => {
+	const name = `${id}.svg`;
+	for (const path of Object.keys(defaultIconModules)) {
+		if (path.endsWith(`/${name}`)) return defaultIconModules[path];
+	};
+	throw new Error(`Cannot find default icon: ${id}`);
+};
 
 /**
  * UtilObject provides utilities for working with Anytype objects.
@@ -462,7 +485,9 @@ class UtilObject {
 		param.limit = 1;
 
 		this.getByIds([ id ], param, objects => {
-			callBack?.(objects[0]);
+			if (objects.length) {
+				callBack?.(objects[0]);
+			};
 		});
 	};
 
@@ -989,7 +1014,7 @@ class UtilObject {
 			svg = typeIcons(`./${id}.svg`);
 			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
 		} catch (e) {
-			svg = U.Common.updateSvg(require('img/icon/error.svg'), { id, size, fill: newColor });
+			svg = U.Common.updateSvg(errorIcon, { id, size, fill: newColor });
 		};
 
 		return svg;
@@ -1019,10 +1044,21 @@ class UtilObject {
 				case I.ObjectLayout.Navigation: id = 'graph'; break;
 				case I.ObjectLayout.Archive: id = 'archive'; break;
 			};
-			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
+			src = U.Common.updateSvg(getDefaultIcon(id), { id, size, fill: J.Theme[theme].iconDefault });
 		};
 
 		return src;
+	};
+
+	chatHasUnread (spaceId: string, chatId: string): boolean {
+		const counters = S.Chat.getChatCounters(spaceId, chatId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		const mode = this.getChatNotificationMode(spaceview, chatId);
+
+		return (
+			((mode == I.NotificationMode.All) && !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter)) ||
+			((mode == I.NotificationMode.Mentions) && !!counters.mentionCounter)
+		);
 	};
 
 	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {

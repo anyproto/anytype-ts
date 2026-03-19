@@ -1,0 +1,10 @@
+import React from 'react';
+import type { IconSvgProps } from '../../iconRegistry';
+
+export function EditIcon({ size, color }: IconSvgProps) {
+	return (
+		<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none">
+			<path d="M15.5 6.50018L16.7929 5.20729C17.1834 4.81677 17.1834 4.1836 16.7929 3.79308L16.2071 3.20729C15.8166 2.81677 15.1834 2.81677 14.7929 3.20729L13.5 4.50018L15.5 6.50018ZM6 16.0002L14.5 7.50018L12.5 5.50018L4 14.0002L3 17L6 16.0002Z" fill={color}/>
+		</svg>
+	);
+}

@@ -29,7 +29,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return [
 			{ 
 				id: 'whatsNew', icon: 'help-bell', document: 'whatsNew', 
-				caption: <Button className="c16" text={U.Common.getElectron().version.app} /> 
+				caption: <Button size={16} text={U.Common.getElectron().version.app} /> 
 			},
 			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },

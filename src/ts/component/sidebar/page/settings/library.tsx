@@ -475,13 +475,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back withBackground" onClick={onBack} />
+					<Icon className="back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center">
 					<Label text={title} />
 				</div>
 				<div className="side right">
-					<Icon id="button-object-more" className="more withBackground" onClick={onMore} />
+					<Icon id="button-object-more" className="more" withBackground={true} onClick={onMore} />
 				</div>
 			</div>
 
@@ -491,15 +491,14 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 						<div className="side left">
 							<Filter
 								ref={filterInputRef}
-								icon="search"
-								className="outlined round"
+								iconParam={{ className: 'search' }}
 								placeholder={translate('commonSearch')}
 								onChange={onFilterChange}
 								onClear={onFilterClear}
 							/>
 						</div>
 						<div className="side right">
-							{canWrite ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={onAdd} /> : ''}
+							{canWrite ? <Button id="button-object-create" color="blank" size={28} text={translate('commonNew')} onClick={onAdd} /> : ''}
 						</div>
 					</div>
 

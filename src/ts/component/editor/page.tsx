@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Deleted, DropTarget, EditorControls, CommentSection } from 'Component';
+import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import { FocusedPanel } from 'Lib/keyboard/router';
 import PageHeadEditor from 'Component/page/elements/head/editor';

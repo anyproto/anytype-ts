@@ -119,8 +119,8 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 				{isWhatsNew ? (
 					<div className="buttons">
-						{page < length - 1 ? <Button className="c28" text={translate('popupHelpPrevious')} onClick={() => onArrow(1)} /> : ''}
-						{page > 0 ? <Button className="c28" text={translate('popupHelpNext')} onClick={() => onArrow(-1)} /> : ''}
+						{page < length - 1 ? <Button size={28} text={translate('popupHelpPrevious')} onClick={() => onArrow(1)} /> : ''}
+						{page > 0 ? <Button size={28} text={translate('popupHelpNext')} onClick={() => onArrow(-1)} /> : ''}
 					</div>
 				) : ''}
 			</div>

@@ -179,7 +179,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 				{error.code ? (
 					<div className="buttons">
 						<div className="animation">
-							<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
+							<Button text={translate('commonBack')} size={28} onClick={onCancel} />
 						</div>
 					</div>
 				) : ''}

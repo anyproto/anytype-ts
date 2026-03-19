@@ -1,11 +1,14 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, U, Relation, Preview } from 'Lib';
+import { I, S, Relation, Preview } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
+
+type SelectSize = 28 | 36;
 
 interface Props {
 	id: string;
 	initial?: string;
+	size?: SelectSize;
 	className?: string;
 	arrowClassName?: string;
 	element?: string;
@@ -30,6 +33,7 @@ interface SelectRefProps {
 const Select = forwardRef<SelectRefProps, Props>(({
 	id = '',
 	initial = '',
+	size = 28,
 	className = '',
 	arrowClassName = '',
 	element = '',
@@ -47,13 +51,9 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	const [ value, setValue ] = useState(initialValue);
 	const [ options, setOptions ] = useState(initialOptions);
 	const nodeRef = useRef(null);
-	const cn = [ 'select', className ];
+	const cn = [ 'select', `size${size}`, className ];
 	const acn = [ 'arrow', arrowClassName ];
 	const current: any[] = [];
-
-	if (className) {
-		cn.push(className);
-	};
 
 	if (readonly) {
 		cn.push('isReadonly');

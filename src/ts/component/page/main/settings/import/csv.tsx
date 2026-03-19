@@ -172,7 +172,7 @@ const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsC
 			</div>
 			
 			<div className="buttons">
-				<Button className="c36" text={translate('popupSettingsImportData')} onClick={onImport} />
+				<Button size={36} text={translate('popupSettingsImportData')} onClick={onImport} />
 			</div>
 
 			<Error text={error} />

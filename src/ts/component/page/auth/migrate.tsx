@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
-import { I, C, S, U, Storage, translate, keyboard } from 'Lib';
+import { I, C, S, U, Storage, translate, } from 'Lib';
 
 const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -53,8 +53,8 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					<Title text={translate('pageAuthMigrateInitTitle')} />
 					<Label text={translate('pageAuthMigrateInitText')} />
 					<div className="buttons">
-						<Button text={translate('pageAuthMigrateInitButtonStartUpdate')} className="c48" color="accent" onClick={onMigrate} />
-						<Button text={translate('pageAuthMigrateInitButtonReadMore')} className="c48" color="none" onClick={() => setScreen('info')} />
+						<Button text={translate('pageAuthMigrateInitButtonStartUpdate')} size={48} color="accent" onClick={onMigrate} />
+						<Button text={translate('pageAuthMigrateInitButtonReadMore')} size={48} color="none" onClick={() => setScreen('info')} />
 					</div>
 				</>
 			);
@@ -64,7 +64,7 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		case 'info': {
 			content = (
 				<>
-					<Icon className="close withBackground" onClick={() => setScreen('init')} />
+					<Icon className="close" withBackground={true} onClick={() => setScreen('init')} />
 
 					<div className="items">
 						<div className="item">
@@ -105,7 +105,7 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					<Icon />
 					<Title text={errorTitle} />
 					<Label text={errorText} />
-					<Button text={translate('pageAuthMigrateTryAgain')} className="c48" color="accent" onClick={onMigrate} />
+					<Button text={translate('pageAuthMigrateTryAgain')} size={48} color="accent" onClick={onMigrate} />
 				</>
 			);
 			break;

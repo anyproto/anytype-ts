@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
@@ -248,20 +248,29 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 			};
 
-			let sectionName = 'commonText';
+			let sectionName = '';
+			const count = blockIds.length;
 
+			if (count > 1) {
+				sectionName = `${count} ${U.Common.plural(count, translate('pluralBlock'))}`;
+			} else
+			if (hasText) {
+				sectionName = translate('commonText');
+			} else
 			if (hasLink) {
-				sectionName = 'commonObject';
+				sectionName = translate('commonObject');
 			} else
 			if (hasFile) {
-				sectionName = (content.type == I.FileType.Image) ? 'commonImage' : 'commonFile';
+				sectionName = translate((content.type == I.FileType.Image) ? 'commonImage' : 'commonFile');
 			} else
 			if (hasBookmark) {
-				sectionName = 'commonBookmark';
+				sectionName = translate('commonBookmark');
+			} else {
+				sectionName = translate('commonBlock');
 			};
 
 			sections = [
-				{ name: translate(sectionName), className: 'settingsText', children: c1 },
+				{ name: sectionName, className: 'settingsText', children: c1 },
 				...actionSections,
 			];
 		};
@@ -771,7 +780,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div>
 			<Filter 
 				ref={filterRef}
-				className="outlined round"
 				placeholder={translate('menuBlockActionsFilterActions')}
 				value={filter}
 				onFocus={onFilterFocus} 

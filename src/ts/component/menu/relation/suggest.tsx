@@ -330,7 +330,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
 					placeholder={translate('menuRelationSuggestFilterOrCreateRelation')}
 					value={filter}
 					onChange={onFilterChange}

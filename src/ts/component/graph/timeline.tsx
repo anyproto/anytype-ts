@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, useCallback, useMemo } 
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react';
-import { Icon, DragHorizontal } from 'Component';
-import { S, J, translate } from 'Lib';
+import { DragHorizontal } from 'Component';
+import { S, } from 'Lib';
 
 interface Props {
 	id: string;

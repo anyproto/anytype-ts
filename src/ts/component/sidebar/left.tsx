@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, SidebarProgress } from 'Component';
-import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { SidebarProgress } from 'Component';
+import { I, U, S, J, keyboard, Preview, sidebar, } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';

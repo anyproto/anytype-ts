@@ -4,45 +4,55 @@
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
-		"precommit": "npx lint-staged",
-		"typecheck": "npx tsc --noEmit -p tsconfig.json",
-		"lint": "eslint .",
+		"precommit": "bunx lint-staged",
+		"typecheck": "bunx tsc --noEmit -p tsconfig.json && bunx tsc --noEmit -p tsconfig.electron.json",
+		"lint": "bunx biome lint src/ && eslint .",
+		"lint:fix": "bunx biome check --write src/",
+		"format": "bunx biome format --write src/",
+		"format:check": "bunx biome format src/",
 		"release:notes": "node scripts/generate-release-notes.js",
-		"electron": "npx electron .",
-		"electron-win": "npx electron.cmd .",
-		"doctor:start:dev": "RSDOCTOR=true npm run start:dev",
-		"doctor:build:dev": "RSDOCTOR=true npm run build:dev",
-		"start:watch": "cross-env-shell rspack serve --mode=development --node-env=development  --env SERVER_PORT=${SERVER_PORT:-8080} --env DATA_PATH=$DATA_PATH",
-		"start:electron-wait-rspack": "cross-env-shell wait-for-localhost ${SERVER_PORT:-8080} && npm run electron",
-		"start:electron-wait-rspack-win": "cross-env-shell wait-for-localhost ${SERVER_PORT:-8080} && npm run electron-win",
-		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-rspack",
-		"start:dev-win": "npm-run-all --parallel start:watch start:electron-wait-rspack-win",
-		"build": "rspack --mode=production --node-env=production --config rspack.config.js",
-		"build:dev": "rspack --mode=development --node-env=development --config rspack.config.js",
-		"build:deps": "rspack build --config rspack.node.config.js --json=compilation-stats.json && cat compilation-stats.json | grep -o '[^\"]\\+node_modules[^\"]\\+' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
+		"electron": "bunx electron .",
+		"electron-win": "bunx electron.cmd .",
+		"start:watch": "cross-env-shell vite --config vite.config.ts --port ${SERVER_PORT:-8080}",
+		"start:electron-wait-vite": "cross-env-shell node scripts/wait-for-localhost.js ${SERVER_PORT:-8080} && bun run electron",
+		"start:electron-wait-vite-win": "cross-env-shell node scripts/wait-for-localhost.js ${SERVER_PORT:-8080} && bun run electron-win",
+		"start:dev": "node scripts/build-electron.js && node scripts/start-dev.js",
+		"start:dev-win": "node scripts/build-electron.js && node scripts/start-dev.js",
+		"build:electron": "node scripts/build-electron.js",
+		"watch:electron": "node scripts/build-electron.js --watch",
+		"build": "node scripts/build-electron.js && vite build --config vite.config.ts",
+		"build:dev": "node scripts/build-electron.js && vite build --config vite.config.ts --mode development",
+		"build:ext": "vite build --config vite.extension.config.ts",
+		"build:deps": "node scripts/analyze-deps.js",
 		"build:nmh": "go build -o dist/nativeMessagingHost ./go/nativeMessagingHost.go",
 		"build:nmh-win": "go build -o dist/nativeMessagingHost.exe ./go/nativeMessagingHost.go",
-		"build:pixi": "rspack --config rspack.pixi.config.js",
-		"dist:mac": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
-		"dist:macarm": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
-		"dist:macamd": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
-		"dist:win": "rspack --mode=production --node-env=production && electron-builder --windows",
-		"dist:linux": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64 --x64",
-		"dist:linuxamd": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --x64",
-		"dist:linuxamd-appimage": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --x64",
-		"dist:linuxarm": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64",
-		"dist:linuxarm-appimage": "npm run build:deps && rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --arm64",
-		"publish:mac": "rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
-		"publish:linux": "rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
-		"publish:win": "rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
-		"postinstall": "npx patch-package && electron-builder install-app-deps",
+		"build:pixi": "vite build --config vite.worker.config.ts",
+		"generate:icons": "bun scripts/convert-icons.ts",
+		"generate:protos": "bash scripts/generate-protos.sh",
+		"dist:mac": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
+		"dist:macarm": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
+		"dist:macamd": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
+		"dist:win": "bun run build:electron && vite build --config vite.config.ts && electron-builder --windows",
+		"dist:linux": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64 --x64",
+		"dist:linuxamd": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --x64",
+		"dist:linuxamd-appimage": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --x64",
+		"dist:linuxarm": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64",
+		"dist:linuxarm-appimage": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --arm64",
+		"publish:mac": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
+		"publish:linux": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
+		"publish:win": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
+		"postinstall": "bunx patch-package && electron-builder install-app-deps",
 		"prepare": "husky install",
 		"update:locale": "node ./electron/hook/locale.js",
 		"ext:manifest:firefox": "node electron/hook/switch-manifest.js firefox",
 		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium",
 		"start:web": "node scripts/start-web.js",
 		"start:dev-web": "cross-env WEB_OPEN_BROWSER=1 node scripts/start-web.js",
-		"build:web": "cross-env BUILD_TARGET=web rspack --mode=production --node-env=production --env target=web"
+		"build:web": "vite build --config vite.web.config.ts",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"storybook": "storybook dev -p 6006",
+		"storybook:build": "storybook build"
 	},
 	"repository": {
 		"type": "git",
@@ -58,12 +68,12 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
-		"@electron/notarize": "^3.1.0",
-		"@rsdoctor/rspack-plugin": "^1.3.4",
-		"@rspack/cli": "^1.7.8",
-		"@rspack/core": "^1.7.8",
-		"@rspack/plugin-react-refresh": "^1.6.1",
-		"@tomjs/electron-devtools-installer": "^3.0.1",
+		"@biomejs/biome": "^2.4.8",
+		"@electron/notarize": "^3.1.1",
+		"@storybook/addon-essentials": "^8",
+		"@storybook/react": "^8",
+		"@storybook/react-vite": "^8",
+		"@tomjs/electron-devtools-installer": "^4.0.1",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.33",
 		"@types/katex": "^0.16.7",
@@ -74,35 +84,36 @@
 		"@types/react": "^18.3.26",
 		"@types/react-dom": "^18.3.7",
 		"@types/react-router-dom": "^5.3.3",
+		"@vitejs/plugin-react-swc": "^4.2.0",
 		"ajv": "^7.2.4",
 		"cross-env": "^10.1.0",
-		"css-loader": "^7.1.2",
-		"electron": "^39.2.7",
-		"electron-builder": "^26.6.0",
+		"electron": "^41.0.2",
+		"electron-builder": "^26.8.1",
 		"eslint": "^9.26.0",
 		"eslint-plugin-react": "^7.37.5",
-		"fork-ts-checker-webpack-plugin": "^9.0.2",
 		"globals": "^16.0.0",
 		"husky": "^8.0.3",
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
-		"node-loader": "^2.1.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"sass": "1.77.6",
-		"sass-loader": "^8.0.2",
-		"source-map-loader": "^5.0.0",
-		"style-loader": "^1.2.1",
+		"storybook": "^8",
+		"terser": "^5.36.0",
+		"ts-proto": "^2.11.5",
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^8.54.0",
-		"wait-for-localhost-cli": "^3.0.0"
+		"vite": "^6.3.0",
+		"vite-plugin-static-copy": "^2.3.0",
+		"vitest": "^4.1.0"
 	},
 	"dependencies": {
+		"@bufbuild/protobuf": "^2.11.0",
 		"@dnd-kit/core": "^6.3.1",
 		"@dnd-kit/modifiers": "^9.0.0",
 		"@dnd-kit/sortable": "^10.0.0",
 		"@dnd-kit/utilities": "^3.2.2",
-		"@electron/remote": "^2.1.2",
+		"@electron/remote": "^2.1.3",
 		"@emoji-mart/data": "^1.2.1",
 		"@excalidraw/excalidraw": "^0.17.6",
 		"@lexical/link": "^0.40.0",
@@ -129,9 +140,9 @@
 		"diff": "^5.2.0",
 		"dompurify": "^3.3.0",
 		"electron-dl": "^3.5.2",
-		"electron-json-storage": "^4.5.0",
-		"electron-log": "^5.2.0",
-		"electron-updater": "^6.6.7",
+		"electron-json-storage": "^4.6.0",
+		"electron-log": "^5.4.3",
+		"electron-updater": "^6.8.3",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"elkjs": "^0.11.0",
@@ -279,121 +290,116 @@
 			"dist/nativeMessagingHost",
 			"dist/*.node",
 			"dist/cmaps/**/*",
-			"dist/wasm/**/*",
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
 			{
-				"from": "node_modules/google-protobuf",
-				"to": "node_modules/google-protobuf"
-			},
-			{
-				"from": "node_modules/grpc-web",
-				"to": "node_modules/grpc-web"
-			},
-			{
-				"from": "node_modules/lodash.isequal",
-				"to": "node_modules/lodash.isequal"
-			},
-			{
-				"from": "node_modules/lodash.escaperegexp",
-				"to": "node_modules/lodash.escaperegexp"
-			},
-			{
-				"from": "node_modules/read-chunk",
-				"to": "node_modules/read-chunk"
-			},
-			{
-				"from": "node_modules/with-open-file",
-				"to": "node_modules/with-open-file"
+				"from": "node_modules/@borewit/text-codec",
+				"to": "node_modules/@borewit/text-codec"
 			},
 			{
 				"from": "node_modules/@electron/remote",
 				"to": "node_modules/@electron/remote"
 			},
 			{
-				"from": "node_modules/p-try",
-				"to": "node_modules/p-try"
+				"from": "node_modules/@tokenizer/inflate",
+				"to": "node_modules/@tokenizer/inflate"
 			},
 			{
-				"from": "node_modules/yocto-queue",
-				"to": "node_modules/yocto-queue"
+				"from": "node_modules/@tokenizer/token",
+				"to": "node_modules/@tokenizer/token"
 			},
 			{
-				"from": "node_modules/uri-js",
-				"to": "node_modules/uri-js"
+				"from": "node_modules/@tomjs/electron-devtools-installer",
+				"to": "node_modules/@tomjs/electron-devtools-installer"
 			},
 			{
-				"from": "node_modules/fast-json-stable-stringify",
-				"to": "node_modules/fast-json-stable-stringify"
+				"from": "node_modules/@tomjs/unzip-crx",
+				"to": "node_modules/@tomjs/unzip-crx"
 			},
 			{
-				"from": "node_modules/ajv/dist/compile/codegen",
-				"to": "node_modules/ajv/dist/compile/codegen"
+				"from": "node_modules/argparse",
+				"to": "node_modules/argparse"
 			},
 			{
-				"from": "node_modules/p-finally",
-				"to": "node_modules/p-finally"
+				"from": "node_modules/array-buffer-byte-length",
+				"to": "node_modules/array-buffer-byte-length"
 			},
 			{
-				"from": "node_modules/file-type",
-				"to": "node_modules/file-type"
+				"from": "node_modules/array-find-index",
+				"to": "node_modules/array-find-index"
 			},
 			{
-				"from": "node_modules/regedit",
-				"to": "node_modules/regedit"
+				"from": "node_modules/array.prototype.flatmap",
+				"to": "node_modules/array.prototype.flatmap"
 			},
 			{
-				"from": "node_modules/stream-slicer",
-				"to": "node_modules/stream-slicer"
-			},
-			{
-				"from": "node_modules/util",
-				"to": "node_modules/util"
-			},
-			{
-				"from": "node_modules/mime-types",
-				"to": "node_modules/mime-types"
-			},
-			{
-				"from": "node_modules/mime-db",
-				"to": "node_modules/mime-db"
-			},
-			{
-				"from": "node_modules/@electron",
-				"to": "node_modules/@electron"
-			},
-			{
-				"from": "node_modules/@tomjs",
-				"to": "node_modules/@tomjs"
-			},
-			{
-				"from": "node_modules/ajv",
-				"to": "node_modules/ajv"
-			},
-			{
-				"from": "node_modules/ajv-formats",
-				"to": "node_modules/ajv-formats"
+				"from": "node_modules/arraybuffer.prototype.slice",
+				"to": "node_modules/arraybuffer.prototype.slice"
 			},
 			{
 				"from": "node_modules/async",
 				"to": "node_modules/async"
 			},
 			{
+				"from": "node_modules/async-function",
+				"to": "node_modules/async-function"
+			},
+			{
+				"from": "node_modules/available-typed-arrays",
+				"to": "node_modules/available-typed-arrays"
+			},
+			{
 				"from": "node_modules/balanced-match",
 				"to": "node_modules/balanced-match"
+			},
+			{
+				"from": "node_modules/base64-js",
+				"to": "node_modules/base64-js"
+			},
+			{
+				"from": "node_modules/bl",
+				"to": "node_modules/bl"
 			},
 			{
 				"from": "node_modules/brace-expansion",
 				"to": "node_modules/brace-expansion"
 			},
 			{
+				"from": "node_modules/buffer",
+				"to": "node_modules/buffer"
+			},
+			{
 				"from": "node_modules/builder-util-runtime",
 				"to": "node_modules/builder-util-runtime"
 			},
 			{
+				"from": "node_modules/call-bind",
+				"to": "node_modules/call-bind"
+			},
+			{
+				"from": "node_modules/call-bind-apply-helpers",
+				"to": "node_modules/call-bind-apply-helpers"
+			},
+			{
+				"from": "node_modules/call-bound",
+				"to": "node_modules/call-bound"
+			},
+			{
+				"from": "node_modules/camelcase",
+				"to": "node_modules/camelcase"
+			},
+			{
+				"from": "node_modules/camelcase-keys",
+				"to": "node_modules/camelcase-keys"
+			},
+			{
 				"from": "node_modules/check-disk-space",
 				"to": "node_modules/check-disk-space"
+			},
+			{
+				"from": "node_modules/chownr",
+				"to": "node_modules/chownr"
 			},
 			{
 				"from": "node_modules/concat-map",
@@ -404,12 +410,60 @@
 				"to": "node_modules/core-util-is"
 			},
 			{
+				"from": "node_modules/cross-spawn",
+				"to": "node_modules/cross-spawn"
+			},
+			{
 				"from": "node_modules/cross-spawn-async",
 				"to": "node_modules/cross-spawn-async"
 			},
 			{
+				"from": "node_modules/currently-unhandled",
+				"to": "node_modules/currently-unhandled"
+			},
+			{
+				"from": "node_modules/data-view-buffer",
+				"to": "node_modules/data-view-buffer"
+			},
+			{
+				"from": "node_modules/data-view-byte-length",
+				"to": "node_modules/data-view-byte-length"
+			},
+			{
+				"from": "node_modules/data-view-byte-offset",
+				"to": "node_modules/data-view-byte-offset"
+			},
+			{
 				"from": "node_modules/debug",
 				"to": "node_modules/debug"
+			},
+			{
+				"from": "node_modules/decamelize",
+				"to": "node_modules/decamelize"
+			},
+			{
+				"from": "node_modules/decompress-response",
+				"to": "node_modules/decompress-response"
+			},
+			{
+				"from": "node_modules/deep-extend",
+				"to": "node_modules/deep-extend"
+			},
+			{
+				"from": "node_modules/define-data-property",
+				"to": "node_modules/define-data-property"
+			},
+			{
+				"from": "node_modules/define-properties",
+				"to": "node_modules/define-properties"
+			},
+			{
+				"from": "node_modules/detect-libc",
+				"to": "node_modules/detect-libc"
+			},
+			{
+				"from": "node_modules/dunder-proto",
+				"to": "node_modules/dunder-proto"
 			},
 			{
 				"from": "node_modules/electron-dl",
@@ -440,8 +494,40 @@
 				"to": "node_modules/electron-window-state"
 			},
 			{
-				"from": "node_modules/env-paths",
-				"to": "node_modules/env-paths"
+				"from": "node_modules/end-of-stream",
+				"to": "node_modules/end-of-stream"
+			},
+			{
+				"from": "node_modules/error-ex",
+				"to": "node_modules/error-ex"
+			},
+			{
+				"from": "node_modules/es-abstract",
+				"to": "node_modules/es-abstract"
+			},
+			{
+				"from": "node_modules/es-define-property",
+				"to": "node_modules/es-define-property"
+			},
+			{
+				"from": "node_modules/es-errors",
+				"to": "node_modules/es-errors"
+			},
+			{
+				"from": "node_modules/es-object-atoms",
+				"to": "node_modules/es-object-atoms"
+			},
+			{
+				"from": "node_modules/es-set-tostringtag",
+				"to": "node_modules/es-set-tostringtag"
+			},
+			{
+				"from": "node_modules/es-shim-unscopables",
+				"to": "node_modules/es-shim-unscopables"
+			},
+			{
+				"from": "node_modules/es-to-primitive",
+				"to": "node_modules/es-to-primitive"
 			},
 			{
 				"from": "node_modules/escape-goat",
@@ -452,6 +538,10 @@
 				"to": "node_modules/execa"
 			},
 			{
+				"from": "node_modules/expand-template",
+				"to": "node_modules/expand-template"
+			},
+			{
 				"from": "node_modules/ext-list",
 				"to": "node_modules/ext-list"
 			},
@@ -460,16 +550,20 @@
 				"to": "node_modules/ext-name"
 			},
 			{
-				"from": "node_modules/fast-deep-equal",
-				"to": "node_modules/fast-deep-equal"
-			},
-			{
-				"from": "node_modules/fast-uri",
-				"to": "node_modules/fast-uri"
+				"from": "node_modules/file-type",
+				"to": "node_modules/file-type"
 			},
 			{
 				"from": "node_modules/find-up",
 				"to": "node_modules/find-up"
+			},
+			{
+				"from": "node_modules/for-each",
+				"to": "node_modules/for-each"
+			},
+			{
+				"from": "node_modules/fs-constants",
+				"to": "node_modules/fs-constants"
 			},
 			{
 				"from": "node_modules/fs-extra",
@@ -480,20 +574,112 @@
 				"to": "node_modules/fs.realpath"
 			},
 			{
+				"from": "node_modules/function-bind",
+				"to": "node_modules/function-bind"
+			},
+			{
+				"from": "node_modules/function.prototype.name",
+				"to": "node_modules/function.prototype.name"
+			},
+			{
+				"from": "node_modules/functions-have-names",
+				"to": "node_modules/functions-have-names"
+			},
+			{
+				"from": "node_modules/generator-function",
+				"to": "node_modules/generator-function"
+			},
+			{
+				"from": "node_modules/get-intrinsic",
+				"to": "node_modules/get-intrinsic"
+			},
+			{
+				"from": "node_modules/get-proto",
+				"to": "node_modules/get-proto"
+			},
+			{
+				"from": "node_modules/get-stdin",
+				"to": "node_modules/get-stdin"
+			},
+			{
+				"from": "node_modules/get-stream",
+				"to": "node_modules/get-stream"
+			},
+			{
+				"from": "node_modules/get-symbol-description",
+				"to": "node_modules/get-symbol-description"
+			},
+			{
 				"from": "node_modules/getos",
 				"to": "node_modules/getos"
+			},
+			{
+				"from": "node_modules/github-from-package",
+				"to": "node_modules/github-from-package"
 			},
 			{
 				"from": "node_modules/glob",
 				"to": "node_modules/glob"
 			},
 			{
+				"from": "node_modules/globalthis",
+				"to": "node_modules/globalthis"
+			},
+			{
+				"from": "node_modules/google-protobuf",
+				"to": "node_modules/google-protobuf"
+			},
+			{
+				"from": "node_modules/gopd",
+				"to": "node_modules/gopd"
+			},
+			{
 				"from": "node_modules/graceful-fs",
 				"to": "node_modules/graceful-fs"
 			},
 			{
+				"from": "node_modules/grpc-web",
+				"to": "node_modules/grpc-web"
+			},
+			{
+				"from": "node_modules/has-bigints",
+				"to": "node_modules/has-bigints"
+			},
+			{
 				"from": "node_modules/has-flag",
 				"to": "node_modules/has-flag"
+			},
+			{
+				"from": "node_modules/has-property-descriptors",
+				"to": "node_modules/has-property-descriptors"
+			},
+			{
+				"from": "node_modules/has-proto",
+				"to": "node_modules/has-proto"
+			},
+			{
+				"from": "node_modules/has-symbols",
+				"to": "node_modules/has-symbols"
+			},
+			{
+				"from": "node_modules/has-tostringtag",
+				"to": "node_modules/has-tostringtag"
+			},
+			{
+				"from": "node_modules/hasown",
+				"to": "node_modules/hasown"
+			},
+			{
+				"from": "node_modules/hosted-git-info",
+				"to": "node_modules/hosted-git-info"
+			},
+			{
+				"from": "node_modules/human-signals",
+				"to": "node_modules/human-signals"
+			},
+			{
+				"from": "node_modules/ieee754",
+				"to": "node_modules/ieee754"
 			},
 			{
 				"from": "node_modules/if-async",
@@ -508,6 +694,10 @@
 				"to": "node_modules/imurmurhash"
 			},
 			{
+				"from": "node_modules/indent-string",
+				"to": "node_modules/indent-string"
+			},
+			{
 				"from": "node_modules/inflight",
 				"to": "node_modules/inflight"
 			},
@@ -516,8 +706,116 @@
 				"to": "node_modules/inherits"
 			},
 			{
+				"from": "node_modules/ini",
+				"to": "node_modules/ini"
+			},
+			{
+				"from": "node_modules/internal-slot",
+				"to": "node_modules/internal-slot"
+			},
+			{
+				"from": "node_modules/is-array-buffer",
+				"to": "node_modules/is-array-buffer"
+			},
+			{
+				"from": "node_modules/is-arrayish",
+				"to": "node_modules/is-arrayish"
+			},
+			{
+				"from": "node_modules/is-async-function",
+				"to": "node_modules/is-async-function"
+			},
+			{
+				"from": "node_modules/is-bigint",
+				"to": "node_modules/is-bigint"
+			},
+			{
+				"from": "node_modules/is-boolean-object",
+				"to": "node_modules/is-boolean-object"
+			},
+			{
+				"from": "node_modules/is-callable",
+				"to": "node_modules/is-callable"
+			},
+			{
+				"from": "node_modules/is-core-module",
+				"to": "node_modules/is-core-module"
+			},
+			{
+				"from": "node_modules/is-data-view",
+				"to": "node_modules/is-data-view"
+			},
+			{
+				"from": "node_modules/is-date-object",
+				"to": "node_modules/is-date-object"
+			},
+			{
+				"from": "node_modules/is-finalizationregistry",
+				"to": "node_modules/is-finalizationregistry"
+			},
+			{
+				"from": "node_modules/is-finite",
+				"to": "node_modules/is-finite"
+			},
+			{
+				"from": "node_modules/is-generator-function",
+				"to": "node_modules/is-generator-function"
+			},
+			{
+				"from": "node_modules/is-map",
+				"to": "node_modules/is-map"
+			},
+			{
+				"from": "node_modules/is-negative-zero",
+				"to": "node_modules/is-negative-zero"
+			},
+			{
+				"from": "node_modules/is-number-object",
+				"to": "node_modules/is-number-object"
+			},
+			{
 				"from": "node_modules/is-plain-obj",
 				"to": "node_modules/is-plain-obj"
+			},
+			{
+				"from": "node_modules/is-regex",
+				"to": "node_modules/is-regex"
+			},
+			{
+				"from": "node_modules/is-set",
+				"to": "node_modules/is-set"
+			},
+			{
+				"from": "node_modules/is-shared-array-buffer",
+				"to": "node_modules/is-shared-array-buffer"
+			},
+			{
+				"from": "node_modules/is-stream",
+				"to": "node_modules/is-stream"
+			},
+			{
+				"from": "node_modules/is-string",
+				"to": "node_modules/is-string"
+			},
+			{
+				"from": "node_modules/is-symbol",
+				"to": "node_modules/is-symbol"
+			},
+			{
+				"from": "node_modules/is-typed-array",
+				"to": "node_modules/is-typed-array"
+			},
+			{
+				"from": "node_modules/is-weakmap",
+				"to": "node_modules/is-weakmap"
+			},
+			{
+				"from": "node_modules/is-weakref",
+				"to": "node_modules/is-weakref"
+			},
+			{
+				"from": "node_modules/is-weakset",
+				"to": "node_modules/is-weakset"
 			},
 			{
 				"from": "node_modules/isarray",
@@ -532,8 +830,8 @@
 				"to": "node_modules/js-yaml"
 			},
 			{
-				"from": "node_modules/json-schema-traverse",
-				"to": "node_modules/json-schema-traverse"
+				"from": "node_modules/json-parse-better-errors",
+				"to": "node_modules/json-parse-better-errors"
 			},
 			{
 				"from": "node_modules/jsonfile",
@@ -560,6 +858,10 @@
 				"to": "node_modules/linux-distro"
 			},
 			{
+				"from": "node_modules/load-json-file",
+				"to": "node_modules/load-json-file"
+			},
+			{
 				"from": "node_modules/locate-path",
 				"to": "node_modules/locate-path"
 			},
@@ -580,24 +882,60 @@
 				"to": "node_modules/lodash.isequal"
 			},
 			{
+				"from": "node_modules/loud-rejection",
+				"to": "node_modules/loud-rejection"
+			},
+			{
 				"from": "node_modules/lru-cache",
 				"to": "node_modules/lru-cache"
+			},
+			{
+				"from": "node_modules/map-obj",
+				"to": "node_modules/map-obj"
+			},
+			{
+				"from": "node_modules/math-intrinsics",
+				"to": "node_modules/math-intrinsics"
+			},
+			{
+				"from": "node_modules/meow",
+				"to": "node_modules/meow"
+			},
+			{
+				"from": "node_modules/merge-stream",
+				"to": "node_modules/merge-stream"
 			},
 			{
 				"from": "node_modules/mime-db",
 				"to": "node_modules/mime-db"
 			},
 			{
+				"from": "node_modules/mime-types",
+				"to": "node_modules/mime-types"
+			},
+			{
 				"from": "node_modules/mimic-fn",
 				"to": "node_modules/mimic-fn"
+			},
+			{
+				"from": "node_modules/mimic-response",
+				"to": "node_modules/mimic-response"
 			},
 			{
 				"from": "node_modules/minimatch",
 				"to": "node_modules/minimatch"
 			},
 			{
+				"from": "node_modules/minimist",
+				"to": "node_modules/minimist"
+			},
+			{
 				"from": "node_modules/mkdirp",
 				"to": "node_modules/mkdirp"
+			},
+			{
+				"from": "node_modules/mkdirp-classic",
+				"to": "node_modules/mkdirp-classic"
 			},
 			{
 				"from": "node_modules/modify-filename",
@@ -608,8 +946,28 @@
 				"to": "node_modules/ms"
 			},
 			{
+				"from": "node_modules/napi-build-utils",
+				"to": "node_modules/napi-build-utils"
+			},
+			{
 				"from": "node_modules/new-github-issue-url",
 				"to": "node_modules/new-github-issue-url"
+			},
+			{
+				"from": "node_modules/node-abi",
+				"to": "node_modules/node-abi"
+			},
+			{
+				"from": "node_modules/node-addon-api",
+				"to": "node_modules/node-addon-api"
+			},
+			{
+				"from": "node_modules/node-exports-info",
+				"to": "node_modules/node-exports-info"
+			},
+			{
+				"from": "node_modules/normalize-package-data",
+				"to": "node_modules/normalize-package-data"
 			},
 			{
 				"from": "node_modules/npm-run-path",
@@ -620,12 +978,32 @@
 				"to": "node_modules/object-assign"
 			},
 			{
+				"from": "node_modules/object-inspect",
+				"to": "node_modules/object-inspect"
+			},
+			{
+				"from": "node_modules/object-keys",
+				"to": "node_modules/object-keys"
+			},
+			{
+				"from": "node_modules/object.assign",
+				"to": "node_modules/object.assign"
+			},
+			{
+				"from": "node_modules/object.entries",
+				"to": "node_modules/object.entries"
+			},
+			{
 				"from": "node_modules/once",
 				"to": "node_modules/once"
 			},
 			{
 				"from": "node_modules/onetime",
 				"to": "node_modules/onetime"
+			},
+			{
+				"from": "node_modules/own-keys",
+				"to": "node_modules/own-keys"
 			},
 			{
 				"from": "node_modules/p-limit",
@@ -636,12 +1014,12 @@
 				"to": "node_modules/p-locate"
 			},
 			{
-				"from": "node_modules/p-try",
-				"to": "node_modules/p-try"
-			},
-			{
 				"from": "node_modules/pako",
 				"to": "node_modules/pako"
+			},
+			{
+				"from": "node_modules/parse-json",
+				"to": "node_modules/parse-json"
 			},
 			{
 				"from": "node_modules/path-exists",
@@ -656,12 +1034,24 @@
 				"to": "node_modules/path-key"
 			},
 			{
+				"from": "node_modules/path-parse",
+				"to": "node_modules/path-parse"
+			},
+			{
+				"from": "node_modules/path-type",
+				"to": "node_modules/path-type"
+			},
+			{
 				"from": "node_modules/pify",
 				"to": "node_modules/pify"
 			},
 			{
-				"from": "node_modules/pkg-up",
-				"to": "node_modules/pkg-up"
+				"from": "node_modules/possible-typed-array-names",
+				"to": "node_modules/possible-typed-array-names"
+			},
+			{
+				"from": "node_modules/prebuild-install",
+				"to": "node_modules/prebuild-install"
 			},
 			{
 				"from": "node_modules/process-nextick-args",
@@ -672,24 +1062,72 @@
 				"to": "node_modules/pseudomap"
 			},
 			{
+				"from": "node_modules/pump",
+				"to": "node_modules/pump"
+			},
+			{
 				"from": "node_modules/pupa",
 				"to": "node_modules/pupa"
+			},
+			{
+				"from": "node_modules/rc",
+				"to": "node_modules/rc"
+			},
+			{
+				"from": "node_modules/read-pkg",
+				"to": "node_modules/read-pkg"
+			},
+			{
+				"from": "node_modules/read-pkg-up",
+				"to": "node_modules/read-pkg-up"
 			},
 			{
 				"from": "node_modules/readable-stream",
 				"to": "node_modules/readable-stream"
 			},
 			{
+				"from": "node_modules/redent",
+				"to": "node_modules/redent"
+			},
+			{
+				"from": "node_modules/reflect.getprototypeof",
+				"to": "node_modules/reflect.getprototypeof"
+			},
+			{
 				"from": "node_modules/regedit",
 				"to": "node_modules/regedit"
+			},
+			{
+				"from": "node_modules/regexp.prototype.flags",
+				"to": "node_modules/regexp.prototype.flags"
+			},
+			{
+				"from": "node_modules/repeating",
+				"to": "node_modules/repeating"
+			},
+			{
+				"from": "node_modules/resolve",
+				"to": "node_modules/resolve"
 			},
 			{
 				"from": "node_modules/rimraf",
 				"to": "node_modules/rimraf"
 			},
 			{
+				"from": "node_modules/safe-array-concat",
+				"to": "node_modules/safe-array-concat"
+			},
+			{
 				"from": "node_modules/safe-buffer",
 				"to": "node_modules/safe-buffer"
+			},
+			{
+				"from": "node_modules/safe-push-apply",
+				"to": "node_modules/safe-push-apply"
+			},
+			{
+				"from": "node_modules/safe-regex-test",
+				"to": "node_modules/safe-regex-test"
 			},
 			{
 				"from": "node_modules/sanitize-filename",
@@ -704,12 +1142,56 @@
 				"to": "node_modules/semver"
 			},
 			{
+				"from": "node_modules/set-function-length",
+				"to": "node_modules/set-function-length"
+			},
+			{
+				"from": "node_modules/set-function-name",
+				"to": "node_modules/set-function-name"
+			},
+			{
+				"from": "node_modules/set-proto",
+				"to": "node_modules/set-proto"
+			},
+			{
 				"from": "node_modules/setimmediate",
 				"to": "node_modules/setimmediate"
 			},
 			{
+				"from": "node_modules/shebang-command",
+				"to": "node_modules/shebang-command"
+			},
+			{
+				"from": "node_modules/shebang-regex",
+				"to": "node_modules/shebang-regex"
+			},
+			{
+				"from": "node_modules/side-channel",
+				"to": "node_modules/side-channel"
+			},
+			{
+				"from": "node_modules/side-channel-list",
+				"to": "node_modules/side-channel-list"
+			},
+			{
+				"from": "node_modules/side-channel-map",
+				"to": "node_modules/side-channel-map"
+			},
+			{
+				"from": "node_modules/side-channel-weakmap",
+				"to": "node_modules/side-channel-weakmap"
+			},
+			{
 				"from": "node_modules/signal-exit",
 				"to": "node_modules/signal-exit"
+			},
+			{
+				"from": "node_modules/simple-concat",
+				"to": "node_modules/simple-concat"
+			},
+			{
+				"from": "node_modules/simple-get",
+				"to": "node_modules/simple-get"
 			},
 			{
 				"from": "node_modules/sort-keys",
@@ -720,32 +1202,132 @@
 				"to": "node_modules/sort-keys-length"
 			},
 			{
+				"from": "node_modules/spdx-correct",
+				"to": "node_modules/spdx-correct"
+			},
+			{
+				"from": "node_modules/spdx-exceptions",
+				"to": "node_modules/spdx-exceptions"
+			},
+			{
+				"from": "node_modules/spdx-expression-parse",
+				"to": "node_modules/spdx-expression-parse"
+			},
+			{
+				"from": "node_modules/spdx-license-ids",
+				"to": "node_modules/spdx-license-ids"
+			},
+			{
+				"from": "node_modules/stop-iteration-iterator",
+				"to": "node_modules/stop-iteration-iterator"
+			},
+			{
 				"from": "node_modules/stream-slicer",
 				"to": "node_modules/stream-slicer"
+			},
+			{
+				"from": "node_modules/string.prototype.trim",
+				"to": "node_modules/string.prototype.trim"
+			},
+			{
+				"from": "node_modules/string.prototype.trimend",
+				"to": "node_modules/string.prototype.trimend"
+			},
+			{
+				"from": "node_modules/string.prototype.trimstart",
+				"to": "node_modules/string.prototype.trimstart"
 			},
 			{
 				"from": "node_modules/string_decoder",
 				"to": "node_modules/string_decoder"
 			},
 			{
+				"from": "node_modules/strip-bom",
+				"to": "node_modules/strip-bom"
+			},
+			{
 				"from": "node_modules/strip-eof",
 				"to": "node_modules/strip-eof"
+			},
+			{
+				"from": "node_modules/strip-final-newline",
+				"to": "node_modules/strip-final-newline"
+			},
+			{
+				"from": "node_modules/strip-indent",
+				"to": "node_modules/strip-indent"
+			},
+			{
+				"from": "node_modules/strip-json-comments",
+				"to": "node_modules/strip-json-comments"
+			},
+			{
+				"from": "node_modules/strtok3",
+				"to": "node_modules/strtok3"
 			},
 			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
 			},
 			{
-				"from": "node_modules/systeminformation",
-				"to": "node_modules/systeminformation"
+				"from": "node_modules/supports-preserve-symlinks-flag",
+				"to": "node_modules/supports-preserve-symlinks-flag"
+			},
+			{
+				"from": "node_modules/tar-fs",
+				"to": "node_modules/tar-fs"
+			},
+			{
+				"from": "node_modules/tar-stream",
+				"to": "node_modules/tar-stream"
 			},
 			{
 				"from": "node_modules/through2",
 				"to": "node_modules/through2"
 			},
 			{
+				"from": "node_modules/tiny-typed-emitter",
+				"to": "node_modules/tiny-typed-emitter"
+			},
+			{
+				"from": "node_modules/token-types",
+				"to": "node_modules/token-types"
+			},
+			{
+				"from": "node_modules/trim-newlines",
+				"to": "node_modules/trim-newlines"
+			},
+			{
 				"from": "node_modules/truncate-utf8-bytes",
 				"to": "node_modules/truncate-utf8-bytes"
+			},
+			{
+				"from": "node_modules/tunnel-agent",
+				"to": "node_modules/tunnel-agent"
+			},
+			{
+				"from": "node_modules/typed-array-buffer",
+				"to": "node_modules/typed-array-buffer"
+			},
+			{
+				"from": "node_modules/typed-array-byte-length",
+				"to": "node_modules/typed-array-byte-length"
+			},
+			{
+				"from": "node_modules/typed-array-byte-offset",
+				"to": "node_modules/typed-array-byte-offset"
+			},
+			{
+				"from": "node_modules/typed-array-length",
+				"to": "node_modules/typed-array-length"
+			},
+			{
+				"from": "node_modules/uint8array-extras",
+				"to": "node_modules/uint8array-extras"
+			},
+			{
+				"from": "node_modules/unbox-primitive",
+				"to": "node_modules/unbox-primitive"
 			},
 			{
 				"from": "node_modules/universalify",
@@ -756,12 +1338,36 @@
 				"to": "node_modules/unused-filename"
 			},
 			{
+				"from": "node_modules/utf8-byte-length",
+				"to": "node_modules/utf8-byte-length"
+			},
+			{
 				"from": "node_modules/util-deprecate",
 				"to": "node_modules/util-deprecate"
 			},
 			{
+				"from": "node_modules/validate-npm-package-license",
+				"to": "node_modules/validate-npm-package-license"
+			},
+			{
 				"from": "node_modules/which",
 				"to": "node_modules/which"
+			},
+			{
+				"from": "node_modules/which-boxed-primitive",
+				"to": "node_modules/which-boxed-primitive"
+			},
+			{
+				"from": "node_modules/which-builtin-type",
+				"to": "node_modules/which-builtin-type"
+			},
+			{
+				"from": "node_modules/which-collection",
+				"to": "node_modules/which-collection"
+			},
+			{
+				"from": "node_modules/which-typed-array",
+				"to": "node_modules/which-typed-array"
 			},
 			{
 				"from": "node_modules/wrappy",
@@ -778,6 +1384,10 @@
 			{
 				"from": "node_modules/yallist",
 				"to": "node_modules/yallist"
+			},
+			{
+				"from": "node_modules/yocto-queue",
+				"to": "node_modules/yocto-queue"
 			}
 		],
 		"dmg": {
@@ -877,11 +1487,16 @@
 		}
 	},
 	"lint-staged": {
+		"src/**/*.{ts,tsx}": "bunx biome lint --no-errors-on-unmatched",
 		"{src,electron}/**/*.{js,ts,tsx}": "eslint"
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run precommit && git add licenses.json"
+			"pre-commit": "bun run precommit && git add licenses.json"
 		}
-	}
+	},
+	"trustedDependencies": [
+		"@sentry/cli",
+		"@swc/core"
+	]
 }

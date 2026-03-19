@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { S, translate, U, I, Action, analytics } from 'Lib';
+import { S, translate, U, Action, } from 'Lib';
 
 interface Props {
 	route: string;
@@ -61,7 +61,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
 				<Label className="upsell" text={upsellText} />
 			</div>
-			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} /> : ''}
+			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} size={28} onClick={onClick} /> : ''}
 		</div>
 	);
 

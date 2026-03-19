@@ -12,7 +12,7 @@ import Index from './iframe/index';
 import Create from './iframe/create';
 import Util from './lib/util';
 
-require('./scss/iframe.scss');
+import './scss/iframe.scss';
 
 configure({ enforceActions: 'never' });
 

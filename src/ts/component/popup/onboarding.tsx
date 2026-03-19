@@ -102,7 +102,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 				<Title text={translate('onboardingPrimitivesTitle')} />
 				<Label text={translate('onboardingPrimitivesDescription')} />
-				<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c42" />
+				<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} size={48} />
 			</div>
 
 			<div className="step1 init">
@@ -116,7 +116,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 									<Label className="description hidden" text={translate(`onboardingPrimitivesSlide${idx}Text`)} />
 									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
 								</>
-							) : <Button onClick={() => close()} className="c36" text={translate('commonSeeUpdates')} />}
+							) : <Button onClick={() => close()} size={36} text={translate('commonSeeUpdates')} />}
 						</div>
 					))}
 				</div>

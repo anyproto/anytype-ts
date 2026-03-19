@@ -25,6 +25,7 @@ interface Props extends I.BlockComponent {
 	highlightMessage: (id: string, orderId?: string) => void;
 	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
 	reloadAndScrollToBottom: () => void;
+	isBottom: React.RefObject<boolean>;
 };
 
 interface RefProps {
@@ -48,7 +49,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { 
 		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
-		highlightMessage, analyticsChatId, reloadAndScrollToBottom,
+		highlightMessage, analyticsChatId, reloadAndScrollToBottom, isBottom,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);
@@ -1736,10 +1737,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const Button = (item: any) => (
-		<div 
-			id={`navigation-${item.type}`} 
-			className={`btn ${item.className || ''}`} 
-			onClick={() => onNavigationClick(item.type)}
+		<div
+			id={`navigation-${item.type}`}
+			className={`btn ${item.className || ''}`}
+			onMouseDown={() => onNavigationClick(item.type)}
 		>
 			<div className="bg" />
 			<Icon className={item.icon} />
@@ -1914,13 +1915,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			</div>
 
 			<div className="inner">
-				{!isEmpty ? (
-					<div className="navigation">
-						{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
-						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-					</div>
-				) : ''}
+				<div className="navigation">
+					{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
+					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+					<Button type={I.ChatReadType.Message} icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
+				</div>
 
 				{form}
 			</div>

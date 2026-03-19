@@ -462,7 +462,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const ButtonItem = (item: any) => {
 		const elementId = `button-${block.id}-${item.id}`;
-		const cn = [ `btn-${item.id}`, 'withBackground' ];
+		const cn = [ `btn-${item.id}` ];
 
 		if (item.on) {
 			cn.push('on');
@@ -470,8 +470,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		return (
 			<Icon
-				id={elementId} 
-				className={cn.join(' ')}
+				id={elementId}
+				className={cn.join(' ')} withBackground={true}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
 			/>
@@ -574,7 +574,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								{allowedView ? (
 									<Icon 
 										id={`button-${block.id}-view-add`} 
-										className="plus withBackground" 
+										className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -586,8 +586,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				<div id="dataviewControlsSideRight" className="side right">
 					<Filter
 						ref={filterRef}
-						placeholder={translate('blockDataviewSearch')} 
-						icon="search withBackground"
+						className="underlined"
+						placeholder={translate('blockDataviewSearch')}
+						iconParam={{ className: 'search', withBackground: true }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}
 						onIconClick={onFilterShow}
@@ -602,7 +603,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 							<Button
 								id={`button-${block.id}-add-record`}
 								color="accent"
-								className="addRecord c28"
+								className="addRecord"
+								size={28}
 								tooltipParam={{ text: tooltip }}
 								text={translate('commonNew')}
 								onClick={e => onRecordAdd(e, -1)}
@@ -611,7 +613,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								<Button
 									id={`button-${block.id}-add-record-select`}
 									color="accent"
-									className="select c28"
+									className="select"
+									size={28}
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}
 								/>

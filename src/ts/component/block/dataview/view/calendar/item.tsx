@@ -296,7 +296,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 			<div className="head">
 				{canCreateValue ? (
 					<Icon 
-						className="plus withBackground" 
+						className="plus" withBackground={true}
 						tooltipParam={{ text: translate(`commonNewObject`) }} 
 						onClick={onCreate} 
 					/> 

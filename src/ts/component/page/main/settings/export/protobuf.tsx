@@ -56,7 +56,7 @@ const PageMainSettingsExportProtobuf = observer(forwardRef<I.PageRef, I.PageSett
 			<div className="buttons">
 				<Button 
 					text={translate('popupSettingsExportOk')} 
-					className="c36"
+					size={36}
 					onClick={() => onExport(I.ExportType.Protobuf, data)} 
 				/>
 			</div>

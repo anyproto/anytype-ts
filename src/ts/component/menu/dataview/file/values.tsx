@@ -6,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, S, U, J, Relation, Renderer, keyboard, translate } from 'Lib';
+import { I, S, U, Relation, Renderer, keyboard, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 

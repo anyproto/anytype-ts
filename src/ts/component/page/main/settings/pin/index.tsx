@@ -63,7 +63,7 @@ const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 			) : (
 				<div className="buttons">
-					<Button className="c36" text={translate('popupSettingsPinOn')} onClick={onTurnOnPin} />
+					<Button size={36} text={translate('popupSettingsPinOn')} onClick={onTurnOnPin} />
 				</div>
 			)}
 		</>

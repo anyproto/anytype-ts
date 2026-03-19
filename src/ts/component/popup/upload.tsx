@@ -13,7 +13,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { layout, onUpload, collectionId, details } = data;
+	const { layout, onUpload, collectionId, details, route } = data;
 	const [ tab, setTab ] = useState(Tab.Upload);
 	const [ isDragging, setIsDragging ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -83,6 +83,14 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			close();
 			C.FileDrop(collectionId || '', '', I.BlockPosition.None as number, allPaths, (message: any) => {
 				U.File.showFileDropError(message);
+
+				if (!message.error.code) {
+					analytics.event('CreateCollectionFromFolder', { route, filesCount: filePaths.length });
+
+					if (filePaths.length) {
+						analytics.event('UploadFile', { route, count: filePaths.length });
+					};
+				};
 			});
 		} else
 		if (filePaths.length) {
@@ -130,11 +138,18 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (paths.length) {
 			e.preventDefault();
 			e.stopPropagation();
-			uploadFiles(paths);
+			uploadFiles(paths, analytics.route.uploadClipboardPaste);
 		};
 	};
 
-	const uploadFiles = (paths: string[]) => {
+	const getUploadType = (typeSet: Set<string>): string => {
+		if (typeSet.size == 1) {
+			return typeSet.values().next().value;
+		};
+		return typeSet.size > 1 ? 'Mixed' : 'File';
+	};
+
+	const uploadFiles = (paths: string[], analyticsRoute?: string) => {
 		setIsLoading(true);
 
 		const space = S.Common.space;
@@ -144,6 +159,8 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let lastErrorDescription = '';
 		const objectIds: string[] = [];
 		const counts: { [key: string]: number } = {};
+		const typeSet: Set<string> = new Set();
+		const eventRoute = analyticsRoute || route;
 
 		const cb = () => {
 			setIsLoading(false);
@@ -151,7 +168,13 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			onUpload?.(objectIds);
 			close();
 
+			if (objectIds.length) {
+				analytics.event('UploadFile', { route: eventRoute, count: objectIds.length, type: getUploadType(typeSet) });
+			};
+
 			if (errorCount > 0) {
+				analytics.event('UploadFileError', { route: eventRoute, errorType: 'Unknown', count: errorCount });
+
 				window.setTimeout(() => {
 					U.File.showUploadError(errorCount, lastErrorDescription);
 				}, S.Popup.getTimeout());
@@ -163,6 +186,9 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const fileLayout = U.File.layoutByMime(mime);
 			const type = U.Object.getFileTypeByLayout(fileLayout);
 			const key = U.File.layoutToCountKey(fileLayout);
+			const typeName = I.FileType[type] || 'File';
+
+			typeSet.add(typeName);
 
 			C.FileUpload(space, '', path, type, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 				completed++;
@@ -203,10 +229,14 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		setError('');
 		setIsLoading(true);
 
+		const typeName = I.FileType[fileType] || 'File';
+
 		C.FileUpload(S.Common.space, url, '', fileType, details || {}, false, '', I.ImageKind.Basic, '', '', (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
+				analytics.event('UploadFileError', { route, errorType: 'Unknown', count: 1 });
+
 				close();
 				window.setTimeout(() => {
 					U.File.showUploadError(1, message.error.description);
@@ -222,6 +252,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			Preview.toastShow({ action: I.ToastAction.Upload, uploadCounts: { [key]: 1 } });
+			analytics.event('UploadFile', { route, count: 1, type: typeName });
 			onUpload?.(objectIds);
 			close();
 		});
@@ -231,6 +262,8 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		$(window).on(`paste.popupUpload`, onPaste);
+		analytics.event('ScreenUploadFile', { route });
+
 		return () => {
 			$(window).off(`paste.popupUpload`);
 		};
@@ -277,11 +310,12 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="inputWrapper">
 						<Input
 							ref={urlRef}
-							className="c36 round"
+							size={36}
+							className="round"
 							placeholder={translate('popupUploadLinkPlaceholder')}
 							onKeyDown={e => e.stopPropagation()}
 						/>
-						<Button className="c36" text={translate('commonUpload')} onClick={onSubmitUrl} />
+						<Button size={36} text={translate('commonUpload')} onClick={onSubmitUrl} />
 					</div>
 					<Error text={error} />
 				</form>

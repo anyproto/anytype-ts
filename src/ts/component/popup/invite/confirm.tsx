@@ -107,10 +107,10 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			<div className="buttons">
 				<div className="sides">
-					{buttons.map((item: any, i: number) => <Button key={i} {...item} className="c36" />)}
+					{buttons.map((item: any, i: number) => <Button key={i} {...item} size={36} />)}
 				</div>
 
-				<Button onClick={onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
+				<Button onClick={onReject} text={translate('popupInviteConfirmButtonReject')} size={36} color="red" />
 			</div>
 
 			<Error text={error} />

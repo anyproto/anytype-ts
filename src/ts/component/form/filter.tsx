@@ -3,11 +3,17 @@ import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, keyboard, translate } from 'Lib';
 
+type FilterSize = 28 | 32 | 36;
+
 interface Props {
 	id?: string;
+	size?: FilterSize;
 	className?: string;
 	inputClassName?: string;
-	icon?: string;
+	iconParam?: {
+		className?: string;
+		withBackground?: boolean;
+	};
 	value?: string;
 	placeholder?: string;
 	tooltipParam?: I.TooltipParam;
@@ -35,9 +41,10 @@ interface FilterRefProps {
 
 const Filter = forwardRef<FilterRefProps, Props>(({
 	id = '',
+	size = 28,
 	className = '',
 	inputClassName = '',
-	icon = '',
+	iconParam,
 	value = '',
 	placeholder = translate('commonFilterClick'),
 	tooltipParam = {},
@@ -56,7 +63,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	const inputRef = useRef(null);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isActive, setIsActive ] = useState(false);
-	const cn = [ 'filter', className ];
+	const cn = [ 'filter', `size${size}`, className ];
 
 	if (isFocused) {
 		cn.push('isFocused');
@@ -67,12 +74,13 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	let iconObj = null;
-	if (icon) {
+	if (iconParam) {
 		iconObj = (
-			<Icon 
-				className={icon} 
+			<Icon
+				className={iconParam.className || ''}
+				withBackground={iconParam.withBackground}
 				tooltipParam={tooltipParam}
-				onClick={onIconClick} 
+				onClick={onIconClick}
 			/>
 		);
 		cn.push('withIcon');

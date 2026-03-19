@@ -84,7 +84,8 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				<Button
 					color="blank"
 					icon="expand"
-					className="expand c32"
+					className="expand"
+					size={32}
 					text={translate('commonOpen')}
 					onClick={e => {
 						e.stopPropagation();

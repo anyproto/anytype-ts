@@ -1,6 +1,6 @@
-import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, } from 'react';
 import $ from 'jquery';
-import { Filter, Icon, Select, Label, Error } from 'Component';
+import { Filter, Icon, Select, Label, } from 'Component';
 import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview, analytics } from 'Lib';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
@@ -485,8 +485,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Label text={translate('popupShortcutDescription')} />
 					</div>
 					<div className="side right">
-						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />
-						<Icon className="close withBackground" tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
+						<Icon id="icon-more" className="more" withBackground={true} onClick={onMenu} />
+						<Icon className="close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
 					</div>
 				</div>
 				<div className="filterWrap">

@@ -35,7 +35,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	return (
 		<>
 			<div className="side left">
-				<Icon className="arrow back withBackground" onClick={onBackHandler} />
+				<Icon className="arrow back" withBackground={true} onClick={onBackHandler} />
 			</div>
 			<div className="side center">
 				<div className="logo" />
@@ -50,7 +50,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 				/>
 
-				<Icon className="settings withBackground" onClick={() => S.Popup.open('settingsOnboarding', {})} />
+				<Icon className="settings" withBackground={true} onClick={() => S.Popup.open('settingsOnboarding', {})} />
 			</div>
 		</>
 	);

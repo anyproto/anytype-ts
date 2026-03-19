@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, S, U, J, translate, analytics, keyboard, Action, Storage } from 'Lib';
-import { sub } from 'date-fns';
 
 interface Props {
 	id?: string;

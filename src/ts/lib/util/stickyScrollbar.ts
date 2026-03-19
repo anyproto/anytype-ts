@@ -1,4 +1,4 @@
-import $ from 'jquery';
+
 
 /**
  * Utility class for managing sticky horizontal scrollbar synchronization

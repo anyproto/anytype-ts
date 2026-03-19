@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName, ObjectType } from 'Component';
+import { Filter, MenuItemVertical, Loader, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
 
 const LIMIT_HEIGHT = 20;
@@ -354,8 +354,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 			{!noFilter ? (
 				<Filter
-					className="outlined round"
-					icon="search"
+					iconParam={{ className: 'search' }}
 					ref={filterRef} 
 					placeholder={placeholder}
 					value={filter}
