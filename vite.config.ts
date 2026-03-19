@@ -256,6 +256,7 @@ const mimeTypes: Record<string, string> = {
 	'.html': 'text/html',
 	'.css': 'text/css',
 	'.js': 'application/javascript',
+	'.mjs': 'application/javascript',
 	'.json': 'application/json',
 	'.svg': 'image/svg+xml',
 	'.png': 'image/png',

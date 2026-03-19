@@ -30,7 +30,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const topRef = useRef(0);
 
 	const getItems = () => {
-		const records = U.Common.objectCopy(getRecords());
+		const records = [ ...getRecords() ];
 		
 		if (isAllowedObject()) {
 			records.push('add-record');

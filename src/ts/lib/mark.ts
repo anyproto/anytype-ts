@@ -329,7 +329,7 @@ class Mark {
 	 * @returns {I.Mark[]} The adjusted marks.
 	 */
 	adjust(marks: I.Mark[], from: number, length: number) {
-		marks = U.Common.objectCopy(marks || []);
+		marks = (marks || []).map(m => ({ ...m, range: { ...m.range } }));
 
 		for (const mark of marks) {
 			if ((mark.range.from < from) && (mark.range.to > from)) {

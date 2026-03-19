@@ -342,15 +342,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
-			const l1 = c1.isLayout();
-			const l2 = c2.isLayout();
+		const allBlocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const layoutBlocks = [];
+		const nonLayoutBlocks = [];
 
-			if (l1 && !l2) return -1;
-			if (!l1 && l2) return 1;
+		for (const b of allBlocks) {
+			if (b.isLayout()) {
+				layoutBlocks.push(b);
+			} else {
+				nonLayoutBlocks.push(b);
+			};
+		};
 
-			return 0;
-		});
+		const blocks = layoutBlocks.concat(nonLayoutBlocks);
 
 		let offset = 140;
 		let hovered: any = null;

@@ -134,31 +134,39 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 
 	const cn = [ 'icon', className, (withBackground ? 'withBackground' : ''), (svgElement ? 'withSvg' : '') ];
 
-	return (
-		<AnimatePresence mode="popLayout">
-			<motion.div
-				ref={ref || nodeRef}
-				id={id}
-				draggable={draggable}
-				className={cn.join(' ')}
-				style={style}
-				onMouseDown={onMouseDownHandler}
-				onMouseEnter={onMouseEnterHandler}
-				onMouseLeave={onMouseLeaveHandler}
-				onMouseMove={onMouseMove}
-				onContextMenu={onContextMenuHandler}
-				onDragStart={onDragStart}
-				onDragEnd={onDragEnd}
-				onClick={onClick}
-				onDoubleClick={onDoubleClick}
-				{...animation}
-			>
-				{svgElement}
-				{arrow ? <div className="icon arrow" /> : ''}
-				{inner}
-			</motion.div>
-		</AnimatePresence>
+	const element = (
+		<motion.div
+			ref={ref || nodeRef}
+			id={id}
+			draggable={draggable}
+			className={cn.join(' ')}
+			style={style}
+			onMouseDown={onMouseDownHandler}
+			onMouseEnter={onMouseEnterHandler}
+			onMouseLeave={onMouseLeaveHandler}
+			onMouseMove={onMouseMove}
+			onContextMenu={onContextMenuHandler}
+			onDragStart={onDragStart}
+			onDragEnd={onDragEnd}
+			onClick={onClick}
+			onDoubleClick={onDoubleClick}
+			{...animation}
+		>
+			{svgElement}
+			{arrow ? <div className="icon arrow" /> : ''}
+			{inner}
+		</motion.div>
 	);
+
+	if (animatePresence) {
+		return (
+			<AnimatePresence mode="popLayout">
+				{element}
+			</AnimatePresence>
+		);
+	};
+
+	return element;
 
 });
 

@@ -98,7 +98,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const getItems = () => {
-		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, [ ...S.Record.getRecordIds(getSubId(), '') ]).map(id => ({ id }));
 	};
 
 	const getCoverObject = (id: string) => {

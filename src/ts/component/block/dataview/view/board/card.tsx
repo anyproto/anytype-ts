@@ -148,7 +148,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-	});
+	}, [ relations.length ]);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,

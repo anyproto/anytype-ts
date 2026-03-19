@@ -314,7 +314,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {

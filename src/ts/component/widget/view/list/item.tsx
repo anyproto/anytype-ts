@@ -88,7 +88,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	if (isSection) {
 		return (

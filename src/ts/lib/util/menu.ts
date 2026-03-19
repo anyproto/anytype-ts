@@ -1148,13 +1148,15 @@ class UtilMenu {
 			return [];
 		};
 
-		const items = U.Common.objectCopy(U.Space.getList()).
-			map(it => {
-				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
-				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
-				it.isPinned = !!it.orderId;
-				return it;
+		const items = U.Space.getList().map(it => {
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				return {
+					...it,
+					counters,
+					hasCounter: counters.mentionCounter || counters.messageCounter,
+					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
+					isPinned: !!it.orderId,
+				};
 			});
 
 		items.sort((c1, c2) => {

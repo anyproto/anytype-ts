@@ -232,8 +232,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		analytics.event('OpenSidebarObject');
 	};
 
-	const getTotalHeight = () => {
-		return loadTree().reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
+	const getTotalHeight = (items?: I.WidgetTreeItem[]) => {
+		return (items || nodes).reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
 	};
 
 	const getRowHeight = (node: any, index: number) => {
@@ -444,7 +444,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		resize();
 
 		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', !length);
-	}, [ nodes ]);
+	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
