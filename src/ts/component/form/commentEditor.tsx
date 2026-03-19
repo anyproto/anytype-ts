@@ -2615,6 +2615,181 @@ const EmojiCommandPlugin = () => {
 	return null;
 };
 
+const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const prevText = useRef('');
+	const colonOffset = useRef(-1);
+
+	const closeEmojiMenu = useCallback(() => {
+		if (S.Menu.isOpen('blockEmoji')) {
+			S.Menu.close('blockEmoji');
+		};
+		colonOffset.current = -1;
+	}, []);
+
+	// Block Enter/Escape at DOM level when blockEmoji menu is open — prevents line break insertion
+	useEffect(() => {
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (!S.Menu.isOpen('blockEmoji')) {
+				return;
+			};
+
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				closeEmojiMenu();
+			};
+		};
+
+		const root = editor.getRootElement();
+		if (root) {
+			root.addEventListener('keydown', onKeyDown, true);
+			return () => root.removeEventListener('keydown', onKeyDown, true);
+		};
+	}, [ editor, closeEmojiMenu ]);
+
+	useEffect(() => {
+		const onKeyUp = (e: KeyboardEvent) => {
+			editor.getEditorState().read(() => {
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				if (!$isTextNode(node)) {
+					prevText.current = '';
+					closeEmojiMenu();
+					return;
+				};
+
+				const text = node.getTextContent();
+				const offset = anchor.offset;
+				const menuOpen = S.Menu.isOpen('blockEmoji');
+
+				// Trigger emoji menu on : character
+				if ((offset > 0) && (text[offset - 1] === ':') && (text !== prevText.current) && !menuOpen) {
+					const charBefore = offset > 1 ? text[offset - 2] : '';
+					if (!charBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(charBefore)) {
+						colonOffset.current = offset - 1;
+						openColonEmojiMenu(editor, editorId, colonOffset);
+					};
+				};
+
+				// Update filter text while emoji menu is open
+				if (menuOpen && (colonOffset.current >= 0)) {
+					// Close if : was deleted
+					if ((offset <= colonOffset.current) || (text[colonOffset.current] !== ':')) {
+						closeEmojiMenu();
+					} else {
+						const filterStart = colonOffset.current + 1;
+						const filterText = text.slice(filterStart, offset);
+
+						if (filterText.includes(' ')) {
+							closeEmojiMenu();
+						} else {
+							S.Common.filterSetText(filterText);
+						};
+					};
+				};
+
+				prevText.current = text;
+			});
+		};
+
+		const root = editor.getRootElement();
+		if (root) {
+			root.addEventListener('keyup', onKeyUp);
+			return () => root.removeEventListener('keyup', onKeyUp);
+		};
+	}, [ editor, editorId, closeEmojiMenu ]);
+
+	return null;
+};
+
+const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: React.MutableRefObject<number>) => {
+	const rect = U.Common.getSelectionRect();
+	if (!rect) {
+		return;
+	};
+
+	const win = $(window);
+
+	S.Common.filterSet(0, '');
+
+	S.Menu.open('blockEmoji', {
+		classNameWrap: 'fromBlock',
+		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		vertical: I.MenuDirection.Top,
+		horizontal: I.MenuDirection.Left,
+		offsetY: -4,
+		commonFilter: true,
+		noAnimation: true,
+		data: {
+			marks: [],
+			onChange: (native: string) => {
+				const filterText = String(S.Common.filter.text || '');
+				const filterLen = filterText.length;
+
+				editor.update(() => {
+					const root = $getRoot();
+					const children = root.getChildren();
+					let found = false;
+
+					// Find and remove : + filter text
+					for (const child of children) {
+						if (!$isElementNode(child) || found) {
+							continue;
+						};
+
+						for (const textChild of child.getChildren()) {
+							if (!$isTextNode(textChild)) {
+								continue;
+							};
+
+							const text = textChild.getTextContent();
+							const offset = colonOffset.current;
+
+							if ((offset >= 0) && (offset < text.length) && (text[offset] === ':')) {
+								const before = text.slice(0, offset);
+								const after = text.slice(offset + 1 + filterLen);
+								textChild.setTextContent(before + after);
+								textChild.select(before.length, before.length);
+								found = true;
+								break;
+							};
+						};
+					};
+
+					// Insert emoji node
+					const newSelection = $getSelection();
+					if ($isRangeSelection(newSelection)) {
+						const code = U.Smile.getCode(native);
+						if (code) {
+							const emojiNode = new EmojiNode(native, code);
+							newSelection.insertNodes([ emojiNode ]);
+
+							const spaceNode = $createTextNode(' ');
+							emojiNode.insertAfter(spaceNode);
+							spaceNode.select();
+						} else {
+							newSelection.insertText(native + ' ');
+						};
+					};
+				});
+
+				colonOffset.current = -1;
+				editor.focus();
+			},
+		},
+	});
+};
+
 const MarkdownSequences: { pattern: RegExp; style: I.TextStyle }[] = [
 	{ pattern: /^\[]\s$/,		style: I.TextStyle.Checkbox },
 	{ pattern: /^###\s$/,		style: I.TextStyle.Header3 },
@@ -3360,6 +3535,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />
 				<EmojiCommandPlugin />
+				<ColonEmojiPlugin editorId={editorId} />
 				<MarkdownPlugin />
 				<InlineMarkdownPlugin />
 				<CodeHighlightPlugin />
