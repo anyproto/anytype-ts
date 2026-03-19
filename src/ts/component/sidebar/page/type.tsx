@@ -99,8 +99,8 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			};
 		};
 
-		objectRef.current = Object.assign(objectRef.current, update);
-		updateRef.current = Object.assign(updateRef.current, update);
+		objectRef.current = { ...objectRef.current, ...update };
+		updateRef.current = { ...updateRef.current, ...update };
 
 		const { recommendedLayout, layoutAlign } = updateRef.current;
 

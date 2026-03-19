@@ -230,7 +230,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	useEffect(() => {
 		rebind();
-		setCurrent(playlist[0]);
+
+		if (playlist.length) {
+			setCurrent(playlist[0]);
+		};
 	});
 
 	useImperativeHandle(ref, () => ({

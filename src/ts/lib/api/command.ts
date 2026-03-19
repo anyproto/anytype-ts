@@ -366,7 +366,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 
 	marks = U.Common.objectCopy(marks);
 	marks = marks.filter(it => Mark.canSave(it.type));
-	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
+	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as I.Mark[];
 
 	dispatcher.request('BlockTextSetText', {
 		contextId,

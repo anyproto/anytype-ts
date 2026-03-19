@@ -854,7 +854,7 @@ class UtilMenu {
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
 			{ id: 'csv', format: I.ImportType.Csv },
-		] as any).map(it => {
+		] as { id: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
 			it.name = names[it.format];
 			return it;
 		});
@@ -1359,7 +1359,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Long },
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
-		] as any[]).map(it => {
+		] as { id: I.DateFormat; name: string }[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;
 		});
@@ -2132,7 +2132,7 @@ class UtilMenu {
 											value = String(element.val());
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as any).innerText || '');
+											value = String((element.get(0) as HTMLElement).innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);

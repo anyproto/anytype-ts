@@ -390,9 +390,9 @@ class UtilCommon {
 	 * @returns {object} The grouped map.
 	 */
 	mapToArray (list: any[], field: string): any {
-		list = list|| [] as any[];
-		
-		const map = {} as any;
+		list = list || [];
+
+		const map: Record<string, any[]> = {};
 		for (const item of list) {
 			map[item[field]] = map[item[field]] || [];
 			map[item[field]].push(item);
@@ -420,7 +420,7 @@ class UtilCommon {
 	 * @returns {any[]} The flattened array.
 	 */
 	unmap (map: any) {
-		let ret: any[] = [] as any[];
+		let ret: any[] = [];
 		for (const field in map) {
 			ret = ret.concat(map[field]);
 		};
@@ -914,7 +914,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
 		};
 	};
 
@@ -979,7 +979,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = U.String.toCamelCase(`error-${command}${code}`);
-		return (TextJson as any)[id] ? translate(id) : description;
+		return (TextJson as Record<string, string>)[id] ? translate(id) : description;
 	};
 
 	/**
@@ -1424,7 +1424,7 @@ class UtilCommon {
 		};
 
 		if (ret.isInside) {
-			ret.route = url.split(':/')[1];
+			ret.route = url.split(':/')[1] || '';
 
 			const search = url.split('?')[1];
 			if (search) {

@@ -732,7 +732,7 @@ class BlockStore {
 		const unwrap = (list: any) => {
 			list = list || [];
 
-			const ret = [] as any[];
+			const ret: I.Block[] = [];
 			for (const item of list) {
 				item.childBlocks = item.childBlocks || [];
 

@@ -24,7 +24,7 @@ class CommonStore {
 	public filterObj: Filter = { from: 0, text: '' };
 	public gatewayUrl = '';
 	public toastObj: I.Toast = null;
-	public configObj: any = {};
+	public configObj: I.AppConfig = {};
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
@@ -223,7 +223,7 @@ class CommonStore {
 		});
 	};
 
-	get config (): any {
+	get config (): I.AppConfig {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
 		return {
@@ -1002,11 +1002,11 @@ class CommonStore {
 
 	/**
 	 * Sets the config object, optionally forcing all values.
-	 * @param {any} config - The config object.
+	 * @param {I.AppConfig} config - The config object.
 	 * @param {boolean} force - Whether to force all values.
 	 */
-	configSet (config: any, force: boolean) {
-		let newConfig: any = {};
+	configSet (config: I.AppConfig, force: boolean) {
+		let newConfig: I.AppConfig = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);
 		} else {

@@ -945,8 +945,8 @@ class Mark {
 		const tags: any = {};
 
 		for (const i in I.MarkType) {
-			if (isNaN(I.MarkType[i] as any)) {
-				tags[i] = this.getTag(i as any);
+			if (isNaN(Number(I.MarkType[i]))) {
+				tags[i] = this.getTag(Number(i));
 			};
 		};
 

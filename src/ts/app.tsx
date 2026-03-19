@@ -36,7 +36,7 @@ declare global {
 
 		isWebVersion: boolean;
 		Config: any;
-		AnytypeGlobalConfig: any;
+		AnytypeGlobalConfig: I.AppConfig;
 	}
 };
 

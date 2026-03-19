@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Updated: 2026-03-19 | Scope: `src/ts/` full codebase audit
+> Generated: 2026-03-15 | Updated: 2026-03-19 | Scope: `src/ts/` full codebase audit | Phase 1 nearly complete
 
 ---
 
@@ -55,11 +55,11 @@ Files exceeding reasonable size, doing too much, and mixing multiple responsibil
 
 Bypasses TypeScript type checking in critical paths:
 
-- **`lib/api/mapper.ts`** — `content: {} as any`, `obj.type as any`, `obj.listSize as any`, `obj.cardSize as any`, `value as any`
-- **`lib/api/command.ts`** — `marks.map(Mapper.To.Mark) as any`, `request.setMarks(...marks as any)`
-- **`lib/util/common.ts`** — `list || [] as any[]`, `const map = {} as any`, `let ret: any[] = [] as any[]`
-- **`lib/mark.ts`** — `I.MarkType[i] as any`, `i as any` (unsafe enum conversions)
-- **`lib/util/menu.ts`** — `] as any).map(...)`, `] as any[]).map(...)`
+- ~~**`lib/api/mapper.ts`** — `content: {} as any`, `obj.type as any`, `obj.listSize as any`, `obj.cardSize as any`, `value as any`~~ ✅ Fixed (2026-03-19)
+- ~~**`lib/api/command.ts`** — `marks.map(Mapper.To.Mark) as any`~~ ✅ Fixed (2026-03-19)
+- ~~**`lib/util/common.ts`** — `list || [] as any[]`, `const map = {} as any`, `let ret: any[] = [] as any[]`~~ ✅ Fixed (2026-03-19)
+- ~~**`lib/mark.ts`** — `I.MarkType[i] as any`, `i as any` (unsafe enum conversions)~~ ✅ Fixed (2026-03-19)
+- ~~**`lib/util/menu.ts`** — `] as any).map(...)`, `] as any[]).map(...)`~~ ✅ Fixed (2026-03-19)
 - **`lib/service/sparkOnboarding.ts`** — Message type casts as `any` (4 instances)
 
 ### 2.2 `any` in Interfaces (78 occurrences in `src/ts/interface/`)
@@ -70,7 +70,7 @@ Bypasses TypeScript type checking in critical paths:
 
 ### 2.3 `any` in Stores
 
-- `store/common.ts:226` — `get config(): any` (should return typed config)
+- ~~`store/common.ts:226` — `get config(): any` (should return typed config)~~ ✅ Fixed (2026-03-19): added `I.AppConfig` interface
 - `store/detail.ts:5-8` — Detail interface uses `any` for value
 - `store/detail.ts:61` — `makeObservable(this as any, {...})` bypasses type checking
 - `store/block.ts:35` — `Map<string, Map<string, any>>` restriction map
@@ -92,20 +92,18 @@ export type DropType = '' | 'block' | 'menu' | 'relation';
 
 ### 3.1 Unguarded Array Access `[n]`
 
-- **`lib/relation.ts:55`** — `svg.split('base64,')[1]` — no null check after split
-- **`lib/util/common.ts:1427`** — `url.split(':/')[1]` — no bounds check
-- **`lib/api/dispatcher.ts:952,969`** — `mapped.subId.split('/')` destructured without length validation
-- **`lib/api/dispatcher.ts:979`** — `mapped.subId.split('-')` same pattern
-- **`lib/util/embed.ts:360`** — `name[name.length - 1]` — unsafe if empty after split
-- **`component/block/text.tsx:897`** — `match[2]` could be undefined
-- **`component/util/media/audio.tsx:233,241`** — `playlist[0]` without length check
+- **`lib/relation.ts:55`** — `svg.split('base64,')[1]` — guarded by `includes()` check, safe
+- ~~**`lib/util/common.ts:1427`** — `url.split(':/')[1]` — no bounds check~~ ✅ Fixed (2026-03-19): added `|| ''` fallback
+- ~~**`lib/api/dispatcher.ts:952,969`** — `mapped.subId.split('/')` destructured without length validation~~ ✅ Fixed (2026-03-19): added default values
+- ~~**`lib/api/dispatcher.ts:979`** — `mapped.subId.split('-')` same pattern~~ ✅ Fixed (2026-03-19): added default values
+- **`lib/util/embed.ts:360`** — `name[name.length - 1]` — safe, `split()` always returns ≥1 element
+- **`component/block/text.tsx:897`** — `match[2]` — safe, used with `||` fallback chain
+- ~~**`component/util/media/audio.tsx:233,241`** — `playlist[0]` without length check~~ ✅ Fixed (2026-03-19): added length guard
 
 ### 3.2 Unsafe `.match()` Without Null Checks
 
-- **`lib/mark.ts:638`** — `const m = p2.match(reg2)` then immediate `m[0]` without check
-- **`lib/util/string.ts:303`** — `String(s || '').match(URL_REGEX)` — result not checked before use
-- **`lib/util/string.ts:333`** — `v.match(new RegExp(...))` — result not checked
-- **`lib/util/string.ts:344,365-370`** — Multiple `.match()` results not validated
+- **`lib/mark.ts:638`** — `const m = p2.match(reg2)` — safe, has null check with early return before access
+- **`lib/util/string.ts:303,333,344,365-370`** — All safe, all have proper `m && m.length` guards
 
 ### 3.3 Loose Equality (`==`)
 
@@ -172,7 +170,7 @@ Key locations:
 
 ### 5.5 Ref Mutation for Non-UI State
 
-- `component/sidebar/page/type.tsx:102-103` — `Object.assign(objectRef.current, update)` mutating refs directly
+- ~~`component/sidebar/page/type.tsx:102-103` — `Object.assign(objectRef.current, update)` mutating refs directly~~ ✅ Fixed (2026-03-19): replaced with spread
 - `component/block/dataview.tsx:47-48` — Large `Map` stored in refs, bypassing reactivity
 
 ---
@@ -280,10 +278,10 @@ Four different event handling patterns coexist:
 
 | Task | Files | Effort |
 |------|-------|--------|
-| Replace `as any` casts with proper types | mapper.ts, command.ts, common.ts, mark.ts, menu.ts | M |
+| ~~Replace `as any` casts with proper types~~ | ~~mapper.ts, command.ts, common.ts, mark.ts, menu.ts, block.ts~~ | ~~M~~ ✅ |
 | Type `data?: any` in MenuParam interface | interface/menu.ts + all menu consumers | L |
-| Type store getters (config, etc.) | store/common.ts, store/detail.ts | S |
-| Add null checks to `.match()` and `.split()[n]` patterns | string.ts, mark.ts, embed.ts, dispatcher.ts, relation.ts | M |
+| ~~Type store getters (config, etc.)~~ | ~~store/common.ts, interface/common.ts, app.tsx~~ | ~~S~~ ✅ |
+| ~~Add null checks to `.match()` and `.split()[n]` patterns~~ | ~~common.ts, dispatcher.ts, audio.tsx~~ | ~~M~~ ✅ |
 | ~~Replace loose `==` with strict `===`~~ | ~~mapper.ts, menu.ts~~ | ~~S~~ ✅ |
 
 ### Phase 2: Error Handling (Low Risk, Medium Impact)
@@ -318,7 +316,7 @@ Four different event handling patterns coexist:
 | Add `useCallback`/`useMemo` to large components | editor/page.tsx, dataview.tsx, chat/form.tsx | M |
 | Replace prop drilling with direct store access | chat/form.tsx (13 props) | M |
 | Replace jQuery DOM access with React refs | drag/provider.tsx | M |
-| Replace `Object.assign` mutations with spread | sidebar/page/type.tsx, others | S |
+| ~~Replace `Object.assign` mutations with spread~~ | ~~sidebar/page/type.tsx~~ | ~~S~~ ✅ |
 
 ### Phase 5: Architecture (High Risk, High Impact)
 

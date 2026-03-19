@@ -959,7 +959,7 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = mapped.subId.split('/');
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
@@ -976,8 +976,8 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep ] = mapped.subId.split('/');
-					
+					const [ subId, dep = '' ] = mapped.subId.split('/');
+
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
@@ -986,7 +986,7 @@ class Dispatcher {
 
 				case 'SubscriptionGroups': {
 					const { group, remove } = mapped;
-					const [ rootId, blockId ] = mapped.subId.split('-');
+					const [ rootId, blockId = '' ] = mapped.subId.split('-');
 
 					if (remove) {
 						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
