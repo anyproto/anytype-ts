@@ -21,7 +21,7 @@ const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			<div className="label">{object.description}</div>
 
 			<div className="buttonsWrapper">
-				<Button color="blank" className="c32" text="Open in app" onClick={onOpen} />
+				<Button color="blank" size={32} text="Open in app" onClick={onOpen} />
 			</div>
 		</div>
 	);

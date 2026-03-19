@@ -494,7 +494,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 							/>
 						</div>
 						<div className="side right">
-							{canWrite ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={onAdd} /> : ''}
+							{canWrite ? <Button id="button-object-create" color="blank" size={28} text={translate('commonNew')} onClick={onAdd} /> : ''}
 						</div>
 					</div>
 

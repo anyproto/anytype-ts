@@ -101,7 +101,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 		<>
 			<div className="titleWrapper">
 				<Title text={translate('popupSettingsApiTitle')} />
-				{list.length ? <Button className="c28" text={translate('popupSettingsApiCreate')} onClick={onAdd} /> : ''}
+				{list.length ? <Button size={28} text={translate('popupSettingsApiCreate')} onClick={onAdd} /> : ''}
 			</div>
 
 			{list.length ? (

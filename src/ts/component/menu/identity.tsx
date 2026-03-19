@@ -20,7 +20,7 @@ const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<Title text={translate('headerSettingsIdentityInfoTitle')} />
 			<Label text={translate('headerSettingsIdentityInfoText')} />
-			<Button className="c36" text={translate('headerSettingsIdentityInfoExplorePlans')} onClick={onClick} />
+			<Button size={36} text={translate('headerSettingsIdentityInfoExplorePlans')} onClick={onClick} />
 		</>
 	);
 }));

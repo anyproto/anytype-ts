@@ -73,7 +73,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 						</div>
 					</div>
 					<div className="side right">
-						<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={onOffload} />
+						<Button color="blank" size={28} text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={onOffload} />
 					</div>
 				</div>
 
@@ -113,7 +113,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 						</div>
 					</div>
 					<div className="side right">
-						<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
+						<Button color="blank" size={28} text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
 					</div>
 				</div>
 			</div>

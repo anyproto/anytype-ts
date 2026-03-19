@@ -314,7 +314,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							placeholder={translate('popupUploadLinkPlaceholder')}
 							onKeyDown={e => e.stopPropagation()}
 						/>
-						<Button className="c36" text={translate('commonUpload')} onClick={onSubmitUrl} />
+						<Button size={36} text={translate('commonUpload')} onClick={onSubmitUrl} />
 					</div>
 					<Error text={error} />
 				</form>

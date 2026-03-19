@@ -48,7 +48,7 @@ const PageMainSettingsDelete = observer(forwardRef<I.PageRef, I.PageSettingsComp
 				<Checkbox ref={checkboxRef} value={false} /> {translate('popupSettingsDeleteCheckboxLabel')}
 			</div>
 
-			<Button text={translate('commonDelete')} color="red" className="c36" onClick={onDelete} />
+			<Button text={translate('commonDelete')} color="red" size={36} onClick={onDelete} />
 			<Error text={error} />
 		</>
 	);

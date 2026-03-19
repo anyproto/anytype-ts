@@ -44,7 +44,7 @@ const UpsellMembers = observer(forwardRef<{}, Props>(({
 				<Label className="usage" text={usageText} />
 				<Label className="upsell" text={translate('upsellBannerMembersUpsellText')} />
 			</div>
-			<Button text={translate('commonUpgrade')} color="black" className="c28" onClick={onClick} />
+			<Button text={translate('commonUpgrade')} color="black" size={28} onClick={onClick} />
 		</div>
 	);
 

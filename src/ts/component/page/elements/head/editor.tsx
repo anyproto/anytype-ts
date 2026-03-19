@@ -136,7 +136,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				{source ? (
 					<div className="bookmarkButtons">
-						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" className="c36" onClick={() => Action.openUrl(source)} />
+						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" size={36} onClick={() => Action.openUrl(source)} />
 					</div>
 				) : ''}
 

@@ -27,7 +27,7 @@ const PageMainSettingsImportNotionWarning = observer(forwardRef<I.PageRef, I.Pag
 				</ol>
 			</div>
 
-			<Button className="c36" text={translate('popupSettingsImportNotionWarningProceed')} onClick={onImport} />
+			<Button size={36} text={translate('popupSettingsImportNotionWarningProceed')} onClick={onImport} />
 		</div>
 	);
 
