@@ -509,7 +509,7 @@
                 .label.active { color: var(--color-text-primary);}
             }
 
-			.objectManagerWrapper { flex-grow: 1; height: auto; }
+			.objectManagerWrapper { flex-grow: 1; height: 0; overflow: hidden; }
 			.objectManagerWrapper {
                 .items { padding-top: 8px; }
 				.items {
