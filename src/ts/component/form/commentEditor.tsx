@@ -2627,21 +2627,18 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 		colonOffset.current = -1;
 	}, []);
 
-	// Block Enter/Escape at DOM level when blockEmoji menu is open — prevents line break insertion
+	// Block Enter/Escape when blockEmoji menu is open
+	// DOM preventDefault stops the browser beforeinput (no line break);
+	// Lexical command handler stops Lexical's own paragraph insertion;
+	// Event still bubbles to window where the menu's keydown handler selects the emoji.
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (!S.Menu.isOpen('blockEmoji')) {
 				return;
 			};
 
-			if (e.key === 'Enter') {
+			if ((e.key === 'Enter') || (e.key === 'Escape')) {
 				e.preventDefault();
-				e.stopPropagation();
-			};
-
-			if (e.key === 'Escape') {
-				e.preventDefault();
-				closeEmojiMenu();
 			};
 		};
 
@@ -2649,6 +2646,36 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 		if (root) {
 			root.addEventListener('keydown', onKeyDown, true);
 			return () => root.removeEventListener('keydown', onKeyDown, true);
+		};
+	}, [ editor ]);
+
+	useEffect(() => {
+		const unregisterEnter = editor.registerCommand(
+			KEY_ENTER_COMMAND,
+			() => {
+				if (S.Menu.isOpen('blockEmoji')) {
+					return true;
+				};
+				return false;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+
+		const unregisterEscape = editor.registerCommand(
+			KEY_ESCAPE_COMMAND,
+			() => {
+				if (S.Menu.isOpen('blockEmoji')) {
+					closeEmojiMenu();
+					return true;
+				};
+				return false;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+
+		return () => {
+			unregisterEnter();
+			unregisterEscape();
 		};
 	}, [ editor, closeEmojiMenu ]);
 
