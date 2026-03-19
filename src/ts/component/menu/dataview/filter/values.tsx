@@ -420,7 +420,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const textInput = (key?: string, placeholder?: string): any => (
 		<div className="textInputWrapper">
 			<Input
-				className="c36"
+				size={36}
 				key={key ? key : 'value-text'}
 				ref={inputRef}
 				value={item.value}

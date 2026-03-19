@@ -10,6 +10,11 @@ const meta: Meta<typeof Input> = {
 			control: 'select',
 			options: ['text', 'password', 'email', 'number', 'search', 'url'],
 		},
+		size: {
+			control: { type: 'select' },
+			options: [ 28, 36, 40 ],
+			table: { type: { summary: '28 | 36 | 40' } },
+		},
 	},
 };
 
@@ -19,6 +24,27 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		placeholder: 'Enter text...',
+	},
+};
+
+export const Size28: Story = {
+	args: {
+		placeholder: 'Size 28 (default)',
+		size: 28,
+	},
+};
+
+export const Size36: Story = {
+	args: {
+		placeholder: 'Size 36',
+		size: 36,
+	},
+};
+
+export const Size40: Story = {
+	args: {
+		placeholder: 'Size 40',
+		size: 40,
 	},
 };
 

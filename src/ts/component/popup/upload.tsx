@@ -310,7 +310,8 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="inputWrapper">
 						<Input
 							ref={urlRef}
-							className="c36 round"
+							size={36}
+							className="round"
 							placeholder={translate('popupUploadLinkPlaceholder')}
 							onKeyDown={e => e.stopPropagation()}
 						/>

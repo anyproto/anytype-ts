@@ -23,7 +23,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const colorConfirm = data.colorConfirm || 'black';
 	const colorCancel = data.colorCancel || 'blank';
 	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
-	const buttonSize = Number(data.buttonSize) || 36;
+	const buttonSize = (Number(data.buttonSize) || 36) as 36;
 
 	if (storageKey) {
 		cn.push('withCheckbox');

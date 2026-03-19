@@ -869,7 +869,7 @@ class WindowManager {
 	};
 
 	reloadAll (): void {
-		this.sendToAll('reload');
+		this.sendToAllTabs('reload');
 	};
 
 	getFirstWindow (): AppWindow | undefined {

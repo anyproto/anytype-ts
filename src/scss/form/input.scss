@@ -5,8 +5,8 @@
 .input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .input:focus, .input:hover { background: var(--color-shape-highlight-medium); }
 
-.input.c36 { height: 36px; border-radius: 12px; }
-.input.c40 { height: 40px; border-radius: 14px; padding: 0px 16px; }
+.input.size36 { height: 36px; border-radius: 12px; }
+.input.size40 { height: 40px; border-radius: 14px; padding: 0px 16px; }
 
 .input.isReadonly { cursor: default; background: var(--color-shape-highlight-light-solid); color: var(--color-text-tertiary); }
 .input.isReadonly:hover, .input.isReadonly:focus { background: var(--color-shape-highlight-light-solid); }
