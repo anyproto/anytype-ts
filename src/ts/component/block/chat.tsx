@@ -914,7 +914,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				scrollToMessage(id, true, true);
 			};
 		} else {
-			jumpIds.current = [];
 			loadMessages(1, true, () => scrollToBottom(true));
 		};
 	};
