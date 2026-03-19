@@ -35,7 +35,9 @@
 	}
 
 	&.isTask, &.isBookmark {
-		.heading .flex { display: flex; align-items: center; gap: 0px 4px; }
+		.heading {
+			.flex { display: flex; align-items: center; gap: 0px 4px; }
+		}
 	}
 
 	.blocks { z-index: 1; }
@@ -207,7 +209,8 @@
 		}
 	}
 
-	.name { @include text-common; font-weight: 700; margin-bottom: 4px; }
+	.flex { margin: 0px 0px 4px 0px; }
+	.name { @include text-common; font-weight: 700; }
 }
 .previewObject.medium.withCover {
 	.scroller { padding-top: 82px; }
@@ -219,14 +222,5 @@
 	.scroller { padding-top: 42px; }
 	.heading {
 		.iconObject { margin-bottom: 2px; }
-	}
-}
-.previewObject.medium.isTask,
-.previewObject.medium.isBookmark {
-	.heading {
-		.iconObject.isTask,
-		.iconObject.isBookmark { left: 0px; top: 3px; margin: 0px; }
-
-		.name { padding-left: 24px; }
 	}
 }
