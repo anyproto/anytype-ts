@@ -347,6 +347,8 @@ jobs:
 
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate protobuf TypeScript bindings
         run: bash scripts/generate-protos.sh --from-dist
