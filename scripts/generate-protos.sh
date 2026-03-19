@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 # Generates TypeScript protobuf bindings from .proto files using ts-proto.
-# Called by download-middleware.sh after extracting the release archive,
-# or by update-middleware.sh after copying from a local anytype-heart checkout.
 #
 # Usage:
-#   bash scripts/generate-protos.sh
+#   bash scripts/generate-protos.sh              # use ../anytype-heart
+#   bash scripts/generate-protos.sh --from-dist  # use dist/lib/protos (CI)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-HEART_DIR="$ROOT_DIR/../anytype-heart"
 MIDDLEWARE_DIR="$ROOT_DIR/middleware"
 TS_PROTO_JS="$ROOT_DIR/node_modules/ts-proto/protoc-gen-ts_proto"
 
-if [[ ! -d "$HEART_DIR" ]]; then
-	echo "Error: anytype-heart repo not found at $HEART_DIR"
-	exit 1
+FROM_DIST=false
+if [[ "${1:-}" == "--from-dist" ]]; then
+	FROM_DIST=true
 fi
 
 if [[ ! -f "$TS_PROTO_JS" ]]; then
@@ -49,17 +47,45 @@ fi
 PROTO_ROOT="$(mktemp -d)"
 trap 'rm -rf "$PROTO_ROOT" "$WRAPPER"' EXIT
 
-# pb/protos/ — commands, events, changes, snapshot
-mkdir -p "$PROTO_ROOT/pb/protos"
-cp "$HEART_DIR/pb/protos/commands.proto" "$PROTO_ROOT/pb/protos/"
-cp "$HEART_DIR/pb/protos/events.proto" "$PROTO_ROOT/pb/protos/"
-cp "$HEART_DIR/pb/protos/changes.proto" "$PROTO_ROOT/pb/protos/"
-cp "$HEART_DIR/pb/protos/snapshot.proto" "$PROTO_ROOT/pb/protos/"
+if [[ "$FROM_DIST" == true ]]; then
+	# CI mode: use .proto files downloaded by update-ci.sh into dist/lib/protos/
+	PROTO_SRC="$ROOT_DIR/dist/lib/protos"
+	if [[ ! -d "$PROTO_SRC" ]]; then
+		echo "Error: dist/lib/protos not found. Run update-ci.sh first."
+		exit 1
+	fi
 
-# pkg/lib/pb/model/protos/ — models, localstore
-mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
-cp "$HEART_DIR/pkg/lib/pb/model/protos/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
-cp "$HEART_DIR/pkg/lib/pb/model/protos/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	# pb/protos/ — commands, events, changes, snapshot
+	mkdir -p "$PROTO_ROOT/pb/protos"
+	cp "$PROTO_SRC/commands.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$PROTO_SRC/events.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$PROTO_SRC/changes.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$PROTO_SRC/snapshot.proto" "$PROTO_ROOT/pb/protos/"
+
+	# pkg/lib/pb/model/protos/ — models, localstore
+	mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
+	cp "$PROTO_SRC/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	cp "$PROTO_SRC/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+else
+	# Local mode: use anytype-heart repo
+	HEART_DIR="$ROOT_DIR/../anytype-heart"
+	if [[ ! -d "$HEART_DIR" ]]; then
+		echo "Error: anytype-heart repo not found at $HEART_DIR"
+		exit 1
+	fi
+
+	# pb/protos/ — commands, events, changes, snapshot
+	mkdir -p "$PROTO_ROOT/pb/protos"
+	cp "$HEART_DIR/pb/protos/commands.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$HEART_DIR/pb/protos/events.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$HEART_DIR/pb/protos/changes.proto" "$PROTO_ROOT/pb/protos/"
+	cp "$HEART_DIR/pb/protos/snapshot.proto" "$PROTO_ROOT/pb/protos/"
+
+	# pkg/lib/pb/model/protos/ — models, localstore
+	mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
+	cp "$HEART_DIR/pkg/lib/pb/model/protos/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	cp "$HEART_DIR/pkg/lib/pb/model/protos/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+fi
 
 echo "Generating TypeScript protobuf bindings..."
 

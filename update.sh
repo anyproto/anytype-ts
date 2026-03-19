@@ -49,11 +49,11 @@ if [ "$platform" = "windows-latest" ]; then
   echo -n "Uncompressing... "
   unzip $FILE
   printf "Done\n"
-  
+
   echo "Moving... "
   mv -fv grpc-server.exe "$folder/anytypeHelper.exe"
-else 
-  echo -n "Uncompressing... " 
+else
+  echo -n "Uncompressing... "
   tar -zxf $FILE
   printf "Done\n"
 
@@ -73,21 +73,5 @@ rm -rf protobuf
 rm -rf relations
 rm -rf json
 rm -rf $FILE
-
-# Populate middleware/ with proto .ts files for Vite's Proto alias
-echo "Populating middleware/ with proto .ts files..."
-rm -rf middleware
-mkdir -p middleware/google/protobuf
-mkdir -p middleware/pb/protos
-mkdir -p middleware/pkg/lib/pb/model/protos
-
-cp -v dist/lib/google/protobuf/descriptor.ts middleware/google/protobuf/
-cp -v dist/lib/google/protobuf/struct.ts middleware/google/protobuf/
-cp -v dist/lib/pb/protos/changes.ts middleware/pb/protos/
-cp -v dist/lib/pb/protos/commands.ts middleware/pb/protos/
-cp -v dist/lib/pb/protos/events.ts middleware/pb/protos/
-cp -v dist/lib/pb/protos/snapshot.ts middleware/pb/protos/
-cp -v dist/lib/pkg/lib/pb/model/protos/localstore.ts middleware/pkg/lib/pb/model/protos/
-cp -v dist/lib/pkg/lib/pb/model/protos/models.ts middleware/pkg/lib/pb/model/protos/
 
 printf "Done\n\n"

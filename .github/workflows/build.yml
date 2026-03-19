@@ -151,6 +151,12 @@ jobs:
           ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )" --arch="arm"
           ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )" --arch="amd"
 
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Generate protobuf TypeScript bindings
+        run: bash scripts/generate-protos.sh --from-dist
+
       - name: Build Native Messaging Host Windows
         if: ${{ startsWith(matrix.os, 'windows-') }}
         run: bun run build:nmh-win
