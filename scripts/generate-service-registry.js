@@ -13,13 +13,13 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const HEART_DIR = path.resolve(ROOT_DIR, '..', 'anytype-heart');
 const SERVICE_TS = path.join(ROOT_DIR, 'src/ts/lib/api/service.ts');
 
-// Try dist/lib/protos first (CI), then anytype-heart repo (local dev)
-const DIST_PROTO = path.join(ROOT_DIR, 'dist/lib/protos/service.proto');
-const HEART_PROTO = path.join(HEART_DIR, 'pb/protos/service/service.proto');
-const SERVICE_PROTO = fs.existsSync(DIST_PROTO) ? DIST_PROTO : HEART_PROTO;
+const fromDist = process.argv.includes('--from-dist');
+const SERVICE_PROTO = fromDist
+	? path.join(ROOT_DIR, 'dist/lib/protos/service.proto')
+	: path.join(HEART_DIR, 'pb/protos/service/service.proto');
 
 if (!fs.existsSync(SERVICE_PROTO)) {
-	console.error('Error: service.proto not found at', DIST_PROTO, 'or', HEART_PROTO);
+	console.error('Error: service.proto not found at', SERVICE_PROTO);
 	process.exit(1);
 }
 

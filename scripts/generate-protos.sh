@@ -111,6 +111,10 @@ echo "Generated TypeScript files:"
 find "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google" -name '*.ts' 2>/dev/null | sort
 
 echo "Generating service registry..."
-node "$ROOT_DIR/scripts/generate-service-registry.js"
+if [[ "$FROM_DIST" == true ]]; then
+	node "$ROOT_DIR/scripts/generate-service-registry.js" --from-dist
+else
+	node "$ROOT_DIR/scripts/generate-service-registry.js"
+fi
 
 echo "Done!"
