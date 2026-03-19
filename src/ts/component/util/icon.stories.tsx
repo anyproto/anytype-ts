@@ -45,6 +45,13 @@ export const WithInner: Story = {
 	},
 };
 
+export const WithBackground: Story = {
+	args: {
+		className: 'more',
+		withBackground: true,
+	},
+};
+
 export const CustomStyle: Story = {
 	args: {
 		className: 'custom',
