@@ -1,0 +1,20 @@
+[
+  "file",
+  "image",
+  "video",
+  "audio",
+  "space",
+  "dashboard",
+  "objectType",
+  "relation",
+  "relationOption",
+  "date",
+  "template",
+  "page",
+  "note",
+  "task",
+  "collection",
+  "set",
+  "profile",
+  "bookmark"
+]
