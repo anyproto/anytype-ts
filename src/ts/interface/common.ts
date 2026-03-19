@@ -280,13 +280,9 @@ export interface FocusState {
 	range: I.TextRange;
 };
 
-export interface RouteParam { 
+export interface RouteParam {
 	replace: boolean;
-	animate: boolean;
-	delay: number;
 	updateTabRoute: boolean;
-	onFadeOut: () => void;
-	onFadeIn?: () => void;
 	onRouteChange?: () => void;
 };
 

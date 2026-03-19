@@ -952,8 +952,8 @@ class UtilMenu {
 					if (targetSpaceId == S.Common.space) {
 						Action.openSettings(id, route);
 					} else {
-						U.Router.switchSpace(targetSpaceId, '', false, { 
-							onFadeIn: () => Action.openSettings(id, route),
+						U.Router.switchSpace(targetSpaceId, '', false, {
+							onRouteChange: () => Action.openSettings(id, route),
 						}, true);
 					};
 					break;

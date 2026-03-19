@@ -1013,19 +1013,6 @@ class UtilCommon {
 	};
 
 	/**
-	 * Adds a script tag to the document body with a given ID and source.
-	 * @param {string} id - The script element ID.
-	 * @param {string} src - The script source URL.
-	 */
-	addScript (id: string, src: string) {
-		const body = $('body');
-		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
-
-		body.find(`script#${id}`).remove();
-		body.append(element);
-	};
-
-	/**
 	 * Converts a Uint8Array to a string.
 	 * @param {Uint8Array} u8a - The array to convert.
 	 * @returns {string} The resulting string.

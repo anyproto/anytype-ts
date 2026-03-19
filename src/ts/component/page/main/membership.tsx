@@ -13,7 +13,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 		U.Space.openDashboardOrVoid({
 			replace: true,
-			onFadeIn: () => {
+			onRouteChange: () => {
 				if (code) {
 					S.Popup.open('membershipActivation', { data: { code } });
 				} else {

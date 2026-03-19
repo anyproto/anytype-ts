@@ -36,7 +36,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 				U.Data.createSession(phrase, '', '', (message: any) => {
 					if (!setErrorHandler(message.error)) {
-						select(accountId, false);
+						select(accountId);
 					};
 				});
 			});
@@ -46,7 +46,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		});
 	};
 
-	const select = (accountId: string, animate: boolean) => {
+	const select = (accountId: string) => {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
@@ -63,10 +63,9 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			Renderer.send('closeOtherWindows');
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { 
+			const routeParam = {
 				replace: true,
-				animate,
-				onFadeIn: () => {
+				onRouteChange: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = Storage.get('multichatsOnboarding');
 
@@ -153,7 +152,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 
 			case 'select': {
-				select(account.id, true);
+				select(account.id);
 				break;
 			};
 		};
