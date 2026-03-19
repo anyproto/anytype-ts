@@ -150,9 +150,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			return;
 		};
 
-		const ids = items.map(it => it.relationKey);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const oldIndex = view.relations.findIndex(it => it.relationKey == active.id);
+		const newIndex = view.relations.findIndex(it => it.relationKey == over.id);
 
 		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		n.current = newIndex;

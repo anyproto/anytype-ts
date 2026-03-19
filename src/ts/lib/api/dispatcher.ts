@@ -712,7 +712,21 @@ class Dispatcher {
 								const { afterId, items } = element.add;
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : list.length;
 
-								items.forEach((it, i) => list.splice(idx + i, 0, it));
+								items.forEach((it, i) => {
+									// For relations, preserve existing width if adding a duplicate
+									// (protobuf3 defaults unset int fields to 0)
+									if (key.id == 'relation') {
+										const existingIdx = list.findIndex(existing => existing[key.idField] == it[key.idField]);
+										if (existingIdx >= 0) {
+											if (!it.width) {
+												it.width = list[existingIdx]?.width || 0;
+											};
+											list[existingIdx] = it;
+											return;
+										};
+									};
+									list.splice(idx + i, 0, it);
+								});
 
 								if ([ 'filter', 'sort', 'relation' ].includes(key.id)) {
 									updateData = true;
