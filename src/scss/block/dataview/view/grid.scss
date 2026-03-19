@@ -213,6 +213,10 @@
 			.cell.isEditing.c-checkbox { 
 				.cellContent { min-width: unset; }
 			}
+
+			.cellContent.c-checkbox {
+				.icon { width: 20px; height: 20px; }
+			}
 		}
 
 		.viewContent.viewGrid.wrapContent {

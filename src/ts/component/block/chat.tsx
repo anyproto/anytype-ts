@@ -800,6 +800,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const first = message.messages[0];
 
 			S.Chat.clear(subId);
+			setIsBottom(false);
 			loadMessagesByOrderId(first.orderId, () => {
 				raf(() => scrollToMessage(first.id, true, true));
 			});
@@ -896,11 +897,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const idx = jumpIds.current.length - 1;
 			const id = jumpIds.current[idx];
 			const ref = messageRefs.current[id];
+
+			jumpIds.current.splice(idx, 1);
+
+			if (!ref) {
+				loadAndScrollToMessage(id);
+				return;
+			};
+
 			const container = U.Common.getScrollContainer(isPopup);
 			const threshold = container.outerHeight() / 2;
 
-			jumpIds.current.splice(idx, 1);
-			if (ref && (getMessageScrollOffset(id) < threshold)) {
+			if (getMessageScrollOffset(id) < threshold) {
 				onScrollToBottomClick();
 			} else {
 				scrollToMessage(id, true, true);
@@ -911,6 +919,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const reloadAndScrollToBottom = () => {
+		jumpIds.current = [];
 		loadMessages(1, true, () => scrollToBottom(true));
 	};
 
@@ -997,10 +1006,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
-
-		if (v) {
-			jumpIds.current = [];
-		};
 	};
 
 	const setAutoLoadDisabled = (v: boolean) => {
@@ -1213,6 +1218,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					loadDepsAndReplies={loadDepsAndReplies}
 					reloadAndScrollToBottom={reloadAndScrollToBottom}
 					isEmpty={isEmpty}
+					isBottom={isBottom}
 				/>
 			) : ''}
 		</div>

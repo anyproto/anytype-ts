@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode, UIEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, J, translate, getSparkOnboardingService, keyboard } from 'Lib';
+import { I, S, U, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
 
@@ -621,7 +621,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					</div>
 					<div className="errorActions">
 						<Button 
-							className="c28 primary" 
+							size={28}
+							className="primary" 
 							text={translate('commonRetry')} 
 							onClick={() => {
 								// Just trigger connect, don't reset error
@@ -631,7 +632,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						/>
 
 						<Button 
-							className="c28 secondary" 
+							size={28}
+							className="secondary" 
 							text={translate('commonClose')} 
 							onClick={() => onClose(true)} 
 						/>

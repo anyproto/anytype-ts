@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, sidebar } from 'Lib';
+import { I, C, S, U, J, Action, translate, analytics, keyboard, } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 const SUB_ID = 'dateListObject';
@@ -216,7 +216,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 								key={item.relationKey}
 								active={relationKey == item.relationKey}
 								color="blank"
-								className="c36"
+								size={28}
 								onClick={() => onCategoryClick(item.relationKey)}
 								icon={icon}
 								text={item.name}

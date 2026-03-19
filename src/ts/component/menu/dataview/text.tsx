@@ -196,7 +196,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 							onFocus={onFocus}
 							onBlur={onBlur}
 						/>
-						<Icon className="clear withBackground" onClick={onClear} />
+						<Icon className="clear" withBackground={true} onClick={onClear} />
 					</>
 				) : (
 					<Editable

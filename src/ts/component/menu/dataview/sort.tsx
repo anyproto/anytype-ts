@@ -369,8 +369,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="side right">
 						{!isReadonlyValue ? (
 							<div className="buttons">
-								<Icon className="more withBackground" onClick={e => onMore(e, item)} />
-								<Icon className="delete withBackground" onClick={e => onRemove(e, item)} />
+								<Icon className="more" withBackground={true} onClick={e => onMore(e, item)} />
+								<Icon className="delete" withBackground={true} onClick={e => onRemove(e, item)} />
 							</div>
 						) : ''}
 					</div>

@@ -89,7 +89,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 					<Icon 
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className="relation withBackground"
+						className="relation" withBackground={true}
 						onClick={onRelation} 
 					/> 
 				) : ''}
@@ -98,7 +98,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 					<Icon 
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-						className="more withBackground"
+						className="more" withBackground={true}
 						onClick={onMore} 
 					/> 
 				) : ''}

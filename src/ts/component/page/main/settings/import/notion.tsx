@@ -42,7 +42,7 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 					/>
 					{error ? <Error text={error} /> : ''}
 				</div>
-				<Button text={translate('popupSettingsImportData')} className="c36" onClick={onImport} />
+				<Button text={translate('popupSettingsImportData')} size={36} onClick={onImport} />
 			</div>
 
 			<div className="line" />

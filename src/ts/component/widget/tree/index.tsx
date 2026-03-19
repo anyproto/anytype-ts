@@ -306,8 +306,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined round"
-							icon="search"
+							iconParam={{ className: 'search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 						/>
@@ -317,7 +316,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 							<Button
 								id="button-object-create"
 								color="blank"
-								className="c28"
+								size={28}
 								text={translate('commonNew')}
 								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
@@ -472,7 +471,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				id="button-show-all" 
 				onClick={onSetPreview} 
 				text={translate('widgetSeeAll')} 
-				className="c28" 
+				size={28}
 				color="blank" 
 			/>
 		</div>

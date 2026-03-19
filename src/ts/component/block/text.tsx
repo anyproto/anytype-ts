@@ -2,17 +2,24 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
+// Prism language plugins expect `Prism` on the global scope
+(window as any).Prism = Prism;
+
+// Load language components sequentially to respect dependency order
+const prismModules = import.meta.glob('/node_modules/prismjs/components/prism-*.js');
+(async () => {
+	for (const lang of U.Prism.components) {
+		const key = `/node_modules/prismjs/components/prism-${lang}.js`;
+		try { await prismModules[key]?.(); } catch (e) {};
+	};
+})();
+
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-};
-
-for (const lang of U.Prism.components) {
-	require(`prismjs/components/prism-${lang}.js`);
 };
 
 const TWIN_PAIRS = {
@@ -498,12 +505,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const processed = lines.map((line, i) => {
 						let removed = 0;
 
+						const match = line.match(/^ {1,4}/);
+
 						if (line.startsWith('\t')) {
 							line = line.substring(1);
 							removed = 1;
 						} else
-						if (line.match(/^ {1,4}/)) {
-							const spaces = line.match(/^ {1,4}/)[0].length;
+						if (match) {
+							const spaces = match[0].length;
 							line = line.substring(spaces);
 							removed = spaces;
 						};

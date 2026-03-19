@@ -1,7 +1,7 @@
-import React, { FC, useRef, useState, useEffect } from 'react';
+import React, { FC, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Button, Error } from 'Component';
+import { Icon, Title, Label, Button, } from 'Component';
 import { I, C, S, U, J, translate, Action, analytics } from 'Lib';
 
 const Notification: FC<I.NotificationComponent> = observer((props) => {
@@ -120,7 +120,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 				{buttons.length ? (
 					<div className="buttons">
 						{buttons.map((item: any, i: number) => (
-							<Button key={i} className="c28" {...item} onClick={e => onButton(e, item.id)} />
+							<Button key={i} size={28} {...item} onClick={e => onButton(e, item.id)} />
 						))}
 					</div>
 				) : ''}

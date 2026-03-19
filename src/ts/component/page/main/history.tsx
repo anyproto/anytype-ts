@@ -6,7 +6,7 @@ import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
-const Diff = require('diff');
+import * as Diff from 'diff';
 
 const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

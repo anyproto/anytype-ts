@@ -23,14 +23,16 @@ const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 					<Icon className="key" />
 					<Label text={translate('blockChatEmptyItem3')} />
 				</div>
-				<div className="buttons">
-					<Button 
-						onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-						text={translate('blockChatEmptyShareInviteLink')} 
-						className="c28" 
-						color="blank" 
-					/>
-				</div>
+				{spaceview.isChat ? (
+					<div className="buttons">
+						<Button
+							onClick={() => Action.openSpaceShare(analytics.route.chat)}
+							text={translate('blockChatEmptyShareInviteLink')}
+							size={28}
+							color="blank"
+						/>
+					</div>
+				) : ''}
 			</div>
 		</div>
 	);

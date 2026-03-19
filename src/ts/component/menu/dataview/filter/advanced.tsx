@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { I, C, S, J, analytics, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
-import relation from 'json/relation';
 
 const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

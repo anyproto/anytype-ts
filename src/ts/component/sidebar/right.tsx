@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, U, J, S, keyboard, sidebar } from 'Lib';
+import { I, U, S, keyboard, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';

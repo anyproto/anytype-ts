@@ -1,0 +1,40 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+	"files": {
+		"includes": ["src/**/*.ts", "src/**/*.tsx"]
+	},
+	"overrides": [{
+		"includes": ["src/ts/component/util/icons/**", "src/ts/component/util/iconRegistry.ts"],
+		"linter": { "enabled": false },
+		"formatter": { "enabled": false }
+	}],
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineWidth": 120
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": false,
+			"correctness": {
+				"noUnusedImports": "warn"
+			},
+			"style": {
+				"useConst": "warn"
+			},
+			"suspicious": {
+				"noDebugger": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"jsxRuntime": "reactClassic",
+		"formatter": {
+			"quoteStyle": "single",
+			"jsxQuoteStyle": "double",
+			"semicolons": "always"
+		}
+	}
+}

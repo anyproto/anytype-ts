@@ -156,7 +156,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									className="arrow withBackground"
+									className="arrow" withBackground={true}
 									onClick={onArrow}
 									tooltipParam={item.arrowTooltipParam}
 								/>

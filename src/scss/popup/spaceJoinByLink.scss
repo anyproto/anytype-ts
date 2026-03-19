@@ -11,12 +11,11 @@
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
+		.icon.join { width: 40px; height: 40px; margin: 16px auto 0px; }
+
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 
-		.input {
-			margin: 0px 0px 12px 0px; height: 56px; background: var(--color-shape-highlight-light); border: 0px;
-			border-radius: 20px; padding: 0px 16px; outline: none;
-		}
+		.input { margin: 0px 0px 12px 0px; }
 
 		.button { width: 100%; }
 	}

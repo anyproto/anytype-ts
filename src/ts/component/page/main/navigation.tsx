@@ -295,8 +295,8 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 			
 				<div className="buttons">
-					<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => onConfirm(e, item)} />
-					{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
+					<Button text={translate('popupNavigationOpen')} size={36} onClick={e => onConfirm(e, item)} />
+					{isPopup ? <Button text={translate('popupNavigationCancel')} size={36} color="blank" onClick={() => S.Popup.close('page')} /> : ''}
 				</div>
 			</div>
 		);

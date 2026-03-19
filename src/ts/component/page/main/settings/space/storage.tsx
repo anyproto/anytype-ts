@@ -107,6 +107,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				buttons={buttons}
 				info={I.ObjectManagerItemInfo.FileSize}
 				isCompact={true}
+				disableHeight={false}
 				sorts={sorts}
 				filters={filters}
 				keys={U.Subscription.syncStatusRelationKeys().concat([ 'creator' ])}

@@ -22,11 +22,13 @@
             .statusBar.ok { color: var(--color-lime); }
 
             .inputWrapper {
-                display: flex; padding: 0px 16px; align-items: center; height: 40px; margin-bottom: 8px; border-radius: 20px;
-                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+                display: flex; padding: 0px 16px; align-items: center; height: 40px; margin-bottom: 8px; border-radius: 14px;
+                background-color: var(--color-shape-highlight-light-solid);
             }
+            .inputWrapper:hover { background-color: var(--color-shape-highlight-medium); }
+            .inputWrapper:focus-within { background-color: var(--color-shape-highlight-medium); }
             .inputWrapper {
-                .input { @include text-common; border: 0; height: 40px; line-height: 40px; padding: 6px 0px; }
+                .input { @include text-common; border: 0; height: 40px; line-height: 40px; padding: 6px 0px; background: none; border-radius: 0px; }
                 .ns { flex-shrink: 0; width: 27px; }
             }
 
@@ -42,11 +44,13 @@
         .title { @include text-header3; margin: 0px 0px 4px 0px; }
         .label { margin: 0px 0px 20px 0px; }
 
-        .inputWrapper { position: relative; height: 40px; margin: 0px 0px 12px 0px;  }
+        .inputWrapper { position: relative; height: 40px; margin: 0px 0px 12px 0px; border-radius: 14px; background-color: var(--color-shape-highlight-light-solid); }
+        .inputWrapper:hover { background-color: var(--color-shape-highlight-medium); }
+        .inputWrapper:focus-within { background-color: var(--color-shape-highlight-medium); }
         .inputWrapper {
             .input {
-                padding: 0px 32px 0px 16px; height: 40px; line-height: 40px; border-radius: 20px;
-                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+                padding: 0px 32px 0px 16px; height: 40px; line-height: 40px;
+                border: 0; background: none; border-radius: 0px;
             }
 
             .icon.clear { display: none; position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; background-image: url('~img/icon/membership/clear.svg'); }

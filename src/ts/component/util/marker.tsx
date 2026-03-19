@@ -3,6 +3,11 @@ import $ from 'jquery';
 import { I, S, J } from 'Lib';
 import { observer } from 'mobx-react';
 
+import checkbox0 from 'img/icon/marker/checkbox0.svg';
+import checkbox1 from 'img/icon/marker/checkbox1.svg';
+import checkbox2 from 'img/icon/marker/checkbox2.svg';
+import checkbox1Dark from 'img/theme/dark/icon/marker/checkbox1.svg';
+
 interface Props {
 	id: string;
 	type: I.MarkerType;
@@ -18,15 +23,15 @@ const Icons: any = {};
 const Theme: any = { dark: {} };
 
 Icons[I.MarkerType.Checkbox] = {
-	0:		 require('img/icon/marker/checkbox0.svg'),
-	1:		 require('img/icon/marker/checkbox1.svg'),
-	2:		 require('img/icon/marker/checkbox2.svg'),
+	0:		 checkbox0,
+	1:		 checkbox1,
+	2:		 checkbox2,
 };
 
 Theme.dark[I.MarkerType.Checkbox] = {
-	0:		 require('img/icon/marker/checkbox0.svg'),
-	1:		 require('img/theme/dark/icon/marker/checkbox1.svg'),
-	2:		 require('img/icon/marker/checkbox2.svg'),
+	0:		 checkbox0,
+	1:		 checkbox1Dark,
+	2:		 checkbox2,
 };
 
 const Marker = observer(forwardRef<HTMLDivElement, Props>(({

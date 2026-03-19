@@ -250,7 +250,6 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Filter
 				ref={nameRef}
 				placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
-				className="outlined round"
 				value={option.name}
 				onKeyUp={(e: any, v: string) => onKeyUp(e, v)}
 				onClear={onClear}

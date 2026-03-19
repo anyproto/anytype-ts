@@ -3,6 +3,12 @@
 .blocks {
 	.block.blockDataview {
 
+		.viewContent {
+			.cellContent.c-checkbox {
+				.icon { width: 16px; height: 16px; }
+			}
+		}
+
 		.viewContent.viewGrid,
 		.viewContent.viewList {
 			.cell.add { color: var(--color-control-active); line-height: 20px; width: 100%; display: block; }
@@ -33,6 +39,7 @@
 					.cellContent:not(.isName) { 
 						width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; 
 					}
+					.cellContent.c-checkbox { padding-top: 0px; }
 					.cellContent:not(.isName) {
 						.empty, .name { @include text-overflow-nw; width: 100%; }
 					}
@@ -112,7 +119,7 @@
 				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
-					.input.name { text-indent: 0px; padding: 0px; height: unset; }
+					.input.name { text-indent: 0px; padding: 0px; height: unset; background: none; border: 0px; border-radius: 0px; }
 				}
 			}
 			.card::after {

@@ -58,8 +58,8 @@ class ErrorBoundary extends Component<Props, State> {
 				</div>
 
 				<div className="buttons">
-					<Button text={translate('commonCopy')} className="c28" color="blank" onClick={this.onCopy} />
-					<Button text={translate('errorBoundaryReload')} className="c28" color="black" onClick={this.onReload} />
+					<Button text={translate('commonCopy')} size={28} color="blank" onClick={this.onCopy} />
+					<Button text={translate('errorBoundaryReload')} size={28} color="black" onClick={this.onReload} />
 				</div>
 			</Frame>
 		);

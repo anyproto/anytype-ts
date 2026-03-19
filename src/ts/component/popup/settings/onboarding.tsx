@@ -191,7 +191,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 								{config.path ? <Label className="small" text={U.String.shorten(config.path, 32)} /> : ''}
 							</div>
-							<Button className="c28" text={translate('commonLoad')} onClick={onUpload} />
+							<Button size={28} text={translate('commonLoad')} onClick={onUpload} />
 						</div>
 					) : ''}
 
@@ -201,8 +201,8 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 							<Label className="small" text={U.String.shorten(config.userPath, 32)} />
 						</div>
 						<div className="buttons">
-							<Button className="c28" text={translate('commonChange')} onClick={onChangeStorage} />
-							{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={onResetStorage} /> : ''}
+							<Button size={28} text={translate('commonChange')} onClick={onChangeStorage} />
+							{!isDefault ? <Button size={28} text={translate('commonReset')} onClick={onResetStorage} /> : ''}
 						</div>
 					</div>
 

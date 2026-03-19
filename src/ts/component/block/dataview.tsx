@@ -547,7 +547,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (isCollection && objects?.length) {
 					// Collection add is handled inside the popup for each file
 				};
-			});
+			}, analytics.route.uploadTypePage);
 		} else
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
 			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
@@ -665,7 +665,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						menuContext?.close();
 						const objectId = getObjectId();
 						const details = getDetails('');
-						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details);
+						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, undefined, analytics.route.uploadTypePage);
 					} else
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
@@ -1707,6 +1707,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (paths.length) {
 			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths, (message: any) => {
 				U.File.showFileDropError(message);
+
+				if (!message.error.code) {
+					analytics.event('UploadFile', { route: analytics.route.uploadDnDSet, count: paths.length });
+				};
 			});
 		};
 	};

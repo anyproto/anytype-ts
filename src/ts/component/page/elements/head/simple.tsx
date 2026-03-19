@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, sidebar } from 'Lib';
+import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -315,7 +315,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 					<Button
 						id="button-layout"
 						color="blank"
-						className="c28 resetLayout"
+						size={28}
+						className="resetLayout"
 						onClick={onLayout}
 					/>
 				);
@@ -327,7 +328,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						id="button-template" 
 						text={translate('commonTemplates')} 
 						color="blank" 
-						className="c28" 
+						size={28}
 						onClick={onTemplates} 
 					/>
 				);
@@ -338,7 +339,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 					<Button 
 						id="button-edit" 
 						color="blank" 
-						className="c28" 
+						size={28}
 						text={translate('commonEditType')} 
 						onClick={() => U.Object.editType(rootId, isPopup)}
 					/>
@@ -355,9 +356,9 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon className="arrow left withBackground" onClick={() => changeDate(-1)} />
-				<Icon className="arrow right withBackground" onClick={() => changeDate(1)}/>
-				<Icon id="calendar-icon" className="calendar withBackground" onClick={onCalendar} />
+				<Icon className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
+				<Icon className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
+				<Icon id="calendar-icon" className="calendar" withBackground={true} onClick={onCalendar} />
 			</>
 		);
 	};
