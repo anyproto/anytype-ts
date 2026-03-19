@@ -192,9 +192,9 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<Icon className="info" onClick={showInfo} />
 			</div>
 
-			<Input className="c36" value={domain} readonly={true} />
+			<Input size={36} value={domain} readonly={true} />
 			<Input
-                className="c36"
+                size={36}
                 ref={inputRef}
                 value={slug}
                 focusOnMount={true} 

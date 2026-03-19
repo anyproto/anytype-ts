@@ -44,7 +44,7 @@
 }
 .select.round {
 	&.hover, &:hover { background: var(--color-shape-highlight-medium); }
-	&.c36 { height: 36px; border-radius: 12px; }
+	&.size36 { height: 36px; border-radius: 12px; }
 
 	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/round.svg'); }
 }

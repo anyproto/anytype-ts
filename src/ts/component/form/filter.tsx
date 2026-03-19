@@ -3,8 +3,11 @@ import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, keyboard, translate } from 'Lib';
 
+type FilterSize = 28 | 32 | 36;
+
 interface Props {
 	id?: string;
+	size?: FilterSize;
 	className?: string;
 	inputClassName?: string;
 	iconParam?: {
@@ -38,6 +41,7 @@ interface FilterRefProps {
 
 const Filter = forwardRef<FilterRefProps, Props>(({
 	id = '',
+	size = 28,
 	className = '',
 	inputClassName = '',
 	iconParam,
@@ -59,7 +63,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	const inputRef = useRef(null);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isActive, setIsActive ] = useState(false);
-	const cn = [ 'filter', className ];
+	const cn = [ 'filter', `size${size}`, className ];
 
 	if (isFocused) {
 		cn.push('isFocused');
