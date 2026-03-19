@@ -66,20 +66,20 @@ class Api {
 	};
 
 	logout (win: AppWindow): void {
-		WindowManager.sendToAll('logout');
+		WindowManager.sendToAllTabs('logout');
 	};
 
 	pinCheck (win?: AppWindow): void {
-		WindowManager.sendToAll('pin-check');
+		WindowManager.sendToAllTabs('pin-check');
 		WindowManager.list.forEach((w: AppWindow) => WindowManager.updateTabBarVisibility(w));
 	};
 
 	pinSet (win: AppWindow): void {
-		WindowManager.sendToAll('pin-set');
+		WindowManager.sendToAllTabs('pin-set');
 	};
 
 	pinRemove (win: AppWindow): void {
-		WindowManager.sendToAll('pin-remove');
+		WindowManager.sendToAllTabs('pin-remove');
 	};
 
 	paste (win: AppWindow): void {
@@ -375,6 +375,11 @@ class Api {
 	};
 
 	openTab (win: AppWindow, data: TabData & Record<string, any>, options?: CreateTabOptions): boolean {
+		// Block new tabs while PIN check is required
+		if (this.hasPinSet && !this.isPinChecked) {
+			return false;
+		};
+
 		const { isPinned, ...rest } = data || {};
 		const route = rest.route || '';
 
@@ -588,7 +593,7 @@ class Api {
 	setUserDataPath (win: AppWindow, p: string): void {
 		this.setConfig(win, { userDataPath: p });
 		app.setPath('userData', p);
-		WindowManager.sendToAll('data-path', Util.dataPath());
+		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
 	showChallenge (win: AppWindow, param: Record<string, any>): void {
