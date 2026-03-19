@@ -110,7 +110,7 @@ export default defineConfig(({ mode }) => {
 						return 'assets/[name]-[hash][extname]';
 					},
 					manualChunks(id) {
-						if (id.includes('dist/lib/pb/')) {
+						if (id.includes('dist/lib/pb/') || id.includes('/middleware/')) {
 							return 'protobuf';
 						}
 						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {

@@ -366,6 +366,7 @@ jobs:
       - name: Build frontend
         run: bun run build
         env:
+          NODE_OPTIONS: --max-old-space-size=8192
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
 
