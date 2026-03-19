@@ -132,6 +132,10 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		if (window.isWebVersion) {
+			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
+		}
+
 		console.log('[App] Init', getGlobal('serverAddress'));
 
 		dispatcher.init(getGlobal('serverAddress'));
@@ -264,6 +268,7 @@ const App: FC = () => {
 
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
+
 		if (route) {
 			const rp = U.Router.getParam(route);
 			if (

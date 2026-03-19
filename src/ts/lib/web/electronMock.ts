@@ -303,6 +303,10 @@ class ElectronMock {
 			});
 		});
 
+		// Single tab in web mode — always return false (no tab to switch to)
+		handlers.set('switchToTabByRoute', () => false);
+		handlers.set('openRouteInTab', () => false);
+
 		['openTab', 'openWindow', 'setActiveTab', 'removeTab', 'closeOtherTabs', 'closeOtherWindows',
 			'reorderTabs', 'setTabsDimmer', 'winCommand', 'setAlwaysShowTabs'].forEach(cmd => {
 			handlers.set(cmd, () => {
@@ -319,6 +323,8 @@ class ElectronMock {
 		});
 
 		handlers.set('payloadBroadcast', noopTrue);
+		handlers.set('setBackground', noopTrue);
+		handlers.set('setHasPinSet', noopTrue);
 
 		// No-op handlers that return empty object
 		['linuxDistro', 'shortcutExport', 'shortcutImport'].forEach(cmd => {

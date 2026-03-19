@@ -9,7 +9,8 @@ const os = require('os');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
 
-const webPort = process.env.WEB_PORT || 9090;
+const webPort = process.env.WEB_PORT || 3030;
+const grpcWebAddr = process.env.ANYTYPE_GRPCWEB_ADDR || '127.0.0.1:31008';
 const openBrowserAuto = process.env.WEB_OPEN_BROWSER === '1' || process.env.WEB_OPEN_BROWSER === 'true';
 
 // Use the same Application Support / AppData folder as Electron
@@ -75,7 +76,7 @@ function startHelper() {
 			}
 		};
 
-		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', '127.0.0.1:0'], {
+		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', grpcWebAddr], {
 			windowsHide: false,
 			env: process.env,
 		});
@@ -129,6 +130,9 @@ function startHelper() {
 				const msg = `anytypeHelper exited unexpectedly with code ${code}`;
 				console.error(`[Web] ${msg}`);
 				reject(new Error(msg));
+			} else {
+				console.error(`[Web] anytypeHelper crashed with code ${code}, shutting down`);
+				process.exit(1);
 			}
 			helperProcess = null;
 		});

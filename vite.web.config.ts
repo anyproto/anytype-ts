@@ -12,6 +12,55 @@ const wasmDir = path.join(pdfjsDistPath, 'wasm');
 const srcImgDir = path.resolve(__dirname, 'src/img');
 const distImgDir = path.resolve(__dirname, 'dist/img');
 
+function spaFallbackPlugin(): Plugin {
+	return {
+		name: 'spa-fallback',
+		configureServer(server) {
+			// Return function so this runs AFTER Vite's internal middleware
+			return () => {
+				server.middlewares.use(async (req, res, next) => {
+					const url = req.url || '';
+					const pathname = url.split('?')[0];
+
+					if (
+						pathname.startsWith('/@') ||
+						pathname.startsWith('/node_modules/') ||
+						pathname.startsWith('/src/') ||
+						pathname.startsWith('/dist/') ||
+						pathname.startsWith('/api/') ||
+						pathname.startsWith('/cmaps/') ||
+						pathname.startsWith('/wasm/')
+					) {
+						return next();
+					}
+
+					const htmlPath = path.resolve(__dirname, 'dist/index.web.html');
+
+					if (!fs.existsSync(htmlPath)) {
+						return next();
+					}
+
+					try {
+						const raw = fs.readFileSync(htmlPath, 'utf-8');
+						const html = await server.transformIndexHtml(
+							'/dist/index.web.html',
+							raw,
+							req.originalUrl
+						);
+
+						res.statusCode = 200;
+						res.setHeader('Content-Type', 'text/html');
+						res.end(html);
+					} catch (err) {
+						console.error('[SPA Fallback] Error:', err);
+						next(err);
+					}
+				});
+			};
+		},
+	};
+}
+
 function webUploadPlugin(): Plugin {
 	const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
@@ -88,11 +137,13 @@ function webUploadPlugin(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-	const webPort = parseInt(process.env.WEB_PORT || '9090', 10);
+	const webPort = parseInt(process.env.WEB_PORT || '3030', 10);
 
 	return {
+		base: '/',
 		root: '.',
 		publicDir: false,
+		appType: 'mpa',
 
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -225,6 +276,7 @@ export default defineConfig(({ mode }) => {
 		},
 
 		plugins: [
+			spaFallbackPlugin(),
 			react(),
 			webUploadPlugin(),
 
@@ -236,7 +288,7 @@ export default defineConfig(({ mode }) => {
 					const dest = path.resolve(__dirname, 'dist-web/index.html');
 					if (fs.existsSync(src)) {
 						let html = fs.readFileSync(src, 'utf8');
-						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, './');
+						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, '/');
 						fs.writeFileSync(dest, html);
 						fs.unlinkSync(src);
 						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch {}
