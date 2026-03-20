@@ -405,26 +405,26 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			let itemsImport: any[] = [];
 			if (canWrite) {
 				itemsImport = ([
-					{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
-					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
-					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
-					{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+					{ id: 'importHtml', icon: 'html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+					{ id: 'importText', icon: 'importText', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+					{ id: 'importProtobuf', icon: 'protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
+					{ id: 'importMarkdown', icon: 'markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
 				] as any[]).map(it => ({ ...it, isImport: true, isSmall: true }));
 			};
 
 			let settingsSpace: any[] = [
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
 
-				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
-				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
-				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+				{ id: 'exportIndex', icon: 'export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportProtobuf', icon: 'protobuf', name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', icon: 'markdown', name: translate('popupSettingsExportMarkdownTitle') },
 			];
 
 			if (canWrite) {
 				settingsSpace = settingsSpace.concat([
-					{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
-					{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
-					{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+					{ id: 'importIndex', icon: 'settingsImport', name: translate('popupSettingsImportTitle') },
+					{ id: 'importNotion', icon: 'notion', name: translate('popupSettingsImportNotionTitle') },
+					{ id: 'importCsv', icon: 'csv', name: translate('popupSettingsImportCsvTitle') },
 				]);
 			};
 
@@ -433,22 +433,22 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
+					id: 'personal', icon: 'personal', name: translate('popupSettingsPersonalTitle'),
 					aliases: [
 						translate('commonLanguage', lang), translate('commonLanguage'),
 						translate('commonSpelling', lang), translate('commonSpelling'),
 					]
 				},
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
+					id: 'personal', icon: 'personal', name: translate('pageSettingsColorMode'),
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ]
 				},
-				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
-				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
-				{ id: 'spaceList', icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
-				{ id: 'dataPublish', icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
-				{ id: 'api', icon: 'settings-api', name: translate('popupSettingsApiTitle') },
+				{ id: 'pinIndex', icon: 'settingsPin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataIndex', icon: 'storage', name: translate('popupSettingsLocalStorageTitle') },
+				{ id: 'phrase', icon: 'phrase', name: translate('popupSettingsPhraseTitle') },
+				{ id: 'spaceList', icon: 'spaces', name: translate('popupSettingsSpacesListTitle') },
+				{ id: 'dataPublish', icon: 'sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'api', icon: 'api', name: translate('popupSettingsApiTitle') },
 			];
 
 			const pageItems: any[] = [
@@ -737,7 +737,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (object) {
 			icon = <IconObject object={object} size={size} />;
 		} else {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon name={item.icon} />;
 		};
 
 		if (item.isObject) {

@@ -716,7 +716,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		let icon = null;
 		if (item.icon) {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon name={item.icon as any} />;
 		} else {
 			icon = <IconObject object={item} />;
 		};

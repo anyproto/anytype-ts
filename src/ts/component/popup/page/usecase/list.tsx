@@ -163,7 +163,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				id={`category-${item.id}`}
 				onClick={() => onCategory(item)}
 			>
-				{item.icon ? <Icon className={item.icon} /> : ''}
+				{item.icon ? <Icon name={item.icon} /> : ''}
 				{item.name}
 			</div>
 		);

@@ -713,7 +713,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 								<div className="buttons">
 									{buttons.map(item => (
 										<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
-											<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
+											<Icon name={item.icon} tooltipParam={{ text: item.tooltip }} />
 										</div>
 									))}
 								</div>

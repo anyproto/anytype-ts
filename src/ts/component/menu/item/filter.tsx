@@ -114,7 +114,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			Item = (item: any) => {
 				let icon = null;
 				if (item.icon) {
-					icon = <Icon className={item.icon} />;
+					icon = <Icon name={item.icon} />;
 				} else {
 					icon = <IconObject object={item} />;
 				};

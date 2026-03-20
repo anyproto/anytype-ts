@@ -190,7 +190,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		return [
-			{ id: 'invite', name: translate('commonAdd'), icon: 'invite' },
+			{ id: 'invite', name: translate('commonAdd'), icon: 'inviteMembers' },
 			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
 			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
 		];
@@ -315,7 +315,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 						className="btn" 
 						onClick={e => onClick(e, item)}
 					>
-						<Icon className={item.icon} />
+						<Icon name={item.icon} />
 						<Label text={item.name} />
 					</div>
 				))}

@@ -1734,7 +1734,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onMouseDown={() => onNavigationClick(item.type)}
 		>
 			<div className="bg" />
-			<Icon className={item.icon} />
+			<Icon name={item.icon} />
 
 			{item.cnt ? (
 				<div className="counter">
