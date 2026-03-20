@@ -40,6 +40,14 @@ class Relation {
 	};
 
 	/**
+	 * Returns the SVG registry icon name for a relation type (e.g. 'relationLongText').
+	 */
+	public registryIconName (v: I.RelationType): any {
+		const name = this.typeName(v);
+		return `relation${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+	};
+
+	/**
 	 * Returns the icon name for a relation key and type.
 	 * @param {string} key - The relation key.
 	 * @param {I.RelationType} v - The relation type.
@@ -643,7 +651,7 @@ class Relation {
 
 			ret.push({
 				id: relation.relationKey,
-				icon: `relation ${this.className(relation.format)}`,
+				icon: this.registryIconName(relation.format),
 				name: relation.name,
 				isHidden: relation.isHidden,
 				format: relation.format,

@@ -359,7 +359,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="sides">
 					<div className="side left">
 						<div className="chip relation" onClick={e => onSortNameClick(e, item)}>
-							<Icon className={`relation ${Relation.className(relation.format)}`} />
+							<Icon name={Relation.registryIconName(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
 						<div className="chip type" onClick={e => onTypeChange(e, item)}>

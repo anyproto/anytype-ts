@@ -421,7 +421,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 					onContextMenu={() => onContext(item)}
 				>
 					{U.Object.isRelationLayout(item.layout) ? (
-						<Icon className={`relation ${Relation.className(item.format)}`} />
+						<Icon name={Relation.registryIconName(item.format)} />
 					) : (
 						<IconObject object={item} />
 					)}

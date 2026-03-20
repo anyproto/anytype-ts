@@ -103,7 +103,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	const getSections = () => {
 		const reg = new RegExp(U.String.regexEscape(data.filter), 'gi');
 		const systemKeys = Relation.systemKeys();
-		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, icon: `relation ${Relation.className(it.format)}` }));
+		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, icon: Relation.registryIconName(it.format) }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const types = data.types || [];

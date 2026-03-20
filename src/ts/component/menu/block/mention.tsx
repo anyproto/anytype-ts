@@ -72,7 +72,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				name: translate('commonDates'), 
 				children: [
 					...dates,
-					{ id: 'selectDate', icon: `relation ${Relation.className(I.RelationType.Date)}`, name: translate(`placeholderCell${I.RelationType.Date}`) },
+					{ id: 'selectDate', icon: Relation.registryIconName(I.RelationType.Date), name: translate(`placeholderCell${I.RelationType.Date}`) },
 					{ isDiv: true },
 				]
 			});

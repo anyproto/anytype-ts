@@ -238,7 +238,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			>
 				{!isReadonly ? <Icon className="dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
-					<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+					<Icon name={Relation.registryIconName(item.relation.format)} />
 					<div className="name">{item.relation.name}</div>
 				</span>
 				{canHide ? (
