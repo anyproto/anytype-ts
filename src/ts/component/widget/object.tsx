@@ -51,7 +51,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -156,6 +156,18 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				if (U.Object.isChatLayout(type.recommendedLayout)) {
 					U.Menu.onChatMenu(menuParam, route, cb);
 				};
+			return;
+		};
+
+		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			U.Menu.onFileUploadPopup(type.recommendedLayout, '', details, (objectIds) => {
+				if (objectIds?.length) {
+					const object = S.Detail.get(S.Common.space, objectIds[0]);
+					if (object) {
+						cb(object);
+					};
+				};
+			}, analytics.route.uploadTypeWidget);
 			return;
 		};
 

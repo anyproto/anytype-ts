@@ -331,8 +331,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
-					icon="search"
+					iconParam={{ className: 'search' }}
 					placeholder={translate('menuTypeSuggestFilterTypes')}
 					value={filter}
 					onChange={onFilterChange} 

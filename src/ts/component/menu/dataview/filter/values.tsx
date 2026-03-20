@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, C, translate, analytics, Relation, Dataview } from 'Lib';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
-import { format } from 'path';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
@@ -421,7 +420,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const textInput = (key?: string, placeholder?: string): any => (
 		<div className="textInputWrapper">
 			<Input
-				className="round c36"
+				size={36}
 				key={key ? key : 'value-text'}
 				ref={inputRef}
 				value={item.value}
@@ -617,7 +616,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							readonly={isReadonly}
 						/>
 					</div>
-					{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+					{!isReadonly ? <Icon className="more" withBackground={true} onClick={onMore} /> : ''}
 				</div>
 			) : ''}
 

@@ -99,8 +99,8 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			};
 		};
 
-		objectRef.current = Object.assign(objectRef.current, update);
-		updateRef.current = Object.assign(updateRef.current, update);
+		objectRef.current = { ...objectRef.current, ...update };
+		updateRef.current = { ...updateRef.current, ...update };
 
 		const { recommendedLayout, layoutAlign } = updateRef.current;
 
@@ -268,14 +268,15 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 					<Button 
 						color="blank" 
 						text={translate('commonCancel')}
-						className="c28"
+						size={28}
 						onClick={onCancel}
 					/>
 
 					<Button 
 						ref={buttonSaveRef} 
 						text={type ? translate('commonSave') : translate('commonCreate')}
-						className="c28 disabled"
+						className="disabled"
+						size={28}
 						onClick={onSave}
 					/>
 				</div>

@@ -1,304 +1,299 @@
-import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import { S, Decode, Mapper } from 'Lib';
 
 /**
  * Response handlers for gRPC command responses.
  *
  * Each exported function corresponds to a middleware command and transforms
- * the protobuf response into a plain JavaScript object for use in the application.
+ * the ts-proto response (plain JS object) into an application-specific object.
  *
- * Naming convention: Function names match the command names exactly
- * (e.g., ObjectCreate handles Rpc.Object.Create.Response)
- *
+ * Naming convention: Function names match the command names exactly.
  * These functions are called by the Dispatcher when processing command responses.
  */
 
 /**
  * Helper to extract and decode details from a response object.
- * @param o - Response object with getDetails() method
- * @returns Decoded details object or empty object if none
  */
 const details = (o: any) => {
-	return o ? S.Detail.mapper(Decode.struct(o.getDetails())) : {};
+	return o ? S.Detail.mapper(Decode.struct(o.details)) : {};
 };
 
-export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
+export const AppGetVersion = (response: any) => {
 	return {
-		details: response.getDetails(),
-		version: response.getVersion(),
+		details: response.details,
+		version: response.version,
 	};
 };
 
-export const AccountCreate = (response: Rpc.Account.Create.Response) => {
+export const AccountCreate = (response: any) => {
 	return {
-		account: Mapper.From.Account(response.getAccount()),
+		account: Mapper.From.Account(response.account),
 	};
 };
 
-export const AccountSelect = (response: Rpc.Account.Select.Response) => {
+export const AccountSelect = (response: any) => {
 	return {
-		account: Mapper.From.Account(response.getAccount()),
+		account: Mapper.From.Account(response.account),
 	};
 };
 
-export const AccountDelete = (response: Rpc.Account.Delete.Response) => {
+export const AccountDelete = (response: any) => {
 	return {
-		status: response.hasStatus() ? Mapper.From.AccountStatus(response.getStatus()) : null,
+		status: response.status ? Mapper.From.AccountStatus(response.status) : null,
 	};
 };
 
-export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFromLegacyExport.Response) => {
+export const AccountRecoverFromLegacyExport = (response: any) => {
 	return {
-		accountId: response.getAccountid(),
-		spaceId: response.getPersonalspaceid(),
+		accountId: response.accountId,
+		spaceId: response.personalSpaceId,
 	};
 };
 
-export const AccountLocalLinkNewChallenge = (response: Rpc.Account.LocalLink.NewChallenge.Response) => {
+export const AccountLocalLinkNewChallenge = (response: any) => {
 	return {
-		challengeId: response.getChallengeid(),
+		challengeId: response.challengeId,
 	};
 };
 
-export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.SolveChallenge.Response) => {
+export const AccountLocalLinkSolveChallenge = (response: any) => {
 	return {
-		token: response.getSessiontoken(),
-		appKey: response.getAppkey(),
+		token: response.sessionToken,
+		appKey: response.appKey,
 	};
 };
 
-export const AccountLocalLinkListApps = (response: Rpc.Account.LocalLink.ListApps.Response) => {
+export const AccountLocalLinkListApps = (response: any) => {
 	return {
-		list: (response.getAppList() || []).map(Mapper.From.AppInfo),
+		list: (response.app || []).map(Mapper.From.AppInfo),
 	};
 };
 
-export const AccountLocalLinkCreateApp = (response: Rpc.Account.LocalLink.CreateApp.Response) => {
+export const AccountLocalLinkCreateApp = (response: any) => {
 	return {
-		key: response.getAppkey(),
+		key: response.appKey,
 	};
 };
 
-export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
+export const AccountMigrate = (response: any) => {
 	return {
-		requiredSpace: response.getError().getRequiredspace()
+		requiredSpace: response.error?.requiredSpace,
 	};
 };
 
-export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
-	return response.toObject();
+export const DebugSpaceSummary = (response: any) => {
+	return response;
 };
 
-export const DebugStat = (response: Rpc.Debug.Stat.Response) => {
+export const DebugStat = (response: any) => {
 	let res = {};
-	try { res = JSON.parse(response.getJsonstat()); } catch (e) { /**/ };
+	try { res = JSON.parse(response.jsonStat); } catch (e) { console.warn('[Response] JSON parse failed:', e); };
 	return res;
 };
 
-export const DebugNetCheck = (response: Rpc.Debug.NetCheck.Response) => {
+export const DebugNetCheck = (response: any) => {
 	return {
-		result: response.getResult(),
+		result: response.result,
 	};
 };
 
-export const DebugRunProfiler = (response: Rpc.Debug.RunProfiler.Response) => {
+export const DebugRunProfiler = (response: any) => {
 	return {
-		path: response.getPath(),
+		path: response.path,
 	};
 };
 
 export const Export = (response: any) => {
 	return {
-		path: response.getPath(),
+		path: response.path,
 	};
 };
 
-export const LinkPreview = (response: Rpc.LinkPreview.Response) => {
+export const LinkPreview = (response: any) => {
 	return {
-		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
+		previewLink: response.linkPreview ? Mapper.From.PreviewLink(response.linkPreview) : {},
 	};
 };
 
-export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
+export const FileListOffload = (response: any) => {
 	return {
-		files: response.getFilesoffloaded(),
-		bytes: response.getBytesoffloaded(),
+		files: response.filesOffloaded,
+		bytes: response.bytesOffloaded,
 	};
 };
 
-export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
-	const usage = response.getUsage();
-	
+export const FileNodeUsage = (response: any) => {
+	const usage = response.usage;
+
 	let res = {};
 
 	if (usage) {
 		res = Object.assign(res, {
-			bytesLimit: usage.getByteslimit(),
-			localUsage: usage.getLocalbytesusage(),
+			bytesLimit: usage.bytesLimit,
+			localUsage: usage.localBytesUsage,
 		});
 	};
 
 	return {
 		...res,
-		spaces: (response.getSpacesList() || []).map(it => ({
-			spaceId: it.getSpaceid(),
-			bytesUsage: it.getBytesusage(),
+		spaces: (response.spaces || []).map((it: any) => ({
+			spaceId: it.spaceId,
+			bytesUsage: it.bytesUsage,
 		})),
 	};
 };
 
-export const FileUpload = (response: Rpc.File.Upload.Response) => {
+export const FileUpload = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
-		preloadFileId: response.getPreloadfileid(),
+		preloadFileId: response.preloadFileId,
 	};
 };
 
-export const FileDownload = (response: Rpc.File.Download.Response) => {
+export const FileDownload = (response: any) => {
 	return {
-		path: response.getLocalpath(),
+		path: response.localPath,
 	};
 };
 
-export const WalletCreate = (response: Rpc.Wallet.Create.Response) => {
+export const WalletCreate = (response: any) => {
 	return {
-		mnemonic: response.getMnemonic(),
+		mnemonic: response.mnemonic,
 	};
 };
 
-export const WalletConvert = (response: Rpc.Wallet.Convert.Response) => {
+export const WalletConvert = (response: any) => {
 	return {
-		mnemonic: response.getMnemonic(),
-		entropy: response.getEntropy(),
+		mnemonic: response.mnemonic,
+		entropy: response.entropy,
 	};
 };
 
-export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response) => {
+export const WalletCreateSession = (response: any) => {
 	return {
-		token: response.getToken(),
-		appToken: response.getApptoken(),
-		accountId: response.getAccountid(),
+		token: response.token,
+		appToken: response.appToken,
+		accountId: response.accountId,
 	};
 };
 
-export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
+export const ObjectCreate = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
-		details: details(response),
-	};
-};
-
-export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
-	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
+export const ObjectCreateSet = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
+export const ObjectCreateFromUrl = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Response) => {
+export const ObjectCreateObjectType = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
-		relationKey: response.getKey(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
+export const ObjectCreateRelation = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
+		relationKey: response.key,
 		details: details(response),
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
+export const ObjectCreateRelationOption = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const ObjectOpen = (response: Rpc.Object.Open.Response) => {
+export const ObjectCreateBookmark = (response: any) => {
 	return {
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		objectId: response.objectId,
+		details: details(response),
 	};
 };
 
-export const ObjectShow = (response: Rpc.Object.Show.Response) => {
+export const ObjectOpen = (response: any) => {
 	return {
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
+export const ObjectShow = (response: any) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.struct),
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
+export const ObjectSearch = (response: any) => {
 	return {
-		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
+		records: (response.records || []).map(Decode.struct),
 	};
 };
 
-export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Response) => {
+export const ObjectSearchWithMeta = (response: any) => {
 	return {
-		subId: response.getSubid(),
-		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
+		records: (response.results || []).map(Mapper.From.ObjectSearchWithMeta),
 	};
 };
 
-export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Response) => {
-	const counters = response.getCounters();
+export const ObjectGroupsSubscribe = (response: any) => {
+	return {
+		subId: response.subId,
+		groups: (response.groups || []).map(Mapper.From.BoardGroup),
+	};
+};
+
+export const ObjectSearchSubscribe = (response: any) => {
+	const counters = response.counters || {};
 	return {
 		counters: {
-			total: counters.getTotal(),
-			nextCount: counters.getNextcount(),
-			prevCount: counters.getPrevcount(),
+			total: counters.total,
+			nextCount: counters.nextCount,
+			prevCount: counters.prevCount,
 		},
-		records: (response.getRecordsList() || []).map(Decode.struct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+		records: (response.records || []).map(Decode.struct),
+		dependencies: (response.dependencies || []).map(Decode.struct),
 	};
 };
 
-export const ObjectCrossSpaceSearchSubscribe = (response: Rpc.Object.CrossSpaceSearchSubscribe.Response) => {
-	const counters = response.getCounters();
+export const ObjectCrossSpaceSearchSubscribe = (response: any) => {
+	const counters = response.counters || {};
 	return {
 		counters: {
-			total: counters.getTotal(),
-			nextCount: counters.getNextcount(),
-			prevCount: counters.getPrevcount(),
+			total: counters.total,
+			nextCount: counters.nextCount,
+			prevCount: counters.prevCount,
 		},
-		records: (response.getRecordsList() || []).map(Decode.struct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+		records: (response.records || []).map(Decode.struct),
+		dependencies: (response.dependencies || []).map(Decode.struct),
 	};
 };
 
-export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) => {
+export const ObjectSubscribeIds = (response: any) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.struct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+		records: (response.records || []).map(Decode.struct),
+		dependencies: (response.dependencies || []).map(Decode.struct),
 	};
 };
 
-export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
-	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
-	const edgesRaw = response.getEdgesList() || [];
+export const ObjectGraph = (response: any) => {
+	const nodes = (response.nodes || []).map(Decode.struct).map((it: any) => S.Detail.mapper(it));
+	const edgesRaw = response.edges || [];
 	const seen = new Set<string>();
 	const edgeMap = new Map<string, any>();
 	const edges: any[] = [];
@@ -333,413 +328,417 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	return { edges, nodes };
 };
 
-export const ObjectShareByLink = (response: Rpc.Object.ShareByLink.Response) => {
+export const ObjectShareByLink = (response: any) => {
 	return {
-		link: response.getLink(),
+		link: response.link,
 	};
 };
 
-export const ObjectListDuplicate = (response: Rpc.Object.ListDuplicate.Response) => {
+export const ObjectListDuplicate = (response: any) => {
 	return {
-		ids: response.getIdsList(),
+		ids: response.ids || [],
 	};
 };
 
-export const ObjectUndo = (response: Rpc.Object.Undo.Response) => {
+export const ObjectUndo = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
-		range: Mapper.From.Range(response.getRange()),
+		blockId: response.blockId,
+		range: Mapper.From.Range(response.range || {}),
 	};
 };
 
-export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
+export const ObjectRedo = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
-		range: Mapper.From.Range(response.getRange()),
+		blockId: response.blockId,
+		range: Mapper.From.Range(response.range || {}),
 	};
 };
 
-export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
+export const ObjectChatAdd = (response: any) => {
 	return {
-		chatId: response.getChatid(),
+		chatId: response.chatId,
 	};
 };
 
-export const ObjectDateByTimestamp = (response: Rpc.Object.DateByTimestamp.Response) => {
+export const ObjectAddDiscussion = (response: any) => {
+	return {
+		discussionId: response.discussionId,
+	};
+};
+
+export const ObjectDateByTimestamp = (response: any) => {
 	return {
 		details: details(response),
 	};
 };
 
-export const BlockCreate = (response: Rpc.Block.Create.Response) => {
+export const BlockCreate = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const BlockCreateWidget = (response: Rpc.Block.CreateWidget.Response) => {
+export const BlockCreateWidget = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
+export const BlockTableCreate = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const BlockSplit = (response: Rpc.Block.Split.Response) => {
+export const BlockSplit = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const BlockCopy = (response: Rpc.Block.Copy.Response) => {
+export const BlockCopy = (response: any) => {
 	return {
-		textSlot: response.getTextslot(),
-		htmlSlot: response.getHtmlslot(),
-		anySlot: response.getAnyslotList(),
+		textSlot: response.textSlot,
+		htmlSlot: response.htmlSlot,
+		anySlot: response.anySlot || [],
 	};
 };
 
-export const BlockCut = (response: Rpc.Block.Cut.Response) => {
+export const BlockCut = (response: any) => {
 	return {
-		textSlot: response.getTextslot(),
-		htmlSlot: response.getHtmlslot(),
-		anySlot: response.getAnyslotList(),
+		textSlot: response.textSlot,
+		htmlSlot: response.htmlSlot,
+		anySlot: response.anySlot || [],
 	};
 };
 
-export const BlockPaste = (response: Rpc.Block.Paste.Response) => {
+export const BlockPaste = (response: any) => {
 	return {
-		blockIds: response.getBlockidsList(),
-		caretPosition: response.getCaretposition(),
-		isSameBlockCaret: response.getIssameblockcaret(),
+		blockIds: response.blockIds || [],
+		caretPosition: response.caretPosition,
+		isSameBlockCaret: response.isSameBlockCaret,
 	};
 };
 
-export const BlockListDuplicate = (response: Rpc.Block.ListDuplicate.Response) => {
+export const BlockListDuplicate = (response: any) => {
 	return {
-		blockIds: response.getBlockidsList(),
+		blockIds: response.blockIds || [],
 	};
 };
 
-export const BlockListConvertToObjects = (response: Rpc.Block.ListConvertToObjects.Response) => {
+export const BlockListConvertToObjects = (response: any) => {
 	return {
-		linkIds: response.getLinkidsList(),
+		linkIds: response.linkIds || [],
 	};
 };
 
-export const BlockPreview = (response: Rpc.Block.Preview.Response) => {
+export const BlockPreview = (response: any) => {
 	return {
-		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+		blocks: (response.blocks || []).map(Mapper.From.Block),
 	};
 };
 
-export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDataview.CreateFromExistingObject.Response) => {
+export const BlockDataviewCreateFromExistingObject = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
-		targetObjectId: response.getTargetobjectid(),
-		views: (response.getViewList() || []).map(Mapper.From.View),
+		blockId: response.blockId,
+		targetObjectId: response.targetObjectId,
+		views: (response.view || []).map(Mapper.From.View),
 	};
 };
 
-export const BlockDataviewViewCreate = (response: Rpc.BlockDataview.View.Create.Response) => {
+export const BlockDataviewViewCreate = (response: any) => {
 	return {
-		viewId: response.getViewid(),
+		viewId: response.viewId,
 	};
 };
 
-export const BlockDataviewFilterAdd = (response: Rpc.BlockDataview.Filter.Add.Response) => {
+export const BlockDataviewFilterAdd = (response: any) => {
 	return {
-		filterId: response.getFilterid(),
+		filterId: response.filterId,
 	};
 };
 
-export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObject.Response) => {
+export const BlockLinkCreateWithObject = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
-		targetId: response.getTargetid(),
+		blockId: response.blockId,
+		targetId: response.targetId,
 		details: details(response),
 	};
 };
 
-export const BlockBookmarkCreateAndFetch = (response: Rpc.BlockBookmark.CreateAndFetch.Response) => {
+export const BlockBookmarkCreateAndFetch = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const BlockFileCreateAndUpload = (response: Rpc.BlockFile.CreateAndUpload.Response) => {
+export const BlockFileCreateAndUpload = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		blockId: response.blockId,
 	};
 };
 
-export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) => {
+export const HistoryGetVersions = (response: any) => {
 	return {
-		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
+		versions: (response.versions || []).map(Mapper.From.HistoryVersion),
 	};
 };
 
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
-	const version = response.getVersion();
+export const HistoryShowVersion = (response: any) => {
 	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		version: response.version ? Mapper.From.HistoryVersion(response.version) : null,
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
+export const HistoryDiffVersions = (response: any) => {
 	return {
-		events: (response.getHistoryeventsList() || []).map(it => {
-			const type = Mapper.Event.Type(it.getValueCase());
-			const { spaceId, data } = Mapper.Event.Data(it);
+		events: (response.historyEvents || []).map((it: any) => {
+			const { type, data } = Mapper.Event.Data(it);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
-			return mapped ? { spaceId, type, data: mapped } : null;
-		}).filter(it => it),
+			return mapped ? { spaceId: it.spaceId, type, data: mapped } : null;
+		}).filter((it: any) => it),
 	};
 };
 
-export const ObjectTypeListConflictingRelations = (response: Rpc.ObjectType.ListConflictingRelations.Response) => {
+export const ObjectTypeListConflictingRelations = (response: any) => {
 	return {
-		conflictRelationIds: response.getRelationidsList()
+		conflictRelationIds: response.relationIds || [],
 	};
 };
 
-export const ObjectTypeSetOrder = (response: Rpc.ObjectType.SetOrder.Response) => {
+export const ObjectTypeSetOrder = (response: any) => {
 	return {
-		list: response.getOrderidsList() || [],
+		list: response.orderIds || [],
 	};
 };
 
-export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
-	const object = response.getObject();
-	const links = object.getLinks();
+export const NavigationGetObjectInfoWithLinks = (response: any) => {
+	const object = response.object || {};
+	const links = object.links || {};
 
 	return {
 		object: {
-			id: object.getId(),
-			info: Mapper.From.ObjectInfo(object.getInfo()),
+			id: object.id,
+			info: Mapper.From.ObjectInfo(object.info || {}),
 			links: {
-				inbound: (links.getInboundList() || []).map(Mapper.From.ObjectInfo),
-				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
+				inbound: (links.inbound || []).map(Mapper.From.ObjectInfo),
+				outbound: (links.outbound || []).map(Mapper.From.ObjectInfo),
 			},
 		},
 	};
 };
 
-export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject.Response) => {
+export const TemplateCreateFromObject = (response: any) => {
 	return {
-		id: response.getId(),
+		id: response.id,
 	};
 };
 
-export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
+export const WorkspaceCreate = (response: any) => {
 	return {
-		objectId: response.getSpaceid(),
-		startingId: response.getStartingobjectid(),
+		objectId: response.spaceId,
+		startingId: response.startingObjectId,
 	};
 };
 
-export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
+export const WorkspaceOpen = (response: any) => {
 	return {
-		info: Mapper.From.AccountInfo(response.getInfo()),
+		info: Mapper.From.AccountInfo(response.info || {}),
 	};
 };
 
-export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
+export const WorkspaceObjectAdd = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 		details: details(response),
 	};
 };
 
-export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
+export const UnsplashSearch = (response: any) => {
 	return {
-		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
+		pictures: (response.pictures || []).map(Mapper.From.UnsplashPicture),
 	};
 };
 
-export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
+export const UnsplashDownload = (response: any) => {
 	return {
-		objectId: response.getObjectid(),
+		objectId: response.objectId,
 	};
 };
 
-export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Response) => {
+export const GalleryDownloadIndex = (response: any) => {
 	return {
-		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
+		categories: (response.categories || []).map((it: any) => {
 			return {
-				id: it.getId(),
-				icon: it.getIcon(),
-				list: it.getExperiencesList() || [],
+				id: it.id,
+				icon: it.icon,
+				list: it.experiences || [],
 			};
 		}),
-		list: (response.getExperiencesList() || []).map(Mapper.From.Manifest),
+		list: (response.experiences || []).map(Mapper.From.Manifest),
 	};
 };
 
-export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.Response) => {
+export const GalleryDownloadManifest = (response: any) => {
 	return {
-		info: Mapper.From.Manifest(response.getInfo()),
+		info: Mapper.From.Manifest(response.info || {}),
 	};
 };
 
-export const NotificationList = (response: Rpc.Notification.List.Response) => {
+export const NotificationList = (response: any) => {
 	return {
-		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+		list: (response.notifications || []).map(Mapper.From.Notification),
 	};
 };
 
-export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
+export const MembershipCodeGetInfo = (response: any) => {
 	return {
-		tier: response.getRequestedtier(),
+		tier: response.requestedTier,
 	};
 };
 
-export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
+export const MembershipV2GetPortalLink = (response: any) => {
 	return {
-		url: response.getUrl(),
+		url: response.url,
 	};
 };
 
-export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.Response) => {
+export const MembershipV2GetProducts = (response: any) => {
 	return {
-		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
+		products: (response.products || []).map(Mapper.From.MembershipProduct),
 	};
 };
 
-export const MembershipV2GetStatus = (response: Rpc.MembershipV2.GetStatus.Response) => {
+export const MembershipV2GetStatus = (response: any) => {
 	return {
-		data: Mapper.From.MembershipData(response.getData()),
+		data: Mapper.From.MembershipData(response.data || {}),
 	};
 };
 
-export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+export const SpaceInviteGenerate = (response: any) => {
 	return {
-		inviteCid: response.getInvitecid(),
-		inviteKey: response.getInvitefilekey(),
+		inviteCid: response.inviteCid,
+		inviteKey: response.inviteFileKey,
 	};
 };
 
-export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Response) => {
+export const SpaceInviteGetCurrent = (response: any) => {
 	return {
-		inviteCid: response.getInvitecid(),
-		inviteKey: response.getInvitefilekey(),
-		inviteType: response.getInvitetype(),
-		permissions: response.getPermissions(),
+		inviteCid: response.inviteCid,
+		inviteKey: response.inviteFileKey,
+		inviteType: response.inviteType,
+		permissions: response.permissions,
 	};
 };
 
-export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
+export const SpaceInviteView = (response: any) => {
 	return {
-		spaceId: response.getSpaceid(),
-		spaceName: response.getSpacename(),
-		iconImage: response.getSpaceiconcid(),
-		creatorName: response.getCreatorname(),
-		creatorIcon: response.getCreatoriconcid(),
-		inviteType: response.getInvitetype(),
-		iconOption: response.getSpaceiconoption(),
-		uxType: response.getSpaceuxtype(),
+		spaceId: response.spaceId,
+		spaceName: response.spaceName,
+		iconImage: response.spaceIconCid,
+		creatorName: response.creatorName,
+		creatorIcon: response.creatorIconCid,
+		inviteType: response.inviteType,
+		iconOption: response.spaceIconOption,
+		uxType: response.spaceUxType,
 	};
 };
 
-export const SpaceSetOrder = (response: Rpc.Space.SetOrder.Response) => {
+export const SpaceSetOrder = (response: any) => {
 	return {
-		list: response.getSpacevieworderList() || [],
+		list: response.spaceViewOrder || [],
 	};
 };
 
-export const DeviceList = (response: Rpc.Device.List.Response) => {
+export const DeviceList = (response: any) => {
 	return {
-		devices: (response.getDevicesList() || []).map(it => Mapper.From.DeviceInfo(it))
+		devices: (response.devices || []).map((it: any) => Mapper.From.DeviceInfo(it)),
 	};
 };
 
-export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
+export const ChatGetMessages = (response: any) => {
 	return {
-		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
-		state: Mapper.From.ChatState(response.getChatstate()),
+		messages: (response.messages || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.chatState || {}),
 	};
 };
 
-export const ChatGetMessagesByIds = (response: Rpc.Chat.GetMessagesByIds.Response) => {
+export const ChatGetMessagesByIds = (response: any) => {
 	return {
-		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+		messages: (response.messages || []).map(Mapper.From.ChatMessage),
 	};
 };
 
-export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessages.Response) => {
+export const ChatSubscribeLastMessages = (response: any) => {
 	return {
-		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
-		state: Mapper.From.ChatState(response.getChatstate()),
+		messages: (response.messages || []).map(Mapper.From.ChatMessage),
+		state: Mapper.From.ChatState(response.chatState || {}),
 	};
 };
 
-export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
+export const ChatAddMessage = (response: any) => {
 	return {
-		messageId: response.getMessageid(),
+		messageId: response.messageId,
 	};
 };
 
-export const ChatSubscribeToMessagePreviews = (response: Rpc.Chat.SubscribeToMessagePreviews.Response) => {
+export const ChatSubscribeToMessagePreviews = (response: any) => {
 	return {
-		previews: (response.getPreviewsList() || []).map(Mapper.From.ChatPreview),
+		previews: (response.previews || []).map(Mapper.From.ChatPreview),
 	};
 };
 
-export const ChatSearch = (response: Rpc.Chat.Search.Response) => {
+export const ChatSearch = (response: any) => {
 	return {
-		list: (response.getResultsList() || []).map(Mapper.From.ChatSearchResult),
+		list: (response.results || []).map(Mapper.From.ChatSearchResult),
 	};
 };
 
-export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Response) => {
+export const RelationListWithValue = (response: any) => {
 	return {
-		relations: (response.getListList() || []).map(it => {
+		relations: (response.list || []).map((it: any) => {
 			return {
-				relationKey: it.getRelationkey(),
-				counter: it.getCounter(),
+				relationKey: it.relationKey,
+				counter: it.counter,
 			};
 		}),
 	};
 };
 
-export const RelationOptionSetOrder = (response: Rpc.Relation.Option.SetOrder.Response) => {
+export const RelationOptionSetOrder = (response: any) => {
 	return {
-		list: response.getRelationoptionorderList() || [],
+		list: response.relationOptionOrder || [],
 	};
 };
 
-export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
-	return { 
-		url: response.getUri(),
+export const PublishingCreate = (response: any) => {
+	return {
+		url: response.uri,
 	};
 };
 
-export const PublishingList = (response: Rpc.Publishing.List.Response) => {
+export const PublishingList = (response: any) => {
 	return {
-		list: (response.getPublishesList() || []).map(Mapper.From.PublishState),
+		list: (response.publishes || []).map(Mapper.From.PublishState),
 	};
 };
 
-export const PublishingResolveUri = (response: Rpc.Publishing.ResolveUri.Response) => {
+export const PublishingResolveUri = (response: any) => {
 	return {
-		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+		state: response.publish ? Mapper.From.PublishState(response.publish) : null,
 	};
 };
 
-export const PublishingGetStatus = (response: Rpc.Publishing.GetStatus.Response) => {
+export const PublishingGetStatus = (response: any) => {
 	return {
-		state: response.hasPublish() ? Mapper.From.PublishState(response.getPublish()) : null,
+		state: response.publish ? Mapper.From.PublishState(response.publish) : null,
 	};
 };
 
-export const ObjectImportUseCase = (response: Rpc.Object.ImportUseCase.Response) => {
+export const ObjectImportUseCase = (response: any) => {
 	return {
-		startingId: response.getStartingobjectid(),
+		startingId: response.startingObjectId,
 	};
 };

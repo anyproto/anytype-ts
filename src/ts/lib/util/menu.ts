@@ -3,6 +3,7 @@ import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import { Action, analytics, C, Dataview, I, J, keyboard, M, Mark, Preview, Relation, S, sidebar, translate, U, Renderer, focus } from 'Lib';
+import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
 
 interface SpaceContextParam {
@@ -323,11 +324,11 @@ class UtilMenu {
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyToClipboard') });
+			items.push({ id: 'copyMedia', icon: 'clipboard', name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
+			items.push({ id: 'copyUrl', icon: 'clipboard', name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
@@ -561,7 +562,7 @@ class UtilMenu {
 			const setLayouts = U.Object.getSetLayouts();
 			const treeSkipLayouts = setLayouts.
 				concat(U.Object.getFileAndSystemLayouts()).
-				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat, I.ObjectLayout.Discussion ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
@@ -617,7 +618,7 @@ class UtilMenu {
 				return w;
 			};
 
-			if (s.toLowerCase() == f.toLowerCase()) {
+			if (s.toLowerCase() === f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
@@ -635,7 +636,7 @@ class UtilMenu {
 
 				let ret = false;
 
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
+				if (c.isBlock && (c.type === I.BlockType.Table)) {
 					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
 					if (match) {
 						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
@@ -811,7 +812,6 @@ class UtilMenu {
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
-		const Locale = require('lib/json/locale.json');
 
 		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });
@@ -854,7 +854,7 @@ class UtilMenu {
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
 			{ id: 'csv', format: I.ImportType.Csv },
-		] as any).map(it => {
+		] as { id: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
 			it.name = names[it.format];
 			return it;
 		});
@@ -952,8 +952,8 @@ class UtilMenu {
 					if (targetSpaceId == S.Common.space) {
 						Action.openSettings(id, route);
 					} else {
-						U.Router.switchSpace(targetSpaceId, '', false, { 
-							onFadeIn: () => Action.openSettings(id, route),
+						U.Router.switchSpace(targetSpaceId, '', false, {
+							onRouteChange: () => Action.openSettings(id, route),
 						}, true);
 					};
 					break;
@@ -1148,13 +1148,15 @@ class UtilMenu {
 			return [];
 		};
 
-		const items = U.Common.objectCopy(U.Space.getList()).
-			map(it => {
-				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
-				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
-				it.isPinned = !!it.orderId;
-				return it;
+		const items = U.Space.getList().map(it => {
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				return {
+					...it,
+					counters,
+					hasCounter: counters.mentionCounter || counters.messageCounter,
+					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
+					isPinned: !!it.orderId,
+				};
 			});
 
 		items.sort((c1, c2) => {
@@ -1293,6 +1295,44 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
+	getCommentAddSections (): any[] {
+		return [
+			{
+				id: 'text', name: translate('commentSlashMenuTitle'),
+				children: [
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, icon: 'comment-header1', name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, icon: 'comment-header2', name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, icon: 'comment-header3', name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+				],
+			},
+			{
+				id: 'list', name: translate('commentSlashMenuLists'),
+				children: [
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, icon: 'comment-numbered', name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, icon: 'comment-bulleted', name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, icon: 'comment-checkbox', name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+				],
+			},
+			{
+				id: 'attachments', name: translate('commentSlashMenuAttachments'),
+				children: [
+					{ id: 'create', action: 'create', icon: 'comment-createObject', name: translate('commonNewObject'), arrow: true },
+					{ id: 'object', action: 'object', icon: 'comment-plus', name: translate('spaceExisting') },
+					{ id: 'file', action: 'file', icon: 'comment-uploadComputer', name: translate('commonUploadComputer') },
+					{ id: 'embed', action: 'embed', icon: 'comment-embed', name: translate('commentSlashMenuEmbed'), arrow: true },
+				],
+			},
+			{
+				id: 'decorations', name: translate('commentSlashMenuDecorations'),
+				children: [
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'comment-quote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'comment-divider', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'comment-code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+				],
+			},
+		];
+	};
+
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
 		const sort: any[] = [
 			{ name: translate('sidebarObjectSort'), isSection: true },
@@ -1321,7 +1361,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Long },
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
-		] as any[]).map(it => {
+		] as { id: I.DateFormat; name: string }[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;
 		});
@@ -1398,7 +1438,7 @@ class UtilMenu {
 
 		const getClipboardData = async () => {
 			let ret = [];
-			try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+			try { ret = await navigator.clipboard.read(); } catch (e) { console.warn('[Menu] clipboard read failed:', e); };
 			return ret;
 		};
 
@@ -1566,6 +1606,20 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
+						if (U.Object.getFileLayouts().includes(item.recommendedLayout)) {
+							this.menuContext?.close();
+
+							window.setTimeout(() => {
+								this.onFileUploadPopup(item.recommendedLayout, '', details, (objectIds) => {
+									if (objectIds?.length) {
+										const object = S.Detail.get(S.Common.space, objectIds[0]);
+										if (object) {
+											cb(object, 0);
+										};
+									};
+								}, route);
+							}, S.Menu.getTimeout());
+						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
@@ -1596,6 +1650,18 @@ class UtilMenu {
 		};
 
 		check();
+	};
+
+	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void, route?: string) {
+		S.Popup.open('upload', {
+			data: {
+				layout,
+				collectionId: collectionId || '',
+				details: details || {},
+				onUpload: callBack,
+				route: route || '',
+			},
+		});
 	};
 
 	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
@@ -2068,7 +2134,7 @@ class UtilMenu {
 											value = String(element.val());
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as any).innerText || '');
+											value = String((element.get(0) as HTMLElement).innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);

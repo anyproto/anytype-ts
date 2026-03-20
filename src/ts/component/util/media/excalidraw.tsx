@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { observer } from 'mobx-react';
-import { S, J, keyboard } from 'Lib';
+import { S, J } from 'Lib';
+import { keyboard } from 'Lib/keyboard';
 
 interface Props {
 	data?: any;
@@ -61,6 +62,10 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 					onChange(elements as any[], appState, files);
 				}}
 				theme={(theme ? 'dark' : 'light')}
+				validateEmbeddable={(url: string | URL) => {
+					const s = typeof url === 'string' ? url : url.toString();
+					return s.startsWith('anytype://') || /^https?:\/\/object\.any\.coop(\/|$|\?)/.test(s);
+				}}
 				UIOptions={{
 					tools: {
 						image: false,

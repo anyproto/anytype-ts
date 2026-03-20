@@ -39,10 +39,10 @@ const Banner: FC<Props> = ({
 			<div className="inner">
 				{title ? <Title text={title} /> : '' }
 				<Label text={text} />
-				{button ? <Button text={button} className="c28" color={buttonColor} onClick={onClick} /> : ''}
+				{button ? <Button text={button} size={28} color={buttonColor} onClick={onClick} /> : ''}
 			</div>
 
-			<Icon className="close withBackground" onClick={onCloseHandler} />
+			<Icon className="close" withBackground={true} onClick={onCloseHandler} />
 		</div>
 	);
 };

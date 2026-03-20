@@ -84,7 +84,7 @@ const PageMainSettingsPhrase = observer(forwardRef<I.PageRef, I.PageSettingsComp
 				<>
 					<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
 					<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-					<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+					<Button size={36} onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
 				</>
 			) : ''}
 		</>

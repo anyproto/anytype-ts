@@ -1,4 +1,4 @@
-import storage from 'Lib/storage';
+
 
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
@@ -166,6 +166,7 @@ export default {
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
 		chatDerived:	 'ot-chatDerived',
+		discussion:		 'ot-discussion',
 		project:		 'ot-project',
 		human:			 'ot-human',
 		participant:	 'ot-participant',

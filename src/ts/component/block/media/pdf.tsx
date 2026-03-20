@@ -73,6 +73,8 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		heightRef.current = $(wrapRef.current).outerHeight();
 	};
 
+	const isDownloading = S.Common.isDownloading(targetObjectId);
+
 	const onOpenFile = () => {
 		Action.openFile(object, analytics.route.block);
 	};
@@ -219,7 +221,8 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 				element = (
 					<div ref={wrapRef} className={cn.join(' ')} style={css}>
-						<div className="info" onMouseDown={onOpenObject}>
+						<div className={[ 'info', (isDownloading ? 'isDownloading' : '') ].join(' ')} onMouseDown={onOpenObject}>
+							{isDownloading ? <Icon className="downloading" /> : ''}
 							<ObjectName object={object} />
 							<span className="size">{U.File.size(object.sizeInBytes)}</span>
 						</div>

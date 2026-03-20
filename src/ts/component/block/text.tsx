@@ -2,17 +2,24 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
 
+// Prism language plugins expect `Prism` on the global scope
+(window as any).Prism = Prism;
+
+// Load language components sequentially to respect dependency order
+const prismModules = import.meta.glob('/node_modules/prismjs/components/prism-*.js');
+(async () => {
+	for (const lang of U.Prism.components) {
+		const key = `/node_modules/prismjs/components/prism-${lang}.js`;
+		try { await prismModules[key]?.(); } catch (e) {};
+	};
+})();
+
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-};
-
-for (const lang of U.Prism.components) {
-	require(`prismjs/components/prism-${lang}.js`);
 };
 
 const TWIN_PAIRS = {
@@ -162,11 +169,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		html = html.replace(/\n/g, '<br/>');
 
-		// Add extra <br/> at end for code blocks to ensure trailing newlines are visible
+		// Add extra <br/> at end to ensure trailing newlines are visible
 		// (contenteditable collapses a single trailing <br/>)
 		// Only add when focused to avoid extra line when blurred
 		phantomNewlineRef.current = false;
-		if (block.isTextCode() && text.endsWith('\n') && (focused == block.id)) {
+		if (text.endsWith('\n') && (focused == block.id)) {
 			html += '<br/>';
 			phantomNewlineRef.current = true;
 		};
@@ -236,9 +243,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
-		const value = getHtmlValue();
+		let value = getHtmlValue();
+
+		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
+		if (phantomNewlineRef.current) {
+			value = value.replace(/<br\/?>$/, '');
+		};
+
 		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
-		
+
 		return Mark.fromHtml(value, restricted);
 	};
 
@@ -364,14 +377,34 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			let pd = true;
+			// Handle shift+enter manually in non-code text blocks to avoid browser
+			// contenteditable bugs (browser can incorrectly split inline elements like
+			// <markupcode> when inserting <br>)
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				pd = false;
-			};
-			if (pd) {
 				e.preventDefault();
+
+				const insert = '\n';
+				const caret = range.from + insert.length;
+				const newValue = U.String.insert(value, insert, range.from, range.to);
+				const caretRange = { from: caret, to: caret };
+
+				if (range.from != range.to) {
+					marksRef.current = Mark.adjust(marksRef.current, range.from, -(range.to - range.from));
+				};
+				marksRef.current = Mark.adjust(marksRef.current, range.from, insert.length);
+
+				focus.set(block.id, caretRange);
+
+				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
+					focus.apply();
+				});
+
+				ret = true;
+				return;
 			};
-			
+
+			e.preventDefault();
+
 			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 				onKeyDown(e, value, marksRef.current, range, props);
 			});
@@ -472,12 +505,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const processed = lines.map((line, i) => {
 						let removed = 0;
 
+						const match = line.match(/^ {1,4}/);
+
 						if (line.startsWith('\t')) {
 							line = line.substring(1);
 							removed = 1;
 						} else
-						if (line.match(/^ {1,4}/)) {
-							const spaces = line.match(/^ {1,4}/)[0].length;
+						if (match) {
+							const spaces = match[0].length;
 							line = line.substring(spaces);
 							removed = spaces;
 						};
@@ -1004,10 +1039,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 
 		let value = getTextValue();
+		
 		const firstChar = value.charAt(range.from - 1);
 
 		value = U.String.cut(value, range.from - 2, range.from);
-
 		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {

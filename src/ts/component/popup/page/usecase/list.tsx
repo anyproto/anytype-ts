@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, S, U, translate, analytics, Onboarding } from 'Lib';
+import { I, C, S, U, translate, analytics, } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
@@ -232,10 +232,10 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<Title text={translate('popupUsecaseListTitle')} />
 				<Label text={translate('popupUsecaseListText')} />
 
-				<Filter 
+				<Filter
 					ref={filterRef}
 					id="store-filter"
-					icon="search"
+					iconParam={{ className: 'search' }}
 					placeholder={translate('commonSearchPlaceholder')}
 					onChange={onFilterChange}
 					onClear={onFilterClear}

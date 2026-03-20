@@ -6,7 +6,8 @@ const KEYS = [
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'suggestCount', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
-	'uxType', 'usage', 'chatId',
+	'uxType', 'usage', 'chatId', 'hasMention', 'hasAttachments',
+	'errorType', 'filesCount',
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -104,6 +105,13 @@ class Analytics {
 		editor: 'Editor',
 
 		stripe: 'Stripe',
+
+		uploadGlobalMenu: 'GlobalMenu',
+		uploadTypePage: 'TypePage',
+		uploadTypeWidget: 'TypeWidget',
+		uploadDnDSet: 'DnDSet',
+		uploadDnDEditor: 'DnDEditor',
+		uploadClipboardPaste: 'ClipboardPaste',
 	};
 
 	/**

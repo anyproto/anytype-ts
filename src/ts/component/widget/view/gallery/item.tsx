@@ -132,7 +132,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	return (
 		<div

@@ -28,7 +28,12 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 		getIdPrefix, canCellEdit,
 	} = props;
 	const record = getRecord(recordId);
-	const relation: any = S.Record.getRelationByKey(relationKey) || {};
+	const relation: any = S.Record.getRelationByKey(relationKey);
+
+	if (!relation) {
+		return null;
+	};
+
 	const view = getView();
 	const viewRelation = view?.getRelation(relationKey);
 	const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), `align${viewRelation?.align}` ];
@@ -79,7 +84,8 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				<Button
 					color="blank"
 					icon="expand"
-					className="expand c32"
+					className="expand"
+					size={32}
 					text={translate('commonOpen')}
 					onClick={e => {
 						e.stopPropagation();

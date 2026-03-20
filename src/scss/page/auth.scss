@@ -51,7 +51,7 @@ html.bodyAuthDeleted {
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { min-width: 224px; @include text-common; font-weight: 400; }
 	.button.disabled { color: var(--color-text-tertiary) !important; background-color: var(--color-control-inactive) !important; }
-	.button.c48 { border-radius: 24px; }
+	.button.size48 { border-radius: 24px; }
 	.button.accent { font-weight: 500; }
 	.button.blank { border: 0px; background: var(--color-shape-highlight-medium); }
 	.button.blank:not(.disabled):hover,

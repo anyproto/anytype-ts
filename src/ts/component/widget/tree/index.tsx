@@ -46,11 +46,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
 
-	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
-
-	const clear = () => {
+	const clearSubscriptionHashes = () => {
 		subscriptionHashes.current = {};
-		branches.current = [];
 	};
 
 	const updateData = () => {
@@ -181,7 +178,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		subscriptionHashes.current[nodeId] = hash;
 
-		U.Subscription.destroyList([ subId ], true, () => {
+		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribeIds({
 				subId,
 				ids: links,
@@ -235,8 +232,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		analytics.event('OpenSidebarObject');
 	};
 
-	const getTotalHeight = () => {
-		return loadTree().reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
+	const getTotalHeight = (items?: I.WidgetTreeItem[]) => {
+		return (items || nodes).reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
 	};
 
 	const getRowHeight = (node: any, index: number) => {
@@ -307,8 +304,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined round"
-							icon="search"
+							iconParam={{ className: 'search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 						/>
@@ -318,7 +314,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 							<Button
 								id="button-object-create"
 								color="blank"
-								className="c28"
+								size={28}
 								text={translate('commonNew')}
 								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
@@ -435,7 +431,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
-			clear();
+			clearSubscriptionHashes();
 			links.current = object.links;
 		};
 
@@ -448,7 +444,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		resize();
 
 		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', !length);
-	}, [ nodes ]);
+	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
@@ -473,7 +469,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				id="button-show-all" 
 				onClick={onSetPreview} 
 				text={translate('widgetSeeAll')} 
-				className="c28" 
+				size={28}
 				color="blank" 
 			/>
 		</div>

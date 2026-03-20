@@ -1,5 +1,6 @@
-import { EventEmitter } from 'events';
 import { I, U, C } from 'Lib';
+
+type Listener = (...args: any[]) => void;
 
 interface SparkOnboardingConfig {
 	url?: string;
@@ -7,7 +8,43 @@ interface SparkOnboardingConfig {
 	maxRetries?: number;
 }
 
-export class SparkOnboardingService extends EventEmitter {
+export class SparkOnboardingService {
+
+	private listeners: Map<string, Listener[]> = new Map();
+
+	on (event: string, fn: Listener): this {
+		if (!this.listeners.has(event)) {
+			this.listeners.set(event, []);
+		};
+		this.listeners.get(event)!.push(fn);
+		return this;
+	};
+
+	off (event: string, fn: Listener): this {
+		const fns = this.listeners.get(event);
+		if (fns) {
+			this.listeners.set(event, fns.filter(f => f !== fn));
+		};
+		return this;
+	};
+
+	emit (event: string, ...args: any[]): boolean {
+		const fns = this.listeners.get(event);
+		if (!fns || !fns.length) {
+			return false;
+		};
+		fns.forEach(fn => fn(...args));
+		return true;
+	};
+
+	removeAllListeners (event?: string): this {
+		if (event) {
+			this.listeners.delete(event);
+		} else {
+			this.listeners.clear();
+		};
+		return this;
+	};
 
 	private ws: WebSocket | null = null;
 	private url: string;
@@ -20,8 +57,7 @@ export class SparkOnboardingService extends EventEmitter {
 	private intentionalClose: boolean = false;
 	private clearSessionOnClose: boolean = false;
 
-	constructor( config: SparkOnboardingConfig = {}) {
-		super();
+	constructor (config: SparkOnboardingConfig = {}) {
 		// Use config override or environment variable (with default)
 		// SPARK_ONBOARDING_URL is injected at build time via rspack DefinePlugin
 		this.url = config.url || SPARK_ONBOARDING_URL;

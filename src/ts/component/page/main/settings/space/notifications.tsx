@@ -132,7 +132,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 									</div>
 								</div>
 								<div className="side right">
-									<Icon onClick={() => onChatModeClick(el)} className="more withBackground" />
+									<Icon onClick={() => onChatModeClick(el)} className="more" withBackground={true} />
 								</div>
 							</div>
 						))}

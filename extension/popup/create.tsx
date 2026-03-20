@@ -471,7 +471,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				</div>
 
 				<div className="buttonsWrapper">
-					<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={onSubmit} />
+					<Button color="pink" size={32} text="Save" type="input" subType="submit" onClick={onSubmit} />
 				</div>
 
 				<Error text={error} />

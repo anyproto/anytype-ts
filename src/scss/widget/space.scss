@@ -33,7 +33,8 @@
 		.spaceInfo { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; }
 		.spaceInfo {
 			.iconObject { margin-bottom: 8px; }
-			.name { @include text-header3; margin-bottom: 0px; text-align: center; }
+			.nameWrap { width: 100%; overflow: hidden; justify-content: center; }
+			.name { @include text-header3; @include text-overflow-nw; margin-bottom: 0px; text-align: center; }
 			.label { @include text-small; color: var(--color-text-secondary); }
 		}
 	}

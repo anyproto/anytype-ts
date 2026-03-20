@@ -28,7 +28,7 @@ const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 						<Button 
 							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
 							text={translate('blockChatEmptyShareInviteLink')} 
-							className="c28" 
+							size={28}
 							color="blank" 
 						/>
 					</div>

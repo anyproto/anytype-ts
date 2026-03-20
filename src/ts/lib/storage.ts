@@ -12,10 +12,13 @@ const SPACE_KEYS = new Set([
 	'scroll',
 	'defaultType',
 	'chat',
+	'comment',
 	'popupSearch',
 	'focus',
 	'openUrl',
 	'graphData',
+	'graphGlobal',
+	'graphDataview',
 	'recentEditMode',
 	'widgetSections',
 ]);
@@ -30,26 +33,47 @@ const LOCAL_KEYS = new Set([
 	'lastOpenedSimple',
 ]);
 
+const cache: Map<string, any> = new Map();
+
+const cacheKey = (key: string, isLocal: boolean): string => {
+	return isLocal ? `local:${key}` : key;
+};
+
 const Api = {
 	get: (key: string, isLocal: boolean) => {
+		const ck = cacheKey(key, isLocal);
+
+		if (cache.has(ck)) {
+			return cache.get(ck);
+		};
+
 		let ret = {};
 		if (electron.storeGet && !isLocal) {
 			ret = electron.storeGet(key);
 		} else {
 			ret = Api.parse(localStorage.getItem(key));
 		};
+
+		cache.set(ck, ret);
 		return ret;
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
+		const str = JSON.stringify(obj);
+		const clean = JSON.parse(str);
+
+		cache.set(cacheKey(key, isLocal), clean);
+
 		if (electron.storeSet && !isLocal) {
-			electron.storeSet(key, obj);
+			electron.storeSet(key, clean);
 		} else {
-			localStorage.setItem(key, JSON.stringify(obj));
+			localStorage.setItem(key, str);
 		};
 	},
 
 	delete: (key: string, isLocal: boolean) => {
+		cache.delete(cacheKey(key, isLocal));
+
 		if (electron.storeDelete && !isLocal) {
 			electron.storeDelete(key);
 		} else {
@@ -63,10 +87,10 @@ const Api = {
 		};
 
 		let ret = '';
-		try { 
-			ret = JSON.parse(s); 
-		} catch (e) { 
-			console.error(e); 
+		try {
+			ret = JSON.parse(s);
+		} catch (e) {
+			console.error('[Storage] JSON parse failed:', e);
 		};
 		return ret;
 	},
@@ -112,8 +136,6 @@ class Storage {
 	 * @param {boolean} isLocal - Whether to store locally.
 	 */
 	set (key: string, obj: any, isLocal?: boolean): void {
-		obj = U.Common.objectCopy(obj);
-
 		if (!key) {
 			console.log('[Storage].set: key not specified');
 			return;
@@ -454,7 +476,7 @@ class Storage {
 			obj[key][rootId] = Number(scroll) || 0;
 
 			this.set('scroll', obj, this.isLocal('scroll'));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Storage] scroll save failed:', e); };
 		return obj;
 	};
 
@@ -639,6 +661,47 @@ class Storage {
 	getChat (id: string) {
 		const map = this.get('chat', this.isLocal('chat')) || {};
 		return map[id] || {};
+	};
+
+	/**
+	 * Sets comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 * @param {any} obj - The comment draft data to set.
+	 */
+	setComment (id: string, obj: any) {
+		if (!id) {
+			return;
+		};
+
+		const map = this.get('comment', this.isLocal('comment')) || {};
+
+		map[id] = Object.assign(map[id] || {}, obj);
+		this.set('comment', map, this.isLocal('comment'));
+	};
+
+	/**
+	 * Gets comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 * @returns {any} The comment draft data.
+	 */
+	getComment (id: string) {
+		const map = this.get('comment', this.isLocal('comment')) || {};
+		return map[id] || {};
+	};
+
+	/**
+	 * Deletes comment draft data for an object ID.
+	 * @param {string} id - The object ID.
+	 */
+	deleteComment (id: string) {
+		if (!id) {
+			return;
+		};
+
+		const map = this.get('comment', this.isLocal('comment')) || {};
+
+		delete map[id];
+		this.set('comment', map, this.isLocal('comment'));
 	};
 
 	/**

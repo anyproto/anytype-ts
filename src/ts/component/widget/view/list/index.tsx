@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { I, S, U, J, keyboard } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import WidgetListItem from './item';
 
@@ -16,7 +16,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView, getContentParam } = props;
 	const { layout } = getContentParam();
-	const cache = useRef({});
+	const cache = useRef(null);
 	const nodeRef =	useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
@@ -28,7 +28,9 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
+	if (!cache.current) {
+		cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
+	};
 
 	const onSortStart = () => {
 		keyboard.disableSelection(true);
@@ -62,8 +64,13 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		return items;
 	};
 
+	const getTotalHeight = (list: any[]) => {
+		return list.reduce((r, c) => r + getRowHeight(c, 0, isCompact), 0);
+	};
+
 	const resize = () => {
-		const length = getItems().length;
+		const currentItems = getItems();
+		const currentLength = currentItems.length;
 
 		raf(() => {
 			const container = $('#sidebarPageWidget #body');
@@ -72,7 +79,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');
 
-			let height = getTotalHeight() + (isPreview ? 16 : 0);
+			let height = getTotalHeight(currentItems) + (isPreview ? 16 : 0);
 
 			if (isPreview) {
 				let maxHeight = container.height() - head.outerHeight(true);
@@ -84,8 +91,8 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 			};
 
 			const css: any = { height, paddingTop: '', paddingBottom: 0 };
-			
-			if (!length) {
+
+			if (!currentLength) {
 				css.paddingTop = 20;
 				css.paddingBottom = 22;
 				css.height = 36 + css.paddingTop + css.paddingBottom;
@@ -93,10 +100,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 			node.css(css);
 		});
-	};
-
-	const getTotalHeight = () => {
-		return getItems().reduce((r, c) => r + getRowHeight(c, 0, isCompact), 0);
 	};
 
 	const getRowHeight = (item: any, index: number, isCompact: boolean) => {
@@ -209,7 +212,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	useEffect(() => {
 		listRef.current?.scrollToPosition(top.current);
 		resize();
-	});
+	}, [ length, isCompact ]);
 
 	useImperativeHandle(ref, () => ({}));
 

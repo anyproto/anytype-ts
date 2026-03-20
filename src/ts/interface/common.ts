@@ -51,6 +51,7 @@ export interface Toast {
 	value?: boolean;
 	ids?: string[];
 	icon?: string;
+	uploadCounts?: { [key: string]: number };
 };
 
 export enum ToastAction {
@@ -64,6 +65,7 @@ export enum ToastAction {
 	Archive 		 = 7,
 	Widget			 = 8,
 	Restore			 = 9,
+	Upload			 = 10,
 };
 
 export interface Option {
@@ -278,13 +280,9 @@ export interface FocusState {
 	range: I.TextRange;
 };
 
-export interface RouteParam { 
+export interface RouteParam {
 	replace: boolean;
-	animate: boolean;
-	delay: number;
 	updateTabRoute: boolean;
-	onFadeOut: () => void;
-	onFadeIn?: () => void;
 	onRouteChange?: () => void;
 };
 
@@ -351,6 +349,27 @@ export enum LocalApiScope {
 	Limited		 = 0,
 	Json		 = 1,
 	Full		 = 2,
+};
+
+export interface AppConfig {
+	channel?: string;
+	theme?: string;
+	showMenuBar?: boolean;
+	alwaysShowTabs?: boolean;
+	hardwareAcceleration?: boolean;
+	hideTray?: boolean;
+	sudo?: boolean;
+	zoom?: number;
+	interfaceLang?: string;
+	userDataPath?: string;
+	updateDisabled?: boolean;
+	updateTimeout?: number;
+	disableCss?: boolean;
+	experimental?: boolean;
+	debug?: Record<string, boolean>;
+	flagsMw?: Record<string, boolean>;
+	languages?: string[];
+	[key: string]: any;
 };
 
 export interface AppInfo {

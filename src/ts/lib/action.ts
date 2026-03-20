@@ -1,7 +1,7 @@
-import block from 'Component/block';
+
 import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
-const Diff = require('diff');
+import * as Diff from 'diff';
 
 class Action {
 
@@ -281,21 +281,23 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	openFile (object: any, route: string) {
-		if (object._empty_) {
+		if (object._empty_ || S.Common.isDownloading(object.id)) {
 			return;
 		};
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
+			S.Common.downloadStart(object.id);
 			C.FileDownload(object.id, U.Common.getElectron().downloadPath(), (message: any) => {
+				S.Common.downloadDone(object.id);
 				if (message.path) {
 					this.openPath(message.path);
 					analytics.event('OpenMedia', { route });
 				};
 			});
 		};
-		const isDangerous = !ext || [ 
-			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar', 
+		const isDangerous = !ext || [
+			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',
 			'app', 'action', 'command', 'csh', 'osx', 'scpt', 'workflow', 'bin', 'ksh', 'out', 'run', 'sh', 'docm', 'xlsm', 'pptm',
 		].includes(ext);
 
@@ -321,14 +323,22 @@ class Action {
 	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
-		if (!id) {
+		if (!id || S.Common.isDownloading(id)) {
 			return;
 		};
 
 		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			Renderer.send('download', url, { directory: paths[0] });
+			S.Common.downloadStart(id);
+
+			const promise = Renderer.send('download', url, { directory: paths[0] });
+			if (promise && promise.then) {
+				promise.then(() => S.Common.downloadDone(id));
+			} else {
+				S.Common.downloadDone(id);
+			};
+
 			analytics.event('DownloadMedia', { route });
 		});
 	};
@@ -1142,14 +1152,7 @@ class Action {
 	};
 
 	openSpaceTab (spaceId: string, uxType: I.SpaceUxType, analyticsRoute?: string) {
-		const route = U.Router.build({
-			page: 'main',
-			action: 'void',
-			id: 'dashboard',
-			spaceId,
-		});
-
-		Renderer.send('openTab', { route }, { setActive: false });
+		Renderer.send('openTab', { spaceId, uxType }, { setActive: false });
 		analytics.event('AddTab', { route: analyticsRoute, uxType });
 	};
 

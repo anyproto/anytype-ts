@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Cover, Icon, ObjectName } from 'Component';
-import { I, C, S, U, J, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate } from 'Lib';
 
 interface Props {
 	id?: string;

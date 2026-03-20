@@ -278,16 +278,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const iconCreate = () => {
-		const cn = [ 'plus' ];
-
-		if (!vaultIsMinimal) {
-			cn.push('withBackground');
-		};
-
 		return (
 			<Icon
 				id="button-create-space"
-				className={cn.join(' ')}
+				className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -359,10 +353,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		setFilter('');
 	};
 
-	const ItemObject = (item: any) => {
+	const ItemObject = forwardRef((item: any, forwardedRef: any) => {
 		if (item.isDiv) {
 			return (
-				<div className="separator" style={item.style}>
+				<div ref={forwardedRef} className="separator" style={item.style}>
 					<div className="inner" />
 				</div>
 			);
@@ -370,7 +364,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.id == 'createSpace') {
 			return (
-				<div className="item add" style={item.style}>
+				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconCreate()}
 				</div>
 			);
@@ -385,7 +379,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
 		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
-		const counter = <ChatCounter spaceId={targetSpaceId} disableMention={vaultIsMinimal} />;
+		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 
 		let chatName = null;
 		let time = null;
@@ -414,7 +408,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
-		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter);
+		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
 			const { createdAt, creator, isSynced } = lastMessage;
@@ -484,14 +478,24 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			);
 		};
 
+		const mergedRef = (node: any) => {
+			setNodeRef(node);
+			if (typeof forwardedRef === 'function') {
+				forwardedRef(node);
+			} else
+			if (forwardedRef) {
+				forwardedRef.current = node;
+			};
+		};
+
 		return (
-			<div 
-				ref={setNodeRef}
+			<div
+				ref={mergedRef}
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				{...attributes}
 				{...listeners}
-				style={style} 
+				style={style}
 				onClick={e => onClick(e, item)}
 				onMouseEnter={() => onOver(item)}
 				onMouseLeave={onOut}
@@ -508,7 +512,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				) : ''}
 			</div>
 		);
-	};
+	});
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
@@ -650,7 +654,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<>
 							{iconCreate()}
 							<Icon 
-								className="toggle withBackground"
+								className="toggle" withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -667,8 +671,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						icon="search"
-						className="outlined round"
+						iconParam={{ className: 'search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}

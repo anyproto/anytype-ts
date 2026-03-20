@@ -4,9 +4,14 @@ import { I, U } from 'Lib';
 const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {
 	if (!isNaN(Number(i))) {
-		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+		const type = Number(i) as I.MarkType;
+		Tags[i] = type == I.MarkType.Link ? 'a' : `markup${I.MarkType[i].toLowerCase()}`;
 	};
 };
+
+const TagValues = Object.values(Tags).join('|');
+const RE_HTML_TAGS = new RegExp(`<(\/)?(${TagValues})\\b(?:([^>]*)>|>)`, 'ig');
+const RE_DATA_PARAM = new RegExp('data-param="([^"]*)"', 'i');
 
 const Patterns: { [key: string]: string } = {
 	// Arrows and Directional Indicators
@@ -45,6 +50,15 @@ const Patterns: { [key: string]: string } = {
 
 	// Mathematical and Scientific
 	'|~': '≉',
+};
+
+let RE_UNICODE_PATTERNS: RegExp = null;
+const getUnicodePatternRegex = (): RegExp => {
+	if (!RE_UNICODE_PATTERNS) {
+		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
+		RE_UNICODE_PATTERNS = new RegExp(`(${keys.join('|')})`, 'g');
+	};
+	return RE_UNICODE_PATTERNS;
 };
 
 const Order = [
@@ -315,7 +329,7 @@ class Mark {
 	 * @returns {I.Mark[]} The adjusted marks.
 	 */
 	adjust(marks: I.Mark[], from: number, length: number) {
-		marks = U.Common.objectCopy(marks || []);
+		marks = (marks || []).map(m => ({ ...m, range: { ...m.range } }));
 
 		for (const mark of marks) {
 			if ((mark.range.from < from) && (mark.range.to > from)) {
@@ -522,9 +536,9 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromHtml(html: string, restricted: I.MarkType[]): I.FromHtmlResult {
-		const tags = this.getTags();
-		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})\\b(?:([^>]*)>|>)`, 'ig');
-		const rp = new RegExp('data-param="([^"]*)"', 'i');
+		RE_HTML_TAGS.lastIndex = 0;
+		const rh = RE_HTML_TAGS;
+		const rp = RE_DATA_PARAM;
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
 
@@ -562,7 +576,7 @@ class Mark {
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
 
-			const key = U.Common.getKeyByValue(tags, p2);
+			const key = U.Common.getKeyByValue(Tags, p2);
 			if (undefined === key) {
 				return;
 			};
@@ -750,9 +764,10 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromUnicode(html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
-		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
-		const reg = new RegExp(`(${keys.join('|')})`, 'g');
+		const reg = getUnicodePatternRegex();
+		reg.lastIndex = 0;
 		const test = reg.test(html);
+		reg.lastIndex = 0;
 		const overlaps = [I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal];
 
 		if (!test) {
@@ -930,8 +945,8 @@ class Mark {
 		const tags: any = {};
 
 		for (const i in I.MarkType) {
-			if (isNaN(I.MarkType[i] as any)) {
-				tags[i] = this.getTag(i as any);
+			if (isNaN(Number(I.MarkType[i]))) {
+				tags[i] = this.getTag(Number(i));
 			};
 		};
 
@@ -1017,11 +1032,40 @@ class Mark {
 	};
 
 	/**
+	 * Build a flat text representation of the element's DOM that includes
+	 * BR elements as \n characters, matching how selection-ranges counts them.
+	 * textContent alone omits BRs, causing offset mismatches.
+	 */
+	getDomText (el: HTMLElement): string {
+		const parts: string[] = [];
+		const walk = (node: Node) => {
+			if (node.nodeType === Node.TEXT_NODE) {
+				parts.push(node.textContent || '');
+			} else
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if ((node as HTMLElement).tagName === 'BR') {
+					parts.push('\n');
+				} else {
+					for (let i = 0; i < node.childNodes.length; i++) {
+						walk(node.childNodes[i]);
+					};
+				};
+			};
+		};
+
+		for (let i = 0; i < el.childNodes.length; i++) {
+			walk(el.childNodes[i]);
+		};
+
+		return parts.join('');
+	};
+
+	/**
 	 * Convert a DOM text offset (with ZWS) to model text offset (without ZWS).
-	 * Scans the element's textContent for ZWS characters and subtracts them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and subtracts them.
 	 */
 	domToModel (domOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 
 		for (let i = 0; i < domOffset && i < text.length; i++) {
@@ -1035,10 +1079,10 @@ class Mark {
 
 	/**
 	 * Convert a model text offset (without ZWS) to DOM text offset (with ZWS).
-	 * Scans the element's textContent for ZWS characters and adds them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and adds them.
 	 */
 	modelToDom (modelOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 		let dom = 0;
 

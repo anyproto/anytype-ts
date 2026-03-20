@@ -74,21 +74,21 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side right">
 				<Icon 
 					id="button-header-search" 
-					className="btn-search withBackground" 
+					className="btn-search" withBackground={true}
 					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }} 
 					onClick={onSearch} 
 				/>
 
 				<Icon 
 					id="button-header-filter" 
-					className="btn-filter withBackground dn" 
+					className="btn-filter dn" withBackground={true}
 					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }} 
 					onClick={onFilter} 
 				/>
 
 				<Icon 
 					id="button-header-settings" 
-					className="btn-settings withBackground" 
+					className="btn-settings" withBackground={true}
 					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }} 
 					onClick={onSettings} 
 				/>

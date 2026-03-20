@@ -6,10 +6,9 @@ import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { configure, spy } from 'mobx';
-import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
+import { configure, } from 'mobx';
+import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
+import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
@@ -37,7 +36,7 @@ declare global {
 
 		isWebVersion: boolean;
 		Config: any;
-		AnytypeGlobalConfig: any;
+		AnytypeGlobalConfig: I.AppConfig;
 	}
 };
 
@@ -132,6 +131,10 @@ const App: FC = () => {
 
 		U.Router.init(history);
 		U.Smile.init();
+
+		if (window.isWebVersion) {
+			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
+		}
 
 		console.log('[App] Init', getGlobal('serverAddress'));
 
@@ -261,8 +264,20 @@ const App: FC = () => {
 		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
-		const route = String(data.route || redirect || '');
 		const tabId = electron.tabId();
+
+		// Validate tab route — don't restore blank/void/auth routes
+		let route = String(data.route || redirect || '');
+
+		if (route) {
+			const rp = U.Router.getParam(route);
+			if (
+				(rp.page == 'auth') ||
+				((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action))
+			) {
+				route = '';
+			};
+		};
 
 		if (config) {
 			S.Common.configSet(config, true);
@@ -313,7 +328,7 @@ const App: FC = () => {
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
-		const routeParam = { replace: true, onFadeIn: hide };
+		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
@@ -379,13 +394,13 @@ const App: FC = () => {
 				if (spaceId) {
 					U.Router.switchSpace(spaceId, '', false, routeParam, true);
 				} else {
-					U.Router.go('/main/void/select', routeParam);
+					U.Data.onAuthWithoutSpace(routeParam);
 				};
 			});
 		};
 
 		if (!accountId) {
-			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			U.Router.go('/auth/select', { replace: true, onRouteChange: cb });
 			return;
 		};
 
@@ -576,10 +591,8 @@ const App: FC = () => {
 
 					<div id="dragPanel" />
 					<div id="tooltipContainer" />
-					<div id="globalFade" />
 
 					<PreviewIndex />
-					<Progress />
 					<Toast />
 					<ListNotification key="listNotification" />
 

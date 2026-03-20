@@ -1,7 +1,9 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle, MouseEvent } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
+
+type ButtonSize = 16 | 28 | 32 | 36 | 40 | 48;
 
 interface ButtonProps {
 	id?: string;
@@ -11,6 +13,7 @@ interface ButtonProps {
 	arrow?: boolean;
 	text?: string;
 	active?: boolean;
+	size?: ButtonSize;
 	color?: string;
 	className?: string;
 	tooltipParam?: Partial<I.TooltipParam>;
@@ -38,6 +41,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	icon,
 	arrow,
 	text = '',
+	size,
 	color: initialColor = 'black',
 	className = '',
 	tooltipParam = {},
@@ -51,7 +55,9 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ color, setColor ] = useState(initialColor);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
-	const cn = [ 'button', color, className ];
+
+	useEffect(() => setColor(initialColor), [ initialColor ]);
+	const cn = [ 'button', color, className, (size ? `size${size}` : '') ];
 
 	let content = null;
 

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { LayoutPlug } from 'Component';
+import { LayoutPlug, Icon, Label } from 'Component';
 import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
@@ -39,6 +39,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const isCreating = useRef(false);
 	const frame = useRef(0);
 	const timeoutFilter = useRef(0);
+	const timeoutDrag = useRef(0);
 	const editingRecordId = useRef('');
 	const filterRef = useRef('');
 	const viewIdRef = useRef('');
@@ -313,7 +314,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -538,6 +539,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			groupId = 'empty';
 		};
 
+		if (type && U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			const objectId = getObjectId();
+			const details = getDetails(groupId);
+
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, (objects) => {
+				if (isCollection && objects?.length) {
+					// Collection add is handled inside the popup for each file
+				};
+			}, analytics.route.uploadTypePage);
+		} else
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
 			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
@@ -646,6 +657,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const typeId = getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
+					if (!type) {
+						return;
+					};
+
+					if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+						menuContext?.close();
+						const objectId = getObjectId();
+						const details = getDetails('');
+						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, undefined, analytics.route.uploadTypePage);
+					} else
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
 						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${U.Common.esc(block.id)}-add-record` });
@@ -1249,7 +1270,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const targetId = getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
@@ -1424,7 +1445,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
 		const win = $(window);
-		const pageContainer = getPageContainer();
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
@@ -1436,11 +1456,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			editingRecordId.current = '';
 		};
 
-		if (nameRef) {
-			nameRef.onBlur();
-		};
-
-		$(pageContainer).trigger('mousedown');
+		nameRef?.onBlur();
 	};
 
 	const multiSelectAction = (id: string) => {
@@ -1487,10 +1503,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			controlsRef.current?.resize?.();
 			viewRef.current?.resize?.();
 		});
-	};
-
-	const getPageContainer = () => {
-		return U.Common.getCellContainer(isPopup ? 'popup' : 'page');
 	};
 
 	if (!views.length) {
@@ -1613,7 +1625,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					onRefRecord={(ref: any, id: string) => recordRefs.current.set(id, ref)}
 					{...props}
 					{...dataviewProps}
-					pageContainer={getPageContainer()}
 					onCellClick={onCellClick}
 					onCellChange={onCellChange}
 					onContext={onContext}
@@ -1627,33 +1638,128 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		);
 	};
 
+	const getEditorWrapper = () => {
+		return $(nodeRef.current).closest('.editorWrapper');
+	};
+
+	const getBlockNode = () => {
+		return $(nodeRef.current).closest('.block.blockDataview');
+	};
+
+	const onFileDragOver = (e: any) => {
+		const oe = e.originalEvent || e;
+		if (!U.File.checkDropFiles(oe)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+
+		const blockNode = getBlockNode();
+		const wrapper = getEditorWrapper();
+		const container = U.Common.getScrollContainer(isPopup);
+		const hoverArea = blockNode.find('.hoverArea');
+
+		if (hoverArea.length && container.length) {
+			const rect = hoverArea.get(0).getBoundingClientRect();
+			const top = rect.bottom;
+			const containerBottom = container.get(0).getBoundingClientRect().bottom;
+			const height = containerBottom - top;
+
+			blockNode.find('.dragOverlay').css({ height });
+		};
+
+		wrapper.addClass('isDraggingOver');
+	};
+
+	const onFileDragLeave = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(() => {
+			getEditorWrapper().removeClass('isDraggingOver');
+		}, 100);
+	};
+
+	const onFileDrop = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.clearTimeout(timeoutDrag.current);
+		getEditorWrapper().removeClass('isDraggingOver');
+
+		const electron = U.Common.getElectron();
+		const files = e.originalEvent?.dataTransfer?.files;
+		if (!files || !files.length) {
+			return;
+		};
+
+		const paths: string[] = [];
+		for (let i = 0; i < files.length; i++) {
+			const path = electron.webFilePath(files[i]);
+			if (path) {
+				paths.push(path);
+			};
+		};
+
+		if (paths.length) {
+			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths, (message: any) => {
+				U.File.showFileDropError(message);
+
+				if (!message.error.code) {
+					analytics.event('UploadFile', { route: analytics.route.uploadDnDSet, count: paths.length });
+				};
+			});
+		};
+	};
+
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
 		onRecordAdd,
 		resize,
 	}));
-	
+
+	useEffect(() => {
+		if (isInline || readonly || !isCollection) {
+			return;
+		};
+
+		const wrapper = getEditorWrapper();
+		const ns = `.dataviewDrag-${block.id}`;
+
+		wrapper.on(`dragover${ns}`, onFileDragOver);
+		wrapper.on(`dragleave${ns}`, onFileDragLeave);
+		wrapper.on(`drop${ns}`, onFileDrop);
+
+		return () => {
+			wrapper.off(ns);
+			window.clearTimeout(timeoutDrag.current);
+		};
+	}, [ readonly ]);
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			tabIndex={0} 
+			tabIndex={0}
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownHandler} 
-			onKeyUp={onKeyUpHandler} 
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
 			onFocus={onFocus}
 		>
 			<div className="hoverArea">
-				<Controls 
-					ref={controlsRef} 
-					{...props} 
-					{...dataviewProps} 
+				<Controls
+					ref={controlsRef}
+					{...props}
+					{...dataviewProps}
 					onFilterChange={onFilterChange}
 				/>
-				<Selection 
-					ref={selectRef} 
-					{...props} 
-					{...dataviewProps} 
-					multiSelectAction={multiSelectAction} 
+				<Selection
+					ref={selectRef}
+					{...props}
+					{...dataviewProps}
+					multiSelectAction={multiSelectAction}
 				/>
 			</div>
 
@@ -1665,6 +1771,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					onClear={closeFilters}
 				/>
 			) : ''}
+
+			<div className="dragOverlay">
+				<div className="inner">
+					<Icon className="dragState" />
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
 
 			{body}
 		</div>

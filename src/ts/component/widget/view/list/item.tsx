@@ -88,7 +88,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	if (isSection) {
 		return (
@@ -136,6 +136,9 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 			const last = list.length ? list[0] : null;
 			const text = last ? S.Chat.getMessageSimpleText(space, last, true) : translate('widgetNoMessages');
+			if (U.Object.chatHasUnread(space, id)) {
+				cn.push('hasUnread');
+			};
 
 			descr = <Label className="descr" text={text} />;
 			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';

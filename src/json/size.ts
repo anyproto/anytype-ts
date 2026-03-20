@@ -51,7 +51,7 @@ export default {
 			default: 192,
 			format1: 500,
 
-			min: 48,
+			min: 54,
 			max: 1000,
 			edit: 300,
 			small: 70,

@@ -1,8 +1,15 @@
 import { I, S, U, J, translate, Dataview } from 'Lib';
+import errorIcon from '../../img/icon/error.svg?raw';
+import systemRelationKeys from 'dist/lib/json/generated/systemRelations.json';
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
-const relationIcons = require.context('img/icon/relation/default', false, /\.svg$/);
+const relationIconModules = import.meta.glob('../../img/icon/relation/default/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const relationIcons = (key: string): string => {
+	const path = `../../img/icon/relation/default/${key.replace('./', '')}`;
+	if (path in relationIconModules) return relationIconModules[path];
+	throw new Error(`Cannot find icon: ${key}`);
+};
 
 class Relation {
 
@@ -47,16 +54,20 @@ class Relation {
 		try {
 			svg = relationIcons(`./${this.iconName(key, format)}.svg`) as string;
 		} catch (e) {
-			svg = require('img/icon/error.svg');
+			svg = errorIcon;
 		};
 
-		if (color) {
-			try {
-				const chunk = svg.split('base64,')[1];
-				const decoded = atob(chunk).replace(/fill="black"/g, `fill="${color}"`);
-				svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(decoded)));
-			} catch (e) { /**/ };
-		};
+		try {
+			let decoded = svg.includes('base64,')
+				? atob(svg.split('base64,')[1])
+				: svg;
+
+			if (color) {
+				decoded = decoded.replace(/fill="black"/g, `fill="${color}"`);
+			};
+
+			svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(decoded)));
+		} catch (e) { console.warn('[Relation] SVG encoding failed:', e); };
 
 		return svg;
 	};
@@ -857,6 +868,7 @@ class Relation {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
+
 		return String(value || '');
 	};
 
@@ -1105,7 +1117,7 @@ class Relation {
 	 * @returns {string[]} The system keys.
 	 */
 	systemKeys () {
-		return require('lib/json/generated/systemRelations.json');
+		return systemRelationKeys;
 	};
 
 	/**

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
 import target from 'Component/selection/target';
+import TextJson from 'json/text.json';
 
 const ALLOWED_KATEX = ['\\url', '\\href', '\\includegraphics'];
 
@@ -82,23 +83,36 @@ class UtilCommon {
 	objectCompare (o1: any, o2: any): boolean {
 		o1 = o1 || {};
 		o2 = o2 || {};
-		
+
 		const k1 = Object.keys(o1);
 		const k2 = Object.keys(o2);
-		const v1 = Object.values(o1);
-		const v2 = Object.values(o2);
-		const sort = (c1: any, c2: any) => {
-			if (c1 > c2) return 1;
-			if (c1 < c2) return -1;
-			return 0;
+
+		if (k1.length !== k2.length) {
+			return false;
 		};
-		
-		k1.sort(sort);
-		k2.sort(sort);
-		v1.sort(sort);
-		v2.sort(sort);
-		
-		return this.compareJSON(k1, k2) && this.compareJSON(v1, v2);
+
+		k1.sort();
+		k2.sort();
+
+		for (let i = 0; i < k1.length; i++) {
+			if (k1[i] !== k2[i]) {
+				return false;
+			};
+
+			const v1 = o1[k1[i]];
+			const v2 = o2[k2[i]];
+
+			if ((typeof v1 === 'object') && (typeof v2 === 'object')) {
+				if (!this.objectCompare(v1, v2)) {
+					return false;
+				};
+			} else
+			if (v1 !== v2) {
+				return false;
+			};
+		};
+
+		return true;
 	};
 
 	/**
@@ -376,9 +390,9 @@ class UtilCommon {
 	 * @returns {object} The grouped map.
 	 */
 	mapToArray (list: any[], field: string): any {
-		list = list|| [] as any[];
-		
-		const map = {} as any;
+		list = list || [];
+
+		const map: Record<string, any[]> = {};
 		for (const item of list) {
 			map[item[field]] = map[item[field]] || [];
 			map[item[field]].push(item);
@@ -394,8 +408,8 @@ class UtilCommon {
 	 */
 	mapToObject (list: any[], field: string) {
 		const obj: any = {};
-		for (let i = 0; i < list.length; i++) {
-			obj[list[i][field]] = list[i];
+		for (const item of list) {
+			obj[item[field]] = item;
 		};
 		return obj;
 	};
@@ -406,11 +420,7 @@ class UtilCommon {
 	 * @returns {any[]} The flattened array.
 	 */
 	unmap (map: any) {
-		let ret: any[] = [] as any[];
-		for (const field in map) {
-			ret = ret.concat(map[field]);
-		};
-		return ret;
+		return Object.values(map).flat();
 	};
 	
 	/**
@@ -697,7 +707,7 @@ class UtilCommon {
 				param[k] = v;
 			});
 
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] invalid URL params:', e); };
 		return param;
 	};
 
@@ -900,7 +910,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
 		};
 	};
 
@@ -965,9 +975,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = U.String.toCamelCase(`error-${command}${code}`);
-		const Text = require('json/text.json');
-
-		return Text[id] ? translate(id) : description;
+		return (TextJson as Record<string, string>)[id] ? translate(id) : description;
 	};
 
 	/**
@@ -998,19 +1006,6 @@ class UtilCommon {
 
 		head.find(`style#${id}`).remove();
 		head.append(element);
-	};
-
-	/**
-	 * Adds a script tag to the document body with a given ID and source.
-	 * @param {string} id - The script element ID.
-	 * @param {string} src - The script source URL.
-	 */
-	addScript (id: string, src: string) {
-		const body = $('body');
-		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
-
-		body.find(`script#${id}`).remove();
-		body.append(element);
 	};
 
 	/**
@@ -1317,8 +1312,9 @@ class UtilCommon {
 
 		let ret = '';
 		try {
-			const chunk = src.split('base64,')[1];
-			const decoded = atob(chunk).replace(/_COLOR_VAR_/g, fill);
+			const decoded = src.includes('base64,')
+				? atob(src.split('base64,')[1]).replace(/_COLOR_VAR_/g, fill)
+				: src.replace(/_COLOR_VAR_/g, fill);
 			const obj = $(decoded);
 			const attr: any = {};
 
@@ -1340,7 +1336,7 @@ class UtilCommon {
 			};
 			
 			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] SVG encoding failed:', e); };
 
 		iconCache.set(key, ret);
 		return ret;
@@ -1396,7 +1392,7 @@ class UtilCommon {
 				};
 
 			};
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] URL parsing failed:', e); };
 
 		return ret;
 	};
@@ -1411,7 +1407,7 @@ class UtilCommon {
 		};
 
 		if (ret.isInside) {
-			ret.route = url.split(':/')[1];
+			ret.route = url.split(':/')[1] || '';
 
 			const search = url.split('?')[1];
 			if (search) {
@@ -1661,10 +1657,9 @@ class UtilCommon {
 	};
 
 	applyAutoDownload (value: number) {
-		if (value < 0) {
-			C.FileSetAutoDownload(false, false);
-		} else {
-			C.FileSetAutoDownload(true, false);
+		C.FileSetAutoDownload(value > 0, false);
+		
+		if (value >= 0) {
 			C.FileAutoDownloadSetLimit(value);
 		};
 	};

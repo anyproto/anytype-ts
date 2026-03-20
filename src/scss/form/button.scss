@@ -52,16 +52,20 @@
 	&:hover, &.hover, &.active { background: var(--color-shape-highlight-medium); }
 }
 
-.button.c48 { @include text-paragraph; height: 48px; border-radius: 24px; padding: 0px 16px; }
-.button.c36 { @include text-common; height: 36px; border-radius: 18px; padding: 0px 12px; }
-.button.c32 { @include text-small; height: 32px; border-radius: 16px; padding: 0px 10px; }
-.button.c28 { @include text-common; height: 28px; border-radius: 14px; padding: 0px 10px; }
-.button.c16 { @include text-9; height: 16px; border-radius: 8px; padding: 0px 4px; }
+.button.size48 { @include text-paragraph; height: 48px; border-radius: 24px; padding: 0px 16px; }
+.button.size36 { @include text-common; height: 36px; border-radius: 18px; padding: 0px 12px; }
+.button.size32 { @include text-small; height: 32px; border-radius: 16px; padding: 0px 10px; }
+.button.size28 { @include text-common; height: 28px; border-radius: 14px; padding: 0px 10px; }
+.button.size16 { @include text-9; height: 16px; border-radius: 8px; padding: 0px 4px; }
 
 input.button { line-height: 1; }
 
 .button {
 	.icon { margin-right: 6px; }
+	.icon.downloading {
+		width: 16px; height: 16px;
+		background-image: url('~img/icon/vault/spinner.svg'); background-size: 16px; animation: rotate 1.2s infinite linear;
+	}
 	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
 }
 

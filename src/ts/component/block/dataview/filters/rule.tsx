@@ -97,7 +97,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							key={`${nodeId}-days-${quickOption}`}
 							ref={inputRef}
 							value={value}
-							className="round c36"
+							size={36}
 							placeholder={translate(`placeholderCell${I.RelationType.Number}`)}
 							onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
 							readonly={readonly}
@@ -123,7 +123,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							key={`${nodeId}-date-${quickOption}`}
 							ref={inputRef}
 							value={value ? U.Date.date(inputFormat, value) : ''}
-							className="round c36"
+							size={36}
 							placeholder={ph}
 							maskOptions={{
 								mask,
@@ -159,7 +159,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				return (
 					<div className="dateWrapper">
 						<Select
-							className="round c36"
+							size={36}
 							key={`${nodeId}-quick-${relationKey}-${condition}`}
 							id={`${nodeId}-quick`}
 							value={String(quickOption)}
@@ -187,7 +187,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 						id={`${nodeId}-checkbox`}
 						value={value ? '1' : '0'}
 						options={checkboxOptions}
-						className="round c36"
+						size={36}
 						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
 						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
 						readonly={readonly}
@@ -205,7 +205,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					<Input
 						ref={inputRef}
 						value={value}
-						className="round c36"
+						size={36}
 						placeholder={translate(`placeholderCell${relation.format}`)}
 						onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
 						readonly={readonly}
@@ -455,14 +455,15 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			)}
 
 			<div className="inner">
-				<div className="relationSelect select round c36" onClick={onRelationClick}>
+				<div className="relationSelect select round size36" onClick={onRelationClick}>
 					{relation ? <Icon className={`relation ${Relation.className(relation.format)}`} /> : ''}
 					<Label text={relation?.name || ''} />
 					<Icon className="arrow" />
 				</div>
 
 				<Select
-					className="conditionSelect  round c36"
+					size={36}
+					className="conditionSelect round"
 					key={`${nodeId}-condition-${relationKey}`}
 					ref={conditionRef}
 					id={`${nodeId}-condition`}
@@ -495,7 +496,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					{valueContent}
 				</div>
 
-				{!readonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+				{!readonly ? <Icon className="more" withBackground={true} onClick={onMore} /> : ''}
 			</div>
 		</div>
 	);

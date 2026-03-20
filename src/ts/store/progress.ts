@@ -3,25 +3,17 @@ import { I, S } from 'Lib';
 
 class ProgressStore {
 
-	public showValue = false;
     public listValue: I.Progress[] = [];
 
     constructor () {
         makeObservable(this, {
 			listValue: observable,
-			showValue: observable,
 			list: computed,
-			show: computed,
 			add: action,
 			update: action,
 			delete: action,
-			showSet: action,
         });
     };
-
-	get show (): boolean {
-		return this.showValue;
-	};
 
 	get list (): I.Progress[] {
 		return this.listValue || [];
@@ -55,14 +47,6 @@ class ProgressStore {
 	 */
 	delete (id: string) {
 		this.listValue = this.listValue.filter(it => it.id != id);
-	};
-
-	/**
-	 * Sets the show value for the progress list.
-	 * @param {boolean} v - The show value.
-	 */
-	showSet (v: boolean): void {
-		this.showValue = Boolean(v);
 	};
 
 	/**

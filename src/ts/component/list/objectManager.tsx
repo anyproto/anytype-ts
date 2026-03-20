@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, Mo
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
+import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { I, S, U, J, translate, keyboard } from 'Lib';
 
 interface Props {
@@ -389,6 +389,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					<div ref={filterWrapperRef} id="filterWrapper" className="filterWrapper">
 						<Filter
 							ref={filterRef}
+							className="underlined"
 							onChange={onFilterChange}
 							onClear={onFilterClear}
 							placeholder={translate('commonSearchPlaceholder')}

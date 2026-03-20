@@ -98,7 +98,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const getItems = () => {
-		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, [ ...S.Record.getRecordIds(getSubId(), '') ]).map(id => ({ id }));
 	};
 
 	const getCoverObject = (id: string) => {
@@ -205,8 +205,8 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
-							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
+							<Icon id={`button-${id}-more`} className="more" withBackground={true} tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
+							{isAllowedObject ? <Icon className="add" withBackground={true} tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
 						</div>
 					</div>
 

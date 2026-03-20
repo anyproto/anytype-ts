@@ -24,7 +24,7 @@ class CommonStore {
 	public filterObj: Filter = { from: 0, text: '' };
 	public gatewayUrl = '';
 	public toastObj: I.Toast = null;
-	public configObj: any = {};
+	public configObj: I.AppConfig = {};
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
@@ -66,9 +66,9 @@ class CommonStore {
 	public isActiveTab = true;
 	public windowIsFocused = true;
 	public routeParam: any = {};
-	public openObjectIds: Map<string, Set<string>> = new Map();
 	public isPinnedValue = false;
 	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+	public downloadingIdsValue: Set<string> = new Set();
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -162,6 +162,7 @@ class CommonStore {
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
+			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
 			preview: computed,
@@ -217,10 +218,12 @@ class CommonStore {
 			isPinnedSet: action,
 			singleTabSet: action,
 			autoDownloadSet: action,
+			downloadStart: action,
+			downloadDone: action,
 		});
 	};
 
-	get config (): any {
+	get config (): I.AppConfig {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
 		return {
@@ -709,6 +712,18 @@ class CommonStore {
 		Storage.set('autoDownload', v);
 	};
 
+	downloadStart (id: string) {
+		this.downloadingIdsValue.add(id);
+	};
+
+	downloadDone (id: string) {
+		this.downloadingIdsValue.delete(id);
+	};
+
+	isDownloading (id: string): boolean {
+		return this.downloadingIdsValue.has(id);
+	};
+
 	/**
 	 * Sets the hide chat send option value.
 	 * @param {boolean} v - Value.
@@ -797,7 +812,7 @@ class CommonStore {
 	redirectSet (v: string) {
 		const param = U.Router.getParam(v);
 
-		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+		if (param.page == 'auth') {
 			return;
 		};
 
@@ -821,6 +836,14 @@ class CommonStore {
 		if (id && ref) {
 			this.refs.set(id, ref);
 		};
+	};
+
+	/**
+	 * Removes a reference by ID.
+	 * @param {string} id - The reference ID.
+	 */
+	refDelete (id: string) {
+		this.refs.delete(id);
 	};
 
 	/**
@@ -979,11 +1002,11 @@ class CommonStore {
 
 	/**
 	 * Sets the config object, optionally forcing all values.
-	 * @param {any} config - The config object.
+	 * @param {I.AppConfig} config - The config object.
 	 * @param {boolean} force - Whether to force all values.
 	 */
-	configSet (config: any, force: boolean) {
-		let newConfig: any = {};
+	configSet (config: I.AppConfig, force: boolean) {
+		let newConfig: I.AppConfig = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);
 		} else {
@@ -1063,7 +1086,7 @@ class CommonStore {
 	 * @returns {I.GraphSettings} The graph settings.
 	 */
 	getGraph (key: string): I.GraphSettings {
-		const stored = Storage.get(key);
+		const stored = U.Common.objectCopy(Storage.get(key));
 		const def = U.Common.objectCopy(this.graphObj);
 		const result = Object.assign(def, stored);
 

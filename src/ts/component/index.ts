@@ -29,6 +29,7 @@ import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
+import SidebarProgress from './sidebar/progress';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -47,7 +48,6 @@ import Label from './util/label';
 import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
-import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
@@ -109,6 +109,7 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
+import { CommentSection } from './comment';
 import OptionSelect from './util/menu/optionSelect';
 import CalendarSelect from './util/menu/calendarSelect';
 
@@ -161,7 +162,6 @@ export {
 	Tag,
 	Loader,
 	Deleted,
-	Progress,
 	DotIndicator,
 	Phrase,
 	TabSwitch,
@@ -197,6 +197,7 @@ export {
 
 	SidebarLeft,
 	SidebarRight,
+	SidebarProgress,
 
 	Widget,
 
@@ -224,4 +225,6 @@ export {
 
 	OptionSelect,
 	CalendarSelect,
+
+	CommentSection,
 };

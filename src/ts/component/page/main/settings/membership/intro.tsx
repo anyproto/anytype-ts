@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';

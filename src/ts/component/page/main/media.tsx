@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
 import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
 
 const MAX_HEIGHT = 396;
@@ -109,7 +109,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const onDownload = () => {
 		const block = getBlock();
 		if (block) {
-			Action.downloadFile(block.getTargetObjectId(), analytics.route.media, block.isFileImage());
+			const targetObjectId = block.getTargetObjectId();
+
+			if (S.Common.isDownloading(targetObjectId)) {
+				return;
+			};
+
+			Action.downloadFile(targetObjectId, analytics.route.media, block.isFileImage());
 		};
 	};
 
@@ -237,7 +243,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 								/>
 
 								<div className="buttons">
-									<Button text={translate('commonDownload')} color="blank" className="c36" onClick={onDownload} />
+									<Button
+										text={S.Common.isDownloading(file.getTargetObjectId()) ? translate('commonDownloading') : translate('commonDownload')}
+										icon={S.Common.isDownloading(file.getTargetObjectId()) ? 'downloading' : ''}
+										color="blank"
+										className={[ 'c36', (S.Common.isDownloading(file.getTargetObjectId()) ? 'disabled' : '') ].join(' ')}
+										onClick={onDownload}
+									/>
 								</div>
 							</div>
 

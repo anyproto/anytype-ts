@@ -1,6 +1,8 @@
 import { observable, action, makeObservable, set } from 'mobx';
 import { J, I, U, M, S, Renderer, Mark } from 'Lib';
 
+const MAX_MESSAGES = 500;
+
 class ChatStore {
 
 	public messageMap: Map<string, any[]> = observable(new Map());
@@ -38,12 +40,17 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
 	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
-		const ids = new Set(this.getList(subId).map(it => it.id));
+		const list = this.getList(subId);
+		const ids = new Set(list.map(it => it.id));
 
 		add = (add || []).filter(it => !ids.has(it.id));
 		add = add.map(it => new M.ChatMessage(it));
 
-		this.getList(subId).unshift(...add);
+		list.unshift(...add);
+
+		if (list.length > MAX_MESSAGES) {
+			list.splice(MAX_MESSAGES);
+		};
 	};
 
 	/**
@@ -52,12 +59,17 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to append.
 	 */
 	append (subId: string, add: I.ChatMessage[]): void {
-		const ids = new Set(this.getList(subId).map(it => it.id));
+		const list = this.getList(subId);
+		const ids = new Set(list.map(it => it.id));
 
 		add = (add || []).filter(it => !ids.has(it.id));
 		add = add.map(it => new M.ChatMessage(it));
 
-		this.getList(subId).push(...add);
+		list.push(...add);
+
+		if (list.length > MAX_MESSAGES) {
+			list.splice(0, list.length - MAX_MESSAGES);
+		};
 	};
 
 	/**

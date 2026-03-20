@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation, sidebar } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Relation, } from 'Lib';
 import object from './object';
 
 const TYPE_KEYS = {
@@ -317,7 +317,10 @@ class UtilData {
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
-						if (route) {
+						const rp = route ? U.Router.getParam(route) : {};
+						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+
+						if (isRestorable) {
 							U.Router.go(route, routeParam);
 						} else {
 							U.Space.openDashboard(routeParam);
@@ -911,12 +914,12 @@ class UtilData {
 	};
 
 	getGraphData (message: any): { nodes: any[]; edges: any[] } {
-		const nodes = message.nodes.map(it => S.Detail.mapper(it)).filter(it => it.type);
+		const nodes = (message.nodes || []).map(it => S.Detail.mapper(it)).filter(it => it.type);
 		const nodeIds = new Set(nodes.map(it => it.id));
 
 		return {
 			nodes,
-			edges: message.edges.filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
+			edges: (message.edges || []).filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
 		};
 	};
 

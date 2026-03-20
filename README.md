@@ -25,6 +25,8 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 - [Prerequisites](#-prerequisites)
 - [Building from Source](#-building-from-source)
 - [Development Workflow](#-development-workflow)
+  - [Updating Middleware](#updating-middleware)
+  - [Updating Protobuf Bindings](#updating-protobuf-bindings)
 - [Localisation](#-localisation)
 - [Contributing](#-contributing)
 - [Community & Support](#-community--support)
@@ -44,7 +46,7 @@ On ARM systems, node package `keytar` needs to be rebuilt during installation, s
 git clone https://github.com/anyproto/anytype-ts.git && cd anytype-ts
 
 # 2 - Install JavaScript dependencies
-npm ci
+bun install
 
 # 3 – Fetch / build middleware & protobuf bindings
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
@@ -77,38 +79,83 @@ You can use [nix](https://nix.dev/install-nix) to install all the required depen
 nix develop --command $SHELL
 ```
 
-You can either run the helper (from *anytype‑heart*) separately or just launch the client with hot‑reload:
+Start the dev server with hot‑reload (builds Electron bundle, starts Vite, then launches Electron):
 
 ```bash
-anytypeHelper &       # or ./bin/anytypeHelper
-npm run start:dev     # Windows: npm run start:dev-win
+bun run start:dev     # Windows: npm run start:dev-win
 # add --user-data-dir=./my_dir to electron(-win) script in package.json if you want to use custom user data directory
 ```
 
-For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
+When you close Electron, the Vite dev server is automatically stopped.
 
-Optional env vars:
-
-| Name         | Purpose                                  |
-|--------------|-------------------------------------------|
-| `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
-| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
-
-### Web Clipper extension Development
-
-Switch manifest before testing/packaging the addon for different browsers using the following scripts:
+For browser-based development without Electron:
 
 ```bash
-npm run ext:manifest:firefox
-npm run ext:manifest:chromium
+bun run start:web
 ```
+
+See [Web Mode](./docs/src/ts/lib/web/README.md) for details.
+
+### Useful commands
+
+```bash
+bun run build         # Production build (Vite)
+bun run build:dev     # Development build (Vite)
+bun run typecheck     # TypeScript type checking
+bun run lint          # Run linters (Biome + ESLint)
+```
+
+### Environment variables
+
+| Name         | Purpose                                           |
+|--------------|---------------------------------------------------|
+| `SERVER_PORT`| Vite dev server port (default: `8080`)             |
+| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`            |
+
+### Web Clipper Extension
+
+Build and switch manifest for different browsers:
+
+```bash
+bun run build:ext
+bun run ext:manifest:firefox
+bun run ext:manifest:chromium
+```
+
+### Updating Middleware
+
+The middleware version is pinned in `middleware.version`. To fetch a pre-built middleware binary and its protobuf/JSON assets:
+
+```bash
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
+```
+
+This downloads the `anytype-heart` release matching the version in `middleware.version`, extracts the `anytypeHelper` binary into `dist/`, and copies protobuf definitions and generated JSON into `dist/lib/`.
+
+For CI environments (requires GitHub credentials):
+
+```bash
+./update-ci.sh --user=<GITHUB_USER> --token=<GITHUB_TOKEN> --os=<OS> --arch=<ARCH> --middleware-version=<VERSION>
+```
+
+### Updating Protobuf Bindings
+
+To regenerate TypeScript protobuf bindings from a local [anytype-heart](https://github.com/anyproto/anytype-heart) checkout (expected at `../anytype-heart`):
+
+```bash
+bun run generate:protos
+```
+
+**Prerequisites:** `protoc` (protobuf compiler) must be installed, and `bun install` must have been run (for `ts-proto`).
+
+This reads `.proto` files from `../anytype-heart`, generates TypeScript bindings into `middleware/`, and creates a service registry.
 
 ## 🌍 Localisation
 
 Translations live on [Crowdin](https://crowdin.com/project/anytype-desktop). Pull the latest locale files with:
 
 ```bash
-npm run update:locale
+bun run update:locale
 ```
 
 

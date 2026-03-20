@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -417,7 +417,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 								key={i}
 								text={button.text}
 								color={(i == 0) ? 'accent' : 'blank'}
-								className="c36"
+								size={36}
 								onClick={e => onButton(e, button)}
 							/>
 						))}

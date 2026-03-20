@@ -19,7 +19,7 @@ const PopupAbout = forwardRef<{}, I.Popup>(() => {
 				<Button 
 					onClick={() => U.Common.copyToast(translate('commonVersion'), version)} 
 					text={translate('commonCopy')} 
-					className="c28" 
+					size={28}
 					color="blank" 
 				/>
 			</div>

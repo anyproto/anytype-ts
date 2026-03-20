@@ -7,64 +7,64 @@
     .menu { box-shadow: 0px 4px 16px rgb(0,0,0,0.2), 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 
     .menu {
-        .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph.svg'); }
+        .icon.textParagraph { background-image: url('~img/theme/dark/icon/menu/action/block/text/paragraph.svg'); }
 
 		.icon.textHeader1,
 		.icon.textHeader2,
-		.icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/header.svg'); }
-		.icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/text/quote.svg'); }
+		.icon.textHeader3 { background-image: url('~img/theme/dark/icon/menu/action/block/text/header.svg'); }
+		.icon.textQuote { background-image: url('~img/theme/dark/icon/menu/action/block/text/quote.svg'); }
 
-        .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted.svg'); }
-		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered.svg'); }
-		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle.svg'); }
-		.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout.svg'); }
-		.icon.textCheckbox { background-image: url('#{$themePath}/icon/menu/action/block/text/checkbox.svg'); }
+        .icon.textBulleted { background-image: url('~img/theme/dark/icon/menu/action/block/text/bulleted.svg'); }
+		.icon.textNumbered { background-image: url('~img/theme/dark/icon/menu/action/block/text/numbered.svg'); }
+		.icon.textToggle { background-image: url('~img/theme/dark/icon/menu/action/block/text/toggle.svg'); }
+		.icon.textCallout { background-image: url('~img/theme/dark/icon/menu/action/block/text/callout.svg'); }
+		.icon.textCheckbox { background-image: url('~img/theme/dark/icon/menu/action/block/text/checkbox.svg'); }
 
 		.icon.textToggleHeader1,
 		.icon.textToggleHeader2,
-		.icon.textToggleHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/toggleHeader.svg'); }
+		.icon.textToggleHeader3 { background-image: url('~img/theme/dark/icon/menu/action/block/text/toggleHeader.svg'); }
 
-        .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+        .icon.more { background-image: url('~img/theme/dark/icon/menu/action/more0.svg'); }
 		
-		.icon.embed-latex { background-image: url('#{$themePath}/icon/menu/action/block/embed/latex.svg'); }
-		.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/menu/action/block/embed/soundcloud.svg'); }
-		.icon.embed-codepen { background-image: url('#{$themePath}/icon/menu/action/block/embed/codepen.svg'); }
-		.icon.embed-githubGist { background-image: url('#{$themePath}/icon/menu/action/block/embed/githubGist.svg'); }
-		.icon.embed-graphviz { background-image: url('#{$themePath}/icon/menu/action/block/embed/graphviz.svg'); }
-		.icon.embed-kroki { background-image: url('#{$themePath}/icon/menu/action/block/embed/kroki.svg'); }
-		.icon.embed-openStreetMap { background-image: url('#{$themePath}/icon/menu/action/block/embed/openStreetMap.svg'); }
-		.icon.embed-twitter { background-image: url('#{$themePath}/icon/menu/action/block/embed/twitter.svg'); }
+		.icon.embed-latex { background-image: url('~img/theme/dark/icon/menu/action/block/embed/latex.svg'); }
+		.icon.embed-soundcloud { background-image: url('~img/theme/dark/icon/menu/action/block/embed/soundcloud.svg'); }
+		.icon.embed-codepen { background-image: url('~img/theme/dark/icon/menu/action/block/embed/codepen.svg'); }
+		.icon.embed-githubGist { background-image: url('~img/theme/dark/icon/menu/action/block/embed/githubGist.svg'); }
+		.icon.embed-graphviz { background-image: url('~img/theme/dark/icon/menu/action/block/embed/graphviz.svg'); }
+		.icon.embed-kroki { background-image: url('~img/theme/dark/icon/menu/action/block/embed/kroki.svg'); }
+		.icon.embed-openStreetMap { background-image: url('~img/theme/dark/icon/menu/action/block/embed/openStreetMap.svg'); }
+		.icon.embed-twitter { background-image: url('~img/theme/dark/icon/menu/action/block/embed/twitter.svg'); }
 
         .icon.color {
 			.inner {
 				&.bgColor-default { background: transparent; }
-				&.bgColor-grey { background: #3c3c3c !important; }
-				&.bgColor-yellow { background: #55500d !important; }
-				&.bgColor-orange { background: #5f430a !important; }
-				&.bgColor-red { background: #74321e !important; }
-				&.bgColor-pink { background: #712055 !important; }
-				&.bgColor-purple { background: #542663 !important; }
-				&.bgColor-blue { background: #2b3368 !important; }
-				&.bgColor-ice { background: #19465f !important; }
-				&.bgColor-teal { background: #16534e !important; }
-				&.bgColor-lime { background: #36551d !important; }
+				&.bgColor-grey { background: #414141 !important; }
+				&.bgColor-yellow { background: #6c630f !important; }
+				&.bgColor-orange { background: #7b3306 !important; }
+				&.bgColor-red { background: #82181a !important; }
+				&.bgColor-pink { background: #861043 !important; }
+				&.bgColor-purple { background: #59168b !important; }
+				&.bgColor-blue { background: #22307e !important; }
+				&.bgColor-ice { background: #024a70 !important; }
+				&.bgColor-teal { background: #0b4f4a !important; }
+				&.bgColor-lime { background: #35530e !important; }
 			}
         }
 
-        .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
+        .arrowDirection { background-image: url('~img/theme/dark/arrow/menuDirection.svg'); }
 
 		.colorMark {
 			&.bgColor-default { background: transparent; }
-			&.bgColor-grey { background: #3c3c3c !important; }
-			&.bgColor-yellow { background: #55500d !important; }
-			&.bgColor-orange { background: #5f430a !important; }
-			&.bgColor-red { background: #74321e !important; }
-			&.bgColor-pink { background: #712055 !important; }
-			&.bgColor-purple { background: #542663 !important; }
-			&.bgColor-blue { background: #2b3368 !important; }
-			&.bgColor-ice { background: #19465f !important; }
-			&.bgColor-teal { background: #16534e !important; }
-			&.bgColor-lime { background: #36551d !important; }
+			&.bgColor-grey { background: #414141 !important; }
+			&.bgColor-yellow { background: #6c630f !important; }
+			&.bgColor-orange { background: #7b3306 !important; }
+			&.bgColor-red { background: #82181a !important; }
+			&.bgColor-pink { background: #861043 !important; }
+			&.bgColor-purple { background: #59168b !important; }
+			&.bgColor-blue { background: #22307e !important; }
+			&.bgColor-ice { background: #024a70 !important; }
+			&.bgColor-teal { background: #0b4f4a !important; }
+			&.bgColor-lime { background: #35530e !important; }
 		}
     }
 
@@ -72,16 +72,16 @@
 
     .menu.vertical {
         .titleWrapper {
-            .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
+            .icon.back { background-image: url('~img/theme/dark/arrow/menu.svg'); }
         }
 
         .item { background: none; }
 		.item::before { background: rgba(238, 238, 238, 0); }
 
         .item {
-            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
-			.icon.chk { background-image: url('#{$themePath}/icon/menu/chk.svg'); }
-			.icon.sortArrow { background-image: url('#{$themePath}/icon/menu/sortArrow.svg'); }
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg'); }
+			.icon.chk { background-image: url('~img/theme/dark/icon/menu/chk.svg'); }
+			.icon.sortArrow { background-image: url('~img/theme/dark/icon/menu/sortArrow.svg'); }
         }
 
         .loaderWrapper { background: var(--color-bg-secondary); }
@@ -93,15 +93,15 @@
     .menu.menuSmile {
 		.body.tabSmile {
 			.foot {
-				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
-				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
-				.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
-				.icon.foods.active { background-image: url('#{$themePath}/icon/emoji/foods1.svg'); }
-				.icon.activity.active { background-image: url('#{$themePath}/icon/emoji/activity1.svg'); }
-				.icon.places.active { background-image: url('#{$themePath}/icon/emoji/places1.svg'); }
-				.icon.objects.active { background-image: url('#{$themePath}/icon/emoji/objects1.svg'); }
-				.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
-				.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
+				.icon.recent.active { background-image: url('~img/theme/dark/icon/emoji/recent1.svg'); }
+				.icon.people.active { background-image: url('~img/theme/dark/icon/emoji/people1.svg'); }
+				.icon.nature.active { background-image: url('~img/theme/dark/icon/emoji/nature1.svg'); }
+				.icon.foods.active { background-image: url('~img/theme/dark/icon/emoji/foods1.svg'); }
+				.icon.activity.active { background-image: url('~img/theme/dark/icon/emoji/activity1.svg'); }
+				.icon.places.active { background-image: url('~img/theme/dark/icon/emoji/places1.svg'); }
+				.icon.objects.active { background-image: url('~img/theme/dark/icon/emoji/objects1.svg'); }
+				.icon.symbols.active { background-image: url('~img/theme/dark/icon/emoji/symbols1.svg'); }
+				.icon.flags.active { background-image: url('~img/theme/dark/icon/emoji/flags1.svg'); }
 			}
 		}
     }
@@ -122,7 +122,7 @@
 
     .menu.menuDataviewFilterValues {
 		.select {
-            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg') !important; }
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg') !important; }
         }
     }
 
@@ -137,12 +137,12 @@
     .menu.menuCalendar {
 		.head {
 			.side.right {
-				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
+				.btn { background-image: url('~img/theme/dark/arrow/calendarNav.svg'); }
 			}
 		}
 
         .select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/big.svg'); }
 		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
     }
@@ -150,12 +150,12 @@
     /* BlockContext */
 
     .menu.menuBlockContext {
-        .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
-		.icon.active.kbd { background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg'); }
-		.icon.active.italic { background-image: url('#{$themePath}/icon/menu/action/mark/italic1.svg'); }
-		.icon.active.link { background-image: url('#{$themePath}/icon/menu/action/mark/link1.svg'); }
-		.icon.active.strike { background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg'); }
-		.icon.active.underline { background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg'); }
+        .icon.active.bold { background-image: url('~img/theme/dark/icon/menu/action/mark/bold1.svg'); }
+		.icon.active.kbd { background-image: url('~img/theme/dark/icon/menu/action/mark/code1.svg'); }
+		.icon.active.italic { background-image: url('~img/theme/dark/icon/menu/action/mark/italic1.svg'); }
+		.icon.active.link { background-image: url('~img/theme/dark/icon/menu/action/mark/link1.svg'); }
+		.icon.active.strike { background-image: url('~img/theme/dark/icon/menu/action/mark/strike1.svg'); }
+		.icon.active.underline { background-image: url('~img/theme/dark/icon/menu/action/mark/underline1.svg'); }
     }
 
     /* BlockLinkSettings */
@@ -163,18 +163,18 @@
     .menu.menuBlockLinkSettings {
         .section.card {
             .item {
-                .icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text0.svg'); }
-			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
+                .icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text0.svg'); }
+			    .icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card0.svg'); }
             }
 
             .item:hover {
-				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
-				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
+				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text1.svg'); }		
+				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card1.svg'); }
 			}
 
 			.item.active {
-				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
-				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
+				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text2.svg'); }		
+				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card2.svg'); }
 			}
         }
     }
@@ -185,7 +185,7 @@
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }
 
-        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
+        .icon.close:hover { background-image: url('~img/theme/dark/icon/menu/onboarding/close1.svg'); }
 	}
 
 	/* DataviewCreateBookmark */
@@ -199,18 +199,18 @@
     .menu.menuDataviewViewLayout {
         .layouts {
             .layout {
-                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg'); }
-                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
-                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery0.svg'); }
-                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
-				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg'); }
+                .icon.view.c0 { background-image: url('~img/theme/dark/icon/dataview/layout/grid0.svg'); }
+                .icon.view.c1 { background-image: url('~img/theme/dark/icon/dataview/layout/list0.svg'); }
+                .icon.view.c2 { background-image: url('~img/theme/dark/icon/dataview/layout/gallery0.svg'); }
+                .icon.view.c3 { background-image: url('~img/theme/dark/icon/dataview/layout/kanban0.svg'); }
+				.icon.view.c4 { background-image: url('~img/theme/dark/icon/dataview/layout/calendar0.svg'); }
             }
 			.layout.active {
-                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg'); }
-                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
-                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
-                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
-				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg'); }
+                .icon.view.c0 { background-image: url('~img/theme/dark/icon/dataview/layout/grid1.svg'); }
+                .icon.view.c1 { background-image: url('~img/theme/dark/icon/dataview/layout/list1.svg'); }
+                .icon.view.c2 { background-image: url('~img/theme/dark/icon/dataview/layout/gallery1.svg'); }
+                .icon.view.c3 { background-image: url('~img/theme/dark/icon/dataview/layout/kanban1.svg'); }
+				.icon.view.c4 { background-image: url('~img/theme/dark/icon/dataview/layout/calendar1.svg'); }
             }
 
             .layout:not(.isReadonly):hover { background-color: rgba(238, 238, 238, 0.06); }
@@ -239,7 +239,7 @@
     .menu.menuDataviewFilterAdvanced {
         .item {
             .txt {
-                .name::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+                .name::after { background-image: url('~img/theme/dark/arrow/select/dark.svg'); }
             }
         }
     }
@@ -248,9 +248,9 @@
 
     .menu.menuDataviewSort {
         .item {
-            .chip.relation::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            .chip.relation::after { background-image: url('~img/theme/dark/arrow/select/dark.svg'); }
             .chip.type {
-                .icon.sortArrow { background-image: url('#{$themePath}/icon/menu/dataview/sort.svg'); }
+                .icon.sortArrow { background-image: url('~img/theme/dark/icon/menu/dataview/sort.svg'); }
             }
         }
     }
@@ -266,8 +266,8 @@
 		.items {
             .sides {
                 .side.right {
-                    .icon.c-syncing { background-image: url('#{$themePath}/icon/menu/syncStatus/loading.svg'); }
-					.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+                    .icon.c-syncing { background-image: url('~img/theme/dark/icon/menu/syncStatus/loading.svg'); }
+					.icon.more:hover { background-image: url('~img/theme/dark/icon/menu/action/more1.svg'); }
                 }
             }
 		}
@@ -284,11 +284,11 @@
     /* Widget */
 
 	.menu {
-		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
-		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
+		.icon.widget-0 { background-image: url('~img/theme/dark/icon/menu/widget/link.svg'); }
+		.icon.widget-1 { background-image: url('~img/theme/dark/icon/menu/widget/tree.svg'); }
+		.icon.widget-2 { background-image: url('~img/theme/dark/icon/menu/widget/list.svg'); }
+		.icon.widget-3 { background-image: url('~img/theme/dark/icon/menu/widget/compact.svg'); }
+		.icon.widget-4 { background-image: url('~img/theme/dark/icon/menu/widget/view.svg'); }
 	}
 
 	/* Publish */
@@ -302,8 +302,8 @@
 		}
 
 		.outer {
-			.icon.space { background-image: url('#{$themePath}/icon/publish/member.svg'); }
-			.icon.export { background-image: url('#{$themePath}/icon/publish/export.svg'); }
+			.icon.space { background-image: url('~img/theme/dark/icon/publish/member.svg'); }
+			.icon.export { background-image: url('~img/theme/dark/icon/publish/export.svg'); }
 		}
 	}
 
@@ -311,7 +311,7 @@
 
 	.menu.menuIdentity {
 		.content {
-			.icon { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
+			.icon { background-image: url('~img/theme/dark/icon/header/anyName.svg'); }
 		}
 	}
 
@@ -319,7 +319,7 @@
 
 	.menu.menuSelect.spaceCreate {
 		.item {
-			.icon.join { background-image: url('#{$themePath}/icon/menu/spaceCreate/join.svg'); }
+			.icon.join { background-image: url('~img/theme/dark/icon/menu/spaceCreate/join.svg'); }
 		}
 	}
 
@@ -327,10 +327,10 @@
 
 	.menu.menuSelect.inviteLinkType {
 		.item {
-			.icon.editor { background-image: url('#{$themePath}/icon/menu/inviteLink/editor.svg'); }
-			.icon.viewer { background-image: url('#{$themePath}/icon/menu/inviteLink/viewer.svg'); }
-			.icon.manual { background-image: url('#{$themePath}/icon/menu/inviteLink/manual.svg'); }
-			.icon.none { background-image: url('#{$themePath}/icon/menu/inviteLink/none.svg'); }
+			.icon.editor { background-image: url('~img/theme/dark/icon/menu/inviteLink/editor.svg'); }
+			.icon.viewer { background-image: url('~img/theme/dark/icon/menu/inviteLink/viewer.svg'); }
+			.icon.manual { background-image: url('~img/theme/dark/icon/menu/inviteLink/manual.svg'); }
+			.icon.none { background-image: url('~img/theme/dark/icon/menu/inviteLink/none.svg'); }
 		}
 	}
 }

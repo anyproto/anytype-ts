@@ -6,10 +6,10 @@
 		.placeholder { display: none; }
 		.disabled { color: var(--color-control-active); opacity: 1 !important; }
 
-		.markers { display: flex; padding: 1px 0px; }
+		.markers { display: flex; padding: 1px 0px; align-items: flex-start; }
 		.markers {
 			.marker { 
-				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
+				text-align: center; display: flex; align-items: center; justify-content: center; position: relative; width: 24px; height: 24px; 
 				line-height: 24px; margin-right: 6px;
 			}
 			.marker {
@@ -17,21 +17,7 @@
 
 				&.markerBulleted { display: flex; align-items: center; justify-content: center; }
 				&.markerBulleted {
-					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
-					.markerInner {
-						&.textColor-default { background-color: var(--color-text-primary) !important; }
-						&.textColor-black { background-color: var(--color-text-primary) !important; }
-						&.textColor-grey { background-color: var(--color-control-active) !important; }
-						&.textColor-yellow { background-color: var(--color-yellow) !important; }
-						&.textColor-orange { background-color: var(--color-orange) !important; }
-						&.textColor-red { background-color: var(--color-red) !important; }
-						&.textColor-pink { background-color: var(--color-pink) !important; }
-						&.textColor-purple { background-color: var(--color-purple) !important; }
-						&.textColor-blue { background-color: var(--color-blue) !important; }
-						&.textColor-ice { background-color: var(--color-ice) !important; }
-						&.textColor-teal { background-color: var(--color-teal) !important; }
-						&.textColor-lime { background-color: var(--color-lime) !important; }
-					}
+					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; }
 				}
 
 				&.markerNumbered { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
@@ -41,7 +27,7 @@
 
 				&.markerCheckbox,
 				&.markerToggle {
-					img { width: 100%; height: 100%; }
+					img { width: 20px; height: 20px; }
 				}
 			}
 		}
@@ -260,7 +246,10 @@
 					> .flex { position: static; }
 					> .flex {
 						#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; padding: 16px; }
-						#value * { background: none; }
+						#value {
+							* { background: none; }
+							.title { @include text-common; font-weight: 400; }
+						}
 
 						.additional { 
 							position: absolute; top: 8px; left: 0px; z-index: 3; display: flex; padding: 0px 16px; width: 100%; 

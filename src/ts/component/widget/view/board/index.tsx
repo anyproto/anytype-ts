@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, J, Dataview } from 'Lib';
+import { I, J, Dataview } from 'Lib';
 import Group from './group';
 
 interface WidgetViewBoardRefProps {

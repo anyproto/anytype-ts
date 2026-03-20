@@ -38,7 +38,7 @@ const BlockDataviewEmpty = observer(forwardRef<{}, I.ViewEmpty>(({
 						<Button 
 							id="emptyButton" 
 							color="blank" 
-							className="c28" 
+							size={28}
 							text={button} 
 							onClick={onClick} 
 						/>

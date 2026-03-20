@@ -47,7 +47,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return [];
 		};
 
-		return U.Common.objectCopy(view.sorts || []);
+		return U.Common.objectCopy(view.sorts || []).filter((it: any) => {
+			const relation = S.Record.getRelationByKey(it.relationKey);
+			return relation && !relation.isArchived && !relation.isDeleted;
+		});
 	};
 
 	const getItems = () => {
@@ -366,8 +369,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="side right">
 						{!isReadonlyValue ? (
 							<div className="buttons">
-								<Icon className="more withBackground" onClick={e => onMore(e, item)} />
-								<Icon className="delete withBackground" onClick={e => onRemove(e, item)} />
+								<Icon className="more" withBackground={true} onClick={e => onMore(e, item)} />
+								<Icon className="delete" withBackground={true} onClick={e => onRemove(e, item)} />
 							</div>
 						) : ''}
 					</div>

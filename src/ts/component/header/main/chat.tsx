@@ -111,7 +111,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				<Icon
 					id="button-header-search"
 					tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText'), typeY: I.MenuDirection.Bottom }}
-					className="search withBackground"
+					className="search" withBackground={true}
 					onClick={() => keyboard.onSearchText('', analytics.route.header)}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
@@ -124,7 +124,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 							caption: keyboard.getCaption('addFavorite'), 
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						className={hasWidget ? 'unpin' : 'pin'} withBackground={true}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
@@ -134,7 +134,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					<Icon
 						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						className={[ 'relation', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')} withBackground={true}
 						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
@@ -143,8 +143,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				<Icon 
 					id="button-header-more"
 					tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-					className="more withBackground"
-					onClick={onMore} 
+					className="more" withBackground={true}
+					onClick={onMore}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 			</div>

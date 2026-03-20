@@ -545,8 +545,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (
 					<>
-						<Icon className="expand withBackground" onClick={onExpand} />
-						{hasMenu ? <Icon id="button-widget-more" className="more withBackground" onClick={onMore} /> : ''}
+						<Icon className="expand" withBackground={true} onClick={onExpand} />
+						{hasMenu ? <Icon id="button-widget-more" className="more" withBackground={true} onClick={onMore} /> : ''}
 					</>
 				);
 			};
@@ -554,7 +554,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon className="back withBackground" onClick={e => {
+						<Icon className="back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -593,7 +593,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			<>
 				<div className="side left">
 					<Icon
-						className="vaultToggle withBackground"
+						className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{
 							text: translate('commonVault'),
@@ -601,7 +601,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						}}
 					/>
 					<Icon 
-						className="widgetPanel withBackground" 
+						className="widgetPanel" withBackground={true} 
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 						tooltipParam={{ 
 							text: translate('commonWidgets'), 
@@ -615,7 +615,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 					<Icon 
 						id="button-recently-open"
-						className="clock withBackground"
+						className="clock" withBackground={true}
 						onClick={onRecentlyOpen}
 						tooltipParam={{ 
 							text: translate('widgetRecentOpen'), 
@@ -656,7 +656,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					let buttons = null;
 					if (isSectionType) {
 						if (canWrite) {
-							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
+							buttons = <Button icon="plus" color="blank" size={28} text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 						};
 					} else 
 					if (!isSectionUnread) {

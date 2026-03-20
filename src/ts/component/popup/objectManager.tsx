@@ -125,8 +125,8 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			/>
 
 			<div className="buttons">
-				<Button text={button} color={buttonColor} className="c36" onClick={onClick} />
-				<Button text={translate('commonCancel')} color="blank" className="c36" onClick={() => close()} />
+				<Button text={button} color={buttonColor} size={36} onClick={onClick} />
+				<Button text={translate('commonCancel')} color="blank" size={36} onClick={() => close()} />
 			</div>
 		</>
 	);

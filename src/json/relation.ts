@@ -25,6 +25,7 @@ export default {
 		'createdDate',
 		'timestamp',
 		'resolvedLayout',
+		'discussionId',
 	],
 
 	sidebar: [

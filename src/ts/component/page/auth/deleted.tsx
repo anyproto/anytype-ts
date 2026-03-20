@@ -47,10 +47,9 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	};
 
 	const onLogout = () => {
-		U.Router.go('/auth/select', { 
-			replace: true, 
-			animate: true,
-			onFadeIn: () => {
+		U.Router.go('/auth/select', {
+			replace: true,
+			onRouteChange: () => {
 				S.Auth.logout(true, false);
 			},
 		});
@@ -82,7 +81,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 				showPie = true;
 				title = U.String.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
 				description = translate('authDeleteDescription');
-				cancelButton = <Button type="input" color="accent" className="c48" text={translate('authDeleteCancelButton')} onClick={onCancel} />;
+				cancelButton = <Button type="input" color="accent" size={48} text={translate('authDeleteCancelButton')} onClick={onCancel} />;
 				cn.push('isPending');
 				break;
 			};
@@ -126,7 +125,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 							
 				<div className="animation buttons">
 					{cancelButton}
-					<Button color="blank" className="c48" text={translate('authDeleteExportButton')} onClick={onExport} />
+					<Button color="blank" size={48} text={translate('authDeleteExportButton')} onClick={onExport} />
 					<div className="remove" onClick={onRemove}>{translate('authDeleteRemoveButton')}</div>
 				</div>
 			</Frame>

@@ -21,7 +21,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			let key = '';
 			if (U.Object.isTemplateType(object.type)) {
 				key = 'template';
-			} else 
+			} else
 			if (Onboarding.isCompletedCommon()) {
 				key = 'editor';
 			};
@@ -35,32 +35,33 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return (
 		<>
-			<Header 
-				component="mainObject" 
-				ref={headerRef} 
-				{...props} 
-				rootId={rootId} 
+			<Header
+				component="mainObject"
+				ref={headerRef}
+				{...props}
+				rootId={rootId}
 			/>
 
-			<AnimatePresence mode="popLayout">
+			<AnimatePresence mode="wait">
 				<motion.div
-					id="bodyWrapper" 
+					key={rootId}
+					id="bodyWrapper"
 					className="wrapper"
-					{...U.Common.animationProps({
-						transition: { duration: 0.3, delay: 0.2 },
-					})}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1, transition: { duration: 0.12 } }}
+					exit={{ opacity: 0, transition: { duration: 0.08 } }}
 				>
-					<EditorPage 
+					<EditorPage
 						key="editorPage"
 						ref={ref => S.Common.refSet(`editor${ns}`, ref)}
-						{...props} 
-						isPopup={isPopup} 
-						rootId={rootId} 
-						onOpen={onOpen} 
+						{...props}
+						isPopup={isPopup}
+						rootId={rootId}
+						onOpen={onOpen}
 					/>
 				</motion.div>
 			</AnimatePresence>
-			
+
 			<Footer component="mainObject" {...props} />
 		</>
 	);

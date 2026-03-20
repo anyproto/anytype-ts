@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -181,18 +181,18 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			id="pageFlex" 
+		<div
+			id="pageFlex"
 			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
-			<div 
-				id="page" 
+			<div
+				id="page"
 				className={`page ${keyboard.getPageClass('page', isPopup)}`}
 			>
 				{Component ? (
-					<Component 
-						ref={childRef} 
+					<Component
+						ref={childRef}
 						{...props}
 						storageGet={() => Storage.get(pageId) || {}}
 						storageSet={data => Storage.set(pageId, data)}
@@ -203,14 +203,14 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					</Frame>
 				)}
 			</div>
-			<SidebarRight 
-				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)} 
-				key="sidebarRight" 
-				{...props} 
+			<SidebarRight
+				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)}
+				key="sidebarRight"
+				{...props}
 			/>
 		</div>
 	);
-	
+
 }));
 
 export default PageIndex;

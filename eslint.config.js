@@ -16,6 +16,8 @@ module.exports = tseslint.config(
 			'electron/**',
 			'scripts/**',
 			'src/json/schema/**',
+			'src/ts/component/util/icons/**',
+			'src/ts/component/util/iconRegistry.ts',
 			'licenses.json',
 			'**/*.d.ts',
 			'*-arm64/**',

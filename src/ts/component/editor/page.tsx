@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Deleted, DropTarget, EditorControls } from 'Component';
+import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -342,15 +342,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
-			const l1 = c1.isLayout();
-			const l2 = c2.isLayout();
+		const allBlocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const layoutBlocks = [];
+		const nonLayoutBlocks = [];
 
-			if (l1 && !l2) return -1;
-			if (!l1 && l2) return 1;
+		for (const b of allBlocks) {
+			if (b.isLayout()) {
+				layoutBlocks.push(b);
+			} else {
+				nonLayoutBlocks.push(b);
+			};
+		};
 
-			return 0;
-		});
+		const blocks = layoutBlocks.concat(nonLayoutBlocks);
 
 		let offset = 140;
 		let hovered: any = null;
@@ -630,10 +634,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 			};
 
-			// Open action menu
-			keyboard.shortcut('menuAction', e, () => {
-				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
-					S.Menu.open('blockAction', {
+			// Open action/add menu
+			keyboard.shortcut('menuAction, menuAdd', e, pressed => {
+				const menuId = pressed == 'menuAction' ? 'blockAction' : 'blockAdd';
+
+				S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+					S.Menu.open(menuId, {
 						element: `#block-${U.Common.esc(ids[0])}`,
 						classNameWrap: 'fromBlock',
 						offsetX: J.Size.blockMenu,
@@ -641,6 +647,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							blockId: ids[0],
 							blockIds: ids,
 							rootId,
+							blockCreate,
 						},
 						onClose: () => {
 							selection.clear();
@@ -1464,13 +1471,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					C.BlockListTurnInto(rootId, [ block.id ], map[block.content.style]);
 				} else
 				if (block.isTextList() || block.isTextParagraph()) {
-					const parent = S.Block.getParentLeaf(rootId, block.id);
-					const parentElement = S.Block.getParentMapElement(rootId, block.id);
-					const canOutdent = parent && parentElement && parent.canHaveChildren() && block.isIndentable() && !parent.canToggle();
-
-					if (canOutdent) {
-						onTabBlock(e, range, true);	
-					} else 
 					if (block.isTextParagraph()) {
 						ids.length ? blockRemove(block) : blockMerge(block, -1, length);
 					} else {
@@ -1530,23 +1530,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 			});
 		} else {
-			const childrenIds = S.Block.getChildrenIds(rootId, block.id);
+			Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
+				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 
-			const doIndent = () => {
-				Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
-					focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
-
-					if (next && next.canToggle()) {
-						S.Block.toggle(rootId, next.id, true);
-					};
-				});
-			};
-
-			if (childrenIds.length) {
-				Action.move(rootId, rootId, block.id, childrenIds, I.BlockPosition.Bottom, doIndent);
-			} else {
-				doIndent();
-			};
+				if (next && next.canToggle()) {
+					S.Block.toggle(rootId, next.id, true);
+				};
+			});
 		};
 	};
 
@@ -1628,9 +1618,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				style: I.TextStyle.Paragraph,
 			}, releaseEnterGuard);
 		} else
-		if (block.isTextParagraph() && !length && parent && parent.canToggle()) {
-			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
-			releaseEnterGuard();
+		if (block.isTextCallout() && (range.from == length) && (range.to == length)) {
+			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			}, releaseEnterGuard);
+		} else
+		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout())) {
+			if (S.Block.isLastChild(rootId, block.id)) {
+				Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
+				releaseEnterGuard();
+			} else {
+				blockSplit(block, range, isShift, releaseEnterGuard);
+			};
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
@@ -2022,9 +2022,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
-		const urls = U.String.getUrlsFromText(data.text);
+		const trimmedText = data.text.trim();
+		const urls = U.String.getUrlsFromText(trimmedText);
 
-		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
+		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
 		};
@@ -2094,6 +2095,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const route = U.Common.getRouteFromUrl(url);
 
+		let linkParamUrl = url;
+		if (route) {
+			linkParamUrl = `${J.Constant.protocol}://${route}`;
+		};
+
+		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
+		const isAnytypeObject = linkParam.isInside && linkParam.target;
+
 		const marks = U.Common.objectCopy(block.content.marks || []);
 		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
 
@@ -2107,19 +2116,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		let linkParamUrl = url;
-		if (route) {
-			linkParamUrl = `${J.Constant.protocol}://${route}`;
-		};
-
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
 		const length = block.getLength();
 		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
-		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
-		const isAnytypeObject = linkParam.isInside && linkParam.target;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
 		const isSameObject = linkParam.target == rootId;
 		const canObject = isAnytypeObject && isSameSpace && !isSameObject && canBookmark;
@@ -2153,11 +2155,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const section = options[0];
 			const cancel = options[options.length - 1];
 			const sortable = options.slice(1, -1);
+			const orderMap = new Map<string, number>(pasteOrder.map((id: string, i: number) => [ id, i ]));
 
 			sortable.sort((a: any, b: any) => {
-				const ai = pasteOrder.indexOf(a.id);
-				const bi = pasteOrder.indexOf(b.id);
-				return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+				const ai = orderMap.get(a.id) ?? sortable.length;
+				const bi = orderMap.get(b.id) ?? sortable.length;
+				return ai - bi;
 			});
 
 			options.length = 0;
@@ -2453,7 +2456,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isHeader) {
-			style = (!range.from && !range.to) || (range.to != length) ? content.style : I.TextStyle.Paragraph;
+			mode = range.to ? I.BlockSplitMode.Bottom : I.BlockSplitMode.Top;
+			style = I.TextStyle.Paragraph;
 		};
 
 		if (isCode || (isToggle && isOpen)) {
@@ -2469,7 +2473,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isCallout || isQuote) {
-			style = content.style;
+			if ((range.from != length) || (range.to != length)) {
+				style = content.style;
+			};
 		};
 
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
@@ -2601,13 +2607,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const ch = scrollContainer.height();
 				const bt = blocks.offset().top;
 				const bh = blocks.outerHeight();
+				const commentSection = node.find('.commentSection');
+				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
-				let height = ch - ct - bt - bh;
-
-				if (bh > ch) {
-					height = Math.max(ch / 2, height);
-				};
-
+				let height = ch - ct - bt - bh - csh - 8;
 				height = Math.max(J.Size.lastBlock, height);
 				last.css({ height });
 			};
@@ -2734,11 +2737,23 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					/>
 				</div>
 
-				<TableOfContents ref={tocRef} {...props} />
-				
 				<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
 					<div id="blockLast" className="blockLast" onClick={onLastClick} />
 				</DropTarget>
+
+				<TableOfContents ref={tocRef} {...props} />
+
+				{S.Common.config.experimental ? (
+				<CommentSection
+					rootId={rootId}
+					targetId={rootId}
+					targetType={I.CommentTargetType.Object}
+					readonly={readonly}
+					isPopup={isPopup}
+					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+					resize={resizePage}
+				/>
+			) : ''}
 			</div>
 		</div>
 	);

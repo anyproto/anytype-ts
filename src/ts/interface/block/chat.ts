@@ -1,4 +1,4 @@
-import { index } from 'd3';
+
 import { I } from 'Lib';
 
 export enum ChatButton {
@@ -67,6 +67,7 @@ export interface ChatMessage {
 	attachments: ChatMessageAttachment[];
 	dependencies: Map<string, any>;
 	reactions: ChatMessageReaction[];
+	blocks: ChatMessageBlock[];
 	isSynced: boolean;
 
 	// Internal
@@ -76,6 +77,37 @@ export interface ChatMessage {
 	isReadMention: boolean;
 	isReadReaction: boolean;
 	hasMention: boolean;
+};
+
+export interface ChatMessageBlock {
+	text?: ChatMessageBlockText;
+	link?: ChatMessageBlockLink;
+	embed?: ChatMessageBlockEmbed;
+};
+
+export interface ChatMessageBlockText {
+	text: string;
+	style: I.TextStyle;
+	marks: I.Mark[];
+	checked?: boolean;
+	lang?: string;
+};
+
+export interface ChatMessageBlockEmbed {
+	text: string;
+	processor: I.EmbedProcessor;
+};
+
+export interface ChatMessageBlockLink {
+	targetObjectId: string;
+	type: ChatMessageBlockLinkType;
+};
+
+export enum ChatMessageBlockLinkType {
+	Object		 = 0,
+	File		 = 1,
+	Image		 = 2,
+	Bookmark	 = 3,
 };
 
 export interface ChatMessageContent {
