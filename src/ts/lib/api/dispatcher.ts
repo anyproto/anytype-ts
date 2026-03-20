@@ -218,7 +218,7 @@ class Dispatcher {
 			};
 
 			if (data) {
-				const d = U.Common.objectClear(data);
+				const d = U.Common.objectClear(U.Common.objectCopy(data));
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 			};
 		};
@@ -1626,7 +1626,7 @@ class Dispatcher {
 
 		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			const d = U.Common.objectClear(data);
+			const d = U.Common.objectClear(U.Common.objectCopy(data));
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
@@ -1669,7 +1669,7 @@ class Dispatcher {
 
 				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					const d = U.Common.objectClear(response);
+					const d = U.Common.objectClear(U.Common.objectCopy(response));
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 
