@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .sidebarProgress {
-	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 320px;
+	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 264px;
 	background: var(--color-bg-primary); border-radius: 12px;
 	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -48,6 +48,8 @@
 			.name { @include text-overflow-nw; @include text-common; font-weight: 500; color: var(--color-text-primary); }
 			.status { @include text-small; color: var(--color-text-secondary); }
 			.status {
+				> span { display: flex; align-items: center; gap: 6px; }
+				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); }
 				.error { color: var(--color-red); }
 			}
 		}
@@ -66,11 +68,14 @@
 
 			.icon.close {
 				position: absolute; left: 0px; top: 0px;
-				width: 28px; height: 28px; background-size: 20px;
+				width: 20px; height: 20px; background-image: url('~img/icon/progress/close.svg');
 				opacity: 0; transition: opacity 0.15s ease;
 			}
 		}
 
+		&.canCancel { transition: $transitionAllCommon; }
+
+		&.canCancel:hover { background: var(--color-shape-highlight-medium); }
 		&.canCancel:hover {
 			.spinnerWrap.withSpinner {
 				&::after { opacity: 0; }

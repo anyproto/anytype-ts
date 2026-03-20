@@ -267,6 +267,11 @@ html.themeDark {
 	.sidebarProgress {
 		background: var(--color-bg-secondary); box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 	}
+	.sidebarProgress {
+		.head {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/sidebarProgress.svg'); }
+		}
+	}
 
 	.tooltip { color: var(--color-text-primary); }
 	.tooltip.big { background: var(--color-bg-secondary); border: 1px solid rgba(229, 229, 229, 0.1); }
