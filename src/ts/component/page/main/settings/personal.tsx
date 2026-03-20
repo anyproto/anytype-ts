@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, hideFileObjectsInTree } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -126,6 +126,15 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 							analytics.event('ShowInSystemTray', { type: v });
 						}}
 					/>
+				</div>
+
+				<div className="item">
+    				<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
+    				<Switch
+						className="big"
+						value={hideFileObjectsInTree}
+						onChange={(e: any, v: boolean) => S.Common.hideFileObjectsInTreeSet(v)}
+    				/>
 				</div>
 
 				{canHideMenu ? (

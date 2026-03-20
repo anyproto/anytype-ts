@@ -52,6 +52,7 @@ class CommonStore {
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
+	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
@@ -146,6 +147,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
@@ -316,6 +318,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get hideFileObjectsInTree (): boolean {
+		return this.boolGet('hideFileObjectsInTree');
 	};
 
 	get autoDownload (): number {
@@ -703,6 +709,10 @@ class CommonStore {
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	hideFileObjectsInTreeSet (v: boolean) {
+		this.boolSet('hideFileObjectsInTree', v);
 	};
 
 	autoDownloadSet (v: number) {
