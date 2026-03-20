@@ -33,3 +33,4 @@ RELEASE_NOTES.md
 /windows/
 .aider*
 .env
+.claude/worktrees/*
