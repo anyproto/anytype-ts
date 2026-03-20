@@ -56,10 +56,10 @@ cd .. && git clone https://github.com/anyproto/anytype-heart.git && cd anytype-h
 make install-dev-js CLIENT_DESKTOP_PATH=../anytype-ts && cd ../anytype-ts
 
 # 5 - Update locale
-npm run update:locale
+bun run update:locale
 
 # 6 – Build the Electron desktop app (see package.json for more options)
-npm run dist:<linux|win|mac>
+bun run dist:<linux|win|mac>
 ```
 
 ### Environment flags
