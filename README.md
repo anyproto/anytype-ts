@@ -82,7 +82,7 @@ nix develop --command $SHELL
 Start the dev server with hot‑reload (builds Electron bundle, starts Vite, then launches Electron):
 
 ```bash
-bun run start:dev     # Windows: npm run start:dev-win
+bun run start:dev     # Windows: bun run start:dev-win
 # add --user-data-dir=./my_dir to electron(-win) script in package.json if you want to use custom user data directory
 ```
 
