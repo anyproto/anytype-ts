@@ -25,9 +25,13 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const limit = getLimit();
 	const cn = [ 'viewContent', className ];
-	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: J.Size.dataview.gallery.height }));
+	const cache = useRef(null);
 	const listRef = useRef(null);
 	const topRef = useRef(0);
+
+	if (!cache.current) {
+		cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: J.Size.dataview.gallery.height });
+	};
 
 	const getItems = () => {
 		const records = [ ...getRecords() ];

@@ -16,7 +16,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView, getContentParam } = props;
 	const { layout } = getContentParam();
-	const cache = useRef({});
+	const cache = useRef(null);
 	const nodeRef =	useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
