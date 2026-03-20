@@ -49,7 +49,7 @@
 			.status { @include text-small; color: var(--color-text-secondary); }
 			.status {
 				> span { display: flex; align-items: center; gap: 6px; }
-				.dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); vertical-align: middle; }
+				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); }
 				.error { color: var(--color-red); }
 			}
 		}
