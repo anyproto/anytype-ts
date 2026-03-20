@@ -324,11 +324,11 @@ class UtilMenu {
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyToClipboard') });
+			items.push({ id: 'copyMedia', icon: 'clipboard', name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
+			items.push({ id: 'copyUrl', icon: 'clipboard', name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
