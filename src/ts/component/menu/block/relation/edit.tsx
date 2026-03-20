@@ -426,7 +426,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 					</div>
 				) : (
 					<div className="item isReadonly">
-						<Icon className="lock" />
+						<Icon className="lock" name="lock" />
 						{relation ? relation.name : ''}
 					</div>
 				)}

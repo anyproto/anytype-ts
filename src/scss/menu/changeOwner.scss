@@ -20,7 +20,6 @@
 		.item { display: flex; align-items: center; padding: 8px 16px; gap: 0px 12px; cursor: pointer; border-radius: 8px; }
 		.item {
 			.iconObject { flex-shrink: 0; }
-			.icon.badge { margin: 0px; width: 14px; height: 14px; }
 			.icon.chk { right: 16px; }
 
 			.info { flex: 1; min-width: 0; }

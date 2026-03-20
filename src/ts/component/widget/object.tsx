@@ -117,7 +117,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 			case J.Constant.widgetId.bin: {
 				items = [
-					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+					{ id: J.Constant.widgetId.bin, icon: 'widgetSystemBin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
 				];
 				break;
 			};
@@ -217,7 +217,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		let icon = null;
 		if (item.icon) {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon name={item.icon} />;
 		} else {
 			icon = (
 				<IconObject

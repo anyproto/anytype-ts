@@ -445,16 +445,26 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const sections = getSections();
+	const viewIconMap = {
+		[I.ViewType.Grid]: 'viewGrid',
+		[I.ViewType.List]: 'viewList',
+		[I.ViewType.Gallery]: 'viewGallery',
+		[I.ViewType.Board]: 'viewKanban',
+		[I.ViewType.Calendar]: 'viewCalendar',
+		[I.ViewType.Graph]: 'viewGraph',
+		[I.ViewType.Timeline]: 'viewList',
+	};
 	const layouts = U.Menu.getViews().map((it: any) => {
 		it.sectionId = 'type';
-		it.icon = `view c${it.id}`;
+		it.icon = viewIconMap[it.id] || 'viewGrid';
 		return it;
 	});
 
 	const Layout = (item: any) => {
 		const cn = [ 'layout' ];
+		const isActive = type == item.id;
 
-		if (type == item.id) {
+		if (isActive) {
 			cn.push('active');
 		};
 		if (isReadonly) {
@@ -462,12 +472,12 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		return (
-			<div 
+			<div
 				className={cn.join(' ')}
 				onClick={e => onClick(e, item)}
 				onMouseEnter={menuClose}
 			>
-				<Icon className={item.icon} />
+				<Icon name={`${item.icon}${isActive ? 1 : 0}` as any} iconSize={56} />
 				<Label text={item.name} />
 			</div>
 		);

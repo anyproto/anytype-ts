@@ -136,9 +136,6 @@
                 }
 
                 .anyNameWrapper { display: flex; align-items: center; gap: 0px 4px; }
-                .anyNameWrapper {
-                    .icon.badge { background-image: url('~img/icon/membership/badge-bw.svg'); }
-                }
             }
         }
     }
@@ -627,7 +624,6 @@
 
                     .tagItem { color: var(--color-text-inversion); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
                     .caption { @include text-common; color: var(--color-text-secondary); }
-                    .icon.badge { width: 14px; height: 14px; }
                 }
 
                 .side.right { justify-content: flex-end; }

@@ -414,8 +414,8 @@ class UtilMenu {
 		});
 	};
 
-	getLayoutIcon (layout: I.ObjectLayout) {
-		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
+	getLayoutIcon (layout: I.ObjectLayout): string {
+		return `layout${I.ObjectLayout[layout]}`;
 	};
 
 	getLayouts () {
@@ -846,15 +846,15 @@ class UtilMenu {
 		const names = this.getImportNames();
 
 		return ([
-			{ id: 'obsidian', format: I.ImportType.Obsidian, isApp: true },
-			{ id: 'notion', format: I.ImportType.Notion, isApp: true },
-			{ id: 'protobuf', format: I.ImportType.Protobuf, isApp: true },
+			{ id: 'obsidian', icon: 'obsidian', format: I.ImportType.Obsidian, isApp: true },
+			{ id: 'notion', icon: 'notion', format: I.ImportType.Notion, isApp: true },
+			{ id: 'protobuf', icon: 'protobuf', format: I.ImportType.Protobuf, isApp: true },
 
-			{ id: 'markdown', format: I.ImportType.Markdown },
-			{ id: 'html', format: I.ImportType.Html },
-			{ id: 'text', format: I.ImportType.Text },
-			{ id: 'csv', format: I.ImportType.Csv },
-		] as { id: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
+			{ id: 'markdown', icon: 'markdown', format: I.ImportType.Markdown },
+			{ id: 'html', icon: 'html', format: I.ImportType.Html },
+			{ id: 'text', icon: 'importText', format: I.ImportType.Text },
+			{ id: 'csv', icon: 'csv', format: I.ImportType.Csv },
+		] as { id: string; icon: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
 			it.name = names[it.format];
 			return it;
 		});
@@ -1190,10 +1190,10 @@ class UtilMenu {
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
-			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', layout: I.ObjectLayout.Archive },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widgetSystemPin' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widgetSystemBin', layout: I.ObjectLayout.Archive },
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 

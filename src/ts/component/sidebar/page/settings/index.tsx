@@ -43,17 +43,17 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const importExport = [
-			{ id: 'exportIndex', icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+			{ id: 'exportIndex', icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] } as any,
 		];
 
 		if (canWrite) {
-			importExport.unshift({ id: 'importIndex', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
+			importExport.unshift({ id: 'importIndex', icon: 'settingsImport', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
 		};
 
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			icon: isOwner ? 'remove' : 'leave',
+			icon: isOwner ? 'settingsRemove' : 'leave',
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
 			color: 'red',
 		} : null;
@@ -61,16 +61,16 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
-					{ id: 'spaceIndex', icon: 'space' },
+					{ id: 'spaceIndex', icon: 'overview' },
 					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members' },
-					(spaceview.isOneToOne || spaceview.isChat) ? null : { id: 'spaceNotifications', icon: 'notifications' },
+					(spaceview.isOneToOne || spaceview.isChat) ? null : { id: 'spaceNotifications', icon: 'pushOn' },
 					{ id: 'spaceStorage', icon: 'storage', alert: notSyncedCounter },
-					{ id: 'archive', icon: 'bin' },
+					{ id: 'archive', icon: 'settingsBin' },
 				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
-					{ id: 'types', icon: 'type' },
-					{ id: 'relations', icon: 'relation' },
+					{ id: 'types', icon: 'settingsType' },
+					{ id: 'relations', icon: 'settingsRelation' },
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
@@ -95,14 +95,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			},
 			{
 				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
-					{ id: 'personal' },
-					{ id: 'language' },
-					{ id: 'pinIndex', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					{ id: 'personal', icon: 'personal' },
+					{ id: 'language', icon: 'settingsLanguage' },
+					{ id: 'pinIndex', icon: 'settingsPin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				],
 			},
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
-					{ id: 'phrase', subPages: [ 'delete' ] },
+					{ id: 'phrase', icon: 'phrase', subPages: [ 'delete' ] },
 					withMembership ? { id: 'membership', icon: 'membership' } : null,
 				],
 			},
@@ -241,7 +241,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				icon = <Icon name={item.icon} />;
 				name = item.name;
 			};
 

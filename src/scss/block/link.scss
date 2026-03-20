@@ -18,10 +18,6 @@
 			.loaderWrapper { width: 20px; height: 20px; display: inline-block; vertical-align: top; position: relative; margin: 0px; }
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 		}
-		.deleted {
-			.icon.ghost { width: 24px; height: 24px; }
-		}
-
 		.linkCard {
 			.sides { display: flex; flex-direction: row; }
 			.side { transition: border-color $transitionCommon; }

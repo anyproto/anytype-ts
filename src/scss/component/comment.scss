@@ -29,7 +29,6 @@
 
 			.author { @include text-small; font-weight: 500; line-height: 18px; }
 			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
-			.icon.badge { width: 14px; height: 14px; }
 			.name { display: flex; align-items: center; gap: 0px 4px; }
 		}
 

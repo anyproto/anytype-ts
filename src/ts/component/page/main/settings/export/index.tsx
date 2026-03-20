@@ -12,8 +12,8 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 
 	const { onPage } = props;
 	const items = [
-		{ id: 'markdown', name: 'Markdown' },
-		{ id: 'protobuf', name: 'Any-Block', isApp: true },
+		{ id: 'markdown', icon: 'markdown', name: 'Markdown' },
+		{ id: 'protobuf', icon: 'protobuf', name: 'Any-Block', isApp: true },
 	];
 
 	const onClick = (id: string) => {
@@ -29,7 +29,7 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 
 		return (
 			<div className={cn.join(' ')} onClick={() => onClick(item.id)} >
-				<Icon className={`import-${item.id}`} />
+				<Icon name={item.icon} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

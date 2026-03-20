@@ -99,7 +99,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="ghost" iconSize={24} />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

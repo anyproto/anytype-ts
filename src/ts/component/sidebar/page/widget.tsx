@@ -540,7 +540,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			let buttons = null;
 
 			if (object.isSystem) {
-				icon = <Icon className={object.icon} />;
+				icon = <Icon name={object.icon} />;
 			} else {
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (

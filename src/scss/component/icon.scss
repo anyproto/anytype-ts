@@ -23,22 +23,9 @@
 .icon.forward { transform: rotateZ(180deg); }
 .icon.expand { background-image: url('~img/icon/menu/action/expand0.svg'); }
 
-.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
 .icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); }
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
-
-.icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
-.icon.ghost { background-image: url('~img/icon/ghost.svg'); }
-
-.icon.widget-star { background-image: url('~img/icon/widget/system/star.svg'); }
-.icon.widget-pin { background-image: url('~img/icon/widget/system/pin.svg'); }
-.icon.widget-chat0 { background-image: url('~img/icon/widget/system/chat0.svg'); }
-.icon.widget-chat1 { background-image: url('~img/icon/widget/system/chat1.svg'); }
-.icon.widget-pencil { background-image: url('~img/icon/widget/system/pencil.svg'); }
-.icon.widget-eye { background-image: url('~img/icon/widget/system/eye.svg'); }
-.icon.widget-bin { background-image: url('~img/icon/widget/system/bin.svg'); }
-.icon.widget-all { background-image: url('~img/icon/widget/system/all.svg'); }
 
 .icon.relation.c-longText,
 .icon.relation.c-shortText,
@@ -65,50 +52,3 @@
 .icon.relation.c-email { mask-image: url('~img/icon/relation/default/email.svg'); }
 .icon.relation.c-phone { mask-image: url('~img/icon/relation/default/phone.svg'); }
 
-.icon.layout.c-page { background-image: url('~img/icon/object/page.svg'); }
-.icon.layout.c-human { background-image: url('~img/icon/object/human.svg'); }
-.icon.layout.c-task { background-image: url('~img/icon/object/task.svg'); }
-.icon.layout.c-set { background-image: url('~img/icon/object/set.svg'); }
-.icon.layout.c-file { background-image: url('~img/icon/object/file.svg'); }
-.icon.layout.c-image { background-image: url('~img/icon/object/image.svg'); }
-.icon.layout.c-type { background-image: url('~img/icon/object/type.svg'); }
-.icon.layout.c-relation { background-image: url('~img/icon/object/relation.svg'); }
-.icon.layout.c-note { background-image: url('~img/icon/object/note.svg'); }
-.icon.layout.c-bookmark { background-image: url('~img/icon/object/bookmark.svg'); }
-
-.icon.settings-personal { background-image: url('~img/icon/settings/personal.svg'); }
-.icon.settings-storage { background-image: url('~img/icon/settings/storage.svg'); }
-.icon.settings-phrase { background-image: url('~img/icon/settings/phrase.svg'); }
-.icon.settings-pin { background-image: url('~img/icon/settings/pin.svg'); }
-.icon.settings-spaces { background-image: url('~img/icon/settings/spaces.svg'); }
-.icon.settings-membership { background-image: url('~img/icon/settings/membership.svg'); }
-.icon.settings-language { background-image: url('~img/icon/settings/language.svg'); }
-.icon.settings-api { background-image: url('~img/icon/settings/api.svg'); }
-.icon.settings-sites { background-image: url('~img/icon/settings/sites.svg'); }
-.icon.settings-space { background-image: url('~img/icon/settings/overview.svg'); }
-.icon.settings-members { background-image: url('~img/icon/settings/members.svg'); }
-.icon.settings-notifications { background-image: url('~img/icon/settings/pushOn.svg'); }
-.icon.settings-import { background-image: url('~img/icon/settings/import.svg'); }
-.icon.settings-export { background-image: url('~img/icon/settings/export.svg'); }
-.icon.settings-type { background-image: url('~img/icon/settings/type.svg'); }
-.icon.settings-relation { background-image: url('~img/icon/settings/relation.svg'); }
-.icon.settings-bin { background-image: url('~img/icon/settings/bin.svg'); }
-.icon.settings-leave { background-image: url('~img/icon/settings/leave.svg'); }
-.icon.settings-remove { background-image: url('~img/icon/settings/remove.svg'); }
-.icon.settings-logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
-
-.icon.settings-ux1 { background-image: url('~img/icon/settings/space/space.svg'); }
-.icon.settings-ux3 { background-image: url('~img/icon/settings/space/chat.svg'); }
-
-.icon.import-notion { background-image: url('~img/icon/import/notion.svg'); }
-.icon.import-markdown { background-image: url('~img/icon/import/markdown.svg'); }
-.icon.import-html { background-image: url('~img/icon/import/html.svg'); }
-.icon.import-text { background-image: url('~img/icon/import/text.svg'); }
-.icon.import-csv { background-image: url('~img/icon/import/csv.svg'); }
-.icon.import-protobuf { background-image: url('~img/icon/import/protobuf.svg'); }
-.icon.import-obsidian { background-image: url('~img/icon/import/obsidian.svg'); }
-
-.icon.badge { width: 18px; height: 18px; background-image: url('~img/icon/membership/badge.svg'); }
-
-.icon.space-link { background-image: url('~img/icon/space/link.svg'); }
-.icon.space-qr { background-image: url('~img/icon/space/qr.svg');  }

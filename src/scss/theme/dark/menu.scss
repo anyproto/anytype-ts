@@ -198,21 +198,6 @@
 
     .menu.menuDataviewViewLayout {
         .layouts {
-            .layout {
-                .icon.view.c0 { background-image: url('~img/theme/dark/icon/dataview/layout/grid0.svg'); }
-                .icon.view.c1 { background-image: url('~img/theme/dark/icon/dataview/layout/list0.svg'); }
-                .icon.view.c2 { background-image: url('~img/theme/dark/icon/dataview/layout/gallery0.svg'); }
-                .icon.view.c3 { background-image: url('~img/theme/dark/icon/dataview/layout/kanban0.svg'); }
-				.icon.view.c4 { background-image: url('~img/theme/dark/icon/dataview/layout/calendar0.svg'); }
-            }
-			.layout.active {
-                .icon.view.c0 { background-image: url('~img/theme/dark/icon/dataview/layout/grid1.svg'); }
-                .icon.view.c1 { background-image: url('~img/theme/dark/icon/dataview/layout/list1.svg'); }
-                .icon.view.c2 { background-image: url('~img/theme/dark/icon/dataview/layout/gallery1.svg'); }
-                .icon.view.c3 { background-image: url('~img/theme/dark/icon/dataview/layout/kanban1.svg'); }
-				.icon.view.c4 { background-image: url('~img/theme/dark/icon/dataview/layout/calendar1.svg'); }
-            }
-
             .layout:not(.isReadonly):hover { background-color: rgba(238, 238, 238, 0.06); }
         }
     }

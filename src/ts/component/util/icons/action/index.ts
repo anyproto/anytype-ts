@@ -1222,3 +1222,16 @@ registerIcon('widgetPlus1', PopupSearchPlusIcon);
 registerIcon('widgetSection1', WidgetSection0Icon);
 registerIcon('widgetSettings1', WidgetSettings0Icon);
 registerIcon('widgetSort', DataviewButtonSort0Icon);
+
+// Layout aliases
+registerIcon('layoutPage', PageIcon);
+registerIcon('layoutHuman', HumanIcon);
+registerIcon('layoutTask', TaskIcon);
+registerIcon('layoutSet', ObjectSetIcon);
+registerIcon('layoutCollection', ObjectSetIcon);
+registerIcon('layoutFile', ObjectFileIcon);
+registerIcon('layoutImage', ObjectImageIcon);
+registerIcon('layoutType', ObjectTypeIcon);
+registerIcon('layoutRelation', ObjectRelationIcon);
+registerIcon('layoutNote', NoteIcon);
+registerIcon('layoutBookmark', ObjectBookmarkIcon);

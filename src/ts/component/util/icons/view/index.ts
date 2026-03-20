@@ -36,3 +36,8 @@ registerIcon('viewKanban1', ViewKanban1Icon);
 registerIcon('viewList', ViewListIcon);
 registerIcon('viewList0', ViewList0Icon);
 registerIcon('viewList1', ViewList1Icon);
+
+// Aliases
+registerIcon('viewCalendar', ViewCalendar0Icon);
+registerIcon('viewGraph', ViewGraph0Icon);
+registerIcon('viewTimeline', ViewList0Icon);

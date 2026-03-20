@@ -331,7 +331,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className={`settings-ux${spaceview.uxType}`} />
+											<Icon name={spaceview.uxType == 1 ? 'settingsSpaceSpace' : 'settingsChat'} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
