@@ -97,14 +97,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalSidebar')} />
-					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => {
-						S.Common.hideSidebarSet(v);
-						Renderer.send('setHideSidebar', v);
-					}} />
-				</div>
-
-				<div className="item">
 					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
 					<Switch 
 						className="big" 
@@ -128,15 +120,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 					/>
 				</div>
 
-				<div className="item">
-    				<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
-    				<Switch
-						className="big"
-						value={hideFileObjectsInTree}
-						onChange={(e: any, v: boolean) => S.Common.hideFileObjectsInTreeSet(v)}
-    				/>
-				</div>
-
 				{canHideMenu ? (
 					<div className="item">
 						<Label text={translate('electronMenuShowMenu')} />
@@ -149,6 +132,31 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionSidebar')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalSidebar')} />
+					<Switch
+						className="big"
+						value={hideSidebar}
+						onChange={(e: any, v: boolean) => {
+							S.Common.hideSidebarSet(v);
+							Renderer.send('setHideSidebar', v);
+						}}
+					/>
+				</div>
+
+				<div className="item">
+    				<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
+    				<Switch
+						className="big"
+						value={hideFileObjectsInTree}
+						onChange={(e: any, v: boolean) => S.Common.hideFileObjectsInTreeSet(v)}
+    				/>
+				</div>
 			</div>
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
