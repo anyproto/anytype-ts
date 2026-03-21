@@ -302,6 +302,10 @@
 				"to": "node_modules/@electron/remote"
 			},
 			{
+				"from": "node_modules/@isaacs/cliui",
+				"to": "node_modules/@isaacs/cliui"
+			},
+			{
 				"from": "node_modules/@tokenizer/inflate",
 				"to": "node_modules/@tokenizer/inflate"
 			},
@@ -318,36 +322,24 @@
 				"to": "node_modules/@tomjs/unzip-crx"
 			},
 			{
-				"from": "node_modules/argparse",
-				"to": "node_modules/argparse"
+				"from": "node_modules/ansi-regex",
+				"to": "node_modules/ansi-regex"
 			},
 			{
-				"from": "node_modules/array-buffer-byte-length",
-				"to": "node_modules/array-buffer-byte-length"
+				"from": "node_modules/ansi-styles",
+				"to": "node_modules/ansi-styles"
+			},
+			{
+				"from": "node_modules/argparse",
+				"to": "node_modules/argparse"
 			},
 			{
 				"from": "node_modules/array-find-index",
 				"to": "node_modules/array-find-index"
 			},
 			{
-				"from": "node_modules/array.prototype.flatmap",
-				"to": "node_modules/array.prototype.flatmap"
-			},
-			{
-				"from": "node_modules/arraybuffer.prototype.slice",
-				"to": "node_modules/arraybuffer.prototype.slice"
-			},
-			{
 				"from": "node_modules/async",
 				"to": "node_modules/async"
-			},
-			{
-				"from": "node_modules/async-function",
-				"to": "node_modules/async-function"
-			},
-			{
-				"from": "node_modules/available-typed-arrays",
-				"to": "node_modules/available-typed-arrays"
 			},
 			{
 				"from": "node_modules/balanced-match",
@@ -374,18 +366,6 @@
 				"to": "node_modules/builder-util-runtime"
 			},
 			{
-				"from": "node_modules/call-bind",
-				"to": "node_modules/call-bind"
-			},
-			{
-				"from": "node_modules/call-bind-apply-helpers",
-				"to": "node_modules/call-bind-apply-helpers"
-			},
-			{
-				"from": "node_modules/call-bound",
-				"to": "node_modules/call-bound"
-			},
-			{
 				"from": "node_modules/camelcase",
 				"to": "node_modules/camelcase"
 			},
@@ -400,6 +380,14 @@
 			{
 				"from": "node_modules/chownr",
 				"to": "node_modules/chownr"
+			},
+			{
+				"from": "node_modules/color-convert",
+				"to": "node_modules/color-convert"
+			},
+			{
+				"from": "node_modules/color-name",
+				"to": "node_modules/color-name"
 			},
 			{
 				"from": "node_modules/concat-map",
@@ -422,18 +410,6 @@
 				"to": "node_modules/currently-unhandled"
 			},
 			{
-				"from": "node_modules/data-view-buffer",
-				"to": "node_modules/data-view-buffer"
-			},
-			{
-				"from": "node_modules/data-view-byte-length",
-				"to": "node_modules/data-view-byte-length"
-			},
-			{
-				"from": "node_modules/data-view-byte-offset",
-				"to": "node_modules/data-view-byte-offset"
-			},
-			{
 				"from": "node_modules/debug",
 				"to": "node_modules/debug"
 			},
@@ -450,20 +426,8 @@
 				"to": "node_modules/deep-extend"
 			},
 			{
-				"from": "node_modules/define-data-property",
-				"to": "node_modules/define-data-property"
-			},
-			{
-				"from": "node_modules/define-properties",
-				"to": "node_modules/define-properties"
-			},
-			{
 				"from": "node_modules/detect-libc",
 				"to": "node_modules/detect-libc"
-			},
-			{
-				"from": "node_modules/dunder-proto",
-				"to": "node_modules/dunder-proto"
 			},
 			{
 				"from": "node_modules/electron-dl",
@@ -494,40 +458,16 @@
 				"to": "node_modules/electron-window-state"
 			},
 			{
+				"from": "node_modules/emoji-regex",
+				"to": "node_modules/emoji-regex"
+			},
+			{
 				"from": "node_modules/end-of-stream",
 				"to": "node_modules/end-of-stream"
 			},
 			{
 				"from": "node_modules/error-ex",
 				"to": "node_modules/error-ex"
-			},
-			{
-				"from": "node_modules/es-abstract",
-				"to": "node_modules/es-abstract"
-			},
-			{
-				"from": "node_modules/es-define-property",
-				"to": "node_modules/es-define-property"
-			},
-			{
-				"from": "node_modules/es-errors",
-				"to": "node_modules/es-errors"
-			},
-			{
-				"from": "node_modules/es-object-atoms",
-				"to": "node_modules/es-object-atoms"
-			},
-			{
-				"from": "node_modules/es-set-tostringtag",
-				"to": "node_modules/es-set-tostringtag"
-			},
-			{
-				"from": "node_modules/es-shim-unscopables",
-				"to": "node_modules/es-shim-unscopables"
-			},
-			{
-				"from": "node_modules/es-to-primitive",
-				"to": "node_modules/es-to-primitive"
 			},
 			{
 				"from": "node_modules/escape-goat",
@@ -558,8 +498,8 @@
 				"to": "node_modules/find-up"
 			},
 			{
-				"from": "node_modules/for-each",
-				"to": "node_modules/for-each"
+				"from": "node_modules/foreground-child",
+				"to": "node_modules/foreground-child"
 			},
 			{
 				"from": "node_modules/fs-constants",
@@ -578,36 +518,8 @@
 				"to": "node_modules/function-bind"
 			},
 			{
-				"from": "node_modules/function.prototype.name",
-				"to": "node_modules/function.prototype.name"
-			},
-			{
-				"from": "node_modules/functions-have-names",
-				"to": "node_modules/functions-have-names"
-			},
-			{
-				"from": "node_modules/generator-function",
-				"to": "node_modules/generator-function"
-			},
-			{
-				"from": "node_modules/get-intrinsic",
-				"to": "node_modules/get-intrinsic"
-			},
-			{
-				"from": "node_modules/get-proto",
-				"to": "node_modules/get-proto"
-			},
-			{
-				"from": "node_modules/get-stdin",
-				"to": "node_modules/get-stdin"
-			},
-			{
 				"from": "node_modules/get-stream",
 				"to": "node_modules/get-stream"
-			},
-			{
-				"from": "node_modules/get-symbol-description",
-				"to": "node_modules/get-symbol-description"
 			},
 			{
 				"from": "node_modules/getos",
@@ -622,16 +534,8 @@
 				"to": "node_modules/glob"
 			},
 			{
-				"from": "node_modules/globalthis",
-				"to": "node_modules/globalthis"
-			},
-			{
 				"from": "node_modules/google-protobuf",
 				"to": "node_modules/google-protobuf"
-			},
-			{
-				"from": "node_modules/gopd",
-				"to": "node_modules/gopd"
 			},
 			{
 				"from": "node_modules/graceful-fs",
@@ -642,28 +546,8 @@
 				"to": "node_modules/grpc-web"
 			},
 			{
-				"from": "node_modules/has-bigints",
-				"to": "node_modules/has-bigints"
-			},
-			{
 				"from": "node_modules/has-flag",
 				"to": "node_modules/has-flag"
-			},
-			{
-				"from": "node_modules/has-property-descriptors",
-				"to": "node_modules/has-property-descriptors"
-			},
-			{
-				"from": "node_modules/has-proto",
-				"to": "node_modules/has-proto"
-			},
-			{
-				"from": "node_modules/has-symbols",
-				"to": "node_modules/has-symbols"
-			},
-			{
-				"from": "node_modules/has-tostringtag",
-				"to": "node_modules/has-tostringtag"
 			},
 			{
 				"from": "node_modules/hasown",
@@ -710,112 +594,28 @@
 				"to": "node_modules/ini"
 			},
 			{
-				"from": "node_modules/internal-slot",
-				"to": "node_modules/internal-slot"
-			},
-			{
-				"from": "node_modules/is-array-buffer",
-				"to": "node_modules/is-array-buffer"
-			},
-			{
 				"from": "node_modules/is-arrayish",
 				"to": "node_modules/is-arrayish"
-			},
-			{
-				"from": "node_modules/is-async-function",
-				"to": "node_modules/is-async-function"
-			},
-			{
-				"from": "node_modules/is-bigint",
-				"to": "node_modules/is-bigint"
-			},
-			{
-				"from": "node_modules/is-boolean-object",
-				"to": "node_modules/is-boolean-object"
-			},
-			{
-				"from": "node_modules/is-callable",
-				"to": "node_modules/is-callable"
 			},
 			{
 				"from": "node_modules/is-core-module",
 				"to": "node_modules/is-core-module"
 			},
 			{
-				"from": "node_modules/is-data-view",
-				"to": "node_modules/is-data-view"
-			},
-			{
-				"from": "node_modules/is-date-object",
-				"to": "node_modules/is-date-object"
-			},
-			{
-				"from": "node_modules/is-finalizationregistry",
-				"to": "node_modules/is-finalizationregistry"
-			},
-			{
 				"from": "node_modules/is-finite",
 				"to": "node_modules/is-finite"
 			},
 			{
-				"from": "node_modules/is-generator-function",
-				"to": "node_modules/is-generator-function"
-			},
-			{
-				"from": "node_modules/is-map",
-				"to": "node_modules/is-map"
-			},
-			{
-				"from": "node_modules/is-negative-zero",
-				"to": "node_modules/is-negative-zero"
-			},
-			{
-				"from": "node_modules/is-number-object",
-				"to": "node_modules/is-number-object"
+				"from": "node_modules/is-fullwidth-code-point",
+				"to": "node_modules/is-fullwidth-code-point"
 			},
 			{
 				"from": "node_modules/is-plain-obj",
 				"to": "node_modules/is-plain-obj"
 			},
 			{
-				"from": "node_modules/is-regex",
-				"to": "node_modules/is-regex"
-			},
-			{
-				"from": "node_modules/is-set",
-				"to": "node_modules/is-set"
-			},
-			{
-				"from": "node_modules/is-shared-array-buffer",
-				"to": "node_modules/is-shared-array-buffer"
-			},
-			{
 				"from": "node_modules/is-stream",
 				"to": "node_modules/is-stream"
-			},
-			{
-				"from": "node_modules/is-string",
-				"to": "node_modules/is-string"
-			},
-			{
-				"from": "node_modules/is-symbol",
-				"to": "node_modules/is-symbol"
-			},
-			{
-				"from": "node_modules/is-typed-array",
-				"to": "node_modules/is-typed-array"
-			},
-			{
-				"from": "node_modules/is-weakmap",
-				"to": "node_modules/is-weakmap"
-			},
-			{
-				"from": "node_modules/is-weakref",
-				"to": "node_modules/is-weakref"
-			},
-			{
-				"from": "node_modules/is-weakset",
-				"to": "node_modules/is-weakset"
 			},
 			{
 				"from": "node_modules/isarray",
@@ -824,6 +624,10 @@
 			{
 				"from": "node_modules/isexe",
 				"to": "node_modules/isexe"
+			},
+			{
+				"from": "node_modules/jackspeak",
+				"to": "node_modules/jackspeak"
 			},
 			{
 				"from": "node_modules/js-yaml",
@@ -894,10 +698,6 @@
 				"to": "node_modules/map-obj"
 			},
 			{
-				"from": "node_modules/math-intrinsics",
-				"to": "node_modules/math-intrinsics"
-			},
-			{
 				"from": "node_modules/meow",
 				"to": "node_modules/meow"
 			},
@@ -928,6 +728,10 @@
 			{
 				"from": "node_modules/minimist",
 				"to": "node_modules/minimist"
+			},
+			{
+				"from": "node_modules/minipass",
+				"to": "node_modules/minipass"
 			},
 			{
 				"from": "node_modules/mkdirp",
@@ -962,10 +766,6 @@
 				"to": "node_modules/node-addon-api"
 			},
 			{
-				"from": "node_modules/node-exports-info",
-				"to": "node_modules/node-exports-info"
-			},
-			{
 				"from": "node_modules/normalize-package-data",
 				"to": "node_modules/normalize-package-data"
 			},
@@ -978,22 +778,6 @@
 				"to": "node_modules/object-assign"
 			},
 			{
-				"from": "node_modules/object-inspect",
-				"to": "node_modules/object-inspect"
-			},
-			{
-				"from": "node_modules/object-keys",
-				"to": "node_modules/object-keys"
-			},
-			{
-				"from": "node_modules/object.assign",
-				"to": "node_modules/object.assign"
-			},
-			{
-				"from": "node_modules/object.entries",
-				"to": "node_modules/object.entries"
-			},
-			{
 				"from": "node_modules/once",
 				"to": "node_modules/once"
 			},
@@ -1002,16 +786,16 @@
 				"to": "node_modules/onetime"
 			},
 			{
-				"from": "node_modules/own-keys",
-				"to": "node_modules/own-keys"
-			},
-			{
 				"from": "node_modules/p-limit",
 				"to": "node_modules/p-limit"
 			},
 			{
 				"from": "node_modules/p-locate",
 				"to": "node_modules/p-locate"
+			},
+			{
+				"from": "node_modules/package-json-from-dist",
+				"to": "node_modules/package-json-from-dist"
 			},
 			{
 				"from": "node_modules/pako",
@@ -1038,16 +822,16 @@
 				"to": "node_modules/path-parse"
 			},
 			{
+				"from": "node_modules/path-scurry",
+				"to": "node_modules/path-scurry"
+			},
+			{
 				"from": "node_modules/path-type",
 				"to": "node_modules/path-type"
 			},
 			{
 				"from": "node_modules/pify",
 				"to": "node_modules/pify"
-			},
-			{
-				"from": "node_modules/possible-typed-array-names",
-				"to": "node_modules/possible-typed-array-names"
 			},
 			{
 				"from": "node_modules/prebuild-install",
@@ -1090,16 +874,8 @@
 				"to": "node_modules/redent"
 			},
 			{
-				"from": "node_modules/reflect.getprototypeof",
-				"to": "node_modules/reflect.getprototypeof"
-			},
-			{
 				"from": "node_modules/regedit",
 				"to": "node_modules/regedit"
-			},
-			{
-				"from": "node_modules/regexp.prototype.flags",
-				"to": "node_modules/regexp.prototype.flags"
 			},
 			{
 				"from": "node_modules/repeating",
@@ -1114,20 +890,8 @@
 				"to": "node_modules/rimraf"
 			},
 			{
-				"from": "node_modules/safe-array-concat",
-				"to": "node_modules/safe-array-concat"
-			},
-			{
 				"from": "node_modules/safe-buffer",
 				"to": "node_modules/safe-buffer"
-			},
-			{
-				"from": "node_modules/safe-push-apply",
-				"to": "node_modules/safe-push-apply"
-			},
-			{
-				"from": "node_modules/safe-regex-test",
-				"to": "node_modules/safe-regex-test"
 			},
 			{
 				"from": "node_modules/sanitize-filename",
@@ -1142,18 +906,6 @@
 				"to": "node_modules/semver"
 			},
 			{
-				"from": "node_modules/set-function-length",
-				"to": "node_modules/set-function-length"
-			},
-			{
-				"from": "node_modules/set-function-name",
-				"to": "node_modules/set-function-name"
-			},
-			{
-				"from": "node_modules/set-proto",
-				"to": "node_modules/set-proto"
-			},
-			{
 				"from": "node_modules/setimmediate",
 				"to": "node_modules/setimmediate"
 			},
@@ -1164,22 +916,6 @@
 			{
 				"from": "node_modules/shebang-regex",
 				"to": "node_modules/shebang-regex"
-			},
-			{
-				"from": "node_modules/side-channel",
-				"to": "node_modules/side-channel"
-			},
-			{
-				"from": "node_modules/side-channel-list",
-				"to": "node_modules/side-channel-list"
-			},
-			{
-				"from": "node_modules/side-channel-map",
-				"to": "node_modules/side-channel-map"
-			},
-			{
-				"from": "node_modules/side-channel-weakmap",
-				"to": "node_modules/side-channel-weakmap"
 			},
 			{
 				"from": "node_modules/signal-exit",
@@ -1218,28 +954,28 @@
 				"to": "node_modules/spdx-license-ids"
 			},
 			{
-				"from": "node_modules/stop-iteration-iterator",
-				"to": "node_modules/stop-iteration-iterator"
-			},
-			{
 				"from": "node_modules/stream-slicer",
 				"to": "node_modules/stream-slicer"
 			},
 			{
-				"from": "node_modules/string.prototype.trim",
-				"to": "node_modules/string.prototype.trim"
+				"from": "node_modules/string-width",
+				"to": "node_modules/string-width"
 			},
 			{
-				"from": "node_modules/string.prototype.trimend",
-				"to": "node_modules/string.prototype.trimend"
-			},
-			{
-				"from": "node_modules/string.prototype.trimstart",
-				"to": "node_modules/string.prototype.trimstart"
+				"from": "node_modules/string-width-cjs",
+				"to": "node_modules/string-width-cjs"
 			},
 			{
 				"from": "node_modules/string_decoder",
 				"to": "node_modules/string_decoder"
+			},
+			{
+				"from": "node_modules/strip-ansi",
+				"to": "node_modules/strip-ansi"
+			},
+			{
+				"from": "node_modules/strip-ansi-cjs",
+				"to": "node_modules/strip-ansi-cjs"
 			},
 			{
 				"from": "node_modules/strip-bom",
@@ -1306,28 +1042,8 @@
 				"to": "node_modules/tunnel-agent"
 			},
 			{
-				"from": "node_modules/typed-array-buffer",
-				"to": "node_modules/typed-array-buffer"
-			},
-			{
-				"from": "node_modules/typed-array-byte-length",
-				"to": "node_modules/typed-array-byte-length"
-			},
-			{
-				"from": "node_modules/typed-array-byte-offset",
-				"to": "node_modules/typed-array-byte-offset"
-			},
-			{
-				"from": "node_modules/typed-array-length",
-				"to": "node_modules/typed-array-length"
-			},
-			{
 				"from": "node_modules/uint8array-extras",
 				"to": "node_modules/uint8array-extras"
-			},
-			{
-				"from": "node_modules/unbox-primitive",
-				"to": "node_modules/unbox-primitive"
 			},
 			{
 				"from": "node_modules/universalify",
@@ -1354,20 +1070,12 @@
 				"to": "node_modules/which"
 			},
 			{
-				"from": "node_modules/which-boxed-primitive",
-				"to": "node_modules/which-boxed-primitive"
+				"from": "node_modules/wrap-ansi",
+				"to": "node_modules/wrap-ansi"
 			},
 			{
-				"from": "node_modules/which-builtin-type",
-				"to": "node_modules/which-builtin-type"
-			},
-			{
-				"from": "node_modules/which-collection",
-				"to": "node_modules/which-collection"
-			},
-			{
-				"from": "node_modules/which-typed-array",
-				"to": "node_modules/which-typed-array"
+				"from": "node_modules/wrap-ansi-cjs",
+				"to": "node_modules/wrap-ansi-cjs"
 			},
 			{
 				"from": "node_modules/wrappy",
