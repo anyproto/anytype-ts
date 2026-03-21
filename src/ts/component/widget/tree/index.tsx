@@ -155,16 +155,16 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	// return the child nodes details for the given subId
 	const getChildNodesDetails = (nodeId: string): I.WidgetTreeDetails[] => {
 		return S.Record.getRecords(getSubId(nodeId), [ 'id', 'layout', 'links' ], true)
-			.filter(it => !Storage.get('hideFileObjectsInTree') || !U.Object.isInFileLayouts(it.layout))
+			.filter(it => !S.Common.hideFileObjectsInTree || !U.Object.isInFileLayouts(it.layout))
 			.map(it => mapper(it));
 	};
 
 	const mapper = (o) => {
-		if (Storage.get('hideFileObjectsInTree') && U.Object.isInFileLayouts(o.layout)) {
+		if (U.Object.isSetLayout(o.layout) || (S.Common.hideFileObjectsInTree && U.Object.isInFileLayouts(o.layout))) {
 			o.links = [];
-			return o;
+		} else {
+			o.links = filterDeletedLinks(Relation.getArrayValue(o.links));
 		};
-		o.links = U.Object.isSetLayout(o.layout) ? [] : filterDeletedLinks(Relation.getArrayValue(o.links));
 		return o;
 	};
 
