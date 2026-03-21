@@ -294,24 +294,12 @@
 			"dist/workers/**/*",
 			"!node_modules/**/*",
 			{
-				"from": "node_modules/@borewit/text-codec",
-				"to": "node_modules/@borewit/text-codec"
-			},
-			{
 				"from": "node_modules/@electron/remote",
 				"to": "node_modules/@electron/remote"
 			},
 			{
 				"from": "node_modules/@isaacs/cliui",
 				"to": "node_modules/@isaacs/cliui"
-			},
-			{
-				"from": "node_modules/@tokenizer/inflate",
-				"to": "node_modules/@tokenizer/inflate"
-			},
-			{
-				"from": "node_modules/@tokenizer/token",
-				"to": "node_modules/@tokenizer/token"
 			},
 			{
 				"from": "node_modules/@tomjs/electron-devtools-installer",
@@ -490,10 +478,6 @@
 				"to": "node_modules/ext-name"
 			},
 			{
-				"from": "node_modules/file-type",
-				"to": "node_modules/file-type"
-			},
-			{
 				"from": "node_modules/find-up",
 				"to": "node_modules/find-up"
 			},
@@ -534,16 +518,8 @@
 				"to": "node_modules/glob"
 			},
 			{
-				"from": "node_modules/google-protobuf",
-				"to": "node_modules/google-protobuf"
-			},
-			{
 				"from": "node_modules/graceful-fs",
 				"to": "node_modules/graceful-fs"
-			},
-			{
-				"from": "node_modules/grpc-web",
-				"to": "node_modules/grpc-web"
 			},
 			{
 				"from": "node_modules/has-flag",
@@ -708,10 +684,6 @@
 			{
 				"from": "node_modules/mime-db",
 				"to": "node_modules/mime-db"
-			},
-			{
-				"from": "node_modules/mime-types",
-				"to": "node_modules/mime-types"
 			},
 			{
 				"from": "node_modules/mimic-fn",
@@ -998,10 +970,6 @@
 				"to": "node_modules/strip-json-comments"
 			},
 			{
-				"from": "node_modules/strtok3",
-				"to": "node_modules/strtok3"
-			},
-			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
 			},
@@ -1026,10 +994,6 @@
 				"to": "node_modules/tiny-typed-emitter"
 			},
 			{
-				"from": "node_modules/token-types",
-				"to": "node_modules/token-types"
-			},
-			{
 				"from": "node_modules/trim-newlines",
 				"to": "node_modules/trim-newlines"
 			},
@@ -1040,10 +1004,6 @@
 			{
 				"from": "node_modules/tunnel-agent",
 				"to": "node_modules/tunnel-agent"
-			},
-			{
-				"from": "node_modules/uint8array-extras",
-				"to": "node_modules/uint8array-extras"
 			},
 			{
 				"from": "node_modules/universalify",

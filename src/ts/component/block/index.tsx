@@ -1107,7 +1107,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		);
 	} else {
 		object = (
-			<div id={`selectionTarget-${id}`} className="selectionTarget">
+			<div id={isSelectionDisabled ? undefined : `selectionTarget-${id}`} className="selectionTarget">
 				{object}
 			</div>
 		);
