@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => {
 			emptyOutDir: false,
 			sourcemap: false,
 			cssCodeSplit: false,
-			assetsInlineLimit: 4096,
+			assetsInlineLimit: 10000000, // Inline all assets as base64
 			commonjsOptions: {
 				include: [/dist\/lib\//, /node_modules\//],
 				transformMixedEsModules: true,
