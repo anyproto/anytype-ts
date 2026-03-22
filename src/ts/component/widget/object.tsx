@@ -131,7 +131,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.stopPropagation();
 
 		const route = analytics.route.widget;
-		const element = `#widget-${$.escapeSelector(parent.id)} #item-${$.escapeSelector(type.id)}`;
+		const element = `#widget-${U.Common.esc(parent.id)} #item-${U.Common.esc(type.id)}`;
 		const cb = (object: any) => {
 			U.Object.openConfig(e, object);
 		};
@@ -171,7 +171,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.stopPropagation();
 
 		const node = $(nodeRef.current);
-		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+		const element = node.find(`#item-${U.Common.esc(item.id)}`);
 		const more = element.find('.buttons');
 
 		if (isBin) {

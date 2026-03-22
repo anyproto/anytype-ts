@@ -247,7 +247,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const { type, groupRelationKey } = saveParam.current;
-		const element = `#${getId()} #item-${item.id}`;
+		const element = `#${getId()} #item-${U.Common.esc(item.id)}`;
 		const groupOptions = getGroupOptions();
 
 		const menuParam: I.MenuParam = { 

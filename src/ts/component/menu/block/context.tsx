@@ -67,7 +67,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		let mark: any = null;
 		let menuId = '';
 		let menuParam: any = {
-			element: `#${getId()} #button-${blockId}-${type}`,
+			element: `#${getId()} #button-${U.Common.esc(blockId)}-${type}`,
 			className: [ className, 'fromContext' ].join(' '),
 			classNameWrap,
 			offsetY: 6,
@@ -281,7 +281,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 
 		const menuParam: any = {
-			element: `#${context.getId()} #item-${item.id}`,
+			element: `#${context.getId()} #item-${U.Common.esc(item.id)}`,
 			className, 
 			classNameWrap,
 			offsetX: context.getSize().width,

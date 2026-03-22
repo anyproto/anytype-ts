@@ -303,7 +303,7 @@ const App: FC = () => {
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
-		const routeParam = { replace: true, onFadeIn: hide };
+		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
@@ -368,7 +368,7 @@ const App: FC = () => {
 		};
 
 		if (!accountId) {
-			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			U.Router.go('/auth/select', { replace: true, onRouteChange: cb });
 			return;
 		};
 
@@ -554,8 +554,6 @@ const App: FC = () => {
 
 					<div id="dragPanel" />
 					<div id="tooltipContainer" />
-					<div id="globalFade" />
-
 					<PreviewIndex />
 					<Progress />
 					<Toast />

@@ -65,7 +65,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		onViewSet(view);
 
 		window.setTimeout(() => { 
-			$(`#button-${block.id}-settings`).trigger('click'); 
+			$(`#button-${U.Common.esc(block.id)}-settings`).trigger('click'); 
 		}, 50);
 	};
 
@@ -329,7 +329,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const onViewSettings = () => {
-		onButton(`#button-${block.id}-settings`, 'dataviewViewSettings');
+		onButton(`#button-${U.Common.esc(block.id)}-settings`, 'dataviewViewSettings');
 	};
 
 	const onSortStart = () => {
@@ -412,7 +412,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const toggleHoverArea = (v: boolean) => {
-		$(`#block-${block.id} .hoverArea`).toggleClass('active', v);
+		$(`#block-${U.Common.esc(block.id)} .hoverArea`).toggleClass('active', v);
 	};
 
 	const resize = () => {
@@ -546,8 +546,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 					<div 
 						id="view-selector"
 						className="viewSelect viewItem select"
-						onClick={() => onButton(`#block-${block.id} #view-selector`, 'dataviewViewList')}
-						onContextMenu={(e: any) => onViewContext(e, `#block-${block.id} #view-selector`, view)}
+						onClick={() => onButton(`#block-${U.Common.esc(block.id)} #view-selector`, 'dataviewViewList')}
+						onContextMenu={(e: any) => onViewContext(e, `#block-${U.Common.esc(block.id)} #view-selector`, view)}
 					>
 						<div className="name">{view.name}</div>
 						<Icon className="arrow dark" />

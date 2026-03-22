@@ -170,7 +170,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		nRef.current = getItems().findIndex(it => it.id == item.id);
 		unsetActive();
 
-		node.find(`#item-${item.id}`).addClass('active');
+		node.find(`#item-${U.Common.esc(item.id)}`).addClass('active');
 	};
 
 	const unsetActive = () => {
@@ -531,7 +531,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onContext = (e: any, item: any) => {
 		S.Menu.open('objectContext', {
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			recalcRect: () => {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };

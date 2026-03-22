@@ -172,7 +172,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			case I.BlockType.TableColumn: {
 				style = optionsStyle('');
 
-				element = node.find(`#cell-${cellId}`).first();
+				element = node.find(`#cell-${U.Common.esc(cellId)}`).first();
 				menuParam = Object.assign(menuParam, {
 					offsetX: element.outerWidth() + 2,
 					offsetY: -element.outerHeight(),
@@ -188,7 +188,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			default: {
 				style = optionsStyle(cellId);
 
-				element = node.find(`#cell-${cellId} .icon.menu .inner`);
+				element = node.find(`#cell-${U.Common.esc(cellId)} .icon.menu .inner`);
 				menuParam = Object.assign(menuParam, {
 					vertical: I.MenuDirection.Center,
 					offsetX: 12,
@@ -231,7 +231,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					};
 
 					const menuParam: any = {
-						element: `#${menuContext.getId()} #item-${item.id}`,
+						element: `#${menuContext.getId()} #item-${U.Common.esc(item.id)}`,
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
@@ -489,7 +489,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			default: {
-				table.find(`#cell-${cellId}`).addClass('isHighlightedCell');
+				table.find(`#cell-${U.Common.esc(cellId)}`).addClass('isHighlightedCell');
 				break;
 			};
 		};
@@ -672,7 +672,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		node.find('.cell.isEditing').removeClass('isEditing');
 
 		if (id) {
-			node.find(`#cell-${id}`).addClass('isEditing');
+			node.find(`#cell-${U.Common.esc(id)}`).addClass('isEditing');
 			
 			frameRemove([ I.BlockPosition.None ]);
 			frameAdd(I.BlockType.Text, '', '', id, I.BlockPosition.None);
@@ -1249,7 +1249,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					return;
 				};
 
-				obj = table.find(`#cell-${cellId}`);
+				obj = table.find(`#cell-${U.Common.esc(cellId)}`);
 				if (!obj.length) {
 					return;
 				};
@@ -1339,8 +1339,8 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const node = $(nodeRef.current);
 		const wrap = $(scrollRef.current);
-		const row = node.find(`#row-${rows[0].id}`);
-		const obj = $(`#block-${block.id}`);
+		const row = node.find(`#row-${U.Common.esc(rows[0].id)}`);
+		const obj = $(`#block-${U.Common.esc(block.id)}`);
 
 		if (frameResize.current) {
 			raf.cancel(frameResize.current);
@@ -1368,7 +1368,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
 				});
 			} else {
-				const parentObj = $(`#block-${parent.id}`);
+				const parentObj = $(`#block-${U.Common.esc(parent.id)}`);
 				if (parentObj.length) {
 					maxWidth = parentObj.width() - J.Size.blockMenu;
 				};

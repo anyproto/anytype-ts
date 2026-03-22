@@ -910,10 +910,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		let el = null;
 		if (item.itemId) {
-			el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
+			el = menu.find(`#item-${U.Common.esc(item.itemId)}`);
 		};
 		if (item.id && (!el || !el.length)) {
-			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
+			el = menu.find(`#item-${U.Common.esc(item.id)}`);
 		};
 
 		if (!el || !el.length) {

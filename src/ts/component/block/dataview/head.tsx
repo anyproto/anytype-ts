@@ -100,7 +100,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 		let menuId = '';
 		let menuParam: any = {
 			menuKey: item.id,
-			element: `#${menuContext.current.getId()} #item-${item.id}`,
+			element: `#${menuContext.current.getId()} #item-${U.Common.esc(item.id)}`,
 			offsetX: menuContext.current.getSize().width,
 			vertical: I.MenuDirection.Center,
 			classNameWrap: 'fromBlock',
@@ -196,7 +196,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 	};
 
 	const onSource = () => {
-		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
+		onSourceTypeSelect(`#block-${U.Common.esc(block.id)} #head-source-select`);
 	};
 
 	const onBlur = () => {

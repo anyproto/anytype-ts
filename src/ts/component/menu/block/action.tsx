@@ -254,7 +254,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			className,

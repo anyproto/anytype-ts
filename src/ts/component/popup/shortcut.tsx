@@ -34,7 +34,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		];
 
 		S.Menu.open('select', {
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options,
@@ -335,7 +335,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					options.unshift({ name: menuLabel, isSection: true });
 
 					S.Menu.open('select', {
-						element: `#${getId()} #item-${editingId}`,
+						element: `#${getId()} #item-${U.Common.esc(editingId)}`,
 						horizontal: I.MenuDirection.Center,
 						className: 'shortcutConflict',
 						offsetY: -4,

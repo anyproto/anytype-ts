@@ -453,7 +453,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			return;
 		};
 
-		const element = `#utilOptionSelect #item-${item.id}`;
+		const element = `#utilOptionSelect #item-${U.Common.esc(item.id)}`;
 
 		S.Menu.open('dataviewOptionEdit', {
 			element,
@@ -480,7 +480,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		Preview.tooltipShow({
 			text: item.name,
-			element: $(nodeRef.current).find(`#item-${item.id}`)
+			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
 		});
 	};
 
@@ -491,7 +491,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		Preview.tooltipShow({
 			text: item.name,
-			element: $(nodeRef.current).find(`#item-${item.id}`)
+			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
 		});
 	};
 

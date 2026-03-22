@@ -390,7 +390,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		const message = `#block-${block.id} #item-${item.id}`;
+		const message = `#block-${U.Common.esc(block.id)} #item-${U.Common.esc(item.id)}`;
 		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {

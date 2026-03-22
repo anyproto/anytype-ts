@@ -716,7 +716,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$(`#marker-${item.id}`).text(`${n}.`);
+						$(`#marker-${U.Common.esc(item.id)}`).text(`${n}.`);
 					} else {
 						n = 0;
 					};
@@ -890,7 +890,7 @@ class BlockStore {
 	 * @param {boolean} v - The toggled value.
 	 */
 	toggle (rootId: string, blockId: string, v: boolean) {
-		const element = $(`#block-${blockId}`);
+		const element = $(`#block-${U.Common.esc(blockId)}`);
 		if (!element.length) {
 			return;
 		};

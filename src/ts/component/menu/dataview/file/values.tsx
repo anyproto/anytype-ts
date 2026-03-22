@@ -77,8 +77,8 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const onMore = (e: any, item: any) => {
-		const itemEl = $(`#${getId()} #item-${item.id}`);
-		const element = `#${getId()} #item-${item.id} .icon.more`;
+		const itemEl = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
+		const element = `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`;
 		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let value = Relation.getArrayValue(data.value);

@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { I, S, J, keyboard } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -67,7 +67,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 		raf(() => {
 			const container = $('#sidebarPageWidget #body');
-			const obj = $(`#widget-${parent.id}`);
+			const obj = $(`#widget-${U.Common.esc(parent.id)}`);
 			const node = $(nodeRef.current);
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');

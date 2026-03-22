@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
 
 interface RouteParam {
@@ -128,7 +127,7 @@ class UtilRouter {
 	};
 
 	/**
-	 * Navigates to a route with optional parameters and animation.
+	 * Navigates to a route with optional parameters.
 	 * @param {string} route - The route string.
 	 * @param {Partial<I.RouteParam>} param - Additional navigation parameters.
 	 */
@@ -140,7 +139,7 @@ class UtilRouter {
 		param = param || {};
 
 		const { space } = S.Common;
-		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
@@ -164,16 +163,6 @@ class UtilRouter {
 		};
 
 		const change = () => {
-			this.history.push(newRoute);
-
-			if (updateTabRoute) {
-				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
-			};
-
-			onRouteChange?.();
-		};
-
-		const onTimeout = () => {
 			Preview.hideAll();
 
 			if (replace) {
@@ -181,34 +170,16 @@ class UtilRouter {
 				this.history.index = -1;
 			};
 
-			if (!animate) {
-				onFadeOut?.();
-				change();
-				onFadeIn?.();
-				return;
+			this.history.push(newRoute);
+
+			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page)) {
+				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
 			};
 
-			const fade = $('#globalFade');
-			const t = delay || J.Constant.delay.route;
-			const wait = t;
-
-			fade.css({ transitionDuration: `${t / 1000}s` }).show();
-				
-			window.setTimeout(() => fade.addClass('show'), 15);
-
-			window.setTimeout(() => {
-				onFadeOut?.();
-				change();
-			}, t);
-
-			window.setTimeout(() => {
-				onFadeIn?.();
-				fade.removeClass('show');
-				window.setTimeout(() => fade.hide(), t);
-			}, wait + t);
+			onRouteChange?.();
 		};
 
-		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
+		timeout ? window.setTimeout(() => change(), timeout) : change();
 	};
 
 	/**

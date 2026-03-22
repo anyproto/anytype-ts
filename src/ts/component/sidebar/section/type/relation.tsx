@@ -64,7 +64,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = $(nodeRef.current).find(`#item-${item.id}`);
+		const element = $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`);
 
 		S.Menu.open('select', {
 			element: element.find('.icon.more'),
@@ -162,7 +162,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = $(nodeRef.current).find(`#item-${over.id}`);
+		const element = $(nodeRef.current).find(`#item-${U.Common.esc(over.id)}`);
 		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
@@ -222,7 +222,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const ids = Relation.getArrayValue(object[list.relationKey]);
 		
 		S.Menu.open('blockRelationEdit', { 
-			element: `#sidebarRight #item-${id}`,
+			element: `#sidebarRight #item-${U.Common.esc(id)}`,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: 'fromSidebar',
 			className: 'fixed',

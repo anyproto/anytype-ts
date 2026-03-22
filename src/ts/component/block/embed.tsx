@@ -77,7 +77,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					return;
 				};
 
-				if ($(e.target).parents(`#block-${block.id}`).length > 0) {
+				if ($(e.target).parents(`#block-${U.Common.esc(block.id)}`).length > 0) {
 					return;
 				};
 
@@ -296,7 +296,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const menuParam = {
 			classNameWrap: 'fromBlock',
 			recalcRect,
-			element: `#block-${block.id} #${element}`,
+			element: `#block-${U.Common.esc(block.id)} #${element}`,
 			offsetY: 4,
 			offsetX: () => {
 				const rect = recalcRect();
@@ -730,7 +730,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectionTarget-${id}`);
+		const el = $(`#selectionTarget-${U.Common.esc(id)}`);
 
 		if (!el.length) {
 			return width;

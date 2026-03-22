@@ -205,7 +205,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		} else 
 		if (item.id == 'selectDate') {
 			S.Menu.open('calendar', {
-				element: `#${getId()} #item-${item.id}`,
+				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				horizontal: I.MenuDirection.Center,
 				rebind: rebind,
 				parentId: props.id,

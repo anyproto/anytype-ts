@@ -99,7 +99,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			default: {
 				S.Menu.open('select', {
 					rebind,
-					element: `#${getId()} #item-${item.id}`,
+					element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 					className,
 					classNameWrap,
 					horizontal: I.MenuDirection.Center,
@@ -121,7 +121,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onMore = (e: any, item: any) => {
-		const elementId = `#${getId()} #item-${item.id}`;
+		const elementId = `#${getId()} #item-${U.Common.esc(item.id)}`;
 		const options = [
 			{ name: translate('menuDataviewSortShowEmpty'), isSection: true },
 			{ id: I.EmptyType.Start, name: translate('menuDataviewSortShowEmptyTop') },
@@ -157,7 +157,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const menuParam = {
 			className,
 			classNameWrap,
-			element: `#${getId()} #item-${item.id} .chip.relation`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)} .chip.relation`,
 			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Bottom,
 			offsetY: 4,

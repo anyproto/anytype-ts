@@ -105,7 +105,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const input = obj.find('#input');
 		const { wh } = U.Common.getWindowDimensions();
 		const hh = J.Size.header;
-		const cell = $(`#${cellId}`);
+		const cell = $(`#${U.Common.esc(cellId)}`);
 
 		raf(() => {
 			const sh = input.get(0).scrollHeight;

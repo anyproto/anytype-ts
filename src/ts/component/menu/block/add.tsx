@@ -248,13 +248,13 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			isSub: true,
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 		});
 
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				$(`#block-${blockId} .value`).text(text);
+				$(`#block-${U.Common.esc(blockId)} .value`).text(text);
 
 				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 					focus.set(blockId, { from: length, to: length });
@@ -346,7 +346,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				$(`#block-${blockId} .value`).text(text);
+				$(`#block-${U.Common.esc(blockId)} .value`).text(text);
 
 				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 					focus.set(blockId, { from: length, to: length });
@@ -579,7 +579,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
 						window.setTimeout(() => { 
-							const element = $(`#block-${newBlockId}`);
+							const element = $(`#block-${U.Common.esc(newBlockId)}`);
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
@@ -620,7 +620,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		marks = Mark.adjust(marks, filter.from - 1, -1);
 
 		// Hack to prevent onBlur save
-		$(`#block-${blockId} #value`).first().text(text);
+		$(`#block-${U.Common.esc(blockId)} #value`).first().text(text);
 		U.Data.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 

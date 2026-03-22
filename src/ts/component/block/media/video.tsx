@@ -21,7 +21,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectionTarget-${id}`);
+		const el = $(`#selectionTarget-${U.Common.esc(id)}`);
 
 		if (!el.length) {
 			return width;

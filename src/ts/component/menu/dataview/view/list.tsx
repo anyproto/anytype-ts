@@ -99,7 +99,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			onRemove: onViewRemove,
 			close,
 			menuParam: {
-				element: `#${getId()} #item-${view.id} .more`,
+				element: `#${getId()} #item-${U.Common.esc(view.id)} .more`,
 				className,
 				classNameWrap,
 				horizontal: I.MenuDirection.Center,

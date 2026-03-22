@@ -129,7 +129,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		const node = $(nodeRef.current);
-		const element = `#button-${id}-more`;
+		const element = `#button-${U.Common.esc(id)}-more`;
 
 		S.Menu.open('dataviewGroupEdit', {
 			element,

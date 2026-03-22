@@ -274,7 +274,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		const body = $(bodyRef.current);
 
 		body.find('.item.active').removeClass('active');
-		body.find(`#item-${id}`).addClass('active');
+		body.find(`#item-${U.Common.esc(id)}`).addClass('active');
 	};
 
 	const onContext = (item: any) => {
@@ -282,7 +282,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		const menuParam = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `.containerSettings #item-${item.id}`,
+			element: `.containerSettings #item-${U.Common.esc(item.id)}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {},
 		};

@@ -105,7 +105,7 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 		S.Menu.closeAll([ 'select2' ], () => {
 			S.Menu.open('select2', {
 				component: 'select',
-				element: `#${menuContextRef.current.getId()} #item-${item.id}`,
+				element: `#${menuContextRef.current.getId()} #item-${U.Common.esc(item.id)}`,
 				offsetX: menuContextRef.current.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,

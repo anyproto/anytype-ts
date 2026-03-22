@@ -35,7 +35,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(U.Common.objectCopy(it)));
 
 				items.forEach(block => {
-					const clone = container.find(`#block-${block.id}`).clone();
+					const clone = container.find(`#block-${U.Common.esc(block.id)}`).clone();
 
 					wrap.append(clone);
 
@@ -77,7 +77,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 					break;
 				};
 
-				const first = container.find(`#record-${ids[0]}`);
+				const first = container.find(`#record-${U.Common.esc(ids[0])}`);
 				const cn = first.parents('.viewContent').attr('class');
 				const block = $('<div class="block blockDataview"></div>');
 				const view = $('<div />');
@@ -88,7 +88,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 				wrap.addClass('blocks').append(block);
 
 				ids.forEach((id: string, idx: number) => {
-					const el = container.find(`#record-${id}`);
+					const el = container.find(`#record-${U.Common.esc(id)}`);
 					const clone = el.clone().addClass('record');
 
 					view.append(clone);

@@ -517,10 +517,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onEmpty = (e: any) => {
 		let element = '';
 		if (isInline) {
-			element = `#block-${block.id} #head-source-select`;
+			element = `#block-${U.Common.esc(block.id)} #head-source-select`;
 			onSourceSelect(element, { horizontal: I.MenuDirection.Center });
 		} else {
-			element = `#${Relation.cellId('blockFeatured', 'setOf', rootId)}`;
+			element = `#${U.Common.esc(Relation.cellId('blockFeatured', 'setOf', rootId))}`;
 			onSourceTypeSelect(element);
 		};
 	};
@@ -648,7 +648,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
-						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${block.id}-add-record` });
+						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${U.Common.esc(block.id)}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
 						onTemplateAdd(item.targetObjectType);
@@ -877,7 +877,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					Onboarding.start(isCollection ? 'inlineCollection' : 'inlineSet', isPopup, false, {
 						parseParam: param => ({
 							...param,
-							element: [ `#block-${block.id}`, param.element ].join(' '),
+							element: [ `#block-${U.Common.esc(block.id)}`, param.element ].join(' '),
 						}),
 					});
 				};
@@ -1133,7 +1133,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					title: translate('blockDataviewEmptyTargetTitle'),
 					description: U.String.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
 					button: translate('blockDataviewEmptyTargetButton'),
-					onClick: () => onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+					onClick: () => onSourceSelect(`#block-${U.Common.esc(block.id)} .dataviewEmpty .button`, {}),
 				};
 				break;
 			};
@@ -1397,7 +1397,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		nameRef?.onClick(e);
 
 		win.on(`mousedown.record-${id}`, (e: any) => {
-			if ($(e.target).parents(`#record-${id}, .menu`).length > 0) {
+			if ($(e.target).parents(`#record-${U.Common.esc(id)}, .menu`).length > 0) {
 				return;
 			};
 
@@ -1467,7 +1467,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		frame.current = raf(() => {
 			if (getWrapperWidth) {
 				const node = $(nodeRef.current);
-				const obj = $(`#block-${block.id}`);
+				const obj = $(`#block-${U.Common.esc(block.id)}`);
 
 				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};

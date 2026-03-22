@@ -491,7 +491,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								$(`#button-${blockId}-settings`).trigger('click');
+								$(`#button-${U.Common.esc(blockId)}-settings`).trigger('click');
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};
@@ -763,7 +763,7 @@ class UtilMenu {
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
 							S.Menu.open('searchObject', {
-								element: `#${this.menuContext.getId()} #item-${item.id}`,
+								element: `#${this.menuContext.getId()} #item-${U.Common.esc(item.id)}`,
 								offsetX: this.menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
@@ -959,8 +959,8 @@ class UtilMenu {
 					if (targetSpaceId == S.Common.space) {
 						Action.openSettings(id, route);
 					} else {
-						U.Router.switchSpace(targetSpaceId, '', false, { 
-							onFadeIn: () => Action.openSettings(id, route),
+						U.Router.switchSpace(targetSpaceId, '', false, {
+							onRouteChange: () => Action.openSettings(id, route),
 						}, true);
 					};
 					break;
@@ -1477,7 +1477,7 @@ class UtilMenu {
 			};
 
 			S.Menu.open('select', {
-				element: `#${props.getId()} #item-${item.id} .icon.more`,
+				element: `#${props.getId()} #item-${U.Common.esc(item.id)} .icon.more`,
 				horizontal: I.MenuDirection.Center,
 				offsetY: 4,
 				className,

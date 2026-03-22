@@ -27,7 +27,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const win = $(window);
 
 		const menuParam: any = {
-			element: `#button-${blockId}-${type}`,
+			element: `#button-${U.Common.esc(blockId)}-${type}`,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			className: 'fixed',
 			classNameWrap: 'fromBlock',

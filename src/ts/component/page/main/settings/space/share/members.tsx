@@ -77,7 +77,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 
 	const onPermissionsSelect = (item: any, isNew?: boolean) => {
 		S.Menu.open('select', {
-			element: `#item-${item.id}-select`,
+			element: `#item-${U.Common.esc(item.id)}-select`,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				value: item.permissions,

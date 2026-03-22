@@ -107,7 +107,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			case 'BlockAdd': {
 				data.blocks.forEach(it => {
 					elements = elements.concat([
-						{ type: I.DiffType.None, element: `#block-${it.id}` },
+						{ type: I.DiffType.None, element: `#block-${U.Common.esc(it.id)}` },
 						{ type: I.DiffType.Add, element: `#block-${it.id} > .wrapContent` },
 					]);
 				});
@@ -139,7 +139,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 						};
 
 						if (afterId) {
-							elements.push({ type: I.DiffType.Remove, element: `#block-${afterId} > .wrapContent` });
+							elements.push({ type: I.DiffType.Remove, element: `#block-${U.Common.esc(afterId)} > .wrapContent` });
 						};
 					});
 				};
@@ -187,7 +187,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				if (type == I.DiffType.Change) {
 					elements = elements.concat(getBlockChangeElements(data.id));
 				} else {
-					elements.push({ type, element: `#block-${data.id}` });
+					elements.push({ type, element: `#block-${U.Common.esc(data.id)}` });
 				};
 				break;
 			};
@@ -216,33 +216,33 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			case 'BlockDataviewViewOrder': {
 				elements = elements.concat([
-					{ type: I.DiffType.None, element: `#block-${data.id}` },
-					{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
-					{ type: I.DiffType.Change, element: `#block-${data.id} #views` },
+					{ type: I.DiffType.None, element: `#block-${U.Common.esc(data.id)}` },
+					{ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #view-selector` },
+					{ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #views` },
 				]);
 				break;
 			};
 
 			case 'BlockDataviewViewUpdate': {
-				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
+				elements.push({ type: I.DiffType.None, element: `#block-${U.Common.esc(data.id)}` });
 
 				if (data.fields !== null) {
 					elements = elements.concat([
-						{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
-						{ type: I.DiffType.Change, element: `#view-item-${data.id}-${data.viewId}` },
+						{ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #view-selector` },
+						{ type: I.DiffType.Change, element: `#view-item-${U.Common.esc(data.id)}-${U.Common.esc(data.viewId)}` },
 					]);
 				};
 
 				if (data.relations.length) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #button-dataview-settings` });
 				};
 
 				if (data.filters.length) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-filter` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #button-dataview-filter` });
 				};
 
 				if (data.sorts.length) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-sort` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #button-dataview-sort` });
 				};
 				break;
 			};
@@ -250,8 +250,8 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			case 'BlockDataviewRelationDelete':
 			case 'BlockDataviewRelationSet': {
 				elements = elements.concat([
-					{ type: I.DiffType.None, element: `#block-${data.id}` },
-					{ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` },
+					{ type: I.DiffType.None, element: `#block-${U.Common.esc(data.id)}` },
+					{ type: I.DiffType.Change, element: `#block-${U.Common.esc(data.id)} #button-dataview-settings` },
 				]);
 				break;
 			};
@@ -271,21 +271,21 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 				if (undefined !== data.details.name) {
 					elements = elements.concat([
-						{ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.title}` },
-						{ type: I.DiffType.Change, element: `.headSimple #editor-${J.Constant.blockId.title}` }
+						{ type: I.DiffType.Change, element: `#block-${U.Common.esc(J.Constant.blockId.title)}` },
+						{ type: I.DiffType.Change, element: `.headSimple #editor-${U.Common.esc(J.Constant.blockId.title)}` }
 					]);
 				};
 
 				if (undefined !== data.details.description) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.description}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${U.Common.esc(J.Constant.blockId.description)}` });
 				};
 
 				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
-					elements.push({ type: I.DiffType.Change, element: `#block-icon-${data.id}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-icon-${U.Common.esc(data.id)}` });
 				};
 
 				if (undefined !== data.details.featuredRelations) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.featured}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${U.Common.esc(J.Constant.blockId.featured)}` });
 				};
 
 				if (type == 'ObjectDetailsAmend') {
@@ -307,8 +307,8 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const getBlockChangeElements = (id: string) => {
 		return [
-			{ type: I.DiffType.None, element: `#block-${id}` },
-			{ type: I.DiffType.Change, element: `#block-${id} > .wrapContent` },
+			{ type: I.DiffType.None, element: `#block-${U.Common.esc(id)}` },
+			{ type: I.DiffType.Change, element: `#block-${U.Common.esc(id)} > .wrapContent` },
 		];
 	};
 

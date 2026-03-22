@@ -97,7 +97,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		// Add block's paddings to height
 		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-			const block = $(`#block-${data.id}`);
+			const block = $(`#block-${U.Common.esc(data.id)}`);
 			if (block.length) {
 				const top = parseInt(block.css('paddingTop'));
 				const bot = parseInt(block.css('paddingBottom'));
@@ -969,7 +969,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		$('.block.isDragging').removeClass('isDragging');
 		
 		for (const id of ids) {
-			$(`#block-${id}`).addClass('isDragging');
+			$(`#block-${U.Common.esc(id)}`).addClass('isDragging');
 		};
 	};
 

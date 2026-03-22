@@ -46,7 +46,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		const menuParam = {
 			className,
 			classNameWrap,
-			element: `#${getId()} #item-${item.itemId}`,
+			element: `#${getId()} #item-${U.Common.esc(item.itemId)}`,
 			offsetX: getSize().width,
 			offsetY: -56,
 			onOpen: context => menuContext = context,

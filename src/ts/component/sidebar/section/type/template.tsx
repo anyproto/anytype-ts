@@ -42,7 +42,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = $(`#sidebarRight #preview-${item.id}`);
+		const node = $(`#sidebarRight #preview-${U.Common.esc(item.id)}`);
 
 		e.preventDefault();
 		e.stopPropagation();

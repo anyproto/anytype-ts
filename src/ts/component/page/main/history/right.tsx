@@ -90,7 +90,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		if (version) {
 			initToggle(version.id, unwrapped);
-			node.find(`#item-${version.id}`).addClass('active');
+			node.find(`#item-${U.Common.esc(version.id)}`).addClass('active');
 		};
 
 		$(scrollRef.current).scrollTop(topRef.current);
@@ -105,7 +105,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const groupId = getGroupId(version.time);
 		const hash = sha1(groupId);
-		const section = node.find(`#section-${hash}`);
+		const section = node.find(`#section-${U.Common.esc(hash)}`);
 
 		section.addClass('isExpanded');
 		section.find('.items').show();
@@ -119,11 +119,11 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		let groupItem = null;
 
 		if (version.isTimeGroup) {
-			groupItem = node.find(`#item-${id}`);
-			children = node.find(`#children-${id}`);
+			groupItem = node.find(`#item-${U.Common.esc(id)}`);
+			children = node.find(`#children-${U.Common.esc(id)}`);
 		} else {
-			groupItem = node.find(`#item-${parent.id}`);
-			children = node.find(`#children-${parent.id}`);
+			groupItem = node.find(`#item-${U.Common.esc(parent.id)}`);
+			children = node.find(`#children-${U.Common.esc(parent.id)}`);
 		};
 
 		if (children && children.length) {
@@ -138,7 +138,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 	const toggleSection = (e: any, id: string, hash: string) => {
 		e.stopPropagation();
 
-		const section = $(nodeRef.current).find(`#section-${hash}`);
+		const section = $(nodeRef.current).find(`#section-${U.Common.esc(hash)}`);
 
 		toggleChildren(id, section, section.find('.items'));
 	};
@@ -148,7 +148,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 
-		toggleChildren(id, node.find(`#item-${id}`), node.find(`#children-${id}`));
+		toggleChildren(id, node.find(`#item-${U.Common.esc(id)}`), node.find(`#children-${U.Common.esc(id)}`));
 	};
 
 	const toggleChildren = (id: string, item: any, children: any) => {

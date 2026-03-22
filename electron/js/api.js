@@ -64,20 +64,20 @@ class Api {
 	};
 
 	logout (win) {
-		WindowManager.sendToAll('logout');
+		WindowManager.sendToAllTabs('logout');
 	};
 
 	pinCheck (win) {
-		WindowManager.sendToAll('pin-check');
+		WindowManager.sendToAllTabs('pin-check');
 		WindowManager.list.forEach(w => WindowManager.updateTabBarVisibility(w));
 	};
 
 	pinSet (win) {
-		WindowManager.sendToAll('pin-set');
+		WindowManager.sendToAllTabs('pin-set');
 	};
 
 	pinRemove (win) {
-		WindowManager.sendToAll('pin-remove');
+		WindowManager.sendToAllTabs('pin-remove');
 	};
 
 	paste (win) {
@@ -373,6 +373,11 @@ class Api {
 	};
 
 	openTab (win, data, options) {
+		// Block new tabs while PIN check is required
+		if (this.hasPinSet && !this.isPinChecked) {
+			return false;
+		};
+
 		const { isPinned, ...rest } = data || {};
 
 		WindowManager.createTab(win, rest, options);
@@ -548,7 +553,7 @@ class Api {
 	setUserDataPath (win, p) {
 		this.setConfig(win, { userDataPath: p });
 		app.setPath('userData', p);
-		WindowManager.sendToAll('data-path', Util.dataPath());
+		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
 	showChallenge (win, param) {

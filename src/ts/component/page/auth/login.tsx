@@ -81,9 +81,9 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			Renderer.send('closeOtherWindows');
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { 
-				replace: true, 
-				onFadeIn: () => Action.checkDiskSpace(),
+			const routeParam = {
+				replace: true,
+				onRouteChange: () => Action.checkDiskSpace(),
 			};
 
 			if (spaceId) {

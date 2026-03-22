@@ -148,7 +148,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const win = $(window);
 		const unbind = () => win.off('mousemove.timeline mouseup.timeline');
 		const node = $(nodeRef.current);
-		const el = node.find(`#item-${item.id}`);
+		const el = node.find(`#item-${U.Common.esc(item.id)}`);
 		const { left } = el.offset();
 		const width = Math.floor(el.outerWidth());
 		const body = $('body');

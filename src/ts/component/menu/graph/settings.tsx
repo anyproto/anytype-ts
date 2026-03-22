@@ -52,7 +52,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		const menuParam: any = {
 			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			width,

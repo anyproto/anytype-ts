@@ -36,7 +36,11 @@ class UtilCommon {
 		};
 		return JSON.parse(JSON.stringify(o));
 	};
-	
+
+	esc (v: any): string {
+		return $.escapeSelector(String(v || ''));
+	};
+
 	/**
 	 * Returns the length of an object or array.
 	 * @param {any} o - The object or array.

@@ -85,7 +85,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const node = $(nodeRef.current);
 		
 		if (idRef.current) {
-			node.find(`#item-${idRef.current}`).addClass('active');
+			node.find(`#item-${U.Common.esc(idRef.current)}`).addClass('active');
 			idRef.current = '';
 		};
 
@@ -478,7 +478,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+		const element = node.find(`#item-${U.Common.esc(item.id)}`);
 		const tt = getTooltip(item);
 
 		element.addClass('active');
@@ -658,7 +658,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = `#${getId()} #item-${$.escapeSelector(item.id)}`;
+		const element = `#${getId()} #item-${U.Common.esc(item.id)}`;
 
 		S.Menu.open('smileColor', {
 			...param,
@@ -769,7 +769,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const foot = node.find('#foot');
 
 		foot.find('.active').removeClass('active');
-		foot.find(`#item-${id}`).addClass('active');
+		foot.find(`#item-${U.Common.esc(id)}`).addClass('active');
 	};
 
 	const onDragOver = (e: any) => {

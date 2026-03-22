@@ -36,7 +36,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
+			$(`#block-${U.Common.esc(block.id)} .cell-key-${U.Common.esc(relationKey)}`).addClass('cellKeyHover');
 		};
 	};
 
@@ -56,11 +56,11 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const blockEl =	`#block-${block.id}`;
+		const blockEl =	`#block-${U.Common.esc(block.id)}`;
 		const rowHead = $(`${blockEl} #rowHead`);
 		const isFixed = rowHead.hasClass('fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
-		const element = `${blockEl} ${headEl} #${Relation.cellId('head', relationKey, '')}`;
+		const element = `${blockEl} ${headEl} #${U.Common.esc(Relation.cellId('head', relationKey, ''))}`;
 		const obj = $(element);
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);

@@ -137,7 +137,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${id}`);
+		const cell = $(`#${U.Common.esc(id)}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
 		if (content.length) {
@@ -160,8 +160,8 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		S.Menu.open('dataviewOptionEdit', { 
-			element: `#${id} #item-${item.id}`,
+		S.Menu.open('dataviewOptionEdit', {
+			element: `#${id} #item-${U.Common.esc(item.id)}`,
 			className: menuParam.className,
 			classNameWrap: menuParam.classNameWrap,
 			offsetY: 4,
@@ -316,7 +316,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${id}`).toggleClass('isEditing', isEditing);
+		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
 
 		if (isEditing) {
 			placeholderCheck();

@@ -101,7 +101,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = $(`#item-${item.id}`);
+		const node = $(`#item-${U.Common.esc(item.id)}`);
 
 		e.preventDefault();
 		e.stopPropagation();

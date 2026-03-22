@@ -83,7 +83,7 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		C.SpaceInviteView(cid, key, (message: any) => {
 			U.Space.openDashboardOrVoid({
-				onFadeIn: () => {
+				onRouteChange: () => {
 					window.setTimeout(() => cb(message), J.Constant.delay.popup);
 				},
 			});

@@ -79,7 +79,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if (dir > 0) {
 			focus.scroll(isPopup, id);
 		} else {
-			const node = $(`.focusable.c${id}`);
+			const node = $(`.focusable.c${U.Common.esc(id)}`);
 			if (!node.length) {
 				return;
 			};
@@ -408,7 +408,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		if ((length == 1) && !keyboard.isCmd(e)) {
-			const selected = $(`#block-${list[I.SelectType.Block][0]}`);
+			const selected = $(`#block-${U.Common.esc(list[I.SelectType.Block][0])}`);
 			const value = selected.find('#value');
 
 			if (!value.length) {
@@ -613,15 +613,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 
 				for (const id of list) {
-					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');
+					container.find(`#selectionTarget-${U.Common.esc(id)}`).addClass('isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
-						container.find(`#block-${id}`).addClass('isSelectionSelected');
+						container.find(`#block-${U.Common.esc(id)}`).addClass('isSelectionSelected');
 
 						const childrenIds = getChildrenIds(id);
 						if (childrenIds.length) {
 							childrenIds.forEach(childId => {
-								container.find(`#block-${childId}`).addClass('isSelectionSelected');
+								container.find(`#block-${U.Common.esc(childId)}`).addClass('isSelectionSelected');
 							});
 						};
 					};

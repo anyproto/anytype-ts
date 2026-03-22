@@ -33,7 +33,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			return;
 		};
 
-		node.find(`#item-${id}`).addClass('active');
+		node.find(`#item-${U.Common.esc(id)}`).addClass('active');
 		blockRef.current = id;
 		S.Menu.updateData('tableOfContents', { blockId: id });
 
@@ -71,7 +71,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			for (let i = 0; i < currentList.length; ++i) {
 				const block = currentList[i];
-				const el = $(`#block-${block.id}`);
+				const el = $(`#block-${U.Common.esc(block.id)}`);
 
 				if (!el.length) {
 					continue;

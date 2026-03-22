@@ -80,8 +80,8 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const node = $(nodeRef.current);
-		const item = node.find(`#item-${id}`);
-		const children = node.find(`#item-${id}-children`);
+		const item = node.find(`#item-${U.Common.esc(id)}`);
+		const children = node.find(`#item-${U.Common.esc(id)}-children`);
 
 		item.addClass('isExpanded');
 		children.show();
@@ -91,8 +91,8 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		const subKey = getToggleKey();
 		const isOpen = Storage.checkToggle(subKey, id);
 		const node = $(nodeRef.current);
-		const item = node.find(`#item-${id}`);
-		const children = node.find(`#item-${id}-children`);
+		const item = node.find(`#item-${U.Common.esc(id)}`);
+		const children = node.find(`#item-${U.Common.esc(id)}-children`);
 
 		let height = 0;
 		if (isOpen) {

@@ -91,7 +91,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const body = $(bodyRef.current);
-		const obj = body.find(`#widget-${block.id}`);
+		const obj = body.find(`#widget-${U.Common.esc(block.id)}`);
 		const clone = $('<div />').addClass('widget isClone').css({ 
 			zIndex: 10000, 
 			position: 'fixed', 
@@ -334,7 +334,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const initToggle = (id: I.WidgetSection) => {
 		const body = $(bodyRef.current);
-		const section = body.find(`#section-${id}`);
+		const section = body.find(`#section-${U.Common.esc(id)}`);
 		const list = section.find('> .items');
 		const isClosed = isSectionClosed(id);
 
@@ -347,7 +347,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const onToggle = (id: I.WidgetSection) => {
 		const body = $(bodyRef.current);
-		const element = body.find(`#section-${id}`);
+		const element = body.find(`#section-${U.Common.esc(id)}`);
 		const list = element.find('> .items');
 		const sections = U.Common.objectCopy(widgetSections);
 		const idx = sections.findIndex(it => it.id == id);
@@ -410,7 +410,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		const section = `#${getId()} #section-${sectionId}`;
+		const section = `#${getId()} #section-${U.Common.esc(sectionId)}`;
 		const wrap = `${section} .nameWrap`;
 		const element = `${section} .buttons`;
 

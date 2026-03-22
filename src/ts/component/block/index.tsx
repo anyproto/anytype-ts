@@ -249,7 +249,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find(`#block-${prevBlockId}`).offset().left : 0) + J.Size.blockMenu;
+		const offset = (prevBlockId ? node.find(`#block-${U.Common.esc(prevBlockId)}`).offset().left : 0) + J.Size.blockMenu;
 		
 		selection?.clear();
 
@@ -281,8 +281,8 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		
-		const prevNode = node.find(`#block-${prevBlockId}`);
-		const currentNode = node.find(`#block-${currentBlockId}`);
+		const prevNode = node.find(`#block-${U.Common.esc(prevBlockId)}`);
+		const currentNode = node.find(`#block-${U.Common.esc(currentBlockId)}`);
 		const res = calcWidth(e.pageX - offset, index);
 
 		if (!res) {

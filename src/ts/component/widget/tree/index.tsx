@@ -279,7 +279,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 
 		if (isPreview) {
-			const head = $(`#widget-${parent.id} .head`);
+			const head = $(`#widget-${U.Common.esc(parent.id)} .head`);
 			const maxHeight = $('#sidebarPageWidget #body').height() - head.outerHeight(true);
 
 			css.height = Math.min(maxHeight, css.height + 8);
@@ -447,7 +447,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		checkShowAllButton(getSubId());
 		resize();
 
-		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
+		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', !length);
 	}, [ nodes ]);
 
 	useImperativeHandle(ref, () => ({

@@ -153,7 +153,7 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		};
 
 		unsetActive();
-		$(nodeRef.current).find(`#panel-${panelRef.current} #item-${item.id}`).addClass('active');
+		$(nodeRef.current).find(`#panel-${U.Common.esc(panelRef.current)} #item-${U.Common.esc(item.id)}`).addClass('active');
 	};
 
 	const unsetActive = () => {

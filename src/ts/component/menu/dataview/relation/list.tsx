@@ -122,7 +122,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		S.Menu.open('dataviewRelationEdit', { 
 			className,
 			classNameWrap,
-			element: `#${getId()} #item-${item.relationKey}`,
+			element: `#${getId()} #item-${U.Common.esc(item.relationKey)}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {

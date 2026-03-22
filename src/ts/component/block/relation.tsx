@@ -46,7 +46,7 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 		};
 
 		S.Menu.open('relationSuggest', { 
-			element: `#block-${block.id}`,
+			element: `#block-${U.Common.esc(block.id)}`,
 			offsetX: J.Size.blockMenu,
 			data: {
 				rootId,

@@ -638,7 +638,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onEmoji = () => {
 		S.Menu.open('smile', {
-			element: `#button-${block.id}-emoji`,
+			element: `#button-${U.Common.esc(block.id)}-emoji`,
 			horizontal: I.MenuDirection.Right,
 			...caretMenuParam(),
 			data: {
@@ -665,7 +665,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		switch (item.id) {
 			case 'create': {
 				U.Menu.typeSuggest({
-					element: `#${context.getId()} #item-${item.id}`,
+					element: `#${context.getId()} #item-${U.Common.esc(item.id)}`,
 					className: 'fixed',
 					classNameWrap: 'fromSidebar',
 					offsetX: context.getSize().width,
@@ -712,7 +712,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('chatFormOptions', {
 				component: 'select',
-				element: `#block-${block.id} #button-${block.id}-attachment`,
+				element: `#block-${U.Common.esc(block.id)} #button-${U.Common.esc(block.id)}-attachment`,
 				className: 'chatAttachment fixed',
 				classNameWrap: 'fromBlock',
 				offsetY: -8,
@@ -1357,7 +1357,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		raf(() => {
 			S.Menu.open('blockMention', {
-				element: `#button-${block.id}-${I.ChatButton.Mention}`,
+				element: `#button-${U.Common.esc(block.id)}-${I.ChatButton.Mention}`,
 				...param,
 				className: [ 'single', param.className ].join(' '),
 				data: {

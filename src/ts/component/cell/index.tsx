@@ -87,7 +87,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 		const { config } = S.Common;
 		const win = $(window);
-		const cell = $(`#${cellId}`);
+		const cell = $(`#${U.Common.esc(cellId)}`);
 		const className = [];
 		const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
 
@@ -148,11 +148,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				cellContent.css({ height: '' });
 			};
 
-			$(`#${cellId}`).removeClass('isEditing');
+			$(`#${U.Common.esc(cellId)}`).removeClass('isEditing');
 			S.Common.cellId = '';
 		};
 
-		const element = cell.hasClass('cellContent') ? `#${cellId}` : `#${cellId} .cellContent`;
+		const element = cell.hasClass('cellContent') ? `#${U.Common.esc(cellId)}` : `#${U.Common.esc(cellId)} .cellContent`;
 
 		let ret = false;
 		let param: I.MenuParam = { 
@@ -403,7 +403,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			const pc = $(pageContainer);
 
 			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
-				if (!$(e.target).parents(`#${cellId}`).length) {
+				if (!$(e.target).parents(`#${U.Common.esc(cellId)}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
@@ -458,7 +458,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
+		const cell = $(`#${U.Common.esc(Relation.cellId(idPrefix, relation.relationKey, record.id))}`);
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
 

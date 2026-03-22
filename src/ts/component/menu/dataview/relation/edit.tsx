@@ -191,7 +191,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 		const menuParam: any = {
 			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			offsetX: getSize().width,
@@ -241,7 +241,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						S.Menu.closeAll([ 'select2' ], () => {
 							S.Menu.open('select2', {
 								component: 'select',
-								element: `#${menuContext.getId()} #item-${item.id}`,
+								element: `#${menuContext.getId()} #item-${U.Common.esc(item.id)}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
@@ -332,11 +332,11 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {
 					S.Menu.open('dataviewFilterAdvanced', { 
-						element: `#button-${blockId}-filter`,
+						element: `#button-${U.Common.esc(blockId)}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
-						onOpen: () => $(`#block-${blockId} .hoverArea`).addClass('active'),
-						onClose: () => $(`#block-${blockId} .hoverArea`).removeClass('active'),
+						onOpen: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).addClass('active'),
+						onClose: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).removeClass('active'),
 						data: {
 							...data,
 							view: observable.box(view),
@@ -360,7 +360,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			case 'insert-left':
 			case 'insert-right': {
 				S.Menu.open('relationSuggest', { 
-					element: `#${getId()} #item-${item.id}`,
+					element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 					offsetX: getSize().width,
 					vertical: I.MenuDirection.Center,
 					noAnimation: true,

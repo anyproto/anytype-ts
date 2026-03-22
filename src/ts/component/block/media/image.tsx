@@ -137,7 +137,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = $(`#selectionTarget-${block.id}`);
+		const el = $(`#selectionTarget-${U.Common.esc(block.id)}`);
 		const width = Number(block.fields.width) || 1;
 
 		if (!el.length) {

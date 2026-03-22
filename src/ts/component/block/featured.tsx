@@ -45,7 +45,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const init = () => {
 		const items = getItems().filter(it => it.relationKey != 'description');
 		const node = $(nodeRef.current);
-		const obj = $(`#block-${block.id}`);
+		const obj = $(`#block-${U.Common.esc(block.id)}`);
 
 		obj.toggleClass('isHidden', !items.length);
 
@@ -250,7 +250,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, relationKey: string, text?: string) => {
-		const cell = $(`#${Relation.cellId(PREFIX, relationKey, rootId)}`);
+		const cell = $(`#${U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId))}`);
 		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			Preview.tooltipShow({ text, element: cell });
@@ -295,7 +295,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		const element = [ `#block-${block.id}`, `#${Relation.cellId(PREFIX, 'type', rootId)}` ];
+		const element = [ `#block-${U.Common.esc(block.id)}`, `#${U.Common.esc(Relation.cellId(PREFIX, 'type', rootId))}` ];
 
 		if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
 			element.push('.cell');
@@ -329,7 +329,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
 		const menuParam = {
 			menuId: item.id,
-			element: `#${menuContext.current.getId()} #item-${item.id}`,
+			element: `#${menuContext.current.getId()} #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
 			offsetX: menuContext.current.getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -444,7 +444,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
+				element: `#block-${U.Common.esc(block.id)} #${U.Common.esc(Relation.cellId(PREFIX, 'setOf', rootId))}`,
 				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				offsetY: 4,
@@ -476,7 +476,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const storeId = getStoreId();
 		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
-		const elementId = `#block-${block.id} #${Relation.cellId(PREFIX, relationKey, object.id)}`;
+		const elementId = `#block-${U.Common.esc(block.id)} #${U.Common.esc(Relation.cellId(PREFIX, relationKey, object.id))}`;
 
 		if (!relation) {
 			return;
@@ -523,7 +523,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const storeId = getStoreId();
 		const object = S.Detail.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
-		const elementId = `#block-${block.id} #${Relation.cellId(PREFIX, relationKey, object.id)}`;
+		const elementId = `#block-${U.Common.esc(block.id)} #${U.Common.esc(Relation.cellId(PREFIX, relationKey, object.id))}`;
 		const options = value.map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,

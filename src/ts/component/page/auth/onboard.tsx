@@ -60,7 +60,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const onAuth = () => {
 		U.Router.switchSpace(S.Common.space, '', false, {
-			onFadeIn: () => {
+			onRouteChange: () => {
 				Onboarding.startCommon(props.isPopup);
 				analytics.event('OpenAccount');
 			},

@@ -53,7 +53,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const element = $(e.currentTarget);
-		const itemElement = $(`#${getId()} #item-${item.id}`);
+		const itemElement = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];

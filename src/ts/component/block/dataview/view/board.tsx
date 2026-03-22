@@ -145,7 +145,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
-				const el = node.find(`#record-${item.id}`);
+				const el = node.find(`#record-${U.Common.esc(item.id)}`);
 				if (!el.length) {
 					return;
 				};
@@ -370,7 +370,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId.current) {
-				node.find(`#record-${hoverId.current}`).addClass(`isOver ${isTop ? 'top' : 'bottom'}`);
+				node.find(`#record-${U.Common.esc(hoverId.current)}`).addClass(`isOver ${isTop ? 'top' : 'bottom'}`);
 			};
 		});
 	};
@@ -533,7 +533,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
-					const el = node.find(`#record-${item.id}`);
+					const el = node.find(`#record-${U.Common.esc(item.id)}`);
 					if (!el.length) {
 						return;
 					};

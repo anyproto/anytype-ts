@@ -251,7 +251,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 						const type = S.Record.getTypeById(item.id);
 
 						S.Menu.open('select', {
-							element: `#${props.getId()} #item-${item.id} .icon.more`,
+							element: `#${props.getId()} #item-${U.Common.esc(item.id)} .icon.more`,
 							horizontal: I.MenuDirection.Center,
 							offsetY: 4,
 							className,

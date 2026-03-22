@@ -169,7 +169,7 @@ const Data = {
 					description: translate('onboardingCommonTextPin'),
 					param: {
 						element: elements.pin,
-						highlightElements: [ `#sidebarPageWidget #section-${I.WidgetSection.Pin}` ],
+						highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Pin)}` ],
 						offsetX: getOffset('pin'),
 					}
 				},
@@ -181,7 +181,7 @@ const Data = {
 					},
 					param: {
 						element: elements.type,
-						highlightElements: [ `#sidebarPageWidget #section-${I.WidgetSection.Type}` ],
+						highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Type)}` ],
 						offsetX: getOffset('type'),
 					}
 				},

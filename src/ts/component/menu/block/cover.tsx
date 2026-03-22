@@ -391,7 +391,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+		const element = node.find(`#item-${U.Common.esc(item.id)}`);
 		element.addClass('hover');
 
 		if (!scroll || !listRef.current || (index === undefined)) {

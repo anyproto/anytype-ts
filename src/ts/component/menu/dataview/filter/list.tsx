@@ -181,7 +181,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (Dataview.isAdvancedFilter(item)) {
 			S.Menu.open('dataviewFilterAdvanced', {
-				element: `#${getId()} #item-${item.id}`,
+				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				classNameWrap: 'fromBlock',
 				horizontal: I.MenuDirection.Right,
 				offsetY: 4,
@@ -203,7 +203,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const view = getView();
 
 		S.Menu.open('dataviewFilterValues', {
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
@@ -260,7 +260,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.stopPropagation();
 
 		S.Menu.open('select', {
-			element: `#${getId()} #item-${item.id} .icon.more`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,

@@ -100,7 +100,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		const el = $(`#${getId()} #item-${item.id}`);
+		const el = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
 
 		if (el.hasClass('disabled') || keyboard.isMouseDisabled) {
 			return;

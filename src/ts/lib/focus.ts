@@ -81,7 +81,7 @@ class Focus {
 	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
-		const el = $(`.focusable.c${focused}`);
+		const el = $(`.focusable.c${U.Common.esc(focused)}`);
 		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
@@ -107,7 +107,7 @@ class Focus {
 
 		$('.focusable.isFocused').removeClass('isFocused');
 
-		const node = $(`.focusable.c${focused}`);
+		const node = $(`.focusable.c${U.Common.esc(focused)}`);
 		if (!node.length) {
 			return;
 		};
@@ -168,7 +168,7 @@ class Focus {
 			return;
 		};
 
-		const node = $(`.focusable.c${id}`);
+		const node = $(`.focusable.c${U.Common.esc(id)}`);
 		if (!node.length) {
 			return;
 		};

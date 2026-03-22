@@ -151,7 +151,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		
 		const items = getItems(true);
 		const node = getNode();
-		const element = node.find(`#item-${item.id}`);
+		const element = node.find(`#item-${U.Common.esc(item.id)}`);
 		const iconWrap = element.find('.iconWrap');
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
@@ -231,7 +231,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		e.stopPropagation();
 
 		U.Menu.spaceContext(item, {
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
@@ -335,7 +335,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const setHover = (item: any) => {
 		if (item) {
-			getNode().find(`#item-${item.id}`).addClass('hover');
+			getNode().find(`#item-${U.Common.esc(item.id)}`).addClass('hover');
 		};
 	};
 

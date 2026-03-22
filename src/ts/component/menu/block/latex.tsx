@@ -39,7 +39,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		S.Menu.open('previewLatex', {
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			offsetX: getSize().width - (isTemplate ? 14 : 0),
 			vertical: I.MenuDirection.Center,
 			isSub: true,

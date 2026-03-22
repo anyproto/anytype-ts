@@ -201,7 +201,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
-				element: `#widget-${block.id} ${param.element}`,
+				element: `#widget-${U.Common.esc(block.id)} ${param.element}`,
 				onOpen: () => node.addClass('active'),
 				onClose: () => node.removeClass('active'),
 				className: 'fixed',
@@ -247,7 +247,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const { x, y } = keyboard.mouse.page;
 		
 		S.Menu.open('widget', {
-			element: `#widget-${block.id} .iconWrap.more`,
+			element: `#widget-${U.Common.esc(block.id)} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
 			subIds: J.Menu.widget,
 			className: 'fixed',

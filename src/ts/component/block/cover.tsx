@@ -56,7 +56,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		focus.clear(true);
 
 		S.Menu.open('smile', {
-			element: `#block-${block.id} #button-icon`,
+			element: `#block-${U.Common.esc(block.id)} #button-icon`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => $(elementsRef.current).addClass('hover'),
@@ -73,7 +73,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	
 	const onLayout = () => {
 		S.Menu.open('blockLayout', { 
-			element: `#block-${block.id} #button-layout`,
+			element: `#block-${U.Common.esc(block.id)} #button-layout`,
 			classNameWrap: 'fromBlock',
 			onOpen: () => $(elementsRef.current).addClass('hover'),
 			onClose: () => $(elementsRef.current).removeClass('hover'),

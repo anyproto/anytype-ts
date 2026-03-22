@@ -871,7 +871,7 @@ class WindowManager {
 	};
 
 	reloadAll () {
-		this.sendToAll('reload');
+		this.sendToAllTabs('reload');
 	};
 
 	getFirstWindow () {

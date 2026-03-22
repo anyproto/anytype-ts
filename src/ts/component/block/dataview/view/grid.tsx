@@ -168,7 +168,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 		relations.forEach(it => {
 			const width = widths[it.relationKey];
-			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
+			const el = node.find(`#${U.Common.esc(Relation.cellId('head', it.relationKey, ''))}`);
 
 			el.toggleClass('small', width <= size.small);
 			el.toggleClass('medium', (width > size.small) && (width <= size.medium));
@@ -195,7 +195,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const cellPosition = (cellId: string) => {
-		const cell = $(`#${cellId}`);
+		const cell = $(`#${U.Common.esc(cellId)}`);
 		if (!cell.hasClass('isEditing')) {
 			return;
 		};
@@ -223,7 +223,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 		const win = $(window);
 		const node = $(nodeRef.current);
-		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
+		const el = node.find(`#${U.Common.esc(Relation.cellId('head', relationKey, ''))}`);
 		const { left } = el.offset();
 
 		$('body').addClass('colResize');
@@ -274,7 +274,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const onCellAdd = (e: any) => {
-		const blockEl = `#block-${block.id}`;
+		const blockEl = `#block-${U.Common.esc(block.id)}`;
 		const rowHead = $(`${blockEl} #rowHead`);
 		const isFixed = rowHead.hasClass('fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
@@ -361,7 +361,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 					scroll.css({ width: cw, marginLeft: -margin });
 					wrap.css({ width: vw + margin - offset, paddingLeft: margin, paddingRight: offset * 2 });
 				} else {
-					const parentObj = $(`#block-${parent.id}`);
+					const parentObj = $(`#block-${U.Common.esc(parent.id)}`);
 					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;
 
 					wrap.css({ width: Math.max(vw, width) });

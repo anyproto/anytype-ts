@@ -91,7 +91,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		container.current = node.find('.editor');
 		buttonAdd.current = node.find('#button-block-add');
-		blockFeatured.current = node.find(`#block-${J.Constant.blockId.featured}`);
+		blockFeatured.current = node.find(`#block-${U.Common.esc(J.Constant.blockId.featured)}`);
 	};
 
 	const getWrapperWidth = (): number => {
@@ -361,7 +361,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		for (const block of blocks) {
-			const obj = $(`#block-${block.id}`);
+			const obj = $(`#block-${U.Common.esc(block.id)}`);
 			if (!obj.length || obj.hasClass('noPlus')) {
 				continue;
 			};
@@ -546,7 +546,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (type == I.MarkType.Link) {
 					window.setTimeout(() => {
 						S.Menu.open('blockLink', {
-							element: `#block-${ids[0]}`,
+							element: `#block-${U.Common.esc(ids[0])}`,
 							classNameWrap: 'fromBlock',
 							horizontal: I.MenuDirection.Center,
 							data: {
@@ -571,7 +571,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					};
 
 					S.Menu.open(menuId, {
-						element: `#block-${ids[0]}`,
+						element: `#block-${U.Common.esc(ids[0])}`,
 						horizontal: I.MenuDirection.Center,
 						classNameWrap: 'fromBlock',
 						data: {
@@ -628,8 +628,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			// Open action menu
 			keyboard.shortcut('menuAction', e, () => {
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
-					S.Menu.open('blockAction', { 
-						element: `#block-${ids[0]}`,
+					S.Menu.open('blockAction', {
+						element: `#block-${U.Common.esc(ids[0])}`,
 						classNameWrap: 'fromBlock',
 						offsetX: J.Size.blockMenu,
 						data: {
@@ -837,8 +837,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Open action menu
 		keyboard.shortcut('menuAction', e, () => {
 			S.Menu.close('blockContext', () => {
-				S.Menu.open('blockAction', { 
-					element: `#block-${block.id}`,
+				S.Menu.open('blockAction', {
+					element: `#block-${U.Common.esc(block.id)}`,
 					classNameWrap: 'fromBlock',
 					offsetX: J.Size.blockMenu,
 					data: {
@@ -1200,7 +1200,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			let closestDistance = Infinity;
 
 			for (const block of blocks) {
-				const node = $(`.focusable.c${block.id}`);
+				const node = $(`.focusable.c${U.Common.esc(block.id)}`);
 				if (!node.length) {
 					continue;
 				};
@@ -1273,7 +1273,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const win = $(window);
 		const st = win.scrollTop();
-		const element = $(`#block-${block.id}`);
+		const element = $(`#block-${U.Common.esc(block.id)}`);
 		const value = element.find('#value');
 
 		let sRect = U.Common.getSelectionRect();
@@ -1842,8 +1842,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Common.filterSet(range.from, '');
 
-		S.Menu.open('blockAdd', { 
-			element: `#block-${blockId}`,
+		S.Menu.open('blockAdd', {
+			element: `#block-${U.Common.esc(blockId)}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
@@ -2101,7 +2101,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const menuParam = {
 			component: 'select',
-			element: `#block-${focused}`,
+			element: `#block-${U.Common.esc(focused)}`,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -2199,7 +2199,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							if (processor !== null) {
 								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
-									$(`#block-${blockId} .preview`).trigger('click');
+									$(`#block-${U.Common.esc(blockId)} .preview`).trigger('click');
 								});
 							};
 							break;

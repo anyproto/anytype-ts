@@ -53,7 +53,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onClick = (e: any, item: any) => {
 		S.Menu.open('dataviewFilterValues', {
-			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
@@ -80,7 +80,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onAdd = () => {
 		const menuParam = {
-			element: `#block-${blockId} #dataviewFilters #item-add`,
+			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-add`,
 			classNameWrap: 'fromBlock',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
@@ -148,7 +148,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		S.Menu.open('select', {
-			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
 			offsetY: 4,
 			data: {
@@ -168,7 +168,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onAdvancedClick = (e: any, item: any) => {
 		S.Menu.open('dataviewFilterAdvanced', {
-			element: `#block-${blockId} #dataviewFilters #item-${item.id}`,
+			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
@@ -204,7 +204,7 @@ const BlockDataviewFilters = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onSortClick = () => {
 		S.Menu.open('dataviewSort', {
-			element: `#block-${blockId} #dataviewFilters #item-sort`,
+			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-sort`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
