@@ -697,6 +697,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				});
 				break;
 			};
+
 		};
 	};
 

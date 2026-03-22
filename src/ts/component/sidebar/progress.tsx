@@ -31,7 +31,7 @@ const ItemStatus = observer(({ id, type }: { id: string; type: I.ProgressType })
 	const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
 	const status = translate(U.String.toCamelCase(`progress-status-${type}`));
 
-	return <span>{percent}% &bull; {status}</span>;
+	return <span>{percent}% <span className="dot" /> {status}</span>;
 });
 
 interface ItemProps {
