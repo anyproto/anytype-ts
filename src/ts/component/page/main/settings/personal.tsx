@@ -102,6 +102,25 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
+					<Label text={translate('popupSettingsPersonalNotificationSound')} />
+
+					<Select
+						id="notificationSound"
+						value={notificationSound}
+						options={notificationSounds}
+						onChange={(v: string) => {
+							S.Common.notificationSoundSet(v);
+
+							if (v) {
+								Sound.play(v);
+							};
+						}}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
 					<Label text={translate('popupSettingsPersonalSidebar')} />
 					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => {
 						S.Common.hideSidebarSet(v);
@@ -157,29 +176,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
 						options={chatKeys}
 						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionNotifications')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalNotificationSound')} />
-
-					<Select
-						id="notificationSound"
-						value={notificationSound}
-						options={notificationSounds}
-						onChange={(v: string) => {
-							S.Common.notificationSoundSet(v);
-
-							if (v) {
-								Sound.play(v);
-							};
-						}}
-						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
