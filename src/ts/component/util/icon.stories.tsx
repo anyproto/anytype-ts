@@ -1,17 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Icon from './icon';
-import { registerIcon } from './iconRegistry';
-import { HeaderMoreIcon as More0Icon } from './icons/action/headerMore';
-import { Fav0Icon } from './icons/action/fav0';
-import { Turn0Icon } from './icons/action/turn0';
-import { RelationCheckboxIcon } from './icons/relation/relationCheckbox';
-
-// Register only the icons used in stories
-registerIcon('more0', More0Icon);
-registerIcon('fav0', Fav0Icon);
-registerIcon('turn0', Turn0Icon);
-registerIcon('relationCheckbox', RelationCheckboxIcon);
 
 const meta: Meta<typeof Icon> = {
 	title: 'Util/Icon',
@@ -67,35 +56,5 @@ export const CustomStyle: Story = {
 	args: {
 		className: 'custom',
 		style: { width: 32, height: 32, background: '#ddd', borderRadius: 8 },
-	},
-};
-
-export const InlineSvgIcon: Story = {
-	args: {
-		name: 'more0',
-		iconSize: 20,
-	},
-};
-
-export const InlineSvgWithBackground: Story = {
-	args: {
-		name: 'turn0',
-		withBackground: true,
-		iconSize: 20,
-	},
-};
-
-export const InlineSvgCustomColor: Story = {
-	args: {
-		name: 'fav0',
-		iconSize: 24,
-		iconColor: '#FF4500',
-	},
-};
-
-export const RelationIcon: Story = {
-	args: {
-		name: 'relationCheckbox',
-		iconSize: 20,
 	},
 };
