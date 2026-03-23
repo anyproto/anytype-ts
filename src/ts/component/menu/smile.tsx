@@ -1169,7 +1169,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onDrop={onDrop}
 					onClick={onUploadHandler}
 				>
-					<Icon className="coverUpload" />
+					<Icon name="common/upload" size={28} />
 					<Label text={translate('menuBlockCoverChoose')} />
 				</div>
 			);

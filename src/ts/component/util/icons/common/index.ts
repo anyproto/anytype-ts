@@ -19,6 +19,7 @@ import Tick from './tick';
 import Eye0 from './eye0';
 import Eye1 from './eye1';
 import Qr from './qr';
+import Upload from './upload';
 
 registerIcon('common/alert', Alert);
 registerIcon('common/back', Back);
@@ -40,3 +41,4 @@ registerIcon('common/resize', Resize);
 registerIcon('common/search', Search);
 registerIcon('common/sortArrow', SortArrow);
 registerIcon('common/tick', Tick);
+registerIcon('common/upload', Upload);

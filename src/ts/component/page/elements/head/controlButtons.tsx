@@ -89,10 +89,10 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		};
 
 		const options: any[] = [
-			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
+			{ id: 'change', iconParam: { name: 'control/cover/change' }, name: translate('pageHeadControlButtonsChangeCover') },
 		];
 		if (U.Data.coverIsImage(coverType)) {
-			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
+			options.push({ id: 'position', iconParam: { name: 'control/cover/position' }, name: translate('pageHeadControlButtonsReposition') });
 		};
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType) && coverId) {
 			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });

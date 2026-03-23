@@ -18,6 +18,7 @@ import './membership';
 import './tier';
 import './dataview/view';
 import './control/dataview';
+import './control/cover';
 
 import './gallery.stories.scss';
 

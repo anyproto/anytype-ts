@@ -1,8 +1,0 @@
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13 11L16 8L13 5V11Z" fill="white"/>
-<path d="M5 3L8 0L11 3H5Z" fill="white"/>
-<path d="M5 13L8 16L11 13H5Z" fill="white"/>
-<path d="M3 11L0 8L3 5L3 11Z" fill="white"/>
-<rect x="2" y="7" width="12" height="2" fill="white"/>
-<rect x="7" y="14" width="12" height="2" transform="rotate(-90 7 14)" fill="white"/>
-</svg>

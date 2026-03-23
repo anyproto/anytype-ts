@@ -299,7 +299,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					onDrop={onDrop}
 					onClick={onClickZone}
 				>
-					<Icon className="upload" />
+					<Icon name="common/upload" size={48} />
 					<div className="label">{translate('popupUploadDropLabel')}</div>
 				</div>
 			) : ''}

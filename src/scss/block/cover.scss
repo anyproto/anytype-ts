@@ -73,9 +73,7 @@
 		}
 		
 		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
-		.btn.drag {
-			.icon { background-size: 16px 16px; background-image: url('~img/icon/cover/drag.svg'); }
-		}
+		.btn.drag { }
 	}
 }
 

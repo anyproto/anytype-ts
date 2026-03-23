@@ -549,7 +549,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						isReadonly={isReadonly}
 						canClear={true}
 						position={position}
-						className="isInline"
+						className="isInline round"
 						menuClassNameWrap="fromBlock"
 						showFooter={false}
 					/>

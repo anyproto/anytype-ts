@@ -162,6 +162,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							size={36}
 							key={`${nodeId}-quick-${relationKey}-${condition}`}
 							id={`${nodeId}-quick`}
+							className="round"
 							value={String(quickOption)}
 							options={quickOptions}
 							onChange={v => onUpdate(index, {
@@ -187,6 +188,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 						id={`${nodeId}-checkbox`}
 						value={value ? '1' : '0'}
 						options={checkboxOptions}
+						className="round"
 						size={36}
 						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
 						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
