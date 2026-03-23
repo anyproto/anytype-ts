@@ -84,7 +84,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 				<Frame>
 					<div className="iconWrapper">
-						<Icon name={id == 'select' ? 'void/select' : 'void/error'} size={56} />
+						<Icon name={id == 'select' ? 'state/select' : 'state/error'} size={56} />
 					</div>
 
 					<Title text={title} />

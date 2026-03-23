@@ -22,9 +22,6 @@
 			.item { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 			.item {
 				.icon { width: 20px; height: 20px; flex-shrink: 0; }
-				.icon.infinity { background-image: url('~img/icon/chat/empty/infinity.svg'); }
-				.icon.wifi { background-image: url('~img/icon/chat/empty/wifi.svg'); }
-				.icon.key { background-image: url('~img/icon/chat/empty/key.svg'); }
 			}
 
 			.buttons { display: flex; justify-content: center; margin-top: 8px; }

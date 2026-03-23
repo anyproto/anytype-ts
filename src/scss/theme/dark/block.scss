@@ -181,13 +181,6 @@
 
 	/* BlockChat */
 	.block.blockChat {
-		.chatEmptyState {
-			.item {
-				.icon.infinity { background-image: url('~img/theme/dark/icon/chat/empty/infinity.svg'); }
-				.icon.wifi { background-image: url('~img/theme/dark/icon/chat/empty/wifi.svg'); }
-				.icon.key { background-image: url('~img/theme/dark/icon/chat/empty/key.svg'); }
-			}
-		}
 
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
@@ -216,11 +209,7 @@
 			}
 		}
 
-		.formWrapper {
-			.dragOverlay {
-				.icon { background-image: url('~img/theme/dark/icon/chat/dragState.svg'); }
-			}
-		}
+		.formWrapper { }
 
 		.form {
 			.icon.send { background: url('~img/theme/dark/icon/chat/buttons/send.svg'); }

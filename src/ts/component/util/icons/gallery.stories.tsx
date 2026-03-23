@@ -11,13 +11,14 @@ import './marker';
 import './filterTemplate';
 import './relation';
 import './publish';
-import './void';
+import './state';
+import './chat/empty';
 import './layout';
 
 import './gallery.stories.scss';
 
 const FOLDER_SIZES: Record<string, number> = {
-	void: 56,
+	state: 56,
 };
 
 const IconGallery = () => {

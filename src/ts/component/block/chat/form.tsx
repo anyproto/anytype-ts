@@ -1889,7 +1889,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
