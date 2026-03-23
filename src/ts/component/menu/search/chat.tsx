@@ -324,7 +324,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					ref={filterRef}
 					placeholder={translate('commonSearch')}
 					value=""
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					onChange={onFilterChange}
 					focusOnMount={true}
 				/>

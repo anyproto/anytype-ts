@@ -487,7 +487,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 						<div className="side left">
 							<Filter
 								ref={filterInputRef}
-								iconParam={{ className: 'search' }}
+								iconParam={{ name: 'common/search' }}
 								placeholder={translate('commonSearch')}
 								onChange={onFilterChange}
 								onClear={onFilterClear}

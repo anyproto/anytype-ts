@@ -311,7 +311,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							iconParam={{ className: 'search' }}
+							iconParam={{ name: 'common/search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 							onClear={() => setSearchIds([])}

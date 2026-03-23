@@ -10,11 +10,7 @@ interface Props {
 	size?: FilterSize;
 	className?: string;
 	inputClassName?: string;
-	iconParam?: {
-		name?: string;
-		className?: string;
-		withBackground?: boolean;
-	};
+	iconParam?: I.IconParam;
 	value?: string;
 	placeholder?: string;
 	tooltipParam?: I.TooltipParam;
@@ -79,8 +75,10 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		iconObj = (
 			<Icon
 				name={iconParam.name}
-				className={iconParam.className || ''}
-				withBackground={iconParam.withBackground}
+				color={iconParam.color}
+				size={iconParam.size}
+				width={iconParam.width}
+				height={iconParam.height}
 				tooltipParam={tooltipParam}
 				onClick={onIconClick}
 			/>

@@ -287,7 +287,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<Filter
 				ref={filterRef}
-				iconParam={{ className: 'search' }}
+				iconParam={{ name: 'common/search' }}
 				size={32}
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}

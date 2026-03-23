@@ -230,7 +230,10 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		content = (
 			<>
 				<Icon
+					name="control/dataview/dnd"
 					className="drag"
+					width={7}
+					height={12}
 					draggable={true}
 					onClick={e => onSelectToggle(e, record.id)}
 					onDragStart={e => onDragRecordStart(e, record.id)}

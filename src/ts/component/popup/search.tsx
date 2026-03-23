@@ -895,7 +895,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="head">
 				<Filter
 					className="underlined"
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					value={filterValueRef.current}
 					ref={filterInputRef}
 					placeholder={translate('popupSearchPlaceholder')}

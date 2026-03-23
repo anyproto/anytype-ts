@@ -1,4 +1,5 @@
 import { registerIcon } from '../../registry';
+import DataviewDnd from './dnd';
 import Expand from './expand';
 import Filter from './filter';
 import Plus from './plus';
@@ -11,6 +12,7 @@ import FilterPlus from './filterPlus';
 import FilterSort from './filterSort';
 import Unlink from './unlink';
 
+registerIcon('control/dataview/dnd', DataviewDnd);
 registerIcon('control/dataview/expand', Expand);
 registerIcon('control/dataview/filter', Filter);
 registerIcon('control/dataview/plus', Plus);

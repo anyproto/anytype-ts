@@ -671,7 +671,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						iconParam={{ className: 'search' }}
+						iconParam={{ name: 'common/search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
