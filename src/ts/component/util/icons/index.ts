@@ -7,3 +7,4 @@ import './emoji';
 import './marker';
 import './filterTemplate';
 import './relation';
+import './publish';

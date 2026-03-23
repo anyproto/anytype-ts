@@ -26,10 +26,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
 	const items: any[] = [
-		(!spaceview.isPersonal && !spaceview.isOneToOne ? 
-		{ 
-			id: 'space', 
-			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
+		(!spaceview.isPersonal && !spaceview.isOneToOne ?
+		{
+			id: 'space',
+			icon: 'publish/member',
+			name: translate('popupSettingsSpaceIndexShareShareTitle'),
 			onClick: () => {
 				Action.openSpaceShare(analytics.route.menuPublish);
 				close();
@@ -37,9 +38,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
 			},
 		} : null),
-		{ 
-			id: 'export', 
-			name: translate('popupExportTitle'), 
+		{
+			id: 'export',
+			icon: 'publish/export',
+			name: translate('popupExportTitle'),
 			onClick: () => {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				close();
@@ -250,7 +252,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<div className="outer">
 				{items.map((item, index) => (
 					<div key={index} className="item" onClick={item.onClick}>
-						<Icon className={item.id} />
+						<Icon name={item.icon} color="default" />
 						<div className="name">{item.name}</div>
 						{item.arrow ? <Icon className="arrow" /> : ''}
 					</div>
