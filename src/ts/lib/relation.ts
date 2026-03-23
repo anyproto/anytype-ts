@@ -22,6 +22,11 @@ class Relation {
 		return U.String.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
+	public registryName (key: string, v: I.RelationType): string {
+		const name = key == 'description' ? 'description' : this.typeName(v);
+		return `relation/${name}`;
+	};
+
 	/**
 	 * Returns the CSS class name for a relation type.
 	 * @param {I.RelationType} v - The relation type.
@@ -383,10 +388,10 @@ class Relation {
 				continue;
 			};
 
-			ret.push({ 
-				id: U.String.sprintf(`_filter_template_%d_`, i), 
+			ret.push({
+				id: U.String.sprintf(`_filter_template_%d_`, i),
 				name: translate(`filterTemplate${i}`),
-				icon: `filterTemplate-${I.FilterValueTemplate[i].toLowerCase()}`,
+				iconParam: { name: `filterTemplate/${I.FilterValueTemplate[i].toLowerCase()}` },
 				templateType: id as I.FilterValueTemplate,
 			});
 		};
@@ -643,7 +648,7 @@ class Relation {
 
 			ret.push({
 				id: relation.relationKey,
-				icon: `relation ${this.className(relation.format)}`,
+				iconParam: { name: this.registryName(relation.relationKey, relation.format) },
 				name: relation.name,
 				isHidden: relation.isHidden,
 				format: relation.format,

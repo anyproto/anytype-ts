@@ -276,7 +276,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				{!item.isEmpty ? (
 					<>
 						{canDrag ? <Icon name="common/dnd" /> : ''}
-						<Icon className={`relation ${Relation.className(item.format)}`} />
+						<Icon name={Relation.registryName(item.relationKey, item.format)} />
 					</>
 				) : ''}
 				<ObjectName object={item} />

@@ -5,3 +5,5 @@ import './control/audio';
 import './common';
 import './emoji';
 import './marker';
+import './filterTemplate';
+import './relation';

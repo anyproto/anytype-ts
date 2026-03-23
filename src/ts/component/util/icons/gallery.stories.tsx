@@ -7,6 +7,8 @@ import './control/audio';
 import './common';
 import './emoji';
 import './marker';
+import './filterTemplate';
+import './relation';
 
 const IconGallery = () => {
 	const folders = getIconsByFolder();
