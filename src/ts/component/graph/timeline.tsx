@@ -121,6 +121,7 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 			<div className="controls">
 				<Icon
 					name={isPlaying ? 'control/audio/pause' : 'control/audio/play'}
+					color="default"
 					onMouseDown={onPlay}
 					onClick={e => e.stopPropagation()}
 				/>

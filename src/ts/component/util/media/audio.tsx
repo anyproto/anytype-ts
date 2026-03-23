@@ -262,6 +262,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				<div className="controls">
 					<Icon
 						name={playingState ? 'control/audio/pause' : 'control/audio/play'}
+						color="default"
 						onMouseDown={onPlayClick}
 						onClick={e => e.stopPropagation()}
 					/>
@@ -285,6 +286,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 						<Icon
 							ref={volumeIconRef}
 							name={mutedState ? 'control/audio/mute' : 'control/audio/volume'}
+							color="default"
 							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}
 							onClick={e => e.stopPropagation()}

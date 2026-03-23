@@ -48,7 +48,7 @@ class ErrorBoundary extends Component<Props, State> {
 
 		return (
 			<Frame className="errorBoundary">
-				<Icon name="common/alert" className="errorBoundaryIcon" />
+				<Icon name="common/alert" color="red" className="errorBoundaryIcon" />
 				<Label className="title" text={translate('errorBoundaryTitle')} />
 				<Label className="description" text={translate('errorBoundaryDescription')} />
 

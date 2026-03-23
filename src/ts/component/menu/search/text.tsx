@@ -349,7 +349,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onKeyUp={onKeyUp}
 					/>
 					<div id="switcher" className="cnt" />
-					<Icon name="common/clear" onClick={onClear} />
+					<Icon name="common/clear" color="default" onClick={onClear} />
 				</div>
 
 				<div className="arrowWrapper">

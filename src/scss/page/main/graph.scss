@@ -24,7 +24,7 @@
 
 		.controls { display: flex; align-items: center; gap: 12px; height: 32px; }
 
-		.icon.hasSvg { width: 20px; height: 20px; flex-shrink: 0; color: var(--color-text-primary); }
+		.icon.hasSvg { width: 20px; height: 20px; flex-shrink: 0; }
 
 		.speed {
 			@include text-small; color: var(--color-text-secondary); flex-shrink: 0;

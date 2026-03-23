@@ -14,7 +14,6 @@
 		.controls { display: flex; align-items: center; column-gap: 10px; height: 32px; }
         .controls {
             .icon { width: 20px; height: 20px; vertical-align: top; transition: none; flex-shrink: 0; }
-            .icon.hasSvg { color: var(--color-text-primary); }
             .icon.controlAudioPlay, .icon.controlAudioPause { margin-left: -4px; }
 
 			.timeDragWrapper { flex: 1 0 auto; height: 100%; }
