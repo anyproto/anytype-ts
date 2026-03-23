@@ -114,7 +114,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					analytics.event('ScreenTransferSpaceOwnershipWarning');
 				},
 				data: {
-					icon: 'key-red',
+					iconParam: { name: 'popup/header/key', color: 'red' },
 					title: translate('popupConfirmOwnershipTransferTitle'),
 					text: U.String.sprintf(
 						translate('popupConfirmOwnershipTransferText'),
@@ -156,7 +156,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 											analytics.event('ScreenTransferSpaceOwnershipSuccess');
 										},
 										data: {
-											icon: 'key-green',
+											iconParam: { name: 'popup/header/key', color: 'lime' },
 											title: translate('popupConfirmOwnershipTransferredTitle'),
 											text: U.String.sprintf(
 												translate('popupConfirmOwnershipTransferredText'),

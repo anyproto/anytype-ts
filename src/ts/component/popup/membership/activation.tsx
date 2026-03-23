@@ -77,7 +77,7 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		<form onSubmit={onSubmit}>
 			{isLoading ? <Loader id="loader" /> : ''}
 
-			<Icon name="membership/activation" />
+			<Icon name="popup/header/activation" color="teal" size={56} />
 
 			<Title text={translate('popupMembershipActivationTitle')} />
 			<Label text={translate('popupMembershipActivationText')} />

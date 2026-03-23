@@ -1135,7 +1135,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'confirm',
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
 				textConfirm: translate('commonDelete'),
@@ -1644,7 +1644,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					setRange(range.current);
 				},
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('popupConfirmSpeedLimitTitle'),
 					text: translate('popupConfirmSpeedLimitText'),
 					textConfirm: translate('commonOkay'),

@@ -155,7 +155,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		S.Popup.open('confirm', {
 			onClose: onCancel,
 			data: {
-				icon: 'warning-red',
+				iconParam: { name: 'popup/header/warning', color: 'red' },
 				title: translate('popupConfirmUxTypeChangeTitle'),
 				text: translate('popupConfirmUxTypeChangeText'),
 				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),

@@ -954,7 +954,7 @@ class UtilMenu {
 				case 'stopSharing': {
 					S.Popup.open('confirm', {
 						data: {
-							icon: 'noAccessRed',
+							iconParam: { name: 'popup/header/redLock', color: 'red' },
 							title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
 							text: translate(`popupConfirmStopSharingSpaceWarningText`),
 							textConfirm: translate('commonConfirm'),

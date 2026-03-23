@@ -503,7 +503,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'updated',
+				iconParam: { name: 'popup/header/updated', color: 'lime' },
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -528,7 +528,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),

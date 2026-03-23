@@ -315,7 +315,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		if (!force && ((sparkOnboarding.step !== I.OnboardingStep.Goal) || (messages.length > 1))) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmCloseAIOnboardingTitle'),
 					text: translate('popupConfirmCloseAIOnboardingText'),
 					textConfirm: translate('popupConfirmCloseAIOnboardingConfirm'),

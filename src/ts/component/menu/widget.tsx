@@ -329,7 +329,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				if (isSystem) {
 					const param: Partial<I.MenuParam> = {
 						data: {
-							icon: 'warning-red',
+							iconParam: { name: 'popup/header/warning', color: 'red' },
 							title: translate('popupConfirmSystemWidgetRemoveTitle'),
 							text: translate('popupConfirmSystemWidgetRemoveText'),
 							textConfirm: translate('commonDelete'),

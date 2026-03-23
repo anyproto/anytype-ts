@@ -989,7 +989,7 @@ class Keyboard {
 					S.Popup.open('confirm', {
 						className: 'isLeft',
 						data: {
-							icon: 'warning',
+							iconParam: { name: 'popup/header/warning', color: 'orange' },
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),

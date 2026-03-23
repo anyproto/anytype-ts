@@ -19,6 +19,7 @@ import './tier';
 import './dataview/view';
 import './control/dataview';
 import './control/cover';
+import './popup/header';
 
 import './gallery.stories.scss';
 
@@ -26,6 +27,7 @@ const FOLDER_SIZES: Record<string, number> = {
 	state: 56,
 	tier: 120,
 	'dataview/view': 56,
+	'popup/header': 56,
 };
 
 const IconGallery = () => {

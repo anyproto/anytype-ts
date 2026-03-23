@@ -128,7 +128,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			S.Popup.open('confirm', {
 				className: 'localOnlyWarning',
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
 					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),

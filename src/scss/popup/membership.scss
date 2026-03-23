@@ -32,7 +32,7 @@
     .popup.popupMembershipActivation {
         .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
 
-        .icon.activation { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/membership/activation.svg'); }
+        .icon.popupHeaderActivation { margin: 0px 0px 12px 0px; }
 
         .title { @include text-header3; margin: 0px 0px 4px 0px; }
         .label { margin: 0px 0px 20px 0px; }

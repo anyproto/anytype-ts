@@ -86,7 +86,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.id == 'remove') {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupConfirmRelationOptionRemoveText'),
 					textConfirm: translate('commonDelete'),
