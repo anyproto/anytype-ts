@@ -14,11 +14,14 @@ import './publish';
 import './state';
 import './chat/empty';
 import './layout';
+import './membership';
+import './tier';
 
 import './gallery.stories.scss';
 
 const FOLDER_SIZES: Record<string, number> = {
 	state: 56,
+	tier: 120,
 };
 
 const IconGallery = () => {

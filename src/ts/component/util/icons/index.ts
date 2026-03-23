@@ -11,3 +11,5 @@ import './publish';
 import './state';
 import './chat/empty';
 import './layout';
+import './membership';
+import './tier';

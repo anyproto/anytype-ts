@@ -162,12 +162,7 @@
 				}
 			}
 
-			.actions {
-				.action {
-					.icon.activation { background-image: url('~img/theme/dark/icon/membership/activation.svg'); }
-					.icon.contact { background-image: url('~img/theme/dark/icon/membership/contact.svg'); }
-				}
-			}
+			.actions { }
 		}
 		.membershipPurchased {
 			.section {
@@ -222,9 +217,7 @@
 	> .pageSettingsAccount {
 		.sections {
 			.section {
-				.anyNameWrapper {
-					.icon.badge { background-image: url('~img/theme/dark/icon/membership/badge-bw.svg'); }
-				}
+				.anyNameWrapper { }
 			}
 		}
 	}

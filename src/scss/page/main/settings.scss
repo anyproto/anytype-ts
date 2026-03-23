@@ -136,9 +136,7 @@
                 }
 
                 .anyNameWrapper { display: flex; align-items: center; gap: 0px 4px; }
-                .anyNameWrapper {
-                    .icon.badge { background-image: url('~img/icon/membership/badge-bw.svg'); }
-                }
+                .anyNameWrapper { }
             }
         }
     }
@@ -1050,26 +1048,11 @@
                     }
                 }
 
-                .tier.green {
-                    .icon { background-image: url('~img/icon/payment/green.svg'); }
-                    .offerLabel { color: var(--color-teal); }
-                }
-                .tier.blue {
-                    .icon { background-image: url('~img/icon/payment/blue.svg'); background-size: 60px; }
-                    .offerLabel { color: var(--color-blue); }
-                }
-                .tier.red {
-                    .icon { background-image: url('~img/icon/payment/red.svg'); }
-                    .offerLabel { color: var(--color-red); }
-                }
-                .tier.ice {
-                    .icon { background-image: url('~img/icon/payment/ice.svg'); }
-                    .offerLabel { color: var(--color-ice); }
-                }
-                .tier.default {
-                    .icon { background-image: url('~img/icon/payment/purple.svg'); }
-                    .offerLabel { color: var(--color-purple); }
-                }
+                .tier.green { .offerLabel { color: var(--color-teal); } }
+                .tier.blue { .offerLabel { color: var(--color-blue); } }
+                .tier.red { .offerLabel { color: var(--color-red); } }
+                .tier.ice { .offerLabel { color: var(--color-ice); } }
+                .tier.default { .offerLabel { color: var(--color-purple); } }
             }
 
             .actions { margin-bottom: 58px; display: flex; gap: 0px 16px; justify-content: center; align-items: stretch; }
@@ -1081,9 +1064,6 @@
                         width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
                         background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
                     }
-                    .icon.activation { background-size: 20px; background-image: url('~img/icon/membership/activation.svg'); }
-                    .icon.contact { background-size: 28px; background-image: url('~img/icon/membership/contact.svg'); }
-
                     .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
                     .label { color: var(--color-text-secondary); }
                     .button { width: 100%; font-weight: 500; }
@@ -1119,29 +1099,9 @@
                     .icon { margin-bottom: 12px; background-size: 60px; width: 60px; height: 60px; }
                     .title { @include text-header2; font-weight: 500; }
 
-                    &.green {
-                        .icon { background-image: url('~img/icon/payment/green.svg'); }
-                    }
-                    &.ice {
-                        .icon { background-image: url('~img/icon/payment/ice.svg'); }
-                    }
-
                     &.blue { box-shadow: 0 0 32px 0 rgba(203, 207, 255, 0.50); }
-                    &.blue {
-                        .icon { background-image: url('~img/icon/payment/blue.svg'); }
-                    }
-
-                    &.red { box-shadow: 0 0 32px 0 rgba(248, 181, 181, 0.50);  }
-                    &.red {
-                        .icon { background-image: url('~img/icon/payment/red.svg'); }
-                    }
-
-                    &.purple,
-                    &.default { box-shadow: 0 0 32px 0 rgba(249, 216, 248, 0.50);  }
-                    &.purple,
-                    &.default {
-                        .icon { background-image: url('~img/icon/payment/purple.svg'); }
-                    }
+                    &.red { box-shadow: 0 0 32px 0 rgba(248, 181, 181, 0.50); }
+                    &.purple, &.default { box-shadow: 0 0 32px 0 rgba(249, 216, 248, 0.50); }
                 }
 
                 .item.anyName {
