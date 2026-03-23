@@ -46,6 +46,14 @@
 		}
 	}
 
+	/* PopupShortcut */
+
+	.popup.popupShortcut {
+		.item.hasError {
+			.name { color: var(--color-text-inversion); }
+		}
+	}
+
 	/* PopupShare */
 
 	.popup.popupShare {

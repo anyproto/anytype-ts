@@ -53,7 +53,7 @@
 				}
 
 				.item {
-					.flex { flex-direction: row; align-items: center; line-height: 24px; }
+					.flex { flex-direction: row; align-items: center; line-height: 24px; gap: 0px 6px; }
 					.name { flex-grow: 1; }
 					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
 

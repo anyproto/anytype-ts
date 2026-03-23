@@ -121,8 +121,8 @@ html.themeDark {
 	.icon.widget-all { background-image: url('#{$themePath}/icon/widget/system/all.svg'); }
 
 	.objectManagerWrapper {
-		.icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
-		.icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
+		.icon.checkbox { background-image: url('#{$themePath}/icon/menu/checkbox0.svg') !important; }
+		.icon.checkbox.active { background-image: url('#{$themePath}/icon/menu/checkbox1.svg') !important; }
 		.icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
 		.icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
 	}
