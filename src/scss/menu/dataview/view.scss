@@ -56,12 +56,6 @@
 			}
 			.layout.active {
 				.label { font-weight: 500; color: var(--color-system-accent-100); }
-				.icon.view.c0 { background-image: url('~img/icon/dataview/layout/grid1.svg'); }
-				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list1.svg'); }
-				.icon.view.c2 { background-image: url('~img/icon/dataview/layout/gallery1.svg'); }
-				.icon.view.c3 { background-image: url('~img/icon/dataview/layout/kanban1.svg'); }
-				.icon.view.c4 { background-image: url('~img/icon/dataview/layout/calendar1.svg'); }
-				.icon.view.c5 { background-image: url('~img/icon/dataview/layout/graph1.svg'); }
 			}
 
 			.layout:not(.isReadonly):hover { background-color: var(--color-shape-highlight-light); }
