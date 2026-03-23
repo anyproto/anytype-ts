@@ -2,6 +2,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { getIconsByFolder, getIcon } from './registry';
 import './header';
+import './control/editor';
+import './control/audio';
 
 const IconGallery = () => {
 	const folders = getIconsByFolder();
