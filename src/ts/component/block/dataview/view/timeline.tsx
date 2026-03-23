@@ -581,7 +581,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					<div className="grad" />
 					<Icon className="arrow left" withBackground={true} onClick={() => onArrow(-1)} />
 					<Icon className="arrow right" withBackground={true} onClick={() => onArrow(1)}/>
-					<Icon id={`calendar-icon-${rootId}-${block.id}`} className="calendar" withBackground={true} onClick={onCalendar} />
+					<Icon id={`calendar-icon-${rootId}-${block.id}`} name="relation/date" withBackground={true} onClick={onCalendar} />
 				</div>
 			</div>
 
