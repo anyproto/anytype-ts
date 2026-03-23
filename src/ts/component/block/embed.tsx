@@ -869,7 +869,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let placeholder = '';
 
 	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
-		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+		resizeIcon = <Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />;
 	};
 
 	if (isExcalidraw) {

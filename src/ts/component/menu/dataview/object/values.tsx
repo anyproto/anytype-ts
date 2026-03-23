@@ -216,7 +216,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{canEdit ? <Icon className="dnd" /> : ''}
+				{canEdit ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
 					<IconObject object={item} />
 					<ObjectName object={item} />

@@ -122,9 +122,9 @@
 			transition: $transitionAllCommon;
 		}
 
-		.icon.resize { 
-			position: absolute; z-index: 1; opacity: 0; cursor: default; width: 20px; height: 20px; right: 0px; bottom: 0px; 
-			cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); z-index: 2; transition: $transitionAllCommon;
+		.icon.resize {
+			position: absolute; z-index: 1; opacity: 0; cursor: default; width: 20px; height: 20px; right: 0px; bottom: 0px;
+			cursor: nwse-resize; z-index: 2; transition: $transitionAllCommon;
 		}
 
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }

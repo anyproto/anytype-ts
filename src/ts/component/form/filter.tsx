@@ -230,7 +230,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 					/>
 				</div>
 
-				<Icon className="clear" onClick={onClearHandler} />
+				<Icon name="common/clear" onClick={onClearHandler} />
 			</div>
 			<div className="line" />
 		</div>

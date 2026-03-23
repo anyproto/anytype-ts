@@ -75,9 +75,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			bullet = <div className="bullet" />;
 		};
 
-		const cnb = [ 'back', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
-		const cnf = [ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
-
 		return (
 			<>
 				<Icon
@@ -110,7 +107,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 				{withNavigation ? (
 					<div className="arrowWrapper">
 						<Icon
-							className={cnb.join(' ')} withBackground={true}
+							name="common/back" className={!keyboard.checkBack(isPopup) ? 'disabled' : ''} withBackground={true}
 							onClick={() => keyboard.onBack(isPopup)}
 							tooltipParam={{
 								text: translate('commonBack'),
@@ -119,7 +116,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							}}
 						/>
 						<Icon
-							className={cnf.join(' ')} withBackground={true}
+							name="common/back" className={[ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ].join(' ')} withBackground={true}
 							onClick={() => keyboard.onForward(isPopup)}
 							tooltipParam={{
 								text: translate('commonForward'),

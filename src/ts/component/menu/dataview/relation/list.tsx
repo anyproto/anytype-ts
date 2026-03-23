@@ -236,7 +236,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{!isReadonly ? <Icon className="dnd" /> : ''}
+				{!isReadonly ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
 					<Icon className={`relation ${Relation.className(item.relation.format)}`} />
 					<div className="name">{item.relation.name}</div>

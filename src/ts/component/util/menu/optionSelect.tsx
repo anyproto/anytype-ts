@@ -733,7 +733,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{...(canSort ? listeners : {})}
 			>
 
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
 					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
@@ -779,7 +779,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				className={cn.join(' ')}
 				style={{ height: HEIGHT }}
 			>
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
 					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (

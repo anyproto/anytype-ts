@@ -153,7 +153,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					{...listeners}
 					style={style}
 				>
-					{!readonly ? <Icon className="dnd" /> : ''}
+					{!readonly ? <Icon name="common/dnd" /> : ''}
 					<span className="clickable">
 						<div className="name">{item.name}</div>
 					</span>

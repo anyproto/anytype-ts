@@ -176,7 +176,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (canDrag) {
 		inner = (
 			<>
-				<Icon className="dnd" />
+				<Icon name="common/dnd" />
 				{inner}
 			</>
 		);

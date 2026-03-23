@@ -1,0 +1,28 @@
+import { registerIcon } from '../registry';
+import Alert from './alert';
+import Back from './back';
+import Clear from './clear';
+import Close from './close';
+import Dnd from './dnd';
+import Ghost from './ghost';
+import Home from './home';
+import Info from './info';
+import Mention from './mention';
+import Question from './question';
+import Resize from './resize';
+import Search from './search';
+import SortArrow from './sortArrow';
+
+registerIcon('common/alert', Alert);
+registerIcon('common/back', Back);
+registerIcon('common/clear', Clear);
+registerIcon('common/close', Close);
+registerIcon('common/dnd', Dnd);
+registerIcon('common/ghost', Ghost);
+registerIcon('common/home', Home);
+registerIcon('common/info', Info);
+registerIcon('common/mention', Mention);
+registerIcon('common/question', Question);
+registerIcon('common/resize', Resize);
+registerIcon('common/search', Search);
+registerIcon('common/sortArrow', SortArrow);

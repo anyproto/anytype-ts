@@ -7,7 +7,7 @@
 
 		.menuHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 		.title { padding: 0px; @include text-paragraph; font-weight: 600; margin: 0px; color: var(--color-text-primary); }
-		.icon.info { width: 20px; height: 20px; background: url('~img/icon/info.svg'); }
+		.icon.info { width: 20px; height: 20px; }
 
 		.input { padding: 7px 9px; height: auto; border-radius: 12px; }
 

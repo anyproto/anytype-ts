@@ -69,7 +69,7 @@ const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
 			</div>
 
 			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
-				{canCancel ? <Icon className="close" onClick={onCancel} /> : ''}
+				{canCancel ? <Icon name="common/close" onClick={onCancel} /> : ''}
 			</div>
 		</div>
 	);

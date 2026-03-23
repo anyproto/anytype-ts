@@ -28,7 +28,6 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 				.side.right {
 					.icon { width: 20px; height: 20px; opacity: 0.75; }
 					.icon:hover, .icon.hover { opacity: 1; }
-					.icon.expand { background-image: url('~img/icon/expand.svg'); };
 					.icon.more { background-image: url('~img/icon/popup/preview/more.svg'); }
 				}
 			}

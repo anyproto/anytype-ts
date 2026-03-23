@@ -306,10 +306,6 @@ html.themeDark {
 		}
 	}
 
-	/* EditorControls */
-
-	.editorControls { }
-
 	/* Header */
 
 	.header.authIndex {
@@ -319,32 +315,6 @@ html.themeDark {
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
-	}
-
-	/* Vault */
-
-	.vault { background-color: #393939; }
-	.vault {
-		.item.isButton {
-			.iconWrap { background-color: #4f4f4f; }
-		}
-
-		.item.gallery {
-			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
-		}
-
-		.item.add {
-			.iconWrap { background-image: url('#{$themePath}/icon/vault/plus.svg'); }
-		}
-
-		.item.settings {
-			.iconWrap { background-color: unset; background-image: url('#{$themePath}/icon/vault/settings.svg'); }
-		}
-	}
-
-	.onboardingElement.onboardingVaultItem { background-color: unset !important; }
-	.onboardingElement.onboardingVaultItem {
-		.iconWrap { background-color: #000000 !important; }
 	}
 
 	/* Sidebar */

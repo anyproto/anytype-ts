@@ -170,7 +170,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			{...listeners}
 			style={style}
 		>
-			{!readonly ? <Icon className="dnd" /> : ''}
+			{!readonly ? <Icon name="common/dnd" /> : ''}
 			<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} className="mainIcon" />
 
 			<div className="txt" onClick={onClick}>

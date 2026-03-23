@@ -275,7 +275,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			>
 				{!item.isEmpty ? (
 					<>
-						{canDrag ? <Icon className="dnd" /> : ''}
+						{canDrag ? <Icon name="common/dnd" /> : ''}
 						<Icon className={`relation ${Relation.className(item.format)}`} />
 					</>
 				) : ''}
@@ -299,7 +299,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					<Label text={list.name} />
 					{list.description ? (
 						<Icon 
-							className="question"
+							name="common/question"
 							tooltipParam={{
 								text: list.description, 
 								className: 'relationGroupDescription',

@@ -355,7 +355,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{!isReadonlyValue ? <Icon className="dnd" /> : ''}
+				{!isReadonlyValue ? <Icon name="common/dnd" /> : ''}
 				<div className="sides">
 					<div className="side left">
 						<div className="chip relation" onClick={e => onSortNameClick(e, item)}>

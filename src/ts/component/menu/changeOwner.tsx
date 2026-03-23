@@ -281,7 +281,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="side left" />
 				<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
 				<div className="side right">
-					<Icon className="close" withBackground={true} onClick={e => close()} />
+					<Icon name="common/close" withBackground={true} onClick={e => close()} />
 				</div>
 			</div>
 

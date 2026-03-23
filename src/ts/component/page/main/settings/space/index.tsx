@@ -359,7 +359,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
-											<Icon className="home" />
+											<Icon name="common/home" />
 
 											<div className="side left">
 												<Title text={translate('commonHomepage')} />

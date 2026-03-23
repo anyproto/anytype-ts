@@ -15,9 +15,10 @@
 	> svg { flex-shrink: 0; }
 };
 
+.icon.commonAlert { color: var(--color-red); }
+
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
-.icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
 .icon.expand { background-image: url('~img/icon/menu/action/expand0.svg'); }
 
@@ -27,7 +28,6 @@
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
-.icon.ghost { background-image: url('~img/icon/ghost.svg'); }
 
 .icon.widget-star { background-image: url('~img/icon/widget/system/star.svg'); }
 .icon.widget-pin { background-image: url('~img/icon/widget/system/pin.svg'); }

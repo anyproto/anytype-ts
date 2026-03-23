@@ -471,7 +471,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back" withBackground={true} onClick={onBack} />
+					<Icon name="common/back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center">
 					<Label text={title} />

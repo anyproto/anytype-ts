@@ -17,11 +17,9 @@
 	}
 	.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
 
-	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 14px;
-		transition: background-image $transitionCommon;
+	.icon.clear {
+		width: 20px; height: 20px; position: absolute; right: 14px; top: 14px;
 	}
-	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
 .cell.isEditing.c-select.isSelect {

@@ -129,7 +129,7 @@
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
 			.switch { flex-shrink: 0; }
 
-			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
+			.icon.dnd { width: 20px; height: 20px; margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.icon.delete, .icon.more { 
 				width: 24px !important; height: 24px !important; background-size: 20px; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 

@@ -1131,8 +1131,8 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			<div className="wrapMenu">
 				<Icon 
 					id={`button-block-menu-${id}`} 
-					className="dnd" 
-					draggable={true} 
+					name="common/dnd"
+					draggable={true}
 					onDragStart={onDragStart} 
 					onMouseDown={onMenuDown} 
 					onClick={onMenuClick} 

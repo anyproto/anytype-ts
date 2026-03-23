@@ -554,7 +554,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon className="back" withBackground={true} onClick={e => {
+						<Icon name="common/back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');

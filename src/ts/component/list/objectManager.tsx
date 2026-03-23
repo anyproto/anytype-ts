@@ -384,7 +384,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					<Buttons ref={buttonsRef} buttons={getButtons()} />
 				</div>
 				<div className="side right">
-					<Icon className="search" onClick={onFilterShow} />
+					<Icon name="common/search" onClick={onFilterShow} />
 
 					<div ref={filterWrapperRef} id="filterWrapper" className="filterWrapper">
 						<Filter

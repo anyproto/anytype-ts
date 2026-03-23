@@ -186,7 +186,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{allowed ? <Icon className="dnd" /> : ''}
+				{allowed ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable" onClick={() => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>

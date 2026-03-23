@@ -126,7 +126,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			<div className="head">
 				<div className="inner">
 					<div className="element" onClick={() => onPage('', {})}>
-						<Icon className="back" />
+						<Icon name="common/back" />
 						{translate('commonBack')}
 					</div>
 				</div>

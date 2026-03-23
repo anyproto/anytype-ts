@@ -499,7 +499,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		>
 			<div className="head">
 				<div className="name">{translate('commonVersionHistory')}</div>
-				<Icon className="close" withBackground={true} onClick={onClose} />
+				<Icon name="common/close" withBackground={true} onClick={onClose} />
 			</div>
 
 			<div 

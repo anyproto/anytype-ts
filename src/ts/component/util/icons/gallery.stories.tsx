@@ -4,6 +4,7 @@ import { getIconsByFolder, getIcon } from './registry';
 import './header';
 import './control/editor';
 import './control/audio';
+import './common';
 
 const IconGallery = () => {
 	const folders = getIconsByFolder();

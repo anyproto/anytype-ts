@@ -159,7 +159,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{allowedView ? <Icon className="dnd" /> : ''}
+				{allowedView ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable">
 					<Cell 
 						id={`menu-group-${item.id}`} 

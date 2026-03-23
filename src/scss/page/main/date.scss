@@ -27,7 +27,7 @@
 	.categories { display: flex; flex-direction: row; gap: 8px; margin: 0px 0px 12px 0px; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
 	.categories {
 		.button { border-radius: 8px; }
-		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; background-image: url('~img/icon/mention.svg'); }
+		.icon.mention { width: 20px; height: 20px; margin: 0px 6px 0px 0px; }
 	}
 
 	.cell.c-type {

@@ -430,7 +430,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				onSelect={onSelect}
 				readonly={isReadonly}
 			/>
-			<Icon className="clear" onClick={onClear} />
+			<Icon name="common/clear" onClick={onClear} />
 		</div>
 	);
 

@@ -1769,7 +1769,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								</div>
 							</div>
 							<div className="side right">
-								<Icon className="clear" onClick={onClear} />
+								<Icon name="common/clear" onClick={onClear} />
 							</div>
 						</div>
 					) : ''}

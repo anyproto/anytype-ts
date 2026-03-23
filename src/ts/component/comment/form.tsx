@@ -707,7 +707,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						<div className="div" />
 						<Icon className="slash" withBackground={true} onClick={onSlashClick} />
 						<Icon className="emoji" withBackground={true} onClick={onEmojiClick} />
-						<Icon className="mention" withBackground={true} onClick={onMentionClick} />
+						<Icon name="common/mention" withBackground={true} onClick={onMentionClick} />
 					</div>
 
 					<div className="side right">

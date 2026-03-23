@@ -218,7 +218,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 										<Label text={name} onClick={withToggle ? () => onToggle(id) : null} />
 										{description ? (
 											<Icon
-												className="question"
+												name="common/question"
 												tooltipParam={{ 
 													text: description,
 													className: 'relationGroupDescription',

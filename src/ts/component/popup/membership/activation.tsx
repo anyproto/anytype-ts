@@ -84,7 +84,7 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 
 			<div ref={inputWrapperRef} className="inputWrapper">
 				<Input type="text" ref={inputRef} onKeyUp={onKeyUp} placeholder={translate('popupMembershipActivationPlaceholder')} />
-				<Icon className="clear" onClick={onClear} />
+				<Icon name="common/clear" onClick={onClear} />
 			</div>
 
 			<div className="buttons">

@@ -341,7 +341,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div ref={nodeRef} className="wrap">
 			<div className="filterWrapper">
 				<div className="filterContainer">
-					<Icon className="search" />
+					<Icon name="common/search" />
 					<Input
 						ref={inputRef}
 						placeholder={translate('commonSearch')}
@@ -349,7 +349,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onKeyUp={onKeyUp}
 					/>
 					<div id="switcher" className="cnt" />
-					<Icon className="clear" onClick={onClear} />
+					<Icon name="common/clear" onClick={onClear} />
 				</div>
 
 				<div className="arrowWrapper">
