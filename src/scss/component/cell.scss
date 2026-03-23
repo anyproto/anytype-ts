@@ -56,13 +56,8 @@
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
-	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); flex-shrink: 0; }
-	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
-
+	.icon { width: 20px; height: 20px; flex-shrink: 0; }
 	.label { line-height: 20px; }
-}
-.cellContent.c-checkbox.canEdit {
-	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 }
 
 .cellContent.c-file {

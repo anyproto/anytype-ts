@@ -40,7 +40,7 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	return (
 		<>
-			<Icon className={cn.join(' ')} />
+			<Icon name={value ? 'marker/checkbox2' : 'marker/checkbox0'} color={value ? 'accent100' : ''} />
 			{label ? <Label text={label} /> : ''}
 		</>
 	);
