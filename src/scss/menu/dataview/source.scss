@@ -51,7 +51,7 @@
 
 		.item.add { display: block; }
 		.item.add {
-			.icon.dnd { margin-top: 0px; }
+			.icon.commonDnd { margin-top: 0px; }
 		}
 
 		.item.isSection { padding: 4px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }

@@ -33,7 +33,7 @@ const IconGallery = () => {
 
 	return (
 		<div className="iconGallery">
-			{Array.from(folders.entries()).map(([ folder, names ]) => (
+			{Array.from(folders.entries()).sort((a, b) => a[0].localeCompare(b[0])).map(([ folder, names ]) => (
 				<div key={folder} className="iconGalleryFolder">
 					<h3 className="iconGalleryTitle">{folder}</h3>
 					<div className="iconGalleryGrid">

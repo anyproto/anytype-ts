@@ -89,7 +89,7 @@
 
 	.block.blockText.textTitle { @include text-title; }
 	.block.blockText.textTitle {
-		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
+		> .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
@@ -116,7 +116,7 @@
 	/* Description */
 
 	.block.blockText.textDescription { @include text-description; }
-	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
+	.block.blockText.textDescription > .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 
 	/* Headers */
 
