@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Blue = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<circle cx="33" cy="33" r="33" transform="rotate(-90 33 33)" fill="url(#paint0_radial_blue)" />
 		<circle cx="33" cy="87" r="33" transform="rotate(-90 33 87)" fill="url(#paint1_radial_blue)" />
 		<circle cx="87" cy="33" r="33" transform="rotate(-90 87 33)" fill="url(#paint2_radial_blue)" />

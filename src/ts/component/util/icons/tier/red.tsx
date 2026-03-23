@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Red = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="120" height="120" viewBox="0 0 120 121" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 120 121" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<g clipPath="url(#clip0_red)">
 			<circle opacity="0.6" cx="60" cy="25.2695" r="25" transform="rotate(-90 60 25.2695)" fill="url(#paint0_radial_red)" />
 			<circle opacity="0.6" cx="60" cy="95.2734" r="25" transform="rotate(-90 60 95.2734)" fill="url(#paint1_radial_red)" />

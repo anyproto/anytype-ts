@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Home = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path fillRule="evenodd" clipRule="evenodd" d="M7 3.5H3C2.72386 3.5 2.5 3.72386 2.5 4V7C2.5 7.27614 2.72386 7.5 3 7.5H7C7.27614 7.5 7.5 7.27614 7.5 7V4C7.5 3.72386 7.27614 3.5 7 3.5ZM3 2C1.89543 2 1 2.89543 1 4V7C1 8.10457 1.89543 9 3 9H7C8.10457 9 9 8.10457 9 7V4C9 2.89543 8.10457 2 7 2H3Z" fill="currentColor" />
 		<path fillRule="evenodd" clipRule="evenodd" d="M7 12.5H3C2.72386 12.5 2.5 12.7239 2.5 13V16C2.5 16.2761 2.72386 16.5 3 16.5H7C7.27614 16.5 7.5 16.2761 7.5 16V13C7.5 12.7239 7.27614 12.5 7 12.5ZM3 11C1.89543 11 1 11.8954 1 13V16C1 17.1046 1.89543 18 3 18H7C8.10457 18 9 17.1046 9 16V13C9 11.8954 8.10457 11 7 11H3Z" fill="currentColor" />
 		<path fillRule="evenodd" clipRule="evenodd" d="M17 3.5H13C12.7239 3.5 12.5 3.72386 12.5 4V7C12.5 7.27614 12.7239 7.5 13 7.5H17C17.2761 7.5 17.5 7.27614 17.5 7V4C17.5 3.72386 17.2761 3.5 17 3.5ZM13 2C11.8954 2 11 2.89543 11 4V7C11 8.10457 11.8954 9 13 9H17C18.1046 9 19 8.10457 19 7V4C19 2.89543 18.1046 2 17 2H13Z" fill="currentColor" />

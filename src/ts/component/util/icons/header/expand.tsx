@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Expand = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M11 4C11 3.58579 11.3358 3.25 11.75 3.25H17V4.75H11.75C11.3358 4.75 11 4.41421 11 4Z" fill="currentColor" />
 		<path d="M16.25 9.25C15.8358 9.25 15.5 8.91421 15.5 8.5V3.25H17V8.5C17 8.91421 16.6642 9.25 16.25 9.25Z" fill="currentColor" />
 		<path fillRule="evenodd" clipRule="evenodd" d="M16.5304 4.78039L11.5304 9.78039L10.4697 8.71973L15.4697 3.71973L16.5304 4.78039Z" fill="currentColor" />

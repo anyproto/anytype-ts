@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Purple = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<circle opacity="0.5" cx="32" cy="32" r="32" fill="url(#paint0_radial_purple)" />
 		<circle opacity="0.65" cx="32" cy="40" r="22" fill="url(#paint1_radial_purple)" />
 		<circle opacity="0.8" cx="32" cy="48" r="12" fill="url(#paint2_radial_purple)" />

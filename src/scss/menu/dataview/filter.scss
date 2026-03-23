@@ -38,9 +38,6 @@
 			&.isActive {
 				.filterInner { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
 				.relationName { font-weight: 500; }
-				.icon.filterIcon {
-					&.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
-				}
 				.icon.relation { background-color: var(--color-system-accent-100); }
 
 				&:hover,

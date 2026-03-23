@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Qr = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<rect x="2.75" y="2.75" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5" />
 		<rect x="2.75" y="11.75" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5" />
 		<rect x="11.75" y="2.75" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5" />

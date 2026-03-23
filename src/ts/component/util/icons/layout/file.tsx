@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LayoutFile = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M10.2428 3.11809L11.3225 4.19781L5.56399 9.95634L4.48427 8.87661L10.2428 3.11809Z" fill="currentColor" />
 		<path d="M11.6824 5.99735L12.7621 7.07707L8.44326 11.396L7.36353 10.3162L11.6824 5.99735Z" fill="currentColor" />
 		<path d="M14.562 7.43733L15.6418 8.51706L10.6031 13.5558L9.52333 12.476L14.562 7.43733Z" fill="currentColor" />

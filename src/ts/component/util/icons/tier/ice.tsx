@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Ice = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<circle opacity="0.4" cx="32" cy="32" r="32" fill="url(#paint0_radial_ice)" />
 		<circle opacity="0.6" cx="32" cy="32" r="18" fill="url(#paint1_radial_ice)" />
 		<circle opacity="0.8" cx="32" cy="32" r="4" fill="url(#paint2_radial_ice)" />

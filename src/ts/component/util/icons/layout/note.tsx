@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Note = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M5.5 12.5H11.5V14H5.5V12.5Z" fill="currentColor" />
 		<path d="M5.5 9.25H14.5V10.75H5.5V9.25Z" fill="currentColor" />
 		<path d="M5.5 6H14.5V7.5H5.5V6Z" fill="currentColor" />
