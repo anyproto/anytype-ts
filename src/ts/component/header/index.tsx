@@ -89,7 +89,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="widgetPanel" withBackground={true}
+					name="header/widget" withBackground={true}
 					onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 					inner={bullet}
 					tooltipParam={{
@@ -99,7 +99,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="expand" withBackground={true}
+					name="header/expand" withBackground={true}
 					onClick={onOpen || onExpand}
 					tooltipParam={{
 						text: translate('commonOpenObject'),
@@ -132,7 +132,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 				{withGraph ? (
 					<Icon
-						className="graph" withBackground={true}
+						name="header/graph" withBackground={true}
 						onClick={onGraph}
 						tooltipParam={{
 							text: translate('commonGraph'),

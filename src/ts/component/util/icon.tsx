@@ -2,9 +2,11 @@ import React, { MouseEvent, forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { I, U, Preview } from 'Lib';
+import { getIcon } from './icons';
 
 interface Props {
 	id?: string;
+	name?: string;
 	icon?: string;
 	className?: string;
 	arrow?: boolean;
@@ -28,6 +30,7 @@ interface Props {
 
 const Icon = forwardRef<HTMLDivElement, Props>(({
 	id = '',
+	name = '',
 	icon = '',
 	className = '',
 	arrow = false,
@@ -50,6 +53,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
+	const SvgComponent = name ? getIcon(name) : null;
 
 	if (icon) {
 		style.backgroundImage = `url("${icon}")`;
@@ -93,7 +97,8 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		});
 	};
 
-	const cn = [ 'icon', className, (withBackground ? 'withBackground' : '') ];
+	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
+	const cn = [ 'icon', nameCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
 
 	const element = (
 		<motion.div
@@ -113,6 +118,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onDoubleClick={onDoubleClick}
 			{...animation}
 		>
+			{SvgComponent ? <SvgComponent /> : ''}
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}
 		</motion.div>

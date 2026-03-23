@@ -68,19 +68,8 @@
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon.more { background-image: url('~img/icon/header/more.svg'); }
-	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
+	.icon.headerExpand { display: none; }
 	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-	.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
-	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
-	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
-	.icon.pin { background-image: url('~img/icon/header/pin.svg'); }
-	.icon.unpin { background-image: url('~img/icon/header/unpin.svg'); }
-	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
-	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.logout { background-image: url('~img/icon/header/logout.svg'); }
 
 	.label.btn {
 		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;
@@ -94,10 +83,10 @@
 		.icon.vaultToggle { display: none; }
 	}
 	&.withSidebarSubLeft {
-		.icon.widgetPanel { display: none; }
+		.icon.headerWidget { display: none; }
 	}
 
-	.icon.widgetPanel {
+	.icon.headerWidget {
 		.bullet {
 			position: absolute; right: 0px; bottom: 0px; width: 12px; height: 12px; border-radius: 6px;
 			background-color: var(--color-red); border: 3px solid var(--color-bg-primary);
@@ -183,7 +172,6 @@ html.bodyAuthSelect {
 	}
 	.filterWrap.active { width: 200px; }
 
-	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }

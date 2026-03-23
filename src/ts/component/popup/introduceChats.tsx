@@ -85,7 +85,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 						<div className={[ 'img', `slide${activeSlide}` ].join(' ')}>
 							<div className="header">
 								<div className="mask">
-									<Icon />
+									<Icon name="header/widget" />
 								</div>
 								<div className="dots" />
 							</div>

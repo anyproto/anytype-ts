@@ -168,7 +168,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={hasWidget ? 'unpin' : 'pin'} withBackground={true}
+						name={hasWidget ? 'header/pin1' : 'header/pin0'} withBackground={true}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
@@ -178,20 +178,20 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon
 						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', (isRelationOpen ? 'active' : '') ].join(' ')} withBackground={true}
+						name="header/relation" className={isRelationOpen ? 'active' : ''} withBackground={true}
 						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}
 
 				{showMenu ? (
-					<Icon 
+					<Icon
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-						className="more" withBackground={true}
-						onClick={onMore} 
+						name="header/more" withBackground={true}
+						onClick={onMore}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 			</div>
 		</>

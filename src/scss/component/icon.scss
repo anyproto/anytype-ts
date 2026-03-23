@@ -9,6 +9,12 @@
 	&:hover, &.hover, &.active { background-color: var(--color-shape-highlight-medium) !important; }
 };
 
+.icon.hasSvg {
+	display: inline-flex; align-items: center; justify-content: center; color: var(--color-icon);
+
+	> svg { flex-shrink: 0; }
+};
+
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }

@@ -74,7 +74,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
 
 		if (id == 'account') {
-			return <Icon id="button-share-one-to-one" className="oneToOne" withBackground={true} onClick={onOneToOne} />;
+			return <Icon id="button-share-one-to-one" name="header/oneToOne" withBackground={true} onClick={onOneToOne} />;
 		};
 
 		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
@@ -89,7 +89,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 			<Icon
 				id="button-header-more"
 				tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-				className="more" withBackground={true}
+				name="header/more" withBackground={true}
 				onClick={onMore}
 				onDoubleClick={e => e.stopPropagation()}
 			/>
@@ -123,12 +123,12 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		<>
 			<div className="side left">
 				{!isPopup ? (
-					<Icon 
-						className="widgetPanel" withBackground={true}
+					<Icon
+						name="header/widget" withBackground={true}
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>

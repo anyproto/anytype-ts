@@ -72,11 +72,11 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-search" 
-					className="btn-search" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSearch} 
+				<Icon
+					id="button-header-search"
+					name="header/search" withBackground={true}
+					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSearch}
 				/>
 
 				<Icon 
