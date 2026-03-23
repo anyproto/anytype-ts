@@ -145,7 +145,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 					{...U.Common.dataProps(dataset)}
 				>
 					{isLoading && <Loader />}
-					{iconParam ? <Icon name={iconParam.name} color={iconParam.color} size={iconParam.size} /> : icon ? <Icon className={icon} /> : ''}
+					{iconParam ? <Icon {...iconParam} /> : icon ? <Icon className={icon} /> : ''}
 					<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>

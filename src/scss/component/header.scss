@@ -109,7 +109,7 @@
 	.logo { width: 70px; height: 18px; background: url('~img/logo/header.svg'); }
 
 	.select {
-		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px 4px 29px; border-radius: 6px;
+		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px; border-radius: 6px;
 		@include text-small; font-weight: 500; color: var(--color-text-secondary);
 	}
 	.select:hover,
@@ -117,7 +117,7 @@
 	.select {
 		.icon.arrow { display: none; }
 
-		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
+/*		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }*/
 	}
 
 	.button.simple { 

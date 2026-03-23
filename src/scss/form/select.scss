@@ -27,6 +27,7 @@
 	}
 	.item::before { display: none; }
 
+	.currentSelected { display: flex; align-items: center; gap: 0px 6px; }
 	.clickable { display: flex; width: 100%; }
 }
 

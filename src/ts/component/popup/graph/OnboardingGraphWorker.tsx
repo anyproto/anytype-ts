@@ -3,10 +3,11 @@ import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { S, U, J } from 'Lib';
 
-const typeIconModules = import.meta.glob('../../../../img/icon/type/default/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const typeIconModules = import.meta.glob('/src/img/icon/type/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 const getTypeIcon = (name: string): string => {
-	const path = `../../../../img/icon/type/default/${name}.svg`;
-	if (path in typeIconModules) return typeIconModules[path];
+	for (const path of Object.keys(typeIconModules)) {
+		if (path.endsWith(`/${name}.svg`)) return typeIconModules[path];
+	};
 	throw new Error(`Cannot find type icon: ${name}`);
 };
 

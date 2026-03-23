@@ -16,6 +16,7 @@ interface Props {
 	options: I.Option[];
 	noFilter?: boolean;
 	isMultiple?: boolean;
+	iconParam?: I.IconParam;
 	showOn?: 'click' | 'mouseDown' | 'mouseEnter';
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
@@ -45,6 +46,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	readonly = false,
 	menuParam = {},
 	tooltipParam = {},
+	iconParam,
 	onChange,	
 }, ref) => {
 
@@ -238,6 +240,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			{current ? (
 				<>
 					<div className="currentSelected">
+						{iconParam ? <Icon {...iconParam} /> : ''}
 						{current.map((item: any, i: number) => (
 							<MenuItemVertical key={i} {...item} />
 						))}

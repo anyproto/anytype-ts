@@ -1,7 +1,7 @@
 import React from 'react';
 import { registerIcon } from '../registry';
 
-const svgModules = import.meta.glob('../../../../../img/icon/type/default/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const svgModules = import.meta.glob('/src/img/icon/type/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 
 for (const [ path, raw ] of Object.entries(svgModules)) {
 	const name = path.split('/').pop()?.replace('.svg', '') || '';

@@ -49,7 +49,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
-		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
+		let relation = { id: 'relation', iconParam: { name: 'header/relation' }, name: translate('menuObjectContextEditRelations') };
 		let notification: any = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };

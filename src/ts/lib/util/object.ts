@@ -3,8 +3,8 @@ import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, 
 import errorIcon from '../../../img/icon/error.svg?raw';
 
 const typeIconModules = import.meta.glob([
-	'../../../img/icon/type/default/*.svg',
-	'/dist/img/icon/type/default/*.svg',
+	'/src/img/icon/type/*.svg',
+	'/dist/img/icon/type/*.svg',
 ], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 const typeIcons = (key: string): string => {
 	const name = key.replace('./', '');

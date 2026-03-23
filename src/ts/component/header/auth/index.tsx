@@ -44,6 +44,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				<Select
 					ref={refLang}
 					id="interfaceLang"
+					iconParam={{ name: 'header/language', size: 18 }}
 					value={interfaceLang}
 					options={interfaceLanguages}
 					onChange={v => Action.setInterfaceLang(v)}
