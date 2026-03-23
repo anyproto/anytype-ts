@@ -12,10 +12,7 @@ for (const [ path, raw ] of Object.entries(svgModules)) {
 
 	const Component = (props: React.SVGProps<SVGSVGElement>) => {
 		const svg = raw
-			.replace(/<svg([^>]*)>/, (match: string, attrs: string) => {
-				const viewBox = attrs.match(/viewBox="([^"]*)"/)?.[1] || '0 0 512 512';
-				return `<svg viewBox="${viewBox}" fill="currentColor" xmlns="http://www.w3.org/2000/svg">`;
-			})
+			.replace(/_COLOR_VAR_/g, 'currentColor')
 			.replace(/<\/?svg[^>]*>/g, '')
 			.replace(/fill="[^"]*"/g, '')
 			.replace(/stroke="[^"]*"/g, '');
