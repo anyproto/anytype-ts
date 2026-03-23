@@ -105,6 +105,11 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	const colorCn = color ? `iconColor iconColor-${color}` : '';
 	const cn = [ 'icon', nameCn, colorCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
 
+	if (SvgComponent && (size != 20)) {
+		style.width = size;
+		style.height = size;
+	};
+
 	const element = (
 		<motion.div
 			ref={ref || nodeRef}
