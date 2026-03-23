@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
-import ghostIcon from 'img/icon/ghost.svg';
+import { getIcon } from './icons';
 import objCheckbox0 from 'img/icon/object/checkbox0.svg';
 import objCheckbox1 from 'img/icon/object/checkbox1.svg';
 import objCheckbox2 from 'img/icon/object/checkbox2.svg';
@@ -101,7 +101,7 @@ const FontSize = {
 	128: 72,
 };
 
-const Ghost = ghostIcon;
+const GhostIcon = getIcon('common/ghost');
 
 const CheckboxTask = {
 	'': {
@@ -437,7 +437,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	if (isDeleted) {
-		icon = <img src={Ghost} className={[ 'iconCommon', `c${iconSize}` ].join(' ')} />;
+		icon = GhostIcon ? <GhostIcon className={[ 'iconCommon', `c${iconSize}` ].join(' ')} /> : null;
 	};
 
 	const setErrorIcon = () => {
