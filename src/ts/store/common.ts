@@ -466,7 +466,11 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('notificationSound');
 		};
-		if (ret === undefined) {
+		// Migrate from old boolean format: false → off, true → default
+		if (ret === false) {
+			ret = '';
+		} else
+		if ((ret === true) || (ret === undefined)) {
 			ret = 'bongo';
 		};
 		return ret;
