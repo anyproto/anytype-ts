@@ -178,10 +178,6 @@ html.themeDark {
 	.button.blank:not(.disabled):hover,
 	.button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
-	.filter {
-		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
-		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
-	}
 	.filter.outlined {
 		.icon.clear { background-image: url('#{$themePath}/icon/filter/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/filter/clear1.svg') !important; }
