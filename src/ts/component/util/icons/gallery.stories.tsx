@@ -31,6 +31,10 @@ const FOLDER_SIZES: Record<string, number> = {
 	'popup/header': 56,
 };
 
+const FOLDER_DIMENSIONS: Record<string, { width: number; height: number }> = {
+	banner: { width: 80, height: 40 },
+};
+
 const IconGallery = () => {
 	const folders = getIconsByFolder();
 
@@ -43,11 +47,12 @@ const IconGallery = () => {
 						{names.map((name) => {
 							const label = name.split('/').pop();
 							const size = FOLDER_SIZES[folder];
+							const dims = FOLDER_DIMENSIONS[folder];
 
 							return (
 								<div key={name} className="iconGalleryItem">
 									<div className="iconGalleryPreview">
-										<Icon name={name} size={size} />
+										<Icon name={name} size={size} iconWidth={dims?.width} iconHeight={dims?.height} />
 									</div>
 									<span className="iconGalleryLabel">{label}</span>
 								</div>

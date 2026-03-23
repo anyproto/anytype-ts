@@ -10,6 +10,8 @@ interface Props {
 	icon?: string;
 	color?: string;
 	size?: number;
+	iconWidth?: number;
+	iconHeight?: number;
 	className?: string;
 	arrow?: boolean;
 	withBackground?: boolean;
@@ -36,6 +38,8 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	icon = '',
 	color = '',
 	size = 20,
+	iconWidth,
+	iconHeight,
 	className = '',
 	arrow = false,
 	withBackground = false,
@@ -104,10 +108,12 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
 	const colorCn = color ? `iconColor iconColor-${color}` : '';
 	const cn = [ 'icon', nameCn, colorCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
+	const w = iconWidth || size;
+	const h = iconHeight || size;
 
-	if (SvgComponent && (size != 20)) {
-		style.width = size;
-		style.height = size;
+	if (SvgComponent && ((w != 20) || (h != 20))) {
+		style.width = w;
+		style.height = h;
 	};
 
 	const element = (
@@ -128,7 +134,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onDoubleClick={onDoubleClick}
 			{...animation}
 		>
-			{SvgComponent ? <SvgComponent width={size} height={size} /> : ''}
+			{SvgComponent ? <SvgComponent width={w} height={h} /> : ''}
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}
 		</motion.div>
