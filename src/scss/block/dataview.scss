@@ -231,6 +231,7 @@
 						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
 						.name { font-weight: 500; }
 
+						.icon.hasSvg { color: var(--color-system-accent-100); }
 						.icon.relation { background-color: var(--color-system-accent-100); }
 						.icon.arrow { background-image: url('~img/arrow/filterValue1.svg'); }
 					}
