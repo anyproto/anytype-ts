@@ -11,7 +11,6 @@ import RelationObject from './object';
 import Phone from './phone';
 import Select from './select';
 import ShortText from './shortText';
-import Tag from './tag';
 import Url from './url';
 
 registerIcon('relation/checkbox', Checkbox);
@@ -26,5 +25,4 @@ registerIcon('relation/object', RelationObject);
 registerIcon('relation/phone', Phone);
 registerIcon('relation/select', Select);
 registerIcon('relation/shortText', ShortText);
-registerIcon('relation/tag', Tag);
 registerIcon('relation/url', Url);

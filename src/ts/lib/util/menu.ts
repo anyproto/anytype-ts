@@ -189,7 +189,7 @@ class UtilMenu {
 		return [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+			{ id: 'date', iconParam: { name: 'relation/date' }, lang: 'Date', arrow: true },
 		].map((it: any) => {
 			it = this.mapperBlock(it);
 
