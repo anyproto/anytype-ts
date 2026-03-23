@@ -3,3 +3,5 @@ import './header';
 import './control/editor';
 import './control/audio';
 import './common';
+import './emoji';
+import './marker';

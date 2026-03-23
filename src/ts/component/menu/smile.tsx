@@ -1065,17 +1065,17 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{sections.length ? (
 						<div id="foot" className="foot">
 							{groups.map((group: any, i: number) => (
-								<Icon 
-									key={i} 
+								<Icon
+									key={i}
 									id={`item-${group.id}`}
-									className={group.id} 
-									tooltipParam={{ text: group.name, typeY: I.MenuDirection.Bottom }} 
-									onClick={() => onGroup(group.id)} 
+									name={`emoji/${group.id}`}
+									tooltipParam={{ text: group.name, typeY: I.MenuDirection.Bottom }}
+									onClick={() => onGroup(group.id)}
 								/>
 							))}
-							<Icon 
-								className="random" 
-								tooltipParam={{ text: translate('menuSmileRandom') }} 
+							<Icon
+								name="emoji/random"
+								tooltipParam={{ text: translate('menuSmileRandom') }}
 								onClick={() => onRandom()}
 							/>
 						</div>
