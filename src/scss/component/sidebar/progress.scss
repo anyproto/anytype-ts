@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .sidebarProgress {
-	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 264px;
+	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 288px;
 	background: var(--color-bg-primary); border-radius: 12px;
 	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -27,7 +27,7 @@
 	.items { display: flex; flex-direction: column; padding: 0px 8px 8px 8px; }
 
 	.item {
-		display: flex; align-items: center; gap: 0px 10px; padding: 6px 4px; border-radius: 8px;
+		display: flex; align-items: center; gap: 0px 10px; padding: 6px 8px; border-radius: 8px;
 	}
 	.item {
 		.iconWrap {
@@ -67,7 +67,7 @@
 			}
 
 			.icon.close {
-				position: absolute; left: 0px; top: 0px;
+				@include pos-abs-mid; margin: -10px 0px 0px -10px; z-index: 2;
 				width: 20px; height: 20px; background-image: url('~img/icon/progress/close.svg');
 				opacity: 0; transition: opacity 0.15s ease;
 			}

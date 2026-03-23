@@ -1,7 +1,7 @@
-import React, { FC, memo, useRef, useEffect, useState } from 'react';
+import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, S, U, C, translate } from 'Lib';
+import { I, S, U, C, J, translate, keyboard, Storage } from 'Lib';
 
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
@@ -15,33 +15,36 @@ const getIconClass = (type: I.ProgressType): string => {
 	};
 };
 
-const ItemStatus = observer(({ id, type }: { id: string; type: I.ProgressType }) => {
-	const item = S.Progress.getItem(id);
+interface ItemStatusProps {
+	type: I.ProgressType;
+	current: number;
+	total: number;
+	error?: string;
+};
 
-	if (!item) {
-		return null;
+const ItemStatus: FC<ItemStatusProps> = memo(({ type, current, total, error }) => {
+	if (error) {
+		return <span className="error">{error}</span>;
 	};
 
-	const isError = item.state == I.ProgressState.Error;
-
-	if (isError) {
-		return <span className="error">{item.error}</span>;
-	};
-
-	const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
+	const percent = total > 0 ? Math.min(100, Math.ceil(current / total * 100)) : 0;
 	const status = translate(U.String.toCamelCase(`progress-status-${type}`));
 
 	return <span>{percent}% <span className="dot" /> {status}</span>;
 });
 
-interface ItemProps {
+export interface ProgressItemProps {
 	id: string;
 	type: I.ProgressType;
 	canCancel: boolean;
 	isError: boolean;
+	current?: number;
+	total?: number;
+	error?: string;
+	onCancel?: (id: string) => void;
 };
 
-const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
+export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, onCancel }: ProgressItemProps) => {
 	const cn = [ 'item' ];
 	const label = translate(U.String.toCamelCase(`progress-${type}`));
 	const iconClass = getIconClass(type);
@@ -50,9 +53,14 @@ const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
 		cn.push('canCancel');
 	};
 
-	const onCancel = (e: React.MouseEvent) => {
+	const handleCancel = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		C.ProcessCancel(id);
+
+		if (onCancel) {
+			onCancel(id);
+		} else {
+			C.ProcessCancel(id);
+		};
 	};
 
 	return (
@@ -64,26 +72,129 @@ const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
 			<div className="info">
 				<div className="name">{label}</div>
 				<div className="status">
-					<ItemStatus id={id} type={type} />
+					<ItemStatus type={type} current={current || 0} total={total || 0} error={error} />
 				</div>
 			</div>
 
 			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
-				{canCancel ? <Icon className="close" onClick={onCancel} /> : ''}
+				{canCancel ? <Icon className="close" onClick={handleCancel} /> : ''}
 			</div>
 		</div>
 	);
 });
 
+const STORAGE_KEY = 'sidebarProgress';
+
 const SidebarProgress: FC = observer(() => {
 
 	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
 	const [ isExpanded, setIsExpanded ] = useState(false);
+	const nodeRef = useRef<HTMLDivElement>(null);
 	const prevCount = useRef(0);
+	const hasDragged = useRef(false);
+	const startX = useRef(0);
+	const startY = useRef(0);
+	const dx = useRef(0);
+	const dy = useRef(0);
+
+	const clampCoords = useCallback((x: number, bottom: number): { x: number; bottom: number } => {
+		const { ww, wh } = U.Common.getWindowDimensions();
+		const node = nodeRef.current;
+		const w = node ? node.offsetWidth : 0;
+		const h = node ? node.offsetHeight : 0;
+
+		x = Math.max(0, Math.min(ww - w, x));
+		bottom = Math.max(0, Math.min(wh - h - J.Size.header, bottom));
+
+		return { x, bottom };
+	}, []);
+
+	const setPosition = useCallback((x: number, bottom: number) => {
+		const node = nodeRef.current;
+
+		if (!node) {
+			return;
+		};
+
+		const coords = clampCoords(x, bottom);
+
+		node.style.position = 'fixed';
+		node.style.left = `${coords.x}px`;
+		node.style.bottom = `${coords.bottom}px`;
+		node.style.top = 'auto';
+	}, [ clampCoords ]);
+
+
+	const onDragMove = useCallback((e: MouseEvent) => {
+		const movedX = Math.abs(e.pageX - startX.current);
+		const movedY = Math.abs(e.pageY - startY.current);
+
+		if ((movedX > 3) || (movedY > 3)) {
+			hasDragged.current = true;
+		};
+
+		const node = nodeRef.current;
+		const { wh } = U.Common.getWindowDimensions();
+		const h = node ? node.offsetHeight : 0;
+		const x = e.pageX - dx.current;
+		const bottom = wh - (e.pageY - dy.current) - h;
+
+		setPosition(x, bottom);
+		Storage.set(STORAGE_KEY, { x, bottom }, Storage.isLocal(STORAGE_KEY));
+	}, [ setPosition ]);
+
+	const onDragEnd = useCallback(() => {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+
+		window.removeEventListener('mousemove', onDragMove);
+		window.removeEventListener('mouseup', onDragEnd);
+	}, [ onDragMove ]);
+
+	const onDragStart = useCallback((e: React.MouseEvent) => {
+		const node = nodeRef.current;
+
+		if (!node) {
+			return;
+		};
+
+		const rect = node.getBoundingClientRect();
+
+		dx.current = e.pageX - rect.left;
+		dy.current = e.pageY - rect.top;
+		startX.current = e.pageX;
+		startY.current = e.pageY;
+		hasDragged.current = false;
+
+		keyboard.disableSelection(true);
+		keyboard.setDragging(true);
+
+		window.addEventListener('mousemove', onDragMove);
+		window.addEventListener('mouseup', onDragEnd);
+	}, [ onDragMove, onDragEnd ]);
+
+	const onHeadClick = useCallback(() => {
+		if (!hasDragged.current) {
+			setIsExpanded(v => !v);
+		};
+	}, []);
 
 	useEffect(() => {
-		if (AUTO_EXPAND && (list.length > 0) && (prevCount.current === 0)) {
-			setIsExpanded(true);
+		if ((list.length > 0) && (prevCount.current === 0)) {
+			Storage.delete(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
+
+			const node = nodeRef.current;
+
+			if (node) {
+				node.style.position = '';
+				node.style.left = '';
+				node.style.bottom = '';
+				node.style.top = '';
+			};
+
+			if (AUTO_EXPAND) {
+				setIsExpanded(true);
+			};
 		};
 
 		if (!list.length) {
@@ -93,19 +204,16 @@ const SidebarProgress: FC = observer(() => {
 		prevCount.current = list.length;
 	}, [ list.length ]);
 
+
 	if (!list.length) {
 		return null;
-	};
-
-	const onToggle = () => {
-		setIsExpanded(!isExpanded);
 	};
 
 	const headerText = U.String.sprintf(translate('progressProcessing'), list.length);
 
 	return (
-		<div className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
-			<div className="head" onClick={onToggle}>
+		<div ref={nodeRef} className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
+			<div className="head" onMouseDown={onDragStart} onClick={onHeadClick}>
 				<Label text={headerText} />
 				<Icon className="arrow" />
 			</div>
@@ -117,12 +225,15 @@ const SidebarProgress: FC = observer(() => {
 						const canCancel = item.canCancel && !isError;
 
 						return (
-							<Item
+							<ProgressItem
 								key={item.id}
 								id={item.id}
 								type={item.type}
 								canCancel={canCancel}
 								isError={isError}
+								current={item.current}
+								total={item.total}
+								error={item.error}
 							/>
 						);
 					})}
