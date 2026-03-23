@@ -14,10 +14,8 @@
 		.controls { display: flex; align-items: center; column-gap: 10px; height: 32px; }
         .controls {
             .icon { width: 20px; height: 20px; vertical-align: top; transition: none; flex-shrink: 0; }
-            .icon.play { background-image: url('~img/icon/audio/play.svg'); margin-left: -4px; }
-            .icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
-            .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
-            .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }
+            .icon.hasSvg { color: var(--color-text-primary); }
+            .icon.controlAudioPlay, .icon.controlAudioPause { margin-left: -4px; }
 
 			.timeDragWrapper { flex: 1 0 auto; height: 100%; }
             .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }

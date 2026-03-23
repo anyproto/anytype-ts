@@ -155,22 +155,9 @@ html.themeDark {
 		.dot { animation-name: dots-dark; }
 	}
 
-	.mediaAudio {
-		.controls {
-			.icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
-			.icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
+	.mediaAudio { }
 
-			.icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
-			.icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-
-			.icon.volume.muted { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-		}
-	}
-
-	.graphTimeline {
-		.iconPlay { background-image: url('#{$themePath}/icon/audio/play.svg'); }
-		.iconPlay.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
-	}
+	.graphTimeline { }
 
 	.switch { background: var(--color-shape-secondary); }
 	.switch {
