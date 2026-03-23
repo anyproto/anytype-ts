@@ -32,7 +32,6 @@ const FOLDER_SIZES: Record<string, number> = {
 };
 
 const FOLDER_DIMENSIONS: Record<string, { width: number; height: number }> = {
-	banner: { width: 80, height: 40 },
 };
 
 const IconGallery = () => {
@@ -52,7 +51,7 @@ const IconGallery = () => {
 							return (
 								<div key={name} className="iconGalleryItem">
 									<div className="iconGalleryPreview">
-										<Icon name={name} size={size} iconWidth={dims?.width} iconHeight={dims?.height} />
+										<Icon name={name} size={size} width={dims?.width} height={dims?.height} />
 									</div>
 									<span className="iconGalleryLabel">{label}</span>
 								</div>

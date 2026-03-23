@@ -13,8 +13,8 @@
 		.txt { line-height: var(--line-height-common); }
 	}
 
-    .icon.close { 
-		background-image: url('~img/icon/banner/close.svg'); position: absolute; right: 6px; top: 6px;
+    .icon.commonClose {
+		position: absolute; right: 6px; top: 6px;
 		width: 20px !important; height: 20px !important;
 	}
 }

@@ -92,8 +92,8 @@ export interface IconParam {
 	name: string;
 	color?: string;
 	size?: number;
-	iconWidth?: number;
-	iconHeight?: number;
+	width?: number;
+	height?: number;
 };
 
 export interface MenuItem {
