@@ -82,6 +82,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
+			uploadRoute: analytics.route.uploadGlobalMenu,
 		}, analytics.route.navigation, object => U.Object.openConfig(null, object));
 	};
 
