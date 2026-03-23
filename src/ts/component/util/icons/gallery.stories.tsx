@@ -12,7 +12,7 @@ const IconGallery = () => {
 	const folders = getIconsByFolder();
 
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: 20 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: 20, overflow: 'auto', height: '100vh' }}>
 			{Array.from(folders.entries()).map(([ folder, names ]) => (
 				<div key={folder}>
 					<h3 style={{ margin: '0 0 12px', fontWeight: 600 }}>{folder}</h3>
