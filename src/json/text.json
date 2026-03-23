@@ -910,6 +910,8 @@
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionSidebar": "Sidebar",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
+	"popupSettingsPersonalNotificationSound": "Notification sound",
+	"popupSettingsPersonalNotificationSoundOff": "Off",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
 	"popupSettingsVaultCompact": "Compact",
