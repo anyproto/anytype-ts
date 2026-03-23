@@ -1,18 +1,26 @@
 import { S } from 'Lib';
 
-const SOUNDS = {
-	bongo: './audio/bongo.mp3',
-	clave: './audio/clave.mp3',
-	chimes: './audio/chimes.mp3',
+interface SoundItem {
+	id: string;
+	name: string;
+	path: string;
 };
+
+const SOUNDS: SoundItem[] = [
+	{ id: 'bongo', name: 'Bongo', path: './audio/bongo.mp3' },
+	{ id: 'clave', name: 'Clave', path: './audio/clave.mp3' },
+	{ id: 'chimes', name: 'Chimes', path: './audio/chimes.mp3' },
+];
 
 let audio: HTMLAudioElement = null;
 
 class Sound {
 
+	list = SOUNDS;
+
 	play (id: string) {
-		const path = SOUNDS[id];
-		if (!path) {
+		const item = SOUNDS.find(it => it.id == id);
+		if (!item) {
 			return;
 		};
 
@@ -22,8 +30,8 @@ class Sound {
 				audio.currentTime = 0;
 			};
 
-			audio = new Audio(path);
-			audio.play();
+			audio = new Audio(item.path);
+			audio.play().catch(() => {});
 		} catch (e) {
 			console.error('[Sound.play]', e);
 		};

@@ -58,9 +58,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 	const notificationSounds: I.Option[] = [
 		{ id: '', name: translate('popupSettingsPersonalNotificationSoundOff') },
-		{ id: 'bongo', name: translate('popupSettingsPersonalNotificationSoundBongo') },
-		{ id: 'clave', name: translate('popupSettingsPersonalNotificationSoundClave') },
-		{ id: 'chimes', name: translate('popupSettingsPersonalNotificationSoundChimes') },
+		...Sound.list.map(it => ({ id: it.id, name: it.name })),
 	];
 
 	return (
