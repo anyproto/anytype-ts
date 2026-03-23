@@ -294,10 +294,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		let buttonsList: I.ButtonComponent[] = [];
 
 		if (selected.current.length) {
-			buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox1' }, text: translate('commonDeselectAll'), onClick: onSelectAll });
 			buttonsList = buttonsList.concat(buttons);
 		} else {
-			buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox0' }, text: translate('commonSelectAll'), onClick: onSelectAll });
 		};
 
 		return buttonsList;

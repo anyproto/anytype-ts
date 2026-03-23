@@ -10,7 +10,6 @@
 		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-shrink: 0; }
 		.titleWrapper {
 			.title { @include text-header1; font-weight: 700; }
-			.icon.archive { width: 32px; height: 32px; background-image: url('~img/icon/archive/logo.svg'); }
 		}
 
 		.objectManagerWrapper { flex-grow: 1; }

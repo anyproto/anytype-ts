@@ -1,6 +1,9 @@
 import { registerIcon } from '../registry';
 import Alert from './alert';
 import Back from './back';
+import Bin from './bin';
+import Checkbox0 from './checkbox0';
+import Checkbox1 from './checkbox1';
 import Clear from './clear';
 import Close from './close';
 import Dnd from './dnd';
@@ -19,6 +22,9 @@ import Qr from './qr';
 
 registerIcon('common/alert', Alert);
 registerIcon('common/back', Back);
+registerIcon('common/bin', Bin);
+registerIcon('common/checkbox0', Checkbox0);
+registerIcon('common/checkbox1', Checkbox1);
 registerIcon('common/clear', Clear);
 registerIcon('common/close', Close);
 registerIcon('common/dnd', Dnd);
