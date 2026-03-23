@@ -56,7 +56,7 @@
 
     .layoutPreview:not(.isTask) {
         .titleWrapper {
-			> .icon { width: 96px; height: 96px; border-radius: 20px; background: var(--color-shape-tertiary) url('~img/icon/sidebar/preview/icon.svg') 50% 50% no-repeat; }
+			> .icon { width: 96px; height: 96px; border-radius: 20px; background: var(--color-shape-tertiary); }
 			> .icon, > .iconObject { margin: 0px 0px 20px 0px; }
 		}
     }
@@ -88,9 +88,9 @@
         .featured { justify-content: flex-start; }
 
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .titleWrapper > .icon { 
-            width: 32px; height: 32px; background-image: url('~img/icon/sidebar/preview/icon.svg'); 
-            margin-bottom: 0px; background-color: unset; background-size: 100%;
+        .titleWrapper > .icon {
+            width: 32px; height: 32px;
+            margin-bottom: 0px;
         }
         .title { @include text-header1; }
 

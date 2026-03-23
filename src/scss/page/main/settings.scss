@@ -533,7 +533,6 @@
 
             .icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
             .icons {
-                .icon.question { }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
             }
         }
@@ -769,7 +768,6 @@
             }
 
             .btn.light {
-                .bg {  }
                 .icon { background-image: url('~img/icon/settings/theme/light.png'); }
             }
 

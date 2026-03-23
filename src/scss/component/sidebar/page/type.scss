@@ -61,7 +61,7 @@
 		.item { padding-left: 4px; }
 		.item {
 			.icon { width: 20px; height: 20px; flex-shrink: 0; }
-			.icon.commonDnd { background-image: url('~img/icon/sidebar/dnd.svg'); cursor: grab; }
+			.icon.commonDnd { cursor: grab; }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 

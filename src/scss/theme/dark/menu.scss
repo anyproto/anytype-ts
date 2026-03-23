@@ -90,7 +90,6 @@
 
     /* Smile */
 
-    .menu.menuSmile { }
 
 	/* BlockRelationEdit */
 
@@ -184,8 +183,6 @@
 
     .menu.menuDataviewViewLayout {
         .layouts {
-            .layout { }
-			.layout.active { }
 
             .layout:not(.isReadonly):hover { background-color: rgba(238, 238, 238, 0.06); }
         }
@@ -275,14 +272,12 @@
 			.button { color: var(--color-text-primary); }
 		}
 
-		.outer { }
 	}
 
 	/* Identity */
 
 	.menu.menuIdentity {
 		.content {
-			.icon { }
 		}
 	}
 

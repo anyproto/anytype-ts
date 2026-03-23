@@ -22,7 +22,6 @@
 			}
 			> .head {
 				.name { @include text-overflow-nw; }
-				.icon.close { }
 			}
 
 			> .scrollWrap { flex-grow: 1; overflow-y: auto; }

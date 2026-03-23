@@ -155,9 +155,7 @@ html.themeDark {
 		.dot { animation-name: dots-dark; }
 	}
 
-	.mediaAudio { }
 
-	.graphTimeline { }
 
 	.switch { background: var(--color-shape-secondary); }
 	.switch {
@@ -324,14 +322,6 @@ html.themeDark {
 				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 
 				.cnt { color: var(--color-text-primary); }
-			}
-
-			> .body {
-				.group {
-					> .titleWrap {
-						.icon.question { background-image: url('#{$themePath}/icon/sidebar/question.svg'); }
-					}
-				}
 			}
 
 			> .bottom {

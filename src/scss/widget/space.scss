@@ -21,7 +21,6 @@
 			.icon.withBackground { width: 20px !important; height: 20px !important;}
 			.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
 			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
-			.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
 			.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
 
 			.label { @include text-overflow-nw; flex-grow: 1; }
