@@ -28,7 +28,7 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 
 	return (
 		<>
-			<Icon className="logo" />
+			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
 			<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
 

@@ -837,13 +837,10 @@
 		.title { margin-bottom: 24px !important; }
 	}
 
-	> .pageSettingsImportObsidian {
-		.icon.logo { background-image: url('~img/icon/import/obsidian.svg'); }
-	}
+	.icon.logo { margin: 0px 0px 16px 0px; }
 
 	> .pageSettingsImportNotion,
     > .pageSettingsImportNotionHelp {
-        .icon.logo { background-image: url('~img/icon/import/notion.svg'); }
         a { font-weight: bold; text-decoration: none; color: var(--color-control-active); }
     }
 
@@ -907,7 +904,6 @@
     }
 
     > .pageSettingsImportMarkdown {
-        .icon.logo { background-image: url('~img/icon/import/markdown.svg'); }
 
         b { font-weight: 600; }
 
@@ -921,7 +917,6 @@
     }
 
     > .pageSettingsImportCsv {
-        .icon.logo { background-image: url('~img/icon/import/csv.svg'); }
 
         .labels {
             .label { margin: 0px 0px 12px 0px; }

@@ -7,7 +7,7 @@ const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSe
 
 	return (
 		<div>
-			<Icon className="logo" />
+			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 			
 			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />

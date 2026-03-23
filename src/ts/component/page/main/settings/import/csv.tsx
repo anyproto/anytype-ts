@@ -113,7 +113,7 @@ const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 	return (
 		<div>
-			<Icon className="logo" />
+			<Icon name="import/csv" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportCsvTitle')} />
 			<Label text={translate('popupSettingsImportCsvText')} />
 

@@ -405,10 +405,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			let itemsImport: any[] = [];
 			if (canWrite) {
 				itemsImport = ([
-					{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
-					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
-					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
-					{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+					{ id: 'importHtml', iconParam: { name: 'import/html' }, name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+					{ id: 'importText', iconParam: { name: 'import/text' }, name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+					{ id: 'importProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
+					{ id: 'importMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
 				] as any[]).map(it => ({ ...it, isImport: true, isSmall: true }));
 			};
 
@@ -416,15 +416,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
 
 				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
-				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
-				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+				{ id: 'exportProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsExportMarkdownTitle') },
 			];
 
 			if (canWrite) {
 				settingsSpace = settingsSpace.concat([
 					{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
-					{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
-					{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+					{ id: 'importNotion', iconParam: { name: 'import/notion' }, name: translate('popupSettingsImportNotionTitle') },
+					{ id: 'importCsv', iconParam: { name: 'import/csv' }, name: translate('popupSettingsImportCsvTitle') },
 				]);
 			};
 
