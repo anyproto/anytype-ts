@@ -390,10 +390,14 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				break;
 			};
 
-			const src = Relation.icon(relationKey, relationFormat);
-
 			icn = icn.concat([ 'iconRelation', `c${iconSize}` ]);
-			icon = <span className={icn.join(' ')} style={{ maskImage: `url(${src})` }} />;
+			icon = (
+				<Icon
+					name={Relation.registryName(relationKey, relationFormat)}
+					size={iconSize}
+					className={icn.join(' ')}
+				/>
+			);
 			break;
 		};
 
