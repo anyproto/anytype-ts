@@ -521,7 +521,7 @@ class UtilMenu {
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
 			it.name = translate(`relationName${it.id}`);
-			it.icon = `relation ${Relation.className(it.id)}`;
+			it.iconParam = { name: Relation.registryName('', it.id) };
 			return it;
 		});
 	};

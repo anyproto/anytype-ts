@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } f
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
-import { I, S, U, J, C, keyboard, Mark, Relation, translate, analytics } from 'Lib';
+import { I, S, U, J, C, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 const HEIGHT_ITEM = 28;
@@ -72,7 +72,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				name: translate('commonDates'), 
 				children: [
 					...dates,
-					{ id: 'selectDate', icon: `relation ${Relation.className(I.RelationType.Date)}`, name: translate(`placeholderCell${I.RelationType.Date}`) },
+					{ id: 'selectDate', iconParam: { name: 'relation/date' }, name: translate(`placeholderCell${I.RelationType.Date}`) },
 					{ isDiv: true },
 				]
 			});

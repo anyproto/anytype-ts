@@ -147,7 +147,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick={onClick}
 			onContextMenu={onContextMenu}
 		>
-			<Icon className={`relation ${Relation.className(relation.format)}`} />
+			<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 
 			<div className="content">
 				<Label className="name" text={displayName} />

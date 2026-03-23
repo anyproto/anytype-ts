@@ -403,7 +403,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							</>
 						) : (
 							<>
-								<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+								<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 								<div className="filterContent">
 									<Label className="relationName" text={item.relation.name} />
 									{Relation.isFilterActive(item) ? (
