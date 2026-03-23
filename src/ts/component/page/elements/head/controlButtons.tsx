@@ -228,35 +228,35 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		>
 			{allowedIcon ? (
 				<div id="button-icon" className="btn white withIcon" onClick={onIconHandler}>
-					<Icon className="icon" />
+					<Icon name="control/editor/icon" />
 					<div className="txt">{translate(`editorControlIcon${Number(check.withIcon)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedCover ? (
 				<div id="button-cover" className="btn white withIcon" onClick={onCoverHandler}>
-					<Icon className="addCover" />
+					<Icon name="control/editor/cover" />
 					<div className="txt">{translate(`editorControlCover${Number(check.withCover)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedDescription ? (
 				<div id="button-description" className="btn white withIcon" onClick={onDescriptionHandler}>
-					<Icon className="description" />
+					<Icon name="control/editor/description" />
 					<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedPrefillName ? (
 				<div id="button-prefill-name" className="btn white withIcon" onClick={onPrefillNameHandler}>
-					<Icon className="preFillName" />
+					<Icon name="control/editor/preFillName" />
 					<div className="txt">{translate(`editorControlPrefillName${prefillType}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedLayout ? (
 				<div id="button-layout" className="btn white withIcon small" onClick={onLayoutHandler}>
-					<Icon className="layout" />
+					<Icon name="control/editor/layout" />
 					{hasConflict ? <div className="dot" /> : ''}
 				</div>
 			) : ''}
