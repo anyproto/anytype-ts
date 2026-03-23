@@ -22,7 +22,7 @@
 		.nameWrap { display: flex; flex-direction: row; gap: 0px 6px; justify-content: space-between; align-items: center; }
 		.nameWrap {
 			.label { color: var(--color-text-primary); @include text-overflow-nw; @include text-common; line-height: 28px; }
-			.icon.close { width: 20px; height: 20px; background-image: url('~img/icon/progress/close.svg'); cursor: default; flex-shrink: 0; opacity: 0; }
+			.icon.close, .icon.commonClose { width: 20px; height: 20px; cursor: default; flex-shrink: 0; opacity: 0; }
 		}
 
 		.bar { width: 100%; height: 4px; background: var(--color-shape-secondary); overflow: hidden; border-radius: 8px; position: relative; }

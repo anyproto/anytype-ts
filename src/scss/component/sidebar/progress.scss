@@ -66,9 +66,9 @@
 				transition: opacity 0.15s ease;
 			}
 
-			.icon.close {
+			.icon.commonClose {
 				position: absolute; left: 0px; top: 0px;
-				width: 20px; height: 20px; background-image: url('~img/icon/progress/close.svg');
+				width: 20px; height: 20px;
 				opacity: 0; transition: opacity 0.15s ease;
 			}
 		}

@@ -28,11 +28,9 @@
 				padding: 0px 8px;
 			}
 
-			.icon.clear {
-				width: 20px; height: 20px; flex-shrink: 0; margin: 0px;
-				background-image: url('~img/icon/filter/clear-dark0.svg') !important;
+			.icon.commonClear {
+				width: 20px; height: 20px; flex-shrink: 0; margin: 0px; color: var(--color-text-primary);
 			}
-			.icon.clear:hover { background-image: url('~img/icon/filter/clear-dark0.svg') !important; }
 		}
 
 		.arrowWrapper {

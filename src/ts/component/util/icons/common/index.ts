@@ -12,6 +12,7 @@ import Question from './question';
 import Resize from './resize';
 import Search from './search';
 import SortArrow from './sortArrow';
+import Tick from './tick';
 
 registerIcon('common/alert', Alert);
 registerIcon('common/back', Back);
@@ -26,3 +27,4 @@ registerIcon('common/question', Question);
 registerIcon('common/resize', Resize);
 registerIcon('common/search', Search);
 registerIcon('common/sortArrow', SortArrow);
+registerIcon('common/tick', Tick);

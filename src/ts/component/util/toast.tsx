@@ -196,7 +196,7 @@ const Toast: FC = observer(() => {
 		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>
 			<div className="inner">
 
-				{icon ? <Icon className={icon} /> : ''}
+				{icon ? <Icon name={({ check: 'common/tick', notice: 'common/alert' })[icon] || icon} /> : ''}
 
 				<div className="message">
 					{textObject}
