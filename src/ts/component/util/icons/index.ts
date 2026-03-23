@@ -9,3 +9,4 @@ import './filterTemplate';
 import './relation';
 import './publish';
 import './void';
+import './layout';

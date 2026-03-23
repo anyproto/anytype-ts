@@ -414,8 +414,8 @@ class UtilMenu {
 		});
 	};
 
-	getLayoutIcon (layout: I.ObjectLayout) {
-		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
+	getLayoutIcon (layout: I.ObjectLayout): I.IconParam {
+		return { name: `layout/${I.ObjectLayout[layout].toLowerCase()}` };
 	};
 
 	getViews () {
