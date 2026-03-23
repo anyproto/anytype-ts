@@ -200,7 +200,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
-			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, cb, analytics.route.uploadTypeWidget);
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, (objectIds) => {
+				if (objectIds?.length) {
+					const object = S.Detail.get(S.Common.space, objectIds[0]);
+					if (object) {
+						cb(object);
+					};
+				};
+			}, analytics.route.uploadTypeWidget);
 			return;
 		};
 
