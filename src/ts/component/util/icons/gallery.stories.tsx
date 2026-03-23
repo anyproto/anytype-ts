@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { getIconsByFolder, getIcon } from './registry';
+import { getIconsByFolder } from './registry';
+import Icon from '../icon';
 import './header';
 import './control/editor';
 import './control/audio';
@@ -15,6 +16,10 @@ import './layout';
 
 import './gallery.stories.scss';
 
+const FOLDER_SIZES: Record<string, number> = {
+	void: 56,
+};
+
 const IconGallery = () => {
 	const folders = getIconsByFolder();
 
@@ -25,18 +30,13 @@ const IconGallery = () => {
 					<h3 className="iconGalleryTitle">{folder}</h3>
 					<div className="iconGalleryGrid">
 						{names.map((name) => {
-							const SvgComponent = getIcon(name);
-
-							if (!SvgComponent) {
-								return null;
-							};
-
 							const label = name.split('/').pop();
+							const size = FOLDER_SIZES[folder];
 
 							return (
 								<div key={name} className="iconGalleryItem">
 									<div className="iconGalleryPreview">
-										<SvgComponent />
+										<Icon name={name} size={size} />
 									</div>
 									<span className="iconGalleryLabel">{label}</span>
 								</div>
