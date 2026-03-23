@@ -31,7 +31,8 @@ const FOLDER_SIZES: Record<string, number> = {
 	'popup/header': 56,
 };
 
-const FOLDER_DIMENSIONS: Record<string, { width: number; height: number }> = {
+const ICON_SIZES: Record<string, { size?: number; width?: number; height?: number }> = {
+	'banner/smile': { width: 80, height: 40 },
 };
 
 const IconGallery = () => {
@@ -45,13 +46,13 @@ const IconGallery = () => {
 					<div className="iconGalleryGrid">
 						{names.map((name) => {
 							const label = name.split('/').pop();
-							const size = FOLDER_SIZES[folder];
-							const dims = FOLDER_DIMENSIONS[folder];
+							const iconSize = ICON_SIZES[name];
+							const size = iconSize?.size || FOLDER_SIZES[folder];
 
 							return (
 								<div key={name} className="iconGalleryItem">
 									<div className="iconGalleryPreview">
-										<Icon name={name} size={size} width={dims?.width} height={dims?.height} />
+										<Icon name={name} size={size} width={iconSize?.width} height={iconSize?.height} />
 									</div>
 									<span className="iconGalleryLabel">{label}</span>
 								</div>
