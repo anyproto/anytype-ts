@@ -92,9 +92,11 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 		case I.MarkerType.Checkbox: {
 			const idx = active ? 2 : (hovered ? 1 : 0);
 			const SvgComponent = CheckboxIcons[idx];
+			const checkboxStyle = active ? { color: 'var(--color-system-accent-100)' } : {};
 
 			inner = SvgComponent ? (
 				<SvgComponent
+					style={checkboxStyle}
 					onMouseEnter={onCheckboxEnterHandler}
 					onMouseLeave={onCheckboxLeaveHandler}
 				/>
