@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconEmoji } from 'Component';
+import { Icon, IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
 import { getIcon } from './icons';
@@ -365,10 +365,17 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				icon = <img src={S.Common.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 			} else
 			if (iconName) {
-				const src = U.Object.typeIcon(iconName, iconOption, size);
+				const typeColor = U.Common.iconBgByOption(iconOption);
 
 				icn = icn.concat([ 'iconCommon', `c${iconSize}` ]);
-				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;
+				icon = (
+					<Icon
+						name={`type/${iconName}`}
+						size={iconSize}
+						className={icn.join(' ')}
+						style={{ color: typeColor }}
+					/>
+				);
 			} else
 			if (iconEmoji) {
 				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;

@@ -19,3 +19,4 @@ import './control/cover';
 import './popup/header';
 import './banner';
 import './import';
+import './type';
