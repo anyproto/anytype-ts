@@ -418,32 +418,6 @@ class UtilMenu {
 		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
 	};
 
-	getLayouts () {
-		return [
-			{ id: I.ObjectLayout.Page },
-			{ id: I.ObjectLayout.Human },
-			{ id: I.ObjectLayout.Task },
-			{ id: I.ObjectLayout.Set },
-			{ id: I.ObjectLayout.File },
-			{ id: I.ObjectLayout.Audio },
-			{ id: I.ObjectLayout.Video },
-			{ id: I.ObjectLayout.Image },
-			{ id: I.ObjectLayout.Pdf },
-			{ id: I.ObjectLayout.Type },
-			{ id: I.ObjectLayout.Relation },
-			{ id: I.ObjectLayout.Note },
-		].map(it => ({ 
-			...it,
-			icon: this.getLayoutIcon(it.id),
-			name: translate(`layout${it.id}`),
-		}));
-	};
-
-	turnLayouts () {
-		const allowed = U.Object.getPageLayouts();
-		return this.getLayouts().filter(it => allowed.includes(it.id));
-	};
-
 	getViews () {
 		const { config } = S.Common;
 

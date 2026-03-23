@@ -88,7 +88,10 @@
         .featured { justify-content: flex-start; }
 
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .titleWrapper > .icon { width: 32px; height: 32px; background: transparent url('~img/icon/sidebar/preview/iconList.svg'); margin-bottom: 0px; }
+        .titleWrapper > .icon { 
+            width: 32px; height: 32px; background-image: url('~img/icon/sidebar/preview/icon.svg'); 
+            margin-bottom: 0px; background-color: unset; background-size: 100%;
+        }
         .title { @include text-header1; }
 
         .listHeader { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px;  }
