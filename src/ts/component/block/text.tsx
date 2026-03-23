@@ -92,7 +92,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// active editing. Skip setValue if the store update is just echoing back
 		// what we already sent — prevents a race where a stale middleware response
 		// overwrites the user's latest keystrokes (e.g. code block text reverting).
-		const isEcho = (focused == block.id) && (text === textRef.current);
+		// Only suppress when text hasn't changed AND marks haven't changed — mark
+		// toggles (bold, italic, etc.) need setValue to re-render markup.
+		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
 
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
