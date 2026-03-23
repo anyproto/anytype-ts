@@ -14,6 +14,7 @@
         .layoutHeader { margin-bottom: 44px; }
         .titleWrapper { margin-bottom: 8px; }
 		.titleWrapper {
+            .iconWrapper { display: flex; align-items: center; justify-content: center; }
 			.iconObject { display: inline-block; }
 		}
         .title { @include text-title; @include text-overflow-nw; }
@@ -55,15 +56,18 @@
     }
 
     .layoutPreview:not(.isTask) {
+        &:not(.isHuman) {
+            .iconWrapper { background: var(--color-shape-tertiary); border-radius: 20px; }
+        }
+
         .titleWrapper {
-			> .icon { width: 96px; height: 96px; border-radius: 20px; background: var(--color-shape-tertiary); }
-			> .icon, > .iconObject { margin: 0px 0px 20px 0px; }
+            .iconWrapper { width: 96px; height: 96px;  margin: 0px 0px 20px 0px; }
 		}
     }
 
     .layoutPreview.isTask {
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .titleWrapper > .icon { width: 30px; height: 30px; flex-shrink: 0; }
+        .titleWrapper > .iconWrapper { width: 32px; height: 32px; flex-shrink: 0; }
         .title { @include text-header1; }
     }
 
@@ -88,10 +92,7 @@
         .featured { justify-content: flex-start; }
 
         .titleWrapper { display: flex; align-items: center; justify-content: flex-start; gap: 0px 8px; }
-        .titleWrapper > .icon {
-            width: 32px; height: 32px;
-            margin-bottom: 0px;
-        }
+        .titleWrapper > .iconWrapper { width: 32px; height: 32px; flex-shrink: 0; margin-bottom: 0px; border-radius: 4px; }
         .title { @include text-header1; }
 
         .listHeader { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px;  }
