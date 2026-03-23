@@ -27,7 +27,7 @@ import './gallery.stories.scss';
 
 const FOLDER_SIZES: Record<string, number> = {
 	state: 56,
-	tier: 120,
+	tier: 56,
 	'dataview/view': 56,
 	'popup/header': 56,
 };
@@ -39,7 +39,7 @@ const ICON_SIZES: Record<string, { size?: number; width?: number; height?: numbe
 	'import/markdown': { size: 40 },
 	'import/text': { size: 40 },
 	'popup/header/anyId': { width: 60, height: 48 },
-	'popup/header/emoji': { width: 232, height: 52 },
+	'popup/header/emoji': { width: 60, height: 48 },
 };
 
 const IconGallery = () => {
