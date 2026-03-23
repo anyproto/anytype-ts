@@ -431,13 +431,6 @@ html.themeDark {
 	}
 
 	/* Key Phrase */
-	.phraseWrapper {
-		.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/hide1.svg'); }
-
-		&.isHidden {
-			.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/see1.svg'); }
-		}
-	}
 
 	/* CalendarSelect */
 	.calendarSelect {

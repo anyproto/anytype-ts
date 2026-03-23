@@ -265,7 +265,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 			</div>
 
 			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
-			<Icon className="show" tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
+			<Icon name={isHidden ? 'common/eye0' : 'common/eye1'} tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
 			<Icon className="copy" withBackground={true} tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
 		</div>
 	);
