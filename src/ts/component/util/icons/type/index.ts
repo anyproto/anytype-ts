@@ -10,21 +10,16 @@ for (const [ path, raw ] of Object.entries(svgModules)) {
 		continue;
 	};
 
-	const Component = (props: React.SVGProps<SVGSVGElement>) => {
-		const svg = raw
-			.replace(/_COLOR_VAR_/g, 'currentColor')
-			.replace(/<\/?svg[^>]*>/g, '')
-			.replace(/fill="[^"]*"/g, '')
-			.replace(/stroke="[^"]*"/g, '');
+	const viewBox = raw.match(/viewBox="([^"]*)"/)?.[1] || '0 0 512 512';
+	const inner = raw.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
 
-		return React.createElement('svg', {
-			viewBox: raw.match(/viewBox="([^"]*)"/)?.[1] || '0 0 512 512',
-			fill: 'currentColor',
-			xmlns: 'http://www.w3.org/2000/svg',
-			dangerouslySetInnerHTML: { __html: svg },
-			...props,
-		});
-	};
+	const Component = (props: React.SVGProps<SVGSVGElement>) => React.createElement('svg', {
+		viewBox,
+		fill: 'currentColor',
+		xmlns: 'http://www.w3.org/2000/svg',
+		dangerouslySetInnerHTML: { __html: inner },
+		...props,
+	});
 
 	Component.displayName = `TypeIcon_${name}`;
 	registerIcon(`type/${name}`, Component);
