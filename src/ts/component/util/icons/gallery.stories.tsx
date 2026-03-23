@@ -10,6 +10,7 @@ import './marker';
 import './filterTemplate';
 import './relation';
 import './publish';
+import './void';
 
 const IconGallery = () => {
 	const folders = getIconsByFolder();

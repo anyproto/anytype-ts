@@ -8,3 +8,4 @@ import './marker';
 import './filterTemplate';
 import './relation';
 import './publish';
+import './void';

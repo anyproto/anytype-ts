@@ -24,16 +24,10 @@
 
 		&.voidError {
 			.iconWrapper { width: 72px; height: 72px; margin: 0px auto 10px; }
-			.iconWrapper {
-				.icon { background-image: url('~img/icon/void/error.svg'); }
-			}
 		}
 
 		&.voidSelect {
 			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
-			.iconWrapper {
-				.icon { background-image: url('~img/icon/void/select.svg'); }
-			}
 			.label { width: 242px; color: var(--color-text-secondary); }
 		}
 	}
