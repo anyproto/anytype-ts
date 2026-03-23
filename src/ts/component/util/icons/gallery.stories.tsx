@@ -24,11 +24,12 @@ import './banner';
 
 import './gallery.stories.scss';
 
-const FOLDER_SIZES: Record<string, number> = {
+const FOLDER_SIZES: Record<string, number | { width: number; height: number }> = {
 	state: 56,
 	tier: 120,
 	'dataview/view': 56,
 	'popup/header': 56,
+	banner: { width: 80, height: 40 },
 };
 
 const IconGallery = () => {
@@ -42,12 +43,15 @@ const IconGallery = () => {
 					<div className="iconGalleryGrid">
 						{names.map((name) => {
 							const label = name.split('/').pop();
-							const size = FOLDER_SIZES[folder];
+							const folderSize = FOLDER_SIZES[folder];
+							const sizeProps = typeof folderSize === 'object'
+								? { style: { width: folderSize.width, height: folderSize.height } }
+								: { size: folderSize };
 
 							return (
 								<div key={name} className="iconGalleryItem">
 									<div className="iconGalleryPreview">
-										<Icon name={name} size={size} />
+										<Icon name={name} {...sizeProps} />
 									</div>
 									<span className="iconGalleryLabel">{label}</span>
 								</div>
