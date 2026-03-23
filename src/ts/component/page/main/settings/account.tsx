@@ -85,7 +85,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				globalName ? (
 					<div className="section">
 						<div className="anyNameWrapper">
-							<Icon name="membership/badgeBw" />
+							<Icon name="membership/badgeBw" color="default" />
 							<Title text={translate('popupSettingsAccountAnyIdTitle')} />
 						</div>
 

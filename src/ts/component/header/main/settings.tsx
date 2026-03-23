@@ -63,7 +63,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon name="membership/badge" size={18} />
+				<Icon name="membership/badge" size={18} color="blue" />
 				<Label text={globalName} />
 			</div>
 		);
