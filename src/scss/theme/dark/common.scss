@@ -412,7 +412,6 @@ html.themeDark {
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
-		.icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
 		.icon.close { background-color: var(--color-bg-secondary); }
 	}
 

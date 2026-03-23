@@ -17,3 +17,4 @@ import './dataview/view';
 import './control/dataview';
 import './control/cover';
 import './popup/header';
+import './banner';
