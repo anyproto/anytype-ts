@@ -317,6 +317,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank"
 						size={28}
 						className="resetLayout"
+						iconParam={{ name: 'common/typeLayout' }}
 						onClick={onLayout}
 					/>
 				);

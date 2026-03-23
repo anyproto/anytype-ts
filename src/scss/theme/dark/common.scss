@@ -204,7 +204,6 @@ html.themeDark {
 	/* PreviewObject */
 
 	.previewObject {
-		.icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
 		.heading {
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
 		}

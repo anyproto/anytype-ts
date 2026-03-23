@@ -615,7 +615,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 					<Icon 
 						id="button-recently-open"
-						className="clock" withBackground={true}
+						name="common/clock" 
+						withBackground={true}
 						onClick={onRecentlyOpen}
 						tooltipParam={{ 
 							text: translate('widgetRecentOpen'), 

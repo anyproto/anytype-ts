@@ -3,7 +3,7 @@
 .previewObject { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
 .previewObject {
 	.loaderWrapper { width: 100%; height: 100% !important; margin: 0px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
-	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/icon/type/logo.svg'); z-index: 1; }
+	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/logo/preview.svg'); z-index: 1; }
 
 	.moreWrapper {
 		position: absolute; z-index: 2; right: 8px; top: 8px; border-radius: 6px; width: 28px; height: 28px; display: flex;
