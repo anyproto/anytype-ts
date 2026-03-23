@@ -17,6 +17,18 @@
 
 .icon.commonAlert { color: var(--color-red); }
 
+.icon.iconColor-default { color: var(--color-text-primary); }
+.icon.iconColor-grey { color: var(--color-grey); }
+.icon.iconColor-yellow { color: var(--color-yellow); }
+.icon.iconColor-orange { color: var(--color-orange); }
+.icon.iconColor-red { color: var(--color-red); }
+.icon.iconColor-pink { color: var(--color-pink); }
+.icon.iconColor-purple { color: var(--color-purple); }
+.icon.iconColor-blue { color: var(--color-blue); }
+.icon.iconColor-ice { color: var(--color-ice); }
+.icon.iconColor-teal { color: var(--color-teal); }
+.icon.iconColor-lime { color: var(--color-lime); }
+
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.forward { transform: rotateZ(180deg); }

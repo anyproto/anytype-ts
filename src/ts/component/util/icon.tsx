@@ -8,6 +8,7 @@ interface Props {
 	id?: string;
 	name?: string;
 	icon?: string;
+	color?: string;
 	className?: string;
 	arrow?: boolean;
 	withBackground?: boolean;
@@ -32,6 +33,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	name = '',
 	icon = '',
+	color = '',
 	className = '',
 	arrow = false,
 	withBackground = false,
@@ -98,7 +100,8 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
-	const cn = [ 'icon', nameCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
+	const colorCn = color ? `iconColor iconColor-${color}` : '';
+	const cn = [ 'icon', nameCn, colorCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
 
 	const element = (
 		<motion.div
