@@ -396,7 +396,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="filterInner">
 						{isAdvanced ? (
 							<>
-								<Icon className="filterIcon advanced" />
+								<Icon name="control/dataview/advanced" className="filterIcon advanced" />
 								<div className="filterContent">
 									<Label className="relationName" text={getName(item)} />
 								</div>

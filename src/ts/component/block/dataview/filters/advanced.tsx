@@ -43,7 +43,7 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick={onClick}
 			onContextMenu={onContextMenu}
 		>
-			<Icon className="filterIcon advanced" />
+			<Icon name="control/dataview/advanced" className="filterIcon advanced" />
 			<div className="content">
 				<Label className="name" text={label} />
 			</div>

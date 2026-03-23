@@ -13,3 +13,5 @@ import './chat/empty';
 import './layout';
 import './membership';
 import './tier';
+import './dataview/view';
+import './control/dataview';

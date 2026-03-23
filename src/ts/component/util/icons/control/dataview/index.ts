@@ -1,0 +1,26 @@
+import { registerIcon } from '../../registry';
+import Edit from './edit';
+import Expand from './expand';
+import Filter from './filter';
+import Plus from './plus';
+import Search from './search';
+import Settings from './settings';
+import Sort from './sort';
+import Source from './source';
+import Advanced from './advanced';
+import FilterPlus from './filterPlus';
+import FilterSort from './filterSort';
+import Unlink from './unlink';
+
+registerIcon('control/dataview/edit', Edit);
+registerIcon('control/dataview/expand', Expand);
+registerIcon('control/dataview/filter', Filter);
+registerIcon('control/dataview/plus', Plus);
+registerIcon('control/dataview/search', Search);
+registerIcon('control/dataview/settings', Settings);
+registerIcon('control/dataview/sort', Sort);
+registerIcon('control/dataview/source', Source);
+registerIcon('control/dataview/advanced', Advanced);
+registerIcon('control/dataview/filterPlus', FilterPlus);
+registerIcon('control/dataview/filterSort', FilterSort);
+registerIcon('control/dataview/unlink', Unlink);

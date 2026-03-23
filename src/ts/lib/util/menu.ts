@@ -437,7 +437,7 @@ class UtilMenu {
 		const views = S.Record.getViews(rootId, blockId);
 
 		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'edit', iconParam: { name: 'control/dataview/settings' }, name: translate('menuDataviewViewEditView') },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
 		];
 

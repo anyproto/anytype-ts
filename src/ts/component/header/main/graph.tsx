@@ -79,18 +79,20 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 					onClick={onSearch}
 				/>
 
-				<Icon 
-					id="button-header-filter" 
+				<Icon
+					id="button-header-filter"
+					name="control/dataview/filter"
 					className="btn-filter dn" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onFilter} 
+					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }}
+					onClick={onFilter}
 				/>
 
-				<Icon 
-					id="button-header-settings" 
+				<Icon
+					id="button-header-settings"
+					name="control/dataview/settings"
 					className="btn-settings" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSettings} 
+					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSettings}
 				/>
 			</div>
 		</>

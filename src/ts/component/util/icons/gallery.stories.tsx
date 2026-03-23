@@ -16,12 +16,15 @@ import './chat/empty';
 import './layout';
 import './membership';
 import './tier';
+import './dataview/view';
+import './control/dataview';
 
 import './gallery.stories.scss';
 
 const FOLDER_SIZES: Record<string, number> = {
 	state: 56,
 	tier: 120,
+	'dataview/view': 56,
 };
 
 const IconGallery = () => {

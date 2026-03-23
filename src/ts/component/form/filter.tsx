@@ -11,6 +11,7 @@ interface Props {
 	className?: string;
 	inputClassName?: string;
 	iconParam?: {
+		name?: string;
 		className?: string;
 		withBackground?: boolean;
 	};
@@ -77,6 +78,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	if (iconParam) {
 		iconObj = (
 			<Icon
+				name={iconParam.name}
 				className={iconParam.className || ''}
 				withBackground={iconParam.withBackground}
 				tooltipParam={tooltipParam}

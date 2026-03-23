@@ -24,10 +24,9 @@
 		.button.expand {
 			&:hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
 
-			.icon { width: 20px; height: 20px; display: none; background-image: url('~img/icon/dataview/button/expand0.svg'); }
+			.icon { width: 20px; height: 20px; display: none; }
 		}
 
-		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: var(--color-text-secondary);
@@ -79,7 +78,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: var(--color-text-primary); }
 		.dataviewHead {
-			.icon.source { background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; flex-shrink: 0; }
+			.icon.source { opacity: 0; flex-shrink: 0; }
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
@@ -115,7 +114,6 @@
 						.inner { gap: 0px; height: 100%; }
 						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
 						.line { display: none !important; }
-						.icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
 						.icon.clear { display: none; }
 					}
 					.filter.isActive {
@@ -144,11 +142,10 @@
 			}
 
 			.icon { position: relative; transition: $transitionAllCommon; }
-			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+			.icon.btn-filter.on,
+			.icon.btn-sort.on { color: var(--color-system-accent-100); }
 			.icon.btn-filter.on:hover,
 			.icon.btn-sort.on:hover { background-color: var(--color-system-selection) !important; }
-			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
 			.icon.btn-filter {
 				.bullet {
@@ -203,9 +200,8 @@
 				}
 				.element {
 					.icon { width: 20px; height: 20px; }
-					.icon.unlink { background-image: url('~img/icon/dataview/selection/unlink.svg'); }
 					.icon.archive { background-image: url('~img/icon/menu/action/remove0.svg'); }
-					}
+				}
 				.element:hover { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
@@ -224,9 +220,9 @@
 					border-radius: 16px; color: var(--color-text-secondary);
 				}
 				.filterItem {
-					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/dataview/filters/sort.svg'); }
+					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
 					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
-					.icon.advanced { width: 20px; height: 20px; background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
+					.icon.advanced { width: 20px; height: 20px; }
 					.icon.relation { width: 20px; height: 20px; flex-shrink: 0; }
 					.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/filterValue0.svg'); }
 
@@ -259,7 +255,7 @@
 				.itemAdd {
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); }
 
-					.icon.plus { width: 20px; height: 20px; background: url('~img/icon/dataview/filters/plus.svg'); }
+					.icon.plus { width: 20px; height: 20px; }
 					.label { color: var(--color-text-secondary); }
 				}
 
@@ -276,9 +272,10 @@
 		}
 
 		.viewContent {
-			.icon.drag { 
-				z-index: 1; width: 7px; height: 12px; background-image: url('~img/icon/dataview/dnd.svg'); cursor: grab;
+			.icon.drag {
+				z-index: 1; width: 7px; height: 12px; cursor: grab;
 				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 4px; opacity: 0; transition: opacity $transitionCommon;
+				background-image: url('~img/icon/dataview/dnd.svg');
 			}
 		}
 
