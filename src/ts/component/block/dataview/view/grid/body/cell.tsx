@@ -96,7 +96,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 		} else {
 			button = (
 				<Icon
-					name="control/dataview/edit"
+					name="common/edit"
 					className="edit"
 					onClick={onEdit}
 				/>

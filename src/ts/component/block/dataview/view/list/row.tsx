@@ -162,7 +162,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 				{isName && canEdit ? (
 					<Icon
-						name="control/dataview/edit"
+						name="common/edit"
 						className={[ 'edit', (isEditing ? 'enabled' : '') ].join(' ')}
 						onClick={e => onEditModeClick(e, recordId)}
 					/>
