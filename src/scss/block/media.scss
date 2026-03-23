@@ -87,10 +87,6 @@
 			}
 		}
 				
-		.icon.dots {
-			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
-			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; z-index: 1;
-		}
 
 		.mediaBlockLoader { 
 			display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; height: 320px; 
@@ -115,20 +111,17 @@
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
 		.icon.download { opacity: 1; }
-		.icon.dots { opacity: 1; }
 	}
 	
 	.block.blockMedia > .wrapContent > .selectionTarget.isSelectionSelected > .dropTarget > .focusable > .wrap,
 	.block.blockMedia > .wrapContent > .selectionTarget.isKeyboardFocused > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
 		.icon.download { opacity: 1; }
-		.icon.dots { opacity: 1; }
 	}
 	
 	.block.blockMedia.isVideo > .wrapContent > .selectionTarget > .dropTarget > .focusable.isPlaying > .wrap {
 		.icon.resize { display: none; }
 		.icon.download { display: none; }
-		.icon.dots { display: none; }
 		.icon.play { display: none; }
 	}
 
