@@ -7,7 +7,7 @@
 }
 
 .iconGalleryGrid {
-	display: flex; flex-wrap: wrap; gap: 16px;
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px;
 }
 
 .iconGalleryItem {
