@@ -121,6 +121,16 @@
 			.content { padding-bottom: 0px; }
 		}
 
+		.inner { padding-bottom: 0px; }
+		.inner.c-shortText,
+		.inner.c-longText,
+		.inner.c-number,
+		.inner.c-email,
+		.inner.c-phone,
+		.inner.c-url,
+		.inner.c-checkbox,
+		.inner.c-date { padding-bottom: 8px; }
+
 		.inner {
 			> .head { display: flex; align-items: center; justify-content: space-between; gap: 0px 4px; padding: 0px 10px; }
 			> .head {
@@ -172,13 +182,12 @@
 					.day.weekend:not(.active) { background: none; }
 				}
 
-				.textInputWrapper { position: relative; margin: 0px 16px 4px; }
+				.textInputWrapper { position: relative; margin: 0px 16px 4px 16px; }
 				.textInputWrapper {
 					.input { padding: 6px 28px 8px 12px; }
 					.input.isFocused { border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
-					.icon.clear { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; opacity: 0; background-image: url('~img/icon/filter/clear0.svg'); }
-					.icon.clear:hover { background-image: url('~img/icon/filter/clear1.svg'); }
-					.icon.clear.active { opacity: 1; }
+
+					.icon.commonClose { position: absolute; top: 8px; right: 8px; }
 				}
 			}
 		}
