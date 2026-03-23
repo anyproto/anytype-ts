@@ -79,7 +79,6 @@
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }
 		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
-		.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
 
 		.cnt { 
 			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
@@ -112,8 +111,6 @@
 			.label.lastMessage { @include clamp2; }
 		}
 	}
-
-
 
 	&.isMinimal {
 		> .head { height: 8px; }
