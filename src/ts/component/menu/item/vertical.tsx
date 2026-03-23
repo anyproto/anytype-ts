@@ -5,8 +5,8 @@ import { I, U, Preview } from 'Lib';
 
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
-	const { 
-		id = '', icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
+	const {
+		id = '', icon, iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
 		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
@@ -84,6 +84,10 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		if (object.isHidden) {
 			cn.push('isHidden');
 		};
+	} else
+	if (iconParam) {
+		cn.push('withIcon');
+		iconMainElement = <Icon name={iconParam.name} color={iconParam.color} size={iconParam.size} className="iconMain" inner={inner} />;
 	} else
 	if (icon) {
 		cn.push('withIcon');

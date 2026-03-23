@@ -380,7 +380,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			ref={nodeRef}
 			className="wrap"
 		>
-			{!noClose ? <Icon name="common/close" onClick={onClose} /> : ''}
+			{!noClose ? <Icon className="close" onClick={onClose} /> : ''}
 
 			<div className="textWrapper">
 				{withCounter ? <Label className="counter" text={U.String.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}

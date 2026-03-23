@@ -9,6 +9,7 @@ interface Props {
 	name?: string;
 	icon?: string;
 	color?: string;
+	size?: number;
 	className?: string;
 	arrow?: boolean;
 	withBackground?: boolean;
@@ -34,6 +35,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	name = '',
 	icon = '',
 	color = '',
+	size = 20,
 	className = '',
 	arrow = false,
 	withBackground = false,
@@ -121,7 +123,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onDoubleClick={onDoubleClick}
 			{...animation}
 		>
-			{SvgComponent ? <SvgComponent /> : ''}
+			{SvgComponent ? <SvgComponent width={size} height={size} /> : ''}
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}
 		</motion.div>
