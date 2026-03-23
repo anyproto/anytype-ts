@@ -61,7 +61,7 @@ const ObjectName: FC<Props> = ({
 		S.Popup.open('confirm', {
 			className: 'anyId',
 			data: {
-				icon: 'anyId',
+				iconParam: { name: 'popup/header/anyId', width: 60, height: 48 },
 				title: translate('membershipUpsellAnyIdTitle'),
 				text: translate('membershipUpsellAnyIdText'),
 				textConfirm: translate('membershipUpsellAnyIdExplorePlans'),

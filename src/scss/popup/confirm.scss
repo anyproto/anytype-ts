@@ -22,8 +22,6 @@
 		.iconWrapper { display: flex; width: 320px; border-radius: 320px; margin: 0px auto 10px; align-items: center; justify-content: space-around; }
 		.iconWrapper {
 			.icon { width: 56px; height: 56px; }
-			.icon.anyId { width: 60px; height: 48px; background-image: url('~img/icon/popup/header/any-id.svg'); }
-			.icon.emoji { width: 232px; height: 52px; background-image: url('~img/icon/popup/header/emoji.svg'); }
 		}
 
 		.checkboxWrapper { 

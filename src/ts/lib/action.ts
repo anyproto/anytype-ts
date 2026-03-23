@@ -1131,7 +1131,7 @@ class Action {
 			S.Popup.replace('membershipFinalization', 'confirm', {
 				onClose: () => callBack?.(),
 				data: {
-					icon: 'emoji',
+					iconParam: { name: 'popup/header/emoji', width: 232, height: 52 },
 					title,
 					text: translate('popupConfirmMembershipSurveyText'),
 					colorConfirm: 'accent',

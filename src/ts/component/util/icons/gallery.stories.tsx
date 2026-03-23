@@ -33,6 +33,8 @@ const FOLDER_SIZES: Record<string, number> = {
 
 const ICON_SIZES: Record<string, { size?: number; width?: number; height?: number }> = {
 	'banner/smile': { width: 80, height: 40 },
+	'popup/header/anyId': { width: 60, height: 48 },
+	'popup/header/emoji': { width: 232, height: 52 },
 };
 
 const IconGallery = () => {

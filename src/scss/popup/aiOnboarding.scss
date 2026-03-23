@@ -520,12 +520,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					display: block;
 					color: $teal-accent;
 					
-					&.large {
-						background: url('~img/icon/popup/header/success.svg') no-repeat center;
-						background-size: contain;
-						filter: brightness(0) saturate(100%) invert(73%) sepia(44%) saturate(3462%) hue-rotate(133deg) brightness(95%) contrast(101%);
 					}
-				}
 
 				.title {
 					font-size: 18px;

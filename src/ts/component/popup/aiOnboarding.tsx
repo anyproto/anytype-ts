@@ -500,7 +500,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				if (lastMessage && (lastMessage.type === 'ai')) {
 					lastMessage.content = (
 						<div className="completionMessage">
-							<Icon className="success large" />
+							<Icon name="popup/header/success" color="lime" size={56} />
 							<div className="title">All set! Your space is ready to explore.</div>
 							<div className="spaceInfo">
 								<div className="spaceName">{sparkOnboarding.manifest.spaceName}</div>

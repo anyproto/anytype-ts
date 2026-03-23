@@ -1,7 +1,9 @@
 import { registerIcon } from '../../registry';
 import Activation from './activation';
+import AnyId from './anyId';
 import Confirm from './confirm';
 import Create from './create';
+import Emoji from './emoji';
 import Error from './error';
 import Invite from './invite';
 import Join from './join';
@@ -14,8 +16,10 @@ import Updated from './updated';
 import Warning from './warning';
 
 registerIcon('popup/header/activation', Activation);
+registerIcon('popup/header/anyId', AnyId);
 registerIcon('popup/header/confirm', Confirm);
 registerIcon('popup/header/create', Create);
+registerIcon('popup/header/emoji', Emoji);
 registerIcon('popup/header/error', Error);
 registerIcon('popup/header/invite', Invite);
 registerIcon('popup/header/join', Join);
