@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
 import type { Event, Event_Message } from 'Proto/pb/protos/events';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus, Sound } from 'Lib';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
@@ -1009,6 +1009,7 @@ class Dispatcher {
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
 						});
+						Sound.playNotification();
 					};
 					break;
 				};
@@ -1119,6 +1120,7 @@ class Dispatcher {
 							cmd: 'openChat',
 							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 						});
+						Sound.playNotification();
 					};
 
 					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
@@ -1297,6 +1299,7 @@ class Dispatcher {
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 									});
+									Sound.playNotification();
 								};
 							};
 						};

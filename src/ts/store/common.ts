@@ -53,6 +53,7 @@ class CommonStore {
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
 	public autoDownloadValue = null;
+	public notificationSoundValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -159,6 +160,7 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
+			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
@@ -181,6 +183,7 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
+			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -211,6 +214,7 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
+			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -453,6 +457,17 @@ class CommonStore {
 		};
 		if (ret === undefined) {
 			ret = true;
+		};
+		return ret;
+	};
+
+	get notificationSound (): string {
+		let ret = this.notificationSoundValue;
+		if (ret === null) {
+			ret = Storage.get('notificationSound');
+		};
+		if (ret === undefined) {
+			ret = 'bongo';
 		};
 		return ret;
 	};
@@ -998,6 +1013,11 @@ class CommonStore {
 
 	gridTitleClickSet (v: boolean) {
 		this.boolSet('gridTitleClick', v);
+	};
+
+	notificationSoundSet (v: string) {
+		this.notificationSoundValue = v;
+		Storage.set('notificationSound', v);
 	};
 
 	/**

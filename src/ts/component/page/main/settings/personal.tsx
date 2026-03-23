@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, keyboard, } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound } from 'Lib';
 
 enum ChatKey {
 	Enter 	 = 'enter',
@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -54,6 +54,13 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 	const chatKeys: I.Option[] = [
 		{ id: ChatKey.Enter, name: 'Enter' },
 		{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
+	];
+
+	const notificationSounds: I.Option[] = [
+		{ id: '', name: translate('popupSettingsPersonalNotificationSoundOff') },
+		{ id: 'bongo', name: translate('popupSettingsPersonalNotificationSoundBongo') },
+		{ id: 'clave', name: translate('popupSettingsPersonalNotificationSoundClave') },
+		{ id: 'chimes', name: translate('popupSettingsPersonalNotificationSoundChimes') },
 	];
 
 	return (
@@ -152,6 +159,29 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
 						options={chatKeys}
 						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionNotifications')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalNotificationSound')} />
+
+					<Select
+						id="notificationSound"
+						value={notificationSound}
+						options={notificationSounds}
+						onChange={(v: string) => {
+							S.Common.notificationSoundSet(v);
+
+							if (v) {
+								Sound.play(v);
+							};
+						}}
+						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
