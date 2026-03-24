@@ -63,12 +63,14 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			return;
 		};
 
+		const naturalHeight = isSticky ? el.offsetHeight : 0;
+
 		wasStickyRef.current = isSticky;
 		el.classList.toggle('isSticky', isSticky);
 
 		if (isSticky) {
 			if (placeholderRef.current) {
-				placeholderRef.current.style.height = `${el.offsetHeight}px`;
+				placeholderRef.current.style.height = `${naturalHeight}px`;
 			};
 			const rect = sectionEl.getBoundingClientRect();
 			el.style.left = `${rect.left}px`;
