@@ -91,11 +91,11 @@ class UtilMenu {
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
 	};
-	
+
 	/**
 	 * Returns the list of list block types.
 	 * @returns {any[]} The list of list block types.
@@ -111,7 +111,7 @@ class UtilMenu {
 			{ id: I.TextStyle.ToggleHeader3, lang: 'ToggleHeader3', aliases: [ 'toggle subheading', 'toggled subheading', 'toggle h3', 'toggle heading 3' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
 	};

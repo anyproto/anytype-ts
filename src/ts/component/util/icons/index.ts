@@ -25,6 +25,7 @@ import './block/embed';
 import './menu/embed';
 import './arrow/menu';
 import './menu/action';
+import './menu/block/text';
 import './menu/mark';
 import './sync';
 import './type';

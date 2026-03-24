@@ -7,23 +7,6 @@
     .menu { box-shadow: 0px 4px 16px rgb(0,0,0,0.2), 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 
     .menu {
-        .icon.textParagraph { background-image: url('~img/theme/dark/icon/menu/action/block/text/paragraph.svg'); }
-
-		.icon.textHeader1,
-		.icon.textHeader2,
-		.icon.textHeader3 { background-image: url('~img/theme/dark/icon/menu/action/block/text/header.svg'); }
-		.icon.textQuote { background-image: url('~img/theme/dark/icon/menu/action/block/text/quote.svg'); }
-
-        .icon.textBulleted { background-image: url('~img/theme/dark/icon/menu/action/block/text/bulleted.svg'); }
-		.icon.textNumbered { background-image: url('~img/theme/dark/icon/menu/action/block/text/numbered.svg'); }
-		.icon.textToggle { background-image: url('~img/theme/dark/icon/menu/action/block/text/toggle.svg'); }
-		.icon.textCallout { background-image: url('~img/theme/dark/icon/menu/action/block/text/callout.svg'); }
-		.icon.textCheckbox { background-image: url('~img/theme/dark/icon/menu/action/block/text/checkbox.svg'); }
-
-		.icon.textToggleHeader1,
-		.icon.textToggleHeader2,
-		.icon.textToggleHeader3 { background-image: url('~img/theme/dark/icon/menu/action/block/text/toggleHeader.svg'); }
-
 
         .icon.color {
 			.inner {

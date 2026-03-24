@@ -43,6 +43,25 @@ class UtilData {
 	 * @param {I.TextStyle} v - The text style.
 	 * @returns {string} The CSS class.
 	 */
+	blockTextIcon (v: I.TextStyle): string {
+		const map: Record<number, string> = {
+			[I.TextStyle.Paragraph]: 'paragraph',
+			[I.TextStyle.Header1]: 'header',
+			[I.TextStyle.Header2]: 'header',
+			[I.TextStyle.Header3]: 'header',
+			[I.TextStyle.Quote]: 'quote',
+			[I.TextStyle.Callout]: 'callout',
+			[I.TextStyle.Checkbox]: 'checkbox',
+			[I.TextStyle.Bulleted]: 'bulleted',
+			[I.TextStyle.Numbered]: 'numbered',
+			[I.TextStyle.Toggle]: 'toggle',
+			[I.TextStyle.ToggleHeader1]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader2]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader3]: 'toggleHeader',
+		};
+		return `menu/block/text/${map[v] || 'paragraph'}`;
+	};
+
 	blockTextClass(v: I.TextStyle): string {
 		const toggleHeaders = [
 			I.TextStyle.ToggleHeader1, 
