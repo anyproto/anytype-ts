@@ -18,7 +18,8 @@
 		.item:hover::before, .item.hover::before, .item.active::before { opacity: 1; }
 		.item {
 			.icon { width: 20px; height: 20px; }
-			.icon.withBackground { width: 20px !important; height: 20px !important;}
+			.icon.withBackground { width: 20px !important; height: 20px !important; }
+			.icon.withBackground > svg { width: 8px; height: 8px; }
 			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
 
 			.label { @include text-overflow-nw; flex-grow: 1; }

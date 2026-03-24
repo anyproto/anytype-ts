@@ -305,11 +305,11 @@ class UtilMenu {
 		let items: any[] = [];
 
 		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
+			items.push({ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true });
 		};
 
 		if (hasCommon) {
-			items.push({ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true });
+			items.push({ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true });
 		};
 
 		if (hasClipboard) {
@@ -321,32 +321,32 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			items.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') });
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'clipboard', name: translate('commonCopyToClipboard') });
+			items.push({ id: 'copyMedia', iconParam: { name: 'menu/action/clipboard' }, name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'copyUrl', icon: 'clipboard', name: translate('libMenuCopyUrl') });
+			items.push({ id: 'copyUrl', iconParam: { name: 'menu/action/clipboard' }, name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
-			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+			items.push({ id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') });
 		};
 
 		if (hasCommon) {
 			items = items.concat([
-				{ id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') },
-				{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+				{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
 			]);
 		};
 
