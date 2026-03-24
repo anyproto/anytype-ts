@@ -68,7 +68,7 @@
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon.headerExpand { display: none; }
+	.icon.commonExpand { display: none; }
 	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 	.label.btn {
