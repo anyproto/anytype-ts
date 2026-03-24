@@ -1068,10 +1068,10 @@ class UtilMenu {
 				};
 
 				if (withDelete) {
-					const icon = isOwner ? 'remove-red' : 'leave-red';
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'red' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', icon, name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'red' });
 				};
 			};
 
