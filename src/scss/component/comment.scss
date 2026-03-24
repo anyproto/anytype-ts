@@ -1,12 +1,35 @@
 @import "~scss/_mixins";
 
 .commentSection {
-	display: flex; flex-direction: column; flex: 1 1 auto; min-height: 200px;
-	padding: 24px 0px 0px 0px; border-top: 1px solid var(--color-shape-secondary);
+	display: flex; flex-direction: column; flex: 1 1 auto;
+	padding: 0px;
 
 	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
 
-	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
+	.socialPlaceholder { height: 0px; }
+
+	.socialBlock {
+		display: flex; padding: 0px 0px 12px 0px;
+		transition: opacity 0.3s $easeInQuint;
+
+		&.isHidden { opacity: 0; transition: opacity 0.3s $easeInQuint; }
+
+		&.isSticky {
+			position: fixed; bottom: 0; z-index: 2;
+			padding: 40px 0px 12px 0px;
+			background: linear-gradient(to bottom, transparent, var(--color-bg-primary) 50%);
+		}
+
+		.commentCounter {
+			display: inline-flex; align-items: center; gap: 0px 6px;
+			padding: 7px 10px 7px 8px; border-radius: 18px;
+			background: var(--color-shape-highlight-medium);
+			user-select: none;
+
+			.icon.discussion { width: 13px; height: 12px; background-image: url('~img/icon/comment/discussion.svg'); }
+			.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
+		}
+	}
 
 	.commentBody { flex: 1 1 auto; }
 	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }

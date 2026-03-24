@@ -1,7 +1,7 @@
 export default {
 	editor: 704,
 	blockMenu: 48,
-	lastBlock: 80,
+	lastBlock: 44,
 	menuBorder: 10,
 	header: 52,
 
