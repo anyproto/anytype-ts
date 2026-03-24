@@ -23,5 +23,6 @@ import './counter';
 import './plus';
 import './block/embed';
 import './menu/embed';
+import './menu/mark';
 import './sync';
 import './type';

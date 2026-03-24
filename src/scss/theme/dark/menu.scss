@@ -123,17 +123,6 @@
         .select:hover { background-color: var(--color-shape-highlight-medium); }
     }
 
-    /* BlockContext */
-
-    .menu.menuBlockContext {
-        .icon.active.bold { background-image: url('~img/theme/dark/icon/menu/action/mark/bold1.svg'); }
-		.icon.active.kbd { background-image: url('~img/theme/dark/icon/menu/action/mark/code1.svg'); }
-		.icon.active.italic { background-image: url('~img/theme/dark/icon/menu/action/mark/italic1.svg'); }
-		.icon.active.link { background-image: url('~img/theme/dark/icon/menu/action/mark/link1.svg'); }
-		.icon.active.strike { background-image: url('~img/theme/dark/icon/menu/action/mark/strike1.svg'); }
-		.icon.active.underline { background-image: url('~img/theme/dark/icon/menu/action/mark/underline1.svg'); }
-    }
-
     /* BlockLinkSettings */
 
     .menu.menuBlockLinkSettings {
