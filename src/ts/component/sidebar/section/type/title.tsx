@@ -134,12 +134,16 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	}, []);
 
 	useEffect(() => {
-		setValue();
+		if (!nameRef.current?.isFocused()) {
+			setValue();
+		};
 	});
 
 	useEffect(() => {
-		rangeRef.current = null;
-		setValue();
+		if (!nameRef.current?.isFocused()) {
+			rangeRef.current = null;
+			setValue();
+		};
 	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({

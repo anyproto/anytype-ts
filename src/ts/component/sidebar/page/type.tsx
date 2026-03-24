@@ -106,7 +106,15 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 		const { recommendedLayout, layoutAlign } = updateRef.current;
 
-		S.Detail.update(U.Subscription.spaceSubId(J.Constant.subId.type), { id: objectRef.current.id, details: updateRef.current }, false);
+		// Skip MobX store update and BlockDataviewRelationSet for text-only changes
+		// to prevent observer re-renders from overwriting the contentEditable DOM and resetting the caret
+		if (!isTextOnly) {
+			S.Detail.update(U.Subscription.spaceSubId(J.Constant.subId.type), { id: objectRef.current.id, details: updateRef.current }, false);
+
+			if (objectRef.current.id) {
+				C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
+			};
+		};
 
 		if ((undefined !== recommendedLayout) && !U.Object.isTypeLayout(objectRef.current.layout)) {
 			updateLayout(recommendedLayout);
@@ -114,12 +122,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 		updateSections();
 		disableButton(!U.Common.objectLength(updateRef.current) || (!objectRef.current.name && !objectRef.current.pluralName));
-
-		// Skip BlockDataviewRelationSet for text-only changes (name/description) to prevent
-		// ObjectShow responses from overwriting the title block and resetting the caret
-		if (objectRef.current.id && !isTextOnly) {
-			C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
-		};
 
 		let eventId = '';
 		if (undefined !== recommendedLayout) {
