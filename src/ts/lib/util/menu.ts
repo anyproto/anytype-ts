@@ -439,11 +439,11 @@ class UtilMenu {
 
 		const options: any[] = [
 			{ id: 'edit', iconParam: { name: 'common/options' }, name: translate('menuDataviewViewEditView') },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+			{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') },
 		];
 
 		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+			options.push({ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') });
 		};
 
 		S.Menu.open('select', {
@@ -1014,7 +1014,7 @@ class UtilMenu {
 				if (inviteLink) {
 					sections.general = [
 						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
-						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
 					];
 				};
 
@@ -1029,42 +1029,42 @@ class UtilMenu {
 				};
 			} else {
 				if (!isLoading) {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+					sections.general.push({ id: 'settings', iconParam: { name: 'menu/action/settings' }, name: translate('menuSpaceContextSpaceSettings') });
 				};
 
 				if (!noShare && space.isPrivate) {
-					sections.general.push({ id: 'members', icon: 'inviteMembers', name: translate('commonInviteMembers') });
+					sections.general.push({ id: 'members', iconParam: { name: 'menu/action/inviteMembers' }, name: translate('commonInviteMembers') });
 				};
 
 				if (!noShare && inviteLink) {
 					sections.general = sections.general.concat([
 						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
-						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
 					]);
 				};
 
 				if (withPin) {
 					if (space.orderId) {
-						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.general.push({ id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') });
 					} else {
-						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.general.push({ id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') });
 					};
 				};
 
 				if (!space.isPrivate) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.general.push({ id: 'unmute', iconParam: { name: 'menu/action/unmute' }, name: translate('commonUnmute') });
 					} else {
-						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.general.push({ id: 'mute', iconParam: { name: 'menu/action/mute' }, name: translate('commonMute') });
 					};
 				};
 
 				if (withOpenNewTab) {
-					sections.actions.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
+					sections.actions.push({ id: 'openNewTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!noManage) {
-					sections.actions.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
+					sections.actions.push({ id: 'manage', iconParam: { name: 'common/options' }, name: translate('widgetManageSections') });
 				};
 
 				if (withDelete) {
@@ -1544,11 +1544,11 @@ class UtilMenu {
 				});
 
 				if (flags.withImport) {
-					buttons.push({ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true });
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/import' }, name: translate('commonImport'), onClick: onImport, isButton: true });
 				};
 
 				if (items.length) {
-					buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
+					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
 				};
 			};
 
