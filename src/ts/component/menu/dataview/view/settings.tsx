@@ -152,8 +152,8 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		if (view.id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
-					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
-					(views.length > 1 ? { id: 'remove', icon: 'remove', name: translate('menuDataviewViewEditRemoveView') } : null),
+					{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: translate('menuDataviewViewEditDuplicateView') },
+					(views.length > 1 ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('menuDataviewViewEditRemoveView') } : null),
 				]
 			});
 		};

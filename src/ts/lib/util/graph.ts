@@ -27,8 +27,9 @@ class UtilGraph {
 		switch (d.layout) {
 			case I.ObjectLayout.Relation: {
 				const name = Relation.registryName(d.relationKey, d.relationFormat);
-				const svg = getIconSvg(name, { style: { width: 100, height: 100, color: '#9B9B9B' } });
+				let svg = getIconSvg(name, { style: { width: 100, height: 100 } });
 				if (svg) {
+					svg = svg.replace(/currentColor/g, '#9B9B9B');
 					src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 				};
 				break;
@@ -41,8 +42,9 @@ class UtilGraph {
 
 			case I.ObjectLayout.Date: {
 				const name = Relation.registryName('', I.RelationType.Date);
-				const svg = getIconSvg(name, { style: { width: 100, height: 100, color: '#9B9B9B' } });
+				let svg = getIconSvg(name, { style: { width: 100, height: 100 } });
 				if (svg) {
+					svg = svg.replace(/currentColor/g, '#9B9B9B');
 					src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 				};
 				break;

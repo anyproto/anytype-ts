@@ -89,7 +89,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onMore = () => {
 		U.Menu.spaceContext(U.Space.getSpaceview(), {
-			element: '#widget-space .nameWrap .arrowMenuButton',
+			element: '#widget-space .nameWrap .icon.arrowButton',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,

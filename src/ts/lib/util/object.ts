@@ -985,8 +985,9 @@ class UtilObject {
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
 		const fill = color || U.Common.iconBgByOption(option);
-		const svg = getIconSvg(`type/${id}`, { style: { width: size, height: size, color: fill } }) ||
-			getIconSvg('state/error', { style: { width: size, height: size, color: fill } });
+		let svg = getIconSvg(`type/${id}`, { style: { width: size, height: size } }) ||
+			getIconSvg('state/error', { style: { width: size, height: size } });
+		svg = svg.replace(/currentColor/g, fill);
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
@@ -1016,7 +1017,8 @@ class UtilObject {
 			case I.ObjectLayout.Archive: id = 'archive'; break;
 		};
 
-		const svg = getIconSvg(`default/${id}`, { style: { width: size, height: size, color: fill } });
+		let svg = getIconSvg(`default/${id}`, { style: { width: size, height: size } });
+		svg = svg.replace(/currentColor/g, fill);
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 

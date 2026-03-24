@@ -157,9 +157,10 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					<span className="clickable">
 						<div className="name">{item.name}</div>
 					</span>
-					<Icon 
-						className={[ 'eye', (item.isHidden ? 'on' : 'off') ].join(' ')} 
-						onClick={e => onSwitch(item)} 
+					<Icon
+						name={item.isHidden ? 'common/eye1' : 'common/eye0'}
+						className="eye"
+						onClick={e => onSwitch(item)}
 					/>
 				</div>
 			);

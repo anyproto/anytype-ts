@@ -1179,7 +1179,7 @@ class UtilMenu {
 
 		const hasAdvancedFilter = view?.filters?.some(f => f.operator === I.FilterOperator.And);
 		const buttons = (!onAdvancedFilterAdd || hasAdvancedFilter) ? [] : [
-			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), icon: 'advancedFilter' }
+			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), iconParam: { name: 'control/dataview/filter' } }
 		];
 
 		const callBack = (item: any) => {
