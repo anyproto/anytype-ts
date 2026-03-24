@@ -245,17 +245,17 @@ class UtilData {
 	 */
 	alignHIcon(v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;
-		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+		return `menu/align/horizontal/${String(I.BlockHAlign[v]).toLowerCase()}`;
 	};
 
 	/**
-	 * Returns the icon class for vertical alignment.
+	 * Returns the registry icon name for vertical alignment.
 	 * @param {I.BlockVAlign} v - The vertical alignment.
-	 * @returns {string} The icon class.
+	 * @returns {string} The registry icon name.
 	 */
 	alignVIcon(v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
-		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
+		return `menu/align/vertical/${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 
 	/**

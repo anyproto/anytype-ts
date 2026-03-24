@@ -386,7 +386,7 @@ class UtilMenu {
 		};
 
 		return ret.map((it: any) => {
-			it.icon = U.Data.alignHIcon(it.id);
+			it.iconParam = { name: U.Data.alignHIcon(it.id) };
 			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
 			it.isAlign = true;
 			return it;
@@ -399,7 +399,7 @@ class UtilMenu {
 			{ id: I.BlockVAlign.Middle },
 			{ id: I.BlockVAlign.Bottom },
 		].map((it: any) => {
-			it.icon = U.Data.alignVIcon(it.id);
+			it.iconParam = { name: U.Data.alignVIcon(it.id) };
 			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
 			return it;
 		});
