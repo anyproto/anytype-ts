@@ -22,7 +22,6 @@ interface Props extends I.BlockComponent {
 	getMessages: () => I.ChatMessage[];
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
-	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
 	reloadAndScrollToBottom: () => void;
 	isBottom: React.RefObject<boolean>;
 };
@@ -46,7 +45,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
+		rootId, block, subId, readonly, isPopup, getReplyContent, getMessages,
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
 		analyticsChatId, reloadAndScrollToBottom, isBottom,
 	} = props;
@@ -1849,10 +1848,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	useEffect(() => {
-		loadDepsAndReplies(getMessages(), () => {
-			renderMarkup();
-			renderReply();
-		});
+		renderMarkup();
+		renderReply();
 
 		checkSendButton();
 		scrollToBottom();

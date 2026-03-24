@@ -52,6 +52,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
+	const prevReplyKey = useRef('');
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -105,6 +106,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			loadDeps(getDepsIds(list), callBack);
 		});
 	};
+
 
 	const loadState = (callBack?: () => void) => {
 		const chatId = getChatId();
@@ -338,6 +340,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			callBack?.();
 			return;
 		};
+
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevReplyKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevReplyKey.current = key;
 
 		const chatId = getChatId();
 		const subId = getSubId();
@@ -1226,7 +1237,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					getMessages={getMessages}
 					getReplyContent={getReplyContent}
 					highlightMessage={highlightMessage}
-					loadDepsAndReplies={loadDepsAndReplies}
+
 					reloadAndScrollToBottom={reloadAndScrollToBottom}
 					isEmpty={isEmpty}
 					isBottom={isBottom}
