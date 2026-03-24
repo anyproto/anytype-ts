@@ -139,8 +139,11 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
-	if (canEdit) {	
+	if (canEdit) {
 		cn.push('canEdit');
+	};
+	if (done) {
+		cn.push('isDone');
 	};
 
 	let icon = null;

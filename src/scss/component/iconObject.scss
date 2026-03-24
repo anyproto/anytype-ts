@@ -67,7 +67,10 @@
 .iconObject.c160 {
 	display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
 }
-.iconObject.isTask { background-color: unset; }
+.iconObject.isTask { background-color: unset; color: var(--color-text-tertiary); }
+.iconObject.isTask.isDone { 
+	.icon.hasSvg { color: var(--color-lime); }
+}
 
 .iconObject.c14,
 .iconObject.c16,
