@@ -24,7 +24,7 @@
 		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
-			.icon:hover { color: var(--color-text-primary); }
+			.icon:hover, .icon.hover { color: var(--color-text-primary); }
 		}
 
 		.bubble:not(.withLayout) { max-width: 480px; }

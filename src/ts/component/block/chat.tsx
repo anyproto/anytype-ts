@@ -561,7 +561,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		if (onMore) {
-			menuParam.element = `${message} .icon.more`;
+			menuParam.element = `${message} .icon.commonMore`;
 		} else {
 			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
 		};
@@ -768,10 +768,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (isSelf) {
 			options.push({ isDiv: true });
-			options.push({ id: 'edit', iconParam: { name: 'chat/buttons/pencil' }, name: translate('commonEdit') });
+			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
 			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
-			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
