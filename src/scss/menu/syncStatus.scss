@@ -50,10 +50,8 @@
 				.side.right { flex-shrink: 0; display: flex; align-items: center;}
 				.side.right {
 					.icon { width: 20px; height: 20px; margin: 0px; }
-					.icon.c-queued { background-image: url('~img/icon/menu/syncStatus/queued.svg'); }
-					.icon.c-syncing { background-image: url('~img/icon/menu/syncStatus/loading.svg'); transform: translateZ(0); animation: rotate 0.8s infinite steps(8); }
-					.icon.c-synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
-					.icon.c-error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; }
+					.icon.c-syncing { transform: translateZ(0); animation: rotate 0.8s infinite steps(8); }
+					.icon.c-error { display: block; }
 					.icon.more { display: none; position: static; width: 20px !important; height: 20px !important; }
 					.icon.more:hover { background-color: unset !important; }
 				}
