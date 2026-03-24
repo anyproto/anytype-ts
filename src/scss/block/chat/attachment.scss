@@ -22,9 +22,10 @@
 			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 		}
 
-		.icon.syncStatus { display: none; position: absolute; z-index: 2; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: rotate 1.2s infinite linear; }
+		.icon.syncStatus { display: none; position: absolute; z-index: 2; inset: 0; margin: auto; animation: rotate 1.2s infinite linear; }
 		.icon.syncStatus {
-			> svg { width: 100% !important; height: 100% !important; fill: var(--color-shape-highlight-medium); }
+			> svg { width: 100% !important; height: 100% !important; }
+			color: var(--color-shape-highlight-medium);
 		}
 
 		&.isSyncing,

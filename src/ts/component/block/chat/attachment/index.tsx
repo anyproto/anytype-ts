@@ -32,7 +32,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 	const nodeRef = useRef(null);
-	const syncIconName = `chat/syncStatus/${I.SyncStatusObject[syncStatus].toLowerCase()}`;
+	const syncIconName = (syncStatus != I.SyncStatusObject.Synced) ? `chat/syncStatus/${I.SyncStatusObject[syncStatus].toLowerCase()}` : '';
 	const src = useRef('');
 
 	if (isDownloadingFile) {

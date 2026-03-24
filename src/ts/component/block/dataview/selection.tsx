@@ -28,8 +28,8 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const buttons: any[] = [
-		{ id: 'archive', text: translate('commonMoveToBin') },
-		{ id: 'done', text: translate('commonDeselectAll') },
+		{ id: 'archive', name: 'menu/action/remove', text: translate('commonMoveToBin') },
+		{ id: 'done', name: 'common/checkbox0', text: translate('commonDeselectAll') },
 	];
 
 	if (isCollection) {
@@ -55,7 +55,7 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 						>
-							<Icon name={item.name} className={item.id} />
+							<Icon name={item.name} />
 							{item.text}
 						</div>
 					))}
