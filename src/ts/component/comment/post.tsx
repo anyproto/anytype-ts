@@ -387,7 +387,7 @@ const CommentPost = observer((props: Props) => {
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
 		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
