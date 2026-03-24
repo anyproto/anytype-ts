@@ -111,7 +111,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	const w = width || size;
 	const h = height || size;
 
-	if (SvgComponent && ((w != 20) || (h != 20))) {
+	if (SvgComponent && !withBackground && ((w != 20) || (h != 20))) {
 		style.width = w;
 		style.height = h;
 	};
