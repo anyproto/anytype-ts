@@ -239,8 +239,7 @@ class UtilData {
 	};
 
 	syncStatusIcon (v: I.SyncStatusObject): string {
-		const name = I.SyncStatusObject[v] || I.SyncStatusObject[I.SyncStatusObject.Queued];
-		return `menu/syncStatus/${String(name).toLowerCase()}`;
+		return `menu/syncStatus/${String(I.SyncStatusObject[v]).toLowerCase()}`;
 	};
 
 	/**
