@@ -75,13 +75,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			bullet = <div className="bullet" />;
 		};
 
-		const cnb = [ 'back', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
-		const cnf = [ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
-
 		return (
 			<>
 				<Icon
-					className="vaultToggle" withBackground={true}
+					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{
 						text: translate('commonVault'),
@@ -89,7 +86,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="widgetPanel" withBackground={true}
+					name="header/widget" withBackground={true}
 					onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 					inner={bullet}
 					tooltipParam={{
@@ -99,7 +96,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="expand" withBackground={true}
+					name="common/expand" withBackground={true}
 					onClick={onOpen || onExpand}
 					tooltipParam={{
 						text: translate('commonOpenObject'),
@@ -110,7 +107,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 				{withNavigation ? (
 					<div className="arrowWrapper">
 						<Icon
-							className={cnb.join(' ')} withBackground={true}
+							name="common/back" className={!keyboard.checkBack(isPopup) ? 'disabled' : ''} withBackground={true}
 							onClick={() => keyboard.onBack(isPopup)}
 							tooltipParam={{
 								text: translate('commonBack'),
@@ -119,7 +116,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							}}
 						/>
 						<Icon
-							className={cnf.join(' ')} withBackground={true}
+							name="common/back" className={[ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ].join(' ')} withBackground={true}
 							onClick={() => keyboard.onForward(isPopup)}
 							tooltipParam={{
 								text: translate('commonForward'),
@@ -132,7 +129,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 				{withGraph ? (
 					<Icon
-						className="graph" withBackground={true}
+						name="header/graph" withBackground={true}
 						onClick={onGraph}
 						tooltipParam={{
 							text: translate('commonGraph'),

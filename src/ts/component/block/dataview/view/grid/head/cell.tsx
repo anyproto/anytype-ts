@@ -19,6 +19,10 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 	const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: relationKey, disabled: !allowed });
 	const relation = S.Record.getRelationByKey(relationKey);
 
+	if (!relation) {
+		return null;
+	};
+
 	if (transform) {
 		transform.scaleX = 1;
 		transform.scaleY = 1;
@@ -123,7 +127,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 					{...attributes}
 					{...listeners}
 				>
-					<Icon className={`relation ${Relation.className(relation.format)}`} />
+					<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 					<ObjectName object={relation} />
 				</div>
 

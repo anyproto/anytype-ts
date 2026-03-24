@@ -127,7 +127,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

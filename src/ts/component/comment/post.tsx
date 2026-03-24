@@ -29,6 +29,7 @@ const CommentPost = observer((props: Props) => {
 	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
+	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
@@ -362,7 +363,15 @@ const CommentPost = observer((props: Props) => {
 		C.ChatToggleMessageReaction(targetId, id, icon);
 	}, [ targetId, id, reactions ]);
 
+	const setHover = useCallback((v: boolean) => {
+		if (contentWrapRef.current) {
+			contentWrapRef.current.classList.toggle('hover', v);
+		};
+	}, []);
+
 	const onReaction = useCallback((e: React.MouseEvent) => {
+		setHover(true);
+
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
 			element: $(e.currentTarget),
@@ -370,6 +379,7 @@ const CommentPost = observer((props: Props) => {
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			noAnimation: true,
+			onClose: () => setHover(false),
 			data: {
 				noHead: true,
 				noUpload: true,
@@ -379,7 +389,7 @@ const CommentPost = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ targetId, id, onReactionSelect ]);
+	}, [ targetId, id, onReactionSelect, setHover ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = $(e.currentTarget);
@@ -387,7 +397,7 @@ const CommentPost = observer((props: Props) => {
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
 		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
@@ -398,12 +408,15 @@ const CommentPost = observer((props: Props) => {
 			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
 		};
 
+		setHover(true);
+
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onClose: () => setHover(false),
 			data: {
 				options: menuItems,
 				onSelect: (e: any, item: any) => {
@@ -416,7 +429,7 @@ const CommentPost = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete ]);
+	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete, setHover ]);
 
 	const getAttachments = useCallback((): any[] => {
 		return (message.attachments || [])
@@ -530,9 +543,9 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				{canReact ? <Icon className="reaction" withBackground={true} onClick={onReaction} /> : null}
-				<Icon className="reply" withBackground={true} onClick={onReply} />
-				<Icon className="more" withBackground={true} onClick={onMenuClick} />
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				<Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} />
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
@@ -541,20 +554,22 @@ const CommentPost = observer((props: Props) => {
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
-			{renderHoverActions()}
-
-			<IconObject
-				object={{ ...author, layout: I.ObjectLayout.Participant }}
-				size={32}
-			/>
-
-			<div className="postInner">
+			<div ref={contentWrapRef} className="contentWrap">
 				<div className="head">
-					<div className="author">
-						<ObjectName object={author} withBadge={true} />
+					<div className="side left">
+						<IconObject
+							object={{ ...author, layout: I.ObjectLayout.Participant }}
+							size={20}
+						/>
+						<div className="author">
+							<ObjectName object={author} withBadge={true} />
+						</div>
+						<div className="date">
+							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						</div>
 					</div>
-					<div className="date">
-						{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+					<div className="side right">
+						{renderHoverActions()}
 					</div>
 				</div>
 

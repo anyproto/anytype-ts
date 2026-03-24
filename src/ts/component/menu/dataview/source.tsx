@@ -183,7 +183,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					<div className="value">{item.value}</div>
 				</div>
 				<div className="buttons">
-					{canDelete ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+					{canDelete ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 				</div>
 			</div>
 		);

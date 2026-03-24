@@ -212,7 +212,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			>
 				<IconObject size={32} object={item} />
 				<ObjectName object={item} />
-				<div className={[ 'icon', 'checkbox', selectedMembers.includes(item.id) ? 'active' : '' ].join(' ')} />
+				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
 			</div>
 		);
 	};
@@ -249,7 +249,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 				<div className="membersSection">
 					<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
 					<div className="addMembers" onClick={() => setStep(0)}>
-						<Icon className="addMember" />
+						<Icon name="menu/spaceCreate/group" className="addMember" />
 						<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
 					</div>
 					{selectedMemberObjects.map(item => (
@@ -277,7 +277,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 				<Filter
 					ref={filterRef}
 					className="outlined round c36"
-					icon="search"
+					iconParam={{ name: 'common/search' }}
 					placeholder={translate('popupSpaceCreateStep1Placeholder')}
 					focusOnMount={false}
 					onChange={v => setSearch(v)}
@@ -319,7 +319,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	return (
 		<>
 			{isLoading ? <Loader id="loader" /> : ''}
-			<Icon className="close" onClick={() => close()} />
+			<Icon name="common/close" className="close" onClick={() => close()} />
 			{stepContent}
 			<Error text={error} />
 		</>

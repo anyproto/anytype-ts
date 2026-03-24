@@ -88,9 +88,20 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
+		// When focused, the local editable DOM may be ahead of the store during
+		// active editing. Skip setValue if the store update is just echoing back
+		// what we already sent — prevents a race where a stale middleware response
+		// overwrites the user's latest keystrokes (e.g. code block text reverting).
+		// Only suppress when text hasn't changed AND marks haven't changed — mark
+		// toggles (bold, italic, etc.) need setValue to re-render markup.
+		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
-			setValue(text);
+
+			if (!isEcho) {
+				setValue(text);
+			};
 
 			prevTextRef.current = text;
 			prevMarksRef.current = marks || [];
@@ -104,7 +115,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Only sync contenteditable from props when not focused or when content changed.
 		// When focused, the local editable state may be ahead of props during active editing
 		// (e.g. RTL flag change triggers re-render before text is saved to middleware).
-		if ((focused != block.id) || textChanged || marksChanged) {
+		if (!isEcho && ((focused != block.id) || textChanged || marksChanged)) {
 			setValue(text);
 		};
 
@@ -1575,7 +1586,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						</div>
 
 						<div className="btn" onClick={onCopy}>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 							<div className="txt">{translate('commonCopy')}</div>
 						</div>
 					</div>

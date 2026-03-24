@@ -36,10 +36,7 @@
 					}
 
 					.side.right {
-						.icon.withBackground { flex-shrink: 0; width: 24px; height: 24px; vertical-align: top; }
-
-						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+						.icon.withBackground { width: 24px; height: 24px; vertical-align: top; }
 					}
 
 					.bgColor { border-radius: 4px 4px 0px 0px; }
@@ -110,10 +107,7 @@
 			}
 			.card.add.first { margin: 0px; }
 			.card.add {
-				.icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
-			}
-			.card.add:hover {
-				.icon { background-image: url('~img/icon/plus/column1.svg'); }
+				.icon { vertical-align: top; }
 			}
 
 			.card.add.isOver.bottom::before { top: -6px; }

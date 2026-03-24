@@ -251,12 +251,12 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 					{sorts.length ? (
 						<>
 							<div id="item-sort" className="filterItem isActive" onClick={onSortClick}>
-								<Icon className={`sortArrow c${sorts[0].type}`} />
+								<Icon name="control/dataview/filterSort" className={`sortArrow c${sorts[0].type}`} />
 								<div className="content">
 									<Label className="name" text={sortTitle} />
 								</div>
-								<Icon className="arrow" />
-								{config.experimental ? <Icon className="delete" onClick={onSortRemove} /> : ''}
+								<Icon name="arrow/button" size={8} className="arrow" />
+								{config.experimental ? <Icon name="chat/buttons/remove" size={8} className="delete" onClick={onSortRemove} /> : ''}
 							</div>
 							<div className="separator vertical" />
 						</>
@@ -291,7 +291,7 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 						);
 					})}
 					<div id="item-add" className="itemAdd" onClick={onAdd}>
-						<Icon className="plus" />
+						<Icon name="control/dataview/filterPlus" className="plus" />
 						<Label text={translate('commonFilter')} />
 					</div>
 

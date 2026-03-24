@@ -10,7 +10,6 @@ const SLIDE_COUNT = 5;
 const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const nodeRef = useRef(null);
-	const feedRef = useRef(null);
 	const [ step, setStep ] = useState(0);
 	const [ swiperControl, setSwiperControl ] = useState(null);
 	const [ activeSlide, setActiveSlide ] = useState(0);
@@ -85,7 +84,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 						<div className={[ 'img', `slide${activeSlide}` ].join(' ')}>
 							<div className="header">
 								<div className="mask">
-									<Icon />
+									<Icon name="header/widget" />
 								</div>
 								<div className="dots" />
 							</div>

@@ -314,7 +314,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -1256,6 +1256,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
+			const typeId = getTypeId();
+			const type = S.Record.getTypeById(typeId);
+
+			if (!readonly && type && U.Object.isInFileLayouts(type.recommendedLayout)) {
+				return true;
+			};
 			return false;
 		};
 
@@ -1774,7 +1780,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon className="dragState" />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>

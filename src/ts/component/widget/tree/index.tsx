@@ -46,8 +46,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
 
-	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
-
 	const clearSubscriptionHashes = () => {
 		subscriptionHashes.current = {};
 	};
@@ -154,11 +152,17 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// return the child nodes details for the given subId
 	const getChildNodesDetails = (nodeId: string): I.WidgetTreeDetails[] => {
-		return S.Record.getRecords(getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => mapper(it));
+		return S.Record.getRecords(getSubId(nodeId), [ 'id', 'layout', 'links' ], true)
+			.filter(it => !S.Common.hideFileObjectsInTree || !U.Object.isInFileLayouts(it.layout))
+			.map(it => mapper(it));
 	};
 
 	const mapper = (o) => {
-		o.links = U.Object.isSetLayout(o.layout) ? [] : filterDeletedLinks(Relation.getArrayValue(o.links));
+		if (U.Object.isSetLayout(o.layout) || (S.Common.hideFileObjectsInTree && U.Object.isInFileLayouts(o.layout))) {
+			o.links = [];
+		} else {
+			o.links = filterDeletedLinks(Relation.getArrayValue(o.links));
+		};
 		return o;
 	};
 
@@ -234,8 +238,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		analytics.event('OpenSidebarObject');
 	};
 
-	const getTotalHeight = () => {
-		return loadTree().reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
+	const getTotalHeight = (items?: I.WidgetTreeItem[]) => {
+		return (items || nodes).reduce((acc, node, index) => acc + getRowHeight(node, index), 0);
 	};
 
 	const getRowHeight = (node: any, index: number) => {
@@ -306,7 +310,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							iconParam={{ className: 'search' }}
+							iconParam={{ name: 'common/search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 						/>
@@ -446,7 +450,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		resize();
 
 		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', !length);
-	}, [ nodes ]);
+	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
@@ -467,12 +471,13 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			{head}
 			{content}
 
-			<Button 
-				id="button-show-all" 
-				onClick={onSetPreview} 
-				text={translate('widgetSeeAll')} 
+			<Button
+				id="button-show-all"
+				onClick={onSetPreview}
+				text={translate('widgetSeeAll')}
 				size={28}
-				color="blank" 
+				color="blank"
+				arrow={true}
 			/>
 		</div>
 	);

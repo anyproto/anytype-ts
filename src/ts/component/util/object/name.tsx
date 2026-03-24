@@ -61,7 +61,7 @@ const ObjectName: FC<Props> = ({
 		S.Popup.open('confirm', {
 			className: 'anyId',
 			data: {
-				icon: 'anyId',
+				iconParam: { name: 'popup/header/anyId', width: 60, height: 48 },
 				title: translate('membershipUpsellAnyIdTitle'),
 				text: translate('membershipUpsellAnyIdText'),
 				textConfirm: translate('membershipUpsellAnyIdExplorePlans'),
@@ -86,7 +86,7 @@ const ObjectName: FC<Props> = ({
 		};
 
 		if (withBadge && U.Object.isParticipantLayout(layout)) {
-			badge = globalName ? <Icon className="badge" onClick={onBadgeClick} /> : '';
+			badge = globalName ? <Icon name="membership/badge" size={18} color="accent100" onClick={onBadgeClick} /> : '';
 		};
 	};
 

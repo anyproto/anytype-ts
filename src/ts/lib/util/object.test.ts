@@ -99,8 +99,8 @@ describe('UtilObject', () => {
 		});
 
 		it('should preserve existing params', () => {
-			const result = UtilObject.checkParam({ routeParam: { animate: true } });
-			expect(result.routeParam).toEqual({ animate: true });
+			const result = UtilObject.checkParam({ routeParam: { replace: true } });
+			expect(result.routeParam).toEqual({ replace: true });
 		});
 
 		it('should handle null input', () => {

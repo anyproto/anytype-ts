@@ -36,7 +36,7 @@ declare global {
 
 		isWebVersion: boolean;
 		Config: any;
-		AnytypeGlobalConfig: any;
+		AnytypeGlobalConfig: I.AppConfig;
 	}
 };
 
@@ -131,6 +131,10 @@ const App: FC = () => {
 
 		U.Router.init(history);
 		U.Smile.init();
+
+		if (window.isWebVersion) {
+			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
+		}
 
 		console.log('[App] Init', getGlobal('serverAddress'));
 
@@ -264,6 +268,7 @@ const App: FC = () => {
 
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
+
 		if (route) {
 			const rp = U.Router.getParam(route);
 			if (
@@ -323,7 +328,7 @@ const App: FC = () => {
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
-		const routeParam = { replace: true, onFadeIn: hide };
+		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
@@ -395,7 +400,7 @@ const App: FC = () => {
 		};
 
 		if (!accountId) {
-			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			U.Router.go('/auth/select', { replace: true, onRouteChange: cb });
 			return;
 		};
 
@@ -498,7 +503,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'updated',
+				iconParam: { name: 'popup/header/updated', color: 'lime' },
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -523,7 +528,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
@@ -586,7 +591,6 @@ const App: FC = () => {
 
 					<div id="dragPanel" />
 					<div id="tooltipContainer" />
-					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Toast />

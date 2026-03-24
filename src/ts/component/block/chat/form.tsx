@@ -22,7 +22,6 @@ interface Props extends I.BlockComponent {
 	getMessages: () => I.ChatMessage[];
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
-	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
 	reloadAndScrollToBottom: () => void;
 	isBottom: React.RefObject<boolean>;
 };
@@ -46,9 +45,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
+		rootId, block, subId, readonly, isPopup, getReplyContent, getMessages,
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
-		highlightMessage, analyticsChatId, reloadAndScrollToBottom, isBottom,
+		analyticsChatId, reloadAndScrollToBottom, isBottom,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);
@@ -538,15 +537,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const res = U.String.insert(current, newText, from, to);
 			const skipMarks = [ I.MarkType.Color, I.MarkType.BgColor ];
 
-			newMarks = Mark.adjust(newMarks, 0, to);
+			newMarks = Mark.adjust(newMarks, 0, from);
 
-			marks.current = Mark.adjust(marks.current, from, newText.length);
+			marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
 			marks.current = marks.current.concat(newMarks);
 			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
+			marks.current = Mark.checkRanges(res, marks.current);
 
 			setMarks(marks.current);
 
-			const rt = to + newText.length;
+			const rt = from + newText.length;
 			range.current = { from: rt, to: rt };
 			updateMarkup(res, range.current);
 			checkUrls();
@@ -784,9 +784,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onAttachment = () => {
 		const options: any[] = [
-			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
-			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
-			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+			{ id: 'create', iconParam: { name: 'menu/action/createObject' }, name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', iconParam: { name: 'menu/block/common/linkto' }, name: translate('spaceExisting') },
+			{ id: 'upload', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer') },
 		];
 
 		S.Menu.closeAll(null, () => {
@@ -1135,7 +1135,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'confirm',
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
 				textConfirm: translate('commonDelete'),
@@ -1644,7 +1644,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					setRange(range.current);
 				},
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('popupConfirmSpeedLimitTitle'),
 					text: translate('popupConfirmSpeedLimitText'),
 					textConfirm: translate('commonOkay'),
@@ -1720,7 +1720,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 			};
 			if (reply.isMultiple && !reply.attachment) {
-				icon = <Icon className="isMultiple" />;
+				icon = <Icon name="chat/attachment/multiple" className="isMultiple" />;
 			};
 
 			onClear = onReplyClear;
@@ -1734,7 +1734,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onMouseDown={() => onNavigationClick(item.type)}
 		>
 			<div className="bg" />
-			<Icon className={item.icon} />
+			<Icon name={item.name} className={item.icon} />
 
 			{item.cnt ? (
 				<div className="counter">
@@ -1751,6 +1751,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				<Icon
 					id={`button-${block.id}-attachment`}
+					name="plus/menu"
 					className="plus"
 					onClick={onAttachment}
 					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}
@@ -1769,7 +1770,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								</div>
 							</div>
 							<div className="side right">
-								<Icon className="clear" onClick={onClear} />
+								<Icon name="common/clear" onClick={onClear} />
 							</div>
 						</div>
 					) : ''}
@@ -1815,11 +1816,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					/>
 
 					<div ref={counterRef} className="charCounter" />
-					<Icon ref={sendRef} className="send" onClick={onSend} />
+					<Icon ref={sendRef} name="chat/buttons/send" className="send" onClick={onSend} />
 				</div>
 
 				<Icon
 					id={`button-${block.id}-emoji`}
+					name="chat/buttons/emoji"
 					className="emoji"
 					onClick={onEmoji}
 					tooltipParam={{ text: translate('menuSmileGallery') }}
@@ -1846,10 +1848,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	useEffect(() => {
-		loadDepsAndReplies([], () => {
-			renderMarkup();
-			renderReply();
-		});
+		renderMarkup();
+		renderReply();
 
 		checkSendButton();
 		scrollToBottom();
@@ -1889,16 +1889,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
 
 			<div className="inner">
 				<div className="navigation">
-					{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
-					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-					<Button type={I.ChatReadType.Message} icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
+					{reactionCounter ? <Button type={I.ChatReadType.Reaction} name="chat/navigation/reaction" icon="reaction" className="active" cnt={reactionCounter} /> : ''}
+					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} name="chat/navigation/mention" icon="mention" className="active" cnt={mentionCounter} /> : ''}
+					<Button type={I.ChatReadType.Message} name="chat/navigation/arrow" icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
 				</div>
 
 				{form}

@@ -390,9 +390,9 @@ class UtilCommon {
 	 * @returns {object} The grouped map.
 	 */
 	mapToArray (list: any[], field: string): any {
-		list = list|| [] as any[];
-		
-		const map = {} as any;
+		list = list || [];
+
+		const map: Record<string, any[]> = {};
 		for (const item of list) {
 			map[item[field]] = map[item[field]] || [];
 			map[item[field]].push(item);
@@ -408,8 +408,8 @@ class UtilCommon {
 	 */
 	mapToObject (list: any[], field: string) {
 		const obj: any = {};
-		for (let i = 0; i < list.length; i++) {
-			obj[list[i][field]] = list[i];
+		for (const item of list) {
+			obj[item[field]] = item;
 		};
 		return obj;
 	};
@@ -420,11 +420,7 @@ class UtilCommon {
 	 * @returns {any[]} The flattened array.
 	 */
 	unmap (map: any) {
-		let ret: any[] = [] as any[];
-		for (const field in map) {
-			ret = ret.concat(map[field]);
-		};
-		return ret;
+		return Object.values(map).flat();
 	};
 	
 	/**
@@ -586,7 +582,7 @@ class UtilCommon {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('commonError'),
 				text: translate('popupConfirmObjectOpenErrorText'),
 				textConfirm: translate('popupConfirmObjectOpenErrorButton'),
@@ -614,7 +610,7 @@ class UtilCommon {
 	onErrorUpdate (onConfirm?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'update',
+				iconParam: { name: 'popup/header/update', color: 'lime' },
 				title: translate('popupConfirmNeedUpdateTitle'),
 				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),
@@ -711,7 +707,7 @@ class UtilCommon {
 				param[k] = v;
 			});
 
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] invalid URL params:', e); };
 		return param;
 	};
 
@@ -914,7 +910,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
 		};
 	};
 
@@ -979,7 +975,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = U.String.toCamelCase(`error-${command}${code}`);
-		return (TextJson as any)[id] ? translate(id) : description;
+		return (TextJson as Record<string, string>)[id] ? translate(id) : description;
 	};
 
 	/**
@@ -1010,19 +1006,6 @@ class UtilCommon {
 
 		head.find(`style#${id}`).remove();
 		head.append(element);
-	};
-
-	/**
-	 * Adds a script tag to the document body with a given ID and source.
-	 * @param {string} id - The script element ID.
-	 * @param {string} src - The script source URL.
-	 */
-	addScript (id: string, src: string) {
-		const body = $('body');
-		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
-
-		body.find(`script#${id}`).remove();
-		body.append(element);
 	};
 
 	/**
@@ -1353,7 +1336,7 @@ class UtilCommon {
 			};
 			
 			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] SVG encoding failed:', e); };
 
 		iconCache.set(key, ret);
 		return ret;
@@ -1409,7 +1392,7 @@ class UtilCommon {
 				};
 
 			};
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Common] URL parsing failed:', e); };
 
 		return ret;
 	};
@@ -1424,7 +1407,7 @@ class UtilCommon {
 		};
 
 		if (ret.isInside) {
-			ret.route = url.split(':/')[1];
+			ret.route = url.split(':/')[1] || '';
 
 			const search = url.split('?')[1];
 			if (search) {

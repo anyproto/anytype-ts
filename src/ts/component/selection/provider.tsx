@@ -512,7 +512,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		// Sort blocks by their document tree order
 		const rootId = keyboard.getRootId();
-		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const tree = S.Block.getTree(rootId, S.Block.getChildren(rootId, rootId));
 		const treeOrder = S.Block.unwrapTree(tree).map(it => it.id);
 		const orderMap = new Map(treeOrder.map((id, idx) => [ id, idx ]));
 

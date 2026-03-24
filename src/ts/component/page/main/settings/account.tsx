@@ -85,7 +85,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				globalName ? (
 					<div className="section">
 						<div className="anyNameWrapper">
-							<Icon className="badge" />
+							<Icon name="membership/badge" color="default" />
 							<Title text={translate('popupSettingsAccountAnyIdTitle')} />
 						</div>
 
@@ -95,7 +95,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 								readonly={true}
 								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnyIdTitle'), account.id)}
 							/>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 						</div>
 					</div>
 				) : (
@@ -108,7 +108,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 								readonly={true}
 								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 							/>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 						</div>
 
 						<div className="upsellWrapper">
@@ -137,7 +137,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 							readonly={true}
 							onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
 						/>
-						<Icon className="copy" />
+						<Icon name="menu/action/copy" className="copy" />
 					</div>
 				</div>
 			) : ''}

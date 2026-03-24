@@ -148,7 +148,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-	});
+	}, [ relations.length ]);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,
@@ -171,6 +171,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			>
 				{canEdit && config.experimental ? (
 					<Icon
+						name="common/edit"
 						className={[ 'edit', isEditing ? 'enabled' : '' ].join(' ')}
 						onClick={e => onEditModeClick(e, record.id)}
 					/>

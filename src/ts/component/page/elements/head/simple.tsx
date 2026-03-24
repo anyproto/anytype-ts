@@ -230,7 +230,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						name: translate('menuTypeLayoutDescription'),
 						children: [ 
 							{ isDiv: true },
-							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
+							{ id: 'reset', iconParam: { name: 'menu/action/reset' }, name: translate('menuTypeLayoutReset') },
 						]
 					}
 				],
@@ -317,6 +317,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank"
 						size={28}
 						className="resetLayout"
+						iconParam={{ name: 'common/typeLayout' }}
 						onClick={onLayout}
 					/>
 				);
@@ -341,7 +342,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank" 
 						size={28}
 						text={translate('commonEditType')} 
-						onClick={() => U.Object.editType(rootId, isPopup)}
+						onClick={() => U.Object.editType(rootId, isPopup, false)}
 					/>
 				);
 			};
@@ -356,9 +357,9 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
-				<Icon className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
-				<Icon id="calendar-icon" className="calendar" withBackground={true} onClick={onCalendar} />
+				<Icon name="arrow/calendar" className="arrow left" withBackground={true} onClick={() => changeDate(-1)} width={8} height={12} />
+				<Icon name="arrow/calendar" className="arrow right" withBackground={true} onClick={() => changeDate(1)} width={8} height={12} />
+				<Icon id="calendar-icon" name="relation/date" withBackground={true} onClick={onCalendar} />
 			</>
 		);
 	};

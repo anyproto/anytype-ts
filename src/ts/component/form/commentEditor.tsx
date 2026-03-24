@@ -1992,11 +1992,12 @@ const PasteUrlPlugin = () => {
 					const section = options[0];
 					const cancel = options[options.length - 1];
 					const sortable = options.slice(1, -1);
+					const orderMap = new Map<string, number>(pasteOrder.map((id: string, i: number) => [ id, i ]));
 
 					sortable.sort((a: any, b: any) => {
-						const ai = pasteOrder.indexOf(a.id);
-						const bi = pasteOrder.indexOf(b.id);
-						return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+						const ai = orderMap.get(a.id) ?? sortable.length;
+						const bi = orderMap.get(b.id) ?? sortable.length;
+						return ai - bi;
 					});
 
 					options.length = 0;

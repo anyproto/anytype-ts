@@ -29,8 +29,8 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 
 	return (
 		<>
-			<Icon className="close" onClick={() => close()} />
-			<Icon className="join" name="menuSpaceCreateJoin" />
+			<Icon name="common/close" className="close" onClick={() => close()} />
+			<Icon className="join" name="menu/spaceCreate/join" />
 			<div className="stepTitle">{translate('popupSpaceJoinByLinkLabel')}</div>
 			<form onSubmit={onSubmit}>
 				<Input

@@ -37,8 +37,6 @@
 .button.black.disabled { opacity: 1; background-color: var(--color-shape-secondary); }
 .button.black:not(.disabled):hover, .button.black:not(.disabled).hover { background: #41403d; }
 .button.black {
-	.arrow { background-image: url('~img/arrow/button/white.svg'); }
-
 	.loaderWrapper {
 		.dot { border-color: #fff; animation-name: dots-dark; }
 	}
@@ -69,7 +67,7 @@ input.button { line-height: 1; }
 	.icon { margin-right: 6px; }
 	.icon.downloading {
 		width: 16px; height: 16px;
-		background-image: url('~img/icon/vault/spinner.svg'); background-size: 16px; animation: rotate 1.2s infinite linear;
+		background-image: url('~img/icon/loader.svg'); background-size: 16px; animation: rotate 1.2s infinite linear;
 	}
 	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
 }

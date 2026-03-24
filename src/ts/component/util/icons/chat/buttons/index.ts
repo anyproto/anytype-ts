@@ -1,0 +1,20 @@
+import { registerIcon } from '../../registry';
+import Clear from './clear';
+import Emoji from './emoji';
+import Mention from './mention';
+import Reaction from './reaction';
+import Remove from './remove';
+import Reply from './reply';
+import ReplyFilled from './replyFilled';
+import Send from './send';
+import Text from './text';
+
+registerIcon('chat/buttons/clear', Clear);
+registerIcon('chat/buttons/emoji', Emoji);
+registerIcon('chat/buttons/mention', Mention);
+registerIcon('chat/buttons/reaction', Reaction);
+registerIcon('chat/buttons/remove', Remove);
+registerIcon('chat/buttons/reply', Reply);
+registerIcon('chat/buttons/replyFilled', ReplyFilled);
+registerIcon('chat/buttons/send', Send);
+registerIcon('chat/buttons/text', Text);

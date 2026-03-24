@@ -83,7 +83,7 @@ const SidebarSectionTypeLayoutFormatList = observer(forwardRef<{}, Props>((props
 						<div className="item">
 							<div className="name">{type?.name || translate('commonSelect')}</div>
 						</div>
-						<Icon className="arrow light" />
+						<Icon name="arrow/small" className="arrow light" size={12} />
 					</div>
 				</div>
 			</div>

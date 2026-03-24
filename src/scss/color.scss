@@ -1,6 +1,6 @@
 .textColor-default { color: var(--color-text-primary) !important; }
 .textColor-black { color: var(--color-text-primary) !important; }
-.textColor-grey { color: var(--color-control-active) !important; }
+.textColor-grey { color: var(--color-dark-grey) !important; }
 .textColor-yellow { color: var(--color-dark-yellow) !important; }
 .textColor-orange { color: var(--color-dark-orange) !important; }
 .textColor-red { color: var(--color-dark-red) !important; }
@@ -11,15 +11,17 @@
 .textColor-teal { color: var(--color-dark-teal) !important; }
 .textColor-lime { color: var(--color-dark-lime) !important; }
 
-.bgColor-grey { background: var(--color-shape-tertiary) !important; }
-.bgColor-yellow { background: var(--color-very-light-yellow) !important; }
-.bgColor-orange { background: var(--color-very-light-orange) !important; }
-.bgColor-red { background: var(--color-very-light-red) !important; }
-.bgColor-pink { background: var(--color-very-light-pink) !important; }
-.bgColor-purple { background: var(--color-very-light-purple) !important; }
-.bgColor-blue { background: var(--color-very-light-blue) !important; }
-.bgColor-ice { background: var(--color-very-light-ice) !important; }
-.bgColor-teal { background: var(--color-very-light-teal) !important; }
-.bgColor-lime { background: var(--color-very-light-lime) !important; }
+.bgColor-default { background: var(--color-shape-tertiary) !important; }
+.bgColor-black { background: var(--color-shape-tertiary) !important; }
+.bgColor-grey { background: var(--color-light-grey) !important; }
+.bgColor-yellow { background: var(--color-light-yellow) !important; }
+.bgColor-orange { background: var(--color-light-orange) !important; }
+.bgColor-red { background: var(--color-light-red) !important; }
+.bgColor-pink { background: var(--color-light-pink) !important; }
+.bgColor-purple { background: var(--color-light-purple) !important; }
+.bgColor-blue { background: var(--color-light-blue) !important; }
+.bgColor-ice { background: var(--color-light-ice) !important; }
+.bgColor-teal { background: var(--color-light-teal) !important; }
+.bgColor-lime { background: var(--color-light-lime) !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }

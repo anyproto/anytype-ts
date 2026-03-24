@@ -183,6 +183,9 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const columns: any = {};
 		
 		relations.forEach(it => {
+			if (!it.relation) {
+				return;
+			};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
 			columns[it.relationKey] = Relation.width(w, it.relation.format);
 		});

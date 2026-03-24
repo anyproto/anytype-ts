@@ -22,6 +22,7 @@ const CommentReply = observer((props: Props) => {
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
+	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, createdAt, modifiedAt } = message;
@@ -162,13 +163,19 @@ const CommentReply = observer((props: Props) => {
 		U.Common.copyToast('', text);
 	}, [ parts ]);
 
+	const setHover = useCallback((v: boolean) => {
+		if (contentWrapRef.current) {
+			contentWrapRef.current.classList.toggle('hover', v);
+		};
+	}, []);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = $(e.currentTarget);
 
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
 		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
@@ -178,12 +185,15 @@ const CommentReply = observer((props: Props) => {
 			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
 		};
 
+		setHover(true);
+
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onClose: () => setHover(false),
 			data: {
 				options: menuItems,
 				onSelect: (e: any, item: any) => {
@@ -195,7 +205,7 @@ const CommentReply = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onDelete ]);
+	}, [ isSelf, onEdit, onCopyText, onDelete, setHover ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -275,7 +285,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<div className="hoverActions">
 				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon className="more" />
+					<Icon name="common/more" className="more" />
 				</div>
 			</div>
 		);
@@ -283,22 +293,27 @@ const CommentReply = observer((props: Props) => {
 
 	return (
 		<div className="commentReply" data-message-id={id}>
-			<div className="head">
-				<IconObject
-					object={{ ...author, layout: I.ObjectLayout.Participant }}
-					size={32}
-				/>
-				<div className="author">
-					<ObjectName object={author} withBadge={true} />
-				</div>
-				<div className="date">
-					{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+			<div ref={contentWrapRef} className="contentWrap">
+				<div className="head">
+					<div className="side left">
+						<IconObject
+							object={{ ...author, layout: I.ObjectLayout.Participant }}
+							size={20}
+						/>
+						<div className="author">
+							<ObjectName object={author} withBadge={true} />
+						</div>
+						<div className="date">
+							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						</div>
+					</div>
+					<div className="side right">
+						{renderHoverActions()}
+					</div>
 				</div>
 
-				{renderHoverActions()}
+				{renderContent()}
 			</div>
-
-			{renderContent()}
 		</div>
 	);
 });

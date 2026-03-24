@@ -29,7 +29,7 @@ import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
-import SidebarProgress from './sidebar/progress';
+import SidebarProgress, { ProgressItem } from './sidebar/progress';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -198,6 +198,7 @@ export {
 	SidebarLeft,
 	SidebarRight,
 	SidebarProgress,
+	ProgressItem,
 
 	Widget,
 

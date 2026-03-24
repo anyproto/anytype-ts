@@ -39,7 +39,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			data: {
-				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
+				options: [ { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
 				},
@@ -224,8 +224,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				</div>
 
 				<div className="side right">
-					<Icon className="arrow left" onClick={() => onArrow(-1)} />
-					<Icon className="arrow right" onClick={() => onArrow(1)} />
+					<Icon name="arrow/calendar" className="arrow left" onClick={() => onArrow(-1)} width={8} height={12} />
+					<Icon name="arrow/calendar" className="arrow right" onClick={() => onArrow(1)} width={8} height={12} />
 				</div>
 			</div>
 

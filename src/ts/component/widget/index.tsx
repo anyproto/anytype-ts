@@ -200,7 +200,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
-			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, cb, analytics.route.uploadTypeWidget);
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? object.id : '', details, (objectIds) => {
+				if (objectIds?.length) {
+					const object = S.Detail.get(S.Common.space, objectIds[0]);
+					if (object) {
+						cb(object);
+					};
+				};
+			}, analytics.route.uploadTypeWidget);
 			return;
 		};
 
@@ -663,12 +670,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		isDraggable = false;
 	} else {
 		if (canCreate) {
-			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
+			buttons.push({ id: 'create', iconParam: { name: 'plus/menu' }, tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
 		};
 
 		collapse = (
 			<div className="iconWrap collapse" onClick={onToggle}>
-				<Icon className="collapse" />
+				<Icon name="widget/collapse" className="collapse" />
 			</div>
 		);
 	};
@@ -679,7 +686,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasChild) {
 		if (object?.isSystem) {
-			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
+			icon = <Icon name={object.iconName} className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
 			icon = (
 				<IconObject 
@@ -713,7 +720,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 								<div className="buttons">
 									{buttons.map(item => (
 										<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
-											<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
+											<Icon {...(item.iconParam || {})} className={item.icon} tooltipParam={{ text: item.tooltip }} />
 										</div>
 									))}
 								</div>

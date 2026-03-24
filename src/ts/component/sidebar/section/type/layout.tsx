@@ -68,7 +68,7 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 		return ret.map(id => {
 			return {
 				id,
-				icon: U.Menu.getLayoutIcon(id),
+				iconParam: U.Menu.getLayoutIcon(id),
 				name: translate(`layout${id}`),
 			};
 		});

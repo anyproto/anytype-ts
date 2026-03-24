@@ -13,7 +13,7 @@
 			&.sortItem:before { display: none; }
 
 			.icon { margin-right: 2px; }
-			.icon.dnd { margin-right: 4px; }
+			.icon.commonDnd { margin-right: 4px; }
 
 			.sides { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; }
 			.side { display: flex; gap: 8px; }
@@ -27,7 +27,7 @@
 			}
 
 			.chip.type {
-				.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/dataview/sort.svg'); }
+				.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
 				.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 			}
 
@@ -39,7 +39,7 @@
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:not(.isReadonly) {
-			.chip.relation::after { content: ''; width: 8px; height: 8px; background-image: url('~img/arrow/select/filter.svg'); }
+			.chip.relation::after { content: ''; width: 8px; height: 8px; }
 		}
 
 		.item:not(.isReadonly):hover,

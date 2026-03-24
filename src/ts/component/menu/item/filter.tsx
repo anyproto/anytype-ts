@@ -170,7 +170,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			{...listeners}
 			style={style}
 		>
-			{!readonly ? <Icon className="dnd" /> : ''}
+			{!readonly ? <Icon name="common/dnd" /> : ''}
 			<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} className="mainIcon" />
 
 			<div className="txt" onClick={onClick}>
@@ -187,8 +187,8 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 
 			{!readonly ? (
 				<div className="buttons">
-					<Icon className="more" withBackground={true} onClick={onClick} />
-					<Icon className="delete" withBackground={true} onClick={onRemove} />
+					<Icon name="common/more" className="more" withBackground={true} onClick={onClick} />
+					<Icon name="menu/common/delete" className="delete" withBackground={true} onClick={onRemove} />
 				</div>
 			) : ''}
 		</div>

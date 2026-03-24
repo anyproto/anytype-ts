@@ -24,13 +24,7 @@
 
 		.controls { display: flex; align-items: center; gap: 12px; height: 32px; }
 
-		.iconPlay {
-			width: 20px; height: 20px; flex-shrink: 0;
-			background-image: url('~img/icon/audio/play.svg'); background-size: contain;
-			background-repeat: no-repeat; background-position: center;
-
-			&.active { background-image: url('~img/icon/audio/pause.svg'); }
-		}
+		.icon.hasSvg { width: 20px; height: 20px; }
 
 		.speed {
 			@include text-small; color: var(--color-text-secondary); flex-shrink: 0;

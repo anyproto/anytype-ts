@@ -101,7 +101,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			case I.BlockType.TableColumn: {
 				options = options.concat([
-					{ id: 'sort', icon: 'sort', name: translate('commonSort'), arrow: true },
+					{ id: 'sort', iconParam: { name: 'common/sort' }, name: translate('commonSort'), arrow: true },
 					{ isDiv: true },
 				]);
 				options = options.concat(optionsColumn(columnId));
@@ -1056,7 +1056,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		let options: any[] = [
 			{ 
-				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
+				id: 'rowHeader', iconParam: { name: 'menu/table/header-row' }, name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, () => {
 						framesUpdate();
@@ -1075,26 +1075,26 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			let moveBot = null;
 
 			if (nextTop && !nextTop.content.isHeader && (idx > 0)) {
-				moveTop = { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') };
+				moveTop = { id: 'rowMoveTop', iconParam: { name: 'menu/table/move-v' }, name: translate('blockTableOptionsRowRowMoveTop') };
 			};
 
 			if (nextBot && !nextBot.content.isHeader && (idx < length - 1)) {
-				moveBot = { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') };
+				moveBot = { id: 'rowMoveBottom', iconParam: { name: 'menu/table/move-v' }, className: 'rotated', name: translate('blockTableOptionsRowRowMoveBottom') };
 			};
 
 			options = options.concat([
-				{ id: 'rowBefore', icon: 'table-insert-top', name: translate('blockTableOptionsRowRowBefore') },
-				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
+				{ id: 'rowBefore', iconParam: { name: 'menu/table/insert-v' }, name: translate('blockTableOptionsRowRowBefore') },
+				{ id: 'rowAfter', iconParam: { name: 'menu/table/insert-v' }, className: 'rotated', name: translate('blockTableOptionsRowRowAfter') },
 				moveTop,
 				moveBot,
-				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
+				{ id: 'rowCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') },
 				{ isDiv: true },
 			]);
 		};
 
 		options = options.concat([
-			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
-			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: translate('blockTableOptionsRowRowRemove') } : null,
+			{ id: 'clearContent', iconParam: { name: 'menu/action/clear' }, name: translate('blockTableOptionsClearContent') },
+			(length > 1) ? { id: 'rowRemove', iconParam: { name: 'menu/action/remove' }, name: translate('blockTableOptionsRowRowRemove') } : null,
 			!isInner ? { isDiv: true } : null,
 		]);
 
@@ -1105,14 +1105,14 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const idx = columns.findIndex(it => it.id == id);
 		const length = columns.length;
 		const options: any[] = [
-			{ id: 'columnBefore', icon: 'table-insert-left', name: translate('blockTableOptionsColumnColumnBefore') },
-			{ id: 'columnAfter', icon: 'table-insert-right', name: translate('blockTableOptionsColumnColumnAfter') },
-			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
-			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
-			{ id: 'columnCopy', icon: 'copy', name: translate('commonDuplicate') },
+			{ id: 'columnBefore', iconParam: { name: 'menu/table/insert-h' }, name: translate('blockTableOptionsColumnColumnBefore') },
+			{ id: 'columnAfter', iconParam: { name: 'menu/table/insert-h' }, className: 'rotated', name: translate('blockTableOptionsColumnColumnAfter') },
+			(idx > 0) ? { id: 'columnMoveLeft', iconParam: { name: 'menu/table/move-h' }, name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
+			(idx < length - 1) ? { id: 'columnMoveRight', iconParam: { name: 'menu/table/move-h' }, className: 'rotated', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
+			{ id: 'columnCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') },
 			{ isDiv: true },
-			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
-			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: translate('blockTableOptionsColumnColumnRemove') } : null,
+			{ id: 'clearContent', iconParam: { name: 'menu/action/clear' }, name: translate('blockTableOptionsClearContent') },
+			(length > 1) ? { id: 'columnRemove', iconParam: { name: 'menu/action/remove' }, name: translate('blockTableOptionsColumnColumnRemove') } : null,
 			!isInner ? { isDiv: true } : null,
 		];
 		return options;
@@ -1127,7 +1127,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{ id: 'color', icon: 'color', name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: translate('blockTableOptionsColorBackground'), inner: innerBackground, arrow: true },
 			{ id: 'style', icon: 'paragraph', name: translate('blockTableOptionsColorStyle'), arrow: true },
-			{ id: 'clearStyle', icon: 'clear', name: translate('blockTableOptionsColorClearStyle') },
+			{ id: 'clearStyle', iconParam: { name: 'menu/action/clear' }, name: translate('blockTableOptionsColorClearStyle') },
 			{ isDiv: true },
 		];
 	};
@@ -1145,10 +1145,10 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const current = S.Block.getLeaf(rootId, cellId);
 		const length = Number(current?.getLength()) || 0;
 		const ret: any[] = [
-			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
-			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
-			{ id: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough') },
-			{ id: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline') },
+			{ id: I.MarkType.Bold, iconParam: { name: 'menu/mark/bold' }, name: translate('commonBold') },
+			{ id: I.MarkType.Italic, iconParam: { name: 'menu/mark/italic' }, name: translate('commonItalic') },
+			{ id: I.MarkType.Strike, iconParam: { name: 'menu/mark/strike' }, name: translate('commonStrikethrough') },
+			{ id: I.MarkType.Underline, iconParam: { name: 'menu/mark/underline' }, name: translate('commonUnderline') },
 		];
 
 		return ret.map(it => {
@@ -1441,7 +1441,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 									className={`plusButton ${item.className}`} 
 									onClick={item.onClick}
 								>
-									<Icon />
+									<Icon name="plus/table" />
 								</div>
 							))}
 						</>

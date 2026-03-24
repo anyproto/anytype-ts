@@ -290,6 +290,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					options={views}
 					onChange={onChangeView}
 					arrowClassName="light"
+					arrowParam={{ name: 'arrow/small', width: 8, height: 5 }}
 					menuParam={{
 						width: 300,
 						className: 'fixed',
@@ -311,7 +312,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							iconParam={{ className: 'search' }}
+							iconParam={{ name: 'common/search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 							onClear={() => setSearchIds([])}
@@ -446,12 +447,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			{head}
 			{content}
 			
-			<Button 
-				id="button-show-all" 
-				onClick={onSetPreview} 
-				text={translate('widgetSeeAll')} 
+			<Button
+				id="button-show-all"
+				onClick={onSetPreview}
+				text={translate('widgetSeeAll')}
 				size={28}
-				color="blank" 
+				color="blank"
+				arrow={true}
 			/>
 		</div>
 	);

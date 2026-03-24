@@ -9,7 +9,7 @@
 		.items { flex-grow: 1; }
 		.item { padding: 4px 10px; display: flex; }
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.icon.plus { margin-right: 4px; }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 
@@ -41,9 +41,8 @@
 
 		.icon.lock { margin-right: 6px; }
 		
-		.icon.arrow { 
-			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
-			background-image: url('~img/arrow/menu.svg'); 
+		.icon.arrow {
+			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px;
 		}
 	}
 

@@ -10,8 +10,8 @@
 	.head {
 		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: var(--color-bg-primary); @include border; transition: $transitionAllCommon; }
 		.icon:hover { background-color: var(--color-shape-highlight-light); }
-		.icon.hide { background-image: url('~img/icon/notification/hide.svg'); background-size: 12px 8px; }
-		.icon.clear { background-image: url('~img/icon/notification/delete.svg'); background-size: 10px; }
+		.icon.hide { background-size: 12px 8px; }
+		.icon.clear { background-size: 10px; }
 	}
 
 	.body { flex-grow: 1; position: relative; }
@@ -27,7 +27,7 @@
 	.notification {
 		.icon.delete { 
 			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: var(--color-bg-primary); 
-			@include border; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
+			@include border; top: -8px; left: -8px;
 			background-size: 10px; transition: $transitionAllCommon; opacity: 0;
 		}
 

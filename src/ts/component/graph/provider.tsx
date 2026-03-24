@@ -289,21 +289,37 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 						return;
 					};
 
+					const w = I.ImageSize.Small;
 					const ratio = img.naturalHeight / img.naturalWidth || 1;
+					const h = Math.round(w * ratio);
 
 					try {
-						createImageBitmap(img, {
-							resizeWidth: I.ImageSize.Small,
-							resizeHeight: I.ImageSize.Small * ratio,
-							resizeQuality: 'high',
-						}).then((res: any) => {
-							if (images.current[src]) {
-								return;
-							};
+						if (src.startsWith('data:')) {
+							const canvas = new OffscreenCanvas(w, h);
+							const ctx = canvas.getContext('2d');
+							ctx.drawImage(img, 0, 0, w, h);
+							createImageBitmap(canvas).then((res: any) => {
+								if (images.current[src]) {
+									return;
+								};
 
-							images.current[src] = true;
-							send('image', { src, bitmap: res });
-						}).catch(() => { /**/ });
+								images.current[src] = true;
+								send('image', { src, bitmap: res });
+							}).catch(() => { /**/ });
+						} else {
+							createImageBitmap(img, {
+								resizeWidth: w,
+								resizeHeight: h,
+								resizeQuality: 'high',
+							}).then((res: any) => {
+								if (images.current[src]) {
+									return;
+								};
+
+								images.current[src] = true;
+								send('image', { src, bitmap: res });
+							}).catch(() => { /**/ });
+						};
 					} catch (e) { /**/ };
 				};
 				img.crossOrigin = 'anonymous';

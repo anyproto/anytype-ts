@@ -60,7 +60,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { processor } = content;
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
-	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
+	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[processor]}`)}` || 'embed/default';
 	const text = String(content.text || '');
 	const isUnsupported = I.EmbedProcessor[processor] === undefined;
 	const css: any = {};
@@ -697,6 +698,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				});
 				break;
 			};
+
 		};
 	};
 
@@ -868,11 +870,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let placeholder = '';
 
 	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
-		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+		resizeIcon = <Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />;
 	};
 
 	if (isExcalidraw) {
-		expandIcon = <Icon className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
+		expandIcon = <Icon name="common/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
@@ -895,11 +897,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		select = (
 			<div id="select" className="select" onMouseDown={onLatexTemplate}>
 				<div className="name">{translate('blockEmbedLatexTemplate')}</div>
-				<Icon className="arrow light" />
+				<Icon name="arrow/button" size={8} className="arrow light" />
 			</div>
 		);
 	} else {
-		source = <Icon className="source" onMouseDown={onEdit} />;
+		source = <Icon name="menu/action/source" className="source" onMouseDown={onEdit} />;
 		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -1003,12 +1005,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 				{isUnsupported ? (
 					<div className="preview unsupported">
-						<Icon className="iconEmbed" />
+						<Icon name="embed/default" size={40} className="iconEmbed" />
 						<Label text={translate('blockEmbedUnsupported')} />
 					</div>
 				) : (
 					<>
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
+							<Icon name={embedIconName} size={40} className="iconEmbed" />
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
 						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />

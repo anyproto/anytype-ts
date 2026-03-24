@@ -72,7 +72,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 				objectIds: [ id ],
 				subId,
 				allowedCollection: true,
-				allowedExport: true,
 				allowedLinkTo: true,
 				openAfterDuplicate: true,
 			},
@@ -132,7 +131,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	return (
 		<div

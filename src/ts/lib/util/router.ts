@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
 
 interface RouteParam {
@@ -18,7 +17,7 @@ interface RouteParam {
  *
  * Key responsibilities:
  * - Building and parsing route URLs
- * - Navigating between pages with optional animations
+ * - Navigating between pages
  * - Managing browser history
  * - Switching between spaces with proper state management
  *
@@ -128,7 +127,7 @@ class UtilRouter {
 	};
 
 	/**
-	 * Navigates to a route with optional parameters and animation.
+	 * Navigates to a route with optional parameters.
 	 * @param {string} route - The route string.
 	 * @param {Partial<I.RouteParam>} param - Additional navigation parameters.
 	 */
@@ -140,7 +139,7 @@ class UtilRouter {
 		param = param || {};
 
 		const { space } = S.Common;
-		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
@@ -168,6 +167,13 @@ class UtilRouter {
 		};
 
 		const change = () => {
+			Preview.hideAll();
+
+			if (replace) {
+				this.history.entries = [];
+				this.history.index = -1;
+			};
+
 			this.history.push(newRoute);
 
 			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page)) {
@@ -177,42 +183,7 @@ class UtilRouter {
 			onRouteChange?.();
 		};
 
-		const onTimeout = () => {
-			Preview.hideAll();
-
-			if (replace) {
-				this.history.entries = [];
-				this.history.index = -1;
-			};
-
-			if (!animate) {
-				onFadeOut?.();
-				change();
-				onFadeIn?.();
-				return;
-			};
-
-			const fade = $('#globalFade');
-			const t = delay || J.Constant.delay.route;
-			const wait = t;
-
-			fade.css({ transitionDuration: `${t / 1000}s` }).show();
-				
-			window.setTimeout(() => fade.addClass('show'), 15);
-
-			window.setTimeout(() => {
-				onFadeOut?.();
-				change();
-			}, t);
-
-			window.setTimeout(() => {
-				onFadeIn?.();
-				fade.removeClass('show');
-				window.setTimeout(() => fade.hide(), t);
-			}, wait + t);
-		};
-
-		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
+		timeout ? window.setTimeout(() => change(), timeout) : change();
 	};
 
 	/**
@@ -256,7 +227,7 @@ class UtilRouter {
 					window.setTimeout(() => {
 						S.Popup.open('confirm', {
 							data: {
-								icon: 'error',
+								iconParam: { name: 'popup/header/error', color: 'orange' },
 								title: translate('commonError'),
 								text: message.error.description,
 								canCancel: true,
@@ -269,7 +240,7 @@ class UtilRouter {
 				return;
 			};
 
-			this.go('/main/blank', { 
+			this.go('/main/blank', {
 				updateTabRoute: false,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);

@@ -1,0 +1,22 @@
+import { registerIcon } from '../registry';
+import Page from './page';
+import Human from './human';
+import Task from './task';
+import Set from './set';
+import LayoutFile from './file';
+import LayoutImage from './image';
+import Type from './type';
+import LayoutRelation from './relation';
+import Note from './note';
+import Bookmark from './bookmark';
+
+registerIcon('layout/page', Page);
+registerIcon('layout/human', Human);
+registerIcon('layout/task', Task);
+registerIcon('layout/set', Set);
+registerIcon('layout/file', LayoutFile);
+registerIcon('layout/image', LayoutImage);
+registerIcon('layout/type', Type);
+registerIcon('layout/relation', LayoutRelation);
+registerIcon('layout/note', Note);
+registerIcon('layout/bookmark', Bookmark);

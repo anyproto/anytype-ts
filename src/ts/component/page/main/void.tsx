@@ -74,7 +74,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				exit={{ opacity: 0, transition: { duration: 0.08 } }}
 			>
 				<Icon
-					className="vaultToggle" withBackground={true}
+					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{
 						text: translate('commonVault'),
@@ -84,7 +84,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 				<Frame>
 					<div className="iconWrapper">
-						<Icon />
+						<Icon name={id == 'select' ? 'state/select' : 'state/error'} size={56} />
 					</div>
 
 					<Title text={title} />

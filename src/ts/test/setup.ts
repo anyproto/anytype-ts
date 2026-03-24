@@ -186,9 +186,7 @@ vi.mock('Lib', () => {
 				return map;
 			},
 			unmap: (map: any) => {
-				let ret: any[] = [];
-				for (const field in map) ret = ret.concat(map[field]);
-				return ret;
+				return Object.values(map).flat();
 			},
 			getKeyByValue: (o: any, v: any) => Object.keys(o || {}).find((k: string) => o[k] === v),
 			formatNumber: (v: number) => String(v),

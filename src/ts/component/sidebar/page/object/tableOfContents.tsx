@@ -16,9 +16,9 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 					<Label text={translate('sidebarToc')} />
 				</div>
 				<div className="side right">
-					<Icon 
-						className="close" withBackground={true}
-						onClick={() => sidebar.rightPanelClose(isPopup, true)} 
+					<Icon
+						name="common/close" withBackground={true}
+						onClick={() => sidebar.rightPanelClose(isPopup, true)}
 					/>
 				</div>
 			</div>

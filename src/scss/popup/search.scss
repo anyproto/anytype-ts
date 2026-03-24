@@ -20,9 +20,8 @@
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
-			
+
 			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg') !important; }
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
@@ -49,14 +48,11 @@
 			}
 
 			.item {
-				.icon { width: 20px; height: 20px; flex-shrink: 0; }
-				.icon.plus { background-image: url('~img/icon/popup/search/plus.svg'); }
-				.icon.relation { background-image: url('~img/icon/menu/action/relation0.svg'); }
-				.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
-				.icon.navigation { background-image: url('~img/icon/menu/action/navigation0.svg'); }
-				.icon.advanced { width: 28px; height: 28px; background: url('~img/arrow/forward.svg'); opacity: 0; }
+				.icon { width: 20px; height: 20px; }
 
-				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.icon.advanced { width: 28px; height: 28px; opacity: 0; }
+
+				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
 				.iconObject:not(.isParticipant) { background: var(--color-shape-tertiary); border-radius: 8px; }
 				.iconObject.isTask { background: none; }

@@ -29,6 +29,95 @@ interface ListObjectRefProps {
 
 const PREFIX = 'listObject';
 
+const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any) => {
+	const cn = [ 'row' ];
+
+	if (U.Object.isTaskLayout(item.layout) && item.isDone) {
+		cn.push('isDone');
+	};
+	if (item.isArchived) {
+		cn.push('isArchived');
+	};
+	if (item.isDeleted) {
+		cn.push('isDeleted');
+	};
+	if (item.isHidden) {
+		cn.push('isHidden');
+	};
+
+	return (
+		<SelectionTarget
+			id={item.id}
+			type={I.SelectType.Record}
+			className={cn.join(' ')}
+			onContextMenu={e => onContext(e, item.id)}
+			style={css}
+		>
+			{columnList.map(column => {
+				const cn = [ 'cell', `c-${column.relationKey}` ];
+				const cnc = [ 'cellContent' ];
+				const value = item[column.relationKey];
+
+				if (column.className) {
+					cnc.push(column.className);
+				};
+
+				let content = null;
+				let onClick = null;
+
+				if (column.isObject) {
+					let object = null;
+
+					if (column.relationKey == 'name') {
+						object = item;
+
+						cn.push('isName');
+						cnc.push('isName');
+					} else {
+						object = S.Detail.get(subId, value, []);
+					};
+
+					if (!object._empty_) {
+						onClick = e => U.Object.openEvent(e, object);
+						content = (
+							<div className="flex">
+								<IconObject object={object} />
+								<ObjectName object={object} />
+							</div>
+						);
+					};
+				} else
+				if (column.isCell) {
+					content = (
+						<Cell
+							elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
+							rootId={rootId}
+							subId={subId}
+							block={null}
+							relationKey={column.relationKey}
+							getRecord={() => item}
+							viewType={I.ViewType.Grid}
+							idPrefix={PREFIX}
+							iconSize={20}
+							readonly={true}
+							arrayLimit={2}
+							textLimit={150}
+						/>
+					);
+				} else {
+					content = column.mapper ? column.mapper(value) : value;
+				};
+
+				return (
+					<div key={`cell-${column.relationKey}`} className={cn.join(' ')}>
+						{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
+					</div>
+				);
+			})}
+		</SelectionTarget>
+	);
+};
+
 const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	spaceId = '',
 	subId = '',
@@ -90,9 +179,9 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		if (!objectIds.length) {
 			objectIds = [ id ];
 		};
-		
+
 		S.Menu.open('objectContext', {
-			recalcRect: () => { 
+			recalcRect: () => {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
@@ -134,101 +223,12 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	let pager = null;
 	if (total && items.length) {
 		pager = (
-			<Pager 
-				offset={offset} 
-				limit={J.Constant.limit.listObject} 
-				total={total} 
-				onChange={page => getData(page)} 
+			<Pager
+				offset={offset}
+				limit={J.Constant.limit.listObject}
+				total={total}
+				onChange={page => getData(page)}
 			/>
-		);
-	};
-
-	const Row = (item: any) => {
-		const cn = [ 'row' ];
-
-		if (U.Object.isTaskLayout(item.layout) && item.isDone) {
-			cn.push('isDone');
-		};
-		if (item.isArchived) {
-			cn.push('isArchived');
-		};
-		if (item.isDeleted) {
-			cn.push('isDeleted');
-		};
-		if (item.isHidden) {
-			cn.push('isHidden');
-		};
-
-		return (
-			<SelectionTarget 
-				id={item.id} 
-				type={I.SelectType.Record} 
-				className={cn.join(' ')}
-				onContextMenu={e => onContext(e, item.id)}
-				style={css}
-			>
-				{columnList.map(column => {
-					const cn = [ 'cell', `c-${column.relationKey}` ];
-					const cnc = [ 'cellContent' ];
-					const value = item[column.relationKey];
-
-					if (column.className) {
-						cnc.push(column.className);
-					};
-
-					let content = null;
-					let onClick = null;
-
-					if (column.isObject) {
-						let object = null;
-
-						if (column.relationKey == 'name') {
-							object = item;
-
-							cn.push('isName');
-							cnc.push('isName');
-						} else {
-							object = S.Detail.get(subId, value, []);
-						};
-
-						if (!object._empty_) {
-							onClick = e => U.Object.openEvent(e, object);
-							content = (
-								<div className="flex">
-									<IconObject object={object} />
-									<ObjectName object={object} />
-								</div>
-							);
-						};
-					} else 
-					if (column.isCell) {
-						content = (
-							<Cell
-								elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
-								rootId={rootId}
-								subId={subId}
-								block={null}
-								relationKey={column.relationKey}
-								getRecord={() => item}
-								viewType={I.ViewType.Grid}
-								idPrefix={PREFIX}
-								iconSize={20}
-								readonly={true}
-								arrayLimit={2}
-								textLimit={150}
-							/>
-						);
-					} else {
-						content = column.mapper ? column.mapper(value) : value;
-					};
-
-					return (
-						<div key={`cell-${column.relationKey}`} className={cn.join(' ')}>
-							{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
-						</div>
-					);
-				})}
-			</SelectionTarget>
 		);
 	};
 
@@ -249,7 +249,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			<div className="table">
 				<div className="row isHead" style={css}>
 					{columnList.map(column => {
-						const arrow = sortId == column.relationKey ? <Icon className={`sortArrow c${sortType}`} /> : null;
+						const arrow = sortId == column.relationKey ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 
 						return (
 							<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => onSort(column.relationKey)}>
@@ -265,13 +265,21 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 					</div>
 				) : (
 					<>
-						{items.map((item: any, i: number) => (
-							<Row key={i} {...item} />
+						{items.map((item: any) => (
+							<ListObjectRow
+								key={item.id}
+								item={item}
+								columnList={columnList}
+								css={css}
+								subId={subId}
+								rootId={rootId}
+								onContext={onContext}
+							/>
 						))}
 					</>
 				)}
 			</div>
-			
+
 			{pager}
 		</div>
 	);

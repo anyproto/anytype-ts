@@ -22,7 +22,6 @@
 			}
 			> .head {
 				.name { @include text-overflow-nw; }
-				.icon.close { background-image: url('~img/icon/close.svg'); }
 			}
 
 			> .scrollWrap { flex-grow: 1; overflow-y: auto; }
@@ -42,7 +41,7 @@
 						.iconObject { margin-left: -6px; border: 2px solid var(--color-bg-primary); background-color: var(--color-bg-primary) !important; }
 					}
 
-					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); transition: none; transform: rotateZ(180deg); }
+					.icon.arrow { width: 20px; height: 20px; transition: none; transform: rotateZ(180deg); }
 				}
 
 				.items { display: none; transition: $transitionAllCommon; padding: 0px 4px; }
@@ -64,9 +63,8 @@
 					> .info { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; padding: 3px 16px; transition: $transitionAllCommon; }
 					> .info:hover { background-color: var(--color-shape-highlight-medium); }
 
-					.icon { width: 20px; height: 20px; flex-shrink: 0; border-radius: 4px; cursor: default; }
-					.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
-					.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); transition: none; }
+					.icon { width: 20px; height: 20px; border-radius: 4px; cursor: default; }
+						.icon.arrow { transform: rotate(-90deg); transition: none; }
 
 					.child {
 						> .info { padding-left: 42px; }

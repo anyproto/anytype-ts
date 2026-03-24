@@ -60,7 +60,7 @@ const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 						))}
 
 						<div className="cellHead last">
-							{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+							{!readonly && allowed ? <Icon id="cell-add" name="plus/menu" className="plus" onClick={onCellAdd} /> : ''}
 						</div>
 					</motion.div>
 				</AnimatePresence>

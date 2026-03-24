@@ -72,6 +72,7 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
@@ -183,6 +184,7 @@ export interface FooterComponent {
 export interface ButtonComponent {
 	id?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	type?: string;
 	arrow?: boolean;
 	subType?: string;
@@ -280,13 +282,9 @@ export interface FocusState {
 	range: I.TextRange;
 };
 
-export interface RouteParam { 
+export interface RouteParam {
 	replace: boolean;
-	animate: boolean;
-	delay: number;
 	updateTabRoute: boolean;
-	onFadeOut: () => void;
-	onFadeIn?: () => void;
 	onRouteChange?: () => void;
 };
 
@@ -353,6 +351,27 @@ export enum LocalApiScope {
 	Limited		 = 0,
 	Json		 = 1,
 	Full		 = 2,
+};
+
+export interface AppConfig {
+	channel?: string;
+	theme?: string;
+	showMenuBar?: boolean;
+	alwaysShowTabs?: boolean;
+	hardwareAcceleration?: boolean;
+	hideTray?: boolean;
+	sudo?: boolean;
+	zoom?: number;
+	interfaceLang?: string;
+	userDataPath?: string;
+	updateDisabled?: boolean;
+	updateTimeout?: number;
+	disableCss?: boolean;
+	experimental?: boolean;
+	debug?: Record<string, boolean>;
+	flagsMw?: Record<string, boolean>;
+	languages?: string[];
+	[key: string]: any;
 };
 
 export interface AppInfo {

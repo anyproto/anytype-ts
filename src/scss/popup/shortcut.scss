@@ -16,8 +16,6 @@
 			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; }
 
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.close { background-image: url('~img/icon/close.svg'); }
 
 			.filter { padding: 0px; }
 			.filter {
@@ -53,8 +51,7 @@
 				}
 
 				.item {
-					.flex { flex-direction: row; align-items: center; line-height: 24px; }
-					.alert { width: 20px; height: 20px; margin-right: 6px; background: url('~img/icon/alert.svg'); }
+					.flex { flex-direction: row; align-items: center; line-height: 24px; gap: 0px 6px; }
 					.name { flex-grow: 1; }
 					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
 

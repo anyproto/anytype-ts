@@ -253,13 +253,13 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	if (!readonly) {
 		if (!hasReactions && canAddReactionValue) {
-			controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
+			controls.push({ id: 'reaction-add', name: 'chat/buttons/reaction', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
-			controls.push({ className: 'more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -364,7 +364,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
 										<div className="time">
-											<Icon className={cns.join(' ')} />
+											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}
 										</div>
 									</div>
@@ -397,7 +397,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 								{controls.length ? (
 									<div className="controls">
 										{controls.map((item, i) => (
-											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+											<Icon key={i} id={item.id} name={item.name} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
 									</div>
 								) : ''}
@@ -409,7 +409,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										<Reaction key={i} {...item} onSelect={onReactionSelect} />
 									))}
 									{!readonly && canAddReactionValue ? (
-										<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+										<Icon id="reaction-add" name="chat/buttons/reaction" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
 									) : ''}
 								</div>
 							) : ''}

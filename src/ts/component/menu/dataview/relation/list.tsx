@@ -236,9 +236,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{!isReadonly ? <Icon className="dnd" /> : ''}
+				{!isReadonly ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
-					<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+					<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 					<div className="name">{item.relation.name}</div>
 				</span>
 				{canHide ? (
@@ -366,7 +366,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('commonAddRelation')}</div>
 					</div>
 				</div>

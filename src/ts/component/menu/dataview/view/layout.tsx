@@ -242,7 +242,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!isReadonly) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'addRelation', icon: 'plus', name: translate('commonAddRelation') },
+				{ id: 'addRelation', iconParam: { name: 'plus/menu' }, name: translate('commonAddRelation') },
 			]);
 		};
 
@@ -445,9 +445,18 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const sections = getSections();
+	const viewIconMap = {
+		[I.ViewType.Grid]: 'dataview/view/grid',
+		[I.ViewType.List]: 'dataview/view/list',
+		[I.ViewType.Gallery]: 'dataview/view/gallery',
+		[I.ViewType.Board]: 'dataview/view/kanban',
+		[I.ViewType.Calendar]: 'dataview/view/calendar',
+		[I.ViewType.Graph]: 'dataview/view/graph',
+	};
+
 	const layouts = U.Menu.getViews().map((it: any) => {
 		it.sectionId = 'type';
-		it.icon = `view c${it.id}`;
+		it.icon = viewIconMap[it.id] || `view c${it.id}`;
 		return it;
 	});
 
@@ -467,7 +476,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onClick={e => onClick(e, item)}
 				onMouseEnter={menuClose}
 			>
-				<Icon className={item.icon} />
+				<Icon name={item.icon} size={56} />
 				<Label text={item.name} />
 			</div>
 		);

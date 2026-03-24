@@ -5,8 +5,7 @@
 		.innerWrap { width: 480px; padding: 0px 16px 16px 16px; border-radius: 32px; position: relative; }
 
 		.icon.close {
-			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; z-index: 2;
-			background-image: url('~img/icon/close.svg');
+			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
 
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}

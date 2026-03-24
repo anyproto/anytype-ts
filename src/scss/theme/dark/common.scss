@@ -47,7 +47,7 @@ html.themeDark {
 	--color-dark-orange: #ffb330;
 
 	--color-very-light-red: #ffede9;
-	--color-light-red: #82181a;
+	--color-light-red: #ffb6a2;
 	--color-dark-red: #82181a;
 
 	--color-very-light-pink: #510427;
@@ -106,32 +106,6 @@ html.themeDark {
 		img:before { background: var(--color-bg-secondary); }
 	}
 
-	.icon.import-notion { background-image: url('#{$themePath}/icon/import/notion.svg'); }
-	.icon.import-roam { background-image: url('#{$themePath}/icon/import/roam.svg'); }
-	.icon.import-obsidian { background-image: url('#{$themePath}/icon/import/obsidian.svg'); }
-	.icon.import-protobuf { background-image: url('#{$themePath}/icon/import/protobuf.svg'); }
-
-	.icon.widget-star { background-image: url('#{$themePath}/icon/widget/system/star.svg'); }
-	.icon.widget-pin { background-image: url('#{$themePath}/icon/widget/system/pin.svg'); }
-	.icon.widget-chat0 { background-image: url('#{$themePath}/icon/widget/system/chat0.svg'); }
-	.icon.widget-chat1 { background-image: url('#{$themePath}/icon/widget/system/chat1.svg'); }
-	.icon.widget-pencil { background-image: url('#{$themePath}/icon/widget/system/pencil.svg'); }
-	.icon.widget-eye { background-image: url('#{$themePath}/icon/widget/system/eye.svg'); }
-	.icon.widget-bin { background-image: url('#{$themePath}/icon/widget/system/bin.svg'); }
-	.icon.widget-all { background-image: url('#{$themePath}/icon/widget/system/all.svg'); }
-
-	.objectManagerWrapper {
-		.icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
-		.icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
-		.icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
-		.icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
-	}
-
-	.utilOptionSelect {
-		.icon.checkbox { background-image: url('#{$themePath}/icon/menu/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('#{$themePath}/icon/menu/checkbox1.svg'); }
-	}
-
 	#root-loader {
 		.logo { background-image: url('~img/logo/white.svg'); }
 	}
@@ -155,23 +129,6 @@ html.themeDark {
 		.dot { animation-name: dots-dark; }
 	}
 
-	.mediaAudio {
-		.controls {
-			.icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
-			.icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
-
-			.icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
-			.icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-
-			.icon.volume.muted { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-		}
-	}
-
-	.graphTimeline {
-		.iconPlay { background-image: url('#{$themePath}/icon/audio/play.svg'); }
-		.iconPlay.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
-	}
-
 	.switch { background: var(--color-shape-secondary); }
 	.switch {
 		.inner { background-color: #fff; }
@@ -182,30 +139,15 @@ html.themeDark {
 	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
 	.button.black:not(.disabled):hover,
 	.button.black:not(.disabled).hover { background: var(--color-control-active); }
-	.button.black {
-		.arrow { background-image: url('~img/arrow/button/black.svg'); }
-	}
 	.button.black.disabled { color: var(--color-text-primary); background: var(--color-shape-tertiary); }
 
 	.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
 	.button.blank:not(.disabled):hover,
 	.button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
-	.filter {
-		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
-		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
-	}
-	.filter.outlined {
-		.icon.clear { background-image: url('#{$themePath}/icon/filter/clear0.svg') !important; }
-		.icon.clear:hover { background-image: url('#{$themePath}/icon/filter/clear1.svg') !important; }
-	}
 
 	.textarea { background: none; }
 	.textareaWrap { background-color: var(--color-bg-secondary); }
-
-	.select:not(.round) {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
-	}
 
 	.inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 	.input-drag-vertical { background-color: var(--color-bg-secondary); }
@@ -219,26 +161,11 @@ html.themeDark {
 		.number { color: var(--color-text-primary); }
 	}
 
-	.listObjectPreview {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
-		.icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
-		.icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
-	}
-
 	/* PreviewObject */
 
 	.previewObject {
-		.icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
 		.heading {
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
-		}
-
-		.blocks {
-			.element {
-				.inner {
-					.icon.hl { background-image: url('#{$themePath}/icon/object/preview/hl.svg'); }
-				}
-			}
 		}
 	}
 
@@ -250,18 +177,6 @@ html.themeDark {
 
 	.previewGraph { background: var(--color-bg-secondary); @include shadow; }
 
-	/* Pager */
-
-	.pager {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
-		.icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
-		.icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
-
-		.icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
-		.icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
-		.icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
-	}
-
 	/* Progress */
 
 	.sidebarProgress {
@@ -271,39 +186,9 @@ html.themeDark {
 	.tooltip { color: var(--color-text-primary); }
 	.tooltip.big { background: var(--color-bg-secondary); border: 1px solid rgba(229, 229, 229, 0.1); }
 
-	/* Icon */
-
-	.icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
-
-	.icon.settings-personal { background-image: url('#{$themePath}/icon/settings/personal.svg'); }
-	.icon.settings-storage { background-image: url('#{$themePath}/icon/settings/storage.svg'); }
-	.icon.settings-phrase { background-image: url('#{$themePath}/icon/settings/phrase.svg'); }
-	.icon.settings-pin { background-image: url('#{$themePath}/icon/settings/pin.svg'); }
-	.icon.settings-spaces { background-image: url('#{$themePath}/icon/settings/spaces.svg'); }
-	.icon.settings-membership { background-image: url('#{$themePath}/icon/settings/membership.svg'); }
-	.icon.settings-language { background-image: url('#{$themePath}/icon/settings/language.svg'); }
-	.icon.settings-api { background-image: url('#{$themePath}/icon/settings/api.svg'); }
-	.icon.settings-sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
-	.icon.settings-space { background-image: url('#{$themePath}/icon/settings/overview.svg'); }
-	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/members.svg'); }
-	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/import.svg'); }
-	.icon.settings-export { background-image: url('#{$themePath}/icon/settings/export.svg'); }
-	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
-	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
-	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
-	.icon.settings-notifications { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
-
-	.icon.settings-ux1 { background-image: url('#{$themePath}/icon/settings/space/space.svg'); }
-	.icon.settings-ux3 { background-image: url('#{$themePath}/icon/settings/space/chat.svg'); }
-
 	/* Editor */
 
 	.editorWrapper {
-		.editor {
-			.icon.buttonAdd { background-image: url('#{$themePath}/icon/block/add0.svg'); }
-			.icon.buttonAdd:hover { background-image: url('#{$themePath}/icon/block/add1.svg'); }
-		}
-
 		.dragWrap {
 			.number { color: var(--color-text-primary); }
 			.input-drag-horizontal {
@@ -314,144 +199,22 @@ html.themeDark {
 		}
 	}
 
-	/* EditorControls */
-
-	.editorControls {
-		.btn {
-			.icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
-			.icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
-			.icon.layout { background-image: url('#{$themePath}/icon/add/layout0.svg'); }
-			.icon.relation { background-image: url('#{$themePath}/icon/add/relation0.svg');  }
-			.icon.description { background-image: url('#{$themePath}/icon/add/description0.svg'); }
-			.icon.preFillName { background-image: url('#{$themePath}/icon/add/preFillName0.svg'); }
-		}
-		.btn:hover, .btn.hover {
-			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
-			.icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
-			.icon.layout { background-image: url('#{$themePath}/icon/add/layout1.svg'); }
-			.icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg');  }
-			.icon.description { background-image: url('#{$themePath}/icon/add/description1.svg'); }
-			.icon.preFillName { background-image: url('#{$themePath}/icon/add/preFillName1.svg'); }
-		}
-	}
-
 	/* Header */
 
 	.header.authIndex {
-		.logo { background: url('#{$themePath}/icon/header/logo.svg'); }
+		.logo { background: url('~img/theme/dark/logo/header.svg'); }
 	}
 
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
-		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
-	}
-
-	/* Vault */
-
-	.vault { background-color: #393939; }
-	.vault {
-		.item.isButton {
-			.iconWrap { background-color: #4f4f4f; }
-		}
-
-		.item.gallery {
-			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
-		}
-
-		.item.add {
-			.iconWrap { background-image: url('#{$themePath}/icon/vault/plus.svg'); }
-		}
-
-		.item.settings {
-			.iconWrap { background-color: unset; background-image: url('#{$themePath}/icon/vault/settings.svg'); }
-		}
-	}
-
-	.onboardingElement.onboardingVaultItem { background-color: unset !important; }
-	.onboardingElement.onboardingVaultItem {
-		.iconWrap { background-color: #000000 !important; }
 	}
 
 	/* Sidebar */
 
 	.sidebar {
-		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-
 		.sidebarPage {
 			> .subHead {
-				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
-				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
-
 				.cnt { color: var(--color-text-primary); }
-			}
-
-			> .body {
-				.group {
-					> .titleWrap {
-						.icon.question { background-image: url('#{$themePath}/icon/sidebar/question.svg'); }
-					}
-				}
-			}
-
-			> .bottom {
-				.widgetSettings:not(.isEditing):hover {
-					.icon { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
-				}
-			}
-		}
-		
-		.containerSettings {
-			> .body {
-				.list {
-					> .head {
-						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-						.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
-
-						.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-						.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
-					}
-					.toggle {
-						.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
-					}
-				}
-
-				.logout {
-					.icon { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
-				}
-			}
-		}
-
-		.sidebarPage.pageWidget {
-			> .bottom {
-				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
-			}
-
-			.createHome {
-				.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
-			}
-
-			.widgetSection {
-				> .nameWrap {
-					.name {
-						&:hover {
-							.icon.arrow { background-image: url('#{$themePath}/arrow/widgetSection1.svg'); }
-						}
-					}
-
-					.buttons {
-						.button.blank {
-							&:hover {
-								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
-							}
-						}		
-						
-						.icon.more {
-							&:hover, &.hover { background-image: url('#{$themePath}/icon/widget/sectionMore1.svg'); }
-						}
-					}
-				}
 			}
 		}
 
@@ -477,46 +240,11 @@ html.themeDark {
 	}
 
 	.banner { border: 1px solid var(--color-shape-highlight-dark); }
-	.banner {
-		.icon.close { background-image: url('#{$themePath}/icon/banner/close.svg'); }
-	}
-	.banner.sidebarUpdateBanner {
-		.button:before { background-image: url('#{$themePath}/icon/banner/download.svg'); }
-	}
 
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
-		.icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
 		.icon.close { background-color: var(--color-bg-secondary); }
-	}
-
-	.emptyState {
-		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
-	}
-
-	/* Key Phrase */
-	.phraseWrapper {
-		.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/hide1.svg'); }
-
-		&.isHidden {
-			.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/see1.svg'); }
-		}
-	}
-
-	/* CalendarSelect */
-	.calendarSelect {
-		.head {
-			.side.right {
-				.icon.arrow { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
-			}
-		}
-	}
-
-	/* Comment checkboxes */
-	.commentSection {
-		.commentEditor-li-unchecked::before { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
-		.commentCheckbox .checkboxMark { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
 	}
 
 	@import "./menu";

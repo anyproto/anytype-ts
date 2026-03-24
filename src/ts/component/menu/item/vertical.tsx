@@ -5,8 +5,8 @@ import { I, U, Preview } from 'Lib';
 
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
-	const { 
-		id = '', icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
+	const {
+		id = '', icon, iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
 		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
@@ -85,16 +85,20 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 			cn.push('isHidden');
 		};
 	} else
+	if (iconParam) {
+		cn.push('withIcon');
+		iconMainElement = <Icon name={iconParam.name} color={iconParam.color} size={iconParam.size} width={iconParam.width} height={iconParam.height} className="iconMain" inner={inner} />;
+	} else
 	if (icon) {
 		cn.push('withIcon');
 		iconMainElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
 	};
 
 	if (withArrow) {
-		iconSideElement = <Icon className="arrow" />;
+		iconSideElement = <Icon name="arrow/item" className="arrow" />;
 	};
 	if (checkbox) {
-		iconSideElement = <Icon className="chk" />;
+		iconSideElement = <Icon name="menu/common/chk" className="chk" />;
 	};
 	if (note) {
 		cn.push('withNote');
@@ -107,7 +111,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 	if (undefined !== sortArrow) {
 		cn.push('withSortArrow');
-		iconSideElement = <Icon className={`sortArrow c${sortArrow}`} />;
+		iconSideElement = <Icon name="common/sortArrow" className={`sortArrow c${sortArrow}`} />;
 	};
 
 	let content = null;
@@ -161,7 +165,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 					) : (
 						<div className="caption">{caption}</div>
 					)}
-					{withMore ? <Icon className="more" withBackground={true} onMouseDown={onMore} /> : ''}
+					{withMore ? <Icon name="common/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
 				</>
 			);
 		};

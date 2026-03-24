@@ -2,13 +2,7 @@ import React, { useRef, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { S, U, J } from 'Lib';
-
-const typeIconModules = import.meta.glob('../../../../img/icon/type/default/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const getTypeIcon = (name: string): string => {
-	const path = `../../../../img/icon/type/default/${name}.svg`;
-	if (path in typeIconModules) return typeIconModules[path];
-	throw new Error(`Cannot find type icon: ${name}`);
-};
+import { getIconSvg } from 'Component/util/icons';
 
 interface OnboardingGraphWorkerProps {
 	width: number;
@@ -53,7 +47,7 @@ const OnboardingGraphWorker = observer(({
 				
 				// Use the same pattern as in graph.ts - direct require without try/catch
 				// Use regular updateSvg with theme-appropriate fill matching node colors
-				const src = U.Common.updateSvg(getTypeIcon(node.iconName), { 
+				const src = U.Common.updateSvg(getIconSvg(`type/${node.iconName}`), { 
 					id: node.iconName, 
 					size: 70, // 30% smaller (was 100)
 					fill: theme === 'dark' 

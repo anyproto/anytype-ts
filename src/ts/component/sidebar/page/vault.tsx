@@ -10,8 +10,8 @@ import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatC
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer } from 'Lib';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
-const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_ITEM = 45;
+const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
@@ -281,7 +281,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		return (
 			<Icon
 				id="button-create-space"
-				className="plus" withBackground={!vaultIsMinimal}
+				name="plus/menu" className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -400,7 +400,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (!item.hasCounter && item.isPinned) {
 			cn.push('isPinned');
-			icons.push('pin');
+			icons.push({ className: 'pin', name: 'vault/pin' });
 		};
 
 		if (item.notificationMode != I.NotificationMode.All) {
@@ -433,7 +433,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<div className="messageWrapper">
 						{last}
 						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
+							{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 						</div>
 						{counter}
 					</div>
@@ -444,7 +444,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<div className="chatWrapper">
 							{chatName}
 							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
+								{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 							</div>
 							{counter}
 						</div>
@@ -470,7 +470,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<ObjectName object={item} />
 
 					<div className="icons">
-						{icons.map(icon => <Icon key={icon} className={icon} />)}
+						{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 					</div>
 
 					{counter}
@@ -653,8 +653,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{!vaultIsMinimal ? (
 						<>
 							{iconCreate()}
-							<Icon 
-								className="toggle" withBackground={true}
+							<Icon
+								name="widget/sidebarToggle" className="toggle" withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -671,7 +671,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						iconParam={{ className: 'search' }}
+						iconParam={{ name: 'common/search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
@@ -747,6 +747,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 					<div className="side right">
 						<Icon
+							name="vault/gallery"
 							className="gallery"
 							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}

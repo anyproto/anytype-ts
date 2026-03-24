@@ -7,8 +7,7 @@
 		#loader { border-radius: 32px; }
 
 		.icon.close {
-			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; z-index: 2;
-			background-image: url('~img/icon/close.svg');
+			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
 
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
@@ -39,8 +38,7 @@
 				.memberRow { display: flex; align-items: center; gap: 12px; padding: 8px 0px; }
 				.memberRow {
 					.name { @include text-common; flex: 1; }
-					.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; background-image: url('~img/icon/marker/checkbox0.svg'); }
-					.icon.checkbox.active { background-image: url('~img/icon/marker/checkbox2.svg'); }
+					.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
 				}
 			}
 		}
@@ -65,7 +63,7 @@
 				.addMembers {
 					.icon.addMember {
 						width: 32px; height: 32px; border-radius: 50%;
-						background: var(--color-shape-highlight-medium) url('~img/icon/menu/spaceCreate/group.svg') 50% 50% no-repeat;
+						background: var(--color-shape-highlight-medium);
 					}
 					.name { @include text-common; color: var(--color-text-secondary); }
 				}

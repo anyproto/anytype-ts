@@ -452,9 +452,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
-		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
+		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
+		{ id: 'sort', name: 'common/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
 	const ButtonItem = (item: any) => {
@@ -468,6 +468,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		return (
 			<Icon
 				id={elementId}
+				name={item.name}
 				className={cn.join(' ')} withBackground={true}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
@@ -550,7 +551,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						onContextMenu={(e: any) => onViewContext(e, `#block-${U.Common.esc(block.id)} #view-selector`, view)}
 					>
 						<div className="name">{view.name}</div>
-						<Icon className="arrow dark" />
+						<Icon name="arrow/select" className="arrow dark" />
 					</div>
 
 					<DndContext
@@ -570,9 +571,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								))}
 
 								{allowedView ? (
-									<Icon 
-										id={`button-${block.id}-view-add`} 
-										className="plus" withBackground={true}
+									<Icon
+										id={`button-${block.id}-view-add`}
+										name="plus/menu" className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -586,7 +587,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						ref={filterRef}
 						className="underlined"
 						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ className: 'search', withBackground: true }}
+						iconParam={{ name: 'common/search' }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}
 						onIconClick={onFilterShow}

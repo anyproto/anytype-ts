@@ -1,4 +1,5 @@
 import { I, S, U, Relation } from 'Lib';
+import { getIconSvg } from 'Component/util/icons';
 
 /**
  * UtilGraph provides utilities for the graph visualization feature.
@@ -25,7 +26,12 @@ class UtilGraph {
 
 		switch (d.layout) {
 			case I.ObjectLayout.Relation: {
-				src = Relation.icon(d.relationKey, d.relationFormat, '#9B9B9B');
+				const name = Relation.registryName(d.relationKey, d.relationFormat);
+				let svg = getIconSvg(name, { style: { width: 100, height: 100 } });
+				if (svg) {
+					svg = svg.replace(/currentColor/g, '#9B9B9B');
+					src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+				};
 				break;
 			};
 
@@ -35,7 +41,12 @@ class UtilGraph {
 			};
 
 			case I.ObjectLayout.Date: {
-				src = Relation.icon('', I.RelationType.Date, '#9B9B9B');
+				const name = Relation.registryName('', I.RelationType.Date);
+				let svg = getIconSvg(name, { style: { width: 100, height: 100 } });
+				if (svg) {
+					svg = svg.replace(/currentColor/g, '#9B9B9B');
+					src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+				};
 				break;
 			};
 

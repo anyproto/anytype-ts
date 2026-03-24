@@ -1,0 +1,28 @@
+.iconGallery {
+	display: flex; flex-direction: column; gap: 32px; padding: 20px; overflow: auto; height: 100vh;
+}
+
+.iconGalleryTitle {
+	margin: 0 0 12px; font-weight: 600;
+}
+
+.iconGalleryGrid {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px;
+}
+
+.iconGalleryItem {
+	display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 8px; min-width: 72px;
+}
+
+.iconGalleryPreview {
+	display: flex; align-items: center; justify-content: center; color: var(--color-icon, #9b9b9b);
+}
+
+.iconGalleryLabel {
+	font-size: 11px; color: #888; text-align: center;
+}
+
+.iconGalleryPreview {
+	.bg { fill: #f2f2f2; }
+	.cross { fill: #b6b6b6; }
+}

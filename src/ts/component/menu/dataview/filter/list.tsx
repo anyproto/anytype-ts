@@ -83,10 +83,10 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isReadonly) {
 			items.push({ isDiv: true });
-			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), icon: 'plus' });
+			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), iconParam: { name: 'plus/menu' } });
 
 			if (filterItems.length) {
-				items.push({ id: 'clear', name: translate('commonClear'), icon: 'remove' });
+				items.push({ id: 'clear', name: translate('commonClear'), iconParam: { name: 'menu/action/remove' } });
 			};
 		};
 
@@ -365,6 +365,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical
 					id={item.id}
 					icon={item.icon}
+					iconParam={item.iconParam}
 					name={item.name}
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onClick={e => onClick(e, item)}
@@ -396,14 +397,14 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="filterInner">
 						{isAdvanced ? (
 							<>
-								<Icon className="filterIcon advanced" />
+								<Icon name="control/dataview/advanced" className="filterIcon advanced" />
 								<div className="filterContent">
 									<Label className="relationName" text={getName(item)} />
 								</div>
 							</>
 						) : (
 							<>
-								<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+								<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 								<div className="filterContent">
 									<Label className="relationName" text={item.relation.name} />
 									{Relation.isFilterActive(item) ? (
@@ -416,7 +417,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							</>
 						)}
 					</div>
-					{!isReadonly ? <Icon className="more" onClick={e => onMore(e, item)} /> : ''}
+					{!isReadonly ? <Icon name="common/more" className="more" onClick={e => onMore(e, item)} /> : ''}
 				</div>
 			);
 		};

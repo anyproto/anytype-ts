@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
 import type { Event, Event_Message } from 'Proto/pb/protos/events';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
+import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus, Sound } from 'Lib';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
@@ -182,7 +182,7 @@ class Dispatcher {
 				try {
 					this.event(item.event, false, item.skipDebug);
 				} catch (e) {
-					console.error(e);
+					console.error('[Dispatcher] event processing failed:', e);
 				};
 			};
 		});
@@ -218,7 +218,7 @@ class Dispatcher {
 			};
 
 			if (data) {
-				const d = U.Common.objectClear(data);
+				const d = U.Common.objectClear(U.Common.objectCopy(data));
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 			};
 		};
@@ -959,7 +959,7 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = mapped.subId.split('/');
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
@@ -976,8 +976,8 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep ] = mapped.subId.split('/');
-					
+					const [ subId, dep = '' ] = mapped.subId.split('/');
+
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
@@ -986,7 +986,7 @@ class Dispatcher {
 
 				case 'SubscriptionGroups': {
 					const { group, remove } = mapped;
-					const [ rootId, blockId ] = mapped.subId.split('-');
+					const [ rootId, blockId = '' ] = mapped.subId.split('-');
 
 					if (remove) {
 						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
@@ -1009,6 +1009,7 @@ class Dispatcher {
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
 						});
+						Sound.playNotification();
 					};
 					break;
 				};
@@ -1024,7 +1025,7 @@ class Dispatcher {
 					};
 
 					let payload: any = {};
-					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
+					try { payload = JSON.parse(mapped.payload); } catch (e) { console.warn('[Dispatcher] payload parse failed:', e); };
 
 					Renderer.send('payloadBroadcast', payload);
 					break;
@@ -1119,6 +1120,7 @@ class Dispatcher {
 							cmd: 'openChat',
 							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 						});
+						Sound.playNotification();
 					};
 
 					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
@@ -1297,6 +1299,7 @@ class Dispatcher {
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
 									});
+									Sound.playNotification();
 								};
 							};
 						};
@@ -1626,7 +1629,7 @@ class Dispatcher {
 
 		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			const d = U.Common.objectClear(data);
+			const d = U.Common.objectClear(U.Common.objectCopy(data));
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
@@ -1669,7 +1672,7 @@ class Dispatcher {
 
 				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					const d = U.Common.objectClear(response);
+					const d = U.Common.objectClear(U.Common.objectCopy(response));
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 

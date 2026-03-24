@@ -8,6 +8,7 @@ import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
+import { Icon } from 'Component';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -50,6 +51,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const frameRef = useRef(0);
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
+	const prevDepsKey = useRef('');
+	const prevReplyKey = useRef('');
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -103,6 +106,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			loadDeps(getDepsIds(list), callBack);
 		});
 	};
+
 
 	const loadState = (callBack?: () => void) => {
 		const chatId = getChatId();
@@ -307,6 +311,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevDepsKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevDepsKey.current = key;
+
 		const subId = getSubId();
 		const keys = U.Subscription.chatRelationKeys();
 
@@ -327,6 +340,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			callBack?.();
 			return;
 		};
+
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevReplyKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevReplyKey.current = key;
 
 		const chatId = getChatId();
 		const subId = getSubId();
@@ -475,7 +497,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 						}}
 					>
-						<div className="icon plus" />
+						<Icon name="plus/menu" className="plus" />
 					</div>
 				</div>
 			);
@@ -550,7 +572,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		if (onMore) {
-			menuParam.element = `${message} .icon.more`;
+			menuParam.element = `${message} .icon.commonMore`;
 		} else {
 			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
 		};
@@ -742,30 +764,30 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const options: any[] = [];
 
 		if (!noControls) {
-			options.push({ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') });
+			options.push({ id: 'reply', iconParam: { name: 'chat/buttons/reply' }, name: translate('blockChatReply') });
 		};
 
 		if (message.content.text) {
-			options.push({ id: 'copy', icon: 'clipboard-copy', name: translate('blockChatCopyText') });
+			options.push({ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('blockChatCopyText') });
 		};
 
 		if (downloadable.length == 1) {
 			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
 
-			options.push({ id: 'download', icon: 'download', name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
 		};
 
 		if (isSelf) {
 			options.push({ isDiv: true });
-			options.push({ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') });
+			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
-			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
 			};
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		return options;
@@ -1215,7 +1237,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					getMessages={getMessages}
 					getReplyContent={getReplyContent}
 					highlightMessage={highlightMessage}
-					loadDepsAndReplies={loadDepsAndReplies}
+
 					reloadAndScrollToBottom={reloadAndScrollToBottom}
 					isEmpty={isEmpty}
 					isBottom={isBottom}

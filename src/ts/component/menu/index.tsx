@@ -1077,7 +1077,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 				{title ? (
 					<div className="titleWrapper">
-						{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
+						{withBack ? <Icon name="common/back" className="arrow back" onClick={() => onBack(id)} /> : ''}
 						<Title text={title} />
 					</div>
 				) : ''}

@@ -1,12 +1,14 @@
 @import "~scss/_mixins";
 
-.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; }
+.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; flex-shrink: 0; }
 .iconObject {
 	img { pointer-events: none; }
 
 	.iconEmoji, .iconImage, .iconFile, .iconCheckbox { width: inherit; height: inherit; transition: none; vertical-align: top; }
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
+
+	.iconCommon.hasSvg, .iconRelation.hasSvg { display: flex; align-items: center; justify-content: center; }
 
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
 		&.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
@@ -66,6 +68,13 @@
 	display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
 }
 .iconObject.isTask { background-color: unset; }
+.iconObject.isTask {
+	.icon.hasSvg { color: var(--color-text-tertiary); }
+
+	&.isDone { 
+		.icon.hasSvg { color: var(--color-lime); }
+	}
+}
 
 .iconObject.c14,
 .iconObject.c16,
@@ -142,4 +151,5 @@
 
 .iconObject.withImageError {
 	img:not(.iconError) { display: none; }
+	.iconError { color: var(--color-shape-highlight-medium); }
 }

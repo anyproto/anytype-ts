@@ -955,6 +955,7 @@ class Api {
 		const notification = new Notification({
 			title: String(title || ''),
 			body: String(text || ''),
+			silent: true,
 		});
 
 		notification.on('click', () => {

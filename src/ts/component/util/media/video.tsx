@@ -89,7 +89,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 
 			<div className="controls">
 				<Icon className="syncStatus" onClick={onSyncStatusClick} />
-				<Icon className="play" onClick={onPlayClick} />
+				<Icon name="popup/preview/play" className="play" onClick={onPlayClick} />
 			</div>
 		</div>
 	);

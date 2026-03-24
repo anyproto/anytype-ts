@@ -70,8 +70,8 @@ const Pin = forwardRef<PinRefProps, Props>(({
 
 	/** sets all the input boxes to empty string */
 	const clear = () => {
-		for (const i in inputRefs.current) {
-			inputRefs.current[i].setValue('');
+		for (const input of inputRefs.current) {
+			input.setValue('');
 		};
 	};
 
@@ -81,8 +81,8 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		clear();
 		focus();
 
-		for (const i in inputRefs.current) {
-			$(inputRefs.current[i].getNode()).removeClass('isMasked');
+		for (const input of inputRefs.current) {
+			$(input.getNode()).removeClass('isMasked');
 		};
 	};
 

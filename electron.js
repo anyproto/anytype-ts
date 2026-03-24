@@ -3260,7 +3260,8 @@ var Api = class {
     ;
     const notification = new import_electron9.Notification({
       title: String(title || ""),
-      body: String(text || "")
+      body: String(text || ""),
+      silent: true
     });
     notification.on("click", () => {
       this.focusWindow(win);

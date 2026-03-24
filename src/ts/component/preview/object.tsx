@@ -83,7 +83,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Checkbox: {
 						inner = (
 							<>
-								<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
+								<Icon name={checked ? 'preview/check1' : 'preview/check0'} className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
 								{line}
 							</>
 						);
@@ -93,7 +93,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Quote: {
 						inner = (
 							<>
-								<Icon className="hl" />
+								<Icon name="preview/hl" className="hl" />
 								{line}
 							</>
 						);
@@ -103,7 +103,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Bulleted: {
 						inner = (
 							<>
-								<Icon className="bullet" />
+								<Icon name="preview/bullet" className="bullet" />
 								{line}
 							</>
 						);
@@ -113,7 +113,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Toggle: {
 						inner = (
 							<>
-								<Icon className="toggle" />
+								<Icon name="preview/toggle" className="toggle" />
 								{line}
 							</>
 						);

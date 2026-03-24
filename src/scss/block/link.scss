@@ -36,7 +36,6 @@
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
 			.cardName {
 				.name { transition: color $transitionCommon, border-color $transitionCommon; font-weight: 500; }
-				.iconObject { flex-shrink: 0; }
 			}
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }

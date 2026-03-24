@@ -10,6 +10,7 @@ interface ButtonProps {
 	type?: string;
 	subType?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	arrow?: boolean;
 	text?: string;
 	active?: boolean;
@@ -39,6 +40,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	type = 'button',
 	subType = 'submit',
 	icon,
+	iconParam,
 	arrow,
 	text = '',
 	size,
@@ -143,7 +145,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 					{...U.Common.dataProps(dataset)}
 				>
 					{isLoading && <Loader />}
-					{icon && <Icon className={icon} />}
+					{iconParam ? <Icon {...iconParam} /> : icon ? <Icon className={icon} /> : ''}
 					<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>

@@ -75,8 +75,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			subId, 
 			objectId: id,
 			data: {
-				allowedCollection: true, 
-				allowedExport: true,
+				allowedCollection: true,
 				allowedLinkTo: true,
 			},
 		});
@@ -88,7 +87,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	if (isSection) {
 		return (
@@ -148,7 +147,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} name="common/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	let inner = (
@@ -176,7 +175,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (canDrag) {
 		inner = (
 			<>
-				<Icon className="dnd" />
+				<Icon name="common/dnd" />
 				{inner}
 			</>
 		);

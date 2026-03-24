@@ -64,7 +64,7 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		case 'info': {
 			content = (
 				<>
-					<Icon className="close" withBackground={true} onClick={() => setScreen('init')} />
+					<Icon name="common/close" withBackground={true} onClick={() => setScreen('init')} />
 
 					<div className="items">
 						<div className="item">

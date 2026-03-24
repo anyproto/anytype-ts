@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => {
 			emptyOutDir: false,
 			sourcemap: false,
 			cssCodeSplit: false,
-			assetsInlineLimit: 10000000, // Inline all assets as base64
+			assetsInlineLimit: 10000, // Inline small assets; fonts stay as URLs
 			commonjsOptions: {
 				include: [/dist\/lib\//, /node_modules\//],
 				transformMixedEsModules: true,
@@ -107,6 +107,14 @@ export default defineConfig(({ mode }) => {
 						if (assetInfo.names?.[0]?.endsWith('.css')) {
 							return 'css/[name][extname]';
 						}
+
+						// Preserve font directory structure under dist/font/
+						const original = assetInfo.originalFileNames?.[0] || '';
+						const fontMatch = original.match(/dist[\/\\]font[\/\\](.+)/);
+						if (fontMatch) {
+							return `font/${fontMatch[1]}`;
+						}
+
 						return 'assets/[name]-[hash][extname]';
 					},
 					manualChunks(id) {
@@ -256,6 +264,7 @@ const mimeTypes: Record<string, string> = {
 	'.html': 'text/html',
 	'.css': 'text/css',
 	'.js': 'application/javascript',
+	'.mjs': 'application/javascript',
 	'.json': 'application/json',
 	'.svg': 'image/svg+xml',
 	'.png': 'image/png',

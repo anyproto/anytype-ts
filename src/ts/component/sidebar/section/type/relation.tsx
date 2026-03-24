@@ -275,12 +275,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			>
 				{!item.isEmpty ? (
 					<>
-						{canDrag ? <Icon className="dnd" /> : ''}
-						<Icon className={`relation ${Relation.className(item.format)}`} />
+						{canDrag ? <Icon name="common/dnd" /> : ''}
+						<Icon name={Relation.registryName(item.relationKey, item.format)} />
 					</>
 				) : ''}
 				<ObjectName object={item} />
-				{list.onMore ? <Icon className="more" onClick={e => list.onMore(e, item)} /> : ''}
+				{list.onMore ? <Icon name="common/more" className="more" onClick={e => list.onMore(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -299,7 +299,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					<Label text={list.name} />
 					{list.description ? (
 						<Icon 
-							className="question"
+							name="common/question"
 							tooltipParam={{
 								text: list.description, 
 								className: 'relationGroupDescription',
@@ -315,7 +315,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					{list.onInfo ? (
 						<Icon 
 							id={`button-more-${list.id}`}
-							className="more" withBackground={true}
+							name="common/more" className="more" withBackground={true}
 							tooltipParam={{ text: translate('commonActions') }}
 							onClick={list.onInfo}
 						/>
@@ -371,9 +371,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon 
-					id="section-relation-plus" 
-					className="plus" withBackground={true}
+				<Icon
+					id="section-relation-plus"
+					name="plus/menu" className="plus" withBackground={true}
 					tooltipParam={{ text: translate('commonAddRelation') }}
 					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
 				/>

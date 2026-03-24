@@ -21,6 +21,7 @@ interface SelectItem {
 	isSection?: boolean;
 	isDiv?: boolean;
 	icon?: string;
+	iconParam?: I.IconParam;
 	isArchived?: boolean;
 	isDeleted?: boolean;
 	_empty_?: boolean;
@@ -679,7 +680,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					onClick={e => onClick(e, item)}
 					onMouseEnter={e => onMouseEnter(e, item)}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -715,6 +716,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		let icon = null;
+		if (item.iconParam) {
+			icon = <Icon name={item.iconParam.name} />;
+		} else
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
@@ -733,10 +737,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{...(canSort ? listeners : {})}
 			>
 
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -753,7 +757,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" onClick={e => onEdit(e, item)} />
+						<Icon name="common/more" className="more" onClick={e => onEdit(e, item)} />
 					</div>
 				) : ''}
 			</div>
@@ -779,9 +783,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				className={cn.join(' ')}
 				style={{ height: HEIGHT }}
 			>
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />
@@ -797,7 +801,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" />
+						<Icon name="common/more" className="more" />
 					</div>
 				) : ''}
 			</div>

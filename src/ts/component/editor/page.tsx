@@ -342,15 +342,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
-			const l1 = c1.isLayout();
-			const l2 = c2.isLayout();
+		const allBlocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const layoutBlocks = [];
+		const nonLayoutBlocks = [];
 
-			if (l1 && !l2) return -1;
-			if (!l1 && l2) return 1;
+		for (const b of allBlocks) {
+			if (b.isLayout()) {
+				layoutBlocks.push(b);
+			} else {
+				nonLayoutBlocks.push(b);
+			};
+		};
 
-			return 0;
-		});
+		const blocks = layoutBlocks.concat(nonLayoutBlocks);
 
 		let offset = 140;
 		let hovered: any = null;
@@ -2151,11 +2155,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const section = options[0];
 			const cancel = options[options.length - 1];
 			const sortable = options.slice(1, -1);
+			const orderMap = new Map<string, number>(pasteOrder.map((id: string, i: number) => [ id, i ]));
 
 			sortable.sort((a: any, b: any) => {
-				const ai = pasteOrder.indexOf(a.id);
-				const bi = pasteOrder.indexOf(b.id);
-				return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+				const ai = orderMap.get(a.id) ?? sortable.length;
+				const bi = orderMap.get(b.id) ?? sortable.length;
+				return ai - bi;
 			});
 
 			options.length = 0;
@@ -2705,7 +2710,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			
 			<div id={`editor-${rootId}`} className="editor">
 				<div className="blocks">
-					<Icon id="button-block-add" className="buttonAdd" onClick={onAdd} />
+					<Icon id="button-block-add" name="plus/blockAdd" className="buttonAdd" size={19} onClick={onAdd} />
 
 					<PageHeadEditor 
 						{...props} 
