@@ -4,24 +4,6 @@
 	.menu {
 		.icon.existingObject { background-image: url('~img/arrow/existing.svg'); }
 
-		.icon.relation-filter { background-image: url('~img/icon/menu/relation/filter.svg'); }
-		.icon.relation-sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
-		.icon.relation-sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
-		.icon.relation-hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
-		.icon.relation-insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
-		.icon.relation-insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
-
-		.icon.table-move-left { background-image: url('~img/icon/menu/table/move-h.svg'); }
-		.icon.table-move-right { background-image: url('~img/icon/menu/table/move-h.svg'); transform: rotateZ(180deg); }
-		.icon.table-move-top { background-image: url('~img/icon/menu/table/move-v.svg'); }
-		.icon.table-move-bottom { background-image: url('~img/icon/menu/table/move-v.svg'); transform: rotateZ(180deg); }
-
-		.icon.table-header-row { background-image: url('~img/icon/menu/table/header-row.svg'); }
-		.icon.table-insert-left { background-image: url('~img/icon/menu/table/insert-h.svg'); }
-		.icon.table-insert-right { background-image: url('~img/icon/menu/table/insert-h.svg'); transform: rotateZ(180deg); }
-		.icon.table-insert-top { background-image: url('~img/icon/menu/table/insert-v.svg'); }
-		.icon.table-insert-bottom { background-image: url('~img/icon/menu/table/insert-v.svg'); transform: rotateZ(180deg); }
-
 		.icon.checkbox { background-size: 18px; }
 		.icon.checkbox.c0 { background-image: url('~img/icon/menu/checkbox0.svg'); }
 		.icon.checkbox.c1 { background-image: url('~img/icon/menu/checkbox1.svg'); }

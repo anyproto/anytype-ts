@@ -36,7 +36,12 @@ import './menu/mark';
 import './default';
 import './menu/align/horizontal';
 import './menu/align/vertical';
+import './menu/common';
+import './menu/inviteLink';
 import './menu/linkStyle';
+import './menu/relation';
+import './menu/spaceCreate';
+import './menu/table';
 import './sync';
 
 import './gallery.stories.scss';

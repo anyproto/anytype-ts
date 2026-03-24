@@ -1056,7 +1056,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		let options: any[] = [
 			{ 
-				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
+				id: 'rowHeader', iconParam: { name: 'menu/table/header-row' }, name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, () => {
 						framesUpdate();
@@ -1075,16 +1075,16 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			let moveBot = null;
 
 			if (nextTop && !nextTop.content.isHeader && (idx > 0)) {
-				moveTop = { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') };
+				moveTop = { id: 'rowMoveTop', iconParam: { name: 'menu/table/move-v' }, name: translate('blockTableOptionsRowRowMoveTop') };
 			};
 
 			if (nextBot && !nextBot.content.isHeader && (idx < length - 1)) {
-				moveBot = { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') };
+				moveBot = { id: 'rowMoveBottom', iconParam: { name: 'menu/table/move-v' }, className: 'rotated', name: translate('blockTableOptionsRowRowMoveBottom') };
 			};
 
 			options = options.concat([
-				{ id: 'rowBefore', icon: 'table-insert-top', name: translate('blockTableOptionsRowRowBefore') },
-				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
+				{ id: 'rowBefore', iconParam: { name: 'menu/table/insert-v' }, name: translate('blockTableOptionsRowRowBefore') },
+				{ id: 'rowAfter', iconParam: { name: 'menu/table/insert-v' }, className: 'rotated', name: translate('blockTableOptionsRowRowAfter') },
 				moveTop,
 				moveBot,
 				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
@@ -1105,10 +1105,10 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const idx = columns.findIndex(it => it.id == id);
 		const length = columns.length;
 		const options: any[] = [
-			{ id: 'columnBefore', icon: 'table-insert-left', name: translate('blockTableOptionsColumnColumnBefore') },
-			{ id: 'columnAfter', icon: 'table-insert-right', name: translate('blockTableOptionsColumnColumnAfter') },
-			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
-			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
+			{ id: 'columnBefore', iconParam: { name: 'menu/table/insert-h' }, name: translate('blockTableOptionsColumnColumnBefore') },
+			{ id: 'columnAfter', iconParam: { name: 'menu/table/insert-h' }, className: 'rotated', name: translate('blockTableOptionsColumnColumnAfter') },
+			(idx > 0) ? { id: 'columnMoveLeft', iconParam: { name: 'menu/table/move-h' }, name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
+			(idx < length - 1) ? { id: 'columnMoveRight', iconParam: { name: 'menu/table/move-h' }, className: 'rotated', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
 			{ id: 'columnCopy', icon: 'copy', name: translate('commonDuplicate') },
 			{ isDiv: true },
 			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
