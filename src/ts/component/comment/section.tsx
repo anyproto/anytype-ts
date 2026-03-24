@@ -146,12 +146,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		const onKeyDown = (e: KeyboardEvent) => {
 			const target = e.target as HTMLElement;
 
-			if (!target?.closest('.blocks') || isExpanded) {
+			if (!target?.closest('.blocks')) {
 				return;
 			};
 
-			const posts = S.Comment.getPosts(subId);
-			if (!posts.length) {
+			const canHide = wasStickyRef.current || (!S.Comment.getPosts(subId).length && !isExpanded);
+			if (canHide) {
 				setHidden(true);
 			};
 		};
