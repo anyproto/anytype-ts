@@ -122,13 +122,13 @@ class UtilMenu {
 	 */
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image', aliases: [ 'image', 'picture' ] },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video', aliases: [ 'video' ] },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio', aliases: [ 'audio' ] },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
+			{ type: I.BlockType.File, id: I.FileType.File, iconParam: { name: 'menu/block/media/file', color: 'ice' }, lang: 'File', aliases: [ 'file' ] },
+			{ type: I.BlockType.File, id: I.FileType.Image, iconParam: { name: 'menu/block/media/image', color: 'lime' }, lang: 'Image', aliases: [ 'image', 'picture' ] },
+			{ type: I.BlockType.File, id: I.FileType.Video, iconParam: { name: 'menu/block/media/video', color: 'blue' }, lang: 'Video', aliases: [ 'video' ] },
+			{ type: I.BlockType.File, id: I.FileType.Audio, iconParam: { name: 'menu/block/media/audio', color: 'pink' }, lang: 'Audio', aliases: [ 'audio' ] },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, iconParam: { name: 'menu/block/media/pdf', color: 'red' }, lang: 'Pdf', aliases: [ 'pdf' ] },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', iconParam: { name: 'menu/block/common/bookmark', color: 'red' }, lang: 'Bookmark', aliases: [ 'bookmark' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, iconParam: { name: 'menu/block/common/code', color: 'purple' }, lang: 'Code', aliases: [ 'code' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -188,8 +188,8 @@ class UtilMenu {
 	 */
 	getBlockLink () {
 		return [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ type: I.BlockType.Page, id: 'existingPage', iconParam: { name: 'menu/block/common/existing' }, lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', iconParam: { name: 'menu/block/common/existing' }, lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
 			{ id: 'date', iconParam: { name: 'relation/date' }, lang: 'Date', arrow: true },
 		].map((it: any) => {
 			it = this.mapperBlock(it);
@@ -235,12 +235,12 @@ class UtilMenu {
 		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: aliasInline },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: aliasInline },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line', aliases: [ 'hr', 'line divider' ] },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, iconParam: { name: 'menu/block/common/tableOfContents' }, lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, iconParam: { name: 'menu/block/common/table' }, lang: 'SimpleTable', aliases: [ 'table' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', iconParam: { name: 'menu/block/common/collection', color: 'blue' }, lang: 'Collection', aliases: aliasInline },
+			{ type: I.BlockType.Dataview, id: 'set', iconParam: { name: 'menu/block/common/set', color: 'purple' }, lang: 'Set', aliases: aliasInline },
 		].map(this.mapperBlock);
 	};
 
@@ -275,8 +275,8 @@ class UtilMenu {
 	 */
 	getTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot' },
 		].map(this.mapperBlock);
 	};
 

@@ -43,9 +43,7 @@
 			.name { @include clamp1; }
 		}
 
-		.icon.collection { background-image: url('~img/icon/menu/action/block/collection.svg'); }
-		.icon.set { background-image: url('~img/icon/menu/action/block/set.svg'); }
-	}
+}
 }
 
 html.platformWindows, html.platformLinux {

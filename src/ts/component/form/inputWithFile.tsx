@@ -197,7 +197,7 @@ const InputWithFile: FC<Props> = ({
 			className={cn.join(' ')}
 			onClick={onClick}
 		>
-			{icon ? <Icon className={icon} /> : ''}
+			{icon ? <Icon name={icon.includes('/') ? icon : `menu/block/${icon == 'bookmark' ? 'common' : 'media'}/${icon}`} /> : ''}
 		
 			<div className="inputWithFile-inner">
 				<form className="form" onSubmit={onSubmit}>
