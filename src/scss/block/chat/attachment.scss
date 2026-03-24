@@ -22,7 +22,10 @@
 			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 		}
 
-		.icon.syncStatus { display: none; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px; animation: rotate 1.2s infinite linear; }
+		.icon.syncStatus { display: none; position: absolute; z-index: 2; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: rotate 1.2s infinite linear; }
+		.icon.syncStatus {
+			> svg { width: 100% !important; height: 100% !important; fill: var(--color-shape-highlight-medium); }
+		}
 
 		&.isSyncing,
 		&.isQueued,
@@ -40,7 +43,7 @@
 			.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
 
 			.iconWrapper {
-				.icon.syncStatus { width: 28px !important; height: 28px !important; margin: -14px 0px 0px -14px; }
+				.icon.syncStatus { width: 28px !important; height: 28px !important; }
 			}
 		}
 
@@ -105,7 +108,7 @@
 			.image,
 			.loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; width: 100%; height: 100%; }
 
-			.icon.syncStatus { width: 72px !important; height: 72px !important; margin: -36px 0px 0px -36px; }
+			.icon.syncStatus { width: 72px !important; height: 72px !important; }
 
 			&.withBlur {
 				.image { border-radius: 0px; position: relative; z-index: 1; }
@@ -117,7 +120,7 @@
 			.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
 			video { width: 100%; display: block; object-fit: cover; height: 224px; }
 
-			.icon.syncStatus { width: 72px !important; height: 72px !important; margin: -36px 0px 0px -36px; }
+			.icon.syncStatus { width: 72px !important; height: 72px !important; }
 
 			&.isError {
 				.icon.syncStatus { z-index: 2; }
