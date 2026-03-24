@@ -11,6 +11,7 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	const valueRef = useRef('');
 	const [ dummy, setDummy ] = useState(0);
 	const rangeRef = useRef<I.TextRange>(null);
+	const prevObjectId = useRef(object?.id);
 
 	const getRelationKey = (): string => {
 		switch (id) {
@@ -140,7 +141,13 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	});
 
 	useEffect(() => {
-		if (!nameRef.current?.isFocused()) {
+		const objectChanged = object?.id !== prevObjectId.current;
+
+		if (objectChanged) {
+			prevObjectId.current = object?.id;
+		};
+
+		if (objectChanged || !nameRef.current?.isFocused()) {
 			rangeRef.current = null;
 			setValue();
 		};
