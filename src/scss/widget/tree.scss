@@ -31,7 +31,7 @@
 			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.icon { width: 20px; height: 20px; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
+		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
 		.icon.arrow { transform: rotate(-90deg); }
 		
 		.clickable {
@@ -39,25 +39,10 @@
 			line-height: 20px;
 		}
 		.name { flex-grow: 1; @include text-overflow-nw; }
-
-		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
-		.buttons {
-			.icon { margin: 0px; }
-			.icon.preview { background-size: 16px 14px; }
-		}
-	}
-
-	.item:hover, .item.active {
-		.clickable { width: calc(100% - 66px); }
-		.buttons { display: flex; }
-		.chatCounter { display: none; }
-	}
-	.item.active {
 	}
 
 	.item.hover, .item.active {
 		.inner::before { background: var(--color-shape-highlight-medium); opacity: 1; }
-		.icon.preview { display: block; }
 	}
 	.item.isOpen {
 		.icon.arrow { transform: rotate(0deg); }

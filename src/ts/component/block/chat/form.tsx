@@ -784,9 +784,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onAttachment = () => {
 		const options: any[] = [
-			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
-			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
-			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+			{ id: 'create', iconParam: { name: 'menu/action/createObject' }, name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', iconParam: { name: 'menu/block/common/linkto' }, name: translate('spaceExisting') },
+			{ id: 'upload', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer') },
 		];
 
 		S.Menu.closeAll(null, () => {

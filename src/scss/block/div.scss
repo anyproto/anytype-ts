@@ -6,7 +6,7 @@
 		.dropTarget { height: 16px; }
 		
 		.icon.commonDnd { height: 12px; top: 50%; margin-top: -6px; }
-		.icon.commonDnd:hover { }
+		.icon.commonDnd svg { display: none; }
 
 		.wrap { text-align: center; position: relative; height: 100%; }
 

@@ -188,8 +188,8 @@ class UtilMenu {
 	 */
 	getBlockLink () {
 		return [
-			{ type: I.BlockType.Page, id: 'existingPage', iconParam: { name: 'menu/block/common/existing' }, lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', iconParam: { name: 'menu/block/common/existing' }, lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ type: I.BlockType.Page, id: 'existingPage', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
 			{ id: 'date', iconParam: { name: 'relation/date' }, lang: 'Date', arrow: true },
 		].map((it: any) => {
 			it = this.mapperBlock(it);

@@ -77,6 +77,9 @@
 					.label::before {
 						content: ''; width: 20px; height: 20px; transform: rotateZ(-90deg);
 						transition: $transitionAllCommon;
+						background-color: var(--color-text-secondary);
+						-webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 8L10 13L5 8' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+						-webkit-mask-size: 20px 20px; -webkit-mask-repeat: no-repeat;
 					}
 					&.isOpen {
 						.side.right { opacity: 1; }
