@@ -1849,7 +1849,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	useEffect(() => {
-		loadDepsAndReplies([], () => {
+		loadDepsAndReplies(getMessages(), () => {
 			renderMarkup();
 			renderReply();
 		});

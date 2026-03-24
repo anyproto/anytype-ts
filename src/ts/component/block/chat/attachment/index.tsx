@@ -65,9 +65,10 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					<IconObject object={object} size={48} iconSize={iconSize} />
 					{isDownloadingFile || syncIconName ? (
 						<Icon 
-							name={syncIconName || 'chat/syncStatus/syncing'} 
+							name={syncIconName}
 							className="syncStatus" 
 							onClick={onSyncStatusClick} 
+							size={28}
 						/>
 					) : ''}
 				</div>
