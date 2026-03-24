@@ -376,15 +376,15 @@ class CommonStore {
 		return this.boolGet('showRelativeDates');
 	};
 
-	get linkStyle (): I.LinkCardStyle {
+	get linkStyle (): I.LinkDefaultStyle {
 		let ret = this.linkStyleValue;
 		if (ret === null) {
 			ret = Storage.get('linkStyle');
 		};
 		if (undefined === ret) {
-			ret = I.LinkCardStyle.Card;
+			ret = I.LinkDefaultStyle.Card;
 		};
-		return Number(ret) || I.LinkCardStyle.Text;
+		return Number(ret) || I.LinkDefaultStyle.Text;
 	};
 
 	get fileStyle (): I.FileStyle {
@@ -951,7 +951,7 @@ class CommonStore {
 	 * Sets the link style value.
 	 * @param {I.LinkCardStyle} v - The link style value.
 	 */
-	linkStyleSet (v: I.LinkCardStyle) {
+	linkStyleSet (v: I.LinkDefaultStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);

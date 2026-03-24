@@ -43,8 +43,9 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 	const linkStyles: I.Option[] = [
-		{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
-		{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+		{ id: I.LinkDefaultStyle.Text, name: translate('popupSettingsPersonalLinkStyleText') },
+		{ id: I.LinkDefaultStyle.Card, name: translate('popupSettingsPersonalLinkStyleCard') },
+		{ id: I.LinkDefaultStyle.CardMedium, name: translate('popupSettingsPersonalLinkStyleCardMedium') },
 	];
 	const fileStyles: I.Option[] = [
 		{ id: I.FileStyle.Embed, name: translate('blockNameEmbed') },

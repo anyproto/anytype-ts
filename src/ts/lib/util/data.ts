@@ -786,9 +786,12 @@ class UtilData {
 	 * @returns {object} The default link settings.
 	 */
 	defaultLinkSettings() {
+		const linkStyle = S.Common.linkStyle;
+		const isCardMedium = (linkStyle == I.LinkDefaultStyle.CardMedium);
+
 		return {
-			iconSize: I.LinkIconSize.Small,
-			cardStyle: S.Common.linkStyle,
+			iconSize: isCardMedium ? I.LinkIconSize.Medium : I.LinkIconSize.Small,
+			cardStyle: (linkStyle == I.LinkDefaultStyle.Text) ? I.LinkCardStyle.Text : I.LinkCardStyle.Card,
 			description: I.LinkDescription.None,
 			relations: [],
 		};

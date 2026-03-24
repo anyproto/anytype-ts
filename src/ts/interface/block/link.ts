@@ -6,6 +6,12 @@ export enum LinkCardStyle {
 	Inline		 = 2,
 };
 
+export enum LinkDefaultStyle {
+	Text		 = 0,
+	Card		 = 1,
+	CardMedium	 = 2,
+};
+
 export enum LinkIconSize {
 	None		 = 0,
 	Small		 = 1,
