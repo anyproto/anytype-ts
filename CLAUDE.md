@@ -289,7 +289,9 @@ curl -s -X POST "https://api.linear.app/graphql" \
 After pushing a fix for a Linear issue, always:
 
 1. **Comment on the issue** with a brief description of the fix (what was changed and why).
-2. **Move the issue** to "Waiting for testing" state.
+2. **Move the issue** to the appropriate state based on its labels:
+   - If the issue has a **"Design"** label → move to **"Design review"**
+   - Otherwise → move to **"Waiting for testing"**
 
 **Comment on an issue:**
 ```bash
