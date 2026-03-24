@@ -191,7 +191,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon name="menu/action/more" className="more" withBackground={true} onClick={e => onViewContext(e, item)} />
+					<Icon name="common/more" className="more" withBackground={true} onClick={e => onViewContext(e, item)} />
 				</div>
 			</div>
 		);

@@ -165,7 +165,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 					) : (
 						<div className="caption">{caption}</div>
 					)}
-					{withMore ? <Icon name="menu/action/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
+					{withMore ? <Icon name="common/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
 				</>
 			);
 		};

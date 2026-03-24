@@ -416,7 +416,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							</>
 						)}
 					</div>
-					{!isReadonly ? <Icon name="menu/action/more" className="more" onClick={e => onMore(e, item)} /> : ''}
+					{!isReadonly ? <Icon name="common/more" className="more" onClick={e => onMore(e, item)} /> : ''}
 				</div>
 			);
 		};

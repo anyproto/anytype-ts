@@ -89,7 +89,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 				<Icon
 					id="button-header-settings"
-					name="control/dataview/settings"
+					name="common/options"
 					className="btn-settings" withBackground={true}
 					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }}
 					onClick={onSettings}

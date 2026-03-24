@@ -98,7 +98,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 					<Icon
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-						name="header/more" withBackground={true}
+						name="common/more" withBackground={true}
 						onClick={onMore}
 					/>
 				) : ''}

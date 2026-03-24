@@ -143,7 +143,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				<Icon
 					id="button-header-more"
 					tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-					name="header/more" withBackground={true}
+					name="common/more" withBackground={true}
 					onClick={onMore}
 					onDoubleClick={e => e.stopPropagation()}
 				/>

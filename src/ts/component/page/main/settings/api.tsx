@@ -87,7 +87,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 					{translate(`apiScope${item.scope}`)}
 				</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${item.hash}`} name="menu/action/more" className="more" withBackground={true} onClick={() => onMore(item)} />
+					<Icon id={`icon-more-${item.hash}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(item)} />
 				</div>
 			</div>
 		);

@@ -280,7 +280,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					</>
 				) : ''}
 				<ObjectName object={item} />
-				{list.onMore ? <Icon name="menu/action/more" className="more" onClick={e => list.onMore(e, item)} /> : ''}
+				{list.onMore ? <Icon name="common/more" className="more" onClick={e => list.onMore(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -315,7 +315,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					{list.onInfo ? (
 						<Icon 
 							id={`button-more-${list.id}`}
-							name="menu/action/more" className="more" withBackground={true}
+							name="common/more" className="more" withBackground={true}
 							tooltipParam={{ text: translate('commonActions') }}
 							onClick={list.onInfo}
 						/>

@@ -454,7 +454,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const buttons = [
 		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
 		{ id: 'sort', name: 'control/dataview/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-		{ id: 'settings', name: 'control/dataview/settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
+		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
 	const ButtonItem = (item: any) => {

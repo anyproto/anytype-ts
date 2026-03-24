@@ -98,7 +98,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon ref={moreRef} name="menu/action/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} name="common/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	if (isSection) {

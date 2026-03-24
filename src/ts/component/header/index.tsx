@@ -96,7 +96,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					name="header/expand" withBackground={true}
+					name="common/expand" withBackground={true}
 					onClick={onOpen || onExpand}
 					tooltipParam={{
 						text: translate('commonOpenObject'),

@@ -1,12 +1,10 @@
 import React from 'react';
 import { registerIcon } from '../registry';
 import AnyName from './anyName';
-import Expand from './expand';
 import Graph from './graph';
 import Language from './language';
 import Invite from './invite';
 import Logout from './logout';
-import More from './more';
 import OneToOne from './oneToOne';
 import Pin from './pin';
 import Relation from './relation';
@@ -17,12 +15,10 @@ import Widget from './widget';
 const PinFilled = (props: React.SVGProps<SVGSVGElement>) => React.createElement(Pin, { ...props, filled: true });
 
 registerIcon('header/anyName', AnyName);
-registerIcon('header/expand', Expand);
 registerIcon('header/graph', Graph);
 registerIcon('header/invite', Invite);
 registerIcon('header/language', Language);
 registerIcon('header/logout', Logout);
-registerIcon('header/more', More);
 registerIcon('header/oneToOne', OneToOne);
 registerIcon('header/pin0', Pin);
 registerIcon('header/pin1', PinFilled);

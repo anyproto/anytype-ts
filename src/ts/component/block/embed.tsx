@@ -874,7 +874,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	if (isExcalidraw) {
-		expandIcon = <Icon name="menu/action/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
+		expandIcon = <Icon name="common/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {

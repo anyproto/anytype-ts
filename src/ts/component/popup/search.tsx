@@ -750,7 +750,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (item.links.length || item.backlinks.length) {
 				advanced = (
 					<Icon
-						name="menu/action/more" className="advanced"
+						name="common/more" className="advanced"
 						tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
 						onClick={e => onBacklink(e, item)}
 					/>

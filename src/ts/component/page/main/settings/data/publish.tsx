@@ -93,7 +93,7 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 				<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
 				<div className="col">{U.File.size(item.size)}</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${item.objectId}`} name="menu/action/more" className="more" withBackground={true} onClick={() => onMore(item)} />
+					<Icon id={`icon-more-${item.objectId}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(item)} />
 				</div>
 			</div>
 		);
