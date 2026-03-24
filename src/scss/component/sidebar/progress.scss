@@ -23,7 +23,7 @@
 		}
 	}
 
-	.items { display: flex; flex-direction: column; padding: 0px 8px 8px 8px; }
+	.items { display: flex; flex-direction: column; padding: 8px; }
 
 	.item {
 		display: flex; align-items: center; gap: 0px 10px; padding: 6px 8px; border-radius: 8px;
@@ -45,7 +45,7 @@
 			.status {
 				> span { display: flex; align-items: center; gap: 6px; }
 				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); }
-				.error { color: var(--color-red); }
+				.error { margin: 0px; @include text-small; }
 			}
 		}
 
@@ -63,9 +63,9 @@
 
 			.icon.commonClose {
 				@include pos-abs-mid; margin: -10px 0px 0px -10px; z-index: 2;
-				width: 20px; height: 20px;
-				opacity: 0; transition: opacity 0.15s ease;
+				width: 20px; height: 20px; opacity: 0; transition: opacity 0.15s ease;
 			}
+			.icon.commonClose:hover { color: var(--color-text-primary); }
 		}
 
 		&.canCancel { transition: $transitionAllCommon; }
