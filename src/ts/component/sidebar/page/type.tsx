@@ -79,6 +79,8 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	const onChange = (update: any) => {
 		const skipFormat = [ 'defaultTypeId', 'iconImage' ];
+		const textKeys = [ 'name', 'pluralName', 'description' ];
+		const isTextOnly = Object.keys(update).every(key => textKeys.includes(key));
 
 		for (const relationKey in update) {
 			if (skipFormat.includes(relationKey)) {
@@ -113,7 +115,9 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		updateSections();
 		disableButton(!U.Common.objectLength(updateRef.current) || (!objectRef.current.name && !objectRef.current.pluralName));
 
-		if (objectRef.current.id) {
+		// Skip BlockDataviewRelationSet for text-only changes (name/description) to prevent
+		// ObjectShow responses from overwriting the title block and resetting the caret
+		if (objectRef.current.id && !isTextOnly) {
 			C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
 		};
 
