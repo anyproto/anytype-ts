@@ -22,8 +22,6 @@
         .side.right { justify-content: flex-end; }
 
         .icon { width: 20px; height: 20px; flex-shrink: 0; }
-        .icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
-        .icon.search { background-image: url('~img/icon/menu/action/search0.svg'); }
 
         .filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
         .filterWrapper.active { width: 200px; }

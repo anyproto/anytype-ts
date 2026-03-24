@@ -54,8 +54,8 @@
 					.icon.c-syncing { background-image: url('~img/icon/menu/syncStatus/loading.svg'); transform: translateZ(0); animation: rotate 0.8s infinite steps(8); }
 					.icon.c-synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
 					.icon.c-error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; }
-					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); display: none; position: static; width: 20px !important; height: 20px !important; }
-					.icon.more:hover { background-color: unset !important; background-image: url('~img/icon/menu/action/more1.svg'); }
+					.icon.more { display: none; position: static; width: 20px !important; height: 20px !important; }
+					.icon.more:hover { background-color: unset !important; }
 				}
 			}
 

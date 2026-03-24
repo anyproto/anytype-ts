@@ -40,7 +40,6 @@
 			.icon.withBackground { width: 24px; height: 24px; }
 			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
 			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 		}
 
 		&:hover {
@@ -108,7 +107,6 @@
 			}
 			.hoverBtn:hover { background: var(--color-shape-secondary); }
 			.hoverBtn .icon { width: 16px; height: 16px; }
-			.hoverBtn .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 		}
 
 		&:hover {

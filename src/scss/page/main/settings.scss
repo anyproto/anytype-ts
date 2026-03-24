@@ -118,7 +118,7 @@
                 .inputWrapper.withIcon { position: relative; }
                 .inputWrapper.withIcon {
                     .icon.copy {
-                        width: 20px; height: 20px; z-index: 0; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+                        width: 20px; height: 20px; z-index: 0; position: absolute; right: 14px; top: 10px;
                         opacity: 0; transition: $transitionAllCommon;
                     }
                 }
@@ -227,7 +227,6 @@
 						.icon.push3 { background-image: url('~img/icon/settings/pushOn.svg'); }
                         .icon.push1,
                         .icon.push2 { background-image: url('~img/icon/settings/pushOff.svg'); }
-						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
                         .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
                         .icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
 
@@ -273,7 +272,6 @@
                             }
                             .input { height: 40px; padding: 0px; font-weight: 500; background: none; border: 0px; border-radius: 0px; }
 
-                            .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
                         }
                     }
 
@@ -418,7 +416,6 @@
 
             .col.colDate { @include text-overflow-nw; }
 
-            .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
             .icon.active { background-color: var(--color-shape-highlight-medium); }
         }
 
@@ -533,7 +530,6 @@
 
             .icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
             .icons {
-                .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
             }
         }
 
@@ -591,7 +587,6 @@
                 }
                 .input { height: 40px; padding: 0px; background: none; border: 0px; border-radius: 0px; }
 
-                .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
                 .button { flex-shrink: 0; }
             }
         }
@@ -709,8 +704,6 @@
                     .label { @include text-small; color: var(--color-text-secondary); }
                 }
                 .side.right {
-                    .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-                    .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
                 }
             }
         }

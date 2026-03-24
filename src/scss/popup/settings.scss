@@ -85,7 +85,7 @@
 				.button {
 					.txt { @include text-overflow-nw; line-height: unset; }
 				}
-				.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; background-image: url('~img/icon/menu/action/copy0.svg'); }
+				.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
 			}
 			> .item:hover {
 				.icon { opacity: 1; }

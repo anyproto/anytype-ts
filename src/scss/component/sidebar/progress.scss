@@ -37,10 +37,6 @@
 		}
 		.iconWrap {
 			.icon.progressType { width: 20px; height: 20px; }
-			.icon.progressType.download { background-image: url('~img/icon/menu/action/import0.svg'); }
-			.icon.progressType.import { background-image: url('~img/icon/menu/action/import0.svg'); }
-			.icon.progressType.export { background-image: url('~img/icon/menu/action/export0.svg'); }
-			.icon.progressType.update { background-image: url('~img/icon/menu/action/download0.svg'); }
 		}
 
 		.info { flex-grow: 1; overflow: hidden; }

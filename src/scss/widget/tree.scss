@@ -45,8 +45,6 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons {
 			.icon { margin: 0px; }
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 			.icon.preview { background-size: 16px 14px; background-image: url('~img/icon/widget/preview.svg'); }
 		}
 	}
@@ -57,7 +55,6 @@
 		.chatCounter { display: none; }
 	}
 	.item.active {
-		.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 
 	.item.hover, .item.active {
