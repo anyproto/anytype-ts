@@ -1,59 +1,85 @@
 @import "~scss/_mixins";
 
 .commentSection {
-	display: flex; flex-direction: column; flex: 1 1 auto; min-height: 200px;
-	padding: 24px 0px 0px 0px; border-top: 1px solid var(--color-shape-secondary);
+	display: flex; flex-direction: column; flex: 1 1 auto;
+	padding: 0px;
 
 	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
 
-	.sectionTitle { @include text-paragraph; font-weight: 600; margin: 0px 0px 16px 0px; }
+	.socialPlaceholder { height: 0px; }
+
+	.socialBlock {
+		display: flex; padding: 0px 0px 12px 0px;
+		transition: opacity 0.3s $easeInQuint;
+
+		&.isHidden { opacity: 0; transition: opacity 0.3s $easeInQuint; }
+
+		&.isSticky {
+			position: fixed; bottom: 0; z-index: 2;
+			padding: 40px 0px 12px 0px;
+			background: linear-gradient(to bottom, transparent, var(--color-bg-primary) 50%);
+		}
+
+		.commentCounter {
+			display: inline-flex; align-items: center; gap: 0px 6px;
+			padding: 7px 10px 7px 8px; border-radius: 18px;
+			background: var(--color-shape-highlight-medium);
+			user-select: none;
+
+			.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
+			.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
+		}
+	}
 
 	.commentBody { flex: 1 1 auto; }
 	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
-	.commentPost {
-		padding: 16px; border-radius: 16px; display: flex; flex-direction: row;
-		gap: 0px 8px; align-items: flex-start; position: relative; flex-wrap: wrap;
-		background: var(--color-shape-highlight-light);
-		transition: background-color 0.3s ease;
+	.head {
+		display: flex; align-items: center; justify-content: space-between;
 
-		.content, .content * { user-select: text !important; }
+		.side.left {
+			display: flex; align-items: center; gap: 0px 8px; min-width: 0;
 
-		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-		> .iconObject { margin: 2px 0px 0px 0px; }
-		.postInner { flex: 1 1 0; min-width: 0; }
-		.content { word-break: break-word; }
-
-		.head {
-			display: flex; align-items: center; gap: 0px 8px; position: relative;
-
+			.iconObject { flex-shrink: 0; }
 			.author { @include text-small; font-weight: 500; line-height: 18px; }
 			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
 			.icon.badge { width: 14px; height: 14px; }
 			.name { display: flex; align-items: center; gap: 0px 4px; }
 		}
 
+		.side.right { flex-shrink: 0; }
+	}
+
+	.hoverActions { opacity: 0; transition: opacity 0.15s ease; }
+	.contentWrap:hover, .contentWrap.hover { .hoverActions { opacity: 1; } }
+
+	.commentPost {
+		padding: 16px; border-radius: 16px; display: flex; flex-direction: column;
+		gap: 0px; position: relative;
+		background: var(--color-shape-highlight-light);
+		transition: background-color 0.3s ease;
+
+		.content, .content * { user-select: text !important; }
+
+		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
+		.content { word-break: break-word; }
+
+		.head { margin: 0px 0px 8px 0px; }
+
 		.hoverActions {
-			display: flex; align-items: center; gap: 0px 4px; position: absolute; right: 14px; top: 14px;
-			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; z-index: 1;
+			display: flex; align-items: center; gap: 0px 4px;
 
 			.icon.withBackground { width: 24px; height: 24px; }
 		}
 
-		&:hover {
-			> .hoverActions { opacity: 1; }
-		}
-
 		.replyList {
 			width: 100%; margin: 0px; padding: 0px;
-
-			.commentReply + .commentReply { border-top: 1px solid var(--color-shape-secondary); }
 		}
 
 		.replyFormWrap {
-			width: 100%; margin: 0px; padding: 0px;
+			width: 100%; margin: 0px; padding: 12px 0px 0px 0px;
 
-			.commentForm { border-radius: 14px; background-color: var(--color-bg-primary); }
+			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
 		}
 
@@ -74,29 +100,20 @@
 	}
 
 	.commentReply {
-		padding: 20px 0px; position: relative;
+		margin: 16px 0px 0px 0px; padding: 16px 0px 0px 0px; position: relative;
+		border-top: 1px solid var(--color-shape-highlight-medium);
 		transition: background-color 0.3s ease;
-
-		&:last-child { padding-bottom: 0px; }
 
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
 		.content {
-			margin: 8px 0px 0px 40px; line-height: 20px; word-break: break-word;
+			margin: 4px 0px 0px 0px; line-height: 20px; word-break: break-word;
 
 			&, * { user-select: text !important; }
 		}
 
-		.head {
-			display: flex; align-items: center; gap: 0px 8px; position: relative;
-
-			.author { @include text-small; font-weight: 500; line-height: 18px; }
-			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
-		}
-
 		.hoverActions {
 			display: flex; align-items: center; gap: 0px 2px;
-			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0;
 
 			.hoverBtn {
 				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
@@ -104,10 +121,6 @@
 			}
 			.hoverBtn:hover { background: var(--color-shape-secondary); }
 			.hoverBtn .icon { width: 16px; height: 16px; }
-		}
-
-		&:hover {
-			> .head > .hoverActions { opacity: 1; }
 		}
 	}
 
@@ -125,7 +138,7 @@
 
 		&.isEdit {
 			.contentArea { padding: 0px; }
-			.formToolbar { padding: 8px 0px 0px 0px; margin-left: -40px; }
+			.formToolbar { padding: 8px 0px 0px 0px; }
 		}
 
 		&.isEdit.isReply {

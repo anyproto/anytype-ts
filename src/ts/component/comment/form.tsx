@@ -672,7 +672,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const isDisabled = isEmpty || isLoading;
-	const showToolbar = isFocused || !isEmpty || isEdit;
+	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
 	if (isEdit) cn.push('isEdit');
