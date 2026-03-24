@@ -190,9 +190,9 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		return [
-			{ id: 'invite', name: translate('commonAdd'), icon: 'invite' },
-			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			{ id: 'invite', iconParam: { name: 'menu/action/inviteMembers' }, name: translate('commonAdd') },
+			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
+			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
 		];
 	};
 
@@ -315,7 +315,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 						className="btn" 
 						onClick={e => onClick(e, item)}
 					>
-						<Icon name={({ invite: 'settings/space/buttons/invite', copyLink: 'settings/space/buttons/copy', qr: 'common/qr' })[item.icon]} className={item.icon} />
+						<Icon {...(item.iconParam || {})} className={item.id} />
 						<Label text={item.name} />
 					</div>
 				))}
@@ -359,7 +359,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
-											<Icon name="common/home" />
+											<Icon name="settings/home" />
 
 											<div className="side left">
 												<Title text={translate('commonHomepage')} />
@@ -371,7 +371,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 													<div className="item">
 														<div className="name">{home ? home.name : translate('commonSelect')}</div>
 													</div>
-													<Icon className="arrow black" />
+													<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 												</div>
 											</div>
 										</div>
@@ -392,7 +392,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 												<div className="item">
 													<div className="name">{type?.name || translate('commonSelect')}</div>
 												</div>
-												<Icon className="arrow black" />
+												<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 											</div>
 										</div>
 									</div>

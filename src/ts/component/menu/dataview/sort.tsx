@@ -363,14 +363,14 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							<div className="name">{relation.name}</div>
 						</div>
 						<div className="chip type" onClick={e => onTypeChange(e, item)}>
-							<Icon className={`sortArrow c${item.type}`} />
+							<Icon name="common/sortArrow" className={`sortArrow c${item.type}`} />
 						</div>
 					</div>
 					<div className="side right">
 						{!isReadonlyValue ? (
 							<div className="buttons">
 								<Icon name="common/more" className="more" withBackground={true} onClick={e => onMore(e, item)} />
-								<Icon className="delete" withBackground={true} onClick={e => onRemove(e, item)} />
+								<Icon name="menu/common/delete" className="delete" withBackground={true} onClick={e => onRemove(e, item)} />
 							</div>
 						) : ''}
 					</div>

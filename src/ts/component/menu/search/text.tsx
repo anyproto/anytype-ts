@@ -353,8 +353,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 
 				<div className="arrowWrapper">
-					<Icon className="arrow up" onClick={() => navigateMatch(-1)} />
-					<Icon className="arrow down" onClick={() => navigateMatch(1)} />
+					<Icon name="arrow/small" className="arrow up" onClick={() => navigateMatch(-1)} />
+					<Icon name="arrow/small" className="arrow down" onClick={() => navigateMatch(1)} />
 				</div>
 			</div>
 		</div>

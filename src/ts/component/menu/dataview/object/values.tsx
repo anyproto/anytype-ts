@@ -221,7 +221,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					<IconObject object={item} />
 					<ObjectName object={item} />
 				</span>
-				{canEdit ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+				{canEdit ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 			</div>
 		);
 	};

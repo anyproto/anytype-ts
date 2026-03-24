@@ -83,14 +83,14 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 		let value = Relation.getArrayValue(data.value);
 		let options: any[] = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-			{ id: 'download', icon: 'download', name: translate('commonDownload') },
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpen') },
+			{ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') },
 		];
 
 		if (isAllowed) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') },
 			]);
 		};
 

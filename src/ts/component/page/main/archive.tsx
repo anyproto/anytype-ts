@@ -57,8 +57,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	];
 
 	const buttons: I.ButtonComponent[] = [
-		{ icon: 'restore', text: translate('commonRestore'), onClick: onRestore },
-		{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: onRemove }
+		{ iconParam: { name: 'menu/action/restore' }, text: translate('commonRestore'), onClick: onRestore },
+		{ iconParam: { name: 'menu/action/remove' }, text: translate('commonDeleteImmediately'), onClick: onRemove }
 	];
 
 	const onKeyDown = useCallback((e: KeyboardEvent) => {

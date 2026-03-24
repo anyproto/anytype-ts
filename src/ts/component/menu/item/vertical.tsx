@@ -98,7 +98,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		iconSideElement = <Icon name="arrow/item" className="arrow" />;
 	};
 	if (checkbox) {
-		iconSideElement = <Icon className="chk" />;
+		iconSideElement = <Icon name="menu/common/chk" className="chk" />;
 	};
 	if (note) {
 		cn.push('withNote');
@@ -111,7 +111,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 	if (undefined !== sortArrow) {
 		cn.push('withSortArrow');
-		iconSideElement = <Icon className={`sortArrow c${sortArrow}`} />;
+		iconSideElement = <Icon name="common/sortArrow" className={`sortArrow c${sortArrow}`} />;
 	};
 
 	let content = null;

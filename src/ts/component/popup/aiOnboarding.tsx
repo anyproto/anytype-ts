@@ -613,7 +613,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			<div ref={nodeRef} className="errorStateWrapper">
 				<div className="errorContent">
 					<div className="errorIcon">
-						<Icon className="warning large" />
+						<Icon name="popup/header/warning" className="warning large" />
 					</div>
 					<div className="errorTitle">{translate('popupAiOnboardingConnectionIssueTitle')}</div>
 					<div className="errorMessage">
@@ -801,7 +801,7 @@ const TypeCard = ({ type, isSelected, onToggle }) => {
 			<div className="header">
 				{type.icon && <Icon className={type.icon} />}
 				<div className="name">{type.name}</div>
-				{isSelected && <Icon className="check" />}
+				{isSelected && <Icon name="common/tick" className="check" />}
 			</div>
 		</div>
 	);

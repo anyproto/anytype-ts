@@ -35,7 +35,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	return (
 		<>
 			<div className="side left">
-				<Icon className="arrow back" withBackground={true} onClick={onBackHandler} />
+				<Icon name="common/back" className="arrow back" withBackground={true} onClick={onBackHandler} />
 			</div>
 			<div className="side center">
 				<div className="logo" />

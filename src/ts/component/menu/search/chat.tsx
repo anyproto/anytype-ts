@@ -330,8 +330,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 

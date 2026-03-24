@@ -242,7 +242,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!isReadonly) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'addRelation', icon: 'plus', name: translate('commonAddRelation') },
+				{ id: 'addRelation', iconParam: { name: 'plus/menu' }, name: translate('commonAddRelation') },
 			]);
 		};
 

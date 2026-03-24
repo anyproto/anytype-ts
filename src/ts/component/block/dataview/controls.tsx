@@ -551,7 +551,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						onContextMenu={(e: any) => onViewContext(e, `#block-${U.Common.esc(block.id)} #view-selector`, view)}
 					>
 						<div className="name">{view.name}</div>
-						<Icon className="arrow dark" />
+						<Icon name="arrow/select" className="arrow dark" />
 					</div>
 
 					<DndContext

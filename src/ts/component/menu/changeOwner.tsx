@@ -256,7 +256,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<ObjectName object={item} withBadge={true} />
 						{item.globalName ? <Label className="globalName" text={item.globalName} /> : ''}
 					</div>
-					{isSelected ? <Icon className="chk" /> : ''}
+					{isSelected ? <Icon name="menu/common/chk" /> : ''}
 				</div>
 			</CellMeasurer>
 		);

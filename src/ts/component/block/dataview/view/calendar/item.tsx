@@ -138,7 +138,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	const onContextHandler = () => {
 		const node = $(nodeRef.current);
 		const options = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') }
 		] as I.Option[];
 
 		if (canCreateValue) {

@@ -177,7 +177,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const ItemAdd = () => (
 		<div className="previewObject small">
 			<div className="border" />
-			<Icon className="add" />
+			<Icon name="menu/action/add" className="add" />
 		</div>
 	);
 

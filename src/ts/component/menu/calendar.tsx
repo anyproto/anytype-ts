@@ -43,7 +43,7 @@ const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			classNameWrap,
 			data: {
 				options: [
-					{ id: 'open', icon: 'expand', name: translate('commonOpenObject') },
+					{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') },
 				],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));

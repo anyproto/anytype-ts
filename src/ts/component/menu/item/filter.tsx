@@ -188,7 +188,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			{!readonly ? (
 				<div className="buttons">
 					<Icon name="common/more" className="more" withBackground={true} onClick={onClick} />
-					<Icon className="delete" withBackground={true} onClick={onRemove} />
+					<Icon name="menu/common/delete" className="delete" withBackground={true} onClick={onRemove} />
 				</div>
 			) : ''}
 		</div>

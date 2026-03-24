@@ -136,10 +136,10 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 				menuParam.data = Object.assign(menuParam.data, {
 					options: [
-						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
-						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
+						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
 						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
-						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
+						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
 						if (S.Menu.isAnimating(menuContext.current?.props.id)) {

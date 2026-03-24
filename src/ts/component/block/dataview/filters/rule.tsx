@@ -391,10 +391,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		const options: any[] = [];
 
 		if (depth < 2) {
-			options.push({ id: 'group', name: translate('menuDataviewFilterTurnIntoGroup'), icon: 'group' });
+			options.push({ id: 'group', name: translate('menuDataviewFilterTurnIntoGroup'), iconParam: { name: 'menu/action/group' } });
 		};
 
-		options.push({ id: 'delete', name: translate('commonDelete'), icon: 'remove' });
+		options.push({ id: 'delete', name: translate('commonDelete'), iconParam: { name: 'menu/action/remove' } });
 
 		S.Menu.open('select', {
 			element: `#${nodeId} .icon.more`,

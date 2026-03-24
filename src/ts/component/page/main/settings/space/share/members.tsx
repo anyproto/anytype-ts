@@ -159,7 +159,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 						<div className="item">
 							<div className="name">{placeholder}</div>
 						</div>
-						<Icon className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} />
+						<Icon name="arrow/small" className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} width={6} height={10} />
 					</div>
 				);
 			};

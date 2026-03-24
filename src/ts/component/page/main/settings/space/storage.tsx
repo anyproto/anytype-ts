@@ -83,7 +83,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const Manager = (item: any) => {
 		const { refId } = item;
 		const buttons: I.ButtonComponent[] = [
-			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: () => onRemove(refId) }
+			{ iconParam: { name: 'menu/action/remove' }, text: translate('commonDeleteImmediately'), onClick: () => onRemove(refId) }
 		];
 		const filters: I.Filter[] = [
 			{ relationKey: 'syncStatus', condition: I.FilterCondition.In, value: item.filters },

@@ -230,7 +230,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						name: translate('menuTypeLayoutDescription'),
 						children: [ 
 							{ isDiv: true },
-							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
+							{ id: 'reset', iconParam: { name: 'menu/action/reset' }, name: translate('menuTypeLayoutReset') },
 						]
 					}
 				],
@@ -357,8 +357,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
-				<Icon className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
+				<Icon name="arrow/calendar" className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
+				<Icon name="arrow/calendar" className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
 				<Icon id="calendar-icon" name="relation/date" withBackground={true} onClick={onCalendar} />
 			</>
 		);

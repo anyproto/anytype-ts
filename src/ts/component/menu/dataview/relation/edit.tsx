@@ -129,10 +129,10 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		let sections: any[] = [
 			{
 				children: [
-					canOpen ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
-					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
-					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
-					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,
+					canOpen ? { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } : null,
+					canDuplicate ? { id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') } : null,
+					canUnlink ? { id: 'unlink', iconParam: { name: 'common/unlink' }, name: unlinkText } : null,
+					canDelete ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') } : null,
 				]
 			}
 		];
@@ -713,7 +713,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					</div>
 				) : (
 					<div className="item isReadonly">
-						<Icon className="lock" />
+						<Icon name="menu/action/pageLock" className="lock" width={8} height={20} />
 						{relation ? relation.name : ''}
 					</div>
 				)}

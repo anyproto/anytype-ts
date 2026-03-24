@@ -21,6 +21,7 @@ interface SelectItem {
 	isSection?: boolean;
 	isDiv?: boolean;
 	icon?: string;
+	iconParam?: I.IconParam;
 	isArchived?: boolean;
 	isDeleted?: boolean;
 	_empty_?: boolean;
@@ -715,6 +716,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		let icon = null;
+		if (item.iconParam) {
+			icon = <Icon name={item.iconParam.name} />;
+		} else
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
@@ -736,7 +740,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -781,7 +785,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			>
 				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />

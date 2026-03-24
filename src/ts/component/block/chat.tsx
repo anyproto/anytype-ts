@@ -753,20 +753,20 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		if (downloadable.length == 1) {
 			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
 
-			options.push({ id: 'download', icon: 'download', name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
 		};
 
 		if (isSelf) {
 			options.push({ isDiv: true });
 			options.push({ id: 'edit', iconParam: { name: 'chat/buttons/pencil' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
 			};
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		return options;

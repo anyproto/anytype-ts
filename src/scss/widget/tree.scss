@@ -27,13 +27,15 @@
 		.iconObject { flex-basis: 20px; margin-right: 6px; }
 
 		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
-		.arrowWrap:hover {
-			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
+		.arrowWrap {
+			&:hover {
+				.icon.arrow { background-color: var(--color-shape-highlight-medium); }
+			}
+
+			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
+			.icon.arrow { transform: rotate(-90deg); }
 		}
 
-		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
-		.icon.arrow { transform: rotate(-90deg); }
-		
 		.clickable {
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
 			line-height: 20px;

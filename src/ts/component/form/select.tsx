@@ -245,7 +245,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 							<MenuItemVertical key={i} {...item} />
 						))}
 					</div>
-					<Icon className={acn.join(' ')} />
+					<Icon name="arrow/select" className={acn.join(' ')} size={8} />
 				</>
 			) : ''}
 		</div>

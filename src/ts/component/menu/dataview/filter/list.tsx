@@ -86,7 +86,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), iconParam: { name: 'plus/menu' } });
 
 			if (filterItems.length) {
-				items.push({ id: 'clear', name: translate('commonClear'), icon: 'remove' });
+				items.push({ id: 'clear', name: translate('commonClear'), iconParam: { name: 'menu/action/remove' } });
 			};
 		};
 
@@ -365,6 +365,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical
 					id={item.id}
 					icon={item.icon}
+					iconParam={item.iconParam}
 					name={item.name}
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onClick={e => onClick(e, item)}

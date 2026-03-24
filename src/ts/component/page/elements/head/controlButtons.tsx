@@ -95,11 +95,11 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 			options.push({ id: 'position', iconParam: { name: 'control/cover/position' }, name: translate('pageHeadControlButtonsReposition') });
 		};
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType) && coverId) {
-			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') });
 		};
 
 		if (hasCover) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
+			options.push({ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonRemove') });
 		};
 
 		S.Menu.open('select', {

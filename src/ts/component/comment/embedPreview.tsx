@@ -179,7 +179,7 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 			{content}
 			{(hasContent && (onEdit || onRemove)) ? (
 				<div className="embedActions">
-					{onEdit ? <Icon className="edit" onClick={onEdit} /> : ''}
+					{onEdit ? <Icon name="common/edit" className="edit" onClick={onEdit} /> : ''}
 					{onRemove ? <Icon name="menu/action/remove" className="remove" onClick={onRemove} /> : ''}
 				</div>
 			) : ''}

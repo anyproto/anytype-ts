@@ -1262,8 +1262,8 @@ class UtilMenu {
 	sidebarModeOptions () {
 		return [
 			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
-			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
+		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
 	};
 
 	codeLangOptions (): I.Option[] {

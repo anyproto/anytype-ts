@@ -987,6 +987,9 @@ class UtilObject {
 		const fill = color || U.Common.iconBgByOption(option);
 		let svg = getIconSvg(`type/${id}`, { style: { width: size, height: size } }) ||
 			getIconSvg('state/error', { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
+		};
 		svg = svg.replace(/currentColor/g, fill);
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
@@ -1018,6 +1021,9 @@ class UtilObject {
 		};
 
 		let svg = getIconSvg(`default/${id}`, { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
+		};
 		svg = svg.replace(/currentColor/g, fill);
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};

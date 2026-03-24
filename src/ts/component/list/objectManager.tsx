@@ -54,7 +54,7 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 
 	const Button = (item: any) => (
 		<div className="element" onClick={item.onClick}>
-			<Icon className={item.icon} />
+			{item.iconParam ? <Icon {...item.iconParam} /> : <Icon className={item.icon} />}
 			<div className="name">{item.text}</div>
 		</div>
 	);

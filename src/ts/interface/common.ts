@@ -72,6 +72,7 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
