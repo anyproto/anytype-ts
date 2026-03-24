@@ -105,27 +105,6 @@
         .select:hover { background-color: var(--color-shape-highlight-medium); }
     }
 
-    /* BlockLinkSettings */
-
-    .menu.menuBlockLinkSettings {
-        .section.card {
-            .item {
-                .icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text0.svg'); }
-			    .icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card0.svg'); }
-            }
-
-            .item:hover {
-				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text1.svg'); }		
-				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card1.svg'); }
-			}
-
-			.item.active {
-				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text2.svg'); }		
-				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card2.svg'); }
-			}
-        }
-    }
-
     /* Onboarding */
 
 	.menu.menuOnboarding {

@@ -8,6 +8,8 @@
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
 
+	.iconCommon.hasSvg, .iconRelation.hasSvg { display: flex; align-items: center; justify-content: center; }
+
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
 		&.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
 		&.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
