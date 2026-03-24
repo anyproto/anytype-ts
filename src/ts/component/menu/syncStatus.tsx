@@ -424,7 +424,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						</div>
 					</div>
 					<div className="side right">
-						<Icon className={U.Data.syncStatusClass(item.syncStatus)} />
+						<Icon name={U.Data.syncStatusIcon(item.syncStatus)} className={U.Data.syncStatusClass(item.syncStatus)} />
 						<Icon name="common/more" className="more" onClick={e => onContextMenu(e, item)} />
 					</div>
 				</div>
