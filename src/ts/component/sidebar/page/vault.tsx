@@ -10,8 +10,8 @@ import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatC
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer } from 'Lib';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
-const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_ITEM = 45;
+const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 

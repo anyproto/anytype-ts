@@ -538,15 +538,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const res = U.String.insert(current, newText, from, to);
 			const skipMarks = [ I.MarkType.Color, I.MarkType.BgColor ];
 
-			newMarks = Mark.adjust(newMarks, 0, to);
+			newMarks = Mark.adjust(newMarks, 0, from);
 
-			marks.current = Mark.adjust(marks.current, from, newText.length);
+			marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
 			marks.current = marks.current.concat(newMarks);
 			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
+			marks.current = Mark.checkRanges(res, marks.current);
 
 			setMarks(marks.current);
 
-			const rt = to + newText.length;
+			const rt = from + newText.length;
 			range.current = { from: rt, to: rt };
 			updateMarkup(res, range.current);
 			checkUrls();
