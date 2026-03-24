@@ -364,7 +364,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
 										<div className="time">
-											<Icon name="chat/messageStatus/syncing" className={cns.join(' ')} />
+											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}
 										</div>
 									</div>
