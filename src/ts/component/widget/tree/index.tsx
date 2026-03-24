@@ -471,12 +471,13 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			{head}
 			{content}
 
-			<Button 
-				id="button-show-all" 
-				onClick={onSetPreview} 
-				text={translate('widgetSeeAll')} 
+			<Button
+				id="button-show-all"
+				onClick={onSetPreview}
+				text={translate('widgetSeeAll')}
 				size={28}
-				color="blank" 
+				color="blank"
+				arrow={true}
 			/>
 		</div>
 	);

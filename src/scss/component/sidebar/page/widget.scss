@@ -52,7 +52,7 @@
 	}
 
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
-	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
+	> .body.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 

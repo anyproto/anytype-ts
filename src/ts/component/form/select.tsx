@@ -17,6 +17,7 @@ interface Props {
 	noFilter?: boolean;
 	isMultiple?: boolean;
 	iconParam?: I.IconParam;
+	arrowParam?: Partial<I.IconParam>;
 	showOn?: 'click' | 'mouseDown' | 'mouseEnter';
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
@@ -47,7 +48,8 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	menuParam = {},
 	tooltipParam = {},
 	iconParam,
-	onChange,	
+	arrowParam,
+	onChange,
 }, ref) => {
 
 	const [ value, setValue ] = useState(initialValue);
@@ -245,7 +247,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 							<MenuItemVertical key={i} {...item} />
 						))}
 					</div>
-					<Icon name="arrow/select" className={acn.join(' ')} size={8} />
+					<Icon name="arrow/select" className={acn.join(' ')} {...arrowParam} />
 				</>
 			) : ''}
 		</div>
