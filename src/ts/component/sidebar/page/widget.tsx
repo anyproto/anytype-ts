@@ -661,7 +661,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						};
 					} else 
 					if (!isSectionUnread) {
-						buttons = <Icon name="common/more" className="more" onClick={() => onSectionContext(section.id)} />;
+						buttons = <Icon name="common/more" size={12} className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 
 					return (

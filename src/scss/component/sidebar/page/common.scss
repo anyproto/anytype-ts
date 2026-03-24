@@ -26,9 +26,7 @@
 		.button.simple:hover { color: var(--color-text-primary); }
 
 		.icon { flex-shrink: 0; }
-		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
-		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
-		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
+			.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 		.icon.toggle { background-image: url('~img/icon/widget/toggle1.svg'); }
 		.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
