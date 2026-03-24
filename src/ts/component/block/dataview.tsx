@@ -1256,6 +1256,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
+			const typeId = getTypeId();
+			const type = S.Record.getTypeById(typeId);
+
+			if (!readonly && type && U.Object.isInFileLayouts(type.recommendedLayout)) {
+				return true;
+			};
 			return false;
 		};
 

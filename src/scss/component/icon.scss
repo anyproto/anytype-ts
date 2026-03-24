@@ -12,7 +12,7 @@
 .icon.hasSvg {
 	display: inline-flex; align-items: center; justify-content: center; color: var(--color-icon); width: 20px; height: 20px;
 
-	> svg { flex-shrink: 0; }
+	> svg { flex-shrink: 0; pointer-events: none; }
 };
 
 .icon.iconColor-default { color: var(--color-text-primary); }

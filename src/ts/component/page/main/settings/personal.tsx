@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, keyboard, } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound } from 'Lib';
 
 enum ChatKey {
 	Enter 	 = 'enter',
@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -56,6 +56,11 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
 	];
 
+	const notificationSounds: I.Option[] = [
+		{ id: '', name: translate('popupSettingsPersonalNotificationSoundOff') },
+		...Sound.list.map(it => ({ id: it.id, name: it.name })),
+	];
+
 	return (
 		<>
 			<Title text={translate('popupSettingsPersonalTitle')} />
@@ -97,11 +102,22 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalSidebar')} />
-					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => {
-						S.Common.hideSidebarSet(v);
-						Renderer.send('setHideSidebar', v);
-					}} />
+					<Label text={translate('popupSettingsPersonalNotificationSound')} />
+
+					<Select
+						id="notificationSound"
+						value={notificationSound}
+						options={notificationSounds}
+						onChange={(v: string) => {
+							S.Common.notificationSoundSet(v);
+
+							if (v) {
+								Sound.play(v);
+							};
+						}}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
 				</div>
 
 				<div className="item">
@@ -140,6 +156,31 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionSidebar')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalSidebar')} />
+					<Switch
+						className="big"
+						value={hideSidebar}
+						onChange={(e: any, v: boolean) => {
+							S.Common.hideSidebarSet(v);
+							Renderer.send('setHideSidebar', v);
+						}}
+					/>
+				</div>
+
+				<div className="item">
+    				<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
+    				<Switch
+						className="big"
+						value={hideFileObjectsInTree}
+						onChange={(e: any, v: boolean) => S.Common.hideFileObjectsInTreeSet(v)}
+    				/>
+				</div>
 			</div>
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />

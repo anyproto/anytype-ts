@@ -72,7 +72,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 				objectIds: [ id ],
 				subId,
 				allowedCollection: true,
-				allowedExport: true,
 				allowedLinkTo: true,
 				openAfterDuplicate: true,
 			},

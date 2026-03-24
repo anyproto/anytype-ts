@@ -1390,7 +1390,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1592,7 +1592,7 @@ class UtilMenu {
 											cb(object, 0);
 										};
 									};
-								}, route);
+								}, flags.uploadRoute || route);
 							}, S.Menu.getTimeout());
 						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {

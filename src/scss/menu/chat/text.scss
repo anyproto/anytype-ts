@@ -5,6 +5,7 @@
         .buttons { display: flex; align-items: center; height: 100%; justify-content: center; }
 
         .icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
+        .icon.hasSvg { width: 32px; height: 32px; }
         .icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
     }

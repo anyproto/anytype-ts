@@ -108,6 +108,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isSystem && canWrite) {
 			if (!isType) {
+				actionChildren.push({ id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true });
 				actionChildren.push({ id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true });
 			};
 
@@ -275,6 +276,28 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					value: String(limit),
 					options: limitOptions.map(it => ({ id: String(it.id), name: String(it.name) })),
 					onSelect: (e: any, option: any) => onSelectOption('limit', option.id),
+				};
+				break;
+			};
+
+			case 'linkTo': {
+				menuId = 'searchObject';
+				menuParam.data = {
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'links', condition: I.FilterCondition.NotIn, value: [ target.id ] },
+					],
+					rootId: target.id,
+					blockId: target.id,
+					blockIds: [ target.id ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ target.id ],
+					position: I.BlockPosition.Bottom,
+					canAdd: true,
+					onSelect: (el: any) => {
+						close();
+					},
 				};
 				break;
 			};

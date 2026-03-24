@@ -75,8 +75,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			subId, 
 			objectId: id,
 			data: {
-				allowedCollection: true, 
-				allowedExport: true,
+				allowedCollection: true,
 				allowedLinkTo: true,
 			},
 		});

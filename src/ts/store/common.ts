@@ -52,7 +52,9 @@ class CommonStore {
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
+	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
+	public notificationSoundValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -146,6 +148,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
@@ -159,6 +162,7 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
+			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
@@ -181,6 +185,7 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
+			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -211,6 +216,7 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
+			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -316,6 +322,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get hideFileObjectsInTree (): boolean {
+		return this.boolGet('hideFileObjectsInTree');
 	};
 
 	get autoDownload (): number {
@@ -453,6 +463,17 @@ class CommonStore {
 		};
 		if (ret === undefined) {
 			ret = true;
+		};
+		return ret;
+	};
+
+	get notificationSound (): string {
+		let ret = this.notificationSoundValue;
+		if (ret === null) {
+			ret = Storage.get('notificationSound');
+		};
+		if (ret === undefined) {
+			ret = '';
 		};
 		return ret;
 	};
@@ -703,6 +724,10 @@ class CommonStore {
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	hideFileObjectsInTreeSet (v: boolean) {
+		this.boolSet('hideFileObjectsInTree', v);
 	};
 
 	autoDownloadSet (v: number) {
@@ -998,6 +1023,11 @@ class CommonStore {
 
 	gridTitleClickSet (v: boolean) {
 		this.boolSet('gridTitleClick', v);
+	};
+
+	notificationSoundSet (v: string) {
+		this.notificationSoundValue = v;
+		Storage.set('notificationSound', v);
 	};
 
 	/**

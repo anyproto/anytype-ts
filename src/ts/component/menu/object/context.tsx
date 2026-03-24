@@ -42,7 +42,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
 
-		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
+		let pageCopy = { id: 'copy', icon: 'duplicate', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
