@@ -88,7 +88,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	} else
 	if (numChildren > 0) {
 		onArrowClick = onToggleHandler;
-		arrow = <Icon name="arrow/menu/button" className="arrow" />;
+		arrow = <Icon name="arrow/menu/button" size={8} className="arrow" />;
 	} else {
 		arrow = <Icon className="blank" />;
 	};

@@ -460,7 +460,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				<div className="relationSelect select round size36" onClick={onRelationClick}>
 					{relation ? <Icon name={Relation.registryName(relation.relationKey, relation.format)} /> : ''}
 					<Label text={relation?.name || ''} />
-					<Icon name="arrow/menu/button" className="arrow" />
+					<Icon name="arrow/menu/button" size={8} className="arrow" />
 				</div>
 
 				<Select

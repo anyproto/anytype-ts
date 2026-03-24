@@ -407,7 +407,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 							/>
 						))}
 					</div>
-					<Icon name="arrow/menu/button" className="arrow" />
+					<Icon name="arrow/menu/button" size={8} className="arrow" />
 				</div>
 				<div className="items">
 					{item.list.map((item: any, i: number) => (
@@ -423,7 +423,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		let icon = null;
 		if (withChildren) {
-			icon = <Icon name="arrow/menu/button" className="arrow" onClick={e => onArrow(e, item.id)} />;
+			icon = <Icon name="arrow/menu/button" size={8} className="arrow" onClick={e => onArrow(e, item.id)} />;
 		} else {
 			icon = <Icon className="blank" />;
 		};

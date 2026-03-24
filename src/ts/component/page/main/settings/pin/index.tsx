@@ -53,12 +53,12 @@ const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 					<div className="item" onClick={onChangePin}>
 						<Label text={translate('popupSettingsPinChange')} />
-						<Icon name="arrow/menu/button" className="arrow" />
+						<Icon name="arrow/menu/button" size={8} className="arrow" />
 					</div>
 
 					<div className="item red" onClick={onTurnOffPin}>
 						<Label text={translate('popupSettingsPinOff')} />
-						<Icon name="arrow/menu/button" className="arrow" />
+						<Icon name="arrow/menu/button" size={8} className="arrow" />
 					</div>
 				</div>
 			) : (

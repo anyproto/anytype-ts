@@ -254,7 +254,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div key={index} className="item" onClick={item.onClick}>
 						<Icon name={item.icon} color="default" />
 						<div className="name">{item.name}</div>
-						{item.arrow ? <Icon name="arrow/menu/button" className="arrow" /> : ''}
+						{item.arrow ? <Icon name="arrow/menu/button" size={8} className="arrow" /> : ''}
 					</div>
 				))}
 			</div>

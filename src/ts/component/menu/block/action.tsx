@@ -149,7 +149,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasCommon, hasClipboard, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
-		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
+		const changeFile = { id: 'changeFile', iconParam: { name: 'menu/mark/link' }, name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -211,17 +211,17 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
 				const deleteName = `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
 
-				const move = hasCommon ? { id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true } : null;
+				const move = hasCommon ? { id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true } : null;
 				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` } : null;
 				const clipboardCut = hasClipboard ? { id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` } : null;
 				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` } : null;
-				const copy = hasCommon ? { id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') } : null;
-				const remove = hasCommon ? { id: 'remove', icon: 'remove', name: deleteName, caption: 'Del' } : null;
-				const download = hasFile ? { id: 'download', icon: 'download', name: translate('commonDownload') } : null;
-				const copyUrl = hasBookmark ? { id: 'copyUrl', icon: 'pageLink', name: translate('libMenuCopyUrl') } : null;
-				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') } : null;
-				const newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
-				const newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
+				const copy = hasCommon ? { id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') } : null;
+				const remove = hasCommon ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: deleteName, caption: 'Del' } : null;
+				const download = hasFile ? { id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') } : null;
+				const copyUrl = hasBookmark ? { id: 'copyUrl', iconParam: { name: 'menu/action/pageLink' }, name: translate('libMenuCopyUrl') } : null;
+				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } : null;
+				const newTab = { id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') };
+				const newWindow = { id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') };
 
 				if (hasLink) {
 					actionSections = [

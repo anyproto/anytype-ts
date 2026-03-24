@@ -343,7 +343,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const Tooltip = (item: any) => (
 		<>
-			<Icon name="arrow/menu/button" className="arrow" />
+			<Icon name="arrow/menu/button" size={8} className="arrow" />
 			<ObjectName object={item} />
 		</>
 	);
@@ -579,8 +579,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			<div className="controlsContainer">
 				<div className="inner">
 					<div className="grad" />
-					<Icon name="arrow/menu/button" className="arrow left" withBackground={true} onClick={() => onArrow(-1)} />
-					<Icon name="arrow/menu/button" className="arrow right" withBackground={true} onClick={() => onArrow(1)}/>
+					<Icon name="arrow/menu/button" size={8} className="arrow left" withBackground={true} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/menu/button" size={8} className="arrow right" withBackground={true} onClick={() => onArrow(1)}/>
 					<Icon id={`calendar-icon-${rootId}-${block.id}`} name="relation/date" withBackground={true} onClick={onCalendar} />
 				</div>
 			</div>

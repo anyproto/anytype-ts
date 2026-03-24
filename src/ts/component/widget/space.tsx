@@ -32,17 +32,18 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	);
 
 	const buttons = [
-		canWrite ? { 
-			id: 'create', 
-			name: translate('commonCreate'), 
+		canWrite ? {
+			id: 'create',
+			iconName: 'common/edit',
+			name: translate('commonCreate'),
 			withArrow: true,
-			arrowTooltipParam: { 
-				text: translate('popupShortcutMainBasics19'), 
-				caption: keyboard.getCaption('selectType'), 
+			arrowTooltipParam: {
+				text: translate('popupShortcutMainBasics19'),
+				caption: keyboard.getCaption('selectType'),
 				typeY: I.MenuDirection.Bottom as any,
 			},
 		} : null,
-		{ id: 'search', name: translate('commonSearch') },
+		{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
 		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
@@ -106,7 +107,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
-					<Icon name="arrow/menu/button" className="arrow" />
+					<Icon name="arrow/menu/button" size={8} className="arrow" />
 				</div>
 
 				<MemberCnt route={route} />
@@ -119,7 +120,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
-						<Icon name="arrow/menu/button" className="arrow" />
+						<Icon name="arrow/menu/button" size={8} className="arrow" />
 					</div>
 
 					<MemberCnt route={analytics.route.widget} />
@@ -151,13 +152,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 					return (
 						<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
-							<Icon className={item.id} />
+							<Icon name={item.iconName} className={item.id} />
 							<Label text={item.name} />
 							{item.id == 'chat' ? <ChatCounter chatId={chatId} /> : ''}
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									name="arrow/menu/button" className="arrow" withBackground={true}
+									name="arrow/menu/button" size={8} className="arrow" withBackground={true}
 									onClick={onArrow}
 									tooltipParam={item.arrowTooltipParam}
 								/>

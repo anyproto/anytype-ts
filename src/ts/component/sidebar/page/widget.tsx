@@ -680,7 +680,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 										onContextMenu={() => onSectionContext(section.id)}
 									>
 										<div className="name" onClick={() => onToggle(section.id)}>
-											<Icon name="arrow/menu/button" className="arrow" />
+											<Icon name="arrow/menu/button" size={8} className="arrow" />
 											{section.name}
 										</div>
 										<div className="buttons">
