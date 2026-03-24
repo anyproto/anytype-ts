@@ -52,6 +52,7 @@ const FOLDER_SIZES: Record<string, number> = {
 	'dataview/view': 56,
 	'popup/header': 56,
 	'embed': 40,
+	'menu/spaceCreate': 40,
 };
 
 const ICON_SIZES: Record<string, { size?: number; width?: number; height?: number }> = {
