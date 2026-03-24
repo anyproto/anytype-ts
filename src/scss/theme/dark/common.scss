@@ -47,7 +47,7 @@ html.themeDark {
 	--color-dark-orange: #ffb330;
 
 	--color-very-light-red: #ffede9;
-	--color-light-red: #82181a;
+	--color-light-red: #ffb6a2;
 	--color-dark-red: #82181a;
 
 	--color-very-light-pink: #510427;
@@ -106,12 +106,6 @@ html.themeDark {
 		img:before { background: var(--color-bg-secondary); }
 	}
 
-	.objectManagerWrapper {
-	}
-
-	.utilOptionSelect {
-	}
-
 	#root-loader {
 		.logo { background-image: url('~img/logo/white.svg'); }
 	}
@@ -134,8 +128,6 @@ html.themeDark {
 	.loaderWrapper {
 		.dot { animation-name: dots-dark; }
 	}
-
-
 
 	.switch { background: var(--color-shape-secondary); }
 	.switch {
@@ -174,14 +166,6 @@ html.themeDark {
 	.previewObject {
 		.heading {
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
-		}
-
-		.blocks {
-			.element {
-				.inner {
-					.icon.hl { }
-				}
-			}
 		}
 	}
 
@@ -261,14 +245,6 @@ html.themeDark {
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
 		.icon.close { background-color: var(--color-bg-secondary); }
-	}
-
-	/* Key Phrase */
-
-	/* Comment checkboxes */
-	.commentSection {
-		.commentEditor-li-unchecked::before { }
-		.commentCheckbox .checkboxMark { }
 	}
 
 	@import "./menu";
