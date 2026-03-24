@@ -14,7 +14,7 @@
 			.iconWrapper { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
 			.iconWrapper {
 				.icon { margin: 0px !important; }
-				.icon.puzzle { background-image: url('~img/icon/menu/puzzle.svg'); background-size: 24px; }
+				.icon.puzzle { background-size: 24px; }
 			}
 
 			.buttons { line-height: 40px; opacity: 0; transition: $transitionAllCommon; }

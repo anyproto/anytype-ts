@@ -34,9 +34,9 @@
 	.menu.menuDataviewText.fromBlockFeatured {
 		.inputWrapper { margin: 0px 8px; padding: 3px 8px; border-radius: 6px; position: relative; }
 		.inputWrapper {
-			.icon.clear { 
-				display: none; background-image: url('~img/icon/menu/clear.svg'); position: absolute; right: 2px; top: 2px; 
-				background-size: 10px !important; width: 24px !important; height: 24px !important;
+			.icon.clear {
+				display: none; position: absolute; right: 2px; top: 2px;
+				width: 24px !important; height: 24px !important;
 			}
 		}
 		.inputWrapper:not(.focused) { cursor: default; padding-right: 28px; }

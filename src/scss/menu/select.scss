@@ -102,12 +102,7 @@
 		.item { height: 64px; }
 		.item {
 			.info { padding-left: 58px !important; }
-
 			.icon { width: 48px; height: 48px; }
-			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
-			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
-			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
-			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
 		}
 
 		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
@@ -144,10 +139,6 @@
 				width: 40px; height: 40px; border-radius: 50%; background-size: 20px;
 				background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
 			}
-			.icon.editor { background-image: url('~img/icon/menu/inviteLink/editor.svg'); }
-			.icon.viewer { background-image: url('~img/icon/menu/inviteLink/viewer.svg'); }
-			.icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
-			.icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
 		}
 	}
 

@@ -551,10 +551,6 @@
                     width: 48px; height: 48px; border-radius: 50%; background-size: 20px;
                     background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
                 }
-                .icon.editor { background-image: url('~img/icon/menu/inviteLink/editor.svg'); }
-                .icon.viewer { background-image: url('~img/icon/menu/inviteLink/viewer.svg'); }
-                .icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
-                .icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
                 .icon.loading {
                     &:before {
                         content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
@@ -689,7 +685,7 @@
             &.options {
                 .item { font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
                 .item.selected {
-                    &:after { content: ''; width: 19px; height: 20px; background: url('~img/icon/menu/chk.svg'); }
+                    &:after { content: ''; width: 19px; height: 20px; }
                 }
             }
 

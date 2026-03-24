@@ -135,11 +135,11 @@
 				width: 24px !important; height: 24px !important; background-size: 20px; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
 				border-radius: 4px; opacity: 0; z-index: 1;
 			}
-			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
+
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px !important; }
-			.icon.chk { width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
-			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
+			.icon.chk { width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px; }
+			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 
 			.buttons { flex-shrink: 0; }
@@ -181,7 +181,7 @@
 
 		.item.withNote {
 			.info { display: flex; align-items: center; gap: 0px 20px; width: 100%; }
-			.icon.note { position: relative; width: 20px; height: 20px; margin: 0px; background: url('~img/icon/menu/important.svg'); }
+			.icon.note { position: relative; width: 20px; height: 20px; margin: 0px; }
 		}
 
 		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }

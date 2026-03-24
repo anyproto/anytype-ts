@@ -53,8 +53,6 @@
 
         .item {
             .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg'); }
-			.icon.chk { background-image: url('~img/theme/dark/icon/menu/chk.svg'); }
-			.icon.sortArrow { background-image: url('~img/theme/dark/icon/menu/sortArrow.svg'); }
         }
 
         .loaderWrapper { background: var(--color-bg-secondary); }
@@ -161,9 +159,6 @@
     .menu.menuDataviewSort {
         .item {
             .chip.relation::after { background-image: url('~img/theme/dark/arrow/select/dark.svg'); }
-            .chip.type {
-                .icon.sortArrow { background-image: url('~img/theme/dark/icon/menu/dataview/sort.svg'); }
-            }
         }
     }
 
@@ -211,22 +206,4 @@
 		}
 	}
 
-	/* Space Create */
-
-	.menu.menuSelect.spaceCreate {
-		.item {
-			.icon.join { background-image: url('~img/theme/dark/icon/menu/spaceCreate/join.svg'); }
-		}
-	}
-
-	/* Invite Link */
-
-	.menu.menuSelect.inviteLinkType {
-		.item {
-			.icon.editor { background-image: url('~img/theme/dark/icon/menu/inviteLink/editor.svg'); }
-			.icon.viewer { background-image: url('~img/theme/dark/icon/menu/inviteLink/viewer.svg'); }
-			.icon.manual { background-image: url('~img/theme/dark/icon/menu/inviteLink/manual.svg'); }
-			.icon.none { background-image: url('~img/theme/dark/icon/menu/inviteLink/none.svg'); }
-		}
-	}
 }
