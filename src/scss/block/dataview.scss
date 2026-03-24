@@ -238,12 +238,12 @@
 					.label.condition { text-transform: lowercase; }
 
 					.icon.delete {
-						display: none; position: absolute; right: -4px; top: -4px; width: 16px; height: 16px; border-radius: 50%;
+						display: none; position: absolute; right: -4px; top: -4px; width: 16px !important; height: 16px !important; border-radius: 50%;
 						background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary);
 					}
 					.icon.delete:hover { background-color: var(--color-shape-secondary); }
 					&:hover {
-						.icon.delete { display: block; }
+						.icon.delete { display: flex; }
 					}
 				}
 

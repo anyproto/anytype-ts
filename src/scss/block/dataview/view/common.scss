@@ -145,7 +145,7 @@
 			.icon.edit:hover { background-color: var(--color-bg-primary); }
 
 			.card:hover {
-				.icon.edit { display: block; }
+				.icon.edit { display: flex; }
 			}
 		}
 	}

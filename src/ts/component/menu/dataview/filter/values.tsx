@@ -89,7 +89,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		const isDate = Relation.isDate(rel.format);
 		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(rel.format);
 
-		if (inputRef.current.setValue && !withFilter) {
+		if (inputRef.current.setValue && !withFilter && !timeout.current) {
 			if (isDate) {
 				// NumberOfDaysAgo/NumberOfDaysNow use input, ExactDate uses CalendarSelect
 				if (it.quickOption != I.FilterQuickOption.ExactDate) {
