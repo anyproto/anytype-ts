@@ -33,6 +33,7 @@ import './menu/block/div';
 import './menu/block/media';
 import './menu/block/text';
 import './menu/mark';
+import './default';
 import './sync';
 
 import './gallery.stories.scss';

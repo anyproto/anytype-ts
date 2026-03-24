@@ -3,17 +3,6 @@ import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, 
 import { getIconSvg } from 'Component/util/icons';
 import errorIcon from '../../../img/icon/error.svg?raw';
 
-const defaultIconModules = import.meta.glob([
-	'../../../img/icon/default/*.svg',
-	'/dist/img/icon/default/*.svg',
-], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const getDefaultIcon = (id: string): string => {
-	const name = `${id}.svg`;
-	for (const path of Object.keys(defaultIconModules)) {
-		if (path.endsWith(`/${name}`)) return defaultIconModules[path];
-	};
-	throw new Error(`Cannot find default icon: ${id}`);
-};
 
 /**
  * UtilObject provides utilities for working with Anytype objects.
@@ -996,47 +985,40 @@ class UtilObject {
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
-		const newColor = color || U.Common.iconBgByOption(option);
-
-		let svg: any = '';
-		try {
-			svg = getIconSvg(`type/${id}`);
-			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
-		} catch (e) {
-			svg = U.Common.updateSvg(errorIcon, { id, size, fill: newColor });
-		};
-
-		return svg;
+		const fill = color || U.Common.iconBgByOption(option);
+		const svg = getIconSvg(`type/${id}`, { style: { width: size, height: size, color: fill } }) ||
+			U.Common.updateSvg(errorIcon, { id, size, fill });
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
 		const theme = S.Common.getThemeClass();
 		const type = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), typeId, [ 'name', 'iconName' ], true);
+		const fill = J.Theme[theme].iconDefault;
 
-		let src = '';
 		if (type.iconName) {
-			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
-		} else {
-			let id = '';
-			switch (layout) {
-				default: id = 'page'; break;
-				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat:
-				case I.ObjectLayout.Discussion: id = 'chat'; break;
-				case I.ObjectLayout.Collection: id = 'collection'; break;
-				case I.ObjectLayout.Set: id = 'set'; break;
-				case I.ObjectLayout.Date: id = 'date'; break;
-				case I.ObjectLayout.Type: id = 'type'; break;
-				case I.ObjectLayout.Bookmark: id = 'page'; break;
-				case I.ObjectLayout.Settings: id = 'settings'; break;
-				case I.ObjectLayout.Graph: id = 'graph'; break;
-				case I.ObjectLayout.Navigation: id = 'graph'; break;
-				case I.ObjectLayout.Archive: id = 'archive'; break;
-			};
-			src = U.Common.updateSvg(getDefaultIcon(id), { id, size, fill: J.Theme[theme].iconDefault });
+			return this.typeIcon(type.iconName, 1, size, fill);
 		};
 
-		return src;
+		let id = '';
+		switch (layout) {
+			default: id = 'page'; break;
+			case I.ObjectLayout.ChatOld:
+			case I.ObjectLayout.Chat:
+			case I.ObjectLayout.Discussion: id = 'chat'; break;
+			case I.ObjectLayout.Collection: id = 'collection'; break;
+			case I.ObjectLayout.Set: id = 'set'; break;
+			case I.ObjectLayout.Date: id = 'date'; break;
+			case I.ObjectLayout.Type: id = 'type'; break;
+			case I.ObjectLayout.Bookmark: id = 'page'; break;
+			case I.ObjectLayout.Settings: id = 'settings'; break;
+			case I.ObjectLayout.Graph: id = 'graph'; break;
+			case I.ObjectLayout.Navigation: id = 'graph'; break;
+			case I.ObjectLayout.Archive: id = 'archive'; break;
+		};
+
+		const svg = getIconSvg(`default/${id}`, { style: { width: size, height: size, color: fill } });
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 	chatHasUnread (spaceId: string, chatId: string): boolean {
