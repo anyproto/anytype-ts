@@ -16,7 +16,7 @@
 		.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
 		.icon.arrow {
-			width: 24px; height: 24px; background-size: 20px; border-radius: 4px;
+			width: 24px !important; height: 24px !important; background-size: 20px; border-radius: 4px;
 			transition: $transitionAllCommon; transform: rotateZ(90deg);
 		}
 		.icon.arrow.left { transform: rotateZ(270deg); }

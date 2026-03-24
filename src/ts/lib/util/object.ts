@@ -927,12 +927,12 @@ class UtilObject {
 		};
 	};
 
-	editType (id: string, isPopup: boolean) {
+	editType (id: string, isPopup: boolean, noPreview: boolean) {
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const state = { 
 			page: 'type', 
 			rootId: id,
-			noPreview: false,
+			noPreview,
 			details: {},
 		};
 

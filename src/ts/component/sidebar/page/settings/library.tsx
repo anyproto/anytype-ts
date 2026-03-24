@@ -245,7 +245,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 		switch (item.layout) {
 			case I.ObjectLayout.Type: {
-				U.Object.editType(item.id, isPopup);
+				U.Object.editType(item.id, isPopup, false);
 				e = 'ClickSettingsSpaceType'; 
 				break;
 			};

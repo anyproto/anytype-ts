@@ -521,7 +521,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'editType': {
-				U.Object.editType(isType ? rootId : object.type, isPopup);
+				U.Object.editType(isType ? rootId : object.type, isPopup, true);
 				break;
 			};
 

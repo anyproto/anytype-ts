@@ -14,7 +14,7 @@
 		.clickable {
 			.icon { width: 20px; height: 20px; transition: $transitionAllCommon; }
 
-			.icon.arrow { transform: rotate(-90deg); }
+			.icon.arrow { width: 20px !important; height: 20px !important; transform: rotate(-90deg); }
 			.icon.plus { width: 24px; height: 24px; background-size: 20px; opacity: 0; }
 
 			.cellContent { flex-grow: 1; width: calc(100% - 24px); }
