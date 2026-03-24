@@ -430,7 +430,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 						<div className="side right">
 							<Icon
 								id="button-create"
-								className="more" withBackground={true}
+								name="menu/action/more" className="more" withBackground={true}
 								onClick={onMore}
 							/>
 						</div>

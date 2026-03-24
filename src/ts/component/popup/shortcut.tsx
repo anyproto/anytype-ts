@@ -483,7 +483,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Label text={translate('popupShortcutDescription')} />
 					</div>
 					<div className="side right">
-						<Icon id="icon-more" className="more" withBackground={true} onClick={onMenu} />
+						<Icon id="icon-more" name="menu/action/more" className="more" withBackground={true} onClick={onMenu} />
 						<Icon name="common/close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
 					</div>
 				</div>

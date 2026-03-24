@@ -215,7 +215,7 @@ const SidebarProgress: FC = observer(() => {
 		<div ref={nodeRef} className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
 			<div className="head" onMouseDown={onDragStart} onClick={onHeadClick}>
 				<Label text={headerText} />
-				<Icon className="arrow" />
+				<Icon name="arrow/menu/button" className="arrow" />
 			</div>
 
 			{isExpanded ? (

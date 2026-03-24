@@ -1,26 +1,14 @@
-import React from 'react';
 import { registerIcon } from '../../registry';
+import Bold from './bold';
+import Code from './code';
+import Italic from './italic';
+import Link from './link';
+import Strike from './strike';
+import Underline from './underline';
 
-const svgModules = import.meta.glob('/src/img/icon/menu/mark/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-
-for (const [ path, raw ] of Object.entries(svgModules)) {
-	const name = path.split('/').pop()?.replace('.svg', '') || '';
-
-	if (!name) {
-		continue;
-	};
-
-	const viewBox = raw.match(/viewBox="([^"]*)"/)?.[1] || '0 0 20 20';
-	const inner = raw.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
-
-	const Component = (props: React.SVGProps<SVGSVGElement>) => React.createElement('svg', {
-		viewBox,
-		fill: 'none',
-		xmlns: 'http://www.w3.org/2000/svg',
-		dangerouslySetInnerHTML: { __html: inner },
-		...props,
-	});
-
-	Component.displayName = `MenuMarkIcon_${name}`;
-	registerIcon(`menu/mark/${name}`, Component);
-};
+registerIcon('menu/mark/bold', Bold);
+registerIcon('menu/mark/code', Code);
+registerIcon('menu/mark/italic', Italic);
+registerIcon('menu/mark/link', Link);
+registerIcon('menu/mark/strike', Strike);
+registerIcon('menu/mark/underline', Underline);

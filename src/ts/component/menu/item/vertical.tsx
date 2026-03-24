@@ -95,7 +95,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 
 	if (withArrow) {
-		iconSideElement = <Icon className="arrow" />;
+		iconSideElement = <Icon name="arrow/menu/button" className="arrow" />;
 	};
 	if (checkbox) {
 		iconSideElement = <Icon className="chk" />;
@@ -165,7 +165,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 					) : (
 						<div className="caption">{caption}</div>
 					)}
-					{withMore ? <Icon className="more" withBackground={true} onMouseDown={onMore} /> : ''}
+					{withMore ? <Icon name="menu/action/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
 				</>
 			);
 		};

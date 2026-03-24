@@ -1,4 +1,4 @@
-export { getIcon, getAllIcons, getIconsByFolder, registerIcon } from './registry';
+export { getIcon, getIconSvg, getAllIcons, getIconsByFolder, registerIcon } from './registry';
 import './header';
 import './control/editor';
 import './control/audio';
@@ -23,6 +23,8 @@ import './counter';
 import './plus';
 import './block/embed';
 import './menu/embed';
+import './arrow/menu';
+import './menu/action';
 import './menu/mark';
 import './sync';
 import './type';

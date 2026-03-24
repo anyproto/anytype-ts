@@ -545,8 +545,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (
 					<>
-						<Icon className="expand" withBackground={true} onClick={onExpand} />
-						{hasMenu ? <Icon id="button-widget-more" className="more" withBackground={true} onClick={onMore} /> : ''}
+						<Icon name="menu/action/expand" className="expand" withBackground={true} onClick={onExpand} />
+						{hasMenu ? <Icon id="button-widget-more" name="menu/action/more" className="more" withBackground={true} onClick={onMore} /> : ''}
 					</>
 				);
 			};
@@ -661,7 +661,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						};
 					} else 
 					if (!isSectionUnread) {
-						buttons = <Icon className="more" onClick={() => onSectionContext(section.id)} />;
+						buttons = <Icon name="menu/action/more" className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 
 					return (
@@ -680,7 +680,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 										onContextMenu={() => onSectionContext(section.id)}
 									>
 										<div className="name" onClick={() => onToggle(section.id)}>
-											<Icon className="arrow" />
+											<Icon name="arrow/menu/button" className="arrow" />
 											{section.name}
 										</div>
 										<div className="buttons">

@@ -290,7 +290,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							<ObjectName object={current} />
 						</div>
 						<div className="side right">
-							<Icon id="button-header-more" tooltipParam={{ text: translate('commonMenu') }} className="more" onClick={onMore} />
+							<Icon id="button-header-more" tooltipParam={{ text: translate('commonMenu') }} name="menu/action/more" className="more" onClick={onMore} />
 						</div>
 					</>
 				) : ''}

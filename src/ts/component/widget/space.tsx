@@ -106,7 +106,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
-					<Icon className="arrow" />
+					<Icon name="arrow/menu/button" className="arrow" />
 				</div>
 
 				<MemberCnt route={route} />
@@ -119,7 +119,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
-						<Icon className="arrow" />
+						<Icon name="arrow/menu/button" className="arrow" />
 					</div>
 
 					<MemberCnt route={analytics.route.widget} />
@@ -157,7 +157,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									className="arrow" withBackground={true}
+									name="arrow/menu/button" className="arrow" withBackground={true}
 									onClick={onArrow}
 									tooltipParam={item.arrowTooltipParam}
 								/>

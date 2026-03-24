@@ -1,18 +1,7 @@
 
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
+import { getIconSvg } from 'Component/util/icons';
 import errorIcon from '../../../img/icon/error.svg?raw';
-
-const typeIconModules = import.meta.glob([
-	'/src/img/icon/type/*.svg',
-	'/dist/img/icon/type/*.svg',
-], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const typeIcons = (key: string): string => {
-	const name = key.replace('./', '');
-	for (const path of Object.keys(typeIconModules)) {
-		if (path.endsWith(`/${name}`)) return typeIconModules[path];
-	};
-	throw new Error(`Cannot find icon: ${key}`);
-};
 
 const defaultIconModules = import.meta.glob([
 	'../../../img/icon/default/*.svg',
@@ -1011,7 +1000,7 @@ class UtilObject {
 
 		let svg: any = '';
 		try {
-			svg = typeIcons(`./${id}.svg`);
+			svg = getIconSvg(`type/${id}`);
 			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
 		} catch (e) {
 			svg = U.Common.updateSvg(errorIcon, { id, size, fill: newColor });

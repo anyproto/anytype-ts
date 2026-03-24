@@ -874,7 +874,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	if (isExcalidraw) {
-		expandIcon = <Icon className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
+		expandIcon = <Icon name="menu/action/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
@@ -897,11 +897,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		select = (
 			<div id="select" className="select" onMouseDown={onLatexTemplate}>
 				<div className="name">{translate('blockEmbedLatexTemplate')}</div>
-				<Icon className="arrow light" />
+				<Icon name="arrow/menu/button" className="arrow light" />
 			</div>
 		);
 	} else {
-		source = <Icon className="source" onMouseDown={onEdit} />;
+		source = <Icon name="menu/action/source" className="source" onMouseDown={onEdit} />;
 		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 

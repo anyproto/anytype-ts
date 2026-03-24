@@ -753,7 +753,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" onClick={e => onEdit(e, item)} />
+						<Icon name="menu/action/more" className="more" onClick={e => onEdit(e, item)} />
 					</div>
 				) : ''}
 			</div>
@@ -797,7 +797,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" />
+						<Icon name="menu/action/more" className="more" />
 					</div>
 				) : ''}
 			</div>

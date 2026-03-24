@@ -1,4 +1,5 @@
-import { FC, SVGProps } from 'react';
+import React, { FC, SVGProps, createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
 
@@ -14,6 +15,14 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 
 export const getAllIcons = (): Map<string, SvgIconComponent> => {
 	return registry;
+};
+
+export const getIconSvg = (name: string, props?: SVGProps<SVGSVGElement>): string => {
+	const Component = registry.get(name);
+	if (!Component) {
+		return '';
+	};
+	return renderToStaticMarkup(createElement(Component, props || {}));
 };
 
 export const getIconsByFolder = (): Map<string, string[]> => {

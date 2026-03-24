@@ -236,7 +236,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					{content}
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={e => onMore(e, item)} />
+					<Icon name="menu/action/more" className="more" onClick={e => onMore(e, item)} />
 				</div>
 			</div>
 		);

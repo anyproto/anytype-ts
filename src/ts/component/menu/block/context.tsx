@@ -462,7 +462,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 					<Icon 
 						id={`button-${blockId}-more`}
-						className="more"
+						name="menu/action/more" className="more"
 						tooltipParam={{ text: translate('menuBlockContextMoreOptions') }}
 						onMouseDown={e => onMark(e, 'more')}
 					/>

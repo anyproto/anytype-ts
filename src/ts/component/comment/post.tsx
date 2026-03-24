@@ -532,7 +532,7 @@ const CommentPost = observer((props: Props) => {
 			<div className="hoverActions">
 				{canReact ? <Icon className="reaction" withBackground={true} onClick={onReaction} /> : null}
 				<Icon className="reply" withBackground={true} onClick={onReply} />
-				<Icon className="more" withBackground={true} onClick={onMenuClick} />
+				<Icon name="menu/action/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};

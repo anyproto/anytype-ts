@@ -83,7 +83,7 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 			</div>
 
 			{hasMore ? (
-				<Icon className="more" onClick={e => relation.onMore(e, relation)} /> 
+				<Icon name="menu/action/more" className="more" onClick={e => relation.onMore(e, relation)} /> 
 			) : ''}
 		</div>
 	);

@@ -160,7 +160,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 				) : ''}
 			</div>
 
-			<Icon className="arrow" />
+			<Icon name="arrow/menu/button" className="arrow" />
 			{config.experimental ? <Icon className="delete" onClick={onRemove} /> : ''}
 		</div>
 	);

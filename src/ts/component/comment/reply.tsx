@@ -275,7 +275,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<div className="hoverActions">
 				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon className="more" />
+					<Icon name="menu/action/more" className="more" />
 				</div>
 			</div>
 		);

@@ -1,26 +1,56 @@
-import React from 'react';
 import { registerIcon } from '../../registry';
+import AppleMusic from './appleMusic';
+import Bilibili from './bilibili';
+import Chart from './chart';
+import Codepen from './codepen';
+import Default from './default';
+import Drawio from './drawio';
+import Excalidraw from './excalidraw';
+import Facebook from './facebook';
+import Figma from './figma';
+import GithubGist from './githubGist';
+import GoogleMaps from './googleMaps';
+import Graphviz from './graphviz';
+import Image from './image';
+import Instagram from './instagram';
+import Kroki from './kroki';
+import Latex from './latex';
+import Mermaid from './mermaid';
+import Miro from './miro';
+import OpenStreetMap from './openStreetMap';
+import Reddit from './reddit';
+import Sketchfab from './sketchfab';
+import Soundcloud from './soundcloud';
+import Spotify from './spotify';
+import Telegram from './telegram';
+import Twitter from './twitter';
+import Vimeo from './vimeo';
+import Youtube from './youtube';
 
-const svgModules = import.meta.glob('/src/img/icon/embed/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-
-for (const [ path, raw ] of Object.entries(svgModules)) {
-	const name = path.split('/').pop()?.replace('.svg', '') || '';
-
-	if (!name) {
-		continue;
-	};
-
-	const viewBox = raw.match(/viewBox="([^"]*)"/)?.[1] || '0 0 40 40';
-	const inner = raw.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
-
-	const Component = (props: React.SVGProps<SVGSVGElement>) => React.createElement('svg', {
-		viewBox,
-		fill: 'none',
-		xmlns: 'http://www.w3.org/2000/svg',
-		dangerouslySetInnerHTML: { __html: inner },
-		...props,
-	});
-
-	Component.displayName = `EmbedIcon_${name}`;
-	registerIcon(`embed/${name}`, Component);
-};
+registerIcon('embed/appleMusic', AppleMusic);
+registerIcon('embed/bilibili', Bilibili);
+registerIcon('embed/chart', Chart);
+registerIcon('embed/codepen', Codepen);
+registerIcon('embed/default', Default);
+registerIcon('embed/drawio', Drawio);
+registerIcon('embed/excalidraw', Excalidraw);
+registerIcon('embed/facebook', Facebook);
+registerIcon('embed/figma', Figma);
+registerIcon('embed/githubGist', GithubGist);
+registerIcon('embed/googleMaps', GoogleMaps);
+registerIcon('embed/graphviz', Graphviz);
+registerIcon('embed/image', Image);
+registerIcon('embed/instagram', Instagram);
+registerIcon('embed/kroki', Kroki);
+registerIcon('embed/latex', Latex);
+registerIcon('embed/mermaid', Mermaid);
+registerIcon('embed/miro', Miro);
+registerIcon('embed/openStreetMap', OpenStreetMap);
+registerIcon('embed/reddit', Reddit);
+registerIcon('embed/sketchfab', Sketchfab);
+registerIcon('embed/soundcloud', Soundcloud);
+registerIcon('embed/spotify', Spotify);
+registerIcon('embed/telegram', Telegram);
+registerIcon('embed/twitter', Twitter);
+registerIcon('embed/vimeo', Vimeo);
+registerIcon('embed/youtube', Youtube);

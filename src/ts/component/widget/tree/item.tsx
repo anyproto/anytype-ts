@@ -84,11 +84,11 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let inner = null;
 
 	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
-		arrow = <Icon className="set" />;
+		arrow = <Icon name="menu/action/set" className="set" />;
 	} else
 	if (numChildren > 0) {
 		onArrowClick = onToggleHandler;
-		arrow = <Icon className="arrow" />;
+		arrow = <Icon name="arrow/menu/button" className="arrow" />;
 	} else {
 		arrow = <Icon className="blank" />;
 	};
@@ -98,7 +98,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} name="menu/action/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	if (isSection) {

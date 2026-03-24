@@ -128,7 +128,7 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="sides">
 						<div className="side left">{label}</div>
 						<div className="side right">
-							<Icon className="expand" withBackground={true} tooltipParam={{ text: translate('commonOpenObject') }} />
+							<Icon name="menu/action/expand" className="expand" withBackground={true} tooltipParam={{ text: translate('commonOpenObject') }} />
 						</div>
 					</div>
 				) : (

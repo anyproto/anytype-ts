@@ -334,8 +334,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					{icon}
 					<ObjectName object={item} />
 
-					{canEditStart ? <Icon className="resize left" onMouseDown={e => onResizeStart(e, item, -1)} /> : ''}
-					{canEditEnd ? <Icon className="resize right" onMouseDown={e => onResizeStart(e, item, 1)} /> : ''}
+					{canEditStart ? <Icon name="menu/action/resize" className="resize left" onMouseDown={e => onResizeStart(e, item, -1)} /> : ''}
+					{canEditEnd ? <Icon name="menu/action/resize" className="resize right" onMouseDown={e => onResizeStart(e, item, 1)} /> : ''}
 				</div>
 			</CellMeasurer>
 		);
@@ -343,7 +343,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const Tooltip = (item: any) => (
 		<>
-			<Icon className="arrow" />
+			<Icon name="arrow/menu/button" className="arrow" />
 			<ObjectName object={item} />
 		</>
 	);
@@ -579,8 +579,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			<div className="controlsContainer">
 				<div className="inner">
 					<div className="grad" />
-					<Icon className="arrow left" withBackground={true} onClick={() => onArrow(-1)} />
-					<Icon className="arrow right" withBackground={true} onClick={() => onArrow(1)}/>
+					<Icon name="arrow/menu/button" className="arrow left" withBackground={true} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/menu/button" className="arrow right" withBackground={true} onClick={() => onArrow(1)}/>
 					<Icon id={`calendar-icon-${rootId}-${block.id}`} name="relation/date" withBackground={true} onClick={onCalendar} />
 				</div>
 			</div>

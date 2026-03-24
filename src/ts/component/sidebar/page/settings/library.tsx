@@ -477,7 +477,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 					<Label text={title} />
 				</div>
 				<div className="side right">
-					<Icon id="button-object-more" className="more" withBackground={true} onClick={onMore} />
+					<Icon id="button-object-more" name="menu/action/more" className="more" withBackground={true} onClick={onMore} />
 				</div>
 			</div>
 
