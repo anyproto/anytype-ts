@@ -133,9 +133,9 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		});
 
 		if (pinCnt == length) {
-			pin = { id: 'unpin', name: translate('commonUnpin') };
+			pin = { id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') };
 		} else {
-			pin = { id: 'pin', name: translate('commonPin') };
+			pin = { id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') };
 		};
 
 		if (length > 1) {
