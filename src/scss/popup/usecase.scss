@@ -49,11 +49,11 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 						background: linear-gradient(to right, rgba(0,0,0,0) 0%, var(--color-shape-secondary) 80%);
 					}
 					&::after {
-						content: ''; display: block; position: absolute; top: 50%; width: 32px; height: 32px; right: 16px; background-color: var(--color-bg-primary); 
-						border-radius: 50%; z-index: 2; margin-top: -16px; background-image: url('~img/arrow/usecaseCategory0.svg');  pointer-events: all; 
+						content: ''; display: block; position: absolute; top: 50%; width: 32px; height: 32px; right: 16px; background-color: var(--color-bg-primary);
+						border-radius: 50%; z-index: 2; margin-top: -16px; pointer-events: all;
 						background-size: 20px; background-position: center; background-repeat: no-repeat; transition: $transitionAllCommon;
 					}
-					&:hover::after { background-color: var(--color-control-accent); background-image: url('~img/arrow/usecaseCategory1.svg'); }
+					&:hover::after { background-color: var(--color-control-accent); }
 				}
 				.swiper-button-prev { left: 0px; transform: rotateY(-180deg); }
 				.swiper-button-next { right: 0px; }
@@ -72,8 +72,6 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				.item.hl { background-image: $hl-gradient; }
 				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
 				.item:hover, .item.active {
-					.icon.heart { background-image: url('~img/icon/popup/usecase/heart1.svg'); }
-					.icon.any { background-image: url('~img/icon/popup/usecase/any1.svg'); }
 				}
 				.item:last-child { margin: 0px; }
 
@@ -81,8 +79,6 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 
 				.item {
 					.icon { width: 16px; height: 16px; background-size: contain; }
-					.icon.heart { background-image: url('~img/icon/popup/usecase/heart0.svg'); }
-					.icon.any { background-image: url('~img/icon/popup/usecase/any0.svg'); }
 				}
 			}
 
@@ -123,7 +119,7 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 			}
 			.head {
 				.inner { display: flex; flex-direction: row; align-items: center; background: var(--color-bg-primary); }
-				.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
+				.icon.back { width: 8px; height: 8px; }
 				
 				.element { 
 					color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
@@ -152,9 +148,9 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 				.swiper-slide { display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; box-shadow: $shadow; }
 				.screen { width: 100%; height: 100%; object-fit: cover; }
 
-				.icon.arrow { 
-					position: absolute; width: 44px; height: 44px; top: 50%; margin-top: -22px; background-color: var(--color-bg-primary); z-index: 1; 
-					border-radius: 50%; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); background-image: url('~img/arrow/usecase.svg'); background-size: 20px;
+				.icon.arrow {
+					position: absolute; width: 44px; height: 44px; top: 50%; margin-top: -22px; background-color: var(--color-bg-primary); z-index: 1;
+					border-radius: 50%; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); background-size: 20px;
 					transition: $transitionAllCommon; border: 1px solid var(--color-shape-primary);
 				}
 				.icon.arrow.hide { opacity: 0; }

@@ -35,18 +35,7 @@
 		}
 
 		.icon { width: 20px; height: 20px; }
-		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
-		.icon.options { background-image: url('~img/icon/widget/options0.svg'); }
-		.icon.collapse { background-image: url('~img/icon/widget/collapse0.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
-
-		.iconWrap:hover,
-		.iconWrap.hover,
-		.iconWrap.active {
-			.icon.back { background-image: url('~img/icon/widget/back1.svg'); }
-			.icon.options { background-image: url('~img/icon/widget/options1.svg'); }
-			.icon.collapse { background-image: url('~img/icon/widget/collapse1.svg'); }
-		}
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
@@ -69,9 +58,9 @@
 		padding: 0px 8px; display: none; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; 
 		border-radius: 6px; margin: 0px 8px;
 	}
-	#button-show-all:after { 
-		content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); 
-		margin: 0px -12px 0px 4px; 
+	#button-show-all:after {
+		content: ''; width: 8px; height: 8px; display: block;
+		margin: 0px -12px 0px 4px;
 	}
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
@@ -80,14 +69,14 @@
 	.emptyWrap { padding: 0px 16px; height: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {
 		.label { text-align: left; @include text-small; @include clamp2; width: 100%; color: var(--color-text-secondary); }
-		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
+		.icon.more { width: 20px; height: 20px; }
 	}
 
 	.icon.remove { position: absolute; top: -15px; right: -5px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
-			height: 20px; width: 20px; border-radius: 50%; background-color: var(--color-shape-primary); background-image: url('~img/icon/widget/remove.svg');
-			background-repeat: no-repeat; background-position: center; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
+			height: 20px; width: 20px; border-radius: 50%; background-color: var(--color-shape-primary);
+			position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
 		}
 	}
 	.icon.remove:hover .inner { background-color: var(--color-text-tertiary); }

@@ -78,7 +78,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		return (
 			<>
 				<Icon
-					className="vaultToggle" withBackground={true}
+					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{
 						text: translate('commonVault'),

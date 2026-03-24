@@ -675,7 +675,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		collapse = (
 			<div className="iconWrap collapse" onClick={onToggle}>
-				<Icon className="collapse" />
+				<Icon name="widget/collapse" className="collapse" />
 			</div>
 		);
 	};
@@ -686,7 +686,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (hasChild) {
 		if (object?.isSystem) {
-			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
+			icon = <Icon name={object.iconName} className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
 			icon = (
 				<IconObject 

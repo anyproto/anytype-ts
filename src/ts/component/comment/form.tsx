@@ -706,7 +706,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						<Icon name="plus/comment" className="plus" withBackground={true} onClick={onPlusClick} />
 						<div className="div" />
 						<Icon className="slash" withBackground={true} onClick={onSlashClick} />
-						<Icon className="emoji" withBackground={true} onClick={onEmojiClick} />
+						<Icon name="chat/buttons/emoji" className="emoji" withBackground={true} onClick={onEmojiClick} />
 						<Icon name="common/mention" withBackground={true} onClick={onMentionClick} />
 					</div>
 
@@ -730,7 +730,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
 							onClick={onSendClick}
 						>
-							<Icon className="send" />
+							<Icon name="chat/buttons/send" className="send" />
 						</div>
 					)}
 					</div>

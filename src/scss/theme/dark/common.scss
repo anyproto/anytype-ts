@@ -106,15 +106,6 @@ html.themeDark {
 		img:before { background: var(--color-bg-secondary); }
 	}
 
-	.icon.widget-star { background-image: url('#{$themePath}/icon/widget/system/star.svg'); }
-	.icon.widget-pin { background-image: url('#{$themePath}/icon/widget/system/pin.svg'); }
-	.icon.widget-chat0 { background-image: url('#{$themePath}/icon/widget/system/chat0.svg'); }
-	.icon.widget-chat1 { background-image: url('#{$themePath}/icon/widget/system/chat1.svg'); }
-	.icon.widget-pencil { background-image: url('#{$themePath}/icon/widget/system/pencil.svg'); }
-	.icon.widget-eye { background-image: url('#{$themePath}/icon/widget/system/eye.svg'); }
-	.icon.widget-bin { background-image: url('#{$themePath}/icon/widget/system/bin.svg'); }
-	.icon.widget-all { background-image: url('#{$themePath}/icon/widget/system/all.svg'); }
-
 	.objectManagerWrapper {
 	}
 
@@ -156,9 +147,6 @@ html.themeDark {
 	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
 	.button.black:not(.disabled):hover,
 	.button.black:not(.disabled).hover { background: var(--color-control-active); }
-	.button.black {
-		.arrow { background-image: url('~img/arrow/button/black.svg'); }
-	}
 	.button.black.disabled { color: var(--color-text-primary); background: var(--color-shape-tertiary); }
 
 	.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
@@ -168,10 +156,6 @@ html.themeDark {
 
 	.textarea { background: none; }
 	.textareaWrap { background-color: var(--color-bg-secondary); }
-
-	.select:not(.round) {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
-	}
 
 	.inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 	.input-drag-vertical { background-color: var(--color-bg-secondary); }
@@ -185,12 +169,6 @@ html.themeDark {
 		.number { color: var(--color-text-primary); }
 	}
 
-	.listObjectPreview {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
-		.icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
-		.icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
-	}
-
 	/* PreviewObject */
 
 	.previewObject {
@@ -201,7 +179,7 @@ html.themeDark {
 		.blocks {
 			.element {
 				.inner {
-					.icon.hl { background-image: url('#{$themePath}/icon/object/preview/hl.svg'); }
+					.icon.hl { }
 				}
 			}
 		}
@@ -215,54 +193,14 @@ html.themeDark {
 
 	.previewGraph { background: var(--color-bg-secondary); @include shadow; }
 
-	/* Pager */
-
-	.pager {
-		.icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
-		.icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
-		.icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
-
-		.icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
-		.icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
-		.icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
-	}
-
 	/* Progress */
 
 	.sidebarProgress {
 		background: var(--color-bg-secondary); box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 	}
-	.sidebarProgress {
-		.head {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/sidebarProgress.svg'); }
-		}
-	}
 
 	.tooltip { color: var(--color-text-primary); }
 	.tooltip.big { background: var(--color-bg-secondary); border: 1px solid rgba(229, 229, 229, 0.1); }
-
-	/* Icon */
-
-	.icon.settings-personal { background-image: url('#{$themePath}/icon/settings/personal.svg'); }
-	.icon.settings-storage { background-image: url('#{$themePath}/icon/settings/storage.svg'); }
-	.icon.settings-phrase { background-image: url('#{$themePath}/icon/settings/phrase.svg'); }
-	.icon.settings-pin { background-image: url('#{$themePath}/icon/settings/pin.svg'); }
-	.icon.settings-spaces { background-image: url('#{$themePath}/icon/settings/spaces.svg'); }
-	.icon.settings-membership { background-image: url('#{$themePath}/icon/settings/membership.svg'); }
-	.icon.settings-language { background-image: url('#{$themePath}/icon/settings/language.svg'); }
-	.icon.settings-api { background-image: url('#{$themePath}/icon/settings/api.svg'); }
-	.icon.settings-sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
-	.icon.settings-space { background-image: url('#{$themePath}/icon/settings/overview.svg'); }
-	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/members.svg'); }
-	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/import.svg'); }
-	.icon.settings-export { background-image: url('#{$themePath}/icon/settings/export.svg'); }
-	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
-	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
-	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
-	.icon.settings-notifications { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
-
-	.icon.settings-ux1 { background-image: url('#{$themePath}/icon/settings/space/space.svg'); }
-	.icon.settings-ux3 { background-image: url('#{$themePath}/icon/settings/space/chat.svg'); }
 
 	/* Editor */
 
@@ -285,61 +223,14 @@ html.themeDark {
 
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
-		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
 	}
 
 	/* Sidebar */
 
 	.sidebar {
-		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-
 		.sidebarPage {
 			> .subHead {
-				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 				.cnt { color: var(--color-text-primary); }
-			}
-
-			> .bottom {
-				.widgetSettings:not(.isEditing):hover {
-					.icon { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
-				}
-			}
-		}
-		
-		.containerSettings {
-			> .body {
-				.list {
-					> .head {
-						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-
-						.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-					}
-					.toggle {
-						.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
-					}
-				}
-
-				.logout {
-					.icon { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
-				}
-			}
-		}
-
-		.sidebarPage.pageWidget {
-			> .bottom {
-				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
-			}
-
-			.widgetSection {
-				> .nameWrap {
-					.name {
-						&:hover {
-							.icon.arrow { background-image: url('#{$themePath}/arrow/widgetSection1.svg'); }
-						}
-					}
-
-				}
 			}
 		}
 
@@ -372,25 +263,12 @@ html.themeDark {
 		.icon.close { background-color: var(--color-bg-secondary); }
 	}
 
-	.emptyState {
-		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
-	}
-
 	/* Key Phrase */
-
-	/* CalendarSelect */
-	.calendarSelect {
-		.head {
-			.side.right {
-				.icon.arrow { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
-			}
-		}
-	}
 
 	/* Comment checkboxes */
 	.commentSection {
-		.commentEditor-li-unchecked::before { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
-		.commentCheckbox .checkboxMark { background-image: url('#{$themePath}/icon/marker/checkbox1.svg'); }
+		.commentEditor-li-unchecked::before { }
+		.commentCheckbox .checkboxMark { }
 	}
 
 	@import "./menu";

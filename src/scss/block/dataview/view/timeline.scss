@@ -38,7 +38,7 @@
 			.grad { width: 24px; height: 24px; background-image: linear-gradient(to left, var(--color-bg-primary) 20%, rgba(255, 255, 255, 0) 100%); }
 
 			.icon { width: 24px !important; height: 24px !important; }
-			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
+			.icon.arrow { }
 			.icon.arrow.left { transform: rotateZ(180deg); }
 		}
 

@@ -25,6 +25,6 @@
 	.button { width: 100%; @include text-small; font-weight: 500; }
 	.button:before {
 		content: ''; display: inline-block; width: 16px; height: 16px;
-		margin: 0px 6px 0px -20px; background: url('~img/icon/banner/download.svg');
+		margin: 0px 6px 0px -20px;
 	}
 }

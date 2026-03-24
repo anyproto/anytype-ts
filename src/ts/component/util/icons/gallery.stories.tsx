@@ -26,7 +26,7 @@ import './counter';
 import './plus';
 import './block/embed';
 import './menu/block/embed';
-import './arrow/menu';
+import './arrow';
 import './menu/action';
 import './menu/block/common';
 import './menu/block/div';
@@ -66,7 +66,7 @@ const ICON_SIZES: Record<string, { size?: number; width?: number; height?: numbe
 	'import/text': { size: 40 },
 	'popup/header/anyId': { width: 60, height: 48 },
 	'popup/header/emoji': { width: 60, height: 48 },
-	'arrow/menu/button': { size: 8 },
+	'arrow/button': { size: 8 },
 	'control/dataview/dnd': { width: 7, height: 12 },
 	'plus/blockAdd': { size: 19 },
 	'plus/onboarding': { size: 18 },

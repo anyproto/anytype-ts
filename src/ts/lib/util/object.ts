@@ -1,7 +1,6 @@
 
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 import { getIconSvg } from 'Component/util/icons';
-import errorIcon from '../../../img/icon/error.svg?raw';
 
 
 /**
@@ -987,7 +986,7 @@ class UtilObject {
 	typeIcon (id: string, option: number, size: number, color?: string): string {
 		const fill = color || U.Common.iconBgByOption(option);
 		const svg = getIconSvg(`type/${id}`, { style: { width: size, height: size, color: fill } }) ||
-			U.Common.updateSvg(errorIcon, { id, size, fill });
+			getIconSvg('state/error', { style: { width: size, height: size, color: fill } });
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 

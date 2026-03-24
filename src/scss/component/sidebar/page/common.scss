@@ -25,10 +25,6 @@
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
-		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
-		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
-		.icon.toggle { background-image: url('~img/icon/widget/toggle1.svg'); }
-		.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 		.sync { -webkit-app-region: no-drag; }
 	}
@@ -41,7 +37,6 @@
 	> .subHead {
 		.icon { width: 20px; height: 20px; }
 		.icon.back { background-size: 20px; }
-		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
 
 		.side { flex-direction: row; display: flex; align-items: center; position: relative; z-index: 1; }
 		.side.left { justify-content: center; flex-shrink: 0; }
@@ -79,8 +74,8 @@
 					.icon { pointer-events: none; }
 					.label { font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					
-					.label::before { 
-						content: ''; width: 20px; height: 20px; background-image: url('~img/icon/widget/collapse0.svg'); transform: rotateZ(-90deg);
+					.label::before {
+						content: ''; width: 20px; height: 20px; transform: rotateZ(-90deg);
 						transition: $transitionAllCommon;
 					}
 					&.isOpen {

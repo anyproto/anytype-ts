@@ -18,8 +18,6 @@
 		.item {
 			.icon { width: 20px; height: 20px; }
 			.icon.withBackground { width: 20px !important; height: 20px !important; }
-			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
-
 			.label { @include text-overflow-nw; flex-grow: 1; }
 		}
 	}

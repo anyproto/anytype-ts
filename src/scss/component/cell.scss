@@ -40,7 +40,7 @@
 	.iconObject { cursor: default; }
 	.icon.downloading {
 		width: 20px; height: 20px;
-		background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+		background-image: url('~img/icon/loader.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
 	}
 	.icon.clear { display: none; }
 
@@ -147,7 +147,7 @@
 		.element {
 			.icon.objectRemove {
 				width: 12px; height: 20px; margin: 0px 0px 0px 2px; display: block;
-				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
+				background-size: 8px;
 			}
 			.icon.objectRemove:hover { opacity: 0.8; }
 		}

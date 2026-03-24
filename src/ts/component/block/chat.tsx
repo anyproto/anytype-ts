@@ -743,7 +743,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const options: any[] = [];
 
 		if (!noControls) {
-			options.push({ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') });
+			options.push({ id: 'reply', iconParam: { name: 'chat/buttons/reply' }, name: translate('blockChatReply') });
 		};
 
 		if (message.content.text) {
@@ -758,7 +758,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (isSelf) {
 			options.push({ isDiv: true });
-			options.push({ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') });
+			options.push({ id: 'edit', iconParam: { name: 'chat/buttons/pencil' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
 			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
 			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });

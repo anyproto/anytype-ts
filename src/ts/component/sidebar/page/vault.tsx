@@ -400,7 +400,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (!item.hasCounter && item.isPinned) {
 			cn.push('isPinned');
-			icons.push('pin');
+			icons.push({ className: 'pin', name: 'vault/pin' });
 		};
 
 		if (item.notificationMode != I.NotificationMode.All) {
@@ -433,7 +433,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<div className="messageWrapper">
 						{last}
 						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
+							{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 						</div>
 						{counter}
 					</div>
@@ -444,7 +444,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<div className="chatWrapper">
 							{chatName}
 							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
+								{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 							</div>
 							{counter}
 						</div>
@@ -470,7 +470,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<ObjectName object={item} />
 
 					<div className="icons">
-						{icons.map(icon => <Icon key={icon} className={icon} />)}
+						{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 					</div>
 
 					{counter}
@@ -653,8 +653,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{!vaultIsMinimal ? (
 						<>
 							{iconCreate()}
-							<Icon 
-								className="toggle" withBackground={true}
+							<Icon
+								name="widget/sidebarToggle" className="toggle" withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -747,6 +747,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 					<div className="side right">
 						<Icon
+							name="vault/gallery"
 							className="gallery"
 							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}

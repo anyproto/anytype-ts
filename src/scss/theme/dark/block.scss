@@ -16,7 +16,7 @@
     /* Common */
 
     .block {
-        .icon.commonDnd { background-image: url('~img/theme/dark/icon/block/menu.svg'); }
+        .icon.commonDnd { }
     }
 
     /* BlockFile */
@@ -35,29 +35,9 @@
     /* BlockDataview */
 
     .block.blockDataview {
-		.loadMore {
-			.icon { background-image: url('~img/theme/dark/arrow/loadMore0.svg'); }
-		}
-
-		.loadMore:hover {
-			.icon { background-image: url('~img/theme/dark/arrow/loadMore1.svg'); }
-		}
-
-
-		.dateSelect {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/dateSelect.svg'); border-radius: 4px; }
-		}
-
 		.dataviewHead {
 			.icon.source { opacity: 0; }
 		}
-
-        .dataviewControls {
-            .viewItem {
-                .icon.arrow { background-image: url('~img/theme/dark/arrow/view.svg'); }
-            }
-        }
-
 
         .viewContent.viewGrid {
 			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
@@ -138,24 +118,9 @@
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
 
-			.bubbleInner {
-				> .controls { 
-					.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/theme/dark/icon/chat/buttons/reply1.svg'); }
-					.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/theme/dark/icon/chat/buttons/reaction2.svg'); }
-				}
-			}
-
-			.reactions {
-				.reactionAdd { background-image: url('~img/theme/dark/icon/chat/buttons/reaction1.svg'); }
-			}
-
 			.attachments {
 				.attachment {
 					&.isSyncing {
-						.icon.syncStatus { background-image: url('~img/theme/dark/icon/chat/syncStatus/syncing.svg'); }
-					}
-					&.isError {
-						.icon.syncStatus { background-image: url('~img/theme/dark/icon/chat/syncStatus/error.svg'); }
 					}
 				}
 			}
@@ -163,21 +128,13 @@
 
 
 		.form {
-			.icon.send { background: url('~img/theme/dark/icon/chat/buttons/send.svg'); }
-			.icon.send.isLoading { background: url('~img/theme/dark/icon/chat/buttons/loader.svg'); }
 
 			.attachments {
 				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
 				.swiper-button-next { background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
 				.swiper-button-prev::before,
 				.swiper-button-next::before { box-shadow: none; }
-				.swiper-button-prev::after,
-				.swiper-button-next::after { background-image: url('~img/theme/dark/arrow/chatFormAttachment.svg'); }
-
-				.attachment {
-					.icon.remove { background-image: url('~img/theme/dark/icon/chat/buttons/remove.svg'); }
 				}
-			}
 		}
 	}
 }

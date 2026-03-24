@@ -710,10 +710,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					height: 20px;
 					cursor: pointer;
 					margin-left: 12px;
-					background: url('~img/icon/chat/buttons/send.svg');
-					background-size: contain;
-					background-repeat: no-repeat;
-					background-position: center;
 					transition: all 0.2s $smooth-curve;
 					
 					// Apply purple filter to the SVG
@@ -735,7 +731,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					}
 
 					&.thinking {
-						background: url('~img/icon/chat/buttons/loader.svg');
+						background: url('~img/icon/loader.svg');
 						animation: rotate 1.2s infinite linear;
 						filter: brightness(0) saturate(100%) invert(56%) sepia(11%) saturate(1831%) hue-rotate(210deg) brightness(95%) contrast(91%);
 					}

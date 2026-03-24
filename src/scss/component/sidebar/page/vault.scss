@@ -73,12 +73,12 @@
 
 		.time { @include text-small; color: var(--color-text-secondary); text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 0px 4px; }
 		&.isSyncing {
-			.time:before { content: ''; display: block; width: 12px; height: 12px; background-image: url('~img/icon/vault/syncing.svg'); }
+			.time:before { content: ''; display: block; width: 12px; height: 12px; background-image: url('~img/icon/loader.svg'); background-size: 12px; animation: rotate 0.8s infinite linear; }
 		}
 
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }
-		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
+		.icon.pin { }
 
 		&.isDragging { z-index: 1; background-color: var(--color-bg-primary); }
 
@@ -88,7 +88,7 @@
 				.iconObject { display: none; }
 				&:before {
 					content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px; border-radius: inherit;
-					width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
+					width: 20px; height: 20px; background: url('~img/icon/loader.svg'); animation: rotate 0.8s infinite linear;
 				}
 			}
 		}

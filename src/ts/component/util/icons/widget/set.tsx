@@ -1,0 +1,12 @@
+import React from 'react';
+
+const Set = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<circle cx="6.5" cy="6.5" r="1.5" fill="currentColor"/>
+		<circle cx="13.5" cy="6.5" r="1.5" fill="currentColor"/>
+		<circle cx="6.5" cy="13.5" r="1.5" fill="currentColor"/>
+		<circle cx="13.5" cy="13.5" r="1.5" fill="currentColor"/>
+	</svg>
+);
+
+export default Set;

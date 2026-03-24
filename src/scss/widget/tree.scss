@@ -32,9 +32,7 @@
 		}
 
 		.icon { width: 20px; height: 20px; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
-		.icon.set { background-image: url('~img/icon/widget/set.svg'); }
-		.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
-		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+		.icon.arrow { transform: rotate(-90deg); }
 		
 		.clickable {
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
@@ -45,7 +43,7 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons {
 			.icon { margin: 0px; }
-			.icon.preview { background-size: 16px 14px; background-image: url('~img/icon/widget/preview.svg'); }
+			.icon.preview { background-size: 16px 14px; }
 		}
 	}
 

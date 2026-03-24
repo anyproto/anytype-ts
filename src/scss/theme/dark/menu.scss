@@ -24,8 +24,6 @@
 			}
         }
 
-        .arrowDirection { background-image: url('~img/theme/dark/arrow/menuDirection.svg'); }
-
 		.colorMark {
 			&.bgColor-default { background: transparent; }
 			&.bgColor-grey { background: #414141 !important; }
@@ -44,16 +42,8 @@
     /* Vertical */
 
     .menu.vertical {
-        .titleWrapper {
-            .icon.back { background-image: url('~img/theme/dark/arrow/menu.svg'); }
-        }
-
         .item { background: none; }
 		.item::before { background: rgba(238, 238, 238, 0); }
-
-        .item {
-            .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg'); }
-        }
 
         .loaderWrapper { background: var(--color-bg-secondary); }
     }
@@ -77,9 +67,6 @@
 	/* DataviewFilterValues */
 
     .menu.menuDataviewFilterValues {
-		.select {
-            .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg') !important; }
-        }
     }
 
 	/* DataviewFileValues */
@@ -91,15 +78,6 @@
     /* Calendar */
 
     .menu.menuCalendar {
-		.head {
-			.side.right {
-				.btn { background-image: url('~img/theme/dark/arrow/calendarNav.svg'); }
-			}
-		}
-
-        .select {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/big.svg'); }
-		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
     }
 
@@ -144,22 +122,6 @@
     }
 
     /* DataviewFilterAdvanced */
-
-    .menu.menuDataviewFilterAdvanced {
-        .item {
-            .txt {
-                .name::after { background-image: url('~img/theme/dark/arrow/select/dark.svg'); }
-            }
-        }
-    }
-
-    /* DataviewSort */
-
-    .menu.menuDataviewSort {
-        .item {
-            .chip.relation::after { background-image: url('~img/theme/dark/arrow/select/dark.svg'); }
-        }
-    }
 
     /* SyncStatus */
 

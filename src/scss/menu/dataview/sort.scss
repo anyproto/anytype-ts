@@ -39,7 +39,7 @@
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:not(.isReadonly) {
-			.chip.relation::after { content: ''; width: 8px; height: 8px; background-image: url('~img/arrow/select/filter.svg'); }
+			.chip.relation::after { content: ''; width: 8px; height: 8px; }
 		}
 
 		.item:not(.isReadonly):hover,

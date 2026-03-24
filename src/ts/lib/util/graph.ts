@@ -1,4 +1,4 @@
-import { I, S, U, Relation } from 'Lib';
+import { I, S, U } from 'Lib';
 
 /**
  * UtilGraph provides utilities for the graph visualization feature.

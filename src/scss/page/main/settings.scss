@@ -62,12 +62,12 @@
         > .item:last-child { border-bottom: 0; }
         > .item.red { color: var(--color-red); }
         > .item {
-            .icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+            .icon.arrow { }
             .select { margin-right: -8px; }
             .button { border: 0px; margin-right: -8px; }
         }
         > .item.redeemCode {
-            .icon.arrow { background: url('~img/icon/popup/settings/forwardBlack.svg') 100% 50% no-repeat; }
+            .icon.arrow { }
         }
     }
     .actionItems:last-child { margin-bottom: 0px; }
@@ -128,7 +128,7 @@
                 .upsellWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 24px; margin-top: 8px; padding: 24px 16px 16px; text-align: center; }
                 .upsellWrapper {
                     .text { width: 280px; margin: 0px auto; }
-                    .icon { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); margin-bottom: 8px; }
+                    .icon { width: 60px; height: 48px; margin-bottom: 8px; }
                     .title { font-weight: 600; margin-bottom: 4px; padding: 0px; }
                     .label { color: var(--color-text-secondary); margin-bottom: 20px; line-height: 20px; }
                     .button { width: 100%; }
@@ -189,9 +189,6 @@
                     width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
                     background-position: 50% 50%; background-size: 20px; transition: $transitionAllCommon;
                 }
-                .icon.invite { background-image: url('~img/icon/settings/space/buttons/invite.svg'); }
-                .icon.qr { background-image: url('~img/icon/settings/space/buttons/qr.svg'); }
-                .icon.copyLink { background-image: url('~img/icon/settings/space/buttons/copy.svg'); }
 
                 .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; padding: 0px 2px; }
 
@@ -220,14 +217,8 @@
 
                     > .item {
 						.icon { width: 20px; height: 20px; }
-						.icon.type { background-image: url('~img/icon/settings/type.svg'); }
-						.icon.home { background-image: url('~img/icon/settings/home.svg'); }
-						.icon.push0,
-						.icon.push3 { background-image: url('~img/icon/settings/pushOn.svg'); }
-                        .icon.push1,
-                        .icon.push2 { background-image: url('~img/icon/settings/pushOff.svg'); }
-                        .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
-                        .icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+                        .icon.arrow { width: 6px; height: 10px; }
+                        .icon.arrow.down { }
 
                         .sides { display: flex; justify-content: space-between; gap: 0px 16px; }
                         .sides:not(.alignTop) { align-items: center; }
@@ -357,10 +348,6 @@
             width: 44px; height: 44px; border-radius: 5px;
             background-position: 50% 50%; background-repeat: no-repeat; background-size: 24px; background-color: var(--color-shape-highlight-medium);
         }
-        .icon.drive { background-image: url('~img/icon/settings/drive.svg'); }
-        .icon.sites { background-image: url('~img/icon/settings/sites.svg'); }
-        .icon.location { background-image: url('~img/icon/settings/location.svg'); }
-        .icon.offline { background-image: url('~img/icon/settings/offline.svg'); }
 
         .actionItems {
             .title { @include text-common; font-weight: 400; margin-bottom: 0; }
@@ -554,7 +541,7 @@
                 .icon.loading {
                     &:before {
                         content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
-                        width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
+                        width: 20px; height: 20px; background: url('~img/icon/loader.svg'); animation: rotate 0.8s infinite linear;
                     }
                 }
 
@@ -566,7 +553,7 @@
                 &.canEdit {
                     .info {
                         .title { display: flex; align-items: center; }
-                        .title:after { content: ''; width: 20px; height: 20px; display: inline-block; background: url('~img/arrow/select/dark.svg'); }
+                        .title:after { content: ''; width: 20px; height: 20px; display: inline-block; }
                     }
                 }
             }
@@ -850,11 +837,11 @@
                 transition: $transitionAllCommon;
             }
             .btn {
-                .icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }
+                .icon.help { width: 14px; height: 14px; transition: $transitionAllCommon; }
             }
             .btn:hover { color: var(--color-text-primary); }
             .btn:hover {
-                .icon.help { background-image: url('~img/icon/popup/settings/help1.svg'); }
+                .icon.help { }
             }
         }
 
@@ -929,7 +916,7 @@
 
         > .loaderWrapper {
             .inner { display: flex; flex-direction: column; gap: 12px 0px; text-align: center; align-items: center; }
-            .icon { width: 56px; height: 56px; background: url('~img/icon/membership/spinner.svg'); animation: rotate 0.8s infinite linear; }
+            .icon { width: 56px; height: 56px; background: url('~img/icon/loader.svg'); background-size: 56px; animation: rotate 0.8s infinite linear; }
             .label { @include text-common; color: var(--color-text-secondary); }
 
             .label.wait { opacity: 0; transition: opacity $easeInQuint 0.5s; }
@@ -1009,7 +996,7 @@
                     .features { display: flex; flex-direction: column; gap: 8px 0px; }
                     .features {
                         .label { display: flex; gap: 0px 6px; @include text-small; }
-                        .label:before { content: ''; display: block; width: 14px; height: 14px; margin-top: 1px; background: url('~img/icon/membership/tick.svg'); }
+                        .label:before { content: ''; display: block; width: 14px; height: 14px; margin-top: 1px; }
                     }
 
                     .button { width: 100%; }
@@ -1083,7 +1070,7 @@
 
                 .item.anyName {
                     .top { align-items: center; }
-                    .icon { width: 60px; height: 48px; margin-bottom: 10px; background: url('~img/icon/membership/any-id.svg'); }
+                    .icon { width: 60px; height: 48px; margin-bottom: 10px; }
 					.title { font-weight: 600; width: 100%; }
 
 					&.withName {

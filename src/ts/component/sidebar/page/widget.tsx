@@ -540,7 +540,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			let buttons = null;
 
 			if (object.isSystem) {
-				icon = <Icon className={object.icon} />;
+				icon = <Icon name={object.iconName} className={object.icon} />;
 			} else {
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (
@@ -593,7 +593,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			<>
 				<div className="side left">
 					<Icon
-						className="vaultToggle" withBackground={true}
+						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{
 							text: translate('commonVault'),
@@ -680,7 +680,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 										onContextMenu={() => onSectionContext(section.id)}
 									>
 										<div className="name" onClick={() => onToggle(section.id)}>
-											<Icon name="arrow/menu/button" size={8} className="arrow" />
+											<Icon name="arrow/button" size={8} className="arrow" />
 											{section.name}
 										</div>
 										<div className="buttons">

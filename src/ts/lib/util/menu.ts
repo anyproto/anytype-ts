@@ -1165,10 +1165,10 @@ class UtilMenu {
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
-			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', layout: I.ObjectLayout.Archive },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin', iconName: 'widget/system/pin' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil', iconName: 'widget/system/pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', iconName: 'widget/system/eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', iconName: 'common/bin', layout: I.ObjectLayout.Archive },
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 

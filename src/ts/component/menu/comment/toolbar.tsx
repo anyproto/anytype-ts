@@ -82,7 +82,7 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		const options = [
 			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('blockNameBulleted'), textStyle: I.TextStyle.Bulleted },
 			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('blockNameNumbered'), textStyle: I.TextStyle.Numbered },
-			{ id: 'checkbox', iconParam: { name: 'menu/block/text/checkbox' }, name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
+			{ id: 'checkbox', iconParam: { name: 'menu/block/text/checkbox', color: 'accent100' }, name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
 		];
 
 		S.Menu.open('select', {

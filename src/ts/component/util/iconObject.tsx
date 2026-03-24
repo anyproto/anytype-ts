@@ -4,12 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
-import { getIcon } from './icons';
-import objCheckbox0 from 'img/icon/object/checkbox0.svg';
-import objCheckbox1 from 'img/icon/object/checkbox1.svg';
-import objCheckbox2 from 'img/icon/object/checkbox2.svg';
-import objCheckbox1Dark from 'img/theme/dark/icon/object/checkbox1.svg';
-import errorIconSvg from 'img/icon/error.svg?raw';
+import { getIcon, getIconSvg } from './icons';
 
 interface Props {
 	id?: string;
@@ -104,16 +99,9 @@ const FontSize = {
 const GhostIcon = getIcon('common/ghost');
 
 const CheckboxTask = {
-	'': {
-		0: objCheckbox0,
-		1: objCheckbox1,
-		2: objCheckbox2,
-	},
-	dark: {
-		0: objCheckbox0,
-		1: objCheckbox1Dark,
-		2: objCheckbox2,
-	},
+	0: 'object/checkbox0',
+	1: 'object/checkbox1',
+	2: 'object/checkbox2',
 };
 
 const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
@@ -138,8 +126,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const theme = S.Common.getThemeClass();
 	const nodeRef = useRef(null);
-	const checkboxRef = useRef(null);
 	const [ stateObject, setStateObject ] = useState(null);
+	const [ isCheckboxHovered, setIsCheckboxHovered ] = useState(false);
 	
 	let object: any = getObject ? getObject() : props.object || {};
 	if (stateObject) {
@@ -173,17 +161,17 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
-			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][1] });
+			setIsCheckboxHovered(true);
 		};
-		
+
 		onMouseEnter?.(e);
 	};
-	
+
 	const onMouseLeaveHandler = (e: any) => {
 		Preview.tooltipHide(false);
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {
-			$(checkboxRef.current).attr({ src: object.done ? CheckboxTask[theme][2] : CheckboxTask[theme][0] });
+			setIsCheckboxHovered(false);
 		};
 		
 		onMouseLeave?.(e);
@@ -345,7 +333,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.Task: {
 			icn = icn.concat([ 'iconCheckbox', `c${iconSize}` ]);
-			icon = <img ref={checkboxRef} src={done ? CheckboxTask[theme][2] : CheckboxTask[theme][0]} className={icn.join(' ')} />;
+			const checkboxState = done ? 2 : (isCheckboxHovered ? 1 : 0);
+			icon = <Icon name={CheckboxTask[checkboxState]} className={icn.join(' ')} size={iconSize} />;
 			break;
 		};
 
@@ -453,13 +442,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const setErrorIcon = () => {
 		const node = $(nodeRef.current);
-		const img = $('<img />');
-
-		img.attr({ 
-			src: U.Common.updateSvg(errorIconSvg, { id: 'error', size, fill: J.Theme[theme]?.iconDefault }), 
-			class: `iconError c${IconSize[size]}`,
-		});
-		node.append(img).addClass('withImageError');
+		const svgMarkup = getIconSvg('state/error', { style: { width: size, height: size } });
+		node.append(`<div class="iconError c${IconSize[size]}">${svgMarkup}</div>`).addClass('withImageError');
 	};
 
 	const unsetErrorIcon = () => {

@@ -12,8 +12,8 @@
 		.info { flex-grow: 1; width: 100%; }
 
 		.icon.remove {
-			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px;
-			background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
+			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px;
+			background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
 		}
 
 		.name { line-height: 20px; font-weight: 500; @include clamp1; }
@@ -26,10 +26,10 @@
 
 		&.isSyncing, 
 		&.isQueued {
-			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear; }
+			.icon.syncStatus { display: block; background-image: url('~img/icon/loader.svg'); animation: rotate 1.2s infinite linear; }
 		}
 		&.isError {
-			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/error.svg'); }
+			.icon.syncStatus { display: block; }
 		}
 
 		&.isFile {
@@ -41,7 +41,7 @@
 				.icon.syncStatus { width: 28px; height: 28px; background-size: 28px; margin: -14px 0px 0px -14px; }
 				.icon.downloading {
 					display: block; width: 28px; height: 28px; background-size: 28px; position: absolute; left: 50%; top: 50%; z-index: 1;
-					margin: -14px 0px 0px -14px; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear;
+					margin: -14px 0px 0px -14px; background-image: url('~img/icon/loader.svg'); animation: rotate 1.2s infinite linear;
 				}
 			}
 		}
@@ -110,7 +110,7 @@
 			.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 			.icon.downloading {
 				display: block; width: 72px; height: 72px; background-size: 72px; position: absolute; left: 50%; top: 50%; z-index: 2;
-				margin: -36px 0px 0px -36px; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear;
+				margin: -36px 0px 0px -36px; background-image: url('~img/icon/loader.svg'); animation: rotate 1.2s infinite linear;
 			}
 
 			&.withBlur {

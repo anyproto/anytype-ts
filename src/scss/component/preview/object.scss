@@ -49,11 +49,11 @@
 			.inner { width: 100%; display: flex; align-items: center; }
 			.inner {
 				.icon { width: 16px; height: 16px; margin-right: 4px; vertical-align: top; }
-				.icon.check { background-image: url('~img/icon/object/preview/check0.svg'); }
-				.icon.check.active { background-image: url('~img/icon/object/preview/check1.svg'); }
-				.icon.hl { background-image: url('~img/icon/object/preview/hl.svg'); }
-				.icon.bullet { background-image: url('~img/icon/object/preview/bullet.svg'); }
-				.icon.toggle { background-image: url('~img/icon/object/preview/toggle.svg'); }
+				.icon.check { }
+				.icon.check.active { }
+				.icon.hl { }
+				.icon.bullet { }
+				.icon.toggle { }
 
 				.number {
 					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: var(--color-text-secondary); margin-right: 4px; flex-shrink: 0;

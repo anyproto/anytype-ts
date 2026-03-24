@@ -34,7 +34,6 @@
 		}
 		.item::before {
 			content: ''; width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
-			background-image: url('~img/arrow/nav0.svg');
 		}
 		.item.withDescr {
 			.bullet { display: block; }
@@ -62,7 +61,7 @@
 		}
 
 		.item.active { background: none; border-color: var(--color-system-accent-100) !important; box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset; }
-		.item.active::before { background-image: url('~img/arrow/nav1.svg'); }
+		.item.active::before { }
 
 		.item.empty { height: 74px; cursor: default; padding: 12px; }
 		.item.empty {

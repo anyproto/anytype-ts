@@ -32,7 +32,7 @@
 	.path {
 		.label { 
 			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
-			background: var(--color-shape-tertiary) url('~img/icon/lock.svg') 6px 6px no-repeat; @include text-overflow-nw;
+			background: var(--color-shape-tertiary); @include text-overflow-nw;
 			font-weight: 400;
 		}
 	}
@@ -64,12 +64,11 @@
 		.action { font-weight: 500; }
 	}
 	.headerBanner.withMenu { padding-right: 24px; }
-	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
+	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.icon { -webkit-app-region: no-drag; }
 	.icon.commonExpand { display: none; }
-	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 	.label.btn {
 		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;

@@ -2,29 +2,11 @@
 
 .menus {
 	.menu {
-		.icon.existingObject { background-image: url('~img/arrow/existing.svg'); }
+		.icon.existingObject { }
 
-		.icon.chat-reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
-		.icon.chat-reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-		.icon.chat-copy { background-image: url('~img/icon/chat/buttons/copy0.svg'); }
-		.icon.chat-link { background-image: url('~img/icon/chat/buttons/link0.svg'); }
-		.icon.chat-pencil { background-image: url('~img/icon/chat/buttons/pencil0.svg'); }
 
 
 		/* ---- Comment slash menu icons ---- */
-		.icon.comment-header1 { background-image: url('~img/icon/comment/menu/header1.svg'); }
-		.icon.comment-header2 { background-image: url('~img/icon/comment/menu/header2.svg'); }
-		.icon.comment-header3 { background-image: url('~img/icon/comment/menu/header3.svg'); }
-		.icon.comment-numbered { background-image: url('~img/icon/comment/menu/numbered.svg'); }
-		.icon.comment-bulleted { background-image: url('~img/icon/comment/menu/bulleted.svg'); }
-		.icon.comment-checkbox { background-image: url('~img/icon/comment/menu/checkbox.svg'); }
-		.icon.comment-createObject { background-image: url('~img/icon/comment/menu/createObject.svg'); }
-		.icon.comment-plus { background-image: url('~img/icon/comment/menu/plus.svg'); }
-		.icon.comment-uploadComputer { background-image: url('~img/icon/comment/menu/uploadComputer.svg'); }
-		.icon.comment-embed { background-image: url('~img/icon/comment/menu/embed.svg'); }
-		.icon.comment-quote { background-image: url('~img/icon/comment/menu/quote.svg'); }
-		.icon.comment-divider { background-image: url('~img/icon/comment/menu/divider.svg'); }
-		.icon.comment-code { background-image: url('~img/icon/comment/menu/code.svg'); }
 
 		.icon.color { z-index: 1; }
 		.icon.color {
@@ -36,8 +18,7 @@
 				&.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; background: var(--color-bg-primary); }
 				&.bgColor-default::before {
 					content: ''; @include pos-abs-mid; width: 7px; height: 7px; transform: translate3d(-50%, -50%, 0);
-					background: url('~img/icon/menu/colorNone.svg');
-				}
+					}
 				&.textColor { background-color: currentColor; }
 			}
 		}

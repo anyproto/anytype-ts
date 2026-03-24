@@ -38,8 +38,6 @@
 			margin-left: auto; opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; z-index: 1;
 
 			.icon.withBackground { width: 24px; height: 24px; }
-			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
-			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
 		}
 
 		&:hover {
@@ -148,9 +146,9 @@
 			.icon.plus {
 				border-radius: 50%; background-color: var(--color-shape-secondary);
 			}
-			.icon.slash { background-image: url('~img/icon/comment/slash.svg'); }
-			.icon.emoji { background-image: url('~img/icon/comment/reaction.svg'); }
-			.icon.mention { background-image: url('~img/icon/comment/mention.svg'); }
+			.icon.slash { }
+			.icon.emoji { }
+			.icon.mention { }
 
 			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); }
 
@@ -159,7 +157,7 @@
 				border-radius: 50%; background: var(--color-system-accent-100); user-select: none;
 
 				&.isDisabled { opacity: 0; pointer-events: none; }
-				.icon.send { width: 20px; height: 20px; background-image: url('~img/icon/comment/send.svg'); }
+				.icon.send { width: 20px; height: 20px; }
 			}
 
 			.btn.save { user-select: none; }
@@ -243,8 +241,8 @@
 		content: ''; position: absolute; left: 0px; top: 0px;
 		width: 20px; height: 20px; background-size: 20px 20px; background-repeat: no-repeat;
 	}
-	.commentEditor-li-unchecked::before { background-image: url('~img/icon/marker/checkbox1.svg'); }
-	.commentEditor-li-checked::before { background-image: url('~img/icon/marker/checkbox2.svg'); }
+	.commentEditor-li-unchecked::before { }
+	.commentEditor-li-checked::before { }
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
 	.commentEditor-attachment { padding: 8px 8px 4px 0px; }
@@ -277,8 +275,7 @@
 
 			.icon.remove {
 				opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px;
-				width: 20px; height: 20px; background-size: 8px;
-				background-image: url('~img/icon/chat/buttons/remove.svg');
+				width: 20px; height: 20px;
 				background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
 			}
 
@@ -343,7 +340,6 @@
 				background-color: var(--color-bg-primary);
 				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
 			}
-			.icon.remove { background-image: url('~img/icon/chat/buttons/remove.svg'); background-size: 8px; }
 		}
 
 		&:hover { .embedActions { opacity: 1; } }
@@ -459,11 +455,11 @@
 
 		.checkboxMark {
 			width: 20px; height: 20px; min-width: 20px;
-			background-image: url('~img/icon/marker/checkbox1.svg'); background-size: 20px 20px; background-repeat: no-repeat;
+			background-size: 20px 20px; background-repeat: no-repeat;
 		}
 
 		&.isChecked {
-			.checkboxMark { background-image: url('~img/icon/marker/checkbox2.svg'); }
+			.checkboxMark { }
 			span { text-decoration: line-through; color: var(--color-text-secondary); }
 		}
 	}

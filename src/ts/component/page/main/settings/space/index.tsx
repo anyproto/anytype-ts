@@ -315,7 +315,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 						className="btn" 
 						onClick={e => onClick(e, item)}
 					>
-						<Icon className={item.icon} />
+						<Icon name={({ invite: 'settings/space/buttons/invite', copyLink: 'settings/space/buttons/copy', qr: 'common/qr' })[item.icon]} className={item.icon} />
 						<Label text={item.name} />
 					</div>
 				))}
@@ -331,7 +331,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className={`settings-ux${spaceview.uxType}`} />
+											<Icon name={spaceview.uxType == I.SpaceUxType.Chat ? 'settings/space/chat' : 'settings/space/space'} className={`settings-ux${spaceview.uxType}`} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
@@ -380,7 +380,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 
 								<div className="item">
 									<div className="sides">
-										<Icon className="type" />
+										<Icon name="settings/type" className="type" />
 
 										<div className="side left">
 											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />

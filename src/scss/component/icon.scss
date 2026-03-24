@@ -38,44 +38,11 @@
 
 .icon.forward, .icon.rotated { transform: rotateZ(180deg); }
 
-.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
+.icon.lock { width: 8px !important; height: 20px !important; }
 
-.icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); }
-.icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
+.icon.checkbox { width: 24px; height: 24px; }
+.icon.checkbox.active { }
 
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
-
-.icon.widget-star { background-image: url('~img/icon/widget/system/star.svg'); }
-.icon.widget-pin { background-image: url('~img/icon/widget/system/pin.svg'); }
-.icon.widget-chat0 { background-image: url('~img/icon/widget/system/chat0.svg'); }
-.icon.widget-chat1 { background-image: url('~img/icon/widget/system/chat1.svg'); }
-.icon.widget-pencil { background-image: url('~img/icon/widget/system/pencil.svg'); }
-.icon.widget-eye { background-image: url('~img/icon/widget/system/eye.svg'); }
-.icon.widget-bin { background-image: url('~img/icon/widget/system/bin.svg'); }
-.icon.widget-all { background-image: url('~img/icon/widget/system/all.svg'); }
-
-.icon.settings-personal { background-image: url('~img/icon/settings/personal.svg'); }
-.icon.settings-storage { background-image: url('~img/icon/settings/storage.svg'); }
-.icon.settings-phrase { background-image: url('~img/icon/settings/phrase.svg'); }
-.icon.settings-pin { background-image: url('~img/icon/settings/pin.svg'); }
-.icon.settings-spaces { background-image: url('~img/icon/settings/spaces.svg'); }
-.icon.settings-membership { background-image: url('~img/icon/settings/membership.svg'); }
-.icon.settings-language { background-image: url('~img/icon/settings/language.svg'); }
-.icon.settings-api { background-image: url('~img/icon/settings/api.svg'); }
-.icon.settings-sites { background-image: url('~img/icon/settings/sites.svg'); }
-.icon.settings-space { background-image: url('~img/icon/settings/overview.svg'); }
-.icon.settings-members { background-image: url('~img/icon/settings/members.svg'); }
-.icon.settings-notifications { background-image: url('~img/icon/settings/pushOn.svg'); }
-.icon.settings-import { background-image: url('~img/icon/settings/import.svg'); }
-.icon.settings-export { background-image: url('~img/icon/settings/export.svg'); }
-.icon.settings-type { background-image: url('~img/icon/settings/type.svg'); }
-.icon.settings-relation { background-image: url('~img/icon/settings/relation.svg'); }
-.icon.settings-bin { background-image: url('~img/icon/settings/bin.svg'); }
-.icon.settings-leave { background-image: url('~img/icon/settings/leave.svg'); }
-.icon.settings-remove { background-image: url('~img/icon/settings/remove.svg'); }
-.icon.settings-logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
-
-.icon.settings-ux1 { background-image: url('~img/icon/settings/space/space.svg'); }
-.icon.settings-ux3 { background-image: url('~img/icon/settings/space/chat.svg'); }
 
 

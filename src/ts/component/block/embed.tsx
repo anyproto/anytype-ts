@@ -897,7 +897,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		select = (
 			<div id="select" className="select" onMouseDown={onLatexTemplate}>
 				<div className="name">{translate('blockEmbedLatexTemplate')}</div>
-				<Icon name="arrow/menu/button" size={8} className="arrow light" />
+				<Icon name="arrow/button" size={8} className="arrow light" />
 			</div>
 		);
 	} else {

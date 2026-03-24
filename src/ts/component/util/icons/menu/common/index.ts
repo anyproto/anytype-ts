@@ -7,8 +7,8 @@ import ColorNone from './colorNone';
 import Delete from './delete';
 import Puzzle from './puzzle';
 
-registerIcon('menu/common/checkboxOff', CheckboxOff);
-registerIcon('menu/common/checkboxOn', CheckboxOn);
+registerIcon('menu/common/checkbox0', CheckboxOff);
+registerIcon('menu/common/checkbox1', CheckboxOn);
 registerIcon('menu/common/chk', Chk);
 registerIcon('menu/common/clear', Clear);
 registerIcon('menu/common/colorNone', ColorNone);

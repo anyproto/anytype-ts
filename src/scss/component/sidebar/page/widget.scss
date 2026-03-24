@@ -12,15 +12,12 @@
 	.widgetSection {
 		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 4px; }
 		> .nameWrap {
-			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
+			.icon.arrow { width: 12px; height: 12px; transform: rotateZ(-90deg); }
 			.icon.plus { width: 12px; height: 12px; }
 
 			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
 			.name {
 				&:hover { color: var(--color-text-primary); }
-				&:hover {
-					.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg'); }
-				}
 			}
 
 			.buttons { 

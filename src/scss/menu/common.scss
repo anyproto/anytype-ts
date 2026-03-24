@@ -57,8 +57,8 @@
 	.menu {
 		.input { user-select: text; }
 		
-		.arrowDirection { 
-			width: 17px; height: 8px; transition: none; background-image: url('~img/arrow/menuDirection.svg');
+		.arrowDirection {
+			width: 17px; height: 8px; transition: none;
 			position: absolute;
 		}
 		.arrowDirection.c1 { top: -7px; }
@@ -88,7 +88,7 @@
 
 		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 16px 0px; align-items: center; }
 		.titleWrapper {
-			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
+			.icon.back { width: 20px; height: 20px; transform: rotateZ(180deg); }
 			.title { @include text-common; @include text-overflow-nw; font-weight: 600; color: var(--color-text-primary); padding: 0; }
 		}
 		

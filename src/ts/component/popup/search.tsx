@@ -415,14 +415,14 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			let settingsSpace: any[] = [
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
 
-				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportIndex', iconParam: { name: 'menu/action/export' }, icon: 'settings-export', name: translate('popupSettingsExportTitle') },
 				{ id: 'exportProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsExportProtobufTitle') },
 				{ id: 'exportMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsExportMarkdownTitle') },
 			];
 
 			if (canWrite) {
 				settingsSpace = settingsSpace.concat([
-					{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+					{ id: 'importIndex', iconParam: { name: 'menu/action/import' }, icon: 'settings-import', name: translate('popupSettingsImportTitle') },
 					{ id: 'importNotion', iconParam: { name: 'import/notion' }, name: translate('popupSettingsImportNotionTitle') },
 					{ id: 'importCsv', iconParam: { name: 'import/csv' }, name: translate('popupSettingsImportCsvTitle') },
 				]);
@@ -433,22 +433,22 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
+					id: 'personal', iconParam: { name: 'settings/personal' }, icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
 					aliases: [
 						translate('commonLanguage', lang), translate('commonLanguage'),
 						translate('commonSpelling', lang), translate('commonSpelling'),
 					]
 				},
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
+					id: 'personal', iconParam: { name: 'settings/personal' }, icon: 'settings-personal', name: translate('pageSettingsColorMode'),
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ]
 				},
-				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
-				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
-				{ id: 'spaceList', icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
-				{ id: 'dataPublish', icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
-				{ id: 'api', icon: 'settings-api', name: translate('popupSettingsApiTitle') },
+				{ id: 'pinIndex', iconParam: { name: 'settings/pin' }, icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataIndex', iconParam: { name: 'settings/storage' }, icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
+				{ id: 'phrase', iconParam: { name: 'settings/phrase' }, icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+				{ id: 'spaceList', iconParam: { name: 'settings/spaces' }, icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
+				{ id: 'dataPublish', iconParam: { name: 'settings/sites' }, icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'api', iconParam: { name: 'settings/api' }, icon: 'settings-api', name: translate('popupSettingsApiTitle') },
 			];
 
 			const pageItems: any[] = [
@@ -737,7 +737,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (object) {
 			icon = <IconObject object={object} size={size} />;
 		} else {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon className={item.icon} {...(item.iconParam || {})} />;
 		};
 
 		if (item.isObject) {

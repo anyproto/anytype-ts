@@ -20,7 +20,7 @@
 		.side.right {
 			.icon.arrow {
 				width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer;
-				background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%;
+				background-position: 50% 50%;
 			}
 			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow.left { transform: rotateZ(180deg); }

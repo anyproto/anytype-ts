@@ -90,8 +90,6 @@
 		.item:not(.isReadonly) {
 			.txt {
 				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; flex-shrink: 0; }
-				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
-				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
 			}
 		}
 
@@ -138,7 +136,7 @@
 				.conditionSelect {
 					.select {
 						.currentSelected { text-transform: lowercase; }
-						.icon.arrow { background-image: url('~img/arrow/select/filter.svg') !important; background-position: 50% 50%; background-size: 8px 8px; }
+						.icon.arrow { background-position: 50% 50%; background-size: 8px 8px; }
 					}
 				}
 				.conditionSelect:hover,
@@ -169,7 +167,7 @@
 					.select { border: 0px; padding: 0px; display: block; width: 100%; }
 					.select:hover, .select.isFocused { background: none; }
 					.select {
-						.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+						.icon.arrow { }
 					}
 					.select.checkboxValue {
 						.item { @include text-common; }

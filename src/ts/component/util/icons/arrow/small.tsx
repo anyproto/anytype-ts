@@ -1,0 +1,9 @@
+import React from 'react';
+
+const Small = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M6.94254 1.68614C7.18457 1.43795 7.57645 1.43795 7.81848 1.68614C8.06051 1.93433 8.06051 2.33618 7.81848 2.58437L4 6.5L0.181523 2.58437C-0.0605078 2.33618 -0.0605078 1.93433 0.181523 1.68614C0.423555 1.43795 0.815431 1.43795 1.05746 1.68614L4 4.70355L6.94254 1.68614Z" fill="currentColor"/>
+	</svg>
+);
+
+export default Small;

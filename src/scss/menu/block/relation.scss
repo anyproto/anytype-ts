@@ -20,9 +20,8 @@
 			.caption { @include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible; }
 		}
 
-		.icon.arrow { 
-			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
-			background-image: url('~img/arrow/menu.svg'); 
+		.icon.arrow {
+			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px;
 		}
 	}
 }

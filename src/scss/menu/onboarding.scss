@@ -5,7 +5,7 @@
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; gap: 16px 0px; }
-		.arrowDirection { background-image: url('~img/arrow/menuDirectionInversion.svg') }
+		.arrowDirection { }
 
 		.category,
 		.counter { @include text-small; color: var(--color-text-secondary); }
@@ -83,14 +83,14 @@
 .onboardingElement.onboardingClonedSection {
 	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
 	.nameWrap > .name {
-		.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg') !important; }
+		.icon.arrow { }
 	}
 }
 .onboardingElement.onboardingClonedSectionDark { height: auto !important; padding-bottom: 8px !important; border-radius: 8px !important; }
 .onboardingElement.onboardingClonedSectionDark {
 	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
 	.nameWrap > .name {
-		.icon.arrow { background-image: url('~img/theme/dark/arrow/widgetSection1.svg') !important; }
+		.icon.arrow { }
 	}
 }
 .onboardingElement.onboardingHeaderSync.sync { background-color: var(--color-shape-tertiary) !important; }

@@ -44,7 +44,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			},
 		} : null,
 		{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
-		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
+		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: MouseEvent, item: any) => {
@@ -107,7 +107,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
-					<Icon name="arrow/menu/button" size={8} color="default" />
+					<Icon name="arrow/button" size={8} color="default" />
 				</div>
 
 				<MemberCnt route={route} />
@@ -120,7 +120,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
-						<Icon name="arrow/menu/button" size={8} color="default" />
+						<Icon name="arrow/button" size={8} color="default" />
 					</div>
 
 					<MemberCnt route={analytics.route.widget} />
@@ -158,7 +158,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									name="arrow/menu/button"
+									name="arrow/button"
 									size={8} 
 									withBackground={true}
 									onClick={onArrow}

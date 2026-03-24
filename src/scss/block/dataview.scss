@@ -33,14 +33,11 @@
 			transition: $transitionAllCommon;
 		}
 		.loadMore {
-			.icon { width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.icon { width: 20px; height: 20px; }
 			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
 		.loadMore:hover { color: var(--color-text-primary); }
-		.loadMore:hover { 
-			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
-		}
 
 		.dateSelect { padding: 2px 0px 2px 10px; display: flex; flex-direction: row; margin: 0px 0px 12px 0px; justify-content: space-between; }
 		.dateSelect {
@@ -55,8 +52,8 @@
 			.btn { padding: 2px 4px; line-height: 20px; transition: $transitionAllCommon; border-radius: 4px; }
 			.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
-			.icon.arrow { 
-				width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/dateSelect.svg'); border-radius: 4px; 
+			.icon.arrow {
+				width: 24px; height: 24px; background-size: 20px; border-radius: 4px;
 				transition: $transitionAllCommon;
 			}
 			.icon.arrow.left { transform: rotateZ(180deg); }
@@ -133,8 +130,8 @@
 						}
 						.button.select {
 							.txt { display: none; }
-							&:after { 
-								content: ''; display: block; width: 8px; height: 100%; background: url('~img/arrow/button/white.svg') center no-repeat; flex-shrink: 0;
+							&:after {
+								content: ''; display: block; width: 8px; height: 100%; flex-shrink: 0;
 							}
 						}
 					}
@@ -168,8 +165,8 @@
 				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: var(--color-control-active);
 			}
-			.viewItem { 
-				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+			.viewItem {
+				.icon.arrow { width: 20px; height: 20px; }
 			}
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: var(--color-text-primary); }
@@ -224,7 +221,7 @@
 					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 					.icon.advanced { width: 20px; height: 20px; }
 					.icon.relation { width: 20px; height: 20px; }
-					.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/filterValue0.svg'); }
+					.icon.arrow { width: 8px; height: 8px; }
 
 					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
 					&.isActive {
@@ -233,7 +230,6 @@
 
 						.icon.hasSvg { color: var(--color-system-accent-100); }
 						.icon.relation { background-color: var(--color-system-accent-100); }
-						.icon.arrow { background-image: url('~img/arrow/filterValue1.svg'); }
 					}
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
 

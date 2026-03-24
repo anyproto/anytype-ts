@@ -33,7 +33,7 @@
 		}
 		.handle:hover, .handle.isActive {
 			.inner { width: 10px; }
-			.inner::after { background-image: url('~img/icon/table/handle/common.svg'); background-size: 8px 16px; }
+			.inner::after { background-size: 8px 16px; }
 		}
 
 		.handle.handleRow { top: 50%; left: -1px; }
@@ -180,7 +180,7 @@
 			}
 			.icon.menu {
 				.inner { 
-					width: 8px; height: 20px; border-radius: 4px; background-image: url('~img/icon/table/handle/cell.svg'); background-size: 8px 16px;
+					width: 8px; height: 20px; border-radius: 4px; background-size: 8px 16px;
 					position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -4px; background-repeat: no-repeat; background-position: center center; 
 					transition: $transitionAllCommon; background-color: var(--color-bg-primary); 
 				} 

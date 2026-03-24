@@ -159,7 +159,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 			className="group"
 		>
 			<div id={`item-${id}`} className="clickable" onClick={onToggle}>
-				<Icon name="arrow/menu/button" size={8} className="arrow" />
+				<Icon name="arrow/button" size={8} className="arrow" />
 				<Cell 
 					id={`board-head-${id}`} 
 					rootId={rootId}

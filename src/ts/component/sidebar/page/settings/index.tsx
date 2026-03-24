@@ -241,7 +241,17 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				const iconKey = item.icon || item.id;
+				const iconNameMap = {
+					space: 'settings/overview',
+					members: 'menu/action/members',
+					notifications: 'settings/pushOn',
+					export: 'menu/action/export',
+					import: 'menu/action/import',
+					leave: 'menu/action/leave',
+				};
+
+				icon = <Icon name={iconNameMap[iconKey] || `settings/${iconKey}`} className={`settings-${iconKey}`} />;
 				name = item.name;
 			};
 

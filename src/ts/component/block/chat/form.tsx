@@ -1720,7 +1720,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 			};
 			if (reply.isMultiple && !reply.attachment) {
-				icon = <Icon className="isMultiple" />;
+				icon = <Icon name="chat/attachment/multiple" className="isMultiple" />;
 			};
 
 			onClear = onReplyClear;
@@ -1734,7 +1734,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onMouseDown={() => onNavigationClick(item.type)}
 		>
 			<div className="bg" />
-			<Icon className={item.icon} />
+			<Icon name={item.name} className={item.icon} />
 
 			{item.cnt ? (
 				<div className="counter">
@@ -1816,11 +1816,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					/>
 
 					<div ref={counterRef} className="charCounter" />
-					<Icon ref={sendRef} className="send" onClick={onSend} />
+					<Icon ref={sendRef} name="chat/buttons/send" className="send" onClick={onSend} />
 				</div>
 
 				<Icon
 					id={`button-${block.id}-emoji`}
+					name="chat/buttons/emoji"
 					className="emoji"
 					onClick={onEmoji}
 					tooltipParam={{ text: translate('menuSmileGallery') }}
@@ -1897,9 +1898,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			<div className="inner">
 				<div className="navigation">
-					{reactionCounter ? <Button type={I.ChatReadType.Reaction} icon="reaction" className="active" cnt={reactionCounter} /> : ''}
-					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-					<Button type={I.ChatReadType.Message} icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
+					{reactionCounter ? <Button type={I.ChatReadType.Reaction} name="chat/navigation/reaction" icon="reaction" className="active" cnt={reactionCounter} /> : ''}
+					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} name="chat/navigation/mention" icon="mention" className="active" cnt={mentionCounter} /> : ''}
+					<Button type={I.ChatReadType.Message} name="chat/navigation/arrow" icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
 				</div>
 
 				{form}
