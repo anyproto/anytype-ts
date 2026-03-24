@@ -15,7 +15,7 @@ const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<>
 			<div className="iconWrapper">
-				<Icon />
+				<Icon name="header/anyName" color="default" />
 			</div>
 
 			<Title text={translate('headerSettingsIdentityInfoTitle')} />

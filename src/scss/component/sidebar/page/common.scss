@@ -25,19 +25,6 @@
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
-		.icon { flex-shrink: 0; }
-		.icon.close { background-image: url('~img/icon/close.svg'); }
-		.icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
-		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
-		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
-		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
-		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
-		.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
-		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
-		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
-		.icon.clock { background-image: url('~img/icon/sidebar/clock.svg'); }
-		.icon.toggle { background-image: url('~img/icon/widget/toggle1.svg'); }
-		.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 		.sync { -webkit-app-region: no-drag; }
 	}
@@ -50,9 +37,6 @@
 	> .subHead {
 		.icon { width: 20px; height: 20px; }
 		.icon.back { background-size: 20px; }
-		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
-		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 		.side { flex-direction: row; display: flex; align-items: center; position: relative; z-index: 1; }
 		.side.left { justify-content: center; flex-shrink: 0; }
@@ -60,7 +44,6 @@
 
 		.side.center { flex-grow: 1; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
 		.side.center {
-			.iconObject { flex-shrink: 0; }
 			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		}
 
@@ -79,8 +62,7 @@
 			> .titleWrap { padding: 0px 4px 12px 4px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
 			> .titleWrap {
 				.icon.withBackground { width: 24px !important; height: 24px !important; }
-				.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
-
+	
 				.side.left { display: flex; flex-direction: row; gap: 0px 4px; align-items: center; }
 				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
@@ -92,9 +74,12 @@
 					.icon { pointer-events: none; }
 					.label { font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					
-					.label::before { 
-						content: ''; width: 20px; height: 20px; background-image: url('~img/icon/widget/collapse0.svg'); transform: rotateZ(-90deg);
+					.label::before {
+						content: ''; width: 20px; height: 20px; transform: rotateZ(-90deg);
 						transition: $transitionAllCommon;
+						background-color: var(--color-text-secondary);
+						-webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 8L10 13L5 8' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+						-webkit-mask-size: 20px 20px; -webkit-mask-repeat: no-repeat;
 					}
 					&.isOpen {
 						.side.right { opacity: 1; }
@@ -103,8 +88,7 @@
 					}
 				}
 
-				.icon.question { background-image: url('~img/icon/sidebar/question.svg'); }
-			}
+				}
 
 			> .list { display: flex; flex-direction: column; gap: 8px 0px; }
 			> .list {
@@ -121,8 +105,7 @@
 		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
 		.titleWrap {
 			.icon.withBackground { width: 24px !important; height: 24px !important; }
-			.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
-		}
+			}
 
 		.title { @include text-paragraph; font-weight: 600; }
 		.label { padding: 5px 16px; @include text-small; font-weight: 500; color: var(--color-text-secondary); }
@@ -133,10 +116,8 @@
 			.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
 			.label { padding: 0px; flex-grow: 1; }
-			.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; }
-			.icon.question { background-image: url('~img/icon/sidebar/question.svg'); }
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.more:hover { background-color: unset; background-image: url('~img/icon/menu/action/more1.svg'); }
+			.icon { width: 24px !important; height: 24px !important; }
+			.icon.more:hover { background-color: unset; }
 		}
 
 		.items { padding: 0px 8px; }

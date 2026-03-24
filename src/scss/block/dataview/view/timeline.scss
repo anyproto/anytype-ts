@@ -9,8 +9,8 @@
 				gap: 0px 4px; max-width: 120px; opacity: 0;
 			}
 			.tooltipItem {
-				.icon.arrow { 
-					width: 16px; height: 16px; border-radius: 4px; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; 
+				.icon.arrow {
+					width: 16px; height: 16px; border-radius: 4px; background-color: var(--color-shape-highlight-medium);
 					transition: all 0.2s $easeInQuint; transform: scale3d(0.5, 0.5, 1);
 				}
 				.name { @include text-overflow-nw; width: 0px; transition: width 0.2s $easeInQuint; }
@@ -38,8 +38,7 @@
 			.grad { width: 24px; height: 24px; background-image: linear-gradient(to left, var(--color-bg-primary) 20%, rgba(255, 255, 255, 0) 100%); }
 
 			.icon { width: 24px !important; height: 24px !important; }
-			.icon.calendar { background-image: url('~img/icon/relation/date.svg'); }
-			.icon.arrow { background-image: url('~img/arrow/dateSelectLight.svg'); }
+			.icon.arrow { }
 			.icon.arrow.left { transform: rotateZ(180deg); }
 		}
 
@@ -107,7 +106,6 @@
 				.item {
 					&.isHidden { visibility: hidden; }
 
-					.iconObject { flex-shrink: 0; }
 					.name { @include text-overflow-nw; font-weight: 500; }
 
 					.icon.resize { position: absolute; top: 0px; height: 100%; width: 20px; }

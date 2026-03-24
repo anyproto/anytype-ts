@@ -114,7 +114,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					analytics.event('ScreenTransferSpaceOwnershipWarning');
 				},
 				data: {
-					icon: 'key-red',
+					iconParam: { name: 'popup/header/key', color: 'red' },
 					title: translate('popupConfirmOwnershipTransferTitle'),
 					text: U.String.sprintf(
 						translate('popupConfirmOwnershipTransferText'),
@@ -156,7 +156,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 											analytics.event('ScreenTransferSpaceOwnershipSuccess');
 										},
 										data: {
-											icon: 'key-green',
+											iconParam: { name: 'popup/header/key', color: 'lime' },
 											title: translate('popupConfirmOwnershipTransferredTitle'),
 											text: U.String.sprintf(
 												translate('popupConfirmOwnershipTransferredText'),
@@ -256,7 +256,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<ObjectName object={item} withBadge={true} />
 						{item.globalName ? <Label className="globalName" text={item.globalName} /> : ''}
 					</div>
-					{isSelected ? <Icon className="chk" /> : ''}
+					{isSelected ? <Icon name="menu/common/chk" /> : ''}
 				</div>
 			</CellMeasurer>
 		);
@@ -281,13 +281,13 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="side left" />
 				<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
 				<div className="side right">
-					<Icon className="close" withBackground={true} onClick={e => close()} />
+					<Icon name="common/close" withBackground={true} onClick={e => close()} />
 				</div>
 			</div>
 
 			<Filter
 				ref={filterRef}
-				iconParam={{ className: 'search' }}
+				iconParam={{ name: 'common/search' }}
 				size={32}
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}

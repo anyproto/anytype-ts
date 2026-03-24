@@ -1,0 +1,9 @@
+import React from 'react';
+
+const ShowAll = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M1.68614 1.05746C1.43795 0.815431 1.43795 0.423555 1.68614 0.181524C1.93433 -0.0605078 2.33618 -0.0605078 2.58437 0.181524L6.5 4L2.58437 7.81848C2.33618 8.06051 1.93433 8.06051 1.68614 7.81848C1.43795 7.57645 1.43795 7.18457 1.68614 6.94254L4.70355 4L1.68614 1.05746Z" fill="currentColor"/>
+	</svg>
+);
+
+export default ShowAll;

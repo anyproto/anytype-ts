@@ -1,0 +1,28 @@
+import { registerIcon } from '../registry';
+import Checkbox from './checkbox';
+import DateIcon from './date';
+import Description from './description';
+import Email from './email';
+import File from './file';
+import LongText from './longText';
+import MultiSelect from './multiSelect';
+import Number from './number';
+import RelationObject from './object';
+import Phone from './phone';
+import Select from './select';
+import ShortText from './shortText';
+import Url from './url';
+
+registerIcon('relation/checkbox', Checkbox);
+registerIcon('relation/date', DateIcon);
+registerIcon('relation/description', Description);
+registerIcon('relation/email', Email);
+registerIcon('relation/file', File);
+registerIcon('relation/longText', LongText);
+registerIcon('relation/multiSelect', MultiSelect);
+registerIcon('relation/number', Number);
+registerIcon('relation/object', RelationObject);
+registerIcon('relation/phone', Phone);
+registerIcon('relation/select', Select);
+registerIcon('relation/shortText', ShortText);
+registerIcon('relation/url', Url);

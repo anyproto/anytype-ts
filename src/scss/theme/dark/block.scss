@@ -9,13 +9,6 @@
 
 		.btn.black { color: var(--color-text-primary); }
 
-        .btn {
-			.icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
-			.icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
-			.icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
-			.icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg'); }
-			.icon.description { background-image: url('~img/theme/dark/icon/add/description1.svg'); }
-		}
     }
 }
 
@@ -23,7 +16,7 @@
     /* Common */
 
     .block {
-        .icon.dnd { background-image: url('~img/theme/dark/icon/block/menu.svg'); }
+        .icon.commonDnd { }
     }
 
     /* BlockFile */
@@ -42,41 +35,8 @@
     /* BlockDataview */
 
     .block.blockDataview {
-		.loadMore {
-			.icon { background-image: url('~img/theme/dark/arrow/loadMore0.svg'); }
-		}
-
-		.loadMore:hover {
-			.icon { background-image: url('~img/theme/dark/arrow/loadMore1.svg'); }
-		}
-
-		.icon.edit:hover { background-image: url('~img/theme/dark/icon/dataview/button/edit1.svg'); }
-		.icon.expand:hover { background-image: url('~img/theme/dark/icon/dataview/button/expand1.svg'); }
-
-        .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
-        .icon.plus:hover { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
-
-		.dateSelect {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/dateSelect.svg'); border-radius: 4px; }
-		}
-
 		.dataviewHead {
-			.icon.source { background-image: url('~img/theme/dark/icon/dataview/button/source0.svg'); opacity: 0; }
-		}
-
-        .dataviewControls {
-            .viewItem {
-                .icon.arrow { background-image: url('~img/theme/dark/arrow/view.svg'); }
-            }
-        }
-
-        .viewContent.viewGrid,
-		.viewContent.viewList {
-			.cell.add {
-				.btn:hover {
-					.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
-				}
-			}
+			.icon.source { opacity: 0; }
 		}
 
         .viewContent.viewGrid {
@@ -87,10 +47,7 @@
 			.cellHead.isDragging::after { background-color: rgba(223, 221, 208, 0.04); }
 
 			.cellHead.last::after, .cellHead.active::after { background: none; }
-			.cellHead.last:hover, .cellHead.last.active {
-				.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
-			}
-
+	
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
@@ -98,9 +55,6 @@
             .cardContent { background: var(--color-bg-secondary); }
 			.card.add { background: var(--color-bg-secondary); }
 
-			.card.add:hover {
-                .icon { background-image: url('~img/theme/dark/icon/plus/column1.svg'); }
-            }
         }
     }
 
@@ -110,35 +64,9 @@
 		.empty { color: var(--color-text-secondary); }
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
 
-		.preview { background-image: url('~img/theme/dark/icon/block/embed/default.svg'); }
 		.preview {
 			.label { color: #464646; }
 		}
-		.preview.isLatex { background-image: url('~img/theme/dark/icon/block/embed/latex.svg'); }
-		.preview.isMermaid { background-image: url('~img/theme/dark/icon/block/embed/mermaid.svg'); }
-		.preview.isChart { background-image: url('~img/theme/dark/icon/block/embed/chart.svg'); }
-		.preview.isYoutube { background-image: url('~img/theme/dark/icon/block/embed/youtube.svg'); }
-		.preview.isVimeo { background-image: url('~img/theme/dark/icon/block/embed/vimeo.svg'); }
-		.preview.isSoundcloud { background-image: url('~img/theme/dark/icon/block/embed/soundcloud.svg'); }
-		.preview.isGoogleMaps { background-image: url('~img/theme/dark/icon/block/embed/googleMaps.svg'); }
-		.preview.isMiro { background-image: url('~img/theme/dark/icon/block/embed/miro.svg'); }
-		.preview.isFigma { background-image: url('~img/theme/dark/icon/block/embed/figma.svg'); }
-		.preview.isOpenStreetMap { background-image: url('~img/theme/dark/icon/block/embed/openStreetMap.svg'); }
-		.preview.isReddit { background-image: url('~img/theme/dark/icon/block/embed/reddit.svg'); }
-		.preview.isFacebook { background-image: url('~img/theme/dark/icon/block/embed/facebook.svg'); }
-		.preview.isInstagram { background-image: url('~img/theme/dark/icon/block/embed/instagram.svg'); }
-		.preview.isTelegram { background-image: url('~img/theme/dark/icon/block/embed/telegram.svg'); }
-		.preview.isGithubGist { background-image: url('~img/theme/dark/icon/block/embed/githubGist.svg'); }
-		.preview.isCodepen { background-image: url('~img/theme/dark/icon/block/embed/codepen.svg'); }
-		.preview.isBilibili { background-image: url('~img/theme/dark/icon/block/embed/bilibili.svg'); }
-		.preview.isExcalidraw { background-image: url('~img/theme/dark/icon/block/embed/excalidraw.svg'); }
-		.preview.isKroki { background-image: url('~img/theme/dark/icon/block/embed/kroki.svg'); }
-		.preview.isGraphviz { background-image: url('~img/theme/dark/icon/block/embed/graphviz.svg'); }
-		.preview.isSketchfab { background-image: url('~img/theme/dark/icon/block/embed/sketchfab.svg'); }
-		.preview.isDrawio { background-image: url('~img/theme/dark/icon/block/embed/drawio.svg'); }
-		.preview.isImage { background-image: url('~img/theme/dark/icon/block/embed/image.svg'); }
-		.preview.isSpotify { background-image: url('~img/theme/dark/icon/block/embed/spotify.svg'); }
-		.preview.isAppleMusic { background-image: url('~img/theme/dark/icon/block/embed/appleMusic.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
 		#value svg { background: none; }
@@ -175,8 +103,7 @@
 
 	/* BlockTable */
 
-	.block.blockTable { 
-		.plusButton .icon { background-image: url('~img/theme/dark/icon/table/plus.svg'); }
+	.block.blockTable {
 
 		.cell {
 			.icon.menu:hover {
@@ -187,63 +114,27 @@
 
 	/* BlockChat */
 	.block.blockChat {
-		.chatEmptyState {
-			.item {
-				.icon.infinity { background-image: url('~img/theme/dark/icon/chat/empty/infinity.svg'); }
-				.icon.wifi { background-image: url('~img/theme/dark/icon/chat/empty/wifi.svg'); }
-				.icon.key { background-image: url('~img/theme/dark/icon/chat/empty/key.svg'); }
-			}
-		}
 
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
 
-			.bubbleInner {
-				> .controls { 
-					.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/theme/dark/icon/chat/buttons/reply1.svg'); }
-					.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/menu/action/more1.svg'); }
-					.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/theme/dark/icon/chat/buttons/reaction2.svg'); }
-				}
-			}
-
-			.reactions {
-				.reactionAdd { background-image: url('~img/theme/dark/icon/chat/buttons/reaction1.svg'); }
-			}
-
 			.attachments {
 				.attachment {
 					&.isSyncing {
-						.icon.syncStatus { background-image: url('~img/theme/dark/icon/chat/syncStatus/syncing.svg'); }
-					}
-					&.isError {
-						.icon.syncStatus { background-image: url('~img/theme/dark/icon/chat/syncStatus/error.svg'); }
 					}
 				}
 			}
 		}
 
-		.formWrapper {
-			.dragOverlay {
-				.icon { background-image: url('~img/theme/dark/icon/chat/dragState.svg'); }
-			}
-		}
 
 		.form {
-			.icon.send { background: url('~img/theme/dark/icon/chat/buttons/send.svg'); }
-			.icon.send.isLoading { background: url('~img/theme/dark/icon/chat/buttons/loader.svg'); }
 
 			.attachments {
 				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
 				.swiper-button-next { background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
 				.swiper-button-prev::before,
 				.swiper-button-next::before { box-shadow: none; }
-				.swiper-button-prev::after,
-				.swiper-button-next::after { background-image: url('~img/theme/dark/arrow/chatFormAttachment.svg'); }
-
-				.attachment {
-					.icon.remove { background-image: url('~img/theme/dark/icon/chat/buttons/remove.svg'); }
 				}
-			}
 		}
 	}
 }

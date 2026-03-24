@@ -227,7 +227,7 @@ class UtilRouter {
 					window.setTimeout(() => {
 						S.Popup.open('confirm', {
 							data: {
-								icon: 'error',
+								iconParam: { name: 'popup/header/error', color: 'orange' },
 								title: translate('commonError'),
 								text: message.error.description,
 								canCancel: true,

@@ -1,0 +1,10 @@
+import React from 'react';
+
+const Language = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M1.6875 3.9375H11.8125M6.75 2.25V3.9375M9.5625 15.75L12.9375 7.875L16.3125 15.75M10.5996 13.5H15.2754M9.88945 3.9375C9.88945 3.9375 9.03516 7.24219 6.99609 9.73828C4.95703 12.2344 2.8125 13.5 2.8125 13.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+		<path d="M9 11.8125C9 11.8125 7.76953 10.8633 6.46875 9.17578C5.16797 7.48828 4.5 6.1875 4.5 6.1875" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+
+export default Language;

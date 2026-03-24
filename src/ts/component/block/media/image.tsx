@@ -164,7 +164,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -199,7 +199,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onError={handleError} 
 						/>
 						<Icon className={isDownloading ? 'downloading' : 'download'} onClick={handleDownload} />
-						<Icon className="resize" onMouseDown={e => handleResizeStart(e, false)} />
+						<Icon name="common/resize" onMouseDown={e => handleResizeStart(e, false)} />
 					</div>
 				);
 				break;

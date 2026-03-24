@@ -65,7 +65,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		more = (
 			<Icon 
 				ref={moreRef} 
-				className="more" 
+				name="common/more" className="more" 
 				onMouseDown={e => onContextHandler(e, true)} 
 				tooltipParam={{ text: translate('widgetOptions') }}
 			/>

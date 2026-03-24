@@ -60,47 +60,47 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let template = null;
 		let setDefaultTemplate = null;
 		let advancedOptions = [];
-		let print = { id: 'print', name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let searchText = { id: 'searchText', icon: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
-		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
-		let pageCopy = { id: 'pageCopy', icon: 'duplicate', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') };
-		let pageDeeplink = { id: 'pageDeeplink', icon: 'linkTo', name: translate('commonCopyDeeplink') };
-		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
-		let downloadFile = { id: 'downloadFile', icon: 'download', name: translate('commonDownload') };
-		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
-		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
-		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
-		let editType = { id: 'editType', name: translate('menuObjectTypeSettings'), icon: 'editType' };
-		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
-		let notification: any = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
-		let copyMedia = { id: 'copyMedia', name: translate('commonCopyToClipboard'), icon: 'clipboard' };
+		let print = { id: 'print', iconParam: { name: 'menu/action/print' }, name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
+		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let searchText = { id: 'searchText', iconParam: { name: 'common/search' }, name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
+		let history = { id: 'history', iconParam: { name: 'menu/action/history' }, name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
+		let pageCopy = { id: 'pageCopy', iconParam: { name: 'menu/action/duplicate' }, name: translate('commonDuplicate') };
+		let pageLink = { id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') };
+		let pageDeeplink = { id: 'pageDeeplink', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonCopyDeeplink') };
+		let pageReload = { id: 'pageReload', iconParam: { name: 'menu/action/reload' }, name: translate('menuObjectReloadFromSource') };
+		let pageExport = { id: 'pageExport', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
+		let downloadFile = { id: 'downloadFile', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') };
+		let openFile = { id: 'openFile', iconParam: { name: 'common/expand' }, name: translate('menuObjectDownloadOpen') };
+		let openObject = { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') };
+		let advanced = { id: 'advanced', iconParam: { name: 'common/more' }, name: translate('menuObjectAdvanced'), children:[], arrow: true };
+		let editType = { id: 'editType', name: translate('menuObjectTypeSettings'), iconParam: { name: 'common/options' } };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), iconParam: { name: 'common/edit' } };
+		let notification: any = { id: 'notification', name: translate('commonNotifications'), iconParam: { name: 'menu/action/notification' }, arrow: true };
+		let copyMedia = { id: 'copyMedia', name: translate('commonCopyToClipboard'), iconParam: { name: 'menu/action/clipboard' } };
 		let sections = [];
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'createObject', name: translate('commonCreateObject') };
-			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefault') };
+			template = { id: 'pageCreate', iconParam: { name: 'menu/action/createObject' }, name: translate('commonCreateObject') };
+			setDefaultTemplate = { id: 'setDefault', iconParam: { name: 'menu/action/pin' }, name: translate('menuObjectSetDefault') };
 			searchText.name = translate('menuObjectSearchInTemplate');
 		} else {
-			template = { id: 'templateCreate', icon: 'template', name: translate('menuObjectUseAsTemplate') };
+			template = { id: 'templateCreate', iconParam: { name: 'menu/action/template' }, name: translate('menuObjectUseAsTemplate') };
 		};
 
 		if (block) {
 			if (block.isLocked()) {
-				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: isTemplate ? translate('menuObjectUnlockTemplate') : translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
+				pageLock = { id: 'pageUnlock', iconParam: { name: 'menu/action/pageUnlock' }, name: isTemplate ? translate('menuObjectUnlockTemplate') : translate('menuObjectUnlockPage'), caption: keyboard.getCaption('pageLock') };
 			} else {
-				pageLock = { id: 'pageLock', icon: 'pageLock', name: isTemplate ? translate('menuObjectLockTemplate') : translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
+				pageLock = { id: 'pageLock', iconParam: { name: 'menu/action/pageLock' }, name: isTemplate ? translate('menuObjectLockTemplate') : translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
 			};
 		};
 
 		if (object.isArchived) {
-			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin'), caption: keyboard.getCaption('moveToBin') };
+			remove = { id: 'pageRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDeleteImmediately') };
+			archive = { id: 'pageUnarchive', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestoreFromBin'), caption: keyboard.getCaption('moveToBin') };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin'), caption: keyboard.getCaption('moveToBin') };
+			archive = { id: 'pageArchive', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin'), caption: keyboard.getCaption('moveToBin') };
 		};
 
 		// Restrictions
@@ -169,9 +169,9 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const isMuted = chatMode != I.NotificationMode.All;
 
 			if (isMuted) {
-				notification = { id: 'unmute', name: translate('commonUnmute'), icon: 'unmute' };
+				notification = { id: 'unmute', name: translate('commonUnmute'), iconParam: { name: 'menu/action/unmute' } };
 			} else {
-				notification = { id: 'mute', name: translate('commonMute'), icon: 'mute' };
+				notification = { id: 'mute', name: translate('commonMute'), iconParam: { name: 'menu/action/mute' } };
 			};
 		};
 		if (!allowedCopyMedia)		 copyMedia = null;

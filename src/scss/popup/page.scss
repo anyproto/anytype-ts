@@ -22,10 +22,10 @@
 
 		.header {
 			.side.left { padding-left: 12px !important; }
-			.icon.toggle, 
-			.icon.widgetPanel,
+			.icon.toggle,
+			.icon.headerWidget,
 			.icon.vaultToggle { display: none; }
-			.icon.expand { display: block; }
+			.icon.commonExpand { display: inline-flex; }
 		}
 		.footer { display: none; }
 

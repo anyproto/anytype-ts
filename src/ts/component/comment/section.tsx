@@ -653,7 +653,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			<div ref={placeholderRef} className="socialPlaceholder" />
 			<div ref={socialRef} className="socialBlock">
 				<div className="commentCounter" onClick={onCounterClick}>
-					<Icon className="discussion" />
+					<Icon name="comment/discussion" className="discussion" size={16} />
 					<span className="count">{postCount}</span>
 				</div>
 			</div>

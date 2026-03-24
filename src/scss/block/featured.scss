@@ -5,8 +5,6 @@
 		@include text-common; line-height: 28px; color: var(--color-text-secondary); padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
 	}
 	.block.blockFeatured {
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
 		&.isReadonly {
 			.cell.isEmpty { display: none; }
@@ -74,7 +72,7 @@
 					display: inline-flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; vertical-align: middle;
 					margin-top: -2px;
 				}
-				.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
+				.iconObject { margin: 0px 6px 0px 0px !important; }
 			}
 
 			.cellContent.c-select, 
@@ -90,7 +88,7 @@
 			}
 		}
 	}
-	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
+	.block.blockFeatured > .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
 		> .wrapContent > .selectionTarget > .dropTarget > .wrap > .listInline { margin-left: -4px; }

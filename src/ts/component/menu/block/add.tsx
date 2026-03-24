@@ -693,11 +693,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseEnter={e => onMouseEnter(e, item)} 
 					style={param.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
-		} else 
+		} else
 		if (item.isRelation) {
 			content = (
 				<div 

@@ -2,105 +2,48 @@
 
 .icon {
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
-	background-position: center center; transition: $transitionAllCommon; position: relative;
+	background-position: center center; transition: $transitionAllCommon; position: relative; flex-shrink: 0;
 }
 .icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px; }
 .icon.withBackground {
 	&:hover, &.hover, &.active { background-color: var(--color-shape-highlight-medium) !important; }
 };
 
+.icon.hasSvg {
+	display: inline-flex; align-items: center; justify-content: center; color: var(--color-icon); width: 20px; height: 20px;
+	background-image: none !important;
+
+	> svg { flex-shrink: 0; pointer-events: none; }
+};
+
+.icon.iconColor-default { color: var(--color-text-primary); }
+.icon.iconColor-grey { color: var(--color-grey); }
+.icon.iconColor-yellow { color: var(--color-yellow); }
+.icon.iconColor-orange { color: var(--color-orange); }
+.icon.iconColor-red { color: var(--color-red); }
+.icon.iconColor-pink { color: var(--color-pink); }
+.icon.iconColor-purple { color: var(--color-purple); }
+.icon.iconColor-blue { color: var(--color-blue); }
+.icon.iconColor-ice { color: var(--color-ice); }
+.icon.iconColor-teal { color: var(--color-teal); }
+.icon.iconColor-lime { color: var(--color-lime); }
+.icon.iconColor-darkGrey { color: var(--color-dark-grey); }
+.icon.iconColor-darkOrange { color: var(--color-dark-orange); }
+.icon.iconColor-darkRed { color: var(--color-dark-red); }
+.icon.iconColor-accent125 { color: var(--color-system-accent-125); }
+.icon.iconColor-accent100 { color: var(--color-system-accent-100); }
+.icon.iconColor-accent50 { color: var(--color-system-accent-50); }
+.icon.iconColor-accent25 { color: var(--color-system-accent-25); }
+
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
-.icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
-.icon.forward { transform: rotateZ(180deg); }
-.icon.expand { background-image: url('~img/icon/menu/action/expand0.svg'); }
+.icon.forward, .icon.rotated { transform: rotateZ(180deg); }
 
-.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
+.icon.lock { width: 8px !important; height: 20px !important; }
 
-.icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); }
-.icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
+.icon.checkbox { width: 24px; height: 24px; }
+.icon.checkbox.active { }
 
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
-.icon.ghost { background-image: url('~img/icon/ghost.svg'); }
 
-.icon.widget-star { background-image: url('~img/icon/widget/system/star.svg'); }
-.icon.widget-pin { background-image: url('~img/icon/widget/system/pin.svg'); }
-.icon.widget-chat0 { background-image: url('~img/icon/widget/system/chat0.svg'); }
-.icon.widget-chat1 { background-image: url('~img/icon/widget/system/chat1.svg'); }
-.icon.widget-pencil { background-image: url('~img/icon/widget/system/pencil.svg'); }
-.icon.widget-eye { background-image: url('~img/icon/widget/system/eye.svg'); }
-.icon.widget-bin { background-image: url('~img/icon/widget/system/bin.svg'); }
-.icon.widget-all { background-image: url('~img/icon/widget/system/all.svg'); }
 
-.icon.relation.c-longText,
-.icon.relation.c-shortText,
-.icon.relation.c-number,
-.icon.relation.c-date,
-.icon.relation.c-select,
-.icon.relation.c-object,
-.icon.relation.c-file,
-.icon.relation.c-checkbox,
-.icon.relation.c-url,
-.icon.relation.c-email,
-.icon.relation.c-phone { mask-size: contain; mask-repeat: no-repeat; mask-position: center; background: var(--color-icon); }
-
-.icon.relation.c-longText { mask-image: url('~img/icon/relation/default/longText.svg'); }
-.icon.relation.c-shortText { mask-image: url('~img/icon/relation/default/shortText.svg'); }
-.icon.relation.c-number { mask-image: url('~img/icon/relation/default/number.svg'); }
-.icon.relation.c-date { mask-image: url('~img/icon/relation/default/date.svg'); }
-.icon.relation.c-select.isMultiSelect { mask-image: url('~img/icon/relation/default/multiSelect.svg'); }
-.icon.relation.c-select.isSelect { mask-image: url('~img/icon/relation/default/select.svg'); }
-.icon.relation.c-object { mask-image: url('~img/icon/relation/default/object.svg'); }
-.icon.relation.c-file { mask-image: url('~img/icon/relation/default/file.svg'); }
-.icon.relation.c-checkbox { mask-image: url('~img/icon/relation/default/checkbox.svg'); }
-.icon.relation.c-url { mask-image: url('~img/icon/relation/default/url.svg'); }
-.icon.relation.c-email { mask-image: url('~img/icon/relation/default/email.svg'); }
-.icon.relation.c-phone { mask-image: url('~img/icon/relation/default/phone.svg'); }
-
-.icon.layout.c-page { background-image: url('~img/icon/object/page.svg'); }
-.icon.layout.c-human { background-image: url('~img/icon/object/human.svg'); }
-.icon.layout.c-task { background-image: url('~img/icon/object/task.svg'); }
-.icon.layout.c-set { background-image: url('~img/icon/object/set.svg'); }
-.icon.layout.c-file { background-image: url('~img/icon/object/file.svg'); }
-.icon.layout.c-image { background-image: url('~img/icon/object/image.svg'); }
-.icon.layout.c-type { background-image: url('~img/icon/object/type.svg'); }
-.icon.layout.c-relation { background-image: url('~img/icon/object/relation.svg'); }
-.icon.layout.c-note { background-image: url('~img/icon/object/note.svg'); }
-.icon.layout.c-bookmark { background-image: url('~img/icon/object/bookmark.svg'); }
-
-.icon.settings-personal { background-image: url('~img/icon/settings/personal.svg'); }
-.icon.settings-storage { background-image: url('~img/icon/settings/storage.svg'); }
-.icon.settings-phrase { background-image: url('~img/icon/settings/phrase.svg'); }
-.icon.settings-pin { background-image: url('~img/icon/settings/pin.svg'); }
-.icon.settings-spaces { background-image: url('~img/icon/settings/spaces.svg'); }
-.icon.settings-membership { background-image: url('~img/icon/settings/membership.svg'); }
-.icon.settings-language { background-image: url('~img/icon/settings/language.svg'); }
-.icon.settings-api { background-image: url('~img/icon/settings/api.svg'); }
-.icon.settings-sites { background-image: url('~img/icon/settings/sites.svg'); }
-.icon.settings-space { background-image: url('~img/icon/settings/overview.svg'); }
-.icon.settings-members { background-image: url('~img/icon/settings/members.svg'); }
-.icon.settings-notifications { background-image: url('~img/icon/settings/pushOn.svg'); }
-.icon.settings-import { background-image: url('~img/icon/settings/import.svg'); }
-.icon.settings-export { background-image: url('~img/icon/settings/export.svg'); }
-.icon.settings-type { background-image: url('~img/icon/settings/type.svg'); }
-.icon.settings-relation { background-image: url('~img/icon/settings/relation.svg'); }
-.icon.settings-bin { background-image: url('~img/icon/settings/bin.svg'); }
-.icon.settings-leave { background-image: url('~img/icon/settings/leave.svg'); }
-.icon.settings-remove { background-image: url('~img/icon/settings/remove.svg'); }
-.icon.settings-logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
-
-.icon.settings-ux1 { background-image: url('~img/icon/settings/space/space.svg'); }
-.icon.settings-ux3 { background-image: url('~img/icon/settings/space/chat.svg'); }
-
-.icon.import-notion { background-image: url('~img/icon/import/notion.svg'); }
-.icon.import-markdown { background-image: url('~img/icon/import/markdown.svg'); }
-.icon.import-html { background-image: url('~img/icon/import/html.svg'); }
-.icon.import-text { background-image: url('~img/icon/import/text.svg'); }
-.icon.import-csv { background-image: url('~img/icon/import/csv.svg'); }
-.icon.import-protobuf { background-image: url('~img/icon/import/protobuf.svg'); }
-.icon.import-obsidian { background-image: url('~img/icon/import/obsidian.svg'); }
-
-.icon.badge { width: 18px; height: 18px; background-image: url('~img/icon/membership/badge.svg'); }
-
-.icon.space-link { background-image: url('~img/icon/space/link.svg'); }
-.icon.space-qr { background-image: url('~img/icon/space/qr.svg');  }

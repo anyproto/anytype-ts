@@ -12,10 +12,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 	useImperativeHandle(ref, () => ({}));
 
 	const markActions = [
-		{ type: 'bold', icon: 'bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
-		{ type: 'italic', icon: 'italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
-		{ type: 'strikethrough', icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
-		{ type: 'underline', icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+		{ type: 'bold', icon: 'menu/mark/bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
+		{ type: 'italic', icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
+		{ type: 'strikethrough', icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
+		{ type: 'underline', icon: 'menu/mark/underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
 	];
 
 	const activeFormats = getActiveFormats?.() || {};
@@ -52,10 +52,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		e.stopPropagation();
 
 		const options = [
-			{ id: 'paragraph', icon: 'textParagraph', name: translate('blockNameParagraph'), textStyle: I.TextStyle.Paragraph },
-			{ id: 'header1', icon: 'textHeader1', name: translate('blockNameHeader1'), textStyle: I.TextStyle.Header1 },
-			{ id: 'header2', icon: 'textHeader2', name: translate('blockNameHeader2'), textStyle: I.TextStyle.Header2 },
-			{ id: 'header3', icon: 'textHeader3', name: translate('blockNameHeader3'), textStyle: I.TextStyle.Header3 },
+			{ id: 'paragraph', iconParam: { name: 'menu/block/text/paragraph' }, name: translate('blockNameParagraph'), textStyle: I.TextStyle.Paragraph },
+			{ id: 'header1', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader1'), textStyle: I.TextStyle.Header1 },
+			{ id: 'header2', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader2'), textStyle: I.TextStyle.Header2 },
+			{ id: 'header3', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader3'), textStyle: I.TextStyle.Header3 },
 		];
 
 		S.Menu.open('select', {
@@ -80,9 +80,9 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		e.stopPropagation();
 
 		const options = [
-			{ id: 'bulleted', icon: 'textBulleted', name: translate('blockNameBulleted'), textStyle: I.TextStyle.Bulleted },
-			{ id: 'numbered', icon: 'textNumbered', name: translate('blockNameNumbered'), textStyle: I.TextStyle.Numbered },
-			{ id: 'checkbox', icon: 'textCheckbox', name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
+			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('blockNameBulleted'), textStyle: I.TextStyle.Bulleted },
+			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('blockNameNumbered'), textStyle: I.TextStyle.Numbered },
+			{ id: 'checkbox', iconParam: { name: 'menu/block/text/checkbox', color: 'accent100' }, name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
 		];
 
 		S.Menu.open('select', {
@@ -103,17 +103,17 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 	};
 
 	const extraActions = [
-		{ id: 'link', icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink'), isActive: activeFormats.link, onClick: onLinkClick },
+		{ id: 'link', icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink'), isActive: activeFormats.link, onClick: onLinkClick },
 		{ id: 'quote', icon: 'quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
 		{ id: 'code', icon: 'codeSnippet', name: translate('blockNameCode'), isActive: blockStyle == 'code', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Code); } },
 	];
 
 	const styleIcon = (() => {
 		switch (blockStyle) {
-			case 'header1': return 'header1';
-			case 'header2': return 'header2';
-			case 'header3': return 'header3';
-			default: return 'text';
+			case 'header1':
+			case 'header2':
+			case 'header3': return 'menu/block/text/header';
+			default: return 'menu/block/text/paragraph';
 		};
 	})();
 
@@ -122,7 +122,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section first">
 				<Icon
 					id="button-style"
-					className={[ styleIcon, 'blockStyle' ].join(' ')} withBackground={true}
+					name={styleIcon}
+					className="blockStyle" withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }}
 					onMouseDown={onStyleClick}
@@ -131,16 +132,15 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 			<div className="section">
 				{markActions.map((action) => {
-					const cn = [ action.icon ];
-					if (activeFormats[action.type]) {
-						cn.push('active');
-					};
+					const isActive = activeFormats[action.type];
 
 					return (
 						<Icon
 							id={`button-${action.type}`}
 							key={action.type}
-							className={cn.join(' ')} withBackground={true}
+							name={action.icon}
+							color={isActive ? 'default' : ''}
+							className={isActive ? 'active' : ''} withBackground={true}
 							tooltipParam={{ text: action.name, caption: action.caption }}
 							onMouseDown={e => onMark(e, action.type)}
 						/>
@@ -150,16 +150,20 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 			<div className="section">
 				{extraActions.map((action) => {
-					const cn = [ action.icon ];
+					const cn = [];
 					if (action.isActive) {
 						cn.push('active');
 					};
+
+					const isRegistered = action.icon.includes('/');
 
 					return (
 						<Icon
 							id={`button-${action.id}`}
 							key={action.id}
-							className={cn.join(' ')} withBackground={true}
+							name={isRegistered ? action.icon : undefined}
+							color={action.isActive ? 'default' : ''}
+							className={[ (!isRegistered ? action.icon : ''), ...cn ].join(' ')} withBackground={true}
 							tooltipParam={{ text: action.name, caption: action.caption }}
 							onMouseDown={action.onClick}
 						/>
@@ -170,7 +174,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section last">
 				<Icon
 					id="button-list"
-					className={[ 'list', 'blockStyle' ].join(' ')} withBackground={true}
+					name="menu/block/text/bulleted"
+					className="blockStyle" withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('blockNameBulleted') }}
 					onMouseDown={onListClick}

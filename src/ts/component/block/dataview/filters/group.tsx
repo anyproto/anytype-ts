@@ -178,7 +178,7 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 		if (depth == 0) {
 			items.push({ isDiv: true });
 		};
-		items.push({ id: 'add', name: translate('menuDataviewFilterAddRule'), icon: 'plus' });
+		items.push({ id: 'add', name: translate('menuDataviewFilterAddRule'), iconParam: { name: 'plus/menu' } });
 
 		return items;
 	};

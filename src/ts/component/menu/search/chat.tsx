@@ -324,14 +324,14 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					ref={filterRef}
 					placeholder={translate('commonSearch')}
 					value=""
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					onChange={onFilterChange}
 					focusOnMount={true}
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 

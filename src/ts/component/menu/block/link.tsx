@@ -96,7 +96,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const sections: any[] = [];
 
 		if (urls.length) {
-			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', url: urls[0] });
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), iconParam: { name: 'common/link' }, url: urls[0] });
 		};
 
 		if (items.length) {
@@ -105,7 +105,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), iconParam: { name: 'plus/menu' } },
 			] 
 		});
 
@@ -270,6 +270,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					id={item.id}
 					object={object}
 					icon={item.icon}
+					iconParam={item.iconParam}
 					name={<ObjectName object={item} withPlural={true} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}

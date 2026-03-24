@@ -186,12 +186,12 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{allowed ? <Icon className="dnd" /> : ''}
+				{allowed ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable" onClick={() => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" withBackground={true} onClick={e => onViewContext(e, item)} />
+					<Icon name="common/more" className="more" withBackground={true} onClick={e => onViewContext(e, item)} />
 				</div>
 			</div>
 		);
@@ -319,7 +319,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('menuDataviewViewListAddView')}</div>
 					</div>
 				</div>

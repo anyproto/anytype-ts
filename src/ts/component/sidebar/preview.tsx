@@ -106,7 +106,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		if (isHuman) {
 			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
 		} else {
-			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
+			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} name="common/preview" size={isList ? 22 : 56} />;
 		};
 	};
 
@@ -155,7 +155,9 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 					<div className="layoutHeader">
 						{!isNote ? (
 							<div className="titleWrapper">
-								{icon}
+								<div className="iconWrapper">
+									{icon}
+								</div>
 								<Title text={name || translate('defaultNamePage')} />
 							</div>
 						) : ''}

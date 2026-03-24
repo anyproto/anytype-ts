@@ -540,13 +540,13 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			let buttons = null;
 
 			if (object.isSystem) {
-				icon = <Icon className={object.icon} />;
+				icon = <Icon name={object.iconName} className={object.icon} />;
 			} else {
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (
 					<>
-						<Icon className="expand" withBackground={true} onClick={onExpand} />
-						{hasMenu ? <Icon id="button-widget-more" className="more" withBackground={true} onClick={onMore} /> : ''}
+						<Icon name="common/expand" className="expand" withBackground={true} onClick={onExpand} />
+						{hasMenu ? <Icon id="button-widget-more" name="common/more" className="more" withBackground={true} onClick={onMore} /> : ''}
 					</>
 				);
 			};
@@ -554,7 +554,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon className="back" withBackground={true} onClick={e => {
+						<Icon name="common/back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -593,19 +593,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			<>
 				<div className="side left">
 					<Icon
-						className="vaultToggle" withBackground={true}
+						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{
 							text: translate('commonVault'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-					<Icon 
-						className="widgetPanel" withBackground={true} 
+					<Icon
+						name="header/widget" withBackground={true}
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
@@ -615,7 +615,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 					<Icon 
 						id="button-recently-open"
-						className="clock" withBackground={true}
+						name="common/clock" 
+						withBackground={true}
 						onClick={onRecentlyOpen}
 						tooltipParam={{ 
 							text: translate('widgetRecentOpen'), 
@@ -660,7 +661,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						};
 					} else 
 					if (!isSectionUnread) {
-						buttons = <Icon className="more" onClick={() => onSectionContext(section.id)} />;
+						buttons = <Icon name="common/more" size={12} className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 
 					return (
@@ -679,7 +680,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 										onContextMenu={() => onSectionContext(section.id)}
 									>
 										<div className="name" onClick={() => onToggle(section.id)}>
-											<Icon className="arrow" />
+											<Icon name="arrow/button" size={8} className="arrow" />
 											{section.name}
 										</div>
 										<div className="buttons">

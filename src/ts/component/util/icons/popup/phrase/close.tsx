@@ -1,0 +1,10 @@
+import React from 'react';
+
+const Close = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path fillRule="evenodd" clipRule="evenodd" d="M0.46967 0.46967C0.762563 0.176777 1.23744 0.176777 1.53033 0.46967L11.5303 10.4697C11.8232 10.7626 11.8232 11.2374 11.5303 11.5303C11.2374 11.8232 10.7626 11.8232 10.4697 11.5303L0.46967 1.53033C0.176777 1.23744 0.176777 0.762563 0.46967 0.46967Z" fill="currentColor"/>
+		<path fillRule="evenodd" clipRule="evenodd" d="M11.5303 0.46967C11.2374 0.176777 10.7626 0.176777 10.4697 0.46967L0.46967 10.4697C0.176777 10.7626 0.176777 11.2374 0.46967 11.5303C0.762563 11.8232 1.23744 11.8232 1.53033 11.5303L11.5303 1.53033C11.8232 1.23744 11.8232 0.762563 11.5303 0.46967Z" fill="currentColor"/>
+	</svg>
+);
+
+export default Close;

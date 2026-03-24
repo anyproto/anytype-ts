@@ -76,7 +76,7 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 				<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
 				<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${space.id}`} className="more" withBackground={true} onClick={() => onMore(space)} />
+					<Icon id={`icon-more-${space.id}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(space)} />
 				</div>
 			</div>
 		);

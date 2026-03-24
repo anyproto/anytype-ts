@@ -10,13 +10,11 @@
 		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-shrink: 0; }
 		.titleWrapper {
 			.title { @include text-header1; font-weight: 700; }
-			.icon.archive { width: 32px; height: 32px; background-image: url('~img/icon/archive/logo.svg'); }
 		}
 
 		.objectManagerWrapper { flex-grow: 1; }
 		.objectManagerWrapper {
 			.controls {
-				.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
 			}
 
 			.ReactVirtualized__List { padding: 12px 0px; }
@@ -31,7 +29,7 @@
 
 				.item { gap: 0px 12px; }
 				.item {
-					.iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: var(--color-shape-tertiary); }
+					.iconObject { flex-basis: 48px; border-radius: 10px; background-color: var(--color-shape-tertiary); }
 
 					.name { @include text-overflow-nw; width: 100%; }
 					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); }

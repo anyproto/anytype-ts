@@ -21,7 +21,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const { id, parentId, treeKey, depth, style, numChildren, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
-	const moreRef = useRef(null);
 	const subKey = getSubKey();
 	const subId = getSubId(parentId);
 	const isOpen = Storage.checkToggle(subKey, treeKey);
@@ -32,7 +31,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
-	const hasMore = false;//U.Space.canMyParticipantWrite();
 	const isChat = U.Object.isChatLayout(object.layout);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const [ dummy, setDummy ] = useState(0);
@@ -54,11 +52,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		const node = $(nodeRef.current);
-		const element = $(moreRef.current);
 
 		onContext({ 
 			node, 
-			element, 
+			element: node, 
 			withElement, 
 			subId, 
 			objectId: id, 
@@ -80,25 +77,20 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let arrow = null;
 	let onArrowClick = null;
 	let onContextMenu = null;
-	let more = null;
 	let inner = null;
 
 	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
-		arrow = <Icon className="set" />;
+		arrow = <Icon name="menu/action/set" className="set" />;
 	} else
 	if (numChildren > 0) {
 		onArrowClick = onToggleHandler;
-		arrow = <Icon className="arrow" />;
+		arrow = <Icon name="arrow/select" className="arrow" />;
 	} else {
-		arrow = <Icon className="blank" />;
+		arrow = <Icon name="widget/blank" className="blank" />;
 	};
 
 	if (arrow) {
 		arrow = <div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>;
-	};
-
-	if (hasMore) {
-		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	if (isSection) {
@@ -131,7 +123,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 				</div>
 
 				{isChat && !hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
-				<div className="buttons">{more}</div>
 			</div>
 		);
 

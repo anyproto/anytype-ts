@@ -77,7 +77,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 			</div>
 
 			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
-				{canCancel ? <Icon className="close" onClick={handleCancel} /> : ''}
+				{canCancel ? <Icon name="common/close" onClick={handleCancel} /> : ''}
 			</div>
 		</div>
 	);
@@ -215,7 +215,7 @@ const SidebarProgress: FC = observer(() => {
 		<div ref={nodeRef} className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
 			<div className="head" onMouseDown={onDragStart} onClick={onHeadClick}>
 				<Label text={headerText} />
-				<Icon className="arrow" />
+				<Icon name="arrow/button" size={8} className="arrow" />
 			</div>
 
 			{isExpanded ? (

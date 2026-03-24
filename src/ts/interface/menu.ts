@@ -88,9 +88,18 @@ export interface MenuRef {
 	onSortEnd?: (result: any) => void;
 };
 
+export interface IconParam {
+	name: string;
+	color?: string;
+	size?: number;
+	width?: number;
+	height?: number;
+};
+
 export interface MenuItem {
 	id?: string;
 	icon?: string;
+	iconParam?: IconParam;
 	object?: any;
 	name?: any;
 	description?: string;

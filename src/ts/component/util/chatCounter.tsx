@@ -81,9 +81,9 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		return null;
 	};
 
-	const iconMention = <Icon className={cnMention.join(' ')} />;
+	const iconMention = <Icon name="counter/mention" size={10} className={cnMention.join(' ')} />;
 	const iconMessage = <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} />;
-	const iconReaction = <Icon className={cnReaction.join(' ')} />;
+	const iconReaction = <Icon name="counter/reaction" size={10} className={cnReaction.join(' ')} />;
 
 	let content = null;
 

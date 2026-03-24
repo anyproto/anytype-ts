@@ -1586,7 +1586,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						</div>
 
 						<div className="btn" onClick={onCopy}>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 							<div className="txt">{translate('commonCopy')}</div>
 						</div>
 					</div>

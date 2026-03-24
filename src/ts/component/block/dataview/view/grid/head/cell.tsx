@@ -127,7 +127,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 					{...attributes}
 					{...listeners}
 				>
-					<Icon className={`relation ${Relation.className(relation.format)}`} />
+					<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 					<ObjectName object={relation} />
 				</div>
 

@@ -175,7 +175,7 @@ const CommentReply = observer((props: Props) => {
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
 		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
@@ -285,7 +285,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<div className="hoverActions">
 				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon className="more" />
+					<Icon name="common/more" className="more" />
 				</div>
 			</div>
 		);

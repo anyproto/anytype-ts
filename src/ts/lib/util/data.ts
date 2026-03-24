@@ -43,6 +43,25 @@ class UtilData {
 	 * @param {I.TextStyle} v - The text style.
 	 * @returns {string} The CSS class.
 	 */
+	blockTextIcon (v: I.TextStyle): string {
+		const map: Record<number, string> = {
+			[I.TextStyle.Paragraph]: 'paragraph',
+			[I.TextStyle.Header1]: 'header',
+			[I.TextStyle.Header2]: 'header',
+			[I.TextStyle.Header3]: 'header',
+			[I.TextStyle.Quote]: 'quote',
+			[I.TextStyle.Callout]: 'callout',
+			[I.TextStyle.Checkbox]: 'checkbox',
+			[I.TextStyle.Bulleted]: 'bulleted',
+			[I.TextStyle.Numbered]: 'numbered',
+			[I.TextStyle.Toggle]: 'toggle',
+			[I.TextStyle.ToggleHeader1]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader2]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader3]: 'toggleHeader',
+		};
+		return `menu/block/text/${map[v] || 'paragraph'}`;
+	};
+
 	blockTextClass(v: I.TextStyle): string {
 		const toggleHeaders = [
 			I.TextStyle.ToggleHeader1, 
@@ -116,13 +135,9 @@ class UtilData {
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default: icon = this.blockTextClass(v); break;
-					case I.TextStyle.Code: icon = 'kbd'; break;
+					default: icon = this.blockTextIcon(v); break;
+					case I.TextStyle.Code: icon = 'menu/mark/code'; break;
 				};
-				break;
-
-			case I.BlockType.Div:
-				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;
@@ -223,6 +238,10 @@ class UtilData {
 		return s ? `c-${s}` : '';
 	};
 
+	syncStatusIcon (v: I.SyncStatusObject): string {
+		return `menu/syncStatus/${String(I.SyncStatusObject[v]).toLowerCase()}`;
+	};
+
 	/**
 	 * Returns the icon class for horizontal alignment.
 	 * @param {I.BlockHAlign} v - The horizontal alignment.
@@ -230,17 +249,17 @@ class UtilData {
 	 */
 	alignHIcon(v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;
-		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+		return `menu/align/horizontal/${String(I.BlockHAlign[v]).toLowerCase()}`;
 	};
 
 	/**
-	 * Returns the icon class for vertical alignment.
+	 * Returns the registry icon name for vertical alignment.
 	 * @param {I.BlockVAlign} v - The vertical alignment.
-	 * @returns {string} The icon class.
+	 * @returns {string} The registry icon name.
 	 */
 	alignVIcon(v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
-		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
+		return `menu/align/vertical/${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 
 	/**

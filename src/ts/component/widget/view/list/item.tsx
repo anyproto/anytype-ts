@@ -147,7 +147,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} name="common/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	let inner = (
@@ -175,7 +175,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (canDrag) {
 		inner = (
 			<>
-				<Icon className="dnd" />
+				<Icon name="common/dnd" />
 				{inner}
 			</>
 		);

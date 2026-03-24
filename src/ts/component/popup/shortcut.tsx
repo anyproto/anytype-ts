@@ -204,7 +204,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (errorId == item.id) {
 				cn.push('hasError');
-				alert = <Icon className="alert" />;
+				alert = <Icon name="common/alert" color="red" />;
 			};
 
 			onClickHandler = () => onClick(item);
@@ -483,8 +483,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Label text={translate('popupShortcutDescription')} />
 					</div>
 					<div className="side right">
-						<Icon id="icon-more" className="more" withBackground={true} onClick={onMenu} />
-						<Icon className="close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
+						<Icon id="icon-more" name="common/more" className="more" withBackground={true} onClick={onMenu} />
+						<Icon name="common/close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
 					</div>
 				</div>
 				<div className="filterWrap">

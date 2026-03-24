@@ -138,7 +138,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	const onContextHandler = () => {
 		const node = $(nodeRef.current);
 		const options = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') }
 		] as I.Option[];
 
 		if (canCreateValue) {
@@ -295,8 +295,8 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		>
 			<div className="head">
 				{canCreateValue ? (
-					<Icon 
-						className="plus" withBackground={true}
+					<Icon
+						name="plus/menu" className="plus" withBackground={true}
 						tooltipParam={{ text: translate(`commonNewObject`) }} 
 						onClick={onCreate} 
 					/> 

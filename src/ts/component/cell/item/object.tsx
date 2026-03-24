@@ -54,7 +54,7 @@ const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 	};
 	if (canEdit) {
 		cn.push('canEdit');
-		iconRemove = <Icon className="objectRemove" onClick={onRemoveHandler} />;
+		iconRemove = <Icon name="object/remove" className="objectRemove" onClick={onRemoveHandler} />;
 	};
 
 	if (relation.relationKey != 'type') {

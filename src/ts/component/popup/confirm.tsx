@@ -7,7 +7,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
+	const { title, text, icon, iconParam, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
 	const cn = [ 'wrap' ];
 	const [ error, setError ] = useState('');
 	const errorText = String(data.error || error || '');
@@ -22,7 +22,22 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const textCancel = data.textCancel || translate('commonCancel');
 	const colorConfirm = data.colorConfirm || 'black';
 	const colorCancel = data.colorCancel || 'blank';
-	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
+	let iconElement: any = null;
+
+	if (iconParam) {
+		iconElement = (
+			<Icon
+				name={iconParam.name}
+				color={iconParam.color}
+				size={iconParam.size || 56}
+			/>
+		);
+	} else
+	if ('string' == typeof(icon)) {
+		iconElement = <Icon className={icon} />;
+	} else {
+		iconElement = icon;
+	};
 	const buttonSize = (Number(data.buttonSize) || 36) as 36;
 
 	if (storageKey) {

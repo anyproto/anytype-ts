@@ -125,7 +125,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -159,7 +159,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onPlay={onPlay}
 							onPause={onPause}
 						/>
-						<Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;

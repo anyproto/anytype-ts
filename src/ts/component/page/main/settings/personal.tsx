@@ -174,12 +174,12 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
-    				<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
-    				<Switch
+					<Label text={translate('popupSettingsPersonalHideFileObjectsInTree')} />
+					<Switch
 						className="big"
 						value={hideFileObjectsInTree}
 						onChange={(e: any, v: boolean) => S.Common.hideFileObjectsInTreeSet(v)}
-    				/>
+					/>
 				</div>
 			</div>
 

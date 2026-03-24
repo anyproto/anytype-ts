@@ -72,6 +72,7 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
@@ -183,6 +184,7 @@ export interface FooterComponent {
 export interface ButtonComponent {
 	id?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	type?: string;
 	arrow?: boolean;
 	subType?: string;

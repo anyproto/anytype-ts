@@ -249,7 +249,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			<div className="table">
 				<div className="row isHead" style={css}>
 					{columnList.map(column => {
-						const arrow = sortId == column.relationKey ? <Icon className={`sortArrow c${sortType}`} /> : null;
+						const arrow = sortId == column.relationKey ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 
 						return (
 							<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => onSort(column.relationKey)}>

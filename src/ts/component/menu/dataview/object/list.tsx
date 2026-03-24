@@ -354,7 +354,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 			{!noFilter ? (
 				<Filter
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					ref={filterRef} 
 					placeholder={placeholder}
 					value={filter}

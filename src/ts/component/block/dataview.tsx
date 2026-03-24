@@ -1780,7 +1780,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon className="dragState" />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>

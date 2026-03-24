@@ -6,7 +6,7 @@ const PopupPhrase: FC<I.Popup> = (props) => {
 	
 	return (
 		<>
-			<Icon className="close" onClick={() => props.close()} />
+			<Icon name="common/close" onClick={() => props.close()} />
 
 			<Title text={translate('popupPhraseTitle1')} />
 			<div className="rows">

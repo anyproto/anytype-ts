@@ -54,7 +54,7 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 
 	const Button = (item: any) => (
 		<div className="element" onClick={item.onClick}>
-			<Icon className={item.icon} />
+			{item.iconParam ? <Icon {...item.iconParam} /> : <Icon className={item.icon} />}
 			<div className="name">{item.text}</div>
 		</div>
 	);
@@ -294,10 +294,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		let buttonsList: I.ButtonComponent[] = [];
 
 		if (selected.current.length) {
-			buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox1' }, text: translate('commonDeselectAll'), onClick: onSelectAll });
 			buttonsList = buttonsList.concat(buttons);
 		} else {
-			buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox0' }, text: translate('commonSelectAll'), onClick: onSelectAll });
 		};
 
 		return buttonsList;
@@ -384,7 +384,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					<Buttons ref={buttonsRef} buttons={getButtons()} />
 				</div>
 				<div className="side right">
-					<Icon className="search" onClick={onFilterShow} />
+					<Icon name="common/search" onClick={onFilterShow} />
 
 					<div ref={filterWrapperRef} id="filterWrapper" className="filterWrapper">
 						<Filter

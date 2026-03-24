@@ -8,6 +8,7 @@ import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
+import { Icon } from 'Component';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -485,7 +486,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 						}}
 					>
-						<div className="icon plus" />
+						<Icon name="plus/menu" className="plus" />
 					</div>
 				</div>
 			);
@@ -752,30 +753,30 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const options: any[] = [];
 
 		if (!noControls) {
-			options.push({ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') });
+			options.push({ id: 'reply', iconParam: { name: 'chat/buttons/reply' }, name: translate('blockChatReply') });
 		};
 
 		if (message.content.text) {
-			options.push({ id: 'copy', icon: 'clipboard-copy', name: translate('blockChatCopyText') });
+			options.push({ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('blockChatCopyText') });
 		};
 
 		if (downloadable.length == 1) {
 			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
 
-			options.push({ id: 'download', icon: 'download', name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
 		};
 
 		if (isSelf) {
 			options.push({ isDiv: true });
-			options.push({ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') });
+			options.push({ id: 'edit', iconParam: { name: 'chat/buttons/pencil' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
 			};
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		return options;

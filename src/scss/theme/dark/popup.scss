@@ -25,24 +25,32 @@
 				.item.hl { color: var(--color-text-inversion); }
 				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
 				.item:hover, .item.active {
-					.icon.heart { background-image: url('~img/theme/dark/icon/popup/usecase/heart1.svg'); }
-					.icon.any { background-image: url('~img/theme/dark/icon/popup/usecase/any1.svg'); }
+					.icon.heart {  }
+					.icon.any {  }
 				}
 
 				.item {
-					.icon.heart { background-image: url('~img/theme/dark/icon/popup/usecase/heart0.svg'); }
-					.icon.any { background-image: url('~img/theme/dark/icon/popup/usecase/any0.svg'); }
+					.icon.heart {  }
+					.icon.any {  }
 				}
 
-				.icon.arrow { background-image: url('~img/theme/dark/arrow/usecaseCategory0.svg'); }
-				.icon.arrow:hover { background-color: var(--color-control-accent); background-image: url('~img/theme/dark/arrow/usecaseCategory1.svg'); }
+				.icon.arrow {  }
+				.icon.arrow:hover { background-color: var(--color-control-accent);  }
 			}
 		}
 
 		.page.pageItem {
 			.screenWrap {
-				.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('~img/theme/dark/arrow/usecase.svg'); }
+				.icon.arrow { background-color: var(--color-bg-secondary);  }
 			}
+		}
+	}
+
+	/* PopupShortcut */
+
+	.popup.popupShortcut {
+		.item.hasError {
+			.name { color: var(--color-text-inversion); }
 		}
 	}
 
@@ -99,12 +107,6 @@
 				.slideBack { background-image: url('~img/theme/dark/icon/onboarding/primitives/arrow.svg'); }
 			}
 		}
-	}
-
-	/* PopupSpaceJoinByLink */
-
-	.popup.popupSpaceJoinByLink {
-		.icon { background-image: url('~img/theme/dark/icon/menu/spaceCreate/join.svg'); }
 	}
 
 	/* PopupConfirm */

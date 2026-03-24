@@ -96,7 +96,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const actionChildren: any[] = [];
 
 		if (!isSystem) {
-			actionChildren.push({ id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') });
+			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		if (canWrite && isPinned) {
@@ -109,13 +109,13 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!isSystem && canWrite) {
 			if (!isType) {
 				actionChildren.push({ id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true });
-				actionChildren.push({ id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true });
+				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
 			};
 
 			const allowedArchive = S.Block.isAllowed(target?.restrictions, [ I.RestrictionObject.Delete ]);
 
 			if (allowedArchive) {
-				actionChildren.push({ id: 'archive', icon: 'remove', name: translate('commonMoveToBin') });
+				actionChildren.push({ id: 'archive', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') });
 			};
 		};
 
@@ -128,8 +128,8 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			sections.push({
 				id: 'open',
 				children: [
-					{ id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') },
-					{ id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') },
+					{ id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') },
+					{ id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') },
 				]
 			});
 		};
@@ -352,7 +352,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				if (isSystem) {
 					const param: Partial<I.MenuParam> = {
 						data: {
-							icon: 'warning-red',
+							iconParam: { name: 'popup/header/warning', color: 'red' },
 							title: translate('popupConfirmSystemWidgetRemoveTitle'),
 							text: translate('popupConfirmSystemWidgetRemoveText'),
 							textConfirm: translate('commonDelete'),

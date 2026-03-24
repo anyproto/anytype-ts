@@ -117,7 +117,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 			case J.Constant.widgetId.bin: {
 				items = [
-					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', iconName: 'common/bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
 				];
 				break;
 			};
@@ -217,7 +217,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		let icon = null;
 		if (item.icon) {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon name={item.iconName} className={item.icon} />;
 		} else {
 			icon = (
 				<IconObject
@@ -248,6 +248,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					{canAdd ? (
 						<div className="buttons">
 							<Icon
+								name="plus/menu"
 								className="plus"
 								tooltipParam={{ text: translate('commonCreateNewObject') }}
 								onClick={e => onCreate(e, item)}

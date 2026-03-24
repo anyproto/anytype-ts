@@ -377,7 +377,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		elements = (
 			<>
 				<div key="btn-drag" className="btn black drag withIcon">
-					<Icon />
+					<Icon name="control/cover/drag" size={16} />
 					<div className="txt">{translate('blockCoverDrag')}</div>
 				</div>
 				

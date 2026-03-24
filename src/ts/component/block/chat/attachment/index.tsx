@@ -287,7 +287,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'warning',
+				iconParam: { name: 'popup/header/warning', color: 'orange' },
 				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
 				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
 				textConfirm,
@@ -409,7 +409,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 		>
 			{content}
-			<Icon className="remove" onClick={onRemoveHandler} />
+			<Icon name="menu/action/remove" className="remove" onClick={onRemoveHandler} />
 		</div>
 	);
 

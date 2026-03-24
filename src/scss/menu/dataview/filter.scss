@@ -16,18 +16,15 @@
 			}
 
 			.icon.filterIcon { width: 20px; height: 20px; margin-right: 0px; }
-			.icon.filterIcon {
-				&.advanced { background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
-			}
 
-			.icon.relation { width: 20px; height: 20px; flex-shrink: 0; }
+			.icon.relation { width: 20px; height: 20px; }
 
 			.filterContent { display: flex; gap: 6px; align-items: center; @include text-overflow-nw; }
 			.value { @include text-overflow-nw; }
 
 			.label.condition { text-transform: lowercase; }
 
-			.icon.more { display: none; width: 20px; height: 20px; flex-shrink: 0; right: 16px; }
+			.icon.more { display: none; width: 20px; height: 20px; right: 16px; }
 
 			&:hover,
 			&.hover {
@@ -38,9 +35,6 @@
 			&.isActive {
 				.filterInner { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
 				.relationName { font-weight: 500; }
-				.icon.filterIcon {
-					&.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
-				}
 				.icon.relation { background-color: var(--color-system-accent-100); }
 
 				&:hover,
@@ -96,8 +90,6 @@
 		.item:not(.isReadonly) {
 			.txt {
 				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; flex-shrink: 0; }
-				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
-				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
 			}
 		}
 
@@ -109,7 +101,7 @@
 
 		.item.add { display: block; }
 		.item.add {
-			.icon.dnd { margin-top: 0px; }
+			.icon.commonDnd { margin-top: 0px; }
 		}
 
 		.bottom {  padding: 0px; flex-shrink: 0; margin: 0px 8px; }
@@ -127,6 +119,16 @@
 			.content { padding-bottom: 0px; }
 		}
 
+		.inner { padding-bottom: 0px; }
+		.inner.c-shortText,
+		.inner.c-longText,
+		.inner.c-number,
+		.inner.c-email,
+		.inner.c-phone,
+		.inner.c-url,
+		.inner.c-checkbox,
+		.inner.c-date { padding-bottom: 8px; }
+
 		.inner {
 			> .head { display: flex; align-items: center; justify-content: space-between; gap: 0px 4px; padding: 0px 10px; }
 			> .head {
@@ -134,7 +136,7 @@
 				.conditionSelect {
 					.select {
 						.currentSelected { text-transform: lowercase; }
-						.icon.arrow { background-image: url('~img/arrow/select/filter.svg') !important; background-position: 50% 50%; background-size: 8px 8px; }
+						.icon.arrow { background-position: 50% 50%; background-size: 8px 8px; }
 					}
 				}
 				.conditionSelect:hover,
@@ -165,7 +167,7 @@
 					.select { border: 0px; padding: 0px; display: block; width: 100%; }
 					.select:hover, .select.isFocused { background: none; }
 					.select {
-						.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+						.icon.arrow { }
 					}
 					.select.checkboxValue {
 						.item { @include text-common; }
@@ -178,13 +180,12 @@
 					.day.weekend:not(.active) { background: none; }
 				}
 
-				.textInputWrapper { position: relative; margin: 0px 16px 4px; }
+				.textInputWrapper { position: relative; margin: 0px 16px 4px 16px; }
 				.textInputWrapper {
 					.input { padding: 6px 28px 8px 12px; }
 					.input.isFocused { border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
-					.icon.clear { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; opacity: 0; background-image: url('~img/icon/filter/clear0.svg'); }
-					.icon.clear:hover { background-image: url('~img/icon/filter/clear1.svg'); }
-					.icon.clear.active { opacity: 1; }
+
+					.icon.commonClose { position: absolute; top: 8px; right: 8px; }
 				}
 			}
 		}

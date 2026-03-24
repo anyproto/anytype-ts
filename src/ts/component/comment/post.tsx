@@ -397,7 +397,7 @@ const CommentPost = observer((props: Props) => {
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
 		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
@@ -543,9 +543,9 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				{canReact ? <Icon className="reaction" withBackground={true} onClick={onReaction} /> : null}
-				<Icon className="reply" withBackground={true} onClick={onReply} />
-				<Icon className="more" withBackground={true} onClick={onMenuClick} />
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				<Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} />
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
