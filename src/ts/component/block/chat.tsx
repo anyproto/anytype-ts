@@ -50,6 +50,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const frameRef = useRef(0);
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
+	const prevDepsKey = useRef('');
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -306,6 +307,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			callBack?.();
 			return;
 		};
+
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevDepsKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevDepsKey.current = key;
 
 		const subId = getSubId();
 		const keys = U.Subscription.chatRelationKeys();
