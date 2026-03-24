@@ -50,7 +50,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	const getSpaceOptions = (): any[] => {
 		let list: any[] = [
 			{ name: translate('popupUsecaseMenuLabel'), isSection: true },
-			{ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true }
+			{ id: 'add', iconParam: { name: 'menu/action/add' }, name: translate('popupUsecaseSpaceCreate'), isBig: true }
 		];
 
 		list = list.concat(U.Space.getList()

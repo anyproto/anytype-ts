@@ -1533,7 +1533,7 @@ class UtilMenu {
 
 			if (!flags.noButtons) {
 				buttons.push({ 
-					id: 'add', icon: 'plus', onClick: () => {
+					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
 						this.menuContext?.close();
 

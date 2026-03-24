@@ -84,7 +84,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		if (filter && canAdd) {
 			const children: any[] = [
-				{ id: 'add', icon: 'plus', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter) }
+				{ id: 'add', iconParam: { name: 'plus/menu' }, name: U.String.sprintf(translate('commonCreateObjectWithName'), filter) }
 			];
 
 			if (length) {

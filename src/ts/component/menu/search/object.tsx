@@ -80,18 +80,18 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		if (canAdd && canWrite) {
 			let name = '';
-			let icon = 'plus';
+			let iconParam: any = { name: 'plus/menu' };
 			let arrow = false;
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.String.sprintf(addParam.nameWithFilter, filter);
-				} else 
+				} else
 				if (addParam.name) {
 					name = addParam.name;
 				};
 				if (addParam.icon) {
-					icon = addParam.icon;
+					iconParam = { name: addParam.icon };
 				};
 				if (addParam.arrow) {
 					arrow = true;
@@ -107,7 +107,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					items.unshift({ isDiv: true });
 				};
 
-				items.unshift({ id: 'add', icon, name, arrow, isAdd: true });
+				items.unshift({ id: 'add', iconParam, name, arrow, isAdd: true });
 			};
 		};
 

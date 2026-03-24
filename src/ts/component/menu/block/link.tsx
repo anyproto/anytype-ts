@@ -105,7 +105,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), iconParam: { name: 'plus/menu' } },
 			] 
 		});
 

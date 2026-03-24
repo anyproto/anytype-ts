@@ -57,7 +57,7 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!readonly && relation && !relation.isReadonlyValue && onCreate) {
-			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });
+			ret.push({ id: 'add', iconParam: { name: 'plus/menu' }, name: translate('commonCreateNewObject') });
 		};
 
 		return ret;

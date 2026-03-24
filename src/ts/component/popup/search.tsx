@@ -483,8 +483,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
-			items.push({ id: 'add', name, icon: 'plus', shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
-			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), icon: 'plus', isSmall: true });
+			items.push({ id: 'add', name, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
+			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' }, isSmall: true });
 		};
 
 		return items.map(it => {

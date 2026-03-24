@@ -83,7 +83,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isReadonly) {
 			items.push({ isDiv: true });
-			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), icon: 'plus' });
+			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), iconParam: { name: 'plus/menu' } });
 
 			if (filterItems.length) {
 				items.push({ id: 'clear', name: translate('commonClear'), icon: 'remove' });
