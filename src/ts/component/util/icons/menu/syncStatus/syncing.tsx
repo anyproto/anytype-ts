@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Loading = (props: React.SVGProps<SVGSVGElement>) => (
+const Syncing = (props: React.SVGProps<SVGSVGElement>) => (
 	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<rect x="9" y="2" width="1.5" height="5" rx="0.75" fill="currentColor" fillOpacity="0.8"/>
 		<rect x="14.9492" y="3.63605" width="1.5" height="5" rx="0.75" transform="rotate(45 14.9492 3.63605)" fill="currentColor" fillOpacity="0.1"/>
@@ -13,4 +13,4 @@ const Loading = (props: React.SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
-export default Loading;
+export default Syncing;

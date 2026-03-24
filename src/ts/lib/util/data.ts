@@ -239,13 +239,7 @@ class UtilData {
 	};
 
 	syncStatusIcon (v: I.SyncStatusObject): string {
-		const map: Record<number, string> = {
-			[I.SyncStatusObject.Synced]: 'ok',
-			[I.SyncStatusObject.Error]: 'failed',
-			[I.SyncStatusObject.Queued]: 'queued',
-			[I.SyncStatusObject.Syncing]: 'loading',
-		};
-		return `menu/syncStatus/${map[v] || 'queued'}`;
+		return `menu/syncStatus/${String(I.SyncStatusObject[v] || 'Queued').toLowerCase()}`;
 	};
 
 	/**
