@@ -212,9 +212,9 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				const deleteName = `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
 
 				const move = hasCommon ? { id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true } : null;
-				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` } : null;
-				const clipboardCut = hasClipboard ? { id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` } : null;
-				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` } : null;
+				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` } : null;
+				const clipboardCut = hasClipboard ? { id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` } : null;
+				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` } : null;
 				const copy = hasCommon ? { id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') } : null;
 				const remove = hasCommon ? { id: 'remove', icon: 'remove', name: deleteName, caption: 'Del' } : null;
 				const download = hasFile ? { id: 'download', icon: 'download', name: translate('commonDownload') } : null;

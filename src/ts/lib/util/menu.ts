@@ -314,9 +314,9 @@ class UtilMenu {
 
 		if (hasClipboard) {
 			items = items.concat([
-				{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
-				{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
-				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+				{ id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` },
+				{ id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` },
+				{ id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` },
 			]);
 		};
 		
@@ -1013,7 +1013,7 @@ class UtilMenu {
 			if (isSharePage) {
 				if (inviteLink) {
 					sections.general = [
-						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
 						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
 					];
 				};
@@ -1038,7 +1038,7 @@ class UtilMenu {
 
 				if (!noShare && inviteLink) {
 					sections.general = sections.general.concat([
-						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
 						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
 					]);
 				};

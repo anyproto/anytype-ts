@@ -747,7 +747,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		if (message.content.text) {
-			options.push({ id: 'copy', icon: 'clipboard-copy', name: translate('blockChatCopyText') });
+			options.push({ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('blockChatCopyText') });
 		};
 
 		if (downloadable.length == 1) {
