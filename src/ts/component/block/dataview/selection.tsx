@@ -33,7 +33,7 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 	];
 
 	if (isCollection) {
-		buttons.unshift({ id: 'unlink', name: 'control/dataview/unlink', text: translate('commonUnlink') });
+		buttons.unshift({ id: 'unlink', name: 'common/unlink', text: translate('commonUnlink') });
 	};
 
 	useImperativeHandle(ref, () => ({

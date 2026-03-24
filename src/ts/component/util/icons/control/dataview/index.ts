@@ -6,7 +6,6 @@ import Source from './source';
 import Advanced from './advanced';
 import FilterPlus from './filterPlus';
 import FilterSort from './filterSort';
-import Unlink from './unlink';
 
 registerIcon('control/dataview/dnd', DataviewDnd);
 registerIcon('control/dataview/filter', Filter);
@@ -15,4 +14,3 @@ registerIcon('control/dataview/source', Source);
 registerIcon('control/dataview/advanced', Advanced);
 registerIcon('control/dataview/filterPlus', FilterPlus);
 registerIcon('control/dataview/filterSort', FilterSort);
-registerIcon('control/dataview/unlink', Unlink);

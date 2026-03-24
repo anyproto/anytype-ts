@@ -28,6 +28,7 @@ import Eye1 from './eye1';
 import Preview from './preview';
 import Qr from './qr';
 import TypeLayout from './typeLayout';
+import Unlink from './unlink';
 import Upload from './upload';
 
 registerIcon('common/alert', Alert);
@@ -59,4 +60,5 @@ registerIcon('common/sort', Sort);
 registerIcon('common/sortArrow', SortArrow);
 registerIcon('common/tick', Tick);
 registerIcon('common/typeLayout', TypeLayout);
+registerIcon('common/unlink', Unlink);
 registerIcon('common/upload', Upload);

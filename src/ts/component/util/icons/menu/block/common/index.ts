@@ -8,7 +8,6 @@ import Relation from './relation';
 import Set from './set';
 import Table from './table';
 import TableOfContents from './tableOfContents';
-import Unlink from './unlink';
 
 registerIcon('menu/block/common/bookmark', Bookmark);
 registerIcon('menu/block/common/code', Code);
@@ -19,4 +18,3 @@ registerIcon('menu/block/common/relation', Relation);
 registerIcon('menu/block/common/set', Set);
 registerIcon('menu/block/common/table', Table);
 registerIcon('menu/block/common/tableOfContents', TableOfContents);
-registerIcon('menu/block/common/unlink', Unlink);
