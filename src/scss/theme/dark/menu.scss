@@ -109,7 +109,6 @@
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }
 
-        .icon.close:hover { background-image: url('~img/theme/dark/icon/menu/onboarding/close1.svg'); }
 	}
 
 	/* DataviewCreateBookmark */
@@ -173,7 +172,6 @@
 		.items {
             .sides {
                 .side.right {
-                    .icon.c-syncing { background-image: url('~img/theme/dark/icon/menu/syncStatus/loading.svg'); }
                 }
             }
 		}

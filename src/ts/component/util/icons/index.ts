@@ -39,5 +39,8 @@ import './menu/linkStyle';
 import './menu/relation';
 import './menu/spaceCreate';
 import './menu/table';
+import './menu/help';
+import './menu/widget';
+import './menu/syncStatus';
 import './sync';
 import './type';

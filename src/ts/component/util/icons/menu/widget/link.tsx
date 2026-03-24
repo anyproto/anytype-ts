@@ -1,0 +1,10 @@
+import React from 'react';
+
+const Link = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M4.5 10C4.5 9.58579 4.83579 9.25 5.25 9.25H18.25C18.6642 9.25 19 9.58579 19 10C19 10.4142 18.6642 10.75 18.25 10.75H5.25C4.83579 10.75 4.5 10.4142 4.5 10Z" fill="currentColor"/>
+		<path d="M1 10C1 9.44772 1.44772 9 2 9C2.55228 9 3 9.44772 3 10C3 10.5523 2.55228 11 2 11C1.44772 11 1 10.5523 1 10Z" fill="currentColor"/>
+	</svg>
+);
+
+export default Link;

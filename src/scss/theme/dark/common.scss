@@ -116,13 +116,9 @@ html.themeDark {
 	.icon.widget-all { background-image: url('#{$themePath}/icon/widget/system/all.svg'); }
 
 	.objectManagerWrapper {
-		.icon.checkbox { background-image: url('#{$themePath}/icon/menu/checkbox0.svg') !important; }
-		.icon.checkbox.active { background-image: url('#{$themePath}/icon/menu/checkbox1.svg') !important; }
 	}
 
 	.utilOptionSelect {
-		.icon.checkbox { background-image: url('#{$themePath}/icon/menu/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('#{$themePath}/icon/menu/checkbox1.svg'); }
 	}
 
 	#root-loader {
