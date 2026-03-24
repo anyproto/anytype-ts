@@ -1131,11 +1131,12 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			<div className="wrapMenu">
 				<Icon
 					id={`button-block-menu-${id}`}
+					name="block/menu"
 					className="commonDnd"
 					draggable={true}
-					onDragStart={onDragStart} 
-					onMouseDown={onMenuDown} 
-					onClick={onMenuClick} 
+					onDragStart={onDragStart}
+					onMouseDown={onMenuDown}
+					onClick={onMenuClick}
 				/>
 				{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 			</div>
