@@ -60,7 +60,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { processor } = content;
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
-	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
+	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[processor]}`)}` || 'embed/default';
 	const text = String(content.text || '');
 	const isUnsupported = I.EmbedProcessor[processor] === undefined;
 	const css: any = {};
@@ -1004,12 +1005,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 				{isUnsupported ? (
 					<div className="preview unsupported">
-						<Icon className="iconEmbed" />
+						<Icon name="embed/default" size={40} className="iconEmbed" />
 						<Label text={translate('blockEmbedUnsupported')} />
 					</div>
 				) : (
 					<>
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
+							<Icon name={embedIconName} size={40} className="iconEmbed" />
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
 						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />

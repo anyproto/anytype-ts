@@ -21,4 +21,7 @@ import './banner';
 import './import';
 import './counter';
 import './plus';
+import './block/embed';
+import './menu/embed';
+import './sync';
 import './type';

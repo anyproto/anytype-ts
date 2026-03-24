@@ -175,8 +175,9 @@ class UtilMenu {
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
+			const embedName = U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`);
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.iconParam = { name: `menu/embed/${embedName}` };
 			return it;
 		});
 	};

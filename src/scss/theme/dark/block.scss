@@ -84,35 +84,9 @@
 		.empty { color: var(--color-text-secondary); }
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
 
-		.preview { background-image: url('~img/theme/dark/icon/block/embed/default.svg'); }
 		.preview {
 			.label { color: #464646; }
 		}
-		.preview.isLatex { background-image: url('~img/theme/dark/icon/block/embed/latex.svg'); }
-		.preview.isMermaid { background-image: url('~img/theme/dark/icon/block/embed/mermaid.svg'); }
-		.preview.isChart { background-image: url('~img/theme/dark/icon/block/embed/chart.svg'); }
-		.preview.isYoutube { background-image: url('~img/theme/dark/icon/block/embed/youtube.svg'); }
-		.preview.isVimeo { background-image: url('~img/theme/dark/icon/block/embed/vimeo.svg'); }
-		.preview.isSoundcloud { background-image: url('~img/theme/dark/icon/block/embed/soundcloud.svg'); }
-		.preview.isGoogleMaps { background-image: url('~img/theme/dark/icon/block/embed/googleMaps.svg'); }
-		.preview.isMiro { background-image: url('~img/theme/dark/icon/block/embed/miro.svg'); }
-		.preview.isFigma { background-image: url('~img/theme/dark/icon/block/embed/figma.svg'); }
-		.preview.isOpenStreetMap { background-image: url('~img/theme/dark/icon/block/embed/openStreetMap.svg'); }
-		.preview.isReddit { background-image: url('~img/theme/dark/icon/block/embed/reddit.svg'); }
-		.preview.isFacebook { background-image: url('~img/theme/dark/icon/block/embed/facebook.svg'); }
-		.preview.isInstagram { background-image: url('~img/theme/dark/icon/block/embed/instagram.svg'); }
-		.preview.isTelegram { background-image: url('~img/theme/dark/icon/block/embed/telegram.svg'); }
-		.preview.isGithubGist { background-image: url('~img/theme/dark/icon/block/embed/githubGist.svg'); }
-		.preview.isCodepen { background-image: url('~img/theme/dark/icon/block/embed/codepen.svg'); }
-		.preview.isBilibili { background-image: url('~img/theme/dark/icon/block/embed/bilibili.svg'); }
-		.preview.isExcalidraw { background-image: url('~img/theme/dark/icon/block/embed/excalidraw.svg'); }
-		.preview.isKroki { background-image: url('~img/theme/dark/icon/block/embed/kroki.svg'); }
-		.preview.isGraphviz { background-image: url('~img/theme/dark/icon/block/embed/graphviz.svg'); }
-		.preview.isSketchfab { background-image: url('~img/theme/dark/icon/block/embed/sketchfab.svg'); }
-		.preview.isDrawio { background-image: url('~img/theme/dark/icon/block/embed/drawio.svg'); }
-		.preview.isImage { background-image: url('~img/theme/dark/icon/block/embed/image.svg'); }
-		.preview.isSpotify { background-image: url('~img/theme/dark/icon/block/embed/spotify.svg'); }
-		.preview.isAppleMusic { background-image: url('~img/theme/dark/icon/block/embed/appleMusic.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
 		#value svg { background: none; }

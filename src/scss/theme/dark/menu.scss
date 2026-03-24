@@ -25,15 +25,6 @@
 		.icon.textToggleHeader3 { background-image: url('~img/theme/dark/icon/menu/action/block/text/toggleHeader.svg'); }
 
         .icon.more { background-image: url('~img/theme/dark/icon/menu/action/more0.svg'); }
-		
-		.icon.embed-latex { background-image: url('~img/theme/dark/icon/menu/action/block/embed/latex.svg'); }
-		.icon.embed-soundcloud { background-image: url('~img/theme/dark/icon/menu/action/block/embed/soundcloud.svg'); }
-		.icon.embed-codepen { background-image: url('~img/theme/dark/icon/menu/action/block/embed/codepen.svg'); }
-		.icon.embed-githubGist { background-image: url('~img/theme/dark/icon/menu/action/block/embed/githubGist.svg'); }
-		.icon.embed-graphviz { background-image: url('~img/theme/dark/icon/menu/action/block/embed/graphviz.svg'); }
-		.icon.embed-kroki { background-image: url('~img/theme/dark/icon/menu/action/block/embed/kroki.svg'); }
-		.icon.embed-openStreetMap { background-image: url('~img/theme/dark/icon/menu/action/block/embed/openStreetMap.svg'); }
-		.icon.embed-twitter { background-image: url('~img/theme/dark/icon/menu/action/block/embed/twitter.svg'); }
 
         .icon.color {
 			.inner {
@@ -230,8 +221,8 @@
 
     .menu.menuSyncStatus {
         .icons {
-            .iconWrapper.c-connected::before { background: #294b0e; }
-            .iconWrapper.c-error::before { background: #581f0c; }
+            .iconWrapper.c-accent100 .iconBg { background: #294b0e; }
+            .iconWrapper.c-red .iconBg, .iconWrapper.c-darkRed .iconBg { background: #581f0c; }
         }
 
 		.items {

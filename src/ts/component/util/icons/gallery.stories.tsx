@@ -22,6 +22,11 @@ import './control/cover';
 import './popup/header';
 import './banner';
 import './import';
+import './counter';
+import './plus';
+import './block/embed';
+import './menu/embed';
+import './sync';
 
 import './gallery.stories.scss';
 
@@ -30,6 +35,7 @@ const FOLDER_SIZES: Record<string, number> = {
 	tier: 56,
 	'dataview/view': 56,
 	'popup/header': 56,
+	'embed': 40,
 };
 
 const ICON_SIZES: Record<string, { size?: number; width?: number; height?: number }> = {
@@ -41,6 +47,11 @@ const ICON_SIZES: Record<string, { size?: number; width?: number; height?: numbe
 	'popup/header/anyId': { width: 60, height: 48 },
 	'popup/header/emoji': { width: 60, height: 48 },
 	'control/dataview/dnd': { width: 7, height: 12 },
+	'plus/blockAdd': { size: 19 },
+	'plus/onboarding': { size: 18 },
+	'plus/table': { width: 11, height: 10 },
+	'plus/widgetSection': { size: 12 },
+	'plus/templateBig': { width: 24, height: 25 },
 };
 
 const IconGallery = () => {
