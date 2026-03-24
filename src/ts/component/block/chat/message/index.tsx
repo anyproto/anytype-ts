@@ -259,7 +259,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
-			controls.push({ className: 'more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
 		};
 	};
 

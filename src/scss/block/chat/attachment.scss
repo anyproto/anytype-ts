@@ -11,8 +11,8 @@
 		.iconObject { background-color: var(--color-shape-tertiary); border-radius: 6px; }
 		.info { flex-grow: 1; width: 100%; }
 
-		.icon.remove {
-			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px;
+		.icon.chatButtonsRemove {
+			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px !important; height: 20px !important;
 			background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
 		}
 
@@ -158,7 +158,7 @@
 	}
 
 	.attachment:hover {
-		.icon.remove { opacity: 1; }
+		.icon.chatButtonsRemove { opacity: 1; }
 	}
 }
 

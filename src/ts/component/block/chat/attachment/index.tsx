@@ -409,7 +409,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 		>
 			{content}
-			<Icon name="menu/action/remove" className="remove" onClick={onRemoveHandler} />
+			<Icon name="chat/buttons/remove" size={8} onClick={onRemoveHandler} />
 		</div>
 	);
 

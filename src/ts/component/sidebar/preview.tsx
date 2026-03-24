@@ -101,7 +101,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	let icon = null;
 	if (!isFile) {
 		if (isTask) {
-			icon = <Checkbox readonly={true} value={false} />;
+			icon = <IconObject object={{ name, layout: recommendedLayout }} size={32} iconSize={28} />
 		} else
 		if (isHuman) {
 			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
