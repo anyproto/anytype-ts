@@ -12,7 +12,7 @@
 		.clickable:hover::before { opacity: 1; }
 
 		.clickable {
-			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: $transitionAllCommon; }
+			.icon { width: 20px; height: 20px; transition: $transitionAllCommon; }
 
 			.icon.arrow {  background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
 			.icon.plus { width: 24px; height: 24px; background-size: 20px; opacity: 0; }
@@ -47,12 +47,11 @@
 
 			.item {
 				.inner { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; height: 28px; }
-				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; flex-grow: 1; }
 
 				.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 				.buttons {
-					.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+					.icon { width: 24px; height: 24px; border-radius: 4px; background-size: 20px; z-index: 2; cursor: default; }
 				}
 			}
 

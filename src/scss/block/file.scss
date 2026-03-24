@@ -18,10 +18,8 @@
 			display: inline-block; vertical-align: top; flex-shrink: 0;
 		}
 
-		.iconObject { flex-shrink: 0; }
-
 		.icon.downloading {
-			width: 24px; height: 24px; flex-shrink: 0;
+			width: 24px; height: 24px;
 			background-image: url('~img/icon/vault/spinner.svg'); background-size: 24px; animation: rotate 1.2s infinite linear;
 		}
 

@@ -75,7 +75,7 @@ $transitionSettings: all 0.25s $easeInQuint;
                 .iconObject { background-color: var(--color-shape-highlight-dark); }
             }
 
-            .iconObject { flex-shrink: 0; transition: $transitionSettings; background-color: var(--color-shape-highlight-medium); }
+            .iconObject { transition: $transitionSettings; background-color: var(--color-shape-highlight-medium); }
             .name { font-weight: 500; white-space: nowrap; @include text-overflow-nw; }
         }
 

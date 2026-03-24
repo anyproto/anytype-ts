@@ -8,7 +8,7 @@
 
 	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; max-width: 960px; }
 	> .inner {
-		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
+		> .icon { width: 32px; height: 32px; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
 			> .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 
@@ -89,7 +89,6 @@
 	.head {
 		.side.left { flex-grow: 1; display: flex; align-items: center; gap: 0px 8px; overflow: hidden; }
 		.side.left {
-			> .icon, > .iconObject { flex-shrink: 0; }
 			> .iconObject:not(.noBg) { background-color: var(--color-shape-highlight-medium) !important; }
 			
 			.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }

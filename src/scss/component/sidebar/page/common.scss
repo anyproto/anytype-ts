@@ -25,8 +25,7 @@
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
-		.icon { flex-shrink: 0; }
-			.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
+		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 		.icon.toggle { background-image: url('~img/icon/widget/toggle1.svg'); }
 		.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
@@ -50,7 +49,6 @@
 
 		.side.center { flex-grow: 1; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
 		.side.center {
-			.iconObject { flex-shrink: 0; }
 			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		}
 
@@ -120,7 +118,7 @@
 			.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
 			.label { padding: 0px; flex-grow: 1; }
-			.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; }
+			.icon { width: 24px !important; height: 24px !important; }
 			.icon.more:hover { background-color: unset; }
 		}
 

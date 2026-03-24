@@ -289,7 +289,7 @@ html.bodyAuthDeleted {
 		.items {
 			.item { text-align: left; display: flex; flex-direction: row; align-items: flex-start; gap: 0px 12px; }
 			.item {
-				.icon { width: 56px; height: 56px; flex-shrink: 0; }
+				.icon { width: 56px; height: 56px; }
 				.icon.process { background: url('~img/icon/migration/process.svg'); }
 				.icon.data { background: url('~img/icon/migration/data.svg'); }
 

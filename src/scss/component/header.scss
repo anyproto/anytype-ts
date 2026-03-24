@@ -67,7 +67,7 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
-	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
+	.icon { -webkit-app-region: no-drag; }
 	.icon.commonExpand { display: none; }
 	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
@@ -153,7 +153,6 @@ html.bodyAuthSelect {
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {
-		.iconObject { flex-shrink: 0; }
 		.name { @include text-overflow-nw; color: var(--color-text-secondary); }
 	}
 	.path:hover { border-color: var(--color-shape-secondary); }

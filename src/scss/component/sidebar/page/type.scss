@@ -7,7 +7,6 @@
 			.label { padding: 0px; }
 			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
 
-			.iconObject { flex-shrink: 0; }
 			.editableWrap { flex-grow: 1; @include text-overflow-nw; }
 		}
 	}
@@ -60,10 +59,10 @@
 
 		.item { padding-left: 4px; }
 		.item {
-			.icon { width: 20px; height: 20px; flex-shrink: 0; }
+			.icon { width: 20px; height: 20px; }
 			.icon.commonDnd { cursor: grab; }
 
-			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
+			.iconObject { margin: 0px 6px 0px 0px; }
 
 			.name { @include text-overflow-nw; flex-grow: 1; }
 

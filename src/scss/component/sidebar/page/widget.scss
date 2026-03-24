@@ -32,8 +32,7 @@
 				.button.blank {
 					&:hover { background: none; color: var(--color-text-primary); }
 				}	
-				
-				.icon { flex-shrink: 0; }
+	
 				.icon.more { width: 28px; height: 28px; margin-right: -8px; }
 				.icon.more:hover, .icon.more.hover { color: var(--color-text-primary); }
 			}

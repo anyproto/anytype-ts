@@ -17,7 +17,7 @@
 			gap: 0px 12px; padding: 12px;
 		}
 		.item {
-			.iconObject { flex-shrink: 0; background: var(--color-shape-tertiary); border-radius: 6px; }
+			.iconObject { background: var(--color-shape-tertiary); border-radius: 6px; }
 			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
 			.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
 

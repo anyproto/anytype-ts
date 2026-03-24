@@ -49,11 +49,11 @@
 			}
 
 			.item {
-				.icon { width: 20px; height: 20px; flex-shrink: 0; }
-	
+				.icon { width: 20px; height: 20px; }
+
 				.icon.advanced { width: 28px; height: 28px; background: url('~img/arrow/forward.svg'); opacity: 0; }
 
-				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
 				.iconObject:not(.isParticipant) { background: var(--color-shape-tertiary); border-radius: 8px; }
 				.iconObject.isTask { background: none; }

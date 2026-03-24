@@ -9,8 +9,8 @@
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; }
 		
-		.icon.edit { 
-			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
+		.icon.edit {
+			display: none; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
 			background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px var(--color-shape-highlight-medium);
 			z-index: 1;
 		}
@@ -33,7 +33,7 @@
 			transition: $transitionAllCommon;
 		}
 		.loadMore {
-			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.icon { width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
 			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
@@ -78,7 +78,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: var(--color-text-primary); }
 		.dataviewHead {
-			.icon.source { opacity: 0; flex-shrink: 0; }
+			.icon.source { opacity: 0; }
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
@@ -223,7 +223,7 @@
 					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
 					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 					.icon.advanced { width: 20px; height: 20px; }
-					.icon.relation { width: 20px; height: 20px; flex-shrink: 0; }
+					.icon.relation { width: 20px; height: 20px; }
 					.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/filterValue0.svg'); }
 
 					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }

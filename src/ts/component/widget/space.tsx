@@ -89,7 +89,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onMore = () => {
 		U.Menu.spaceContext(U.Space.getSpaceview(), {
-			element: '#widget-space .nameWrap .arrow',
+			element: '#widget-space .nameWrap .arrowMenuButton',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
@@ -107,7 +107,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
-					<Icon name="arrow/menu/button" size={8} className="arrow" />
+					<Icon name="arrow/menu/button" size={8} color="default" />
 				</div>
 
 				<MemberCnt route={route} />
@@ -120,7 +120,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
-						<Icon name="arrow/menu/button" size={8} className="arrow" />
+						<Icon name="arrow/menu/button" size={8} color="default" />
 					</div>
 
 					<MemberCnt route={analytics.route.widget} />
@@ -158,7 +158,9 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									name="arrow/menu/button" size={8} className="arrow" withBackground={true}
+									name="arrow/menu/button"
+									size={8} 
+									withBackground={true}
 									onClick={onArrow}
 									tooltipParam={item.arrowTooltipParam}
 								/>

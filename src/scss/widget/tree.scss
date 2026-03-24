@@ -24,14 +24,14 @@
 
 		.dropTarget { border-radius: 4px; }
 
-		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; }
+		.iconObject { flex-basis: 20px; margin-right: 6px; }
 
 		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
 		.arrowWrap:hover {
 			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
+		.icon { width: 20px; height: 20px; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
 		.icon.set { background-image: url('~img/icon/widget/set.svg'); }
 		.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
 		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }

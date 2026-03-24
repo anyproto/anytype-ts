@@ -69,7 +69,6 @@
 			}
 			.item:hover::before { background: var(--color-shape-highlight-medium); }
 
-			.icon { flex-shrink: 0; }
 			.icon.arrow { background-size: 6px 10px; background-image: url('~img/icon/popup/settings/forward.svg'); right: 12px; }
 
 			.name { flex-grow: 1; }

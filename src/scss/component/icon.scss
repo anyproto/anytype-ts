@@ -2,7 +2,7 @@
 
 .icon {
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
-	background-position: center center; transition: $transitionAllCommon; position: relative;
+	background-position: center center; transition: $transitionAllCommon; position: relative; flex-shrink: 0;
 }
 .icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px; }
 .icon.withBackground {

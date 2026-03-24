@@ -134,7 +134,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onDoubleClick={onDoubleClick}
 			{...animation}
 		>
-			{SvgComponent ? <SvgComponent style={{ width: w, height: h, minWidth: w, minHeight: h, maxWidth: w, maxHeight: h }} /> : ''}
+			{SvgComponent ? <SvgComponent style={{ width: w, height: h }} /> : ''}
 			{arrow ? <div className="icon arrow" /> : ''}
 			{inner}
 		</motion.div>

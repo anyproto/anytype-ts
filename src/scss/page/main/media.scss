@@ -65,7 +65,6 @@
 			.mediaAudio { padding: 12px 16px; }
 			.mediaAudio {
 				.controls {
-					.icon { flex-shrink: 0; }
 					.icon.play { margin: 0px; }
 					.icon.volume { margin: 0px; }
 
@@ -96,7 +95,7 @@
 		.item.add { display: flex; gap: 0px 6px; align-items: center; padding: 6px 0px; }
 		.item.add {
 			.icon.plus {
-				transition: $transitionAllCommon; flex-shrink: 0; width: 20px; height: 20px;
+				transition: $transitionAllCommon; width: 20px; height: 20px;
 			}
 			.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
 		}

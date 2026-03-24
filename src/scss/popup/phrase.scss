@@ -15,7 +15,7 @@
 		.rows { display: flex; flex-direction: column; gap: 32px 0px; }
 		.row { display: flex; flex-direction: row; gap: 0px 12px; }
 		.row {
-			.icon { width: 56px; height: 56px; background-size: 56px; flex-shrink: 0; }
+			.icon { width: 56px; height: 56px; background-size: 56px; }
 			.icon.gameDie {  background-image: url('~img/icon/popup/phrase/gameDie.png'); }
 			.icon.scan {  background-image: url('~img/icon/popup/phrase/scan.png'); }
 			.icon.safetyBox {  background-image: url('~img/icon/popup/phrase/safetyBox.png'); }

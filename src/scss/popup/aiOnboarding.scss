@@ -709,7 +709,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					width: 20px;
 					height: 20px;
 					cursor: pointer;
-					flex-shrink: 0;
 					margin-left: 12px;
 					background: url('~img/icon/chat/buttons/send.svg');
 					background-size: contain;
@@ -862,7 +861,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				.icon {
 					width: 18px;
 					height: 18px;
-					flex-shrink: 0;
 				}
 
 				.name {

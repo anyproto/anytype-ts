@@ -37,9 +37,9 @@
 
 .cellContent { cursor: default; }
 .cellContent {
-	.iconObject { flex-shrink: 0; cursor: default; }
+	.iconObject { cursor: default; }
 	.icon.downloading {
-		width: 20px; height: 20px; flex-shrink: 0;
+		width: 20px; height: 20px;
 		background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
 	}
 	.icon.clear { display: none; }
@@ -56,7 +56,7 @@
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
-	.icon { width: 20px; height: 20px; flex-shrink: 0; }
+	.icon { width: 20px; height: 20px; }
 	.label { line-height: 20px; }
 }
 
@@ -64,7 +64,6 @@
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
 	.element {
-		.iconObject { flex-shrink: 0; }
 		.flex { align-items: center; gap: 0px 4px; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
@@ -146,8 +145,8 @@
 	.itemWrap {
 		.element { margin: 0px !important; }
 		.element {
-			.icon.objectRemove { 
-				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0; display: block;
+			.icon.objectRemove {
+				width: 12px; height: 20px; margin: 0px 0px 0px 2px; display: block;
 				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
 			}
 			.icon.objectRemove:hover { opacity: 0.8; }

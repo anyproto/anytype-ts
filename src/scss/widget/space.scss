@@ -3,7 +3,6 @@
 .widget.widgetSpace { background: none; }
 .widget.widgetSpace {
 	.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
-	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
 
 	.buttons { padding: 8px; background: var(--color-shape-highlight-light); border-radius: 12px; }
 	.buttons {
@@ -19,7 +18,6 @@
 		.item {
 			.icon { width: 20px; height: 20px; }
 			.icon.withBackground { width: 20px !important; height: 20px !important; }
-			.icon.arrow > svg { width: 8px !important; height: 8px !important; }
 			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
 
 			.label { @include text-overflow-nw; flex-grow: 1; }
@@ -41,7 +39,6 @@
 	.spaceStream {
 		.head { padding: 0px 0px 16px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 		.head {
-			.iconObject { flex-shrink: 0; }
 			.info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
 
 			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; }

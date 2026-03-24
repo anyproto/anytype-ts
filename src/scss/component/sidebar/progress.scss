@@ -12,7 +12,7 @@
 	}
 	.head {
 		.icon.arrow {
-			width: 20px; height: 20px; flex-shrink: 0;
+			width: 20px; height: 20px;
 			background-image: url('~img/arrow/sidebarProgress.svg');
 			transform: rotateZ(180deg); transition: transform 0.2s ease;
 		}

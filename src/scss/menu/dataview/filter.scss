@@ -17,14 +17,14 @@
 
 			.icon.filterIcon { width: 20px; height: 20px; margin-right: 0px; }
 
-			.icon.relation { width: 20px; height: 20px; flex-shrink: 0; }
+			.icon.relation { width: 20px; height: 20px; }
 
 			.filterContent { display: flex; gap: 6px; align-items: center; @include text-overflow-nw; }
 			.value { @include text-overflow-nw; }
 
 			.label.condition { text-transform: lowercase; }
 
-			.icon.more { display: none; width: 20px; height: 20px; flex-shrink: 0; right: 16px; }
+			.icon.more { display: none; width: 20px; height: 20px; right: 16px; }
 
 			&:hover,
 			&.hover {

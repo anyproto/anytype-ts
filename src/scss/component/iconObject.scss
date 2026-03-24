@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; }
+.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; flex-shrink: 0; }
 .iconObject {
 	img { pointer-events: none; }
 

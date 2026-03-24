@@ -25,7 +25,6 @@
 
 					.relationSelect { position: relative; display: flex; align-items: center; gap: 0px 6px; }
 					.relationSelect {
-						.iconObject { flex-shrink: 0; }
 						.label { @include text-common; font-weight: 400; padding: 0px; margin: 0px; @include text-overflow-nw; color: var(--color-text-primary); }
 					}
 
@@ -73,7 +72,6 @@
 						.select { justify-content: space-between; }
 					}
 
-					.icon.more { flex-shrink: 0; }
 				}
 			}
 			.rule.isReadonly {

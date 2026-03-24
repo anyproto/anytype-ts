@@ -8,7 +8,7 @@
 
 	.attachment {
 		.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 12px; width: 100%; }
-		.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
+		.iconObject { background-color: var(--color-shape-tertiary); border-radius: 6px; }
 		.info { flex-grow: 1; width: 100%; }
 
 		.icon.remove {
@@ -58,7 +58,6 @@
 				.side.left {
 					.link { @include text-small; color: var(--color-text-secondary); display: flex; justify-content: flex-start; align-items: center; gap: 0px 6px; min-width: 0; }
 					.link {
-						.iconObject { flex-shrink: 0; }
 						.source { flex-grow: 1; width: 0; @include text-overflow-nw; }
 					}
 					.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }

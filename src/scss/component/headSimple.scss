@@ -28,7 +28,6 @@
 
 	.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; justify-content: stretch; }
 	.titleWrap {
-		> .iconObject { flex-shrink: 0; }
 		> .title { @include text-header1; }
 	}
 
