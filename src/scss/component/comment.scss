@@ -159,9 +159,6 @@
 			.icon.plus {
 				border-radius: 50%; background-color: var(--color-shape-secondary);
 			}
-			.icon.slash { }
-			.icon.emoji { }
-			.icon.mention { }
 
 			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); }
 
@@ -254,8 +251,6 @@
 		content: ''; position: absolute; left: 0px; top: 0px;
 		width: 20px; height: 20px; background-size: 20px 20px; background-repeat: no-repeat;
 	}
-	.commentEditor-li-unchecked::before { }
-	.commentEditor-li-checked::before { }
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
 	.commentEditor-attachment { padding: 8px 8px 4px 0px; }
@@ -472,7 +467,6 @@
 		}
 
 		&.isChecked {
-			.checkboxMark { }
 			span { text-decoration: line-through; color: var(--color-text-secondary); }
 		}
 	}

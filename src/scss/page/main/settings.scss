@@ -62,12 +62,8 @@
         > .item:last-child { border-bottom: 0; }
         > .item.red { color: var(--color-red); }
         > .item {
-            .icon.arrow { }
             .select { margin-right: -8px; }
             .button { border: 0px; margin-right: -8px; }
-        }
-        > .item.redeemCode {
-            .icon.arrow { }
         }
     }
     .actionItems:last-child { margin-bottom: 0px; }
@@ -218,7 +214,6 @@
                     > .item {
 						.icon { width: 20px; height: 20px; }
                         .icon.arrow { width: 6px; height: 10px; }
-                        .icon.arrow.down { }
 
                         .sides { display: flex; justify-content: space-between; gap: 0px 16px; }
                         .sides:not(.alignTop) { align-items: center; }
@@ -512,8 +507,6 @@
             .title { margin-bottom: 0px; }
 
             .icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
-            .icons {
-            }
         }
 
         .section { margin-bottom: 36px; }
@@ -682,8 +675,6 @@
                     .title { @include text-common; font-weight: 500; margin-bottom: 0px; }
                     .label { @include text-small; color: var(--color-text-secondary); }
                 }
-                .side.right {
-                }
             }
         }
     }
@@ -840,9 +831,6 @@
                 .icon.help { width: 14px; height: 14px; transition: $transitionAllCommon; }
             }
             .btn:hover { color: var(--color-text-primary); }
-            .btn:hover {
-                .icon.help { }
-            }
         }
 
         .list {

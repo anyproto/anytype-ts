@@ -37,48 +37,10 @@
     }
 }
 
-/* PageMainHistory */
-
-.pageMainHistory {
-}
-
-/* PageMainArchive */
-
-.pageMainArchive,
-.pageSettingsArchive {
-}
-
 /* PageMainSettings */
 .settingsPageContainer {
-	.pageSettingsSpaceIndex, 
-	.pageSettingsSpaceIndexEmpty {
-		.spaceButtons {
-			.btn {
-			}
-		}
-
-		.sections {
-			.section {
-				.sectionContent {
-					> .item {
-					}
-				}
-			}
-		}
-	}
-
 	.pageSettingsSpaceIndex .sectionIntegrations .item:hover,
 	.pageSettingsPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
-
-	.pageSettingsImportNotion {
-		.btn {
-			.icon.help { }
-		}
-		.btn:hover {
-			.icon.help { }
-		}
-	}
-
 
 	.pageSettingsPersonal {
 		.colorScheme {
@@ -112,15 +74,6 @@
 	}
 
 	.pageSettingsMembership {
-		.membershipIntro {
-			.tiers {
-				.tier {
-					.features {
-						.label:before { }
-					}
-				}
-			}
-		}
 		.membershipPurchased {
 			.section {
 				.item { background: var(--color-bg-secondary); }
@@ -138,25 +91,5 @@
 
 	.pageSettingsSpaceNotifications {
         .section { display: flex; flex-direction: column; gap: 8px 0px; }
-        .section {
-            &.options {
-                .item.selected {
-                    &:after { }
-                }
-            }
-
-            &.chats {
-                .side.right {
-                }
-            }
-        }
     }
-
-	> .pageSettingsIndex,
-	> .pageSettingsAccount {
-		.sections {
-			.section {
-			}
-		}
-	}
 }

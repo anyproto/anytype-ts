@@ -31,7 +31,10 @@
 		.bubble.withLayout { max-width: 540px; }
 	}
 
-	.icon.status { width: 12px; height: 12px; }
+	.icon.status { width: 12px !important; height: 12px !important; color: inherit; }
+	.icon.status {
+		> svg { width: 100%; height: 100%; }
+	}
 	.icon.status.isHidden { display: none; }
 
 	.bubble { 

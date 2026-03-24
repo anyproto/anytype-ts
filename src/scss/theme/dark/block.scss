@@ -13,12 +13,6 @@
 }
 
 .blocks {
-    /* Common */
-
-    .block {
-        .icon.commonDnd { }
-    }
-
     /* BlockFile */
 
     .block.blockFile {
@@ -117,13 +111,6 @@
 
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
-
-			.attachments {
-				.attachment {
-					&.isSyncing {
-					}
-				}
-			}
 		}
 
 

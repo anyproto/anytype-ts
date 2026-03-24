@@ -49,11 +49,6 @@
 			.inner { width: 100%; display: flex; align-items: center; }
 			.inner {
 				.icon { width: 16px; height: 16px; margin-right: 4px; vertical-align: top; }
-				.icon.check { }
-				.icon.check.active { }
-				.icon.hl { }
-				.icon.bullet { }
-				.icon.toggle { }
 
 				.number {
 					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: var(--color-text-secondary); margin-right: 4px; flex-shrink: 0;

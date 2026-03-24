@@ -46,9 +46,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
+		rootId, block, subId, readonly, isPopup, getReplyContent, loadDepsAndReplies, getMessages,
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
-		highlightMessage, analyticsChatId, reloadAndScrollToBottom, isBottom,
+		analyticsChatId, reloadAndScrollToBottom, isBottom,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);

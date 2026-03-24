@@ -166,9 +166,6 @@
 				.item {
 					.select { border: 0px; padding: 0px; display: block; width: 100%; }
 					.select:hover, .select.isFocused { background: none; }
-					.select {
-						.icon.arrow { }
-					}
 					.select.checkboxValue {
 						.item { @include text-common; }
 						.icon.arrow { right: -8px !important; }

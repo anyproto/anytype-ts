@@ -32,6 +32,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 	const nodeRef = useRef(null);
+	const syncIconName = `chat/syncStatus/${I.SyncStatusObject[syncStatus].toLowerCase()}`;
 	const src = useRef('');
 
 	if (isDownloadingFile) {
@@ -62,11 +63,13 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="clickable" onClick={e => onOpen(e)}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					{isDownloadingFile ? (
-						<Icon className="downloading" />
-					) : (
-						<Icon onClick={onSyncStatusClick} className="syncStatus" />
-					)}
+					{isDownloadingFile || syncIconName ? (
+						<Icon 
+							name={syncIconName || 'chat/syncStatus/syncing'} 
+							className="syncStatus" 
+							onClick={onSyncStatusClick} 
+						/>
+					) : ''}
 				</div>
 
 				<div className="info">
@@ -175,11 +178,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					style={style}
 				/>
 
-				{(syncStatus != I.SyncStatusObject.Synced) ? (
-					<Icon className="downloading" />
-				) : (
-					<Icon onClick={onSyncStatusClick} className="syncStatus" />
-				)}
+				{syncIconName ? <Icon name={syncIconName} className="syncStatus" onClick={onSyncStatusClick} /> : ''}
 			</div>
 		);
 	};

@@ -17,6 +17,7 @@
 
 			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
 			.name {
+				.icon.hasSvg { color: inherit; }
 				&:hover { color: var(--color-text-primary); }
 			}
 
@@ -27,11 +28,12 @@
 			.buttons {
 				.button.blank { border: 0px; padding: 5px 0px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 				.button.blank {
+					.icon.hasSvg { color: inherit; }
 					&:hover { background: none; color: var(--color-text-primary); }
 				}	
 	
-				.icon.more { width: 28px; height: 28px; margin-right: -8px; }
-				.icon.more:hover, .icon.more.hover { color: var(--color-text-primary); }
+				.icon.commonMore { width: 28px !important; height: 28px !important; margin-right: -8px; }
+				.icon.commonMore:hover, .icon.commonMore.hover { color: var(--color-text-primary); }
 			}
 
 			&:hover, &.active {

@@ -39,7 +39,6 @@
 		}
 		.arrowWrapper {
 			.icon { width: 20px; height: 20px; }
-			.icon.arrow { }
 			.icon.arrow.down { transform: rotate(180deg); }
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
