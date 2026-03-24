@@ -445,9 +445,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const setErrorIcon = () => {
 		const node = $(nodeRef.current);
-		const svgMarkup = getIconSvg('type/image', { style: { width: size, height: size } });
+		const svgMarkup = getIconSvg('type/image', { style: { width: iconSize, height: iconSize } });
 
-		node.append(`<div class="iconError c${IconSize[size]}">${svgMarkup}</div>`).addClass('withImageError');
+		node.append(`<div class="iconError c${iconSize}">${svgMarkup}</div>`).addClass('withImageError');
 	};
 
 	const unsetErrorIcon = () => {
