@@ -100,11 +100,12 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 	};
 
 	const getStyles = () => {
+		const styleNames = { [I.LinkCardStyle.Text]: 'text', [I.LinkCardStyle.Card]: 'card' };
 		return [
-			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
-			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
+			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 		].map((it: any) => {
-			it.icon = `linkStyle${it.id}`;
+			it.iconParam = { name: `menu/linkStyle/${styleNames[it.id]}` };
 			return it;
 		});
 	};

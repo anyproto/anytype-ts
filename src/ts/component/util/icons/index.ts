@@ -33,5 +33,6 @@ import './menu/mark';
 import './default';
 import './menu/align/horizontal';
 import './menu/align/vertical';
+import './menu/linkStyle';
 import './sync';
 import './type';
