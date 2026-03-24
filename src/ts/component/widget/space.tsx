@@ -34,7 +34,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const buttons = [
 		canWrite ? {
 			id: 'create',
-			iconName: 'common/edit',
+			iconName: 'menu/action/createObject',
 			name: translate('commonCreate'),
 			withArrow: true,
 			arrowTooltipParam: {
