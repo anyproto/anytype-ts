@@ -219,7 +219,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{spaceview.isShared && !spaceview.isOneToOne ? (
 				<div className="flex">
 					<div className="side left">
-						<Icon className="joinSpace" />
+						<Icon name="plus/joinSpace" className="joinSpace" />
 						<Label text={translate('menuPublishLabelJoinSpace')} />
 					</div>
 					<div className="value">

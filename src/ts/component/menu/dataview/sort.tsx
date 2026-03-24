@@ -410,7 +410,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseLeave={() => setHover()}
 					style={param.style}
 				>
-					<Icon className={item.id === 'add' ? 'plus' : 'remove'} />
+					<Icon name={item.id === 'add' ? 'plus/menu' : undefined} className={item.id === 'add' ? 'plus' : 'remove'} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

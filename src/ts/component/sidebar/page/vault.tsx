@@ -281,7 +281,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		return (
 			<Icon
 				id="button-create-space"
-				className="plus" withBackground={!vaultIsMinimal}
+				name="plus/menu" className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),

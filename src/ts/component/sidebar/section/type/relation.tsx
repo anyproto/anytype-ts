@@ -371,9 +371,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon 
-					id="section-relation-plus" 
-					className="plus" withBackground={true}
+				<Icon
+					id="section-relation-plus"
+					name="plus/menu" className="plus" withBackground={true}
 					tooltipParam={{ text: translate('commonAddRelation') }}
 					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
 				/>

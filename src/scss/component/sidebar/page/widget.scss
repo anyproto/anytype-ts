@@ -13,7 +13,7 @@
 		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 4px; }
 		> .nameWrap {
 			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
-			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
+			.icon.plus { width: 12px; height: 12px; }
 
 			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
 			.name {
@@ -31,9 +31,6 @@
 				.button.blank { border: 0px; padding: 5px 0px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 				.button.blank {
 					&:hover { background: none; color: var(--color-text-primary); }
-					&:hover {
-						.icon.plus { background-image: url('~img/icon/plus/widgetSection1.svg'); }
-					}
 				}	
 				
 				.icon { flex-shrink: 0; }

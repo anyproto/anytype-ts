@@ -1,0 +1,22 @@
+import { registerIcon } from '../registry';
+import Menu from './menu';
+import Comment from './comment';
+import Template from './template';
+import TemplateBig from './templateBig';
+import Table from './table';
+import WidgetSection from './widgetSection';
+import Space from './space';
+import JoinSpace from './joinSpace';
+import Onboarding from './onboarding';
+import BlockAdd from './blockAdd';
+
+registerIcon('plus/menu', Menu);
+registerIcon('plus/comment', Comment);
+registerIcon('plus/template', Template);
+registerIcon('plus/templateBig', TemplateBig);
+registerIcon('plus/table', Table);
+registerIcon('plus/widgetSection', WidgetSection);
+registerIcon('plus/space', Space);
+registerIcon('plus/joinSpace', JoinSpace);
+registerIcon('plus/onboarding', Onboarding);
+registerIcon('plus/blockAdd', BlockAdd);

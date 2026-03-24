@@ -234,7 +234,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			onClick={e => onClick(e, item)}
 			style={item.style}
 		>
-			<Icon className="plus" />
+			<Icon name="plus/menu" className="plus" />
 			<div className="name">{item.name}</div>
 		</div>
 	);

@@ -381,7 +381,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	};
 
 	if (options && canAdd && !isReadonlyRelation) {
-		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
+		const add = <Icon key="optionAdd" name="plus/menu" className="add" onClick={onOptionAdd} />;
 		withMore ? options.unshift(add) : options.push(add);
 	};
 

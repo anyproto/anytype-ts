@@ -43,8 +43,6 @@
 			.icon { background-image: url('~img/theme/dark/arrow/loadMore1.svg'); }
 		}
 
-        .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
-        .icon.plus:hover { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
 
 		.dateSelect {
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/dateSelect.svg'); border-radius: 4px; }
@@ -60,14 +58,6 @@
             }
         }
 
-        .viewContent.viewGrid,
-		.viewContent.viewList {
-			.cell.add {
-				.btn:hover {
-					.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
-				}
-			}
-		}
 
         .viewContent.viewGrid {
 			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
@@ -77,10 +67,7 @@
 			.cellHead.isDragging::after { background-color: rgba(223, 221, 208, 0.04); }
 
 			.cellHead.last::after, .cellHead.active::after { background: none; }
-			.cellHead.last:hover, .cellHead.last.active {
-				.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
-			}
-
+	
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
@@ -88,9 +75,6 @@
             .cardContent { background: var(--color-bg-secondary); }
 			.card.add { background: var(--color-bg-secondary); }
 
-			.card.add:hover {
-                .icon { background-image: url('~img/theme/dark/icon/plus/column1.svg'); }
-            }
         }
     }
 
@@ -165,8 +149,7 @@
 
 	/* BlockTable */
 
-	.block.blockTable { 
-		.plusButton .icon { background-image: url('~img/theme/dark/icon/table/plus.svg'); }
+	.block.blockTable {
 
 		.cell {
 			.icon.menu:hover {

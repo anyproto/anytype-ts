@@ -73,10 +73,7 @@
 			}
 
 			&.last::after, &.hover::after { background: none; }
-			&.last:hover, &.last.hover {
-				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 			}
-		}
 
 		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
 		.cellFoot {

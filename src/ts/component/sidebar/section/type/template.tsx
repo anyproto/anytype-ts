@@ -135,9 +135,9 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 			<div className="titleWrap">
 				<Title text={translate('commonTemplates')} />
 				{!readonly ? (
-					<Icon 
-						id="section-relation-plus" 
-						className="plus" withBackground={true}
+					<Icon
+						id="section-relation-plus"
+						name="plus/menu" className="plus" withBackground={true}
 						tooltipParam={{ text: translate('commonAddTemplate') }}
 						onClick={e => onAdd()} 
 					/>

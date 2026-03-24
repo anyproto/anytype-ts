@@ -173,7 +173,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 					withName={true}
 					placeholder={translate('commonUncategorized')}
 				/>
-				{canCreate ? <Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} onClick={onCreateHandler} /> : ''}
+				{canCreate ? <Icon name="plus/menu" className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} onClick={onCreateHandler} /> : ''}
 			</div>
 
 			<div id={`item-${id}-children`} className="items">

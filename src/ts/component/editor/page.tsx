@@ -2710,7 +2710,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			
 			<div id={`editor-${rootId}`} className="editor">
 				<div className="blocks">
-					<Icon id="button-block-add" className="buttonAdd" onClick={onAdd} />
+					<Icon id="button-block-add" name="plus/blockAdd" className="buttonAdd" size={19} onClick={onAdd} />
 
 					<PageHeadEditor 
 						{...props} 

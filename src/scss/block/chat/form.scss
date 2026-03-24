@@ -10,8 +10,7 @@
 	> .inner {
 		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
-		> .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
-		> .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+			> .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 
 		> .form { width: 100%; }
 	}

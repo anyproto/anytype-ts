@@ -38,7 +38,6 @@
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options0.svg'); }
-		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		.icon.collapse { background-image: url('~img/icon/widget/collapse0.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
@@ -47,7 +46,6 @@
 		.iconWrap.active {
 			.icon.back { background-image: url('~img/icon/widget/back1.svg'); }
 			.icon.options { background-image: url('~img/icon/widget/options1.svg'); }
-			.icon.plus { background-image: url('~img/icon/widget/plus1.svg'); }
 			.icon.collapse { background-image: url('~img/icon/widget/collapse1.svg'); }
 		}
 

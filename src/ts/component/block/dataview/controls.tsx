@@ -571,9 +571,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								))}
 
 								{allowedView ? (
-									<Icon 
-										id={`button-${block.id}-view-add`} 
-										className="plus" withBackground={true}
+									<Icon
+										id={`button-${block.id}-view-add`}
+										name="plus/menu" className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -587,7 +587,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						ref={filterRef}
 						className="underlined"
 						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ name: 'control/dataview/search' }}
+						iconParam={{ name: 'common/search' }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}
 						onIconClick={onFilterShow}

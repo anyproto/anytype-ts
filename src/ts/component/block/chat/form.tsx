@@ -1751,6 +1751,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				<Icon
 					id={`button-${block.id}-attachment`}
+					name="plus/menu"
 					className="plus"
 					onClick={onAttachment}
 					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}

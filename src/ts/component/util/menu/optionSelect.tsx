@@ -679,7 +679,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					onClick={e => onClick(e, item)}
 					onMouseEnter={e => onMouseEnter(e, item)}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);

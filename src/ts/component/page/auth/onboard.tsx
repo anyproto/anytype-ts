@@ -237,7 +237,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			additional = (
 				<div className="learnMore animation" onClick={onLearnMore}>
-					<Icon />
+					<Icon name="plus/onboarding" size={18} />
 					<Label text={translate('commonLearnMore')} />
 				</div>
 			);

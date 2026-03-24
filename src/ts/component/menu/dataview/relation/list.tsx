@@ -366,7 +366,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('commonAddRelation')}</div>
 					</div>
 				</div>

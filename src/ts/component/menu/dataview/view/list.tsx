@@ -319,7 +319,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('menuDataviewViewListAddView')}</div>
 					</div>
 				</div>

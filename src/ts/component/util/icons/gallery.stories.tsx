@@ -40,6 +40,7 @@ const ICON_SIZES: Record<string, { size?: number; width?: number; height?: numbe
 	'import/text': { size: 40 },
 	'popup/header/anyId': { width: 60, height: 48 },
 	'popup/header/emoji': { width: 60, height: 48 },
+	'control/dataview/dnd': { width: 7, height: 12 },
 };
 
 const IconGallery = () => {

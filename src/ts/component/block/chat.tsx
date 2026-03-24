@@ -8,6 +8,7 @@ import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
+import { Icon } from 'Component';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -475,7 +476,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 						}}
 					>
-						<div className="icon plus" />
+						<Icon name="plus/menu" className="plus" />
 					</div>
 				</div>
 			);

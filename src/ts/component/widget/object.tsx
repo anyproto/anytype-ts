@@ -248,6 +248,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					{canAdd ? (
 						<div className="buttons">
 							<Icon
+								name="plus/menu"
 								className="plus"
 								tooltipParam={{ text: translate('commonCreateNewObject') }}
 								onClick={e => onCreate(e, item)}

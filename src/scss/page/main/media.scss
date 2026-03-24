@@ -95,14 +95,13 @@
 
 		.item.add { display: flex; gap: 0px 6px; align-items: center; padding: 6px 0px; }
 		.item.add {
-			.icon.plus { 
-				background-image: url('~img/icon/plus/menu0.svg'); transition: $transitionAllCommon; flex-shrink: 0; width: 20px; height: 20px; 
+			.icon.plus {
+				transition: $transitionAllCommon; flex-shrink: 0; width: 20px; height: 20px;
 			}
 			.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
 		}
 		.item.add:hover {
-			.name { color: var(--color-text-primary); } 
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+			.name { color: var(--color-text-primary); }
 		}
 	}
 }
