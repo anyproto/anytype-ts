@@ -110,10 +110,10 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 	const styleIcon = (() => {
 		switch (blockStyle) {
-			case 'header1': return 'header1';
-			case 'header2': return 'header2';
-			case 'header3': return 'header3';
-			default: return 'text';
+			case 'header1':
+			case 'header2':
+			case 'header3': return 'menu/block/text/header';
+			default: return 'menu/block/text/paragraph';
 		};
 	})();
 
@@ -122,7 +122,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section first">
 				<Icon
 					id="button-style"
-					className={[ styleIcon, 'blockStyle' ].join(' ')} withBackground={true}
+					name={styleIcon}
+					className="blockStyle" withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }}
 					onMouseDown={onStyleClick}
@@ -173,7 +174,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			<div className="section last">
 				<Icon
 					id="button-list"
-					className={[ 'list', 'blockStyle' ].join(' ')} withBackground={true}
+					name="menu/block/text/bulleted"
+					className="blockStyle" withBackground={true}
 					arrow={true}
 					tooltipParam={{ text: translate('blockNameBulleted') }}
 					onMouseDown={onListClick}

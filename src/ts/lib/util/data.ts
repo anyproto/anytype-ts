@@ -135,13 +135,9 @@ class UtilData {
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default: icon = this.blockTextClass(v); break;
-					case I.TextStyle.Code: icon = 'kbd'; break;
+					default: icon = this.blockTextIcon(v); break;
+					case I.TextStyle.Code: icon = 'menu/mark/code'; break;
 				};
-				break;
-
-			case I.BlockType.Div:
-				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;

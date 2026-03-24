@@ -394,12 +394,13 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		<div className="flex">
 			{canTurn ? (
 				<div className="section">
-					<Icon 
-						id={`button-${blockId}-style`} 
-						arrow={true} 
-						tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }} 
-						className={[ styleIcon, 'blockStyle' ].join(' ')} 
-						onMouseDown={e => onMark(e, 'style')} 
+					<Icon
+						id={`button-${blockId}-style`}
+						name={styleIcon}
+						arrow={true}
+						tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }}
+						className="blockStyle"
+						onMouseDown={e => onMark(e, 'style')}
 					/>
 				</div>
 			) : ''}
