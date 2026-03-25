@@ -730,7 +730,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
 							onClick={onSendClick}
 						>
-							<Icon name="chat/buttons/send" className="send" />
+							<Icon name="comment/send" className="send" color="white" />
 						</div>
 					)}
 					</div>
