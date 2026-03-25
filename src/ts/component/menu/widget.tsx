@@ -101,14 +101,14 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (canWrite && isPinned) {
 			const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
-			const icon = isSystem ? 'remove' : 'unpin';
+			const iconName = isSystem ? 'menu/action/remove' : 'menu/action/unpin';
 
-			actionChildren.push({ id: 'removeWidget', name, icon });
+			actionChildren.push({ id: 'removeWidget', name, iconParam: { name: iconName } });
 		};
 
 		if (!isSystem && canWrite) {
 			if (!isType) {
-				actionChildren.push({ id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true });
+				actionChildren.push({ id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true });
 				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
 			};
 

@@ -1829,7 +1829,7 @@ class UtilMenu {
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
+		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 
 		let options: any[] = [];
 		let value = '';
