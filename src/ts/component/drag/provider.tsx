@@ -240,7 +240,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				};
 			};
 
-			const contextObject = S.Detail.get(rootId, contextId, [ 'layout' ], true);
+			const detailsId = (data && (data.dropType == I.DropType.Widget)) ? S.Block.widgets : rootId;
+			const contextObject = S.Detail.get(detailsId, contextId, [ 'layout' ], true);
 			const isSetLayout = U.Object.isInSetLayouts(contextObject.layout);
 
 			if (allPaths.length && isSetLayout) {
