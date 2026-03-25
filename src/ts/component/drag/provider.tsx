@@ -228,7 +228,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			if (allPaths.length && !isSetLayout) {
 				let contextId = rootId;
 
-				if (data && (data.dropType == I.DropType.Menu)) {
+				if (data && ((data.dropType == I.DropType.Menu) || (data.dropType == I.DropType.Widget))) {
 					contextId = targetId;
 					targetId = '';
 					position.current = I.BlockPosition.Bottom;
