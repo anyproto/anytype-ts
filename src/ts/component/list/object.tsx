@@ -1,14 +1,16 @@
-import React, { forwardRef, useImperativeHandle, useEffect, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
+import { IconObject, Pager, ObjectName, ObjectDescription, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
 import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 
 interface Column {
 	relationKey: string;
 	name: string;
 	className?: string;
+	width?: string;
 	isObject?: boolean;
 	isCell?: boolean;
+	withDescription?: boolean;
 	mapper?: (value : any) => any;
 };
 
@@ -21,6 +23,18 @@ interface Props {
 	filters?: I.Filter[];
 	relationKeys?: string[];
 	route: string;
+	selectable?: boolean;
+	selectedIds?: string[];
+	ignoreArchived?: boolean;
+	skipLayoutFilter?: boolean;
+	withDescription?: boolean;
+	iconSize?: number;
+	emptyText?: string;
+	defaultSortId?: string;
+	defaultSortType?: I.SortType;
+	onSelect?: (id: string, e: MouseEvent) => void;
+	onSelectAll?: () => void;
+	isAllSelected?: boolean;
 };
 
 interface ListObjectRefProps {
@@ -29,7 +43,7 @@ interface ListObjectRefProps {
 
 const PREFIX = 'listObject';
 
-const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any) => {
+const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, selectable, isSelected, onSelect, iconSize }: any) => {
 	const cn = [ 'row' ];
 
 	if (U.Object.isTaskLayout(item.layout) && item.isDone) {
@@ -53,6 +67,12 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any)
 			onContextMenu={e => onContext(e, item.id)}
 			style={css}
 		>
+			{selectable ? (
+				<div className={[ 'cell', 'cellCheck', (isSelected ? 'isChecked' : '') ].join(' ')}>
+					<Checkbox value={isSelected} onChange={e => onSelect(item.id, e)} />
+				</div>
+			) : ''}
+
 			{columnList.map(column => {
 				const cn = [ 'cell', `c-${column.relationKey}` ];
 				const cnc = [ 'cellContent' ];
@@ -79,12 +99,30 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any)
 
 					if (!object._empty_) {
 						onClick = e => U.Object.openEvent(e, object);
-						content = (
-							<div className="flex">
-								<IconObject object={object} />
-								<ObjectName object={object} />
-							</div>
-						);
+
+						const iconProps: any = {};
+						if (iconSize && (column.relationKey == 'name')) {
+							iconProps.size = iconSize;
+						};
+
+						if (column.withDescription) {
+							content = (
+								<div className="flex">
+									<IconObject object={object} {...iconProps} />
+									<div className="info">
+										<ObjectName object={object} />
+										<ObjectDescription object={object} />
+									</div>
+								</div>
+							);
+						} else {
+							content = (
+								<div className="flex">
+									<IconObject object={object} {...iconProps} />
+									<ObjectName object={object} />
+								</div>
+							);
+						};
 					};
 				} else
 				if (column.isCell) {
@@ -127,18 +165,30 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	filters = [],
 	relationKeys = [],
 	route = '',
+	selectable = false,
+	selectedIds = [],
+	ignoreArchived = true,
+	skipLayoutFilter = false,
+	withDescription = false,
+	iconSize,
+	emptyText = '',
+	defaultSortId,
+	defaultSortType,
+	onSelect,
+	onSelectAll,
+	isAllSelected = false,
 }, ref) => {
 
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const { dateFormat } = S.Common;
 
 	const getColumns = (): Column[] => {
-		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(columns || []);
+		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true, withDescription } ] as any[]).concat(columns || []);
 	};
 
 	const columnList = getColumns();
-	const [ sortType, setSortType ] = useState(I.SortType.Asc);
-	const [ sortId, setSortId ] = useState(columnList.length ? columnList[0].relationKey : '');
+	const [ sortType, setSortType ] = useState(defaultSortType ?? I.SortType.Asc);
+	const [ sortId, setSortId ] = useState(defaultSortId ?? (columnList.length ? columnList[0].relationKey : ''));
 
 	const getKeys = () => {
 		return J.Relation.default.concat(getColumns().map(it => it.relationKey)).concat(relationKeys || []);
@@ -151,9 +201,13 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const getData = (page: number, callBack?: (message: any) => void) => {
 		const limit = J.Constant.limit.listObject;
 		const offset = (page - 1) * limit;
-		const fl = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-		].concat(filters || []);
+		const fl = [];
+
+		if (!skipLayoutFilter) {
+			fl.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
+		};
+
+		fl.push(...(filters || []));
 
 		S.Record.metaSet(subId, '', { offset });
 
@@ -166,6 +220,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			filters: fl,
 			offset,
 			limit,
+			ignoreArchived,
 		}, callBack);
 	};
 
@@ -215,7 +270,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const items = getItems();
 	const widths = [ 'minmax(0, 1fr)' ];
 	for (let i = 1; i < columnList.length; ++i) {
-		widths.push(`${60 / (columnList.length - 1)}%`);
+		widths.push(columnList[i].width || `${60 / (columnList.length - 1)}%`);
 	};
 
 	const css = { gridTemplateColumns: widths.join(' ') };
@@ -238,7 +293,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		};
 	}, []);
 
-	useEffect(() => getData(1), [ sortId, sortType ]);
+	useEffect(() => getData(1), [ sortId, sortType, JSON.stringify(filters) ]);
 
 	useImperativeHandle(ref, () => ({
 		getData,
@@ -248,11 +303,25 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		<div className="listObject">
 			<div className="table">
 				<div className="row isHead" style={css}>
+					{selectable ? (
+						<div className="cell cellCheck">
+							<Checkbox value={isAllSelected} onChange={() => onSelectAll?.()} />
+						</div>
+					) : ''}
 					{columnList.map(column => {
+						const cn = [ 'cell', 'isHead' ];
 						const arrow = sortId == column.relationKey ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 
+						if (arrow) {
+							cn.push('isSorted');
+						};
+
 						return (
-							<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => onSort(column.relationKey)}>
+							<div 
+								key={`head-${column.relationKey}`} 
+								className={cn.join(' ')} 
+								onClick={() => onSort(column.relationKey)}
+							>
 								<div className="name">{column.name}{arrow}</div>
 							</div>
 						);
@@ -261,7 +330,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 				{!items.length ? (
 					<div className="row">
-						<div className="cell empty">{translate('commonNoObjects')}</div>
+						<div className="cell empty">{emptyText || translate('commonNoObjects')}</div>
 					</div>
 				) : (
 					<>
@@ -274,6 +343,10 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 								subId={subId}
 								rootId={rootId}
 								onContext={onContext}
+								selectable={selectable}
+								isSelected={selectedIds.includes(item.id)}
+								onSelect={onSelect}
+								iconSize={iconSize}
 							/>
 						))}
 					</>

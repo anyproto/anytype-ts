@@ -29,8 +29,6 @@
 		&.c80 { @include pos-abs-mid; width: 80px; height: 80px; margin: -40px 0px 0px -40px; }
 	}
 
-	.iconRelation { mask-size: contain; mask-repeat: no-repeat; mask-position: center; background-color: var(--color-icon); }
-
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; border-radius: inherit; }
 }
 .iconObject.c14 { width: 14px; height: 14px; }

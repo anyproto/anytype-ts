@@ -1,28 +1,12 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockLink from './link';
 
 const ROOT = 'sb-link';
 
-const meta: Meta<typeof BlockLink> = {
-	title: 'Block/Link',
-	component: BlockLink,
-	tags: ['autodocs'],
-	decorators: [
-		withBlock('blockLink'),
-	],
-};
-
-export { meta as default };
-type Story = StoryObj<typeof meta>;
-
-const setup = (targetId: string, details: any) => {
-	S.Detail.update(ROOT, { id: targetId, details }, false);
-};
-
-const makeBlock = (id: string, targetBlockId: string, cardStyle: number, extra: any = {}) => ({
+const makeBlock = (id: string, targetBlockId: string, cardStyle: number, extra: any = {}) => new M.Block({
 	id,
 	type: I.BlockType.Link,
 	content: {
@@ -36,8 +20,23 @@ const makeBlock = (id: string, targetBlockId: string, cardStyle: number, extra: 
 	childrenIds: [],
 	bgColor: extra.bgColor || '',
 	fields: {},
-	getTargetObjectId: () => targetBlockId,
 });
+
+const meta: Meta<typeof BlockLink> = {
+	title: 'Block/Link',
+	component: BlockLink,
+	tags: ['autodocs'],
+	decorators: [
+		withBlock(U.Data.blockClass(makeBlock('_', '', I.LinkCardStyle.Text))),
+	],
+};
+
+export { meta as default };
+type Story = StoryObj<typeof meta>;
+
+const setup = (targetId: string, details: any) => {
+	S.Detail.update(ROOT, { id: targetId, details }, false);
+};
 
 export const TextStyle: Story = {
 	decorators: [

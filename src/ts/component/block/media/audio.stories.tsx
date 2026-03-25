@@ -1,17 +1,25 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../../.storybook/decorators';
 import BlockAudio from './audio';
 
 const ROOT = 'sb-audio';
+
+const makeBlock = (id: string, state: number, targetObjectId = '') => new M.Block({
+	id,
+	type: I.BlockType.File,
+	content: { state, targetObjectId },
+	childrenIds: [],
+	fields: {},
+});
 
 const meta: Meta<typeof BlockAudio> = {
 	title: 'Block/Media/Audio',
 	component: BlockAudio,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockMedia isAudio'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.FileState.Done))),
 	],
 };
 
@@ -33,13 +41,7 @@ export const Done: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'audio-done',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Done, targetObjectId: 'audio-obj-1' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('audio-done', I.FileState.Done, 'audio-obj-1'),
 	},
 };
 
@@ -47,13 +49,7 @@ export const Empty: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'audio-empty',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Empty, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('audio-empty', I.FileState.Empty),
 	},
 };
 
@@ -61,12 +57,6 @@ export const Error: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'audio-error',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Error, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('audio-error', I.FileState.Error),
 	},
 };

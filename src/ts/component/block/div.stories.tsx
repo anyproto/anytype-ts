@@ -1,14 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { I } from 'Lib';
+import { I, M, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockDiv from './div';
+
+const makeBlock = (id: string, style: number) => new M.Block({
+	id,
+	type: I.BlockType.Div,
+	content: { style },
+	childrenIds: [],
+});
 
 const meta: Meta<typeof BlockDiv> = {
 	title: 'Block/Div',
 	component: BlockDiv,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockDiv'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.DivStyle.Line))),
 	],
 };
 
@@ -17,22 +24,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Line: Story = {
 	args: {
-		block: {
-			id: 'div-line',
-			type: I.BlockType.Div,
-			content: { style: I.DivStyle.Line },
-			childrenIds: [],
-		},
+		block: makeBlock('div-line', I.DivStyle.Line),
 	},
 };
 
 export const Dots: Story = {
 	args: {
-		block: {
-			id: 'div-dots',
-			type: I.BlockType.Div,
-			content: { style: I.DivStyle.Dot },
-			childrenIds: [],
-		},
+		block: makeBlock('div-dots', I.DivStyle.Dot),
 	},
 };
