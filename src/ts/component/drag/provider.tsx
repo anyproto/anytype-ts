@@ -228,7 +228,20 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			if (allPaths.length && !isSetLayout) {
 				let contextId = rootId;
 
-				if (data && ((data.dropType == I.DropType.Menu) || (data.dropType == I.DropType.Widget))) {
+				if (data && (data.dropType == I.DropType.Menu)) {
+					contextId = targetId;
+					targetId = '';
+					position.current = I.BlockPosition.Bottom;
+				};
+
+				if (data && (data.dropType == I.DropType.Widget)) {
+					const targetObject = S.Detail.get(rootId, targetId, [ 'layout' ], true);
+
+					if (U.Object.isInSetLayouts(targetObject.layout)) {
+						clearState();
+						return;
+					};
+
 					contextId = targetId;
 					targetId = '';
 					position.current = I.BlockPosition.Bottom;
