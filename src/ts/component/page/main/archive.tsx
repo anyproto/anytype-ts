@@ -93,7 +93,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">
-					<Icon name="common/bin" color="default" />
+					<Icon name="common/bin" size={32} color="default" />
 					<Title text={translate('commonBin')} />
 				</div>
 
