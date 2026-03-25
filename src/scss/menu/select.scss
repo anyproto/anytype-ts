@@ -106,6 +106,9 @@
 		}
 
 		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
+		#item-join {
+			.icon { width: 20px; height: 20px; }
+		}
 	}
 
 	/* Type layout conflict */

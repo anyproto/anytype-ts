@@ -1681,20 +1681,19 @@ class UtilMenu {
 		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
 			const suffix = U.String.toUpperCamelCase(id);
+			const description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);;
 
-			let icon = '';
-			let description = '';
-			let withDescription = false;
+			let withDescription = true;
+			let iconParam = { name: `menu/spaceCreate/${id}`, size: 40 };
 
-			if (id != 'join') {
-				icon = id;
-				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
-				withDescription = true;
+			if (id == 'join') {
+				withDescription = false;
+				iconParam = null;
 			};
 
 			return {
 				id,
-				icon,
+				iconParam,
 				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
 				description,
 				withDescription,
