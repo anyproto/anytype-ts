@@ -17,7 +17,7 @@ const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				<div className="logo" />
 			</div>
 			<div className="side right">
-				<Button icon="logout" color="simple" text={translate('commonLogout')} onClick={onLogout} />
+				<Button icon="header/logout" color="simple" text={translate('commonLogout')} onClick={onLogout} />
 			</div>
 		</>
 	);
