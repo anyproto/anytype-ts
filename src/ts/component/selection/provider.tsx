@@ -242,7 +242,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 			} else {
 				if (keyboard.isCmd(e)) {
-					checkNodes(e);
+					const t = $(e.target).closest('.selectionTarget');
+					const type = t.attr('data-type') as I.SelectType;
+					const startRecordIds = idsOnStart.current.get(I.SelectType.Record) || [];
+
+					if ((type != I.SelectType.Record) || startRecordIds.length) {
+						checkNodes(e);
+					};
 				};
 				
 				const rootId = keyboard.getRootId();
