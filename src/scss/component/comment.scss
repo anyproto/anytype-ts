@@ -54,7 +54,7 @@
 	.contentWrap:hover, .contentWrap.hover { .hoverActions { opacity: 1; } }
 
 	.commentPost {
-		padding: 16px; border-radius: 16px; display: flex; flex-direction: column;
+		padding: 12px 16px; border-radius: 16px; display: flex; flex-direction: column;
 		gap: 0px; position: relative;
 		background: var(--color-shape-highlight-light);
 		transition: background-color 0.3s ease;
@@ -64,7 +64,7 @@
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
 		.content { word-break: break-word; }
 
-		.head { margin: 0px 0px 8px 0px; }
+		.head { margin: 0px 0px 4px 0px; }
 
 		.hoverActions {
 			display: flex; align-items: center; gap: 0px 4px;
