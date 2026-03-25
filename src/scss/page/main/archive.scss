@@ -46,17 +46,28 @@
 				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; }
 				.row:hover .cell.cellCheck { opacity: 1; }
 				.row .cell.cellCheck.isChecked { opacity: 1; }
+
+				.row .cell { padding: 12px 14px; }
+				.row .cell:first-child { padding-left: 0px; }
+				.row .cell:last-child { padding-right: 0px; }
+
+				.row.isHead .cell { padding: 8px 14px; }
+				.row.isHead .cell:first-child { padding-left: 0px; }
 			}
 
 			.cell.isName {
+				.cellContent.isName { height: auto; }
 				.cellContent.isName {
+					.flex { align-items: center; gap: 0px 12px; }
+
 					.info { display: flex; flex-direction: column; overflow: hidden; }
 					.info {
+						.name { @include text-overflow-nw; }
 						.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 					}
-				}
 
-				.flex { align-items: center; }
+					.iconObject { flex-shrink: 0; }
+				}
 			}
 		}
 	}

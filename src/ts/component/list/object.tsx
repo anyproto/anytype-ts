@@ -27,6 +27,7 @@ interface Props {
 	ignoreArchived?: boolean;
 	skipLayoutFilter?: boolean;
 	withDescription?: boolean;
+	iconSize?: number;
 	emptyText?: string;
 	defaultSortId?: string;
 	defaultSortType?: I.SortType;
@@ -41,7 +42,7 @@ interface ListObjectRefProps {
 
 const PREFIX = 'listObject';
 
-const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, selectable, isSelected, onSelect }: any) => {
+const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, selectable, isSelected, onSelect, iconSize }: any) => {
 	const cn = [ 'row' ];
 
 	if (U.Object.isTaskLayout(item.layout) && item.isDone) {
@@ -97,10 +98,15 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 					if (!object._empty_) {
 						onClick = e => U.Object.openEvent(e, object);
 
+						const iconProps: any = {};
+						if (iconSize && (column.relationKey == 'name')) {
+							iconProps.size = iconSize;
+						};
+
 						if (column.withDescription) {
 							content = (
 								<div className="flex">
-									<IconObject object={object} />
+									<IconObject object={object} {...iconProps} />
 									<div className="info">
 										<ObjectName object={object} />
 										<ObjectDescription object={object} />
@@ -110,7 +116,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 						} else {
 							content = (
 								<div className="flex">
-									<IconObject object={object} />
+									<IconObject object={object} {...iconProps} />
 									<ObjectName object={object} />
 								</div>
 							);
@@ -162,6 +168,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	ignoreArchived = true,
 	skipLayoutFilter = false,
 	withDescription = false,
+	iconSize,
 	emptyText = '',
 	defaultSortId,
 	defaultSortType,
@@ -334,6 +341,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 								selectable={selectable}
 								isSelected={selectedIds.includes(item.id)}
 								onSelect={onSelect}
+								iconSize={iconSize}
 							/>
 						))}
 					</>
