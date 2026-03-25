@@ -235,16 +235,23 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				};
 
 				if (data && (data.dropType == I.DropType.Widget)) {
-					const targetObject = S.Detail.get(rootId, targetId, [ 'layout' ], true);
+					const { widgets } = S.Block;
+					const childrenIds = S.Block.getChildrenIds(widgets, targetId);
+					const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+					const widgetTargetId = child?.getTargetObjectId();
 
-					if (U.Object.isInSetLayouts(targetObject.layout)) {
-						clearState();
-						return;
+					if (widgetTargetId) {
+						const widgetTarget = S.Detail.get(widgets, widgetTargetId, [ 'layout' ], true);
+
+						if (U.Object.isInSetLayouts(widgetTarget.layout)) {
+							clearState();
+							return;
+						};
+
+						contextId = widgetTargetId;
+						targetId = '';
+						position.current = I.BlockPosition.Bottom;
 					};
-
-					contextId = targetId;
-					targetId = '';
-					position.current = I.BlockPosition.Bottom;
 				};
 
 				C.FileDrop(contextId, targetId, position.current, allPaths, (message: any) => {
