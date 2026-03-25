@@ -20,29 +20,19 @@
 
 			.iconWrap {
 				width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-				border-radius: 8px; transition: $transitionAllCommon; border: 1px solid transparent;
+				border-radius: 50%; transition: $transitionAllCommon; background-color: var(--color-shape-highlight-light);
 			}
-			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); border-color: var(--color-shape-secondary); }
-			.iconWrap.isDisabled { opacity: 0.3; }
-			.iconWrap.isDisabled:hover { background-color: transparent; border-color: transparent; }
+			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
 
 			.icon { width: 20px; height: 20px; margin: 0px; }
 
-			.filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
-			.filterWrapper.active { width: 200px; }
-
-			.filter { padding: 0px; }
-			.filter {
-				.line { display: none; }
-				.inner { height: 20px; }
-			}
+			.filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; display: none; }
+			.filterWrapper.active { width: 200px; display: block; }
 		}
 
 		.listObject { flex-grow: 1; }
 		.listObject {
 			.table {
-				.row.isArchived *, .row.isDeleted * { text-decoration: none; color: inherit; }
-
 				.row:hover { background-color: var(--color-shape-highlight-medium); }
 				.row.isHead:hover { background-color: transparent; }
 
@@ -73,6 +63,10 @@
 
 					.iconObject { flex-shrink: 0; }
 				}
+			}
+
+			.cell.isChecked {
+				.icon.checkbox { color: var(--color-control-accent); }
 			}
 		}
 	}

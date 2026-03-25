@@ -297,8 +297,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 								<div ref={filterWrapperRef} className="filterWrapper">
 									<Filter
 										ref={filterRef}
-										className="underlined"
 										onChange={onFilterChange}
+										size={32}
 										placeholder={translate('commonSearchPlaceholder')}
 									/>
 								</div>
@@ -323,7 +323,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					ignoreArchived={false}
 					skipLayoutFilter={true}
 					withDescription={true}
-					iconSize={40}
 					emptyText={translate('pageMainArchiveEmpty')}
 					defaultSortId="lastModifiedDate"
 					defaultSortType={I.SortType.Desc}
