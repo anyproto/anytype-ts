@@ -278,7 +278,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 								<Icon
 									className="archiveAction"
-									name="common/switchView"
+									name={isDetailed ? 'common/switchViewDetailed' : 'common/switchView'}
 									withBackground={true}
 									tooltipParam={{ text: translate('commonSwitchView') }}
 									onClick={onSwitchView}

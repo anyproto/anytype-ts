@@ -64,7 +64,10 @@
 					}
 
 					.cell { padding: 11px 14px; align-content: center; }
-					.cell.cellCheck { padding: 0px 12px 0px 0px; }
+					.cell.cellCheck { padding: 0px 12px 0px 0px; opacity: 0; transition: opacity 0.15s ease; }
+					.cell.cellCheck:hover { opacity: 1; }
+					.cell.cellCheck.isChecked { opacity: 1; }
+					&:hover .cell.cellCheck { opacity: 1; }
 					.cell:nth-child(2) { padding-left: 0px; }
 					.cell:last-child { padding-right: 0px; }
 
