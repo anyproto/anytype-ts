@@ -226,7 +226,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				Preview.toastShow({ text: translate('toastSetFileDrop') });
 			} else
 			if (allPaths.length && !isSetLayout) {
-				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
+				let contextId = rootId;
+
+				if (data && (data.dropType == I.DropType.Menu)) {
+					contextId = targetId;
+					targetId = '';
+					position.current = I.BlockPosition.Bottom;
+				};
+
+				C.FileDrop(contextId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
 
 					if (!message.error.code) {
