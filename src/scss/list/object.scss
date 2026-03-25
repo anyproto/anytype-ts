@@ -34,6 +34,7 @@
 			.cell.empty { line-height: 20px; }
 
 			.cell.cellCheck {
+				position: absolute; left: -36px; top: 0px; bottom: 0px; width: 36px;
 				display: flex; align-items: center; justify-content: center; padding: 0px;
 			}
 

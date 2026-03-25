@@ -33,12 +33,19 @@
 		.listObject { flex-grow: 1; }
 		.listObject {
 			.table {
-				.row:hover { background-color: var(--color-shape-highlight-medium); }
-				.row.isHead:hover { background-color: transparent; }
+				padding-left: 36px;
+
+				.row { position: relative; }
+
+				.row:hover::before {
+					content: ''; position: absolute; top: 0px; bottom: 0px; left: -36px; right: 0px;
+					background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
+				}
+				.row.isHead:hover::before { display: none; }
 
 				.row.isHead .cell.cellCheck { visibility: hidden; }
 
-				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; }
+				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; z-index: 1; }
 				.row:hover .cell.cellCheck { opacity: 1; }
 				.row .cell.cellCheck.isChecked { opacity: 1; }
 
@@ -48,6 +55,14 @@
 				.row .cell.cellCheck { padding: 0px; }
 
 				.row.isHead { border-bottom: 0px; }
+
+				.row.isHead .cell.isHead {
+					.name {
+						display: inline-flex; padding: 4px 8px; margin: -4px -8px; border-radius: 6px;
+						transition: $transitionAllCommon;
+					}
+					.name:hover { background-color: var(--color-shape-highlight-medium); }
+				}
 			}
 
 			.cell.isName {

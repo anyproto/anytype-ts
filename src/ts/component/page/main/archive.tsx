@@ -109,39 +109,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
 	};
 
-	const onEmptyBin = () => {
-		Action.emptyBin(analytics.route.archive);
-		setSelectedIds([]);
-	};
-
-	const onMore = (e: MouseEvent) => {
-		e.stopPropagation();
-
-		const options: any[] = [];
-
-		if (isOwner) {
-			options.push({ id: 'emptyBin', name: translate('commonEmptyBin'), iconParam: { name: 'menu/action/remove' } });
-		};
-
-		if (!options.length) {
-			return;
-		};
-
-		S.Menu.open('select', {
-			element: `#page-archive-more`,
-			horizontal: I.MenuDirection.Right,
-			offsetY: 4,
-			data: {
-				options,
-				onSelect: (_e: any, item: any) => {
-					switch (item.id) {
-						case 'emptyBin': onEmptyBin(); break;
-					};
-				},
-			},
-		});
-	};
-
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
@@ -260,7 +227,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		<>
 			<Header
 				{...props}
-				component={U.Common.settingsHeader(isPopup, 'mainEmpty')}
+				component="mainArchive"
 			/>
 
 			<div ref={nodeRef} className={cnWrapper.join(' ')}>
@@ -286,12 +253,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 											<Icon name="menu/action/remove" />
 										</div>
 									</>
-								) : ''}
-
-								{isOwner ? (
-									<div className="iconWrap" onClick={onMore}>
-										<Icon id="page-archive-more" name="common/more" />
-									</div>
 								) : ''}
 
 								<div ref={filterWrapperRef} className="filterWrapper">

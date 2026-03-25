@@ -266,13 +266,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	const items = getItems();
-	const widths = [];
-
-	if (selectable) {
-		widths.push('36px');
-	};
-
-	widths.push('minmax(0, 1fr)');
+	const widths = [ 'minmax(0, 1fr)' ];
 	for (let i = 1; i < columnList.length; ++i) {
 		widths.push(`${60 / (columnList.length - 1)}%`);
 	};
