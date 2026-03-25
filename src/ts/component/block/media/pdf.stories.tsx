@@ -1,17 +1,25 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../../.storybook/decorators';
 import BlockPdf from './pdf';
 
 const ROOT = 'sb-pdf';
+
+const makeBlock = (id: string, state: number, targetObjectId = '', width = 0) => new M.Block({
+	id,
+	type: I.BlockType.File,
+	content: { state, targetObjectId },
+	childrenIds: [],
+	fields: { width },
+});
 
 const meta: Meta<typeof BlockPdf> = {
 	title: 'Block/Media/PDF',
 	component: BlockPdf,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockMedia isPdf'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.FileState.Done))),
 	],
 };
 
@@ -33,13 +41,7 @@ export const Done: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'pdf-done',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Done, targetObjectId: 'pdf-obj-1' },
-			childrenIds: [],
-			fields: { width: 0.9 },
-		},
+		block: makeBlock('pdf-done', I.FileState.Done, 'pdf-obj-1', 0.9),
 	},
 };
 
@@ -47,13 +49,7 @@ export const Empty: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'pdf-empty',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Empty, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('pdf-empty', I.FileState.Empty),
 	},
 };
 
@@ -61,12 +57,6 @@ export const Error: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'pdf-error',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Error, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('pdf-error', I.FileState.Error),
 	},
 };

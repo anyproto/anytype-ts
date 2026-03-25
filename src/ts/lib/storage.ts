@@ -21,6 +21,7 @@ const SPACE_KEYS = new Set([
 	'graphDataview',
 	'recentEditMode',
 	'widgetSections',
+	'binViewDetailed',
 ]);
 
 const LOCAL_KEYS = new Set([

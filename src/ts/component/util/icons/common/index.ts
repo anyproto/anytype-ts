@@ -30,6 +30,7 @@ import Preview from './preview';
 import Qr from './qr';
 import TypeLayout from './typeLayout';
 import Unlink from './unlink';
+import SwitchView from './switchView';
 import Upload from './upload';
 
 registerIcon('common/alert', Alert);
@@ -59,6 +60,7 @@ registerIcon('common/question', Question);
 registerIcon('common/resize', Resize);
 registerIcon('common/search', Search);
 registerIcon('common/sort', Sort);
+registerIcon('common/switchView', SwitchView);
 registerIcon('common/sortArrow', SortArrow);
 registerIcon('common/tick', Tick);
 registerIcon('common/typeLayout', TypeLayout);

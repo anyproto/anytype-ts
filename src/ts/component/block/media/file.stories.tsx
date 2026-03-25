@@ -1,17 +1,25 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../../.storybook/decorators';
 import BlockFile from './file';
 
 const ROOT = 'sb-file';
+
+const makeBlock = (id: string, state: number, targetObjectId = '') => new M.Block({
+	id,
+	type: I.BlockType.File,
+	content: { state, style: I.FileStyle.Auto, targetObjectId },
+	childrenIds: [],
+	fields: {},
+});
 
 const meta: Meta<typeof BlockFile> = {
 	title: 'Block/Media/File',
 	component: BlockFile,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockFile'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.FileState.Done))),
 	],
 };
 
@@ -34,13 +42,7 @@ export const Done: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'file-done',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Done, style: I.FileStyle.Auto, targetObjectId: 'file-obj-1' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('file-done', I.FileState.Done, 'file-obj-1'),
 	},
 };
 
@@ -48,13 +50,7 @@ export const Empty: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'file-empty',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Empty, style: I.FileStyle.Auto, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('file-empty', I.FileState.Empty),
 	},
 };
 
@@ -62,12 +58,6 @@ export const Error: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'file-error',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Error, style: I.FileStyle.Auto, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('file-error', I.FileState.Error),
 	},
 };

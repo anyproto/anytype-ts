@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
-import { I, S, U, J, translate, Action, analytics, keyboard, sidebar, Preview } from 'Lib';
+import { I, S, U, J, translate, Action, analytics, keyboard, sidebar, Storage } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -13,6 +13,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const filterWrapperRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
+	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
 
@@ -31,6 +32,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		{
 			relationKey: 'lastModifiedDate',
 			name: translate('commonDeleted'),
+			width: '20%',
 			mapper: (v: number) => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
 		},
 	];
@@ -39,6 +41,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		columns.push({
 			relationKey: 'creator',
 			name: translate('commonCreatedBy'),
+			width: '20%',
 			isObject: true,
 		});
 	};
@@ -109,6 +112,13 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
 	};
 
+	const onSwitchView = () => {
+		const v = !isDetailed;
+
+		setIsDetailed(v);
+		Storage.set('binViewDetailed', v);
+	};
+
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
@@ -165,14 +175,11 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		return fl;
 	};
 
-	const onDeleteMouseEnter = (e: MouseEvent) => {
+	const getDeleteTooltip = (): string => {
 		if (!canDeleteSelection()) {
-			Preview.tooltipShow({ text: translate('binDeleteDisabledTooltip'), element: $(e.currentTarget) });
+			return translate('binDeleteDisabledTooltip');
 		};
-	};
-
-	const onDeleteMouseLeave = () => {
-		Preview.tooltipHide(false);
+		return translate('commonDeleteImmediately');
 	};
 
 	const resize = () => {
@@ -215,8 +222,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
-	const cnDelete = [ 'iconWrap', ((!canDelete || !hasSelection) ? 'isDisabled' : '') ];
-	const cnRestore = [ 'iconWrap', (!hasSelection ? 'isDisabled' : '') ];
 	const cnWrapper = [ 'wrapper' ];
 
 	if (hasSelection) {
@@ -241,17 +246,20 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 							<>
 								{hasSelection ? (
 									<>
-										<div className={cnRestore.join(' ')} onClick={onRestore}>
-											<Icon name="menu/action/restore" />
-										</div>
-										<div
-											className={cnDelete.join(' ')}
+										<Icon
+											className="archiveAction"
+											name="menu/action/restore"
+											withBackground={true}
+											tooltipParam={{ text: translate('commonRestore') }}
+											onClick={onRestore}
+										/>
+										<Icon
+											className={[ 'archiveAction', ((!canDelete || !hasSelection) ? 'isDisabled' : '') ].join(' ')}
+											name="menu/action/remove"
+											withBackground={true}
+											tooltipParam={{ text: getDeleteTooltip() }}
 											onClick={onRemove}
-											onMouseEnter={onDeleteMouseEnter}
-											onMouseLeave={onDeleteMouseLeave}
-										>
-											<Icon name="menu/action/remove" />
-										</div>
+										/>
 									</>
 								) : ''}
 
@@ -264,9 +272,20 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 									/>
 								</div>
 
-								<div className="iconWrap" onClick={onFilterShow}>
-									<Icon name="common/search" />
-								</div>
+								<Icon
+									className="archiveAction"
+									name="common/switchView"
+									withBackground={true}
+									tooltipParam={{ text: translate('commonSwitchView') }}
+									onClick={onSwitchView}
+								/>
+								<Icon
+									className="archiveAction"
+									name="common/search"
+									withBackground={true}
+									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+									onClick={onFilterShow}
+								/>
 							</>
 						) : ''}
 					</div>
@@ -283,7 +302,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					relationKeys={relationKeys}
 					ignoreArchived={false}
 					skipLayoutFilter={true}
-					withDescription={true}
+					withDescription={isDetailed}
+					iconSize={isDetailed ? 32 : null}
 					emptyText={translate('pageMainArchiveEmpty')}
 					defaultSortId="lastModifiedDate"
 					defaultSortType={I.SortType.Desc}

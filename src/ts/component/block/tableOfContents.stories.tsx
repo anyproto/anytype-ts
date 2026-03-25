@@ -1,27 +1,29 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockTableOfContents from './tableOfContents';
+
+const makeBlock = (id: string) => new M.Block({
+	id,
+	type: I.BlockType.TableOfContents,
+	content: {},
+	childrenIds: [],
+});
+
+const mockBlock = makeBlock('toc-1');
 
 const meta: Meta<typeof BlockTableOfContents> = {
 	title: 'Block/TableOfContents',
 	component: BlockTableOfContents,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockTableOfContents'),
+		withBlock(U.Data.blockClass(mockBlock)),
 	],
 };
 
 export { meta as default };
 type Story = StoryObj<typeof meta>;
-
-const mockBlock = {
-	id: 'toc-1',
-	type: I.BlockType.Empty,
-	content: {},
-	childrenIds: [],
-};
 
 export const Empty: Story = {
 	args: {

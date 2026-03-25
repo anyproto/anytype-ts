@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { I } from 'Lib';
+import { I, M, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockEmbed from './embed';
 
@@ -9,15 +9,12 @@ const meta: Meta<typeof BlockEmbed> = {
 	title: 'Block/Embed',
 	component: BlockEmbed,
 	tags: ['autodocs'],
-	decorators: [
-		withBlock('blockEmbed'),
-	],
 };
 
 export { meta as default };
 type Story = StoryObj<typeof meta>;
 
-const makeBlock = (id: string, processor: number, text: string, width = 1) => ({
+const makeBlock = (id: string, processor: number, text: string, width = 1) => new M.Block({
 	id,
 	type: I.BlockType.Embed,
 	content: { processor, text },
@@ -27,7 +24,10 @@ const makeBlock = (id: string, processor: number, text: string, width = 1) => ({
 	hAlign: 0,
 });
 
+const embedBlock = (processor: number) => withBlock(U.Data.blockClass(makeBlock('_', processor, '')));
+
 export const Latex: Story = {
+	decorators: [ embedBlock(I.EmbedProcessor.Latex) ],
 	args: {
 		rootId: ROOT,
 		readonly: true,
@@ -36,6 +36,7 @@ export const Latex: Story = {
 };
 
 export const LatexEquation: Story = {
+	decorators: [ embedBlock(I.EmbedProcessor.Latex) ],
 	args: {
 		rootId: ROOT,
 		readonly: true,
@@ -44,6 +45,7 @@ export const LatexEquation: Story = {
 };
 
 export const Mermaid: Story = {
+	decorators: [ embedBlock(I.EmbedProcessor.Mermaid) ],
 	args: {
 		rootId: ROOT,
 		readonly: true,
@@ -52,6 +54,7 @@ export const Mermaid: Story = {
 };
 
 export const MermaidSequence: Story = {
+	decorators: [ embedBlock(I.EmbedProcessor.Mermaid) ],
 	args: {
 		rootId: ROOT,
 		readonly: true,

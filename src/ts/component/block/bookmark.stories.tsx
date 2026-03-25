@@ -1,17 +1,25 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockBookmark from './bookmark';
 
 const ROOT = 'sb-bookmark';
+
+const makeBlock = (id: string, state: number, targetObjectId = '', url = '') => new M.Block({
+	id,
+	type: I.BlockType.Bookmark,
+	content: { state, targetObjectId, url },
+	childrenIds: [],
+	bgColor: '',
+});
 
 const meta: Meta<typeof BlockBookmark> = {
 	title: 'Block/Bookmark',
 	component: BlockBookmark,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockBookmark'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.BookmarkState.Done))),
 	],
 };
 
@@ -39,17 +47,7 @@ export const Done: Story = {
 		rootId: ROOT,
 		readonly: false,
 		getWrapperWidth: () => 600,
-		block: {
-			id: 'bm-done',
-			type: I.BlockType.Bookmark,
-			content: {
-				state: I.BookmarkState.Done,
-				targetObjectId: 'bm-target-1',
-				url: 'https://anytype.io',
-			},
-			childrenIds: [],
-			bgColor: '',
-		},
+		block: makeBlock('bm-done', I.BookmarkState.Done, 'bm-target-1', 'https://anytype.io'),
 	},
 };
 
@@ -58,17 +56,7 @@ export const Empty: Story = {
 		rootId: ROOT,
 		readonly: false,
 		getWrapperWidth: () => 600,
-		block: {
-			id: 'bm-empty',
-			type: I.BlockType.Bookmark,
-			content: {
-				state: I.BookmarkState.Empty,
-				targetObjectId: '',
-				url: '',
-			},
-			childrenIds: [],
-			bgColor: '',
-		},
+		block: makeBlock('bm-empty', I.BookmarkState.Empty),
 	},
 };
 
@@ -77,17 +65,7 @@ export const Fetching: Story = {
 		rootId: ROOT,
 		readonly: false,
 		getWrapperWidth: () => 600,
-		block: {
-			id: 'bm-fetching',
-			type: I.BlockType.Bookmark,
-			content: {
-				state: I.BookmarkState.Fetching,
-				targetObjectId: '',
-				url: 'https://anytype.io',
-			},
-			childrenIds: [],
-			bgColor: '',
-		},
+		block: makeBlock('bm-fetching', I.BookmarkState.Fetching, '', 'https://anytype.io'),
 	},
 };
 
@@ -96,17 +74,7 @@ export const Error: Story = {
 		rootId: ROOT,
 		readonly: false,
 		getWrapperWidth: () => 600,
-		block: {
-			id: 'bm-error',
-			type: I.BlockType.Bookmark,
-			content: {
-				state: I.BookmarkState.Error,
-				targetObjectId: '',
-				url: 'https://invalid-url',
-			},
-			childrenIds: [],
-			bgColor: '',
-		},
+		block: makeBlock('bm-error', I.BookmarkState.Error, '', 'https://invalid-url'),
 	},
 };
 
@@ -124,16 +92,6 @@ export const Deleted: Story = {
 		rootId: ROOT,
 		readonly: false,
 		getWrapperWidth: () => 600,
-		block: {
-			id: 'bm-del',
-			type: I.BlockType.Bookmark,
-			content: {
-				state: I.BookmarkState.Done,
-				targetObjectId: 'bm-target-del',
-				url: '',
-			},
-			childrenIds: [],
-			bgColor: '',
-		},
+		block: makeBlock('bm-del', I.BookmarkState.Done, 'bm-target-del'),
 	},
 };

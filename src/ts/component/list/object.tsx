@@ -7,6 +7,7 @@ interface Column {
 	relationKey: string;
 	name: string;
 	className?: string;
+	width?: string;
 	isObject?: boolean;
 	isCell?: boolean;
 	withDescription?: boolean;
@@ -71,6 +72,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 					<Checkbox value={isSelected} onChange={e => onSelect(item.id, e)} />
 				</div>
 			) : ''}
+
 			{columnList.map(column => {
 				const cn = [ 'cell', `c-${column.relationKey}` ];
 				const cnc = [ 'cellContent' ];
@@ -268,7 +270,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const items = getItems();
 	const widths = [ 'minmax(0, 1fr)' ];
 	for (let i = 1; i < columnList.length; ++i) {
-		widths.push(`${60 / (columnList.length - 1)}%`);
+		widths.push(columnList[i].width || `${60 / (columnList.length - 1)}%`);
 	};
 
 	const css = { gridTemplateColumns: widths.join(' ') };
@@ -307,10 +309,19 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 						</div>
 					) : ''}
 					{columnList.map(column => {
+						const cn = [ 'cell', 'isHead' ];
 						const arrow = sortId == column.relationKey ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 
+						if (arrow) {
+							cn.push('isSorted');
+						};
+
 						return (
-							<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => onSort(column.relationKey)}>
+							<div 
+								key={`head-${column.relationKey}`} 
+								className={cn.join(' ')} 
+								onClick={() => onSort(column.relationKey)}
+							>
 								<div className="name">{column.name}{arrow}</div>
 							</div>
 						);

@@ -1,17 +1,25 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
+import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../../.storybook/decorators';
 import BlockVideo from './video';
 
 const ROOT = 'sb-video';
+
+const makeBlock = (id: string, state: number, targetObjectId = '', width = 0) => new M.Block({
+	id,
+	type: I.BlockType.File,
+	content: { state, targetObjectId },
+	childrenIds: [],
+	fields: { width },
+});
 
 const meta: Meta<typeof BlockVideo> = {
 	title: 'Block/Media/Video',
 	component: BlockVideo,
 	tags: ['autodocs'],
 	decorators: [
-		withBlock('blockMedia isVideo'),
+		withBlock(U.Data.blockClass(makeBlock('_', I.FileState.Done))),
 	],
 };
 
@@ -32,13 +40,7 @@ export const Done: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'vid-done',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Done, targetObjectId: 'vid-obj-1' },
-			childrenIds: [],
-			fields: { width: 0.75 },
-		},
+		block: makeBlock('vid-done', I.FileState.Done, 'vid-obj-1', 0.75),
 	},
 };
 
@@ -46,13 +48,7 @@ export const Empty: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'vid-empty',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Empty, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('vid-empty', I.FileState.Empty),
 	},
 };
 
@@ -60,12 +56,6 @@ export const Error: Story = {
 	args: {
 		rootId: ROOT,
 		readonly: false,
-		block: {
-			id: 'vid-error',
-			type: I.BlockType.File,
-			content: { state: I.FileState.Error, targetObjectId: '' },
-			childrenIds: [],
-			fields: {},
-		},
+		block: makeBlock('vid-error', I.FileState.Error),
 	},
 };

@@ -18,11 +18,12 @@
 
 			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-shrink: 0; }
 
-			.iconWrap {
-				width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-				border-radius: 50%; transition: $transitionAllCommon; background-color: var(--color-shape-highlight-light);
+			.icon.withBackground.archiveAction {
+				width: 32px !important; height: 32px !important; border-radius: 50%;
+				background-color: var(--color-shape-highlight-light);
 			}
-			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.withBackground.archiveAction:hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.withBackground.archiveAction.isDisabled { opacity: 0.4; pointer-events: none; }
 
 			.icon { width: 20px; height: 20px; margin: 0px; }
 
@@ -30,58 +31,64 @@
 			.filterWrapper.active { width: 200px; display: block; }
 		}
 
-		.listObject { flex-grow: 1; }
+		.listObject { flex-grow: 1; margin-left: -36px; }
 		.listObject {
 			.table {
 				padding-left: 36px;
 
-				.row { position: relative; }
+				.row { position: relative; gap: 0px 6px; border: 0px; }
+				.row {
+					&.isHead { border-bottom: 1px solid var(--color-shape-secondary); overflow: visible; }
+					&.isHead {
+						.cell { overflow: visible; }
+						.cell {
+							.name {
+								display: inline-flex; width: auto; padding: 1px 6px; margin-left: -6px;
+								border-radius: 9px; transition: $transitionAllCommon;
+							}
+							.name:hover { background-color: var(--color-shape-highlight-medium); }
 
-				.row:hover::before {
-					content: ''; position: absolute; top: 0px; bottom: 0px; left: -36px; right: 0px;
-					background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
-				}
-				.row.isHead:hover::before { display: none; }
-
-				.row.isHead .cell.cellCheck { visibility: hidden; }
-
-				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; z-index: 1; }
-				.row:hover .cell.cellCheck { opacity: 1; }
-				.row .cell.cellCheck.isChecked { opacity: 1; }
-
-				.row .cell { padding: 12px 14px; }
-				.row .cell:first-child { padding-left: 0px; }
-				.row .cell:last-child { padding-right: 0px; }
-				.row .cell.cellCheck { padding: 0px; }
-
-				.row.isHead { border-bottom: 0px; }
-
-				.row.isHead .cell.isHead {
-					.name {
-						display: inline-flex; padding: 4px 8px; margin: -4px -8px; border-radius: 6px;
-						transition: $transitionAllCommon;
-					}
-					.name:hover { background-color: var(--color-shape-highlight-medium); }
-				}
-			}
-
-			.cell.isName {
-				.cellContent.isName { height: auto; }
-				.cellContent.isName {
-					.flex { align-items: center; gap: 0px 12px; }
-
-					.info { display: flex; flex-direction: column; overflow: hidden; }
-					.info {
-						.name { @include text-overflow-nw; }
-						.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
+							&.isSorted {
+								.name { padding-right: 2px; }
+							}
+						}
+						&:hover::before { display: none; }
+						&:hover {
+							.cell.cellCheck { opacity: 1; }
+						}
 					}
 
-					.iconObject { flex-shrink: 0; }
-				}
-			}
+					&:hover::before {
+						content: ''; position: absolute; top: 0px; bottom: -1px; left: -8px; right: -8px;
+						background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
+					}
 
-			.cell.isChecked {
-				.icon.checkbox { color: var(--color-control-accent); }
+					.cell { padding: 11px 14px; }
+					.cell.cellCheck { padding: 0px 12px 0px 0px; }
+					.cell:nth-child(2) { padding-left: 0px; }
+					.cell:last-child { padding-right: 0px; }
+
+					.cell.isName {
+						.cellContent.isName { height: auto; }
+						.cellContent.isName {
+							.flex { align-items: center; gap: 0px 12px; }
+
+							.info { display: flex; flex-direction: column; overflow: hidden; }
+							.info {
+								.name { @include text-overflow-nw; }
+								.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
+							}
+
+							.iconObject { flex-shrink: 0; }
+						}
+					}
+
+					.cell.isChecked {
+						.icon.checkbox { color: var(--color-control-accent); }
+					}
+
+					.icon.objectCheckbox2 { color: var(--color-control-accent); }
+				}
 			}
 		}
 	}
@@ -89,6 +96,7 @@
 	.wrapper.hasSelection {
 		.listObject .table {
 			.row .cell.cellCheck { opacity: 1; }
+			.row.isHead .cell.cellCheck { opacity: 1; }
 		}
 	}
 
