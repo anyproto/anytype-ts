@@ -42,7 +42,7 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 		toggle: () => setValue(!value)
 	}));
 
-	useEffect(() => setValue(initialValue), []);
+	useEffect(() => setValue(initialValue), [ initialValue ]);
 
 	return (
 		<Icon

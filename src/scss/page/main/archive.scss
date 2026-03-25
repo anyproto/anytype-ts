@@ -16,15 +16,15 @@
 				.title { @include text-header1; font-weight: 700; }
 			}
 
-			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; flex-shrink: 0; }
+			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-shrink: 0; }
 
 			.iconWrap {
-				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-				border-radius: 6px; transition: $transitionAllCommon;
+				width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+				border-radius: 8px; transition: $transitionAllCommon; border: 1px solid transparent;
 			}
-			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
+			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); border-color: var(--color-shape-secondary); }
 			.iconWrap.isDisabled { opacity: 0.3; }
-			.iconWrap.isDisabled:hover { background-color: transparent; }
+			.iconWrap.isDisabled:hover { background-color: transparent; border-color: transparent; }
 
 			.icon { width: 20px; height: 20px; margin: 0px; }
 
@@ -43,6 +43,11 @@
 			.table {
 				.row.isArchived *, .row.isDeleted * { text-decoration: none; color: inherit; }
 
+				.row:hover { background-color: var(--color-shape-highlight-medium); }
+				.row.isHead:hover { background-color: transparent; }
+
+				.row.isHead .cell.cellCheck { visibility: hidden; }
+
 				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; }
 				.row:hover .cell.cellCheck { opacity: 1; }
 				.row .cell.cellCheck.isChecked { opacity: 1; }
@@ -50,9 +55,9 @@
 				.row .cell { padding: 12px 14px; }
 				.row .cell:first-child { padding-left: 0px; }
 				.row .cell:last-child { padding-right: 0px; }
+				.row .cell.cellCheck { padding: 0px; }
 
-				.row.isHead .cell { padding: 8px 14px; }
-				.row.isHead .cell:first-child { padding-left: 0px; }
+				.row.isHead { border-bottom: 0px; }
 			}
 
 			.cell.isName {
