@@ -27,7 +27,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const cover = getCoverObject(recordId);
 	const relationName: any = S.Record.getRelationByKey('name') || {};
 	const canEdit = canCellEdit(relationName, record);
-
+	const selection = S.Common.getRef('selectionProvider');
 
 	if (coverFit) {
 		cn.push('coverFit');
@@ -65,7 +65,8 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			2: () => onContext(e, record.id)
 		};
 
-		if (keyboard.isSelectionClearDisabled) {
+		const ids = selection?.get(I.SelectType.Record) || [];
+		if (((e.ctrlKey || e.metaKey) && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

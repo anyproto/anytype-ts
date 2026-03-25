@@ -416,13 +416,15 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
+		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
 			0: () => U.Object.openConfig(e, item),
 			1: () => U.Object.openConfig(e, item),
 			2: () => onContext(e, item.id)
 		};
 
-		if (keyboard.isSelectionClearDisabled) {
+		const ids = selection?.get(I.SelectType.Record) || [];
+		if (((e.ctrlKey || e.metaKey) && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 
