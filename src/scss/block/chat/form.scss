@@ -153,7 +153,7 @@
 	.charCounter.red { background: var(--color-red); }
 	.charCounter.show { display: block; }
 
-	.icon.send { position: absolute; bottom: 6px; right: 10px; width: 20px; height: 20px; }
+	.icon.send { position: absolute; bottom: 6px; right: 10px; width: 20px; height: 20px; color: var(--color-control-accent); }
 	.icon.send.isLoading { background: url('~img/icon/loader.svg'); }
 	.icon.send.anim { animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
 }
