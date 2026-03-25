@@ -63,7 +63,7 @@
 						background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
 					}
 
-					.cell { padding: 11px 14px; }
+					.cell { padding: 11px 14px; align-content: center; }
 					.cell.cellCheck { padding: 0px 12px 0px 0px; }
 					.cell:nth-child(2) { padding-left: 0px; }
 					.cell:last-child { padding-right: 0px; }
@@ -78,8 +78,6 @@
 								.name { @include text-overflow-nw; }
 								.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 							}
-
-							.iconObject { flex-shrink: 0; }
 						}
 					}
 
@@ -89,6 +87,13 @@
 
 					.icon.objectCheckbox2 { color: var(--color-control-accent); }
 				}
+			}
+		}
+
+		&.isDetailed {
+			.listObject {
+				.cell { padding-top: 16px; padding-bottom: 16px; }
+				.iconObject { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
 	}

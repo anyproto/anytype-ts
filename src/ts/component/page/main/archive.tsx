@@ -228,6 +228,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		cnWrapper.push('hasSelection');
 	};
 
+	if (isDetailed) {
+		cnWrapper.push('isDetailed');
+	};
+
 	return (
 		<>
 			<Header
