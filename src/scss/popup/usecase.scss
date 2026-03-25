@@ -51,9 +51,10 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 					&::after {
 						content: ''; display: block; position: absolute; top: 50%; width: 32px; height: 32px; right: 16px; background-color: var(--color-bg-primary);
 						border-radius: 50%; z-index: 2; margin-top: -16px; pointer-events: all;
-						background-size: 20px; background-position: center; background-repeat: no-repeat; transition: $transitionAllCommon;
+						background-image: url('~img/icon/arrow/swiper.svg'); background-size: 20px; background-position: center; background-repeat: no-repeat;
+						transition: $transitionAllCommon;
 					}
-					&:hover::after { background-color: var(--color-control-accent); }
+					&:hover::after { background-color: var(--color-control-accent); background-image: url('~img/icon/arrow/swiper-hover.svg'); }
 				}
 				.swiper-button-prev { left: 0px; transform: rotateY(-180deg); }
 				.swiper-button-next { right: 0px; }
@@ -148,7 +149,7 @@ $hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 
 				.icon.arrow {
 					position: absolute; width: 44px; height: 44px; top: 50%; margin-top: -22px; background-color: var(--color-bg-primary); z-index: 1;
-					border-radius: 50%; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); background-size: 20px;
+					border-radius: 50%; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 					transition: $transitionAllCommon; border: 1px solid var(--color-shape-primary);
 				}
 				.icon.arrow.hide { opacity: 0; }

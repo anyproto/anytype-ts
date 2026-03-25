@@ -6,12 +6,12 @@ import { I, S, U, C, J, translate, keyboard, Storage } from 'Lib';
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 
-const getIconClass = (type: I.ProgressType): string => {
+const getIconName = (type: I.ProgressType): string => {
 	switch (type) {
-		case I.ProgressType.Update:		return 'update';
-		case I.ProgressType.Import:		return 'import';
-		case I.ProgressType.Export:		return 'export';
-		default:						return 'download';
+		case I.ProgressType.Update:		return 'popup/header/update';
+		case I.ProgressType.Import:		return 'menu/action/import';
+		case I.ProgressType.Export:		return 'menu/action/export';
+		default:						return 'menu/action/download';
 	};
 };
 
@@ -47,7 +47,7 @@ export interface ProgressItemProps {
 export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, onCancel }: ProgressItemProps) => {
 	const cn = [ 'item' ];
 	const label = translate(U.String.toCamelCase(`progress-${type}`));
-	const iconClass = getIconClass(type);
+	const iconName = getIconName(type);
 
 	if (canCancel) {
 		cn.push('canCancel');
@@ -65,8 +65,8 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 
 	return (
 		<div className={cn.join(' ')}>
-			<div className={[ 'iconWrap', iconClass ].join(' ')}>
-				<Icon className={`progressType ${iconClass}`} />
+			<div className="iconWrap">
+				<Icon name={iconName} className="progressType" />
 			</div>
 
 			<div className="info">

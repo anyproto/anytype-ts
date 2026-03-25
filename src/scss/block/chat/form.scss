@@ -127,7 +127,10 @@
 			border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary);
 		}
 		.swiper-button-prev::after,
-		.swiper-button-next::after { z-index: 2; margin: -10px 0px 0px -9px; width: 20px; height: 20px; }
+		.swiper-button-next::after {
+			z-index: 2; margin: -10px 0px 0px -9px; width: 20px; height: 20px;
+			background: url('~img/icon/arrow/swiper.svg') center / contain no-repeat;
+		}
 		.swiper-button-prev::after { transform: rotateZ(180deg); margin-left: -10px; }
 
 		.swiper-button-disabled { display: none; }

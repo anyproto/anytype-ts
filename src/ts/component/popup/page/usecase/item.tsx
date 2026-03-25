@@ -167,8 +167,8 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 					))}
 				</Swiper>
 
-				<Icon id="arrowLeft" className="arrow left" onClick={() => onArrow(-1)} />
-				<Icon id="arrowRight" className="arrow right" onClick={() => onArrow(1)} />
+				<Icon id="arrowLeft" name="arrow/gallery" className="arrow left" size={20} onClick={() => onArrow(-1)} />
+				<Icon id="arrowRight" name="arrow/gallery" className="arrow right" size={20} onClick={() => onArrow(1)} />
 			</div>
 
 			<div className="footerWrap">

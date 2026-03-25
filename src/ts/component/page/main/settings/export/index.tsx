@@ -29,7 +29,7 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 
 		return (
 			<div className={cn.join(' ')} onClick={() => onClick(item.id)} >
-				<Icon className={`import-${item.id}`} />
+				<Icon name={`import/${item.id}`} size={item.isApp ? 18 : 40} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
