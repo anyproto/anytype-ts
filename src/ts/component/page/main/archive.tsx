@@ -7,6 +7,7 @@ import { I, S, U, J, translate, Action, analytics, keyboard, sidebar, Storage } 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
+	const { dateFormat } = S.Common;
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
@@ -33,7 +34,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			relationKey: 'lastModifiedDate',
 			name: translate('commonDeleted'),
 			width: '20%',
-			mapper: (v: number) => v ? U.Date.dateWithFormat(S.Common.dateFormat, v) : '',
+			mapper: (v: number) => v ? U.Date.dateWithFormat(dateFormat, v) : '',
 		},
 	];
 
@@ -267,6 +268,14 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 									</>
 								) : ''}
 
+								<Icon
+									className="archiveAction"
+									name={isDetailed ? 'common/switchViewDetailed' : 'common/switchView'}
+									withBackground={true}
+									tooltipParam={{ text: translate('commonSwitchView') }}
+									onClick={onSwitchView}
+								/>
+
 								<div ref={filterWrapperRef} className="filterWrapper">
 									<Filter
 										ref={filterRef}
@@ -275,14 +284,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 										placeholder={translate('commonSearchPlaceholder')}
 									/>
 								</div>
-
-								<Icon
-									className="archiveAction"
-									name={isDetailed ? 'common/switchViewDetailed' : 'common/switchView'}
-									withBackground={true}
-									tooltipParam={{ text: translate('commonSwitchView') }}
-									onClick={onSwitchView}
-								/>
 								<Icon
 									className="archiveAction"
 									name="common/search"
