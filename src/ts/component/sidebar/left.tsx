@@ -222,11 +222,28 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		getSubComponentRef: () => subPageRef.current,
 	}));
 
+	const onDragOverHandler = (e: React.DragEvent) => {
+		if (e.dataTransfer?.types?.includes('Files')) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.dataTransfer.dropEffect = 'none';
+		};
+	};
+
+	const onDropHandler = (e: React.DragEvent) => {
+		if (e.dataTransfer?.types?.includes('Files')) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+	};
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id="sidebarLeft" 
-			className={cn.join(' ')} 
+			id="sidebarLeft"
+			className={cn.join(' ')}
+			onDragOver={onDragOverHandler}
+			onDrop={onDropHandler}
 		>
 			<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
 				{Component ? (
