@@ -219,41 +219,34 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
 			const allPaths = filePaths.concat(dirPaths);
-			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
+			let contextId = rootId;
+
+			if (data && (data.dropType == I.DropType.Menu)) {
+				contextId = targetId;
+				targetId = '';
+				position.current = I.BlockPosition.Bottom;
+			};
+
+			if (data && (data.dropType == I.DropType.Widget)) {
+				const { widgets } = S.Block;
+				const childrenIds = S.Block.getChildrenIds(widgets, targetId);
+				const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+				const widgetTargetId = child?.getTargetObjectId();
+
+				if (widgetTargetId) {
+					contextId = widgetTargetId;
+					targetId = '';
+					position.current = I.BlockPosition.Bottom;
+				};
+			};
+
+			const contextObject = S.Detail.get(rootId, contextId, [ 'layout' ], true);
+			const isSetLayout = U.Object.isInSetLayouts(contextObject.layout);
 
 			if (allPaths.length && isSetLayout) {
 				Preview.toastShow({ text: translate('toastSetFileDrop') });
 			} else
 			if (allPaths.length && !isSetLayout) {
-				let contextId = rootId;
-
-				if (data && (data.dropType == I.DropType.Menu)) {
-					contextId = targetId;
-					targetId = '';
-					position.current = I.BlockPosition.Bottom;
-				};
-
-				if (data && (data.dropType == I.DropType.Widget)) {
-					const { widgets } = S.Block;
-					const childrenIds = S.Block.getChildrenIds(widgets, targetId);
-					const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-					const widgetTargetId = child?.getTargetObjectId();
-
-					if (widgetTargetId) {
-						const widgetTarget = S.Detail.get(widgets, widgetTargetId, [ 'layout' ], true);
-
-						if (U.Object.isInSetLayouts(widgetTarget.layout)) {
-							clearState();
-							return;
-						};
-
-						contextId = widgetTargetId;
-						targetId = '';
-						position.current = I.BlockPosition.Bottom;
-					};
-				};
-
 				C.FileDrop(contextId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
 
