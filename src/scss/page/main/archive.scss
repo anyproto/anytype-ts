@@ -7,35 +7,26 @@
 		height: 100%; display: flex; flex-direction: column; gap: 16px 0px;
 	}
 	.wrapper {
-		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-shrink: 0; }
 		.titleWrapper {
-			.title { @include text-header1; font-weight: 700; }
+			display: flex; flex-direction: row; align-items: center; flex-shrink: 0;
 		}
-
-		.controls {
-			display: flex; flex-direction: row; align-items: center; padding: 0px 0px 8px 0px;
-			border-bottom: 1px solid var(--color-shape-secondary);
-		}
-		.controls {
-			.side { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
-			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; justify-content: flex-end; }
-
-			.button {
-				display: flex; flex-direction: row; align-items: center; gap: 0px 6px;
-				border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px; transition: $transitionAllCommon;
+		.titleWrapper {
+			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-grow: 1; }
+			.side.left {
+				.title { @include text-header1; font-weight: 700; }
 			}
-			.button {
-				.name { @include text-overflow-nw; }
-			}
-			.button:first-child { margin-left: -4px; }
-			.button:hover { background-color: var(--color-shape-highlight-medium); }
-			.button.isDisabled { opacity: 0.3; }
-			.button.isDisabled:hover { background-color: transparent; }
 
-			.icon { width: 20px; height: 20px; }
-			.icon.searchIcon { margin: 0px; }
-			.icon.moreIcon { margin: 0px; }
+			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; flex-shrink: 0; }
+
+			.iconWrap {
+				width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+				border-radius: 6px; transition: $transitionAllCommon;
+			}
+			.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
+			.iconWrap.isDisabled { opacity: 0.3; }
+			.iconWrap.isDisabled:hover { background-color: transparent; }
+
+			.icon { width: 20px; height: 20px; margin: 0px; }
 
 			.filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
 			.filterWrapper.active { width: 200px; }
@@ -49,7 +40,30 @@
 
 		.listObject { flex-grow: 1; }
 		.listObject {
-			.row.isArchived *, .row.isArchived .icon.checkbox { text-decoration: none; color: inherit; }
+			.table {
+				.row.isArchived *, .row.isDeleted * { text-decoration: none; color: inherit; }
+
+				.row .cell.cellCheck { opacity: 0; transition: opacity 0.15s ease; }
+				.row:hover .cell.cellCheck { opacity: 1; }
+				.row .cell.cellCheck.isChecked { opacity: 1; }
+			}
+
+			.cell.isName {
+				.cellContent.isName {
+					.info { display: flex; flex-direction: column; overflow: hidden; }
+					.info {
+						.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
+					}
+				}
+
+				.flex { align-items: center; }
+			}
+		}
+	}
+
+	.wrapper.hasSelection {
+		.listObject .table {
+			.row .cell.cellCheck { opacity: 1; }
 		}
 	}
 

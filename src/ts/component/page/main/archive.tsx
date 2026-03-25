@@ -21,6 +21,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const isOwner = U.Space.isMyOwner();
 	const participantId = U.Space.getCurrentParticipantId();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const hasSelection = selectedIds.length > 0;
 
 	const filters: I.Filter[] = [
 		{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
@@ -84,7 +85,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onSelectAll = () => {
-		if (selectedIds.length) {
+		if (hasSelection) {
 			setSelectedIds([]);
 		} else {
 			setSelectedIds(getRecordIds());
@@ -92,7 +93,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onRestore = () => {
-		if (!selectedIds.length) {
+		if (!hasSelection) {
 			return;
 		};
 
@@ -101,7 +102,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onRemove = () => {
-		if (!selectedIds.length || !canDeleteSelection()) {
+		if (!hasSelection || !canDeleteSelection()) {
 			return;
 		};
 
@@ -245,10 +246,15 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		resize,
 	}));
 
-	const isAllSelected = (selectedIds.length > 0) && (selectedIds.length >= getRecordIds().length);
+	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
-	const cnDelete = [ 'button', ((!canDelete || !selectedIds.length) ? 'isDisabled' : '') ];
-	const cnRestore = [ 'button', (!selectedIds.length ? 'isDisabled' : '') ];
+	const cnDelete = [ 'iconWrap', ((!canDelete || !hasSelection) ? 'isDisabled' : '') ];
+	const cnRestore = [ 'iconWrap', (!hasSelection ? 'isDisabled' : '') ];
+	const cnWrapper = [ 'wrapper' ];
+
+	if (hasSelection) {
+		cnWrapper.push('hasSelection');
+	};
 
 	return (
 		<>
@@ -257,47 +263,53 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 				component={U.Common.settingsHeader(isPopup, 'mainEmpty')}
 			/>
 
-			<div ref={nodeRef} className="wrapper">
+			<div ref={nodeRef} className={cnWrapper.join(' ')}>
 				<div className="titleWrapper">
-					<Icon name="common/bin" size={32} color="default" />
-					<Title text={translate('commonBin')} />
-				</div>
-
-				{canWrite ? (
-					<div className="controls">
-						<div className="side left">
-							<div className={cnRestore.join(' ')} onClick={onRestore}>
-								<Icon name="menu/action/restore" />
-								<div className="name">{translate('commonRestore')}</div>
-							</div>
-							<div
-								className={cnDelete.join(' ')}
-								onClick={onRemove}
-								onMouseEnter={onDeleteMouseEnter}
-								onMouseLeave={onDeleteMouseLeave}
-							>
-								<Icon name="menu/action/remove" />
-								<div className="name">{translate('commonDeleteImmediately')}</div>
-							</div>
-						</div>
-						<div className="side right">
-							<Icon name="common/search" className="searchIcon" onClick={onFilterShow} />
-
-							<div ref={filterWrapperRef} className="filterWrapper">
-								<Filter
-									ref={filterRef}
-									className="underlined"
-									onChange={onFilterChange}
-									placeholder={translate('commonSearchPlaceholder')}
-								/>
-							</div>
-
-							{isOwner ? (
-								<Icon id="page-archive-more" name="common/more" className="moreIcon" onClick={onMore} />
-							) : ''}
-						</div>
+					<div className="side left">
+						<Icon name="common/bin" size={32} color="default" />
+						<Title text={translate('commonBin')} />
 					</div>
-				) : ''}
+					<div className="side right">
+						{canWrite ? (
+							<>
+								{hasSelection ? (
+									<>
+										<div className={cnRestore.join(' ')} onClick={onRestore}>
+											<Icon name="menu/action/restore" />
+										</div>
+										<div
+											className={cnDelete.join(' ')}
+											onClick={onRemove}
+											onMouseEnter={onDeleteMouseEnter}
+											onMouseLeave={onDeleteMouseLeave}
+										>
+											<Icon name="menu/action/remove" />
+										</div>
+									</>
+								) : ''}
+
+								{isOwner ? (
+									<div className="iconWrap" onClick={onMore}>
+										<Icon id="page-archive-more" name="common/more" />
+									</div>
+								) : ''}
+
+								<div ref={filterWrapperRef} className="filterWrapper">
+									<Filter
+										ref={filterRef}
+										className="underlined"
+										onChange={onFilterChange}
+										placeholder={translate('commonSearchPlaceholder')}
+									/>
+								</div>
+
+								<div className="iconWrap" onClick={onFilterShow}>
+									<Icon name="common/search" />
+								</div>
+							</>
+						) : ''}
+					</div>
+				</div>
 
 				<ListObject
 					ref={listRef}
@@ -309,6 +321,9 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					filters={getFilters()}
 					relationKeys={relationKeys}
 					ignoreArchived={false}
+					skipLayoutFilter={true}
+					withDescription={true}
+					emptyText={translate('pageMainArchiveEmpty')}
 					defaultSortId="lastModifiedDate"
 					defaultSortType={I.SortType.Desc}
 					selectable={canWrite}

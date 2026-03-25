@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
+import { IconObject, Pager, ObjectName, ObjectDescription, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
 import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 
 interface Column {
@@ -9,6 +9,7 @@ interface Column {
 	className?: string;
 	isObject?: boolean;
 	isCell?: boolean;
+	withDescription?: boolean;
 	mapper?: (value : any) => any;
 };
 
@@ -24,6 +25,9 @@ interface Props {
 	selectable?: boolean;
 	selectedIds?: string[];
 	ignoreArchived?: boolean;
+	skipLayoutFilter?: boolean;
+	withDescription?: boolean;
+	emptyText?: string;
 	defaultSortId?: string;
 	defaultSortType?: I.SortType;
 	onSelect?: (id: string, e: MouseEvent) => void;
@@ -62,7 +66,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 			style={css}
 		>
 			{selectable ? (
-				<div className="cell cellCheck">
+				<div className={[ 'cell', 'cellCheck', (isSelected ? 'isChecked' : '') ].join(' ')}>
 					<Checkbox value={isSelected} onChange={e => onSelect(item.id, e)} />
 				</div>
 			) : ''}
@@ -92,12 +96,25 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 
 					if (!object._empty_) {
 						onClick = e => U.Object.openEvent(e, object);
-						content = (
-							<div className="flex">
-								<IconObject object={object} />
-								<ObjectName object={object} />
-							</div>
-						);
+
+						if (column.withDescription) {
+							content = (
+								<div className="flex">
+									<IconObject object={object} />
+									<div className="info">
+										<ObjectName object={object} />
+										<ObjectDescription object={object} />
+									</div>
+								</div>
+							);
+						} else {
+							content = (
+								<div className="flex">
+									<IconObject object={object} />
+									<ObjectName object={object} />
+								</div>
+							);
+						};
 					};
 				} else
 				if (column.isCell) {
@@ -143,6 +160,9 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	selectable = false,
 	selectedIds = [],
 	ignoreArchived = true,
+	skipLayoutFilter = false,
+	withDescription = false,
+	emptyText = '',
 	defaultSortId,
 	defaultSortType,
 	onSelect,
@@ -154,7 +174,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const { dateFormat } = S.Common;
 
 	const getColumns = (): Column[] => {
-		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(columns || []);
+		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true, withDescription } ] as any[]).concat(columns || []);
 	};
 
 	const columnList = getColumns();
@@ -172,9 +192,13 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const getData = (page: number, callBack?: (message: any) => void) => {
 		const limit = J.Constant.limit.listObject;
 		const offset = (page - 1) * limit;
-		const fl = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-		].concat(filters || []);
+		const fl = [];
+
+		if (!skipLayoutFilter) {
+			fl.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
+		};
+
+		fl.push(...(filters || []));
 
 		S.Record.metaSet(subId, '', { offset });
 
@@ -294,7 +318,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 				{!items.length ? (
 					<div className="row">
-						<div className="cell empty">{translate('commonNoObjects')}</div>
+						<div className="cell empty">{emptyText || translate('commonNoObjects')}</div>
 					</div>
 				) : (
 					<>
