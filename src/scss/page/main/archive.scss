@@ -2,9 +2,9 @@
 
 .pageMainArchive,
 .pageSettingsArchive {
-	.wrapper { 
-		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 40px 0px; user-select: none; 
-		height: 100%; display: flex; flex-direction: column; gap: 46px 0px;
+	.wrapper {
+		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 40px 0px; user-select: none;
+		height: 100%; display: flex; flex-direction: column; gap: 16px 0px;
 	}
 	.wrapper {
 		.titleWrapper { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-shrink: 0; }
@@ -12,29 +12,44 @@
 			.title { @include text-header1; font-weight: 700; }
 		}
 
-		.objectManagerWrapper { flex-grow: 1; }
-		.objectManagerWrapper {
-			.controls {
+		.controls {
+			display: flex; flex-direction: row; align-items: center; padding: 0px 0px 8px 0px;
+			border-bottom: 1px solid var(--color-shape-secondary);
+		}
+		.controls {
+			.side { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+			.side.left { flex-grow: 1; }
+			.side.right { flex-shrink: 0; justify-content: flex-end; }
+
+			.button {
+				display: flex; flex-direction: row; align-items: center; gap: 0px 6px;
+				border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px; transition: $transitionAllCommon;
 			}
-
-			.ReactVirtualized__List { padding: 12px 0px; }
-			
-			.items { flex-grow: 1; }
-			.items {
-				.row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-				@media (max-width: 940px) {
-					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-				}
-
-				.item { gap: 0px 12px; }
-				.item {
-					.iconObject { flex-basis: 48px; border-radius: 10px; background-color: var(--color-shape-tertiary); }
-
-					.name { @include text-overflow-nw; width: 100%; }
-					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); }
-				}
+			.button {
+				.name { @include text-overflow-nw; }
 			}
+			.button:first-child { margin-left: -4px; }
+			.button:hover { background-color: var(--color-shape-highlight-medium); }
+			.button.isDisabled { opacity: 0.3; }
+			.button.isDisabled:hover { background-color: transparent; }
+
+			.icon { width: 20px; height: 20px; }
+			.icon.searchIcon { margin: 0px; }
+			.icon.moreIcon { margin: 0px; }
+
+			.filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
+			.filterWrapper.active { width: 200px; }
+
+			.filter { padding: 0px; }
+			.filter {
+				.line { display: none; }
+				.inner { height: 20px; }
+			}
+		}
+
+		.listObject { flex-grow: 1; }
+		.listObject {
+			.row.isArchived *, .row.isArchived .icon.checkbox { text-decoration: none; color: inherit; }
 		}
 	}
 

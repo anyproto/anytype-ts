@@ -34,6 +34,13 @@
 			.cell:last-child { padding-right: 0px; }
 			.cell.empty { line-height: 20px; }
 
+			.cell.cellCheck {
+				display: flex; align-items: center; justify-content: center; padding: 0px;
+			}
+			.cell.cellCheck {
+				.icon.checkbox { width: 18px; height: 18px; }
+			}
+
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
 				.more { vertical-align: top; }

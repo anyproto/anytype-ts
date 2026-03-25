@@ -1842,11 +1842,13 @@ class UtilMenu {
 			value = String(recentEditMode);
 		} else 
 		if (sectionId == I.WidgetSection.Bin) {
-			options = options.concat([
-				{ id: 'openBin', name: translate('commonOpen') },
-				{ id: 'emptyBin', name: translate('commonEmptyBin') },
-				{ isDiv: true },
-			]);
+			options.push({ id: 'openBin', name: translate('commonOpen') });
+
+			if (U.Space.isMyOwner()) {
+				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
+			};
+
+			options.push({ isDiv: true });
 		};
 
 		options.push(toggle);

@@ -1,6 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useEffect, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon } from 'Component';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
 import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 
 interface Column {
@@ -21,6 +21,14 @@ interface Props {
 	filters?: I.Filter[];
 	relationKeys?: string[];
 	route: string;
+	selectable?: boolean;
+	selectedIds?: string[];
+	ignoreArchived?: boolean;
+	defaultSortId?: string;
+	defaultSortType?: I.SortType;
+	onSelect?: (id: string, e: MouseEvent) => void;
+	onSelectAll?: () => void;
+	isAllSelected?: boolean;
 };
 
 interface ListObjectRefProps {
@@ -29,7 +37,7 @@ interface ListObjectRefProps {
 
 const PREFIX = 'listObject';
 
-const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any) => {
+const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, selectable, isSelected, onSelect }: any) => {
 	const cn = [ 'row' ];
 
 	if (U.Object.isTaskLayout(item.layout) && item.isDone) {
@@ -53,6 +61,11 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext }: any)
 			onContextMenu={e => onContext(e, item.id)}
 			style={css}
 		>
+			{selectable ? (
+				<div className="cell cellCheck">
+					<Checkbox value={isSelected} onChange={e => onSelect(item.id, e)} />
+				</div>
+			) : ''}
 			{columnList.map(column => {
 				const cn = [ 'cell', `c-${column.relationKey}` ];
 				const cnc = [ 'cellContent' ];
@@ -127,6 +140,14 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	filters = [],
 	relationKeys = [],
 	route = '',
+	selectable = false,
+	selectedIds = [],
+	ignoreArchived = true,
+	defaultSortId,
+	defaultSortType,
+	onSelect,
+	onSelectAll,
+	isAllSelected = false,
 }, ref) => {
 
 	const { offset, total } = S.Record.getMeta(subId, '');
@@ -137,8 +158,8 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	const columnList = getColumns();
-	const [ sortType, setSortType ] = useState(I.SortType.Asc);
-	const [ sortId, setSortId ] = useState(columnList.length ? columnList[0].relationKey : '');
+	const [ sortType, setSortType ] = useState(defaultSortType ?? I.SortType.Asc);
+	const [ sortId, setSortId ] = useState(defaultSortId ?? (columnList.length ? columnList[0].relationKey : ''));
 
 	const getKeys = () => {
 		return J.Relation.default.concat(getColumns().map(it => it.relationKey)).concat(relationKeys || []);
@@ -166,6 +187,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			filters: fl,
 			offset,
 			limit,
+			ignoreArchived,
 		}, callBack);
 	};
 
@@ -213,7 +235,13 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	const items = getItems();
-	const widths = [ 'minmax(0, 1fr)' ];
+	const widths = [];
+
+	if (selectable) {
+		widths.push('36px');
+	};
+
+	widths.push('minmax(0, 1fr)');
 	for (let i = 1; i < columnList.length; ++i) {
 		widths.push(`${60 / (columnList.length - 1)}%`);
 	};
@@ -238,7 +266,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		};
 	}, []);
 
-	useEffect(() => getData(1), [ sortId, sortType ]);
+	useEffect(() => getData(1), [ sortId, sortType, JSON.stringify(filters) ]);
 
 	useImperativeHandle(ref, () => ({
 		getData,
@@ -248,6 +276,11 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		<div className="listObject">
 			<div className="table">
 				<div className="row isHead" style={css}>
+					{selectable ? (
+						<div className="cell cellCheck">
+							<Checkbox value={isAllSelected} onChange={() => onSelectAll?.()} />
+						</div>
+					) : ''}
 					{columnList.map(column => {
 						const arrow = sortId == column.relationKey ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 
@@ -274,6 +307,9 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 								subId={subId}
 								rootId={rootId}
 								onContext={onContext}
+								selectable={selectable}
+								isSelected={selectedIds.includes(item.id)}
+								onSelect={onSelect}
 							/>
 						))}
 					</>
