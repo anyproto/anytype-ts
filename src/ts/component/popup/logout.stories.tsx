@@ -1,20 +1,16 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { S } from 'Lib';
+import { popupProps } from 'SbHelpers/mockData';
+import { withPopup } from '../../../../.storybook/decorators';
 import PopupLogout from './logout';
-
-const noop = () => {};
 
 const meta: Meta<typeof PopupLogout> = {
 	title: 'Popup/Logout',
 	component: PopupLogout,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 400, padding: 24 }}>
-				<Story />
-			</div>
-		),
+		withPopup('Logout'),
 	],
 };
 
@@ -29,8 +25,6 @@ export const Default: Story = {
 		},
 	],
 	args: {
-		id: 'logout-default',
-		param: { data: {} },
-		close: noop,
+		...popupProps('logout-default'),
 	},
 };

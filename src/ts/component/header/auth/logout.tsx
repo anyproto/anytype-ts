@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Button } from 'Component';
+import Button from 'Component/form/button';
 import { observer } from 'mobx-react';
 import { Animation, I, S, U, translate } from 'Lib';
 

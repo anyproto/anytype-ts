@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { popupProps } from 'SbHelpers/mockData';
+import { withPopup } from '../../../../.storybook/decorators';
 import PopupAbout from './about';
 
 const meta: Meta<typeof PopupAbout> = {
@@ -6,11 +8,7 @@ const meta: Meta<typeof PopupAbout> = {
 	component: PopupAbout,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 400, padding: 24, textAlign: 'center' }}>
-				<Story />
-			</div>
-		),
+		withPopup('About'),
 	],
 };
 
@@ -18,5 +16,7 @@ export { meta as default };
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: {},
+	args: {
+		...popupProps('about-default'),
+	},
 };

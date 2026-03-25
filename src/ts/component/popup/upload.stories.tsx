@@ -1,18 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { popupProps } from 'SbHelpers/mockData';
+import { withPopup } from '../../../../.storybook/decorators';
 import PopupUpload from './upload';
-
-const noop = () => {};
 
 const meta: Meta<typeof PopupUpload> = {
 	title: 'Popup/Upload',
 	component: PopupUpload,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 480, padding: 24 }}>
-				<Story />
-			</div>
-		),
+		withPopup('Upload'),
 	],
 };
 
@@ -21,14 +17,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		id: 'upload-default',
-		param: {
-			data: {
-				layout: 0,
-				onUpload: noop,
-				route: 'storybook',
-			},
-		},
-		close: noop,
+		...popupProps('upload-default', {
+			layout: 0,
+			onUpload: () => {},
+			route: 'storybook',
+		}),
 	},
 };

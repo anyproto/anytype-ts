@@ -1,6 +1,7 @@
 import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
+import Icon from 'Component/util/icon';
+import Label from 'Component/util/label';
 import { I, S, U, C, J, translate, keyboard, Storage } from 'Lib';
 
 const AUTO_EXPAND = true;

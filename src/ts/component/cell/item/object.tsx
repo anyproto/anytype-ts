@@ -1,6 +1,8 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, Icon } from 'Component';
+import Icon from 'Component/util/icon';
+import IconObject from 'Component/util/iconObject';
+import ObjectName from 'Component/util/object/name';
 import { I, S, U } from 'Lib';
 
 interface Props {

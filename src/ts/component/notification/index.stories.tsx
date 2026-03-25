@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Notification from './index';
+import { withNotification } from '../../../../.storybook/decorators';
 
 const noop = () => {};
 
@@ -8,13 +9,7 @@ const meta: Meta<typeof Notification> = {
 	title: 'Notification/Item',
 	component: Notification,
 	tags: ['autodocs'],
-	decorators: [
-		(Story) => (
-			<div style={{ width: 380 }}>
-				<Story />
-			</div>
-		),
-	],
+	decorators: [ withNotification ],
 };
 
 export { meta as default };

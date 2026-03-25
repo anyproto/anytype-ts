@@ -1,18 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { popupProps } from 'SbHelpers/mockData';
+import { withPopup } from '../../../../.storybook/decorators';
 import PopupExport from './export';
-
-const noop = () => {};
 
 const meta: Meta<typeof PopupExport> = {
 	title: 'Popup/Export',
 	component: PopupExport,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 400, padding: 24 }}>
-				<Story />
-			</div>
-		),
+		withPopup('Export'),
 	],
 };
 
@@ -21,10 +17,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		id: 'export-default',
-		param: { data: {} },
-		close: noop,
-		storageGet: () => ({}),
-		storageSet: noop,
+		...popupProps('export-default'),
 	},
 };

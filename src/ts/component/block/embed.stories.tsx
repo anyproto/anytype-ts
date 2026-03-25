@@ -1,6 +1,6 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { I } from 'Lib';
+import { withBlock } from '../../../../.storybook/decorators';
 import BlockEmbed from './embed';
 
 const ROOT = 'sb-embed';
@@ -10,11 +10,7 @@ const meta: Meta<typeof BlockEmbed> = {
 	component: BlockEmbed,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 600, padding: 16 }}>
-				<Story />
-			</div>
-		),
+		withBlock('blockEmbed'),
 	],
 };
 

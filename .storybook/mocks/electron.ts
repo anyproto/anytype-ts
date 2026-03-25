@@ -39,7 +39,7 @@ const ElectronMock = {
 	userPath: noopReturn('/tmp/user'),
 
 	// IPC
-	Api: (_winId: number, _cmd: string, _args: any[]) => {},
+	Api: (_winId: number, _cmd: string, _args: any[]) => Promise.resolve(),
 	on: noop,
 	removeAllListeners: noop,
 	send: noop,

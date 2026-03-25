@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { I, S } from 'Lib';
+import { withBlock } from '../../../../.storybook/decorators';
 import BlockBookmark from './bookmark';
 
 const ROOT = 'sb-bookmark';
@@ -10,11 +11,7 @@ const meta: Meta<typeof BlockBookmark> = {
 	component: BlockBookmark,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 600, padding: 16 }}>
-				<Story />
-			</div>
-		),
+		withBlock('blockBookmark'),
 	],
 };
 

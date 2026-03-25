@@ -1,20 +1,16 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { S } from 'Lib';
+import { popupProps } from 'SbHelpers/mockData';
+import { withPopup } from '../../../../.storybook/decorators';
 import PopupPin from './pin';
-
-const noop = () => {};
 
 const meta: Meta<typeof PopupPin> = {
 	title: 'Popup/Pin',
 	component: PopupPin,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 320, padding: 24 }}>
-				<Story />
-			</div>
-		),
+		withPopup('Pin'),
 	],
 };
 
@@ -29,13 +25,9 @@ export const Default: Story = {
 		},
 	],
 	args: {
-		id: 'pin-default',
-		param: {
-			data: {
-				onSuccess: noop,
-				onError: noop,
-			},
-		},
-		close: noop,
+		...popupProps('pin-default', {
+			onSuccess: () => {},
+			onError: () => {},
+		}),
 	},
 };

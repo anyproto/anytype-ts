@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { I, S } from 'Lib';
+import { withBlock } from '../../../../../.storybook/decorators';
 import BlockFile from './file';
 
 const ROOT = 'sb-file';
@@ -10,11 +11,7 @@ const meta: Meta<typeof BlockFile> = {
 	component: BlockFile,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 600, padding: 16 }}>
-				<Story />
-			</div>
-		),
+		withBlock('blockFile'),
 	],
 };
 
@@ -40,7 +37,7 @@ export const Done: Story = {
 		block: {
 			id: 'file-done',
 			type: I.BlockType.File,
-			content: { state: I.FileState.Done, style: I.FileStyle.Block, targetObjectId: 'file-obj-1' },
+			content: { state: I.FileState.Done, style: I.FileStyle.Auto, targetObjectId: 'file-obj-1' },
 			childrenIds: [],
 			fields: {},
 		},
@@ -54,7 +51,7 @@ export const Empty: Story = {
 		block: {
 			id: 'file-empty',
 			type: I.BlockType.File,
-			content: { state: I.FileState.Empty, style: I.FileStyle.Block, targetObjectId: '' },
+			content: { state: I.FileState.Empty, style: I.FileStyle.Auto, targetObjectId: '' },
 			childrenIds: [],
 			fields: {},
 		},
@@ -68,7 +65,7 @@ export const Error: Story = {
 		block: {
 			id: 'file-error',
 			type: I.BlockType.File,
-			content: { state: I.FileState.Error, style: I.FileStyle.Block, targetObjectId: '' },
+			content: { state: I.FileState.Error, style: I.FileStyle.Auto, targetObjectId: '' },
 			childrenIds: [],
 			fields: {},
 		},

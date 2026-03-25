@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { I, S } from 'Lib';
+import { withBlock } from '../../../../../.storybook/decorators';
 import BlockVideo from './video';
 
 const ROOT = 'sb-video';
@@ -10,11 +11,7 @@ const meta: Meta<typeof BlockVideo> = {
 	component: BlockVideo,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 600, padding: 16 }}>
-				<Story />
-			</div>
-		),
+		withBlock('blockMedia isVideo'),
 	],
 };
 

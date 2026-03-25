@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { I, S } from 'Lib';
+import { withBlock } from '../../../../.storybook/decorators';
 import BlockTableOfContents from './tableOfContents';
 
 const meta: Meta<typeof BlockTableOfContents> = {
@@ -8,11 +9,7 @@ const meta: Meta<typeof BlockTableOfContents> = {
 	component: BlockTableOfContents,
 	tags: ['autodocs'],
 	decorators: [
-		(Story) => (
-			<div style={{ width: 600, padding: 16 }}>
-				<Story />
-			</div>
-		),
+		withBlock('blockTableOfContents'),
 	],
 };
 

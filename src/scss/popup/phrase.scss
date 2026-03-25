@@ -4,12 +4,12 @@
 	.popup.popupPhrase {
 		.innerWrap { width: 548px; padding: 32px; }
 
-		.icon.close {
+		.icon.commonClose {
 			position: absolute; right: 16px; top: 16px; width: 32px; height: 32px; border-radius: 50%;
 			background: var(--color-shape-highlight-medium);
 		}
-		.icon.close:hover { background-color: var(--color-shape-highlight-dark); }
-
+		.icon.commonClose:hover { background-color: var(--color-shape-highlight-dark); }
+		
 		.title { @include text-header1; margin: 0px 0px 40px 0px; }
 
 		.rows { display: flex; flex-direction: column; gap: 32px 0px; }

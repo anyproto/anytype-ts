@@ -78,6 +78,21 @@ export const mockParticipant = (overrides: any = {}) => ({
 });
 
 /**
+ * Default props for popup components.
+ * The Popup wrapper (popup/index.tsx) passes position, storageGet, storageSet, getId
+ * to child popup components. Stories need these to avoid runtime errors.
+ */
+export const popupProps = (id: string, data: any = {}) => ({
+	id,
+	param: { data },
+	close: () => {},
+	position: () => {},
+	getId: () => id,
+	storageGet: () => ({}),
+	storageSet: () => {},
+});
+
+/**
  * Set detail store values for a rootId/objectId pair.
  * Usage: setDetail('root-1', 'obj-1', { name: 'Test', layout: 0 });
  */

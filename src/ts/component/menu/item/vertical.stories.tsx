@@ -1,17 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import MenuItemVertical from './vertical';
+import { withMenu } from '../../../../../.storybook/decorators';
 
 const meta: Meta<typeof MenuItemVertical> = {
 	title: 'Menu/ItemVertical',
 	component: MenuItemVertical,
 	tags: ['autodocs'],
-	decorators: [
-		(Story) => (
-			<div style={{ width: 280 }}>
-				<Story />
-			</div>
-		),
-	],
+	decorators: [ withMenu ],
 };
 
 export { meta as default };
@@ -135,13 +130,13 @@ export const WithMore: Story = {
 
 export const MenuList: Story = {
 	render: () => (
-		<div style={{ width: 280 }}>
+		<>
 			<MenuItemVertical id="s1" name="Actions" isSection={true} index={0} />
 			<MenuItemVertical id="i1" name="Turn into" iconParam={{ name: 'menu/block/text/paragraph', size: 20 }} arrow={true} />
 			<MenuItemVertical id="i2" name="Move to" iconParam={{ name: 'menu/action/move', size: 20 }} />
 			<MenuItemVertical id="i3" name="Duplicate" iconParam={{ name: 'menu/action/duplicate', size: 20 }} caption="Ctrl+D" />
 			<MenuItemVertical id="d1" isDiv={true} />
 			<MenuItemVertical id="i4" name="Delete" color="red" iconParam={{ name: 'menu/action/remove', size: 20 }} />
-		</div>
+		</>
 	),
 };
