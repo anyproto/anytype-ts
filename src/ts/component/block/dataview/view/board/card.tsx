@@ -43,7 +43,6 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const onClick = (e: any) => {
 		e.preventDefault();
 
-		const selection = S.Common.getRef('selectionProvider');
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const cb = {
@@ -52,8 +51,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection?.get(I.SelectType.Record) || [];
-		if (((e.ctrlKey || e.metaKey) && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
+		if (keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

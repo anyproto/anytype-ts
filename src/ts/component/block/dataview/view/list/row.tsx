@@ -46,7 +46,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const relations = view.getVisibleRelations();
 	const nameIndex = relations.findIndex(it => it.relationKey == 'name');
 	const isRegular = view.listSize == I.ListSize.Regular;
-	const selection = S.Common.getRef('selectionProvider');
+
 
 	const left = [];
 	const right = [];
@@ -82,6 +82,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const onClick = (e: any) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		const cb = {
 			0: () => U.Object.openConfig(e, record),
@@ -89,8 +90,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection?.get(I.SelectType.Record) || [];
-		if (((e.ctrlKey || e.metaKey) && (ids.length > 1)) || keyboard.isSelectionClearDisabled) {
+		if (keyboard.isSelectionClearDisabled) {
 			return;
 		};
 
