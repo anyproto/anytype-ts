@@ -38,7 +38,7 @@ class UtilCommon {
 	};
 
 	esc (v: any): string {
-		return $.escapeSelector(String(v || ''));
+		return $.escapeSelector(String(v));
 	};
 
 	/**
