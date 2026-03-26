@@ -198,7 +198,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onClick={handleClick} 
 							onError={handleError} 
 						/>
-						<Icon className={isDownloading ? 'downloading' : 'download'} onClick={handleDownload} />
+						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" onClick={handleDownload} />}
 						<Icon name="common/resize" onMouseDown={e => handleResizeStart(e, false)} />
 					</div>
 				);
