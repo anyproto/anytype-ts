@@ -1,34 +1,38 @@
 @import "~scss/_mixins";
 
+.socialBlockWrap { position: sticky; bottom: 0; height: 0; z-index: 2; }
+
+.socialBlock {
+	position: absolute; bottom: 0; width: 100%;
+	display: flex; justify-content: center;
+	padding: 26px 0px 12px 0px;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-primary) 50%);
+	transition: opacity 0.3s $easeInQuint;
+
+	&.isHidden { opacity: 0; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
+
+	.commentCounter {
+		display: inline-flex; align-items: center; gap: 0px 6px;
+		padding: 7px 10px 7px 8px; border-radius: 18px;
+		background: var(--color-shape-tertiary);
+		user-select: none;
+
+		&:hover { background: var(--color-shape-secondary); }
+
+		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
+		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
+	}
+}
+
 .commentSection {
 	display: flex; flex-direction: column; flex: 1 1 auto;
 	padding: 0px;
 
 	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
 
-	.socialPlaceholder { height: 0px; }
-
-	.socialBlock {
-		display: flex; padding: 0px 0px 12px 0px;
-		transition: opacity 0.3s $easeInQuint;
-
-		&.isHidden { opacity: 0; transition: opacity 0.3s $easeInQuint; }
-
-		&.isSticky {
-			position: fixed; bottom: 0; z-index: 2;
-			padding: 40px 0px 12px 0px;
-			background: linear-gradient(to bottom, transparent, var(--color-bg-primary) 50%);
-		}
-
-		.commentCounter {
-			display: inline-flex; align-items: center; gap: 0px 6px;
-			padding: 7px 10px 7px 8px; border-radius: 18px;
-			background: var(--color-shape-highlight-medium);
-			user-select: none;
-
-			.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
-			.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
-		}
+	&.isVisible {
+		padding-top: 16px;
+		border-top: 1px solid var(--color-shape-secondary);
 	}
 
 	.commentBody { flex: 1 1 auto; }

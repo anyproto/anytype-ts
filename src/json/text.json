@@ -287,6 +287,7 @@
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
+	"pluralComment": "comment|comments",
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
@@ -2864,6 +2865,7 @@
 	"paymentProvider4": "App Store",
 	"paymentProvider5": "Google Play",
 
+	"commentLeaveComment": "Leave a comment",
 	"commentPlaceholder": "Leave a comment...",
 	"commentReplyPlaceholder": "Write a reply...",
 	"commentLoadMore": "Load more comments",
