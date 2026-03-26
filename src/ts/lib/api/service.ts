@@ -285,7 +285,6 @@ const registry: Record<string, RegistryEntry> = {
 	ObjectTypeResolveLayoutConflicts: { req: Commands.Rpc_ObjectType_ResolveLayoutConflicts_Request, res: Commands.Rpc_ObjectType_ResolveLayoutConflicts_Response },
 	ObjectTypeSetOrder: { req: Commands.Rpc_ObjectType_SetOrder_Request, res: Commands.Rpc_ObjectType_SetOrder_Response },
 	ObjectUndo: { req: Commands.Rpc_Object_Undo_Request, res: Commands.Rpc_Object_Undo_Response },
-	ObjectWorkspaceSetDashboard: { req: Commands.Rpc_Object_WorkspaceSetDashboard_Request, res: Commands.Rpc_Object_WorkspaceSetDashboard_Response },
 	ProcessCancel: { req: Commands.Rpc_Process_Cancel_Request, res: Commands.Rpc_Process_Cancel_Response },
 	ProcessSubscribe: { req: Commands.Rpc_Process_Subscribe_Request, res: Commands.Rpc_Process_Subscribe_Response },
 	ProcessUnsubscribe: { req: Commands.Rpc_Process_Unsubscribe_Request, res: Commands.Rpc_Process_Unsubscribe_Response },
@@ -341,6 +340,7 @@ const registry: Record<string, RegistryEntry> = {
 	WorkspaceObjectListRemove: { req: Commands.Rpc_Workspace_Object_ListRemove_Request, res: Commands.Rpc_Workspace_Object_ListRemove_Response },
 	WorkspaceOpen: { req: Commands.Rpc_Workspace_Open_Request, res: Commands.Rpc_Workspace_Open_Response },
 	WorkspaceSelect: { req: Commands.Rpc_Workspace_Select_Request, res: Commands.Rpc_Workspace_Select_Response },
+	WorkspaceSetHomepage: { req: Commands.Rpc_Workspace_SetHomepage_Request, res: Commands.Rpc_Workspace_SetHomepage_Response },
 	WorkspaceSetInfo: { req: Commands.Rpc_Workspace_SetInfo_Request, res: Commands.Rpc_Workspace_SetInfo_Response },
 };
 
