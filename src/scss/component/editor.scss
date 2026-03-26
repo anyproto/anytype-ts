@@ -35,7 +35,7 @@
 		}
 		.icon.buttonAdd.show { display: flex; }
 		
-		.blockLast { margin-left: -50px; }
+		.blockLast { margin-left: -50px; height: 44px; }
 
 		.tableOfContents { position: fixed; top: 50%; transform: translate3d(0px, -50%, 0px); padding: 16px; z-index: 10; }
 		.tableOfContents {

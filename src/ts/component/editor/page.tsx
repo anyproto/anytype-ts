@@ -2603,16 +2603,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			if (blocks.length && last.length && scrollContainer.length) {
 				last.css({ height: '' });
 
-				const ct = scrollContainer.offset().top;
-				const ch = scrollContainer.height();
-				const bt = blocks.offset().top;
-				const bh = blocks.outerHeight();
 				const commentSection = node.find('.commentSection');
 				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
-				let height = ch - ct - bt - bh - csh - 8;
-				height = Math.max(J.Size.lastBlock, height);
-				last.css({ height });
+				if (!csh) {
+					const ct = scrollContainer.offset().top;
+					const ch = scrollContainer.height();
+					const bt = blocks.offset().top;
+					const bh = blocks.outerHeight();
+
+					let height = ch - ct - bt - bh - 8;
+					height = Math.max(J.Size.lastBlock, height);
+					last.css({ height });
+				};
 			};
 
 			tocRef.current?.resize?.();
