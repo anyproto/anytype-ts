@@ -1422,11 +1422,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 
-	const setRecordEditingOn = (e: any, id: string) => {
+	const setRecordEditingOn = (e: any, id: string, retries?: number) => {
 		const ref = recordRefs.current.get(id);
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
 		const win = $(window);
+
+		if (!nameRef && (retries === undefined || retries > 0)) {
+			window.setTimeout(() => setRecordEditingOn(e, id, (retries ?? 5) - 1), 50);
+			return;
+		};
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
