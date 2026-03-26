@@ -610,7 +610,7 @@ class WindowManager {
 		};
 	};
 
-	openSpaceInTab (win: AppWindow, spaceId: string, uxType: number): void {
+	openSpaceInTab (win: AppWindow, spaceId: string, spaceType: number): void {
 		if (!win || !win.views || !spaceId) {
 			return;
 		};
@@ -619,7 +619,7 @@ class WindowManager {
 		if (existing) {
 			this.setActiveTab(win, existing.id);
 		} else {
-			this.createTab(win, { spaceId, uxType }, { setActive: true });
+			this.createTab(win, { spaceId, spaceType }, { setActive: true });
 		};
 	};
 

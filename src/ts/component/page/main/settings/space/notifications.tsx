@@ -43,7 +43,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 
 	const onSpaceModeChange = (v: I.NotificationMode) => {
 		C.PushNotificationSetSpaceMode(space, Number(v));
-		analytics.event('ChangeMessageNotificationState', { type: v, uxType: spaceview.uxType, route: analytics.route.settingsSpaceNotifications });
+		analytics.event('ChangeMessageNotificationState', { type: v, spaceType: spaceview.spaceType, route: analytics.route.settingsSpaceNotifications });
 	};
 
 	const onChatModeClick = (el: any) => {

@@ -22,7 +22,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
 	const nameRef = useRef(null);
-	const uxTypeRef = useRef(null);
+	const spaceTypeRef = useRef(null);
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
 
@@ -56,7 +56,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		modeRef.current?.setValue(String(spaceview.notificationMode));
-		modeRef.current?.setValue(String(spaceview.uxType));
+		modeRef.current?.setValue(String(spaceview.spaceType));
 	};
 
 	const onKeyUp = () => {
@@ -143,35 +143,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 
 	const onCancel = () => {
 		setIsEditing(false);
-	};
-
-	const onSpaceUxType = (v) => {
-		v = Number(v);
-
-		const onCancel = () => {
-			uxTypeRef.current?.setValue(spaceview.uxType);
-		};
-
-		S.Popup.open('confirm', {
-			onClose: onCancel,
-			data: {
-				iconParam: { name: 'popup/header/warning', color: 'red' },
-				title: translate('popupConfirmUxTypeChangeTitle'),
-				text: translate('popupConfirmUxTypeChangeText'),
-				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					const details: any = {
-						spaceUxType: v,
-						spaceDashboardId: (v == I.SpaceUxType.OneToOne ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
-					};
-
-					C.WorkspaceSetInfo(S.Common.space, details);
-					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
-				},
-				onCancel,
-			},
-		});
 	};
 
 	const checkName = (v: string): string => {
@@ -326,34 +297,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<>
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-
-							{isOwner && spaceview.isShared && !spaceview.isPersonal && config.sudo ? (
-								<div className="sectionContent">
-									<div className="item">
-										<div className="sides">
-											<Icon name={spaceview.uxType == I.SpaceUxType.Chat ? 'settings/space/chat' : 'settings/space/space'} className={`settings-ux${spaceview.uxType}`} />
-
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
-											</div>
-
-											<div className="side right">
-												<Select
-													id="uxType"
-													readonly={!canWrite}
-													ref={uxTypeRef}
-													value={String(spaceview.uxType)}
-													options={U.Menu.uxTypeOptions()}
-													onChange={onSpaceUxType}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-							) : ''}
 
 							<div className="sectionContent">
 								{!spaceview.isOneToOne ? (

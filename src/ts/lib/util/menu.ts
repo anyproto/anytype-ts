@@ -679,12 +679,12 @@ class UtilMenu {
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
+			C.WorkspaceSetInfo(space, { homepage: object.id }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { homepage: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -700,7 +700,7 @@ class UtilMenu {
 
 		let options = [];
 		if (spaceview.isOneToOne) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
+			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceType${I.SpaceType.Chat}`) });
 		} else {
 			options = [
 				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -868,7 +868,7 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId, uxType } = space;
+		const { targetSpaceId, spaceType } = space;
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
@@ -886,7 +886,7 @@ class UtilMenu {
 					};
 
 					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: space.spaceType, route });
 					break;
 				};
 
@@ -989,7 +989,7 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					Action.openSpaceTab(targetSpaceId, uxType, route);
+					Action.openSpaceTab(targetSpaceId, spaceType, route);
 					break;
 				};
 
@@ -1705,12 +1705,12 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'personal': {
-							Action.createSpace(I.SpaceUxType.Data, route);
+							Action.createSpace(I.SpaceType.Data, route);
 							break;
 						};
 
 						case 'group': {
-							Action.createSpace(I.SpaceUxType.Chat, route);
+							Action.createSpace(I.SpaceType.Chat, route);
 							break;
 						};
 
@@ -1751,11 +1751,11 @@ class UtilMenu {
 		});
 	};
 
-	uxTypeOptions (): I.Option[] {
+	spaceTypeOptions (): I.Option[] {
 		return [
-			{ id: I.SpaceUxType.Data },
-			{ id: I.SpaceUxType.Chat },
-		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+			{ id: I.SpaceType.Data },
+			{ id: I.SpaceType.Chat },
+		].map(it => ({ ...it, name: translate(`spaceType${it.id}`) }));
 	};
 
 	notificationModeOptions (forSettings?: boolean): I.Option[] {

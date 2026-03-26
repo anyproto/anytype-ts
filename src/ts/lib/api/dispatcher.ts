@@ -1435,7 +1435,7 @@ class Dispatcher {
 
 		const { space } = S.Common;
 		const keys = Object.keys(details);
-		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
+		const check = [ 'creator', 'homepage', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
 		if (subIds.length) {

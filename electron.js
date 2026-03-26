@@ -1509,7 +1509,7 @@ var WindowManager = class {
     }
     ;
   }
-  openSpaceInTab(win, spaceId, uxType) {
+  openSpaceInTab(win, spaceId, spaceType) {
     if (!win || !win.views || !spaceId) {
       return;
     }
@@ -1518,7 +1518,7 @@ var WindowManager = class {
     if (existing) {
       this.setActiveTab(win, existing.id);
     } else {
-      this.createTab(win, { spaceId, uxType }, { setActive: true });
+      this.createTab(win, { spaceId, spaceType }, { setActive: true });
     }
     ;
   }
@@ -3072,8 +3072,8 @@ var Api = class {
   openRouteInTab(win, route, data) {
     window_default.openRouteInTab(win, route, data);
   }
-  openSpaceInTab(win, spaceId, uxType) {
-    window_default.openSpaceInTab(win, spaceId, uxType);
+  openSpaceInTab(win, spaceId, spaceType) {
+    window_default.openSpaceInTab(win, spaceId, spaceType);
   }
   pinTab(win, id) {
     window_default.pinTab(win, id);

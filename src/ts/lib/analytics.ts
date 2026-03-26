@@ -6,7 +6,7 @@ const KEYS = [
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'suggestCount', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
-	'uxType', 'usage', 'chatId', 'hasMention', 'hasAttachments',
+	'spaceType', 'usage', 'chatId', 'hasMention', 'hasAttachments',
 	'errorType', 'filesCount',
 ];
 const URL = 'amplitude.anytype.io';
@@ -318,22 +318,22 @@ class Analytics {
 		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
-		let uxType = I.SpaceUxType.Data;
+		let spaceType = I.SpaceType.Data;
 		
 		if (spaceview) {
-			param.spaceType = I.SpaceType[Number(spaceview.spaceAccessType) || 0];
+			param.spaceType = I.SpaceAccessType[Number(spaceview.spaceAccessType) || 0];
 			param.spaceId = String(spaceview.analyticsSpaceId || '');
 
-			if (undefined !== spaceview.uxType) {
-				uxType = spaceview.uxType;
+			if (undefined !== spaceview.spaceType) {
+				spaceType = spaceview.spaceType;
 			};
 		};
 
-		if (undefined !== data.uxType) {
-			uxType = data.uxType;
+		if (undefined !== data.spaceType) {
+			spaceType = data.spaceType;
 		};
 
-		data.uxType = I.SpaceUxType[Number(uxType) || 0];
+		data.spaceType = I.SpaceType[Number(spaceType) || 0];
 
 		if (participant) {
 			param.permissions = Number(participant.permissions) || 0;
@@ -430,9 +430,9 @@ class Analytics {
 				break;
 			};
 
-			case 'ChangeSpaceUxType': {
+			case 'ChangeSpaceType': {
 				data.type = Number(data.type) || 0;
-				data.type = I.SpaceUxType[data.type];
+				data.type = I.SpaceType[data.type];
 				break;
 			};
 

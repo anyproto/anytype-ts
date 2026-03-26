@@ -16,11 +16,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const route = analytics.route.widget;
-	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
+	const cn = [ U.Data.spaceClass(spaceview.spaceType) ];
 	const iconSize = spaceview.isOneToOne ? 80 : 48;
 	const rootId = keyboard.getRootId();
 	const workspace = S.Detail.get(S.Block.workspace, S.Block.workspace, [ 'chatId' ]);
 	const chatId = workspace.chatId;
+
+	console.log(I.SpaceType[spaceview.spaceType]);
 
 	const icon = (
 		<IconObject

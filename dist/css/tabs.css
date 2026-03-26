@@ -125,10 +125,8 @@ body.platform-win32.showMenuBar {
 		.icon.close { background-image: url('../img/icon/close.svg'); opacity: 0; }
 		.icon.object { width: 18px; height: 18px; background-size: cover; border-radius: 2px; }
 		.icon.object.layout1,
-		.icon.object.layout10.uxType3.isImage,
-		.icon.object.layout10.uxType4.isImage,
-		.icon.object.layout18.uxType3.isImage,
-		.icon.object.layout18.uxType4.isImage,
+		.icon.object.layout10.spaceType4.isImage,
+		.icon.object.layout18.spaceType4.isImage,
 		.icon.object.layout22.isImage { border-radius: 50% };
 
 		.iconWrapper { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }

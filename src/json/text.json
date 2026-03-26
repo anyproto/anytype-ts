@@ -2837,10 +2837,11 @@
 	"filterTemplate1": "This Object",
 	"filterTemplate2": "Current User",
 
-	"spaceUxType0": "None",
-	"spaceUxType1": "Space",
-	"spaceUxType2": "Stream",
-	"spaceUxType3": "Chat",
+	"spaceType0": "None",
+	"spaceType1": "Data",
+	"spaceType2": "Tech",
+	"spaceType3": "Chat",
+	"spaceType4": "One-to-One",
 
 	"windowMinimize": "Minimize",
 	"windowMaximize": "Maximize",

@@ -12,18 +12,18 @@ export enum SpaceStatus {
 	Removing				 = 10,
 };
 
-export enum SpaceType {
+export enum SpaceAccessType {
 	Private					 = 0,
 	Personal				 = 1,
 	Shared					 = 2,
 };
 
-export enum SpaceUxType {
-	None 					 = 0,
-	Data 					 = 1,
-	Stream					 = 2,
-	Chat 					 = 3,
-	OneToOne 				 = 4,
+export enum SpaceType {
+	None					 = 0,
+	Data					 = 1,
+	Tech					 = 2,
+	Chat					 = 3,
+	OneToOne				 = 4,
 };
 
 export enum ParticipantPermissions {

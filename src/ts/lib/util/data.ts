@@ -116,12 +116,12 @@ class UtilData {
 
 	/**
 	 * Returns the CSS class for a space UX type.
-	 * @param {I.SpaceUxType} v - The space UX type.
+	 * @param {I.SpaceType} v - The space UX type.
 	 * @returns {string} The CSS class.
 	 */
-	spaceClass (v: I.SpaceUxType): string {
-		v = Number(v) || I.SpaceUxType.None;
-		return v ? `space${String(I.SpaceUxType[v])}` : '';
+	spaceClass (v: I.SpaceType): string {
+		v = Number(v) || I.SpaceType.None;
+		return v ? `space${String(I.SpaceType[v])}` : '';
 	};
 
 	/**
@@ -1088,7 +1088,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Data });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, spaceType: I.SpaceType.Data });
 					});
 				});
 			});

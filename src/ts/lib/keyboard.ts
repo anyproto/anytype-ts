@@ -500,7 +500,7 @@ class Keyboard {
 					};
 
 					if (S.Common.isPinned) {
-						Renderer.send('openSpaceInTab', item.targetSpaceId, item.uxType);
+						Renderer.send('openSpaceInTab', item.targetSpaceId, item.spaceType);
 					} else
 					if (item.targetSpaceId != S.Common.space) {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
@@ -2114,7 +2114,7 @@ class Keyboard {
 			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
 			U.String.toCamelCase([ prefix, page, action ].join('-')),
 			U.Common.getContainerClassName(isPopup),
-			U.Data.spaceClass(spaceview.uxType),
+			U.Data.spaceClass(spaceview.spaceType),
 		].join(' ');
 	};
 

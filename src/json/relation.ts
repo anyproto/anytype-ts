@@ -160,7 +160,7 @@ export default {
 		'creator',
 		'createdDate',
 		'chatId',
-		'spaceUxType',
+		'spaceType',
 		'spacePushNotificationMode',
 		'spacePushNotificationForceAllIds',
 		'spacePushNotificationForceMuteIds',

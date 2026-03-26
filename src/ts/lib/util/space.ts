@@ -120,9 +120,8 @@ class UtilSpace {
 
 		const details: any = {
 			oneToOneIdentity: id,
-			spaceUxType: I.SpaceUxType.OneToOne,
-			spaceAccessType: I.SpaceType.Shared,
-			spaceDashboardId: I.HomePredefinedId.Chat,
+			spaceAccessType: I.SpaceAccessType.Shared,
+			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
 		};
 
@@ -146,7 +145,7 @@ class UtilSpace {
 			analytics.event('CreateSpace', { 
 				usecase: I.Usecase.ChatSpace,
 				middleTime: message.middleTime, 
-				uxType: I.SpaceUxType.OneToOne,
+				spaceType: I.SpaceType.OneToOne,
 				route,
 			});
 		});
@@ -162,7 +161,7 @@ class UtilSpace {
 			return this.getChat();
 		};
 
-		const id = space.spaceDashboardId;
+		const id = space.homepage;
 
 		if (!id) {
 			return null;
@@ -255,7 +254,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
+			name: translate(`spaceType${I.SpaceType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};

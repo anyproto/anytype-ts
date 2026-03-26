@@ -18,9 +18,9 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const { data } = param;
-	const { uxType } = data;
+	const { spaceType } = data;
 	const { name: limit } = J.Constant.limit.space;
-	const isChatSpace = uxType == I.SpaceUxType.Chat;
+	const isChatSpace = spaceType == I.SpaceType.Chat;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -43,7 +43,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			name,
 			layout: I.ObjectLayout.SpaceView,
 			iconOption,
-			uxType,
+			spaceType,
 		};
 	};
 
@@ -102,19 +102,16 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 		const { onCreate, route } = data;
 		const submittedName = checkName(name);
-		const usecase = isChatSpace ? I.Usecase.ChatSpace : I.Usecase.DataSpace;
+		const usecase = I.Usecase.DataSpace;
 
 		setIsLoading(true);
 
 		const details: any = {
 			name: submittedName,
 			iconOption,
-			spaceUxType: uxType,
-			spaceAccessType: I.SpaceType.Private,
-			spaceDashboardId: isChatSpace ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last,
+			spaceAccessType: I.SpaceAccessType.Private,
+			homepage: I.HomePredefinedId.Last,
 		};
-
-		analytics.event('ClickCreateSpaceEmpty');
 
 		C.WorkspaceCreate(details, usecase, (message: any) => {
 			setIsLoading(false);
@@ -157,7 +154,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 					}
 				}, false);
 
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, uxType });
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, spaceType });
 				analytics.event('SelectUsecase', { type: usecase });
 			});
 		});

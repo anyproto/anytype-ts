@@ -494,8 +494,8 @@ class UtilSubscription {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (!skipIds.includes(space.spaceDashboardId)) {
-				ids.push(space.spaceDashboardId);
+			if (!skipIds.includes(space.homepage)) {
+				ids.push(space.homepage);
 			};
 
 			list.push({

@@ -294,12 +294,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onClick = (e: any, item: any) => {
 		if (e.ctrlKey || e.metaKey) {
-			Action.openSpaceTab(item.targetSpaceId, item.uxType, analytics.route.vault);
+			Action.openSpaceTab(item.targetSpaceId, item.spaceType, analytics.route.vault);
 			return;
 		};
 
 		if (S.Common.isPinned) {
-			Renderer.send('openSpaceInTab', item.targetSpaceId, item.uxType);
+			Renderer.send('openSpaceInTab', item.targetSpaceId, item.spaceType);
 		} else
 		if (item.targetSpaceId != space) {
 			U.Router.switchSpace(item.targetSpaceId, '', !!space, {}, false);
@@ -377,7 +377,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			transition,
 			...item.style,
 		};
-		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
+		const cn = [ 'item', U.Data.spaceClass(item.spaceType) ];
 		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
 		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 
