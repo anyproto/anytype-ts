@@ -2070,13 +2070,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				from = to = block.getLength();
 
 				keyboard.setFocus(false);
-			} else 
+			} else
 			if (message.caretPosition >= 0) {
 				id = focused;
 				from = to = message.caretPosition;
 			};
 
-			focusSet(id, from, to, !message.isSameBlockCaret);
+			focusSet(id, from, to, id != focused);
 			analytics.event('PasteBlock', { count });
 		});
 	};
