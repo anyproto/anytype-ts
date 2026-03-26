@@ -237,6 +237,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...listeners}
 				style={style}
 				onClick={e => U.Object.openEvent(e, item)}
+				onAuxClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left">

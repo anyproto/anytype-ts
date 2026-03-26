@@ -153,7 +153,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 
 				return (
 					<div key={`cell-${column.relationKey}`} className={cn.join(' ')}>
-						{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
+						{content ? <div className={cnc.join(' ')} onClick={onClick} onAuxClick={onClick}>{content}</div> : ''}
 					</div>
 				);
 			})}

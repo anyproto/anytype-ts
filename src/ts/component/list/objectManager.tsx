@@ -344,7 +344,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					onChange={e => onClick(e, item)}
 				/>
 			)}
-			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)}>
+			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)} onAuxClick={e => U.Object.openEvent(e, item)}>
 				<IconObject object={item} size={iconSize} />
 
 				<div className="info">
