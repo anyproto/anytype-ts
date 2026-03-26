@@ -1,6 +1,7 @@
 import * as I from 'Interface';
 
-const electron = U.Common.getElectron();
+let _electron: any = null;
+const electron = () => _electron || (_electron = U.Common.getElectron());
 
 const ACCOUNT_KEYS = new Set([
 	'spaceId',
@@ -48,8 +49,8 @@ const Api = {
 		};
 
 		let ret = {};
-		if (electron.storeGet && !isLocal) {
-			ret = electron.storeGet(key);
+		if (electron().storeGet && !isLocal) {
+			ret = electron().storeGet(key);
 		} else {
 			ret = Api.parse(localStorage.getItem(key));
 		};
@@ -64,8 +65,8 @@ const Api = {
 
 		cache.set(cacheKey(key, isLocal), clean);
 
-		if (electron.storeSet && !isLocal) {
-			electron.storeSet(key, clean);
+		if (electron().storeSet && !isLocal) {
+			electron().storeSet(key, clean);
 		} else {
 			localStorage.setItem(key, str);
 		};
@@ -74,8 +75,8 @@ const Api = {
 	delete: (key: string, isLocal: boolean) => {
 		cache.delete(cacheKey(key, isLocal));
 
-		if (electron.storeDelete && !isLocal) {
-			electron.storeDelete(key);
+		if (electron().storeDelete && !isLocal) {
+			electron().storeDelete(key);
 		} else {
 			localStorage.removeItem(key);
 		};
