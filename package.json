@@ -241,6 +241,7 @@
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
+			"dist/audio/**/*",
 			"electron/img/*",
 			"electron/img/icons/*",
 			"electron/js/preload.cjs",

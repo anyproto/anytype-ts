@@ -3244,7 +3244,7 @@ var Api = class {
     }, 100);
   }
   notification(win, param) {
-    const { id, title, text, cmd, payload } = param || {};
+    const { id, title, text, cmd, payload, silent = true } = param || {};
     if (!text) {
       return;
     }
@@ -3261,7 +3261,7 @@ var Api = class {
     const notification = new import_electron9.Notification({
       title: String(title || ""),
       body: String(text || ""),
-      silent: true
+      silent
     });
     notification.on("click", () => {
       this.focusWindow(win);
@@ -3271,6 +3271,9 @@ var Api = class {
       ;
     });
     notification.show();
+  }
+  notificationSound(_win) {
+    import_electron9.shell.beep();
   }
   payloadBroadcast(win, payload) {
     if (payload.type == "openObject") {

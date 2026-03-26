@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound, SYSTEM_SOUND_ID } from 'Lib';
 
 enum ChatKey {
 	Enter 	 = 'enter',
@@ -59,6 +59,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 	const notificationSounds: I.Option[] = [
 		{ id: '', name: translate('popupSettingsPersonalNotificationSoundOff') },
+		{ id: SYSTEM_SOUND_ID, name: translate('popupSettingsPersonalNotificationSoundSystem') },
 		...Sound.list.map(it => ({ id: it.id, name: it.name })),
 	];
 
@@ -113,7 +114,11 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 							S.Common.notificationSoundSet(v);
 
 							if (v) {
-								Sound.play(v);
+								if (v == SYSTEM_SOUND_ID) {
+									Renderer.send('notificationSound');
+								} else {
+									Sound.play(v);
+								};
 							};
 						}}
 						arrowClassName="black"
