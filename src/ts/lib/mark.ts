@@ -211,7 +211,7 @@ class Mark {
 			map[type].push(mark);
 		};
 
-		return U.Common.unmap(map).sort(this.sort);
+		return (U.Common.unmap(map) as I.Mark[]).sort(this.sort);
 	};
 
 	/**

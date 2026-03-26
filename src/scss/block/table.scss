@@ -175,7 +175,7 @@
 			}
 
 			.icon.menu { 
-				width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; 
+				width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; 
 				background-color: var(--color-bg-primary); 
 			}
 			.icon.menu {
