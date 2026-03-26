@@ -28,61 +28,37 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const subscribedId = useRef('');
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const socialRef = useRef<HTMLDivElement>(null);
-	const placeholderRef = useRef<HTMLDivElement>(null);
-	const wasStickyRef = useRef(false);
-	const stickyRafRef = useRef(0);
+	const scrollTimerRef = useRef(0);
+	const isSectionVisibleRef = useRef(false);
 	const messageIdHandled = useRef(false);
+
+	const posts = S.Comment.getPosts(subId);
+	const postCount = posts.length;
+	const isOpen = (postCount > 0) || isExpanded;
+	const isOpenRef = useRef(isOpen);
+	isOpenRef.current = isOpen;
 
 	const resize = useCallback(() => {
 		props.resize?.();
 	}, [ props.resize ]);
 
-	const updateSocialSticky = useCallback(() => {
-		const el = socialRef.current;
-		const sectionEl = sectionRef.current;
+	const updateSocialVisibility = useCallback(() => {
+		const shouldHide = isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
+		socialRef.current?.classList.toggle('isHidden', shouldHide);
+	}, []);
 
-		if (!el || !sectionEl) {
+	const setHidden = useCallback((v: boolean) => {
+		if (v === isHiddenRef.current) {
 			return;
 		};
+		isHiddenRef.current = v;
+		updateSocialVisibility();
+	}, [ updateSocialVisibility ]);
 
-		const container = U.Common.getScrollContainer(isPopup);
-		if (!container.length) {
-			return;
-		};
-
-		const viewportBottom = container.get(0).getBoundingClientRect().bottom;
-		const ref = wasStickyRef.current ? placeholderRef.current : el;
-		const isSticky = ref ? (ref.getBoundingClientRect().bottom > viewportBottom) : false;
-
-		if (isSticky === wasStickyRef.current) {
-			if (isSticky) {
-				const rect = sectionEl.getBoundingClientRect();
-				el.style.left = `${rect.left}px`;
-				el.style.width = `${rect.width}px`;
-			};
-			return;
-		};
-
-		const naturalHeight = isSticky ? el.offsetHeight : 0;
-
-		wasStickyRef.current = isSticky;
-		el.classList.toggle('isSticky', isSticky);
-
-		if (isSticky) {
-			if (placeholderRef.current) {
-				placeholderRef.current.style.height = `${naturalHeight}px`;
-			};
-			const rect = sectionEl.getBoundingClientRect();
-			el.style.left = `${rect.left}px`;
-			el.style.width = `${rect.width}px`;
-		} else {
-			if (placeholderRef.current) {
-				placeholderRef.current.style.height = '0px';
-			};
-			el.style.left = '';
-			el.style.width = '';
-		};
-	}, [ isPopup ]);
+	useEffect(() => {
+		updateSocialVisibility();
+		resize();
+	}, [ isOpen ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -97,52 +73,23 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			const max = U.Common.getMaxScrollHeight(isPopup);
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
-			updateSocialSticky();
 
-			if (isHiddenRef.current) {
-				isHiddenRef.current = false;
-				socialRef.current?.classList.remove('isHidden');
-			};
+			setHidden(true);
+			window.clearTimeout(scrollTimerRef.current);
+			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
 		});
-
-		resize();
-		updateSocialSticky();
 
 		return () => {
 			container.off(`scroll.${ns}`);
+			window.clearTimeout(scrollTimerRef.current);
 
 			if (discussionId) {
 				unsubscribe(discussionId);
 			};
 		};
-	}, [ discussionId, updateSocialSticky ]);
+	}, [ discussionId ]);
 
 	useEffect(() => {
-		const onResize = () => {
-			resize();
-
-			cancelAnimationFrame(stickyRafRef.current);
-			stickyRafRef.current = requestAnimationFrame(() => {
-				updateSocialSticky();
-			});
-		};
-
-		window.addEventListener('resize', onResize);
-		return () => {
-			window.removeEventListener('resize', onResize);
-			cancelAnimationFrame(stickyRafRef.current);
-		};
-	}, [ resize, updateSocialSticky ]);
-
-	useEffect(() => {
-		const setHidden = (v: boolean) => {
-			if (v === isHiddenRef.current) {
-				return;
-			};
-			isHiddenRef.current = v;
-			socialRef.current?.classList.toggle('isHidden', v);
-		};
-
 		const onKeyDown = (e: KeyboardEvent) => {
 			const target = e.target as HTMLElement;
 
@@ -150,10 +97,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const canHide = wasStickyRef.current || (!S.Comment.getPosts(subId).length && !isExpanded);
-			if (canHide) {
-				setHidden(true);
-			};
+			setHidden(true);
 		};
 
 		const onMouseMove = () => {
@@ -167,7 +111,24 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			window.removeEventListener('keydown', onKeyDown);
 			window.removeEventListener('mousemove', onMouseMove);
 		};
-	}, [ subId, isExpanded ]);
+	}, []);
+
+	useEffect(() => {
+		const el = sectionRef.current;
+		if (!el) {
+			isSectionVisibleRef.current = false;
+			updateSocialVisibility();
+			return;
+		};
+
+		const observer = new IntersectionObserver((entries) => {
+			isSectionVisibleRef.current = entries[0]?.isIntersecting || false;
+			updateSocialVisibility();
+		}, { threshold: 0 });
+
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [ updateSocialVisibility ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
@@ -632,6 +593,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const onCounterClick = useCallback(() => {
 		setIsExpanded(true);
+		resize();
 
 		window.setTimeout(() => {
 			const container = U.Common.getScrollContainer(isPopup);
@@ -644,45 +606,48 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		}, 50);
 	}, [ isPopup ]);
 
-	const posts = S.Comment.getPosts(subId);
-	const postCount = posts.length;
-	const isOpen = (postCount > 0) || isExpanded;
+	const counterLabel = postCount > 0
+		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
+		: translate('commentLeaveComment');
 
 	return (
-		<div ref={sectionRef} className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-			<div ref={placeholderRef} className="socialPlaceholder" />
-			<div ref={socialRef} className="socialBlock">
-				<div className="commentCounter" onClick={onCounterClick}>
-					<Icon name="comment/discussion" className="discussion" size={16} />
-					<span className="count">{postCount}</span>
-				</div>
+		<>
+			<div ref={sectionRef} className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+				{postCount > 0 ? (
+					<div className="commentBody">
+						<CommentList
+							rootId={rootId}
+							targetId={discussionId || targetId}
+							targetType={targetType}
+							readonly={readonly}
+							onLoadMore={onLoadMore}
+						/>
+					</div>
+				) : null}
+
+				{isOpen ? (
+					<div className="commentFormWrap">
+						<CommentForm
+							ref={formRef}
+							rootId={rootId}
+							subId={subId}
+							readonly={readonly}
+							onSubmit={onSubmitPost}
+							onResize={scrollToBottomCheck}
+						/>
+					</div>
+				) : null}
 			</div>
 
-			{postCount > 0 ? (
-				<div className="commentBody">
-					<CommentList
-						rootId={rootId}
-						targetId={discussionId || targetId}
-						targetType={targetType}
-						readonly={readonly}
-						onLoadMore={onLoadMore}
-					/>
+			<div className="socialBlockWrap">
+				<div ref={socialRef} className="socialBlock">
+					<div className="commentCounter" onClick={onCounterClick}>
+						<Icon name="comment/discussion" className="discussion" size={16} />
+						<span className="count">{counterLabel}</span>
+					</div>
 				</div>
-			) : null}
-
-			{isOpen ? (
-				<div className="commentFormWrap">
-					<CommentForm
-						ref={formRef}
-						rootId={rootId}
-						subId={subId}
-						readonly={readonly}
-						onSubmit={onSubmitPost}
-						onResize={scrollToBottomCheck}
-					/>
-				</div>
-			) : null}
-		</div>
+			</div>
+		</>
 	);
 });
 
