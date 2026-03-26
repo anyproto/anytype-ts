@@ -38,7 +38,7 @@
 
 				.row { position: relative; gap: 0px 6px; border: 0px; }
 				.row {
-					&.isHead { border-bottom: 1px solid var(--color-shape-secondary); overflow: visible; }
+					&.isHead { overflow: visible; @include text-small; }
 					&.isHead {
 						.cell { overflow: visible; }
 						.cell {
@@ -58,29 +58,30 @@
 						}
 					}
 
-					&:hover::before {
-						content: ''; position: absolute; top: 0px; bottom: -1px; left: -8px; right: -8px;
-						background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
+					&:hover {
+						&::before {
+							content: ''; position: absolute; top: 0px; bottom: -1px; left: -8px; right: -8px;
+							background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
+						}
+						.cell.cellCheck { opacity: 1; }
 					}
 
 					.cell { padding: 11px 14px; align-content: center; }
 					.cell.cellCheck { padding: 0px 12px 0px 0px; opacity: 0; transition: opacity 0.15s ease; }
 					.cell.cellCheck:hover { opacity: 1; }
 					.cell.cellCheck.isChecked { opacity: 1; }
-					&:hover .cell.cellCheck { opacity: 1; }
 					.cell:nth-child(2) { padding-left: 0px; }
 					.cell:last-child { padding-right: 0px; }
 
-					.cell.isName {
-						.cellContent.isName { height: auto; }
-						.cellContent.isName {
-							.flex { align-items: center; gap: 0px 12px; }
+					.cellContent.isName { height: auto; }
+					.cellContent.isName {
+						.name { font-weight: 500; }
+						.flex { align-items: center; gap: 0px 12px; }
 
-							.info { display: flex; flex-direction: column; overflow: hidden; }
-							.info {
-								.name { @include text-overflow-nw; }
-								.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
-							}
+						.info { display: flex; flex-direction: column; overflow: hidden; }
+						.info {
+							.name { @include text-overflow-nw;}
+							.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 						}
 					}
 
@@ -93,7 +94,7 @@
 
 		&.isDetailed {
 			.listObject {
-				.cell { padding-top: 16px; padding-bottom: 16px; }
+				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
 				.iconObject { background-color: var(--color-shape-highlight-medium); }
 			}
 		}

@@ -107,9 +107,16 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 
 	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
 	const colorCn = color ? `iconColor iconColor-${color}` : '';
-	const cn = [ 'icon', nameCn, colorCn, className, (withBackground ? 'withBackground' : ''), (SvgComponent ? 'hasSvg' : '') ];
+	const cn = [ 'icon', nameCn, colorCn, className ];
 	const w = width || size;
 	const h = height || size;
+
+	if (withBackground) {
+		cn.push('withBackground');
+	};
+	if (SvgComponent) {
+		cn.push('hasSvg');
+	};
 
 	if (SvgComponent && !withBackground && ((w != 20) || (h != 20))) {
 		style.width = w;

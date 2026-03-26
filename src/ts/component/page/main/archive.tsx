@@ -17,7 +17,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
-
 	const spaceview = U.Space.getSpaceview();
 	const isShared = spaceview.isShared;
 	const isOwner = U.Space.isMyOwner();
@@ -296,6 +295,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					skipLayoutFilter={true}
 					withDescription={isDetailed}
 					iconSize={isDetailed ? 32 : null}
+					rowHeight={isDetailed ? 64 : 40}
 					emptyText={translate('pageMainArchiveEmpty')}
 					defaultSortId="lastModifiedDate"
 					defaultSortType={I.SortType.Desc}
