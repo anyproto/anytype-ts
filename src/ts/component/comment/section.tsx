@@ -37,13 +37,16 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isOpen = (postCount > 0) || isExpanded;
 	const isOpenRef = useRef(isOpen);
 	isOpenRef.current = isOpen;
+	const discussionIdRef = useRef(discussionId);
+	discussionIdRef.current = discussionId;
 
 	const resize = useCallback(() => {
 		props.resize?.();
 	}, [ props.resize ]);
 
 	const updateSocialVisibility = useCallback(() => {
-		const shouldHide = isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
+		const loaded = isLoaded.current || !discussionIdRef.current;
+		const shouldHide = !loaded || isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
 		socialRef.current?.classList.toggle('isHidden', shouldHide);
 	}, []);
 
@@ -400,15 +403,17 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		C.ChatSubscribeLastMessages(id, POST_LIMIT, sid, (message: any) => {
 			if (message.error.code) {
 				isLoaded.current = true;
+				updateSocialVisibility();
 				return;
 			};
 
 			fetchAllMessages(id, sid, () => {
 				isLoaded.current = true;
+				updateSocialVisibility();
 				handleMessageId(id);
 			});
 		});
-	}, [ targetType, fetchAllMessages, handleMessageId ]);
+	}, [ targetType, fetchAllMessages, handleMessageId, updateSocialVisibility ]);
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -594,6 +599,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const onCounterClick = useCallback(() => {
 		setIsExpanded(true);
+		isSectionVisibleRef.current = true;
+		updateSocialVisibility();
 		resize();
 
 		window.setTimeout(() => {
@@ -611,9 +618,11 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
 		: translate('commentLeaveComment');
 
+	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
+
 	return (
 		<>
-			<div ref={sectionRef} className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+			<div ref={sectionRef} className={cn.join(' ')} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
 				{postCount > 0 ? (
 					<div className="commentBody">
 						<CommentList
@@ -641,7 +650,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			</div>
 
 			<div className="socialBlockWrap">
-				<div ref={socialRef} className="socialBlock">
+				<div ref={socialRef} className="socialBlock isHidden">
 					<div className="commentCounter" onClick={onCounterClick}>
 						<Icon name="comment/discussion" className="discussion" size={16} />
 						<span className="count">{counterLabel}</span>
