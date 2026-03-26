@@ -224,8 +224,22 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				</div>
 
 				<div className="side right">
-					<Icon name="arrow/calendar" className="arrow left" onClick={() => onArrow(-1)} width={8} height={12} />
-					<Icon name="arrow/calendar" className="arrow right" onClick={() => onArrow(1)} width={8} height={12} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow left" 
+						withBackground={true} 
+						onClick={() => onArrow(1)}
+						width={8}
+						height={12} 
+					/>
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow right" 
+						withBackground={true} 
+						onClick={() => onArrow(-1)}
+						width={8}
+						height={12} 
+					/>
 				</div>
 			</div>
 

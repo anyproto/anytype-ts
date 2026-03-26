@@ -52,13 +52,9 @@
 			.btn { padding: 2px 4px; line-height: 20px; transition: $transitionAllCommon; border-radius: 4px; }
 			.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
-			.icon.arrow {
-				width: 24px; height: 24px; background-size: 20px; border-radius: 4px;
-				transition: $transitionAllCommon;
-			}
-			.icon.arrow.left { transform: rotateZ(180deg); }
-
-			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.arrow { width: 24px !important; height: 24px !important; }
+			.icon.arrow.left { transform: rotateZ(270deg); }
+			.icon.arrow.right { transform: rotateZ(90deg); }
 		}
 
 		.dataviewEmpty { 
