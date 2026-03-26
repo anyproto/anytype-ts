@@ -115,7 +115,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const reload = () => {
-		listRef.current?.getData(1);
+		listRef.current?.reload();
 	};
 
 	const getFilters = (start: number, end: number): I.Filter[] => {
@@ -235,6 +235,8 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					filters={filters}
 					route={analytics.route.screenDate}
 					relationKeys={keys}
+					useInfiniteScroll={true}
+					isPopup={isPopup}
 				/>
 			</>
 		);

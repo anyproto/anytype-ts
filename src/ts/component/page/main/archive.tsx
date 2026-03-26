@@ -183,15 +183,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		return translate('commonDeleteImmediately');
 	};
 
-	const resize = () => {
-		const win = $(window);
-		const container = U.Common.getPageFlexContainer(isPopup);
-		const node = $(nodeRef.current);
-		const wh = isPopup ? container.height() : win.height();
-
-		node.css({ height: wh - J.Size.header });
-	};
-
 	const onKeyDown = useCallback((e: KeyboardEvent) => {
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
@@ -216,10 +207,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		win.on('keydown.archive', (e: any) => onKeyDown(e));
 		return () => { win.off('keydown.archive'); };
 	}, []);
-
-	useImperativeHandle(ref, () => ({
-		resize,
-	}));
 
 	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
@@ -317,6 +304,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					isAllSelected={isAllSelected}
 					onSelect={onSelect}
 					onSelectAll={onSelectAll}
+					useInfiniteScroll={true}
+					isPopup={isPopup}
 				/>
 			</div>
 

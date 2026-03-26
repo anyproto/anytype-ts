@@ -1,6 +1,8 @@
 @import "~scss/_mixins";
 
 .listObject {
+	.ReactVirtualized__Grid, .ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
 	.table { display: grid; margin: 0px 0px 10px 0px; }
 	.table {
 		.selectionTarget { display: grid; }

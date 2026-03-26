@@ -3,8 +3,8 @@
 .pageMainArchive,
 .pageSettingsArchive {
 	.wrapper {
-		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 40px 0px; user-select: none;
-		height: 100%; display: flex; flex-direction: column; gap: 16px 0px;
+		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none;
+		display: flex; flex-direction: column; gap: 16px 0px;
 	}
 	.wrapper {
 		.titleWrapper {
@@ -87,8 +87,6 @@
 					.cell.isChecked {
 						.icon.checkbox { color: var(--color-control-accent); }
 					}
-
-					.icon.objectCheckbox2 { color: var(--color-control-accent); }
 				}
 			}
 		}
