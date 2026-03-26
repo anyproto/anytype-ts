@@ -2744,16 +2744,16 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				<TableOfContents ref={tocRef} {...props} />
 
 				{S.Common.config.experimental ? (
-				<CommentSection
-					rootId={rootId}
-					targetId={rootId}
-					targetType={I.CommentTargetType.Object}
-					readonly={readonly}
-					isPopup={isPopup}
-					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
-					resize={resizePage}
-				/>
-			) : ''}
+					<CommentSection
+						rootId={rootId}
+						targetId={rootId}
+						targetType={I.CommentTargetType.Object}
+						readonly={readonly}
+						isPopup={isPopup}
+						messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+						resize={resizePage}
+					/>
+				) : ''}
 			</div>
 		</div>
 	);

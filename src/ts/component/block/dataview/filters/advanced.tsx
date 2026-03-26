@@ -19,8 +19,7 @@ interface Props {
 
 const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { config } = S.Common;
-	const { filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
+	const { filter, readonly, onOver, onClick, onContextMenu } = props;
 	const { id } = filter;
 	const ruleCount = filter.nestedFilters?.length || 1;
 	const cn = [ 'filterItem', 'isAdvanced', 'withValue' ];
@@ -47,7 +46,6 @@ const DataviewFilterAdvanced = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="content">
 				<Label className="name" text={label} />
 			</div>
-			{config.experimental ? <Icon name="chat/buttons/remove" size={8} className="delete" onClick={onRemove} /> : ''}
 		</div>
 	);
 
