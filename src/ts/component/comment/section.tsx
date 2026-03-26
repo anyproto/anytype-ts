@@ -58,7 +58,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	useEffect(() => {
 		updateSocialVisibility();
 		resize();
-	}, [ isOpen ]);
+	}, [ isOpen, updateSocialVisibility, resize ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -97,6 +97,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
+			window.clearTimeout(scrollTimerRef.current);
 			setHidden(true);
 		};
 
@@ -111,7 +112,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			window.removeEventListener('keydown', onKeyDown);
 			window.removeEventListener('mousemove', onMouseMove);
 		};
-	}, []);
+	}, [ setHidden ]);
 
 	useEffect(() => {
 		const el = sectionRef.current;
@@ -604,7 +605,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 			window.setTimeout(() => formRef.current?.focus(), 300);
 		}, 50);
-	}, [ isPopup ]);
+	}, [ isPopup, resize ]);
 
 	const counterLabel = postCount > 0
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`

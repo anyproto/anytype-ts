@@ -2601,14 +2601,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks.length && last.length && scrollContainer.length) {
+				last.css({ height: '' });
+
 				const commentSection = node.find('.commentSection');
 				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
-				if (csh > 0) {
-					last.css({ height: '' });
-				} else {
-					last.css({ height: '' });
-
+				if (!csh) {
 					const ct = scrollContainer.offset().top;
 					const ch = scrollContainer.height();
 					const bt = blocks.offset().top;
