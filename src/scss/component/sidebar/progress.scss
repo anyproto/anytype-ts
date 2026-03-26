@@ -7,18 +7,18 @@
 }
 .sidebarProgress {
 	.head {
-		display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;
+		display: flex; align-items: center; justify-content: space-between; padding: 11px 12px;
 		gap: 0px 8px; @include text-common; font-weight: 500; color: var(--color-text-primary);
 	}
 	.head {
 		.icon.arrow {
-			width: 20px; height: 20px;
-			transform: rotateZ(180deg); transition: transform 0.2s ease;
+			width: 20px; height: 20px; transform: rotateZ(180deg); transition: transform 0.2s ease;
 		}
 	}
 
 	&.isExpanded {
-		.head {
+		.head { padding-bottom: 3px; }
+		.head { 
 			.icon.arrow { transform: rotateZ(0deg); }
 		}
 	}

@@ -29,7 +29,6 @@ const LOCAL_KEYS = new Set([
 	'scroll',
 	'focus',
 	'graphData',
-	'progress',
 	'updateBanner',
 	'lastOpenedSimple',
 ]);

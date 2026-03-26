@@ -78,7 +78,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 			</div>
 
 			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
-				{canCancel ? <Icon name="common/close" onClick={handleCancel} /> : ''}
+				{canCancel ? <Icon name="common/clear" onClick={handleCancel} /> : ''}
 			</div>
 		</div>
 	);
