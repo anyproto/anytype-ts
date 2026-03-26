@@ -10,11 +10,9 @@ import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, anal
 (window as any).Prism = Prism;
 
 // Load language components sequentially to respect dependency order
-const prismModules = import.meta.glob('/node_modules/prismjs/components/prism-*.js');
 (async () => {
 	for (const lang of U.Prism.components) {
-		const key = `/node_modules/prismjs/components/prism-${lang}.js`;
-		try { await prismModules[key]?.(); } catch (e) {};
+		try { await import(/* @vite-ignore */ `prismjs/components/prism-${lang}.js`); } catch (e) {};
 	};
 })();
 
