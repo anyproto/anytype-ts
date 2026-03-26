@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import Icon from 'Component/util/icon';
 import Select from 'Component/form/select';
 import { observer } from 'mobx-react';
-import { Action, Animation, I, S, U, J } from 'Lib';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
 interface Props extends I.HeaderComponent {
 	onBack?: () => void;

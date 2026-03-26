@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
 import { IconObject } from 'Component';
-import { U } from 'Lib';
 
 interface Props {
 	icon?: string;

@@ -5,7 +5,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
-import { I, J, U, S, C, translate, keyboard, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 

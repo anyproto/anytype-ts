@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, S, U, J, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const TEMPLATE_WIDTH = 224;
 

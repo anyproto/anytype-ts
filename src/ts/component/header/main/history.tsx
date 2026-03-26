@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 interface HeaderMainHistoryRefProps {
 	setVersion: (version: I.HistoryVersion) => void;

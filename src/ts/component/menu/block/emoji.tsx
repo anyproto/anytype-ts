@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, J, keyboard, Mark, Storage } from 'Lib';
 import { AutoSizer, CellMeasurer, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const HEIGHT_ITEM = 28;
 const LIMIT_INITIAL = 10;

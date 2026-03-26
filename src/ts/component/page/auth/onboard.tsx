@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
 enum Stage {
 	Phrase 		= 0,

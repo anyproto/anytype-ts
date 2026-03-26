@@ -1,9 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, EmptySearch } from 'Component';
-import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
 import * as Diff from 'diff';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;

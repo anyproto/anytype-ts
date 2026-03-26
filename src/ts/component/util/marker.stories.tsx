@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Marker from './marker';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const meta: Meta<typeof Marker> = {
 	title: 'Util/Marker',

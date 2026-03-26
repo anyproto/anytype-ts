@@ -1,6 +1,7 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, focus } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 

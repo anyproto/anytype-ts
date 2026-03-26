@@ -1,7 +1,8 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { InputWithFile, IconObject, Error, ObjectName, Icon, } from 'Component';
-import { I, S, U, focus, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 

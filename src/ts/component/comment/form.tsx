@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Button } from 'Component';
-import { I, C, J, S, U, keyboard, translate, Storage } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Props {
 	rootId: string;

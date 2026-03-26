@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard, translate, Action } from 'Lib';
 import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

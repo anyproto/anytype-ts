@@ -1,4 +1,3 @@
-import { S } from 'Lib';
 
 interface SoundItem {
 	id: string;

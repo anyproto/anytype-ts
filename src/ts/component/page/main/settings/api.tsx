@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Button, EmptyState } from 'Component';
-import { I, S, U, C, J, translate, Preview } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

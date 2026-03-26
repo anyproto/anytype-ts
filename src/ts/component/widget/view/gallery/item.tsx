@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;

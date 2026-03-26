@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
-import { I, keyboard, translate, S, Renderer, C, analytics, U, } from 'Lib';
+import * as I from 'Interface';
 
 const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 

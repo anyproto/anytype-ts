@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { S, U, J } from 'Lib'; 
 
 import Index from './popup/index';
 import Create from './popup/create';

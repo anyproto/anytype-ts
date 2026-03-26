@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 48;
 const HEIGHT_DIV = 16;

@@ -3,7 +3,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 

@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 

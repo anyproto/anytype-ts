@@ -3,7 +3,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -31,6 +30,9 @@ import PageMainObject from './main/object';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Highlight from 'Lib/highlight';
 
 const Components = {
 	'index/index':			 PageMainBlank,

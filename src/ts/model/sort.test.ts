@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import Sort from './sort';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 describe('Sort', () => {
 

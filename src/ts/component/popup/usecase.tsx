@@ -1,9 +1,9 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, Action } from 'Lib';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
+import * as I from 'Interface';
 
 const Components: any = {
 	list: PopupUsecasePageList,

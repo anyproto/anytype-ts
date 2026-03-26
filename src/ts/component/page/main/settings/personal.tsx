@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound, SYSTEM_SOUND_ID } from 'Lib';
+import * as I from 'Interface';
 
 enum ChatKey {
 	Enter 	 = 'enter',

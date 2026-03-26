@@ -1,10 +1,10 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
+import * as I from 'Interface';
 
 const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	

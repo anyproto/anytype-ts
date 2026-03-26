@@ -4,9 +4,9 @@ import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { I, S, U } from 'Lib';
 import { Icon } from 'Component';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	onCellAdd(e: any): void;

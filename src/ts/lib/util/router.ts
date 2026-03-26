@@ -1,4 +1,6 @@
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface RouteParam {
 	page: string;

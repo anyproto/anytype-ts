@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { IconObject } from 'Component';
-import { I, U, keyboard, } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 

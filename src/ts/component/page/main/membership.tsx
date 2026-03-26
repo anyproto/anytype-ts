@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title } from 'Component';
-import { I, S, U, translate, keyboard, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

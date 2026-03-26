@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;

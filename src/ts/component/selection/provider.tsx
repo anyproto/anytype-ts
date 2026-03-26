@@ -3,7 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	children?: ReactNode;

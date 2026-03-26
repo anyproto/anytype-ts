@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, U, J, Preview } from 'Lib';
+import * as I from 'Interface';
 
 class MenuStore {
 

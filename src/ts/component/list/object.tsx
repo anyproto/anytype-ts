@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef, Mo
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { IconObject, Pager, ObjectName, ObjectDescription, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
-import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
+import * as I from 'Interface';
 
 interface Column {
 	relationKey: string;

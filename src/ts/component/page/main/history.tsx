@@ -2,11 +2,12 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
 import * as Diff from 'diff';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

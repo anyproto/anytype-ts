@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	className?: string;

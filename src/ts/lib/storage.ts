@@ -1,4 +1,4 @@
-import { I, S, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const electron = U.Common.getElectron();
 

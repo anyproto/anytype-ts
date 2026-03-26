@@ -2,13 +2,13 @@ import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react'
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, analytics, keyboard, Relation, Action, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
+import * as I from 'Interface';
 
 interface Props extends I.Cell {
 	elementId?: string;

@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, S, U, focus, translate, analytics, Action, keyboard, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 

@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, DragHorizontal, DragVertical, Label } from 'Component';
-import { U } from 'Lib';
 
 interface PlaylistItem {
 	name: string;

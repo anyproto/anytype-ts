@@ -1,5 +1,5 @@
-import { I, U, translate, S, J } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const Data = {
 	productHuntChats: () => ({

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Cover, MediaAudio, MediaVideo } from 'Component';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	object: any;

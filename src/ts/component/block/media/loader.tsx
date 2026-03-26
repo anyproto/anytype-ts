@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Icon, ObjectName } from 'Component';
-import { I, S } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const BlockLoader = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 

@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	rootId: string;

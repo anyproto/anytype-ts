@@ -1,4 +1,5 @@
-import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 class Survey {
 

@@ -1,8 +1,8 @@
 import React, { MouseEvent, forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
-import { I, U, Preview } from 'Lib';
 import { getIcon } from './icons';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

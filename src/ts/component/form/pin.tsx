@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import sha1 from 'sha1';
 import $ from 'jquery';
 import { Input } from 'Component';
-import { keyboard } from 'Lib';
 
 interface Props {
 	isNumeric?: boolean;

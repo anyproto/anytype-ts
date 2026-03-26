@@ -1,10 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 

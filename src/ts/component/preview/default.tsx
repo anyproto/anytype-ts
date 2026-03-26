@@ -5,7 +5,6 @@ import Loader from 'Component/util/loader';
 import ObjectName from 'Component/util/object/name';
 import ObjectDescription from 'Component/util/object/description';
 import ObjectType from 'Component/util/object/type';
-import { S, U } from 'Lib';
 
 interface Props {
 	id?: string;

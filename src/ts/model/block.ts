@@ -1,4 +1,3 @@
-import { I } from 'Lib';
 import { observable, makeObservable } from 'mobx';
 
 import BlockContentLayout from './content/layout';
@@ -12,6 +11,7 @@ import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
 import { BlockContentTableRow } from './content/table';
 import BlockContentWidget from './content/widget';
+import * as I from 'Interface';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,

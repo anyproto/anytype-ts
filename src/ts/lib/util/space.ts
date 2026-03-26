@@ -1,4 +1,5 @@
-import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * UtilSpace provides utilities for working with Anytype spaces.

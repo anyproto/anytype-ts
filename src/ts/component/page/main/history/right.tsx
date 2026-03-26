@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { I, C, S, U, translate, analytics, dispatcher, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;

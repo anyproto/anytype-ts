@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -27,6 +26,9 @@ import BlockPdf from './media/pdf';
 import BlockLoader from './media/loader';
 
 import BlockEmbed from './embed';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	css?: any;

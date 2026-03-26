@@ -1,8 +1,9 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, M, S, U } from 'Lib';
 import { withBlock } from '../../../../../.storybook/decorators';
 import BlockAudio from './audio';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ROOT = 'sb-audio';
 

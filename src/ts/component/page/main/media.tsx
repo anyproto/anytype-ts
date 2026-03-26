@@ -2,7 +2,8 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const MAX_HEIGHT = 396;
 

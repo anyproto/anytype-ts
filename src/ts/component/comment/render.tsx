@@ -1,8 +1,8 @@
 import React from 'react';
 import * as Prism from 'prismjs';
-import { I, S, U, Mark } from 'Lib';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from './embedPreview';
+import * as I from 'Interface';
 
 const renderPart = (part: I.CommentContentPart, index: number, subId?: string): JSX.Element => {
 	const key = `part-${index}`;

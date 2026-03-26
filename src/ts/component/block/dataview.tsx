@@ -6,7 +6,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug, Icon, Label } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -21,6 +20,9 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;

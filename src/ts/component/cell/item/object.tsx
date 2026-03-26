@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import Icon from 'Component/util/icon';
 import IconObject from 'Component/util/iconObject';
 import ObjectName from 'Component/util/object/name';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	cellId: string;

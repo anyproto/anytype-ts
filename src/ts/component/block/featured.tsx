@@ -3,7 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
-import { I, C, S, U, J, M, Preview, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	size?: number;

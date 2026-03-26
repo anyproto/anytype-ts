@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Title, Label, Button, Icon, Select } from 'Component';
-import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

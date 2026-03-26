@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {

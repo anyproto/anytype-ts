@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, MouseEvent, SyntheticEvent } from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label, ChatCounter } from 'Component';
-import { I, S, U, J, keyboard, Storage, translate } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Props extends I.WidgetTreeItem {
 	index: number;

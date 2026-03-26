@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
-import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Filter {
 	from: number;

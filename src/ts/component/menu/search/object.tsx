@@ -3,7 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;

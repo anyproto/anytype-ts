@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
-import target from 'Component/selection/target';
 import TextJson from 'json/text.json';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const ALLOWED_KATEX = ['\\url', '\\href', '\\includegraphics'];
 

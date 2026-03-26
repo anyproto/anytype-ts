@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { IconObject, Input, Title, Icon, Label, Button } from 'Component';
-import { I, S, U, J, C, translate, keyboard, Action, analytics, Relation } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

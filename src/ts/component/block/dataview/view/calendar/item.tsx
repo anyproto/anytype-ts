@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
-import { I, S, U, C, translate, Preview, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	d: number;

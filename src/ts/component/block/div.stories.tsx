@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, M, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockDiv from './div';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const makeBlock = (id: string, style: number) => new M.Block({
 	id,

@@ -1,6 +1,6 @@
-import { I } from 'Lib';
 import { observable, makeObservable } from 'mobx';
 import { Mark } from './content/text';
+import * as I from 'Interface';
 
 class ChatMessageContent implements I.ChatMessageContent {
 

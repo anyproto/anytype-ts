@@ -1,7 +1,7 @@
 import React, { FC, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, J, U, Relation, translate } from 'Lib';
 import { Cell, Button, Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	rootId?: string;

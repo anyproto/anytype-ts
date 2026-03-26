@@ -1,5 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, C, S, U, Storage, analytics, Renderer, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;

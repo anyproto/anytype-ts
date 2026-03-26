@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, Mo
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

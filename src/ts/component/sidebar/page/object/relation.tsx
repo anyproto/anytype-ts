@@ -2,8 +2,9 @@ import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, 
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, C, translate, keyboard, Relation, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 

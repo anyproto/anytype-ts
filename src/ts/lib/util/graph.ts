@@ -1,5 +1,5 @@
-import { I, S, U, Relation } from 'Lib';
 import { getIconSvg } from 'Component/util/icons';
+import * as I from 'Interface';
 
 /**
  * UtilGraph provides utilities for the graph visualization feature.

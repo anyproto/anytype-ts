@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import { I, Relation, S, translate, U, sidebar } from 'Lib';
 import { EmptyNodes, Title } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	layoutFormat: I.LayoutFormat;

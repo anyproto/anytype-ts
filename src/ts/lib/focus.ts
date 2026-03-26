@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, C, U, J, keyboard, Mark } from 'Lib';
+import * as I from 'Interface';
 
 /**
  * Focus manages the focus state and text selection within the application.

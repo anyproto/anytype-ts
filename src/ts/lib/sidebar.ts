@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface SidebarData {
 	width: number;

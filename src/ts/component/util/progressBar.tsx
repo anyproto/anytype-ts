@@ -1,7 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import $ from 'jquery';
 import { Label } from 'Component';
-import { Preview, U } from 'Lib';
 
 interface Segment {
 	name: string;

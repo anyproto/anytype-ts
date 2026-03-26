@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const FooterAuthIndex = forwardRef<{}, I.FooterComponent>(() => {
 

@@ -1,4 +1,4 @@
-import { U, translate, keyboard, Storage } from 'Lib';
+import Storage from 'Lib/storage';
 
 const getSections = () => {
 	const isMac = U.Common.isPlatformMac();

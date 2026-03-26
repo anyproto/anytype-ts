@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { S, I, U, translate, analytics, keyboard, sidebar, Relation } from 'Lib';
 import { Icon, Label } from 'Component';
+import * as I from 'Interface';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

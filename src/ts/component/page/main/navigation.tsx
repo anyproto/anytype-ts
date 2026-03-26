@@ -4,9 +4,10 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 import Item from 'Component/page/main/navigation/item';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 enum Panel { 
 	Left = 1, 

@@ -1,5 +1,6 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { J, I, U, M, S, Renderer, Mark } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const MAX_MESSAGES = 500;
 

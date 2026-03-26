@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { Storage } from 'Lib';
+import Storage from 'Lib/storage';
 
 const HIGHLIGHTS_MAP = {
 	whatsNew: [ '#button-help', '#menuHelp #item-whatsNew' ],

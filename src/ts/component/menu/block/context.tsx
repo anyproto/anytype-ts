@@ -2,7 +2,9 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

@@ -3,10 +3,10 @@ import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
 import { renderParts } from './render';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;

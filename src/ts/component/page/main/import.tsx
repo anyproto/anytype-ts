@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, S, U, translate, analytics, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

@@ -5,8 +5,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { I, U, S, keyboard, translate, analytics } from 'Lib';
 import { Icon, Button, Label } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT = 52;
 

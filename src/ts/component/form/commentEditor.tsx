@@ -46,10 +46,11 @@ import {
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, J, S, U, keyboard, translate, Storage } from 'Lib';
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {

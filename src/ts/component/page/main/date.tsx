@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
+import * as I from 'Interface';
 
 const SUB_ID = 'dateListObject';
 

@@ -2,7 +2,8 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Renderer } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
-import { I, S, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

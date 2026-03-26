@@ -1,5 +1,6 @@
 import * as Docs from 'Docs';
-import { I, S, U, Storage, } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * Onboarding manages the user onboarding and tutorial flows.

@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, S, translate, sidebar } from 'Lib';
 import Section from 'Component/sidebar/section';
+import * as I from 'Interface';
 
 const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
 

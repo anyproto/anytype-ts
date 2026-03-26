@@ -8,8 +8,11 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 

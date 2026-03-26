@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

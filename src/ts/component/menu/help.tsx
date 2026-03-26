@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
-import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'Lib';
+import * as I from 'Interface';
+import Highlight from 'Lib/highlight';
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

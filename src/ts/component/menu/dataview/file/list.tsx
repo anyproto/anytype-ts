@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, EmptySearch, ObjectName, ObjectType } from 'Component';
-import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;

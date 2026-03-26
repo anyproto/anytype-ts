@@ -2,7 +2,8 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
-import { I, S, U, J, translate, Action, analytics, keyboard, sidebar, Storage } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

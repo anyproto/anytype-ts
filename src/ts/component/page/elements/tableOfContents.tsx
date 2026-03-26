@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, use
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;

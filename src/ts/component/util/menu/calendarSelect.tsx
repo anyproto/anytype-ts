@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, U, J, translate, keyboard } from 'Lib';
 import { Select, Icon } from 'Component';
+import * as I from 'Interface';
 
 export interface CalendarDay {
 	d: number;

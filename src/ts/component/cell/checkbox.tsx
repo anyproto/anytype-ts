@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { Icon, Label } from 'Component';
-import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 

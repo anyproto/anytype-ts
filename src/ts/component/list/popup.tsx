@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Popup } from 'Component';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 const ListPopup: FC<I.PageComponent> = observer(() => {
 	const { list } = S.Popup;

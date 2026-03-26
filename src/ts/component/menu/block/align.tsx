@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

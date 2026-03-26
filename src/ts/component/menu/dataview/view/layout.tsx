@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

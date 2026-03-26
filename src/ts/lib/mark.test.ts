@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import Mark from './mark';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 describe('Mark', () => {
 

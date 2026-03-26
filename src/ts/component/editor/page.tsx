@@ -4,10 +4,12 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
-import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;

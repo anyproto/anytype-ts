@@ -1,4 +1,4 @@
-import { I, U, C } from 'Lib';
+import * as I from 'Interface';
 
 type Listener = (...args: any[]) => void;
 

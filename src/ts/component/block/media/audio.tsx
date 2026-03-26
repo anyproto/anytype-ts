@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
-import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
