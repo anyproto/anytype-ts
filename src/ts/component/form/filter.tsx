@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef } from 'react';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 type FilterSize = 28 | 32 | 36;
 

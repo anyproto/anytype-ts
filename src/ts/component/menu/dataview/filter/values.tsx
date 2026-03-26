@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, C, translate, analytics, Relation, Dataview } from 'Lib';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
+import * as I from 'Interface';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 

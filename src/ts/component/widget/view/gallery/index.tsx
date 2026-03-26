@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { observer } from 'mobx-react';
-import { I, S, J } from 'Lib';
 import Item from './item';
+import * as I from 'Interface';
 
 const LIMIT = 30;
 const LIMIT_ROW = 2;

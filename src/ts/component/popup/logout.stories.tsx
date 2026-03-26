@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { S } from 'Lib';
 import { popupProps } from 'SbHelpers/mockData';
 import { withPopup } from '../../../../.storybook/decorators';
 import PopupLogout from './logout';

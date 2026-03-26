@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -89,6 +88,8 @@ import MenuChatCreate from './chat/create';
 import MenuChangeOwner from './changeOwner';
 
 import MenuCommentToolbar from './comment/toolbar';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;

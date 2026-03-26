@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
-import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 

@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, Dataview } from 'Lib';
 import { GraphProvider } from 'Component';
+import * as I from 'Interface';
 
 const PADDING = 46;
 

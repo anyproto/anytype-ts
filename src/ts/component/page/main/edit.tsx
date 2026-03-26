@@ -2,7 +2,7 @@ import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

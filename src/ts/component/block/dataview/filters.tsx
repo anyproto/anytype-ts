@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, U, translate, S, Relation, C, Dataview, analytics } from 'Lib';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
+import * as I from 'Interface';
 
 interface RefProps {
 	openFilterMenu: (filterId: string) => void;

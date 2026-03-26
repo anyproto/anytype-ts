@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
-import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;

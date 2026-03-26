@@ -4,8 +4,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Mark, Action, translate } from 'Lib';
 import Row from './table/row';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const PADDING = 46;
 const SNAP = 10;

@@ -7,8 +7,10 @@ import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordin
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter, DropTarget } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 

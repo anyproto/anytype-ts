@@ -2,7 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativ
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

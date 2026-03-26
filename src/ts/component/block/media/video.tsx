@@ -2,7 +2,8 @@ import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
-import { I, C, S, J, U, translate, focus, Action, keyboard } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -159,7 +160,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onPlay={onPlay}
 							onPause={onPause}
 						/>
-						<Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;

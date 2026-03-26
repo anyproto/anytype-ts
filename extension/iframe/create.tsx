@@ -2,7 +2,8 @@ import { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, S, U, J, translate } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ROOT_ID = 'preview';
 

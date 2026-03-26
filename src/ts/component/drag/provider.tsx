@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
-import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	children?: ReactNode;

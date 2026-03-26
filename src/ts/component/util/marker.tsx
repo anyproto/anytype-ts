@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { I, S, J } from 'Lib';
 import { observer } from 'mobx-react';
 import { getIcon } from './icons';
+import * as I from 'Interface';
 
 interface Props {
 	id: string;

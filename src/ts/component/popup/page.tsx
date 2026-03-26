@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, history as historyPopup, keyboard, sidebar } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
 import { Page } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.Popup {};
 

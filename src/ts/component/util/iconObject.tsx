@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconEmoji } from 'Component';
-import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
 import { getIcon, getIconSvg } from './icons';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

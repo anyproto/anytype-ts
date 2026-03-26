@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U, J, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

@@ -1,7 +1,9 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Button, Footer, Error } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	type: I.BannerType;

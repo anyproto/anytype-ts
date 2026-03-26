@@ -4,8 +4,8 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, U, S, C, J, Dataview, keyboard, translate } from 'Lib';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
+import * as I from 'Interface';
 
 const HEIGHT = 36;
 const WIDTH = 40;

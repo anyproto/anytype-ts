@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import UtilFile from './file';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 describe('UtilFile', () => {
 

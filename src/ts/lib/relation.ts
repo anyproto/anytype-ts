@@ -1,5 +1,5 @@
-import { I, S, U, J, translate, Dataview } from 'Lib';
 import systemRelationKeys from 'dist/lib/json/generated/systemRelations.json';
+import * as I from 'Interface';
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];

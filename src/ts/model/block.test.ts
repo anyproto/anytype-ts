@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import Block from './block';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const makeBlock = (overrides: Partial<I.Block> = {}): Block => {
 	return new Block({

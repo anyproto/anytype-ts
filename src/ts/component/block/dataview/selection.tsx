@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	multiSelectAction?: (id: string) => void;

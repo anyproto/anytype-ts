@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, translate, S, Relation } from 'Lib';
 import { Icon, Label } from 'Component';
+import * as I from 'Interface';
 
 interface FilterWithRelation extends I.Filter {
 	relation: any;

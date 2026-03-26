@@ -16,6 +16,7 @@
 	"dist/css/**/*",
 	"dist/js/**/*",
 	"dist/audio/**/*",
+	"dist/assets/**/*",
 	"dist/*.js",
 	"!dist/js/main.js.map",
 	"dist/anytypeHelper.exe",

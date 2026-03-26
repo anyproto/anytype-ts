@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, analytics, translate, Preview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, sidebar } from 'Lib';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
+import * as I from 'Interface';
 
 const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

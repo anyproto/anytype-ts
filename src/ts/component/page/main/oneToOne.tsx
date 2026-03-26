@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Loader, Error, Frame, Button, Footer } from 'Component';
-import { U, I, keyboard, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainOneToOne = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, S, U, Action, Relation, keyboard, translate } from 'Lib';
 import { Block, Button, DragHorizontal, Loader } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;

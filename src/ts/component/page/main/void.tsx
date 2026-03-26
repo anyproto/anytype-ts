@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Frame } from 'Component';
-import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
-import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import * as I from 'Interface';
 
 enum Tab {
 	None	 = 0,

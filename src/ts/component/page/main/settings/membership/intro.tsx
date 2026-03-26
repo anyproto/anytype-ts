@@ -2,9 +2,9 @@ import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react'
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, C, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
+import * as I from 'Interface';
 
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

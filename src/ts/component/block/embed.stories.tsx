@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, M, U } from 'Lib';
 import { withBlock } from '../../../../.storybook/decorators';
 import BlockEmbed from './embed';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ROOT = 'sb-embed';
 

@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
+import * as I from 'Interface';
 
 const PADDING = 16;
 

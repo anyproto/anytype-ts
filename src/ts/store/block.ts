@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 /**
  * BlockStore manages the block data structure for all open objects.

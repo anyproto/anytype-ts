@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Cell } from 'Component';
-import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
 import Item from './item';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const ANIMATION = 200;
 

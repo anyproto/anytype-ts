@@ -1,4 +1,3 @@
-import { U } from 'Lib';
 
 class Renderer {
 

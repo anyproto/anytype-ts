@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Pin, Error } from 'Component';
-import { I, S, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PopupPin = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 

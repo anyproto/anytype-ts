@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, J, translate, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
 
 interface WidgetViewCalendarRefProps {
 	load: (searchIds: string[]) => void;

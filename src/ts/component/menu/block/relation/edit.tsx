@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation, Action } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
+import * as I from 'Interface';
 
 const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import View from './view';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const makeView = (overrides: Partial<I.View> = {}): View => {
 	return new View({

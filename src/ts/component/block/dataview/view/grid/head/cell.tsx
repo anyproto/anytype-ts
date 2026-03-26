@@ -2,8 +2,8 @@ import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { I, S, J, U, keyboard, Relation, Dataview } from 'Lib';
 import { Icon, ObjectName } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;

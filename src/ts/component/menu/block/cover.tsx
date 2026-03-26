@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { AutoSizer, List } from 'react-virtualized';
-import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
+import * as I from 'Interface';
 
 enum Tab {
 	Gallery	 = 0,

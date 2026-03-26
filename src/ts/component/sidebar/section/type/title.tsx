@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
-import { J, analytics, I, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	

@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
+import * as I from 'Interface';
 
 const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

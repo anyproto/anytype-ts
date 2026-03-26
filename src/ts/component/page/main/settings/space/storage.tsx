@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, ProgressBar, UpsellBanner } from 'Component';
-import { I, J, U, S, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

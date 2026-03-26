@@ -2,9 +2,9 @@ import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, sidebar, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
+import * as I from 'Interface';
 
 const BORDER = 16;
 const WIDTH_VIDEO = 1040;

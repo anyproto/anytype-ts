@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, keyboard, Relation } from 'Lib';
 import { OptionSelect } from 'Component';
+import * as I from 'Interface';
 
 const SUB_ID = 'dataviewOptionList';
 

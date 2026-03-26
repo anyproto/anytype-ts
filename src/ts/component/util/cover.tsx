@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode, MouseEvent, CSSProperties } from 'react';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

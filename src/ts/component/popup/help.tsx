@@ -2,8 +2,8 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Cover, Button } from 'Component';
-import { I, U, translate, keyboard } from 'Lib';
 import Block from 'Component/block/help';
+import * as I from 'Interface';
 
 const LIMIT = 1;
 

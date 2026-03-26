@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const FALLBACK_TIMEOUT = 3000;
 

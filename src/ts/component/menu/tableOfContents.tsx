@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Label, MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, translate, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;

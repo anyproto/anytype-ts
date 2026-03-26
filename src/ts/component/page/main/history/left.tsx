@@ -1,7 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Block, HeadSimple } from 'Component';
-import { I, M, S, U, Dataview } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.PageComponent {
 	rootId: string;

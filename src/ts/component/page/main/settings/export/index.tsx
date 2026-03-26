@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;

@@ -1,4 +1,3 @@
-import { U } from 'Lib';
 
 const BORDER = 20;
 const MAX_STEP = 10;

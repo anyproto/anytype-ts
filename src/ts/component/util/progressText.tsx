@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label } from 'Component';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	type: I.ProgressType;

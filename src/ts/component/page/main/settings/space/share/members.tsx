@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
-import { I, C, S, U, translate, Action, analytics, } from 'Lib';
+import * as I from 'Interface';
 
 const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

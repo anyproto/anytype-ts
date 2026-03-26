@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { U, I } from 'Lib';
 import { Label, Button } from 'Component';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const BlockDataviewEmpty = observer(forwardRef<{}, I.ViewEmpty>(({
 	block,

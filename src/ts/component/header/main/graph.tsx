@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

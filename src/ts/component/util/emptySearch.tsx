@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { U, translate } from 'Lib';
 
 interface Props {
 	text?: string;

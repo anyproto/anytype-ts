@@ -4,7 +4,6 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
-import { S, U } from 'Lib'; 
 
 import Index from './auth/index';
 import Success from './auth/success';

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
-import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, Mo
 import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { I, S, U, keyboard, Relation } from 'Lib';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;

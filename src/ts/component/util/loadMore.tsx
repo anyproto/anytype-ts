@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from 'Component';
-import { translate, U } from 'Lib';
 
 interface Props {
 	limit: number;

@@ -2,9 +2,9 @@ import React, { useEffect, useCallback, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, keyboard, translate, analytics } from 'Lib';
 import CommentList from './list';
 import CommentForm from './form';
+import * as I from 'Interface';
 
 const HIGHLIGHT_DURATION = 2000;
 

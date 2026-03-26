@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
-import { I, U, S, J, Action, analytics, translate, Renderer } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	object: any;

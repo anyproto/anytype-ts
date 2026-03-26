@@ -1,5 +1,6 @@
-import { I, M, S } from 'Lib';
 import { observable, makeObservable } from 'mobx';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 /**
  * View represents a saved configuration for displaying objects in a Set/Collection.

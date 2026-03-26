@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Title, Icon, } from 'Component';
-import { I, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PopupPhrase: FC<I.Popup> = (props) => {
 	

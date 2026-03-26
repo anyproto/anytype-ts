@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { Icon } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	processor: I.EmbedProcessor;

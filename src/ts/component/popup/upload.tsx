@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent }
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader, Error } from 'Component';
-import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
 
 enum Tab {
 	Upload = 0,

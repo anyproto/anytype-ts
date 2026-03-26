@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode, UIEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
+import * as I from 'Interface';
 
 interface Message {
 	id: string;

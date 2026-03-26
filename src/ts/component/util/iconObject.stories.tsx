@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import IconObject from './iconObject';
-import { I } from 'Lib';
 import Theme from 'json/theme';
+import * as I from 'Interface';
 
 import './icons/object';
 import './icons/type';

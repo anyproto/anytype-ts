@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

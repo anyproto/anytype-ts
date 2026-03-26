@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

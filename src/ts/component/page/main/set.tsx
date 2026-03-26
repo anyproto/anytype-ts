@@ -3,7 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, Onboarding, Storage } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

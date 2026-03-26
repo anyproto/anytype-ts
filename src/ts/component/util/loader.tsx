@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import raf from 'raf';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

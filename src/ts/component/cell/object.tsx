@@ -4,8 +4,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
+import * as I from 'Interface';
 
 const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 

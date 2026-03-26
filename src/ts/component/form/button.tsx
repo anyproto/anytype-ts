@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
+import * as I from 'Interface';
 
 type ButtonSize = 16 | 28 | 32 | 36 | 40 | 48;
 

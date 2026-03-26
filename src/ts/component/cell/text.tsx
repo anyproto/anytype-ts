@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject, ChatCounter, Icon } from 'Component';
+import * as I from 'Interface';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 

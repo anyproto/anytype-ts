@@ -1,7 +1,8 @@
 import React, { forwardRef, useState } from 'react';
 import { Title, Label, Button, Switch, Select } from 'Component';
-import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PageMainSettingsExportProtobuf = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

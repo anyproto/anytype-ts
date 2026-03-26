@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Title, Button } from 'Component';
-import { U, translate, analytics, Action } from 'Lib';
 
 const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 

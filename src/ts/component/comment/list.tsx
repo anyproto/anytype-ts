@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate } from 'Lib';
 import CommentPost from './post';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;

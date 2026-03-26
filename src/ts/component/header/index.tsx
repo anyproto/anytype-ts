@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
@@ -15,6 +14,7 @@ import HeaderMainNavigation from './main/navigation';
 import HeaderMainSettings from './main/settings';
 import HeaderMainEmpty from './main/empty';
 import HeaderMainArchive from './main/archive';
+import * as I from 'Interface';
 
 interface Props extends I.HeaderComponent {
 	component: string;

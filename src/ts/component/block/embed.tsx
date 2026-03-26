@@ -6,7 +6,8 @@ import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const MediaMermaid = React.lazy(() => import('Component/util/media/mermaid'));
 const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
@@ -870,7 +871,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let placeholder = '';
 
 	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
-		resizeIcon = <Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />;
+		resizeIcon = <Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />;
 	};
 
 	if (isExcalidraw) {

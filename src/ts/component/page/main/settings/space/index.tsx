@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
+import * as I from 'Interface';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

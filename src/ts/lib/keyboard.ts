@@ -1,5 +1,8 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 class Keyboard {
 

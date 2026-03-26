@@ -1,5 +1,5 @@
-import { I, S, J, C, U, Action, Relation } from 'Lib';
 import sha1 from 'sha1';
+import * as I from 'Interface';
 
 /**
  * Utility class for managing subscriptions, search, and data synchronization in the application.

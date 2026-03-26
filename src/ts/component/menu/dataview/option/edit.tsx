@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, C, U, J, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
