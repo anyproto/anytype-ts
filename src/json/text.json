@@ -919,6 +919,7 @@
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalNotificationSound": "Notification sound",
 	"popupSettingsPersonalNotificationSoundOff": "Off",
+	"popupSettingsPersonalNotificationSoundSystem": "System",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
 	"popupSettingsVaultCompact": "Compact",

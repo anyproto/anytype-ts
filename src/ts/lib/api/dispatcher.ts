@@ -1008,6 +1008,7 @@ class Dispatcher {
 							id: item.id,
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
+							silent: !Sound.isSystem(),
 						});
 						Sound.playNotification();
 					};
@@ -1119,6 +1120,7 @@ class Dispatcher {
 							text: notification,
 							cmd: 'openChat',
 							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+							silent: !Sound.isSystem(),
 						});
 						Sound.playNotification();
 					};
@@ -1298,6 +1300,7 @@ class Dispatcher {
 										text,
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+										silent: !Sound.isSystem(),
 									});
 									Sound.playNotification();
 								};
