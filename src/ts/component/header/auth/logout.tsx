@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Button } from 'Component';
+import Button from 'Component/form/button';
 import { observer } from 'mobx-react';
 import { Animation, I, S, U, translate } from 'Lib';
 
@@ -17,7 +17,7 @@ const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				<div className="logo" />
 			</div>
 			<div className="side right">
-				<Button icon="logout" color="simple" text={translate('commonLogout')} onClick={onLogout} />
+				<Button icon="header/logout" color="simple" text={translate('commonLogout')} onClick={onLogout} />
 			</div>
 		</>
 	);

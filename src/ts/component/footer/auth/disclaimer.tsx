@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Label } from 'Component';
+import Label from 'Component/util/label';
 import { I, U, J, translate } from 'Lib';
 
 const FooterAuthDisclaimer = forwardRef<{}, I.FooterComponent>(() => {

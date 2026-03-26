@@ -184,7 +184,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 		return {
 			id: String(id),
-			icon: suffix.toLowerCase(),
+			iconParam: { name: `menu/inviteLink/${suffix.toLowerCase()}` },
 			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
 			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
 			withDescription: true,
@@ -208,7 +208,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		return true;
 	};
 
-	const { name, description, icon } = getOptionById(invite.type);
+	const { name, description, iconParam } = getOptionById(invite.type);
 
 	useEffect(() => {
 		init();
@@ -232,7 +232,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 				<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
 				<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', canEdit ? 'canEdit' : '' ].join(' ')} onClick={onInviteMenu}>
-					<Icon className={isLoading ? 'loading' : icon} />
+					<Icon name={isLoading ? '' : iconParam.name} className={isLoading ? 'loading' : ''} />
 					<div className="info">
 						<Title text={name} />
 						<Label text={description} />

@@ -53,7 +53,6 @@ import './widget/system';
 import './comment';
 import './notification';
 import './table';
-import './popup/settings';
 import './popup/preview';
 import './popup/usecase';
 import './popup/search';

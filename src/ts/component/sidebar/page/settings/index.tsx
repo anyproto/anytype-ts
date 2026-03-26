@@ -341,7 +341,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 					{!isSpace ? (
 						<div className="logout" onClick={() => S.Popup.open('logout', {})}>
-							<Icon />
+							<Icon name="header/logout" />
 							{translate('commonLogout')}
 						</div>
 					) : ''}

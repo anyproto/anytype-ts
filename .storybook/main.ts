@@ -14,6 +14,7 @@ const config: StorybookConfig = {
 		config.resolve = config.resolve || {};
 		config.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx'];
 		config.resolve.alias = [
+			{ find: 'SbHelpers', replacement: path.resolve(__dirname, 'helpers') },
 			{ find: 'dist', replacement: path.resolve(__dirname, '../dist') },
 			{ find: 'protobuf', replacement: path.resolve(__dirname, '../dist/lib') },
 			{ find: 'json', replacement: path.resolve(__dirname, '../src/json') },

@@ -25,6 +25,9 @@
 					> span { min-width: 100%; display: inline-block; text-align: center; }
 				}
 
+				&.markerCheckbox { color: var(--color-text-secondary); }
+				&.markerCheckbox.active { color: var(--color-system-accent-100); }
+
 				&.markerCheckbox,
 				&.markerToggle {
 					img { width: 20px; height: 20px; }
@@ -83,7 +86,7 @@
 
 	/* IsChecked */
 
-	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget * { color: var(--color-control-active) !important; }
+	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget { color: var(--color-control-active) !important; }
 
 	/* Title */
 

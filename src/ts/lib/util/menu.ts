@@ -679,7 +679,7 @@ class UtilMenu {
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { homepage: object.id }, (message: any) => {
+			C.WorkspaceSetHomepage(space, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -716,7 +716,6 @@ class UtilMenu {
 			horizontal: I.MenuDirection.Right,
 			subIds,
 			onOpen: context => this.setContext(context),
-			onClose: () => S.Menu.closeAll(subIds),
 			data: {
 				options,
 				onOver: (e: any, item: any) => {
@@ -1813,7 +1812,7 @@ class UtilMenu {
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
+		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1826,11 +1825,13 @@ class UtilMenu {
 			value = String(recentEditMode);
 		} else 
 		if (sectionId == I.WidgetSection.Bin) {
-			options = options.concat([
-				{ id: 'openBin', name: translate('commonOpen') },
-				{ id: 'emptyBin', name: translate('commonEmptyBin') },
-				{ isDiv: true },
-			]);
+			options.push({ id: 'openBin', name: translate('commonOpen') });
+
+			if (U.Space.isMyOwner()) {
+				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
+			};
+
+			options.push({ isDiv: true });
 		};
 
 		options.push(toggle);

@@ -150,7 +150,7 @@ export default {
 	],
 
 	space: [
-		'spaceDashboardId',
+		'homepage',
 		'spaceAccountStatus',
 		'spaceLocalStatus',
 		'spaceAccessType',

@@ -1,11 +1,13 @@
 @import "~scss/_mixins";
 
 .listObject {
+	.ReactVirtualized__Grid, .ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
 	.table { display: grid; margin: 0px 0px 10px 0px; }
 	.table {
 		.selectionTarget { display: grid; }
 		
-		.row.isHead { display: grid; color: var(--color-control-active); }
+		.row.isHead { display: grid; color: var(--color-text-secondary); }
 		.row.isHead {
 			.cell { 
 				text-align: left; padding: 9px 0px 9px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
@@ -17,14 +19,13 @@
 					@include text-overflow-nw;
 				}
 
-				.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
+				.icon.sortArrow { margin: 0px; color: inherit; }
 				.icon.sortArrow.c0 { transform: rotateZ(180deg); }
 			}
 		}
 
 		.row { border-bottom: 1px solid var(--color-shape-secondary); }
 
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 		.row.isSelectionSelected::after { display: none; }
 		.row.isSelectionSelected { background-color: var(--color-system-selection); }
 
@@ -34,12 +35,18 @@
 			.cell:last-child { padding-right: 0px; }
 			.cell.empty { line-height: 20px; }
 
+			.cell.cellCheck {
+				position: absolute; left: -36px; top: 0px; bottom: 0px; width: 36px;
+				display: flex; align-items: center; justify-content: center; padding: 0px;
+			}
+
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
 				.more { vertical-align: top; }
 				.empty { display: block; }
 				.flex { gap: 0px 6px; }
 			}
+			.cellContent.isName { height: auto; }
 
 			.cellContent.c-object {
 				.wrap { white-space: nowrap; }

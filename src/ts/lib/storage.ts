@@ -22,6 +22,7 @@ const SPACE_KEYS = new Set([
 	'recentEditMode',
 	'widgetSections',
 	'channelBanner',
+	'binViewDetailed',
 ]);
 
 const LOCAL_KEYS = new Set([
@@ -29,7 +30,6 @@ const LOCAL_KEYS = new Set([
 	'scroll',
 	'focus',
 	'graphData',
-	'progress',
 	'updateBanner',
 	'lastOpenedSimple',
 ]);

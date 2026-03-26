@@ -36,7 +36,6 @@
 				.icon { vertical-align: middle; opacity: 1; }
 			}
 		}
-		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:not(.isReadonly) {
 			.chip.relation::after { content: ''; width: 8px; height: 8px; }

@@ -14,6 +14,7 @@ import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainSettings from './main/settings';
 import HeaderMainEmpty from './main/empty';
+import HeaderMainArchive from './main/archive';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -30,6 +31,7 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainEmpty:			 HeaderMainEmpty,
+	mainArchive:		 HeaderMainArchive,
 	mainSettings: 		 HeaderMainSettings,
 };
 

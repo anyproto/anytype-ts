@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Icon, Select } from 'Component';
+import Icon from 'Component/util/icon';
+import Select from 'Component/form/select';
 import { observer } from 'mobx-react';
 import { Action, Animation, I, S, U, J } from 'Lib';
 

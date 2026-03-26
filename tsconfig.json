@@ -71,6 +71,9 @@
 			"Proto/*": [
 				"../middleware/*"
 			],
+			"SbHelpers/*": [
+				"../.storybook/helpers/*"
+			],
           }
     },
 	"include": [

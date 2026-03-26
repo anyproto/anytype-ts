@@ -2,6 +2,7 @@
 
 .banner {
     border-radius: 12px; padding: 12px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
+	position: relative;
 }
 .banner {
 	.title { @include text-common; margin-bottom: 0px; }

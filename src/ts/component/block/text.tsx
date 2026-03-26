@@ -1581,7 +1581,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					<div className="buttons">
 						<div className="btn" onClick={onToggleWrap}>
-							<Icon className="codeWrap" />
+							<Icon name="menu/action/wrap" className="codeWrap" />
 							<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
 						</div>
 

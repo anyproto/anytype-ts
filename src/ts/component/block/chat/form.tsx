@@ -841,11 +841,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		list = list.map(it => ({ ...it, timestamp: U.Date.now() }));
 
 		if (list.length + attachments.length > limit) {
+			list = list.slice(0, limit);
 			Preview.toastShow({
 				icon: 'notice',
 				text: U.String.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
 			});
-			return;
 		};
 
 		saveState([ ...attachments, ...list ]);

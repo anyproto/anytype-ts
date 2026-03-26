@@ -57,7 +57,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			listRef.current?.getData(1);
+			listRef.current?.reload();
 			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 
@@ -446,6 +446,8 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 							rootId={rootId}
 							columns={columnsObject}
 							route={analytics.route.screenRelation}
+							useInfiniteScroll={true}
+							isPopup={isPopup}
 						/>
 					</div>
 				</div>

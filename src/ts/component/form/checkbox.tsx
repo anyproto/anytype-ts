@@ -6,6 +6,7 @@ interface Props {
 	value: boolean;
 	className?: string;
 	readonly?: boolean;
+	size?: number;
 	onChange?(e: any, value: boolean): void;
 };
 
@@ -21,6 +22,7 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 	className = '',
 	readonly = false,
 	onChange,
+	size,
 }, ref: any) => {
 
 	const [ value, setValue ] = useState(false);
@@ -42,13 +44,13 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 		toggle: () => setValue(!value)
 	}));
 
-	useEffect(() => setValue(initialValue), []);
+	useEffect(() => setValue(initialValue), [ initialValue ]);
 
 	return (
 		<Icon
 			id={id}
 			name={value ? 'object/checkbox2' : 'object/checkbox0'}
-			size={24}
+			size={size}
 			className={[ 'checkbox', (readonly ? 'isReadonly' : ''), className ].join(' ')}
 			onClick={onChangeHandler}
 		/>

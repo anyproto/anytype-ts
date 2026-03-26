@@ -219,14 +219,36 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
 			const allPaths = filePaths.concat(dirPaths);
-			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
+			let contextId = rootId;
+
+			if (data && (data.dropType == I.DropType.Menu)) {
+				contextId = targetId;
+				targetId = '';
+				position.current = I.BlockPosition.Bottom;
+			};
+
+			if (data && (data.dropType == I.DropType.Widget)) {
+				const { widgets } = S.Block;
+				const childrenIds = S.Block.getChildrenIds(widgets, targetId);
+				const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+				const widgetTargetId = child?.getTargetObjectId();
+
+				if (widgetTargetId) {
+					contextId = widgetTargetId;
+					targetId = '';
+					position.current = I.BlockPosition.Bottom;
+				};
+			};
+
+			const detailsId = (data && (data.dropType == I.DropType.Widget)) ? S.Block.widgets : rootId;
+			const contextObject = S.Detail.get(detailsId, contextId, [ 'layout' ], true);
+			const isSetLayout = U.Object.isInSetLayouts(contextObject.layout);
 
 			if (allPaths.length && isSetLayout) {
 				Preview.toastShow({ text: translate('toastSetFileDrop') });
 			} else
 			if (allPaths.length && !isSetLayout) {
-				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
+				C.FileDrop(contextId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
 
 					if (!message.error.code) {
