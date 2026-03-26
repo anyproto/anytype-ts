@@ -370,7 +370,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			);
 		};
 
-		const { targetSpaceId, id, lastMessage, isOneToOne, isChat, isPinned } = item;
+		const { targetSpaceId, id, lastMessage, isOneToOne, isPinned } = item;
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: !isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
@@ -407,7 +407,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
+		const rawCounters = !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
 		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
@@ -428,7 +428,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (isChat || isOneToOne) {
+			if (isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}

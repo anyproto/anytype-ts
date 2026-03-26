@@ -630,7 +630,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const isOwner = U.Space.isMyOwner();
 		const hasDashboard = spaceview.spaceDashboardId && (spaceview.spaceDashboardId != I.HomePredefinedId.Last);
 		const bannerData = Storage.get('channelBanner') || {};
-		const showCreateHome = spaceview.isChat && isOwner && !hasDashboard && !bannerData.home;
+		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
 
 		const onCreateHome = () => {
 			Action.openSettings('spaceHome', analytics.route.widget);

@@ -46,7 +46,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			},
 		} : null,
 		{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
-		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
+		spaceview.isOneToOne ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: MouseEvent, item: any) => {

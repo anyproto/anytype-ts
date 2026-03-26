@@ -535,7 +535,6 @@ class DetailStore {
 		// Space type
 		object.spaceType = Number(object.spaceType) || I.SpaceType.Data;
 		object.isData = object.spaceType == I.SpaceType.Data;
-		object.isChat = object.spaceType == I.SpaceType.Chat;
 		object.isOneToOne = object.spaceType == I.SpaceType.OneToOne;
 
 		// Chat

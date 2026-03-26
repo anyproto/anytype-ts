@@ -1,12 +1,10 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Label, Title, Button } from 'Component';
-import { U, translate, analytics, Action } from 'Lib';
+import { Icon, Label, Title } from 'Component';
+import { translate } from 'Lib';
 
 const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 
-	const spaceview = U.Space.getSpaceview();
-	
 	return (
 		<div className="chatEmptyState">
 			<div className="inner">
@@ -23,16 +21,6 @@ const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 					<Icon name="chat/empty/key" />
 					<Label text={translate('blockChatEmptyItem3')} />
 				</div>
-				{spaceview.isChat ? (
-					<div className="buttons">
-						<Button
-							onClick={() => Action.openSpaceShare(analytics.route.chat)}
-							text={translate('blockChatEmptyShareInviteLink')}
-							size={28}
-							color="blank"
-						/>
-					</div>
-				) : ''}
 			</div>
 		</div>
 	);
