@@ -207,8 +207,8 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			return;
 		};
 
-		const { details, flags } = Relation.getParamForNewObject(text, relation);
-		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, message => onValueAdd(message.targetId));
+		const { details } = Relation.getParamForNewObject(text, relation);
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', [], analytics.route.relation, message => onValueAdd(message.targetId));
 	};
 
 	const onFocus = () => {
