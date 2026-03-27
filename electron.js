@@ -1140,15 +1140,23 @@ var WindowManager = class {
     });
     win.on("enter-full-screen", () => menu_default.initMenu());
     win.on("leave-full-screen", () => menu_default.initMenu());
-    win.on("resize", () => {
-      const { width, height } = this.getBounds(win);
+    const updateViewBounds = () => {
+      const bounds = this.getBounds(win);
+      if (!bounds) {
+        return;
+      }
+      ;
       const activeView = util_default.getActiveView(win);
       if (activeView) {
         const tabBarHeight = this.getTabBarHeight(win);
-        activeView.setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+        activeView.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
       }
       ;
-    });
+    };
+    win.on("resize", updateViewBounds);
+    win.on("maximize", updateViewBounds);
+    win.on("unmaximize", updateViewBounds);
+    win.on("restore", updateViewBounds);
     if (initialTabData) {
       this.createTab(win, initialTabData, { setActive: true });
     } else {
@@ -3244,7 +3252,7 @@ var Api = class {
     }, 100);
   }
   notification(win, param) {
-    const { id, title, text, cmd, payload } = param || {};
+    const { id, title, text, cmd, payload, silent = true } = param || {};
     if (!text) {
       return;
     }
@@ -3261,7 +3269,7 @@ var Api = class {
     const notification = new import_electron9.Notification({
       title: String(title || ""),
       body: String(text || ""),
-      silent: true
+      silent
     });
     notification.on("click", () => {
       this.focusWindow(win);
@@ -3271,6 +3279,9 @@ var Api = class {
       ;
     });
     notification.show();
+  }
+  notificationSound(_win) {
+    import_electron9.shell.beep();
   }
   payloadBroadcast(win, payload) {
     if (payload.type == "openObject") {

@@ -76,7 +76,7 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 							className={cn.join(' ')}
 							onClick={() => setSelected(option.id)}
 						>
-							<Icon icon={`./img/${S.Common.getThemePath()}icon/settings/${option.id}.svg`} className="preview" />
+							<Icon className={[ 'preview', option.id ].join(' ')} />
 							<div className="optionName">{translate(option.nameKey)}</div>
 						</div>
 					);

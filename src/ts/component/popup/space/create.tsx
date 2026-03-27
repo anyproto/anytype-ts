@@ -116,7 +116,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			name: submittedName,
 			iconOption,
 			spaceAccessType: I.SpaceAccessType.Private,
-			homepage: '',
+			homepage: I.HomePredefinedId.Widget,
 		};
 
 		C.WorkspaceCreate(details, usecase, (message: any) => {
