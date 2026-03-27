@@ -176,15 +176,23 @@ class WindowManager {
 		});
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
-		win.on('resize', () => {
-			const { width, height } = this.getBounds(win);
+		const updateViewBounds = () => {
+			const bounds = this.getBounds(win);
+			if (!bounds) {
+				return;
+			};
 
 			const activeView = Util.getActiveView(win);
 			if (activeView) {
 				const tabBarHeight = this.getTabBarHeight(win);
-				activeView.setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+				activeView.setBounds({ x: 0, y: tabBarHeight, width: bounds.width, height: bounds.height - tabBarHeight });
 			};
-		});
+		};
+
+		win.on('resize', updateViewBounds);
+		win.on('maximize', updateViewBounds);
+		win.on('unmaximize', updateViewBounds);
+		win.on('restore', updateViewBounds);
 
 		// Handle tab creation
 		if (initialTabData) {
