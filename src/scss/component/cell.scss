@@ -48,6 +48,11 @@
 	.empty { vertical-align: top; display: none; }
 
 	.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }
+
+	.placeholderChip { display: flex; align-items: center; gap: 0px 4px; color: var(--color-system-accent-100); }
+	.placeholderChip {
+		.iconMain { color: inherit; }
+	}
 }
 
 .cellContent.editModeOn {

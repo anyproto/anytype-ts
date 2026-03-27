@@ -115,6 +115,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			return;
 		};
 
+		if (isDate && Relation.isPlaceholderValue(record[relation.relationKey])) {
+			return;
+		};
+
 		keyboard.setFocus(false);
 		range.current = null;
 
@@ -131,6 +135,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	};
 
 	const onUnmount = () => {
+		const currentRecord = getRecord(recordId);
+		if (currentRecord && Relation.isPlaceholderValue(currentRecord[relation.relationKey])) {
+			return;
+		};
 		if (isEditing && (record[relation.relationKey] !== value.current)) {
 			save(value.current);
 		};
@@ -161,7 +169,11 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let val = record[relation.relationKey];
 	let icon = null;
 	let counter = null;
+	const isPlaceholder = isDate && (val === J.Constant.placeholderId.today);
 
+	if (isPlaceholder) {
+		val = null;
+	} else
 	if (isDate || isNumber) {
 		val = Relation.formatValue(relation, val, true);
 		if (isNumber) {
@@ -339,7 +351,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	};
 
 	useEffect(() => {
-		setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+		if (!isPlaceholder) {
+			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+		};
 	}, []);
 
 	useEffect(() => {
@@ -390,7 +404,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				cellPosition(id);
 			};
 		} else {
-			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+			if (!isPlaceholder) {
+				setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+			};
 
 			cell.find('.cellContent').css({ left: '', right: '' });
 		};
@@ -412,6 +428,16 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		getValue: () => val,
 		onBlur,
 	}));
+
+	if (isPlaceholder && !isEditing) {
+		return (
+			<div className="placeholderChip">
+				<Icon name="relation/date" className="iconMain" />
+				<div className="name">{translate('placeholderToday')}</div>
+				{counter}
+			</div>
+		);
+	};
 
 	return (
 		<>

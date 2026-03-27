@@ -7,12 +7,28 @@
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
 
 		.line { margin: 8px 16px 11px 16px; }
-		
-		.input { 
+
+		.input {
 			height: 28px; border-radius: 4px; border: solid 1px var(--color-shape-primary); margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
 
+		.dynamicDates {
+			padding: 0px 16px 8px;
+			border-top: 1px solid var(--color-shape-secondary);
+			margin-top: 4px;
+
+			.sectionName { @include text-small; color: var(--color-text-secondary); padding: 8px 0px 4px; }
+
+			.item {
+				display: flex; align-items: center; gap: 0px 6px; height: 28px; padding: 0px 4px; border-radius: 6px;
+
+				.icon { width: 20px; height: 20px; flex-shrink: 0; }
+				.name { @include text-paragraph; }
+			}
+			.item:hover { background-color: var(--color-shape-highlight-medium); }
+			.item.active { color: var(--color-control-accent); }
+		}
 	}
 
 	.menu.menuCalendarDay {

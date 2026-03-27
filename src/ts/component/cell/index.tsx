@@ -170,18 +170,19 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				$(element).removeClass('withMenu');
 				setOff();
 			},
-			data: { 
+			data: {
 				cellId,
 				cellRef: childRef.current,
 				rootId,
 				subId,
 				blockId: block?.id,
-				value, 
+				value,
 				relation: observable.box(relation),
 				relationKey: relation.relationKey,
 				record,
 				placeholder,
 				canEdit,
+				isTemplate: U.Object.isTemplateType(record.type),
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (childRef.current && childRef.current.onChange) {
 						childRef.current.onChange(value);
@@ -199,9 +200,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		switch (relation.format) {
 
 			case I.RelationType.Date: {
+				const isPlaceholderValue = (param.data.value === J.Constant.placeholderId.today);
 				param.data = Object.assign(param.data, {
-					value: param.data.value || U.Date.now(),
+					value: isPlaceholderValue ? U.Date.now() : (param.data.value || U.Date.now()),
 					noKeyboard: true,
+					hasPlaceholder: isPlaceholderValue,
 				});
 					
 				menuId = 'calendar';
@@ -453,7 +456,23 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			return null;
 		};
 
+		if (Relation.isPlaceholderValue(value)) {
+			callBack?.(null);
+			return;
+		};
+
 		value = Relation.formatValue(relation, value, true);
+
+		if ((relation.format == I.RelationType.Date) && (value !== null) && isNaN(value)) {
+			callBack?.(null);
+			return;
+		};
+
+		// For object relations, strip placeholder sentinels before saving
+		if (Array.isArray(value)) {
+			value = value.filter(it => !Relation.isPlaceholderValue(it));
+		};
+
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
 		};

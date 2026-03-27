@@ -59,15 +59,19 @@ const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 		iconRemove = <Icon name="object/remove" size={8} className="objectRemove" onClick={onRemoveHandler} />;
 	};
 
+	if (object._isPlaceholder) {
+		cn.push('placeholderChip');
+		iconObject = <Icon name="filterTemplate/user" size={size} className="iconMain" />;
+	} else
 	if (relation.relationKey != 'type') {
 		iconObject = (
-			<IconObject 
+			<IconObject
 				id={`${cellId}-icon`}
-				object={object} 
-				size={size} 
+				object={object}
+				size={size}
 				iconSize={iconSize}
 				noClick={true}
-				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)} 
+				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(layout)}
 			/>
 		);
 	};

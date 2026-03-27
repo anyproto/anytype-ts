@@ -63,9 +63,13 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const getItems = (): any[] => {
-		return Relation.getArrayValue(record[relation.relationKey]).
-			map(id => S.Detail.get(subId, id, [])).
-			filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+		const pid = J.Constant.placeholderId;
+		return Relation.getArrayValue(record[relation.relationKey]).map(id => {
+			if (id === pid.currentUser) {
+				return { id: pid.currentUser, name: translate('placeholderCurrentUser'), _isPlaceholder: true };
+			};
+			return S.Detail.get(subId, id, []);
+		}).filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
 	const getItemIds = (): string[] => {
@@ -315,17 +319,17 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			content = (
 				<span className="over">
 					{value.map((item: any, i: number) => (
-						<ItemObject 
-							key={item.id} 
+						<ItemObject
+							key={item.id}
 							cellId={id}
 							getObject={() => item}
 							size={size}
-							iconSize={iconSize} 
-							relation={relation} 
-							elementMapper={elementMapper} 
+							iconSize={iconSize}
+							relation={relation}
+							elementMapper={elementMapper}
 							canEdit={canEdit}
-							onClick={e => onClick(e, item)}
-							onContext={(length == 1) ? onContext : undefined}
+							onClick={item._isPlaceholder ? undefined : (e => onClick(e, item))}
+							onContext={(length == 1) && !item._isPlaceholder ? onContext : undefined}
 						/>
 					))}
 					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}

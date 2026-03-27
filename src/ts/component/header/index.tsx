@@ -163,6 +163,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onExpand = () => {
+		sidebar.rightPanelClose(isPopup, false);
 		S.Popup.closeAll(null, () => U.Object.openRoute({ id: rootId, layout }));
 	};
 

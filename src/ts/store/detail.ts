@@ -275,7 +275,7 @@ class DetailStore {
 		if (!detailMap || detailMap.size == 0) {
 			return { id, _empty_: true };
 		};
-		
+
 		const object = { id };
 		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
@@ -287,6 +287,7 @@ class DetailStore {
 			object[item.relationKey] = item.value;
 		};
 
+		this.applyPlaceholders(object, detailMap);
 		return this.mapper(object, skipLayoutFormat);
 	};
 
@@ -299,6 +300,68 @@ class DetailStore {
 	public getKeys (rootId: string, id: string): string[] {
 		const detailMap = this.map.get(rootId)?.get(id);
 		return detailMap ? Array.from(detailMap.keys()) : [];
+	};
+
+	/**
+	 * Reads templatePlaceholders from object details and reconstructs relation values
+	 * by replacing placeholder entries with sentinel constants.
+	 * @private
+	 * @param {any} object - The object to mutate.
+	 */
+	private applyPlaceholders (object: any, detailMap: Map<string, Detail>): void {
+		const detail = detailMap.get('templatePlaceholders');
+		const placeholders = detail?.value as any;
+		if (!placeholders || (typeof placeholders !== 'object') || Array.isArray(placeholders)) {
+			return;
+		};
+
+
+		const pid = J.Constant.placeholderId;
+		const meta: Record<string, any[]> = {};
+
+		for (const relationKey in placeholders) {
+			const entries = placeholders[relationKey];
+			if (!Array.isArray(entries) || !entries.length) {
+				continue;
+			};
+
+			meta[relationKey] = entries;
+
+			const values: any[] = [];
+			let singleValue: any = null;
+
+			for (const entry of entries) {
+				const type = Number(entry.type) || 0;
+
+				switch (type) {
+					case I.PlaceholderType.Today: {
+						singleValue = pid.today;
+						values.push(pid.today);
+						break;
+					};
+					case I.PlaceholderType.CurrentUser: {
+						values.push(pid.currentUser);
+						break;
+					};
+					default: {
+						if (entry.value !== undefined && entry.value !== null) {
+							singleValue = entry.value;
+							values.push(entry.value);
+						};
+						break;
+					};
+				};
+			};
+
+			if (values.length > 1) {
+				object[relationKey] = values;
+			} else
+			if (values.length == 1) {
+				object[relationKey] = singleValue !== null ? singleValue : values[0];
+			};
+		};
+
+		object._placeholders = meta;
 	};
 
 	/**

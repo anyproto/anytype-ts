@@ -421,6 +421,17 @@ class Relation {
 		return value;
 	};
 
+	public isPlaceholderValue (value: any): boolean {
+		if (typeof value === 'string') {
+			const pid = J.Constant.placeholderId;
+			return (value === pid.today) || (value === pid.currentUser);
+		};
+		if (Array.isArray(value)) {
+			return value.some(v => this.isPlaceholderValue(v));
+		};
+		return false;
+	};
+
 	/**
 	 * Checks if a value is valid for a relation.
 	 * @param {any} relation - The relation object.
@@ -430,6 +441,10 @@ class Relation {
 	public checkRelationValue (relation: any, value: any): boolean {
 		if (!relation) {
 			return false;
+		};
+
+		if (this.isPlaceholderValue(value)) {
+			return true;
 		};
 
 		value = this.formatValue(relation, value, false);

@@ -1572,6 +1572,18 @@ export const TemplateExportAll = (path: string, callBack?: (message: any) => voi
 	dispatcher.request('TemplateExportAll', { path }, callBack);
 };
 
+export const TemplateSetPlaceholders = (templateId: string, placeholders: any[], callBack?: (message: any) => void) => {
+	dispatcher.request('TemplateSetPlaceholders', { templateId, placeholders }, callBack);
+};
+
+export const TemplateGetPlaceholders = (templateId: string, callBack?: (message: any) => void) => {
+	dispatcher.request('TemplateGetPlaceholders', { templateId }, callBack);
+};
+
+export const TemplateDeletePlaceholders = (templateId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+	dispatcher.request('TemplateDeletePlaceholders', { templateId, relationKeys }, callBack);
+};
+
 // ---------------------- UNSPLASH ---------------------- //
 
 export const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
