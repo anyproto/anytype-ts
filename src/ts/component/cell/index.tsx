@@ -468,13 +468,42 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			return;
 		};
 
-		// For object relations, strip placeholder sentinels before saving
-		if (Array.isArray(value)) {
-			value = value.filter(it => !Relation.isPlaceholderValue(it));
+		const currentRecord = getRecord(recordId);
+		const isTemplate = currentRecord && U.Object.isTemplateType(currentRecord.type);
+
+		if (isTemplate && currentRecord._placeholders?.[relation.relationKey]) {
+			syncPlaceholders(relation.relationKey, value);
+			callBack?.(null);
+			return;
 		};
 
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
+		};
+	};
+
+	const syncPlaceholders = (relationKey: string, value: any) => {
+		const pid = J.Constant.placeholderId;
+
+		if (Array.isArray(value)) {
+			const entries = value.map(v => {
+				if (v === pid.currentUser) {
+					return { type: I.PlaceholderType.CurrentUser };
+				};
+				return { type: I.PlaceholderType.Value, value: v };
+			});
+
+			if (entries.length) {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: entries }]);
+			} else {
+				C.TemplateDeletePlaceholders(rootId, [ relationKey ]);
+			};
+		} else {
+			if (value === null || value === undefined) {
+				C.TemplateDeletePlaceholders(rootId, [ relationKey ]);
+			} else {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: [{ type: I.PlaceholderType.Value, value }] }]);
+			};
 		};
 	};
 
