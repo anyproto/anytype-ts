@@ -12,7 +12,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
-	const filterWrapperRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
 	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
@@ -125,8 +124,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			return;
 		};
 
-		$(filterWrapperRef.current).addClass('active');
-		filterRef.current?.focus();
+		filterRef.current.setActive(true);
+		filterRef.current.focus();
 
 		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
@@ -134,7 +133,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
 			const value = filterRef.current?.getValue();
 
-			if (!value && !$(e.target).parents('.filterWrapper').length) {
+			if (!value && !$(e.target).parents('.filter').length) {
 				onFilterHide();
 				container.off('mousedown.filter');
 			};
@@ -153,7 +152,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			return;
 		};
 
-		$(filterWrapperRef.current).removeClass('active');
+		filterRef.current.setActive(false);
 		filterRef.current.setValue('');
 		filterRef.current.blur();
 		setFilterText('');
@@ -259,21 +258,15 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 									onClick={onSwitchView}
 								/>
 
-								<div ref={filterWrapperRef} className="filterWrapper">
-									<Filter
-										ref={filterRef}
-										onChange={onFilterChange}
-										size={32}
-										placeholder={translate('commonSearchPlaceholder')}
-									/>
-									<Icon
-										className="archiveAction"
-										name="common/search"
-										withBackground={true}
-										tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-										onClick={onFilterShow}
-									/>
-								</div>
+								<Filter
+									ref={filterRef}
+									onChange={onFilterChange}
+									placeholder={translate('commonSearchPlaceholder')}
+									iconParam={{ name: 'common/search' }}
+									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+									onIconClick={onFilterShow}
+									size={32}
+								/>
 							</>
 						) : ''}
 					</div>

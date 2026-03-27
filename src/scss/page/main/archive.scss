@@ -27,12 +27,18 @@
 
 			.icon { width: 20px; height: 20px; margin: 0px; }
 
-			.filterWrapper { display: flex; flex-direction: row; align-items: center; }
-			.filterWrapper {
-				.filter { width: 0px; overflow: hidden; opacity: 0; transition: $transitionAllCommon; }
+			.filter { padding: 0px; }
+			.filter {
+				.inner { background-color: var(--color-shape-highlight-light); }
+
+				.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
+				.line { display: none !important; }
+				.icon.commonClear { display: none; }
 			}
-			.filterWrapper.active {
-				.filter { width: 200px; opacity: 1; }
+			.filter.isActive {
+				.inner > .icon:hover { background-color: unset; }
+				.icon.commonClear { display: block; }
+				.filterInputWrap { width: 168px; }
 			}
 		}
 
