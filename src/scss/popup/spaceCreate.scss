@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { overflow: hidden; width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; }
+		.innerWrap { width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; }
 
 		#loader { border-radius: 32px; }
 

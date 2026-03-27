@@ -1787,6 +1787,13 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	}, callBack);
 };
 
+export const SpaceParticipantsAddList = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	dispatcher.request('SpaceParticipantsAddList', {
+		spaceId,
+		identities,
+	}, callBack);
+};
+
 export const SpaceChangeOwnership = (spaceId: string, newOwnerIdentity: string, callBack?: (message: any) => void) => {
 	// Note: Requires middleware branch GO-6168-change-ownership
 	dispatcher.request('SpaceChangeOwnership', {

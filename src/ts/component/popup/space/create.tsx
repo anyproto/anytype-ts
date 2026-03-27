@@ -104,6 +104,12 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		const submittedName = checkName(name);
 		const usecase = I.Usecase.DataSpace;
 
+		// Resolve identities before space switch since participant objects belong to the current space
+		const identities = U.Space.getParticipantsList([ I.ParticipantStatus.Active ])
+			.filter(it => selectedMembers.includes(it.id))
+			.map(it => it.identity)
+			.filter(it => it);
+
 		setIsLoading(true);
 
 		const details: any = {
@@ -143,6 +149,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 									analytics.event('ShareSpace');
 									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
 								});
+
+								if (identities.length) {
+									C.SpaceParticipantsAddList(S.Common.space, identities);
+								};
 							});
 						};
 
@@ -271,10 +281,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 				<Filter
 					ref={filterRef}
-					className="outlined round c36"
 					iconParam={{ name: 'common/search' }}
 					placeholder={translate('popupSpaceCreateStep1Placeholder')}
 					focusOnMount={false}
+					size={36}
 					onChange={v => setSearch(v)}
 				/>
 
