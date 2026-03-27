@@ -27,8 +27,13 @@
 
 			.icon { width: 20px; height: 20px; margin: 0px; }
 
-			.filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; display: none; }
-			.filterWrapper.active { width: 200px; display: block; }
+			.filterWrapper { display: flex; flex-direction: row; align-items: center; }
+			.filterWrapper {
+				.filter { width: 0px; overflow: hidden; opacity: 0; transition: $transitionAllCommon; }
+			}
+			.filterWrapper.active {
+				.filter { width: 200px; opacity: 1; }
+			}
 		}
 
 		.listObject { flex-grow: 1; margin-left: -36px; }
@@ -38,7 +43,7 @@
 
 				.row { position: relative; gap: 0px 6px; border: 0px; }
 				.row {
-					&.isHead { overflow: visible; @include text-small; }
+					&.isHead { overflow: visible; font-size: 12px; font-weight: 500; }
 					&.isHead {
 						.cell { overflow: visible; }
 						.cell {
@@ -51,6 +56,8 @@
 							&.isSorted {
 								.name { padding-right: 2px; }
 							}
+
+							.icon.objectCheckbox2 { color: var(--color-control-accent); }
 						}
 						&:hover::before { display: none; }
 						&:hover {
@@ -85,8 +92,8 @@
 						}
 					}
 
-					.cell.isChecked {
-						.icon.checkbox { color: var(--color-control-accent); }
+					.cell.cellCheck.isChecked {
+						.icon.checkbox.hasSvg { color: var(--color-control-accent); }
 					}
 				}
 			}
@@ -100,12 +107,6 @@
 		}
 	}
 
-	.wrapper.hasSelection {
-		.listObject .table {
-			.row .cell.cellCheck { opacity: 1; }
-			.row.isHead .cell.cellCheck { opacity: 1; }
-		}
-	}
 
 }
 

@@ -190,8 +190,8 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		return [
-			{ id: 'invite', iconParam: { name: 'menu/action/inviteMembers' }, name: translate('commonAdd') },
-			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
+			{ id: 'invite', iconParam: { name: 'header/invite' }, name: translate('commonInvite') },
+			{ id: 'copyLink', iconParam: { name: 'menu/action/copy' }, name: translate('pageSettingsSpaceIndexCopyLink') },
 			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
 		];
 	};

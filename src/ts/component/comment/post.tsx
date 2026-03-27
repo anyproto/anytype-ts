@@ -393,19 +393,18 @@ const CommentPost = observer((props: Props) => {
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = $(e.currentTarget);
-
 		const menuItems: any[] = [];
 
 		if (isSelf) {
 			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
-		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), icon: 'link' });
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
+		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
 		};
 
 		setHover(true);

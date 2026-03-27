@@ -212,10 +212,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const canDelete = canDeleteSelection();
 	const cnWrapper = [ 'wrapper' ];
 
-	if (hasSelection) {
-		cnWrapper.push('hasSelection');
-	};
-
 	if (isDetailed) {
 		cnWrapper.push('isDetailed');
 	};
@@ -270,14 +266,14 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 										size={32}
 										placeholder={translate('commonSearchPlaceholder')}
 									/>
+									<Icon
+										className="archiveAction"
+										name="common/search"
+										withBackground={true}
+										tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+										onClick={onFilterShow}
+									/>
 								</div>
-								<Icon
-									className="archiveAction"
-									name="common/search"
-									withBackground={true}
-									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-									onClick={onFilterShow}
-								/>
 							</>
 						) : ''}
 					</div>

@@ -1277,34 +1277,34 @@ class UtilMenu {
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
-					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, icon: 'comment-header1', name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
-					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, icon: 'comment-header2', name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
-					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, icon: 'comment-header3', name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
 				],
 			},
 			{
 				id: 'list', name: translate('commentSlashMenuLists'),
 				children: [
-					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, icon: 'comment-numbered', name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
-					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, icon: 'comment-bulleted', name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
-					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, icon: 'comment-checkbox', name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
 				],
 			},
 			{
 				id: 'attachments', name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'create', action: 'create', icon: 'comment-createObject', name: translate('commonNewObject'), arrow: true },
-					{ id: 'object', action: 'object', icon: 'comment-plus', name: translate('spaceExisting') },
-					{ id: 'file', action: 'file', icon: 'comment-uploadComputer', name: translate('commonUploadComputer') },
-					{ id: 'embed', action: 'embed', icon: 'comment-embed', name: translate('commentSlashMenuEmbed'), arrow: true },
+					{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
+					{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
+					{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
 				],
 			},
 			{
 				id: 'decorations', name: translate('commentSlashMenuDecorations'),
 				children: [
-					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'comment-quote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
-					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'comment-divider', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
-					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'comment-code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 				],
 			},
 		];

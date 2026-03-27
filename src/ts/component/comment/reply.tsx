@@ -178,11 +178,11 @@ const CommentReply = observer((props: Props) => {
 			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
 		};
 
 		setHover(true);
