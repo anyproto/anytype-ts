@@ -60,7 +60,7 @@
 			}
 
 			&.last {
-				.icon.plus { margin: 0px; }
+				.icon.plus { margin: 0px; display: block; }
 			}
 
 			&.isDragging { border: 0px; height: 38px; }
@@ -73,7 +73,7 @@
 			}
 
 			&.last::after, &.hover::after { background: none; }
-			}
+		}
 
 		.cellFoot { height: 48px; @include text-common; color: var(--color-text-primary); }
 		.cellFoot {

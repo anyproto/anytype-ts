@@ -144,11 +144,9 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
 								});
 							});
-
-							Action.openSettings('spaceHome', '');
-						} else {
-							U.Space.openDashboard();
 						};
+
+						Action.openSettings('spaceHome', '');
 
 						onCreate?.(message.objectId);
 					}
