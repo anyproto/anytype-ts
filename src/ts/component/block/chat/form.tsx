@@ -283,7 +283,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			if (type !== null) {
 				e.preventDefault();
-				onTextButtonToggle(type, '');
+
+				if (type == I.MarkType.Link) {
+					openLinkMenu();
+				} else {
+					onTextButtonToggle(type, '');
+				};
 			};
 		};
 
@@ -1335,6 +1340,34 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				break;
 			};
 		};
+	};
+
+	const openLinkMenu = () => {
+		const { from, to } = range.current;
+		const mark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
+		const rect = U.Common.getSelectionRect();
+		const win = $(window);
+
+		S.Menu.close('chatText', () => {
+			S.Menu.open('blockLink', {
+				classNameWrap: 'fromBlock',
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
+				data: {
+					value: mark?.param,
+					filter: mark?.param,
+					type: mark?.type,
+					skipIds: [ rootId ],
+					onChange: onTextButtonToggle,
+					onClear: (before) => {
+						if (before) {
+							removeBookmark(before);
+						};
+					},
+				},
+			});
+		});
 	};
 
 	const onTextButtonToggle = (type: I.MarkType, param: string) => {
