@@ -21,7 +21,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			const home = U.Space.getDashboard();
 
 			let last = null;
-			if (home && [ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
+			if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 				last = U.Space.getLastObject();
 			};
 

@@ -180,6 +180,7 @@ class UtilSpace {
 				break;
 			};
 
+			case '':
 			case I.HomePredefinedId.Widget:
 			case I.HomePredefinedId.Last: {
 				ret = this.getLastOpened();
@@ -204,7 +205,7 @@ class UtilSpace {
 	 * @returns {string[]} The list of system dashboard IDs.
 	 */
 	getSystemDashboardIds () {
-		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
+		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
 	};
 
 	/**
@@ -225,8 +226,8 @@ class UtilSpace {
 	 */
 	getLastOpened () {
 		return { 
-			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'),
+			id: I.HomePredefinedId.Widget,
+			name: translate('commonEmpty'),
 		};
 	};
 

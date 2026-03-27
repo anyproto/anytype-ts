@@ -110,7 +110,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			name: submittedName,
 			iconOption,
 			spaceAccessType: I.SpaceAccessType.Private,
-			homepage: I.HomePredefinedId.Last,
+			homepage: '',
 		};
 
 		C.WorkspaceCreate(details, usecase, (message: any) => {

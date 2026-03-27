@@ -34,7 +34,9 @@ import Unlink from './unlink';
 import SwitchView from './switchView';
 import SwitchViewDetailed from './switchViewDetailed';
 import Upload from './upload';
+import Empty from './empty';
 
+registerIcon('common/empty', Empty);
 registerIcon('common/alert', Alert);
 registerIcon('common/back', Back);
 registerIcon('common/bin', Bin);

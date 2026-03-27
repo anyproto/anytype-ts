@@ -7,6 +7,7 @@ import React, { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
+import item from 'Component/block/dataview/view/calendar/item';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -678,7 +679,6 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
 			C.WorkspaceSetHomepage(space, object.id, (message: any) => {
@@ -700,65 +700,28 @@ class UtilMenu {
 			});
 		};
 
-		let options = [];
-		if (spaceview.isOneToOne) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceType${I.SpaceType.Chat}`) });
-		} else {
-			options = [
-				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-			];
-		};
-
 		analytics.event('ClickChangeSpaceDashboard');
 
-		S.Menu.open('select', {
+		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds,
-			onOpen: context => this.setContext(context),
 			data: {
-				options,
-				onOver: (e: any, item: any) => {
-					if (!this.menuContext) {
-						return;
-					};
-
-					if (!item.arrow) {
-						S.Menu.closeAll(subIds);
-						return;
-					};
-
-					switch (item.id) {
-						case I.HomePredefinedId.Existing: {
-							S.Menu.open('searchObject', {
-								element: `#${this.menuContext.getId()} #item-${U.Common.esc(item.id)}`,
-								offsetX: this.menuContext.getSize().width,
-								vertical: I.MenuDirection.Center,
-								isSub: true,
-								data: {
-									withPlural: true,
-									filters: [
-										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-									],
-									canAdd: true,
-									onSelect: el => {
-										onSelect(el, true);
-										this.menuContext?.close();
-
-										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
-									},
-								}
-							});
-							break;
-						};
-					};
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+				],
+				dataChange: (_ctx: any, items: any) => {
+					return [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
+						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
+					].concat(items);
 				},
-				onSelect: (e: any, item: any) => {
-					onSelect({ id: item.id }, false);
-					analytics.event('ChangeSpaceDashboard', { type: item.id });
+				onSelect: el => {
+					onSelect(el, true);
+
+					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
 		});
@@ -1132,23 +1095,18 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessage?.createdAt || 0;
-			const d2 = c2.lastMessage?.createdAt || 0;
+			const d1 = c1.lastMessage?.createdAt || c1.spaceJoinDate || c1.creationDate || 0;
+			const d2 = c2.lastMessage?.createdAt || c2.spaceJoinDate || c2.creationDate || 0;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
-
 			if (c1.hasCounter && !c2.hasCounter) return -1;
 			if (!c1.hasCounter && c2.hasCounter) return 1;
 
-			if (c1.creationDate > c2.creationDate) return -1;
-			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
+		
 		return items;
 	};
 
