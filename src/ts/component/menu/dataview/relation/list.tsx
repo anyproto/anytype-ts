@@ -163,6 +163,11 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const view = getView();
 		const object = S.Detail.get(rootId, rootId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
+		const vr = view.getRelation(item.relationKey);
+
+		if (vr) {
+			vr.isVisible = v;
+		};
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
 		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
