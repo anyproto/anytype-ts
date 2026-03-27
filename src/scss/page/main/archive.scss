@@ -89,7 +89,7 @@
 
 					.cell.c-lastModifiedDate,
 					.cell.c-creator {
-						.cellContent { height: 18px; font-size: var(--font-size-small); line-height: 18px; letter-spacing: var(--letter-spacing-small); }
+						.cellContent { height: 18px; @include text-small; }
 					}
 
 					.cell.c-creator {
