@@ -4,7 +4,7 @@
 .pageSettingsArchive {
 	.wrapper {
 		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none;
-		display: flex; flex-direction: column; gap: 16px 0px;
+		display: flex; flex-direction: column; gap: 24px 0px;
 	}
 	.wrapper {
 		.titleWrapper {
@@ -50,6 +50,7 @@
 				.row { position: relative; gap: 0px 6px; border: 0px; }
 				.row {
 					&.isHead { overflow: visible; font-size: 12px; font-weight: 500; }
+					&.isHead > .cell { padding-top: 6px; padding-bottom: 6px; }
 					&.isHead {
 						.cell { overflow: visible; }
 						.cell {
@@ -86,6 +87,16 @@
 					.cell:nth-child(2) { padding-left: 0px; }
 					.cell:last-child { padding-right: 0px; }
 
+					.cell.c-lastModifiedDate,
+					.cell.c-creator {
+						.cellContent { height: 18px; @include text-small; }
+					}
+
+					.cell.c-creator {
+						.iconObject { width: 18px; height: 18px; }
+						.iconObject .iconImage { width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+					}
+
 					.cellContent.isName { height: auto; }
 					.cellContent.isName {
 						.name { font-weight: 500; }
@@ -108,7 +119,27 @@
 		&.isDetailed {
 			.listObject {
 				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
-				.iconObject:not(.isFile) { background-color: var(--color-shape-highlight-medium); }
+				.row.isHead > .cell { padding-top: 6px !important; padding-bottom: 6px !important; }
+				.iconObject.c32 { border-radius: 6px; }
+
+				.iconObject.c32.isPage {
+					.smileImage { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+					.iconEmoji { line-height: 20px; }
+					.iconCommon { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+				}
+				.iconObject.c32.isBookmark {
+					.iconCommon { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+				}
+				.iconObject:not(.isFile):not(.isImage):not(.isVideo):not(.isAudio):not(.isPdf):not(.isArchive):not(.isTask) { background-color: var(--color-shape-highlight-medium); }
+
+				.iconObject.isFile,
+				.iconObject.isImage,
+				.iconObject.isVideo,
+				.iconObject.isAudio,
+				.iconObject.isPdf,
+				.iconObject.isArchive {
+					.iconFile { width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+				}
 			}
 		}
 	}
