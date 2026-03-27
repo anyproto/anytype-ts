@@ -2,7 +2,7 @@
  * Custom gRPC-web service client using ts-proto MessageFns for serialization.
  * Replaces the generated service_grpc_web_pb.js which depends on old CJS protobuf files.
  *
- * Auto-generated registry: 325 unary methods.
+ * Auto-generated registry: 328 unary methods.
  */
 
 import { GrpcWebClientBase, MethodDescriptor, MethodType } from 'grpc-web';
@@ -323,7 +323,10 @@ const registry: Record<string, RegistryEntry> = {
 	SpaceUnsetOrder: { req: Commands.Rpc_Space_UnsetOrder_Request, res: Commands.Rpc_Space_UnsetOrder_Response },
 	TemplateClone: { req: Commands.Rpc_Template_Clone_Request, res: Commands.Rpc_Template_Clone_Response },
 	TemplateCreateFromObject: { req: Commands.Rpc_Template_CreateFromObject_Request, res: Commands.Rpc_Template_CreateFromObject_Response },
+	TemplateDeletePlaceholders: { req: Commands.Rpc_Template_DeletePlaceholders_Request, res: Commands.Rpc_Template_DeletePlaceholders_Response },
 	TemplateExportAll: { req: Commands.Rpc_Template_ExportAll_Request, res: Commands.Rpc_Template_ExportAll_Response },
+	TemplateGetPlaceholders: { req: Commands.Rpc_Template_GetPlaceholders_Request, res: Commands.Rpc_Template_GetPlaceholders_Response },
+	TemplateSetPlaceholders: { req: Commands.Rpc_Template_SetPlaceholders_Request, res: Commands.Rpc_Template_SetPlaceholders_Response },
 	UnsplashDownload: { req: Commands.Rpc_Unsplash_Download_Request, res: Commands.Rpc_Unsplash_Download_Response },
 	UnsplashSearch: { req: Commands.Rpc_Unsplash_Search_Request, res: Commands.Rpc_Unsplash_Search_Response },
 	WalletCloseSession: { req: Commands.Rpc_Wallet_CloseSession_Request, res: Commands.Rpc_Wallet_CloseSession_Response },
