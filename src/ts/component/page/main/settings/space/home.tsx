@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon } from 'Component';
+import { Title, Label, Button, Icon, Frame } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const HOME_OPTIONS = [
@@ -58,7 +58,7 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 	};
 
 	return (
-		<div className="spaceHome">
+		<Frame>
 			<Title text={translate('settingsSpaceHomeTitle')} />
 			<Label text={translate('settingsSpaceHomeDescription')} />
 
@@ -86,7 +86,7 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 			<div className="buttons">
 				<Button text={translate('commonCreate')} color="accent" onClick={onCreate} />
 			</div>
-		</div>
+		</Frame>
 	);
 
 }));

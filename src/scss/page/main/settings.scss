@@ -1079,29 +1079,28 @@
 }
 
 .settingsPage.pageSettingsSpaceHome {
-    .spaceHome { display: flex; flex-direction: column; align-items: center; padding: 48px 0px; }
-    .spaceHome {
+    .frame { display: flex; flex-direction: column; align-items: center; padding: 48px 0px; position: absolute; }
+    .frame {
         .title { @include text-header1; font-weight: 700; margin: 0px 0px 8px 0px; text-align: center; }
-        .label { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 480px; margin: 0px 0px 32px 0px; }
+        .label { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 480px; margin: 0px 0px 42px 0px; }
 
-        .homeOptions { display: flex; flex-direction: row; gap: 0px 12px; margin: 0px 0px 32px 0px; }
+        .homeOptions { display: flex; flex-direction: row; gap: 0px 20px; margin: 0px 0px 42px 0px; font-weight: 500; }
         .homeOptions {
+            .option { display: flex; flex-direction: column; align-items: center; gap: 10px 0px; }
             .option {
-                display: flex; flex-direction: column; align-items: center; gap: 8px 0px; padding: 12px;
-                border-radius: 12px; border: 2px solid var(--color-shape-secondary); width: 140px;
-                transition: border-color $transitionCommon;
-            }
-            .option {
-                .icon.preview { width: 112px; height: 80px; background-size: contain; background-repeat: no-repeat; background-position: center; }
-                .icon.preview.chat { background-image: url('~img/icon/settings/homeChat.svg'); }
-                .icon.preview.page { background-image: url('~img/icon/settings/homePage.svg'); }
-                .icon.preview.collection { background-image: url('~img/icon/settings/homeCollection.svg'); }
-                .icon.preview.empty { background-image: url('~img/icon/settings/homeEmpty.svg'); }
+                .icon.preview { 
+                    width: 128px; height: 96px; border-radius: 16px; border: 1px solid var(--color-shape-secondary); 
+                    transition: border-color $transitionCommon;
+                }
+                .icon.preview.chat { background-image: url('~img/icon/settings/chat.svg'); }
+                .icon.preview.page { background-image: url('~img/icon/settings/page.svg'); }
+                .icon.preview.collection { background-image: url('~img/icon/settings/collection.svg'); }
+                .icon.preview.empty { background-image: url('~img/icon/settings/empty.svg'); }
 
-                .optionName { @include text-common; color: var(--color-text-primary); }
-
-                &:hover { border-color: var(--color-shape-primary); }
-                &.active { border-color: var(--color-control-accent); }
+                &:hover, &.active { color: var(--color-system-accent-100); }
+                &:hover, &.active {
+                    .icon.preview { border-color: var(--color-system-accent-50); }
+                }
             }
         }
 
