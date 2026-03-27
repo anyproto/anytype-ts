@@ -23,7 +23,7 @@
 
 		.listInline { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
 		.listInline {
-			.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
+			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 
 			.cell { white-space: nowrap; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 2px; min-height: 28px; }
 			.cell.canEdit {
