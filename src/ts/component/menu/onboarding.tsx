@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label, ProgressBar } from 'Component';
-import { I, C, S, U, J, Onboarding, analytics, keyboard, translate, Action } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import * as I from 'Interface';
 
 const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 

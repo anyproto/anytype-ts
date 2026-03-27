@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, U, S, keyboard, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
 import PageWidget from './page/widget';
+import * as I from 'Interface';
 
 interface Props {
 	isPopup?: boolean;

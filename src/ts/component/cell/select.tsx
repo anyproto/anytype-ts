@@ -4,7 +4,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, S, U, J, Relation, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
@@ -290,7 +290,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 					</span>
 				) : ''}
 
-				{isSelect ? <Icon name="common/clear" onMouseDown={onClear} /> : ''}
+				{isSelect ? <Icon name="common/clear" className="clear" onMouseDown={onClear} /> : ''}
 			</div>
 		);
 	} else {

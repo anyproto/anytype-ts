@@ -1,7 +1,7 @@
 import { observable, action, makeObservable, computed } from 'mobx';
-import { I, getSparkOnboardingService } from 'Lib';
 import { SparkOnboardingService } from 'Lib/service/sparkOnboarding';
 import { GRAPH_CONFIG, UI_CONFIG, VALIDATION_CONFIG } from 'Lib/constant/sparkOnboarding';
+import * as I from 'Interface';
 
 class SparkOnboardingStore {
 	step: I.OnboardingStep = I.OnboardingStep.Goal;

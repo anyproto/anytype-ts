@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, Ke
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { J, S, keyboard, translate } from 'Lib';
 
 interface Props {
 	value?: string;

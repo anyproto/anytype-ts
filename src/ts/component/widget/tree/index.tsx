@@ -4,8 +4,9 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Filter, Button } from 'Component';
-import { I, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
 const LIMIT = 20; // Number of nodes to load at a time

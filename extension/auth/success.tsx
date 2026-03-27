@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 

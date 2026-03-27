@@ -1,4 +1,5 @@
-import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * UtilSpace provides utilities for working with Anytype spaces.
@@ -24,7 +25,7 @@ class UtilSpace {
 		param = param || {};
 
 		let home = this.getDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
+		if (home && [ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 			home = this.getLastObject();
 		};
 
@@ -179,6 +180,7 @@ class UtilSpace {
 				break;
 			};
 
+			case I.HomePredefinedId.Widget:
 			case I.HomePredefinedId.Last: {
 				ret = this.getLastOpened();
 				break;

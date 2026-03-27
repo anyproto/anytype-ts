@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
-import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

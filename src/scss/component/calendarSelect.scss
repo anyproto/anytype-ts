@@ -18,12 +18,9 @@
 		}
 		.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
 		.side.right {
-			.icon.arrow {
-				width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer;
-				background-position: 50% 50%;
-			}
-			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
-			.icon.arrow.left { transform: rotateZ(180deg); }
+			.icon.arrow { width: 24px !important; height: 24px !important; 	}
+			.icon.arrow.left { transform: rotateZ(270deg); }
+			.icon.arrow.right { transform: rotateZ(90deg); }
 		}
 
 		.weekDays {

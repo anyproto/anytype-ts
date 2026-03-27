@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	spaceId?: string;

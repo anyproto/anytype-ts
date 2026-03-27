@@ -1,6 +1,6 @@
-
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
 import { getIconSvg } from 'Component/util/icons';
+import * as I from 'Interface';
 
 
 /**

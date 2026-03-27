@@ -2,7 +2,8 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, us
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
-import { I, S, U, J, translate, Action, analytics, keyboard, sidebar, Storage } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -11,13 +12,11 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
-	const filterWrapperRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
 	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
-
 	const spaceview = U.Space.getSpaceview();
 	const isShared = spaceview.isShared;
 	const isOwner = U.Space.isMyOwner();
@@ -125,8 +124,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			return;
 		};
 
-		$(filterWrapperRef.current).addClass('active');
-		filterRef.current?.focus();
+		filterRef.current.setActive(true);
+		filterRef.current.focus();
 
 		const container = U.Common.getPageFlexContainer(isPopup);
 		const win = $(window);
@@ -134,7 +133,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
 			const value = filterRef.current?.getValue();
 
-			if (!value && !$(e.target).parents('.filterWrapper').length) {
+			if (!value && !$(e.target).parents('.filter').length) {
 				onFilterHide();
 				container.off('mousedown.filter');
 			};
@@ -153,7 +152,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			return;
 		};
 
-		$(filterWrapperRef.current).removeClass('active');
+		filterRef.current.setActive(false);
 		filterRef.current.setValue('');
 		filterRef.current.blur();
 		setFilterText('');
@@ -212,10 +211,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const canDelete = canDeleteSelection();
 	const cnWrapper = [ 'wrapper' ];
 
-	if (hasSelection) {
-		cnWrapper.push('hasSelection');
-	};
-
 	if (isDetailed) {
 		cnWrapper.push('isDetailed');
 	};
@@ -263,20 +258,14 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 									onClick={onSwitchView}
 								/>
 
-								<div ref={filterWrapperRef} className="filterWrapper">
-									<Filter
-										ref={filterRef}
-										onChange={onFilterChange}
-										size={32}
-										placeholder={translate('commonSearchPlaceholder')}
-									/>
-								</div>
-								<Icon
-									className="archiveAction"
-									name="common/search"
-									withBackground={true}
+								<Filter
+									ref={filterRef}
+									onChange={onFilterChange}
+									placeholder={translate('commonSearchPlaceholder')}
+									iconParam={{ name: 'common/search' }}
 									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-									onClick={onFilterShow}
+									onIconClick={onFilterShow}
+									size={32}
 								/>
 							</>
 						) : ''}
@@ -296,6 +285,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					skipLayoutFilter={true}
 					withDescription={isDetailed}
 					iconSize={isDetailed ? 32 : null}
+					rowHeight={isDetailed ? 64 : 40}
 					emptyText={translate('pageMainArchiveEmpty')}
 					defaultSortId="lastModifiedDate"
 					defaultSortType={I.SortType.Desc}

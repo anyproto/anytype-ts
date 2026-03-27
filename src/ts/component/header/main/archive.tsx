@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainArchive = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

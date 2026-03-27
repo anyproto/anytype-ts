@@ -4,10 +4,12 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
-import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -2603,16 +2605,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			if (blocks.length && last.length && scrollContainer.length) {
 				last.css({ height: '' });
 
-				const ct = scrollContainer.offset().top;
-				const ch = scrollContainer.height();
-				const bt = blocks.offset().top;
-				const bh = blocks.outerHeight();
 				const commentSection = node.find('.commentSection');
 				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
-				let height = ch - ct - bt - bh - csh - 8;
-				height = Math.max(J.Size.lastBlock, height);
-				last.css({ height });
+				if (!csh) {
+					const ct = scrollContainer.offset().top;
+					const ch = scrollContainer.height();
+					const bt = blocks.offset().top;
+					const bh = blocks.outerHeight();
+
+					let height = ch - ct - bt - bh - 8;
+					height = Math.max(J.Size.lastBlock, height);
+					last.css({ height });
+				};
 			};
 
 			tocRef.current?.resize?.();
@@ -2744,16 +2749,16 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				<TableOfContents ref={tocRef} {...props} />
 
 				{S.Common.config.experimental ? (
-				<CommentSection
-					rootId={rootId}
-					targetId={rootId}
-					targetType={I.CommentTargetType.Object}
-					readonly={readonly}
-					isPopup={isPopup}
-					messageId={keyboard.getMatch(isPopup)?.params?.messageId}
-					resize={resizePage}
-				/>
-			) : ''}
+					<CommentSection
+						rootId={rootId}
+						targetId={rootId}
+						targetType={I.CommentTargetType.Object}
+						readonly={readonly}
+						isPopup={isPopup}
+						messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+						resize={resizePage}
+					/>
+				) : ''}
 			</div>
 		</div>
 	);

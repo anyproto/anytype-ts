@@ -2,12 +2,13 @@
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
-import type { Event, Event_Message } from 'Proto/pb/protos/events';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus, Sound } from 'Lib';
+import type { Event } from 'Proto/pb/protos/events';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -1008,6 +1009,7 @@ class Dispatcher {
 							id: item.id,
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
+							silent: !Sound.isSystem(),
 						});
 						Sound.playNotification();
 					};
@@ -1119,6 +1121,7 @@ class Dispatcher {
 							text: notification,
 							cmd: 'openChat',
 							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+							silent: !Sound.isSystem(),
 						});
 						Sound.playNotification();
 					};
@@ -1298,6 +1301,7 @@ class Dispatcher {
 										text,
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+										silent: !Sound.isSystem(),
 									});
 									Sound.playNotification();
 								};

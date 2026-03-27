@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { U } from 'Lib';
 
 interface Props {
 	id?: string;

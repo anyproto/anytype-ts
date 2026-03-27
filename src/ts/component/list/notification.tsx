@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { Notification, Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { I, C, S } from 'Lib';
+import * as I from 'Interface';
 
 const LIMIT = 5;
 

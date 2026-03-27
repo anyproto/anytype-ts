@@ -1,5 +1,4 @@
 import React, { Component, ReactNode } from 'react';
-import { U, translate } from 'Lib';
 import { Frame, Button, Label, Icon } from 'Component';
 
 interface Props {

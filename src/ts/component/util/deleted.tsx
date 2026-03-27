@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	className?: string;
@@ -21,7 +21,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			const home = U.Space.getDashboard();
 
 			let last = null;
-			if (home && (home.id == I.HomePredefinedId.Last)) {
+			if (home && [ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 				last = U.Space.getLastObject();
 			};
 

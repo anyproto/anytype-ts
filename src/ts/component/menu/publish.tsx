@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
-import { C, U, I, S, Action, translate, analytics, Preview } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

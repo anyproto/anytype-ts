@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const SKIP_TAGS = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 

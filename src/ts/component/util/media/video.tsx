@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { U } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {

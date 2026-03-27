@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
-import { I, S, U, translate } from 'Lib';
 import { CalendarSelect } from 'Component';
 import { CalendarSelectRefProps, CalendarDay } from 'Component/util/menu/calendarSelect';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

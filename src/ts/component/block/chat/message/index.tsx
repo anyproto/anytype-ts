@@ -4,11 +4,11 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence, } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import * as I from 'Interface';
 
 interface ChatMessageRefProps {
 	highlight: () => void;

@@ -2,7 +2,8 @@ import React, { FC, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
-import { I, J, U, keyboard, focus, translate, Action } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	icon?: string;

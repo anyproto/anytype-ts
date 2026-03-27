@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
+import * as I from 'Interface';
 
 const PADDING = 16;
 
@@ -156,9 +156,23 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 				</div>
 
 				<div className="side right">
-					<Icon name="arrow/calendar" className="arrow left" onClick={() => onArrow(-1)} width={8} height={12} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow left" 
+						withBackground={true} 
+						onClick={() => onArrow(1)}
+						width={8}
+						height={12} 
+					/>
 					<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
-					<Icon name="arrow/calendar" className="arrow right" onClick={() => onArrow(1)} width={8} height={12} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow right" 
+						withBackground={true} 
+						onClick={() => onArrow(-1)}
+						width={8}
+						height={12} 
+					/>
 				</div>
 			</div>
 

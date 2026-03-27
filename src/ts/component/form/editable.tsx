@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, U, keyboard, Mark } from 'Lib';
 import raf from 'raf';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

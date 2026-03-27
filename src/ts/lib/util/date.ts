@@ -1,4 +1,4 @@
-import { I, U, J, S, translate } from 'Lib';
+import * as I from 'Interface';
 
 /**
  * Utility class for date and time manipulation, formatting, and calculations.

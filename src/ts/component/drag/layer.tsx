@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react'; 
-import { I, M, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const DragLayer = observer(forwardRef((_, ref: any) => {
 	

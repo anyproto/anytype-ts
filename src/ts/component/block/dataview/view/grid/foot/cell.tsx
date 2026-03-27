@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;

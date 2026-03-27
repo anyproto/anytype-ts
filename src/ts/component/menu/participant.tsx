@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button, Loader } from 'Component';
-import { I, U, S, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 

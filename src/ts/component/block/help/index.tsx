@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
-import { I, U } from 'Lib';
 import ContentIcon from './icon';
 import ContentText from './text';
 import ContentLink from './link';
+import * as I from 'Interface';
 
 interface Props {
 	type: I.BlockType;

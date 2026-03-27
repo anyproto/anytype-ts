@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, J, keyboard } from 'Lib';
 import { Icon, Block } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;

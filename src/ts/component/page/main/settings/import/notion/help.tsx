@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

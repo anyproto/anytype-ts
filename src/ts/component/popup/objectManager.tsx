@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
-import { I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const ROW_HEIGHT = 30;
 

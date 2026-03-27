@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import $ from 'jquery';
 import { Title, Button, QR } from 'Component';
-import { I, translate, Renderer, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 

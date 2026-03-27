@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import { keyboard } from 'Lib';
 
 interface Props {
 	id?: string;

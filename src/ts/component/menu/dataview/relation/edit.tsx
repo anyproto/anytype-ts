@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview, Action } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
+import * as I from 'Interface';
 
 const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -141,17 +141,17 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			sections = sections.concat([
 				{
 					children: [
-						canFilter ? { id: 'filter', iconParam: { name: 'menu/relation/filter' }, name: translate('menuDataviewRelationEditAddFilter') } : null,
+						canFilter ? { id: 'filter', iconParam: { name: 'control/dataview/filter' }, name: translate('menuDataviewRelationEditAddFilter') } : null,
 						canSort ? { id: 'sort0', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
 						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
 						{ id: 'insert-left', iconParam: { name: 'menu/relation/insert' }, name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', iconParam: { name: 'menu/relation/insert' }, className: 'rotated', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
-						canHide ? { id: 'hide', iconParam: { name: 'menu/relation/hide' }, name: translate('menuDataviewRelationEditHideRelation') } : null,
+						canHide ? { id: 'hide', iconParam: { name: 'common/eye1' }, name: translate('menuDataviewRelationEditHideRelation') } : null,
 					]
 				},
 				{
 					children: [
-						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
+						canAlign ? { id: 'align', iconParam: { name: U.Data.alignHIcon(viewRelation?.align) }, name: translate('commonAlign'), arrow: true } : null,
 						canCalculate ? { id: 'calculate', iconParam: { name: 'relation/number' }, name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},

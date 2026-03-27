@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { observer } from 'mobx-react';
-import { S, J } from 'Lib';
 import { keyboard } from 'Lib/keyboard';
 
 interface Props {

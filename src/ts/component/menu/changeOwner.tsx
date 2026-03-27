@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader, EmptySearch } from 'Component';
-import { I, C, J, S, U, keyboard, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 56;
 const LIMIT = 10;

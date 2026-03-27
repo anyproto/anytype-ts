@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

@@ -2,10 +2,10 @@ import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMem
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { motion } from 'motion/react';
-import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore, Icon } from 'Component';
 import Card from './gallery/card';
 import { throttle } from 'lodash';
+import * as I from 'Interface';
 
 const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 

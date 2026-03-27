@@ -2,9 +2,9 @@ import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { LoadMore } from 'Component';
-import { I, S, U } from 'Lib';
 import BodyRow from './list/row';
 import AddRow from './grid/body/add';
+import * as I from 'Interface';
 
 const HEIGHT_COMPACT = 32;
 const HEIGHT_REGULAR = 64;

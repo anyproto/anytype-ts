@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, translate, Preview } from 'Lib';
 import { Icon, Select, Input, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;

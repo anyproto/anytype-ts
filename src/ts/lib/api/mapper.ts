@@ -1,4 +1,5 @@
-import { I, M, U, Encode, Decode } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 /**
  * Mapper provides bidirectional conversion between protobuf messages

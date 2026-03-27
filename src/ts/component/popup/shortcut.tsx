@@ -1,7 +1,8 @@
 import React, { forwardRef, useState, useEffect, useRef, } from 'react';
 import $ from 'jquery';
 import { Filter, Icon, Select, Label, } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 

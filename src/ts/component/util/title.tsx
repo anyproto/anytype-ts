@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { I, U } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 interface Props {
 	text: string;

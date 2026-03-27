@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { Icon } from 'Component';
-import { I, U, S, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	object: any;

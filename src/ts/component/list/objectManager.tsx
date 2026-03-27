@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { I, S, U, J, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	isPopup?: boolean;

@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
-import { S, U, J, translate, Renderer, keyboard, Storage, analytics } from 'Lib';
+import Storage from 'Lib/storage';
 
 const STORAGE_KEY = 'updateBanner';
 

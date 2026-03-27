@@ -1,6 +1,6 @@
 import loadImage from 'blueimp-load-image';
-import { I, S, U, J, Relation, translate } from 'Lib';
 import { DragEvent } from 'react';
+import * as I from 'Interface';
 
 const SIZE_UNIT = 1024;
 const UNITS = {

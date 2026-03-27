@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle, ReactNode } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { U } from 'Lib';
 
 interface Props {
 	children?: ReactNode;

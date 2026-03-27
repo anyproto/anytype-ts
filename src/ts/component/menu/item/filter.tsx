@@ -2,8 +2,8 @@ import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, ObjectName } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.Menu, I.Filter {
 	id: string;

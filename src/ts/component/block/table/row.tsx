@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, S } from 'Lib';
 import { observer } from 'mobx-react';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.BlockComponentTable {
 	onRowUpdate: (rowId: string) => void;

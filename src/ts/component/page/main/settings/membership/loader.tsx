@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { translate } from 'Lib';
 
 const PageMainSettingsMembershipLoader = forwardRef<HTMLDivElement, {}>((props, ref) => {
 

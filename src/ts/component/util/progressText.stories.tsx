@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, S } from 'Lib';
 import ProgressText from './progressText';
+import * as I from 'Interface';
 
 const meta: Meta<typeof ProgressText> = {
 	title: 'Util/ProgressText',

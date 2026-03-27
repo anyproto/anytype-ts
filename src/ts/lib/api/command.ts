@@ -1,4 +1,5 @@
-import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('InitialSetParameters', {

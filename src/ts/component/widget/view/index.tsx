@@ -1,7 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Filter, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Storage } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 
@@ -10,6 +9,9 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface WidgetViewRefProps {
 	updateData: () => void;

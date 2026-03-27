@@ -2,9 +2,10 @@ import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperative
 import $ from 'jquery';
 import raf from 'raf';
 import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
-import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
@@ -240,7 +241,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 						{pager}
 
-						<Icon name="common/resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;

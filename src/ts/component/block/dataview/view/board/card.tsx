@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	id: string;

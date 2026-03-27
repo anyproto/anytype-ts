@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label } from 'Component';
-import { I, U, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	route?: string;

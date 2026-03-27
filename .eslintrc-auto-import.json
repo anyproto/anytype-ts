@@ -1,0 +1,30 @@
+{
+  "globals": {
+    "Action": true,
+    "C": true,
+    "Dataview": true,
+    "Decode": true,
+    "Encode": true,
+    "H": true,
+    "J": true,
+    "Key": true,
+    "Mapper": true,
+    "Mark": true,
+    "Onboarding": true,
+    "Preview": true,
+    "Relation": true,
+    "Renderer": true,
+    "S": true,
+    "SYSTEM_SOUND_ID": true,
+    "Sound": true,
+    "Survey": true,
+    "U": true,
+    "analytics": true,
+    "dispatcher": true,
+    "getSparkOnboardingService": true,
+    "keyboard": true,
+    "scrollOnMove": true,
+    "sidebar": true,
+    "translate": true
+  }
+}

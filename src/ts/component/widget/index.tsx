@@ -4,12 +4,13 @@ import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, ChatCounter } from 'Component';
-import { C, I, S, U, J, translate, Storage, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Props extends I.WidgetComponent {
 	name?: string;

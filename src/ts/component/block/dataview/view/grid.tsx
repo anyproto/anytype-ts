@@ -6,11 +6,11 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
-import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
+import * as I from 'Interface';
 
 const PADDING = 46;
 const HEIGHT = 48;

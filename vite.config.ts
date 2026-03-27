@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import AutoImport from 'unplugin-auto-import/vite';
 import path from 'path';
 import fs from 'fs';
 import { build as esbuild } from 'esbuild';
@@ -153,6 +154,54 @@ export default defineConfig(({ mode }) => {
 			react(),
 			protobufCjsPlugin(),
 			devServerPlugin(),
+
+			AutoImport({
+				imports: [
+					{
+						'Store':     [['*', 'S']],
+						'Hook':      [['*', 'H']],
+						'json':      [['*', 'J']],
+					},
+					{
+						'Lib/api/command':             [['*', 'C']],
+						'Lib/util':                    [['*', 'U']],
+						'Lib/keyboard':                [['keyboard', 'keyboard'], ['Key', 'Key']],
+						'Lib/sidebar':                 [['sidebar', 'sidebar']],
+						// Storage, focus, history, Animation excluded — clash with DOM globals
+						'Lib/mark':                    [['default', 'Mark']],
+						'Lib/relation':                [['default', 'Relation']],
+						'Lib/dataview':                [['default', 'Dataview']],
+						'Lib/scrollOnMove':            [['scrollOnMove', 'scrollOnMove']],
+						'Lib/analytics':               [['analytics', 'analytics']],
+						'Lib/action':                  [['default', 'Action']],
+						'Lib/onboarding':              [['default', 'Onboarding']],
+						'Lib/survey':                  [['default', 'Survey']],
+						'Lib/preview':                 [['default', 'Preview']],
+						// Highlight excluded — clashes with CSS Highlight API
+						'Lib/translate':               [['translate', 'translate']],
+						'Lib/sound':                   [['default', 'Sound'], ['SYSTEM_SOUND_ID', 'SYSTEM_SOUND_ID']],
+						'Lib/renderer':                [['default', 'Renderer']],
+						'Lib/api/dispatcher':          [['dispatcher', 'dispatcher']],
+						'Lib/api/mapper':              [['Mapper', 'Mapper']],
+						'Lib/api/struct':              [['Encode', 'Encode'], ['Decode', 'Decode']],
+						'Lib/service/sparkOnboarding': [['getSparkOnboardingService', 'getSparkOnboardingService']],
+					},
+				],
+				dts: './src/ts/auto-imports.d.ts',
+				include: [/\.tsx?$/],
+				exclude: [
+					/node_modules/,
+					/src\/ts\/lib\/index\.ts$/,
+					/src\/ts\/store\/index\.ts$/,
+					/src\/ts\/interface\/index\.ts$/,
+					/src\/ts\/model\/index\.ts$/,
+					/src\/ts\/component\/index\.ts$/,
+				],
+				eslintrc: {
+					enabled: true,
+					filepath: './.eslintrc-auto-import.json',
+				},
+			}),
 
 			// Move index.html from dist/src/html/index.html to dist/index.html and fix paths
 			{

@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react';
 import Button from 'Component/form/button';
 import { observer } from 'mobx-react';
-import { Animation, I, S, U, translate } from 'Lib';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
 const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

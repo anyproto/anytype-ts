@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { Input, Label } from 'Component';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	label: string;

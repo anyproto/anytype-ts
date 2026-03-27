@@ -2,13 +2,15 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Storage, Action } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
 import { Icon } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface RefProps {
 	forceUpdate: () => void;

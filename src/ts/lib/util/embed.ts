@@ -1,4 +1,4 @@
-import { I, U, J } from 'Lib';
+import * as I from 'Interface';
 
 const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];

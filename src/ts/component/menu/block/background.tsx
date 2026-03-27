@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

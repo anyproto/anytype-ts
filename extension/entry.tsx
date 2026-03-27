@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
-import { C, U, J, S } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Auth from './auth';

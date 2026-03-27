@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { I, M, S, U } from 'Lib';
 import BlockText from './text';
 import BlockDiv from './div';
 import BlockBookmark from './bookmark';
@@ -11,6 +10,8 @@ import BlockImage from './media/image';
 import BlockAudio from './media/audio';
 import BlockVideo from './media/video';
 import BlockPdf from './media/pdf';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const meta: Meta = {
 	title: 'Block/Gallery',

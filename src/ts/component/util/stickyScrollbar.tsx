@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
-import { U, I } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	isInline?: boolean;

@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, PreviewTab } from 'Component';
-import { I, S, U, Preview, Mark, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 const OFFSET_Y = 8;
 const BORDER = 12;

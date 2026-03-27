@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
-import { I, J, U, S, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	

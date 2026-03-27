@@ -1,4 +1,3 @@
-import { S, J } from 'Lib';
 import defaultData from 'json/text.json';
 
 const langModules = import.meta.glob('../../dist/lib/json/lang/*.json', { eager: true }) as Record<string, { default: any }>;

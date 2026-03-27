@@ -1,10 +1,11 @@
-import { S } from 'Lib';
 
 interface SoundItem {
 	id: string;
 	name: string;
 	path: string;
 };
+
+export const SYSTEM_SOUND_ID = 'system';
 
 const SOUNDS: SoundItem[] = [
 	{ id: 'bongo', name: 'Bongo', path: './audio/bongo.mp3' },
@@ -39,11 +40,15 @@ class Sound {
 
 	playNotification () {
 		const sound = S.Common.notificationSound;
-		if (!sound) {
+		if (!sound || (sound == SYSTEM_SOUND_ID)) {
 			return;
 		};
 
 		this.play(sound);
+	};
+
+	isSystem (): boolean {
+		return S.Common.notificationSound == SYSTEM_SOUND_ID;
 	};
 
 };

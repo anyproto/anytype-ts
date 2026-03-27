@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, Relation, S, Storage, translate, U, sidebar } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;

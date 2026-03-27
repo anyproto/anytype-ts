@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Button, Error, Input, Icon } from 'Component';
 import { I, U, translate } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
 

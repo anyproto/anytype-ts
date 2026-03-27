@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
-import { I, S, U, translate, Dataview } from 'Lib';
 import Card from './card';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	id: string;

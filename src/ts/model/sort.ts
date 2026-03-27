@@ -1,5 +1,5 @@
-import { I } from 'Lib';
 import { observable, makeObservable } from 'mobx';
+import * as I from 'Interface';
 
 /**
  * Sort represents a sorting rule for ordering objects in Sets/Collections.

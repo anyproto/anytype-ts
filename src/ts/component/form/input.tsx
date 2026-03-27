@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 type InputSize = 28 | 36 | 40 | 56;
 

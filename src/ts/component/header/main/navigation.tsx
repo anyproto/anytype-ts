@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainNavigation = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	

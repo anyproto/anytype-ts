@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum Platform {
 	None	 = '',
@@ -139,6 +139,7 @@ export enum HomePredefinedId {
 	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
+	Widget		 = 'widgets',
 };
 
 export interface HeaderComponent {

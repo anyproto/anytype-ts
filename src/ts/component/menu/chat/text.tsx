@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Mark, S, translate, U } from 'Lib';
+import * as I from 'Interface';
 
 const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

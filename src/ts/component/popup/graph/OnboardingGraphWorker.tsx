@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
-import { S, U, J } from 'Lib';
 import { getIconSvg } from 'Component/util/icons';
 
 interface OnboardingGraphWorkerProps {

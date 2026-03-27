@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, S, U, J, focus, keyboard, analytics } from 'Lib';
 import ControlButtons from './controlButtons';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.PageComponent {
 	readonly?: boolean;

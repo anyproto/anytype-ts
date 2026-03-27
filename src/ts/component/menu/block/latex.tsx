@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 let _katex: any = null;
 let _katexLoading: Promise<any> | null = null;

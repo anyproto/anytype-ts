@@ -4,9 +4,9 @@ import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
 import { StickyScrollbar } from 'Component';
-import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
+import * as I from 'Interface';
 
 const PADDING = 46;
 

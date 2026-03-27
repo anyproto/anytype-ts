@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 let _katex: any = null;
 let _katexLoading: Promise<any> | null = null;

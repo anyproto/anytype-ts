@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Loader } from 'Component';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
 interface BlockIconUserRefProps {
 	setLoading: (v: boolean) => void;

@@ -1,7 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from 'Component';
-import { U, translate } from 'Lib';
 
 interface Props {
 	className?: string;

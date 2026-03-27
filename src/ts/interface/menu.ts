@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { None, Top, Bottom, Left, Right, Center };

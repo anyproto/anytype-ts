@@ -25,7 +25,7 @@
 					> span { min-width: 100%; display: inline-block; text-align: center; }
 				}
 
-				&.markerCheckbox { color: var(--color-text-secondary); }
+				&.markerCheckbox { color: var(--color-icon); }
 				&.markerCheckbox.active { color: var(--color-system-accent-100); }
 
 				&.markerCheckbox,

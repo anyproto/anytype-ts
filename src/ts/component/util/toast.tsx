@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U, Preview, Action, translate, keyboard, analytics, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 const Toast: FC = observer(() => {
 	const nodeRef = useRef(null);

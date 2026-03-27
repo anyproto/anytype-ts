@@ -92,7 +92,7 @@
 			transition: $transitionAllCommon;
 		}
 
-		.icon.resize {
+		.icon.commonResize {
 			position: absolute; z-index: 1; opacity: 0; cursor: default; width: 20px; height: 20px; right: 0px; bottom: 0px;
 			cursor: nwse-resize; z-index: 2; transition: $transitionAllCommon;
 		}

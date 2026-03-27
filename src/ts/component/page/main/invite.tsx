@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Action } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

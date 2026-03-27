@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	

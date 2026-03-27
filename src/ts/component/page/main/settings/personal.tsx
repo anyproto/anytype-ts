@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, keyboard, Sound } from 'Lib';
+import * as I from 'Interface';
 
 enum ChatKey {
 	Enter 	 = 'enter',
@@ -59,6 +59,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 	const notificationSounds: I.Option[] = [
 		{ id: '', name: translate('popupSettingsPersonalNotificationSoundOff') },
+		{ id: SYSTEM_SOUND_ID, name: translate('popupSettingsPersonalNotificationSoundSystem') },
 		...Sound.list.map(it => ({ id: it.id, name: it.name })),
 	];
 
@@ -86,7 +87,44 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				))}
 			</div>
 
-			<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalNotificationSound')} />
+
+					<Select
+						id="notificationSound"
+						value={notificationSound}
+						options={notificationSounds}
+						onChange={(v: string) => {
+							S.Common.notificationSoundSet(v);
+
+							if (v) {
+								if (v == SYSTEM_SOUND_ID) {
+									Renderer.send('notificationSound');
+								} else {
+									Sound.play(v);
+								};
+							};
+						}}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('electronMenuShowTray')} />
+					<Switch
+						className="big"
+						value={!hideTray}
+						onChange={(e: any, v: boolean) => {
+							Renderer.send('setHideTray', v);
+							analytics.event('ShowInSystemTray', { type: v });
+						}}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionInterface')} />
 
 			<div className="actionItems">
 				<div className="item">
@@ -103,44 +141,13 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalNotificationSound')} />
-
-					<Select
-						id="notificationSound"
-						value={notificationSound}
-						options={notificationSounds}
-						onChange={(v: string) => {
-							S.Common.notificationSoundSet(v);
-
-							if (v) {
-								Sound.play(v);
-							};
-						}}
-						arrowClassName="black"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-
-				<div className="item">
 					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
-					<Switch 
-						className="big" 
-						value={alwaysShowTabs} 
+					<Switch
+						className="big"
+						value={alwaysShowTabs}
 						onChange={(e: any, v: boolean) => {
 							Renderer.send('setAlwaysShowTabs', v);
 							analytics.event(v ? 'ShowTabBar' : 'HideTabBar');
-						}}
-					/>
-				</div>
-
-				<div className="item">
-					<Label text={translate('electronMenuShowTray')} />
-					<Switch
-						className="big"
-						value={!hideTray}
-						onChange={(e: any, v: boolean) => {
-							Renderer.send('setHideTray', v);
-							analytics.event('ShowInSystemTray', { type: v });
 						}}
 					/>
 				</div>
@@ -157,11 +164,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
-			</div>
 
-			<Label className="section" text={translate('popupSettingsPersonalSectionSidebar')} />
-
-			<div className="actionItems">
 				<div className="item">
 					<Label text={translate('popupSettingsPersonalSidebar')} />
 					<Switch
@@ -184,35 +187,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 			</div>
 
-			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalChatSend')} />
-					<Select
-						id="chatSend"
-						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
-						options={chatKeys}
-						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionLists')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalGridTitleClick')} />
-					<Switch
-						className="big"
-						value={gridTitleClick}
-						onChange={(e: any, v: boolean) => S.Common.gridTitleClickSet(v)}
-					/>
-				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+			<Label className="section" text={translate('popupSettingsPersonalSectionContentViews')} />
 
 			<div className="actionItems">
 				<div className="item">
@@ -249,6 +224,30 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						options={fileStyles}
 						onChange={v => S.Common.fileStyleSet(v)}
 						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalGridTitleClick')} />
+					<Switch
+						className="big"
+						value={gridTitleClick}
+						onChange={(e: any, v: boolean) => S.Common.gridTitleClickSet(v)}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionMessaging')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalChatSend')} />
+					<Select
+						id="chatSend"
+						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>

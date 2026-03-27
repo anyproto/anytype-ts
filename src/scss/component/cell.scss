@@ -145,10 +145,7 @@
 	.itemWrap {
 		.element { margin: 0px !important; }
 		.element {
-			.icon.objectRemove {
-				width: 12px; height: 20px; margin: 0px 0px 0px 2px; display: block;
-				background-size: 8px;
-			}
+			.icon.objectRemove { width: 12px !important; height: 20px !important; margin: 0px 0px 0px 2px; display: block; }
 			.icon.objectRemove:hover { opacity: 0.8; }
 		}
 	}

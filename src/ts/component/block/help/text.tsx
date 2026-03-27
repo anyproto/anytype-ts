@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Marker, IconObject } from 'Component';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	text?: string;

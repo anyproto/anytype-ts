@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Relation, } from 'Lib';
 import object from './object';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 const TYPE_KEYS = {
 	default: [

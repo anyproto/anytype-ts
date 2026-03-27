@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { S } from 'Lib';
 import UpdateBanner from './updateBanner';
 
 const meta: Meta<typeof UpdateBanner> = {

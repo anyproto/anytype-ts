@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent, useEffect, useRef } from 'react';
 import $ from 'jquery';
-import { I, Preview, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

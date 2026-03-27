@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react';
 import { DragHorizontal, Icon } from 'Component';
-import { S, } from 'Lib';
 
 interface Props {
 	id: string;

@@ -1,10 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
-import { I, U, translate } from 'Lib';
 
 import FormatPage from './format/page';
 import FormatList from './format/list';
+import * as I from 'Interface';
 
 const Components = [
 	FormatPage,

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, Relation, Preview } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 type SelectSize = 28 | 36;
 

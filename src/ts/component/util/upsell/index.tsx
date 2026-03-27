@@ -1,10 +1,10 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U } from 'Lib';
 
 import UpsellStorage from './storage';
 import UpsellSpace from './space';
 import UpsellMembers from './members';
+import * as I from 'Interface';
 
 interface Props {
 	components: string[];

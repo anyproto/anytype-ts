@@ -26,9 +26,9 @@
 			.icon.ghost { width: 24px; height: 24px; }
 		}
 
-		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
+		.icon.resize, .icon.commonDownload { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; }
-		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; }
+		.icon.commonDownload { width: 28px; height: 28px; right: 8px; top: 8px; }
 		.icon.downloading {
 			width: 28px; height: 28px; right: 8px; top: 8px; position: absolute; z-index: 1; opacity: 1;
 			background-image: url('~img/icon/loader.svg'); background-size: 28px; animation: rotate 1.2s infinite linear;
@@ -110,18 +110,18 @@
 
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
-		.icon.download { opacity: 1; }
+		.icon.commonDownload { opacity: 1; }
 	}
 	
 	.block.blockMedia > .wrapContent > .selectionTarget.isSelectionSelected > .dropTarget > .focusable > .wrap,
 	.block.blockMedia > .wrapContent > .selectionTarget.isKeyboardFocused > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
-		.icon.download { opacity: 1; }
+		.icon.commonDownload { opacity: 1; }
 	}
 	
 	.block.blockMedia.isVideo > .wrapContent > .selectionTarget > .dropTarget > .focusable.isPlaying > .wrap {
 		.icon.resize { display: none; }
-		.icon.download { display: none; }
+		.icon.commonDownload { display: none; }
 		.icon.play { display: none; }
 	}
 
