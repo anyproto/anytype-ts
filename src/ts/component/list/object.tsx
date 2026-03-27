@@ -50,6 +50,7 @@ const PREFIX = 'listObject';
 
 const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, selectable, isSelected, onSelect, iconSize }: any) => {
 	const cn = [ 'row' ];
+	const cnc = [ 'cell', 'cellCheck' ];
 
 	if (U.Object.isTaskLayout(item.layout) && item.isDone) {
 		cn.push('isDone');
@@ -64,6 +65,10 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 		cn.push('isHidden');
 	};
 
+	if (isSelected) {
+		cnc.push('isChecked');
+	};
+
 	return (
 		<SelectionTarget
 			id={item.id}
@@ -73,7 +78,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 			style={css}
 		>
 			{selectable ? (
-				<div className={[ 'cell', 'cellCheck', (isSelected ? 'isChecked' : '') ].join(' ')}>
+				<div className={cnc.join(' ')}>
 					<Checkbox value={isSelected} onChange={e => onSelect(item.id, e)} />
 				</div>
 			) : ''}
@@ -357,7 +362,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const head = (
 		<div className="row isHead" style={css}>
 			{selectable ? (
-				<div className="cell cellCheck">
+				<div className={[ 'cell', 'cellCheck', (isAllSelected ? 'isChecked' : '') ].join(' ')}>
 					<Checkbox value={isAllSelected} onChange={() => onSelectAll?.()} />
 				</div>
 			) : ''}

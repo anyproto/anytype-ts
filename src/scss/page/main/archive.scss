@@ -95,7 +95,7 @@
 		&.isDetailed {
 			.listObject {
 				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
-				.iconObject { background-color: var(--color-shape-highlight-medium); }
+				.iconObject:not(.isFile) { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
 	}
