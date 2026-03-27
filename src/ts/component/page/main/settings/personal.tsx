@@ -89,19 +89,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 			<div className="actionItems">
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalVaultStyle')} />
-
-					<Select
-						id="vaultMessages"
-						value={String(Number(vaultMessages))}
-						options={vaultStyles}
-						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
-						arrowClassName="black"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-
-				<div className="item">
 					<Label text={translate('popupSettingsPersonalNotificationSound')} />
 
 					<Select
@@ -123,22 +110,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionInterface')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
-					<Switch
-						className="big"
-						value={alwaysShowTabs}
-						onChange={(e: any, v: boolean) => {
-							Renderer.send('setAlwaysShowTabs', v);
-							analytics.event(v ? 'ShowTabBar' : 'HideTabBar');
-						}}
-					/>
-				</div>
 
 				<div className="item">
 					<Label text={translate('electronMenuShowTray')} />
@@ -148,6 +119,35 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						onChange={(e: any, v: boolean) => {
 							Renderer.send('setHideTray', v);
 							analytics.event('ShowInSystemTray', { type: v });
+						}}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionInterface')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalVaultStyle')} />
+
+					<Select
+						id="vaultMessages"
+						value={String(Number(vaultMessages))}
+						options={vaultStyles}
+						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
+					<Switch
+						className="big"
+						value={alwaysShowTabs}
+						onChange={(e: any, v: boolean) => {
+							Renderer.send('setAlwaysShowTabs', v);
+							analytics.event(v ? 'ShowTabBar' : 'HideTabBar');
 						}}
 					/>
 				</div>
