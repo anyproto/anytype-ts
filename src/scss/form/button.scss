@@ -65,6 +65,7 @@ input.button { line-height: 1; }
 		background-image: url('~img/icon/loader.svg'); background-size: 16px; animation: rotate 1.2s infinite linear;
 	}
 	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
+	.txt:empty { display: none; }
 }
 
 .button.simple { 

@@ -290,7 +290,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 					</span>
 				) : ''}
 
-				{isSelect ? <Icon name="common/clear" onMouseDown={onClear} /> : ''}
+				{isSelect ? <Icon name="common/clear" className="clear" onMouseDown={onClear} /> : ''}
 			</div>
 		);
 	} else {

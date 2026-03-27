@@ -122,13 +122,10 @@
 					.buttonWrap.withSelect {
 						.button.addRecord { border-radius: 14px 0 0 14px; padding: 0px 4px 0px 12px; }
 						.button.select {
-							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 12px 0px 4px; display: flex; align-items: center; justify-content: center; 
+							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 8px; display: flex; align-items: center; justify-content: center; 
 						}
 						.button.select {
-							.txt { display: none; }
-							&:after {
-								content: ''; display: block; width: 8px; height: 100%; flex-shrink: 0;
-							}
+							.icon { margin: 0px; }
 						}
 					}
 				}
