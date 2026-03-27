@@ -38,12 +38,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, [])	;
 	
 	useEffect(() => {
-		checkFilter();
-		resize();
-		setActive();
-	});
-
-	useEffect(() => {
 		const items = getItems();
 		const itemsWithoutSections = items.filter(it => !it.isSection);
 
@@ -59,6 +53,12 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		loadObjects();
 	}, [ filter.text ]);
+
+	useEffect(() => {
+		checkFilter();
+		resize();
+		setActive();
+	});
 
 	const checkFilter = () => {
 		$(`#${getId()}`).toggleClass('withFilter', !!filter);
@@ -79,7 +79,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!filter) {
 			itemsRef.current = [];
-			setDummy(dummy + 1);
+			setDummy(d => d + 1);
 			return;
 		};
 
@@ -102,7 +102,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			itemsRef.current = message.records || [];
-			setDummy(dummy + 1);
+			setDummy(d => d + 1);
 		});
 	};
 
