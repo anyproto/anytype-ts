@@ -509,7 +509,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		if (listRef.current) {
 			listRef.current.recomputeRowHeights();
 
-			if (top.current) {
+			if (!disableHeight && top.current) {
 				listRef.current.scrollToPosition(top.current);
 			};
 		};

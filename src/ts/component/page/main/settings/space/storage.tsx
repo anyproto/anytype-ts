@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, ProgressBar, UpsellBanner } from 'Component';
 import * as I from 'Interface';
 
+
 const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { isPopup } = props;
@@ -14,7 +15,6 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const isOwner = U.Space.isMyOwner();
 	const usageCn = [ 'item', 'usageWrapper' ];
 	const canWrite = U.Space.canMyParticipantWrite();
-	const nodeRef = useRef(null);
 	const managersRef = useRef<any>({});
 	const segments: any = {
 		current: { name: currentSpace.name, usage: 0, className: 'current', },
@@ -107,7 +107,8 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				buttons={buttons}
 				info={I.ObjectManagerItemInfo.FileSize}
 				isCompact={true}
-				disableHeight={false}
+				disableHeight={true}
+				isPopup={isPopup}
 				sorts={sorts}
 				filters={filters}
 				keys={U.Subscription.syncStatusRelationKeys().concat([ 'creator' ])}
@@ -126,24 +127,14 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		};
 	};
 
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const sc = U.Dom.getScrollContainer(isPopup);
-		const height = sc.height() - J.Size.header - 36;
-
-		node.css({ height });
-	};
-
 	useEffect(() => {
-		resize();
-
 		return () => {
 			U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 		};
 	}, []);
 
 	return (
-		<div ref={nodeRef} className="wrap">
+		<div className="wrap">
 			<UpsellBanner components={[ 'storage' ]} route={analytics.route.settingsStorage} />
 
 			<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
