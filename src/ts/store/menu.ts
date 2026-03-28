@@ -27,10 +27,9 @@ class MenuStore {
 
 	/**
 	 * Opens a menu with the given ID and parameters.
-	 * @param {string} id - The menu ID.
-	 * @param {I.MenuParam} param - The menu parameters.
+	 * When a known menu ID is passed, the data property is type-checked against MenuDataMap.
 	 */
-	open (id: string, param: I.MenuParam) {
+	open <K extends string> (id: K, param: I.MenuParam<K extends keyof I.MenuDataMap ? I.MenuDataMap[K] : any>) {
 		if (!id) {
 			return;
 		};
