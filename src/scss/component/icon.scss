@@ -39,7 +39,7 @@
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.forward, .icon.rotated { transform: rotateZ(180deg); }
-
 .icon.lock { width: 8px !important; height: 20px !important; }
-
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
+
+.icon.objectCheckbox2 { color: var(--color-control-accent); }
