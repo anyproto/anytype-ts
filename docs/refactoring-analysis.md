@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Updated: 2026-03-19 | Scope: `src/ts/` full codebase audit | Phase 1 nearly complete
+> Generated: 2026-03-15 | Updated: 2026-03-28 | Scope: `src/ts/` full codebase audit | Phase 1–2 complete, Phase 5.3 complete
 
 ---
 
@@ -17,6 +17,7 @@
 9. [Code Duplication](#9-code-duplication)
 10. [Inconsistent Patterns](#10-inconsistent-patterns)
 11. [Refactoring Plan](#11-refactoring-plan)
+12. [Low-Hanging Fruit Plan](#12-low-hanging-fruit-plan)
 
 ---
 
@@ -24,28 +25,30 @@
 
 Files exceeding reasonable size, doing too much, and mixing multiple responsibilities.
 
-| File | Lines | Responsibilities |
-|------|-------|-----------------|
-| `src/ts/docs/help/whatsNew.ts` | 3,701 | Hardcoded changelog data (should be JSON) |
-| `src/ts/component/editor/page.tsx` | 2,746 | Editor state, drag/drop, keyboard, focus, rendering, TOC |
-| `src/ts/lib/api/command.ts` | 2,572 | 100+ flat gRPC command exports with no grouping |
-| `src/ts/lib/keyboard.ts` | 2,195 | Keyboard, mouse, shortcuts, menus, focus — all in one |
-| `src/ts/lib/util/menu.ts` | 2,105 | Menu positioning, filtering, keyboard nav, styling |
-| `src/ts/component/block/chat/form.tsx` | 1,910 | Chat form, attachments, editing, mention handling |
-| `src/ts/lib/api/mapper.ts` | 1,904 | Protobuf mapping with long if-chains |
-| `src/ts/lib/util/common.ts` | 1,696 | Catch-all utility: DOM, math, string, selection, storage |
-| `src/ts/component/block/dataview.tsx` | 1,674 | All dataview types (grid, board, calendar, gallery) |
-| `src/ts/lib/api/dispatcher.ts` | 1,682 | gRPC lifecycle, event buffering, command queueing, response mapping |
-| `src/ts/component/block/text.tsx` | 1,642 | Text block with marks, latex, code, mentions |
-| `src/ts/component/block/table.tsx` | 1,455 | Table block with editing, selection, drag |
-| `src/ts/lib/dataview.ts` | 1,245 | Dataview handler |
-| `src/ts/component/block/chat.tsx` | 1,222 | Chat block manager |
-| `src/ts/component/menu/smile.tsx` | 1,216 | Emoji menu with library and upload |
-| `src/ts/lib/relation.ts` | 1,170 | Relation handler |
-| `src/ts/lib/action.ts` | 1,167 | Action dispatcher |
-| `src/ts/component/block/index.tsx` | 1,165 | Block factory/dispatcher |
-| `src/ts/component/menu/index.tsx` | 1,111 | Menu dispatcher |
-| `src/ts/component/drag/provider.tsx` | 1,102 | Drag provider with complex state |
+| File | Lines (Mar 19) | Lines (Mar 28) | Δ | Responsibilities |
+|------|---------------|----------------|---|-----------------|
+| `src/ts/docs/help/whatsNew.ts` | 3,701 | 3,701 | 0 | Hardcoded changelog data (should be JSON) |
+| `src/ts/component/editor/page.tsx` | 2,746 | 2,767 | +21 | Editor state, drag/drop, keyboard, focus, rendering, TOC |
+| `src/ts/lib/api/command.ts` | 2,572 | 1,975 | **-597** | 100+ gRPC command exports — shrunk via refactoring |
+| `src/ts/lib/keyboard.ts` | 2,195 | 2,198 | +3 | Keyboard, mouse, shortcuts, menus, focus — all in one |
+| `src/ts/lib/util/menu.ts` | 2,105 | 2,149 | +44 | Menu positioning, filtering, keyboard nav, styling |
+| `src/ts/component/block/chat/form.tsx` | 1,910 | 1,945 | +35 | Chat form, attachments, editing, mention handling |
+| `src/ts/lib/api/mapper.ts` | 1,904 | 1,931 | +27 | Protobuf mapping with long if-chains |
+| `src/ts/lib/util/common.ts` | 1,696 | 1,678 | -18 | Catch-all utility: DOM, math, string, selection, storage |
+| `src/ts/component/block/dataview.tsx` | 1,674 | 1,796 | +122 | All dataview types (grid, board, calendar, gallery) |
+| `src/ts/lib/api/dispatcher.ts` | 1,682 | 1,766 | +84 | gRPC lifecycle, event buffering, command queueing, response mapping |
+| `src/ts/component/block/text.tsx` | 1,642 | 1,660 | +18 | Text block with marks, latex, code, mentions |
+| `src/ts/component/block/table.tsx` | 1,455 | 1,456 | +1 | Table block with editing, selection, drag |
+| `src/ts/lib/dataview.ts` | 1,245 | 1,267 | +22 | Dataview handler |
+| `src/ts/component/block/chat.tsx` | 1,222 | 1,252 | +30 | Chat block manager |
+| `src/ts/component/menu/smile.tsx` | 1,216 | 1,216 | 0 | Emoji menu with library and upload |
+| `src/ts/lib/relation.ts` | 1,170 | 1,148 | -22 | Relation handler |
+| `src/ts/lib/action.ts` | 1,167 | 1,163 | -4 | Action dispatcher |
+| `src/ts/component/block/index.tsx` | 1,165 | 1,168 | +3 | Block factory/dispatcher |
+| `src/ts/component/menu/index.tsx` | 1,111 | 1,116 | +5 | Menu dispatcher |
+| `src/ts/component/drag/provider.tsx` | 1,102 | 1,154 | +52 | Drag provider with complex state |
+
+**Notable:** `command.ts` dropped 597 lines (2,572 → 1,975). Most other files grew slightly from feature work. No god files were split yet.
 
 ---
 
@@ -53,14 +56,19 @@ Files exceeding reasonable size, doing too much, and mixing multiple responsibil
 
 ### 2.1 `as any` Casts in Core Libraries
 
-Bypasses TypeScript type checking in critical paths:
+~~Bypasses TypeScript type checking in critical paths~~ — Mostly fixed.
 
 - ~~**`lib/api/mapper.ts`** — `content: {} as any`, `obj.type as any`, `obj.listSize as any`, `obj.cardSize as any`, `value as any`~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/api/command.ts`** — `marks.map(Mapper.To.Mark) as any`~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/util/common.ts`** — `list || [] as any[]`, `const map = {} as any`, `let ret: any[] = [] as any[]`~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/mark.ts`** — `I.MarkType[i] as any`, `i as any` (unsafe enum conversions)~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/util/menu.ts`** — `] as any).map(...)`, `] as any[]).map(...)`~~ ✅ Fixed (2026-03-19)
-- **`lib/service/sparkOnboarding.ts`** — Message type casts as `any` (4 instances)
+- **`lib/service/sparkOnboarding.ts`** — Message type casts as `any` (4 instances) — remaining
+- **`lib/api/service.ts`** — gRPC Object/decode casts (7 instances) — low-level, hard to fix
+- **`lib/api/dispatcher.ts`** — Comment message casts (4 instances) — needs Comment type alignment
+- **`lib/translate.ts`** — `(defaultData as any)[key]` (1 instance)
+
+**Current count (lib/ + store/, excluding tests): 31 instances** (down from 50+ pre-fix)
 
 ### 2.2 `any` in Interfaces (78 occurrences in `src/ts/interface/`)
 
@@ -133,32 +141,36 @@ Files fixed: `storage.ts` (JSON parse), `dispatcher.ts` (event processing)
 
 ## 5. React Anti-Patterns
 
-### 5.1 `forceUpdate()` Abuse (43+ instances) — CRITICAL
+### 5.1 `forceUpdate()` Abuse (30 files) — CRITICAL
 
 Components use `useState` dummy counters to force re-renders, bypassing MobX reactivity:
 
 ```typescript
-// Typical pattern found in 43+ components:
+// Typical pattern found in 30 component files:
 const [ dummy, setDummy ] = useState(0);
 const forceUpdate = () => setDummy(dummy + 1);
 ```
 
-Key locations:
-- `component/editor/page.tsx:127-128` — `controlsRef.current?.forceUpdate()`, `tocRef.current?.forceUpdate()`
-- `component/page/elements/head/controlButtons.tsx:221`
-- `component/page/main/set.tsx:77-79` — Multiple forceUpdates
-- `component/popup/relation.tsx:169`
-- `component/sidebar/section/index.tsx:57`
-- `component/cell/index.tsx:582`
-- 30+ more files
+**Update (2026-03-28):** Down from 43+ to 30 files. One fix landed (`57c884c860` — MenuBlockAdd useEffect ordering and stale state updater).
 
-**Root cause:** Child components missing `@observer` decorators, or state that should be observable but isn't.
+Key locations:
+- `component/editor/page.tsx` — `controlsRef.current?.forceUpdate()`, `tocRef.current?.forceUpdate()`
+- `component/page/elements/head/controlButtons.tsx`
+- `component/page/main/set.tsx` — Multiple forceUpdates
+- `component/popup/relation.tsx`
+- `component/sidebar/section/index.tsx`
+- `component/cell/index.tsx`
+- `component/sidebar/right.tsx`
+- `component/header/index.tsx`
+- 22+ more files
+
+**Root cause:** Child components missing `observer()` wrappers, or state that should be observable but isn't.
 
 ### 5.2 Massive Components Without Memoization
 
-- `component/editor/page.tsx` (2,746 lines) — no `useCallback`/`useMemo`
-- `component/block/chat/form.tsx` (1,910 lines) — no callback memoization
-- `component/block/dataview.tsx` (1,674 lines) — many unmemoized callbacks
+- `component/editor/page.tsx` (2,767 lines) — no `useCallback`/`useMemo`
+- `component/block/chat/form.tsx` (1,945 lines) — no callback memoization
+- `component/block/dataview.tsx` (1,796 lines) — many unmemoized callbacks
 
 ### 5.3 Excessive Prop Drilling
 
@@ -204,34 +216,33 @@ Key locations:
 - `window.Electron` — `lib/util/common.ts:40`
 - `window.AnytypeGlobalConfig` — `lib/util/common.ts:47` (used in store getter!)
 - `window.isExtension` — `lib/keyboard.ts:2123`
-- `(window as any).AnytypeGlobalConfig` — `lib/web/electronMock.ts:375-376,421-422`
+- `(window as any).AnytypeGlobalConfig` — `lib/web/electronMock.ts:381-382,427-428`
 
 ### 7.3 Config Loaded from Global
 
 ```typescript
-// store/common.ts
-get config(): any {
+// store/common.ts — now typed as I.AppConfig (✅ fixed) but still reads from window global
+get config(): I.AppConfig {
     const config = window.AnytypeGlobalConfig || this.configObj || {};
 }
 ```
-Store computed property depends on untyped global — can fail silently if not initialized.
 
 ---
 
 ## 8. Architecture & Coupling
 
-### 8.1 Barrel Export Creates Massive Dependency Tree
+### ~~8.1 Barrel Export Creates Massive Dependency Tree~~ ✅ Fixed (2026-03-26)
 
-`lib/index.ts` re-exports everything:
-```typescript
-import * as J from 'json';       // All JSON data
-import * as I from 'Interface';  // 31 wildcard exports
-import * as S from 'Store';      // All 13 stores
-import * as U from './util';     // 13 util modules
-import * as C from './api/command'; // 100+ command functions
-```
+~~`lib/index.ts` re-exports everything. Any module importing from `'Lib'` gets the entire dependency tree.~~
 
-Any module importing from `'Lib'` gets the entire dependency tree.
+**Fixed via `unplugin-auto-import`** (commit `182e12e861`):
+- Removed 473 `import { ... } from 'Lib'` statements across ~510 files
+- Auto-import plugin injects `S`, `U`, `C`, `J`, `translate`, `keyboard`, etc. at build time
+- `lib/index.ts` reduced from barrel hub to 66-line legacy shim
+- Enables tree-shaking and eliminates circular dependency chains (`Lib → Store → Lib`)
+- RFC document: `docs/RFC-AUTO-IMPORTS.md`
+
+**Also fixed:** Circular init in `storage.ts` — lazy-evaluated electron reference (`f7c0af169d`)
 
 ### 8.2 High Coupling in Dispatcher
 
@@ -272,27 +283,27 @@ Four different event handling patterns coexist:
 
 ## 11. Refactoring Plan
 
-### Phase 1: Type Safety (Low Risk, High Impact)
+### Phase 1: Type Safety (Low Risk, High Impact) ✅ COMPLETE
 
 **Branch: `refactor/type-safety`**
 
-| Task | Files | Effort |
+| Task | Files | Status |
 |------|-------|--------|
-| ~~Replace `as any` casts with proper types~~ | ~~mapper.ts, command.ts, common.ts, mark.ts, menu.ts, block.ts~~ | ~~M~~ ✅ |
-| Type `data?: any` in MenuParam interface | interface/menu.ts + all menu consumers | L |
-| ~~Type store getters (config, etc.)~~ | ~~store/common.ts, interface/common.ts, app.tsx~~ | ~~S~~ ✅ |
-| ~~Add null checks to `.match()` and `.split()[n]` patterns~~ | ~~common.ts, dispatcher.ts, audio.tsx~~ | ~~M~~ ✅ |
-| ~~Replace loose `==` with strict `===`~~ | ~~mapper.ts, menu.ts~~ | ~~S~~ ✅ |
+| ~~Replace `as any` casts with proper types~~ | ~~mapper.ts, command.ts, common.ts, mark.ts, menu.ts, block.ts~~ | ✅ |
+| Type `data?: any` in MenuParam interface | interface/menu.ts + all menu consumers | Remaining (L) |
+| ~~Type store getters (config, etc.)~~ | ~~store/common.ts, interface/common.ts, app.tsx~~ | ✅ |
+| ~~Add null checks to `.match()` and `.split()[n]` patterns~~ | ~~common.ts, dispatcher.ts, audio.tsx~~ | ✅ |
+| ~~Replace loose `==` with strict `===`~~ | ~~mapper.ts, menu.ts~~ | ✅ |
 
-### Phase 2: Error Handling (Low Risk, Medium Impact)
+### Phase 2: Error Handling (Low Risk, Medium Impact) ✅ COMPLETE
 
 **Branch: `refactor/error-handling`**
 
-| Task | Files | Effort |
+| Task | Files | Status |
 |------|-------|--------|
-| ~~Replace empty catch blocks with logging or explicit no-ops~~ | ~~embed.ts, common.ts, response.ts, dispatcher.ts, relation.ts, menu.ts, storage.ts~~ | ~~S~~ ✅ |
-| ~~Add error context to console.error calls~~ | ~~storage.ts, dispatcher.ts~~ | ~~S~~ ✅ |
-| Create consistent error handling patterns | New error utility | M |
+| ~~Replace empty catch blocks with logging~~ | ~~embed.ts, common.ts, response.ts, dispatcher.ts, relation.ts, menu.ts, storage.ts~~ | ✅ |
+| ~~Add error context to console.error calls~~ | ~~storage.ts, dispatcher.ts~~ | ✅ |
+| Create consistent error handling patterns | New error utility | Remaining (M) |
 
 ### Phase 3: God File Decomposition (Medium Risk, High Impact)
 
@@ -300,34 +311,34 @@ Four different event handling patterns coexist:
 
 | Task | Source File | Target Modules | Effort |
 |------|-----------|----------------|--------|
-| Split keyboard.ts | `lib/keyboard.ts` (2,195 lines) | KeyboardHandler, MouseHandler, MenuKeyboard, FocusManager | L |
-| Split util/common.ts | `lib/util/common.ts` (1,696 lines) | DomUtil, MathUtil, SelectionUtil, (keep StringUtil in string.ts) | L |
-| Group command.ts by domain | `lib/api/command.ts` (2,572 lines) | BlockCommands, ObjectCommands, SpaceCommands, etc. | L |
-| Split editor/page.tsx | `component/editor/page.tsx` (2,746 lines) | Extract hooks: useEditorFocus, useEditorDrag, useEditorKeyboard | XL |
-| Split chat/form.tsx | `component/block/chat/form.tsx` (1,910 lines) | ChatComposer, AttachmentPanel, MentionHandler | L |
+| Split keyboard.ts | `lib/keyboard.ts` (2,198 lines) | KeyboardHandler, MouseHandler, MenuKeyboard, FocusManager | L |
+| Split util/common.ts | `lib/util/common.ts` (1,678 lines) | DomUtil, MathUtil, SelectionUtil, (keep StringUtil in string.ts) | L |
+| ~~Shrink command.ts~~ | ~~`lib/api/command.ts` (2,572→1,975 lines)~~ | ~~-597 lines from cleanup~~ | ✅ Partial |
+| Split editor/page.tsx | `component/editor/page.tsx` (2,767 lines) | Extract hooks: useEditorFocus, useEditorDrag, useEditorKeyboard | XL |
+| Split chat/form.tsx | `component/block/chat/form.tsx` (1,945 lines) | ChatComposer, AttachmentPanel, MentionHandler | L |
 
 ### Phase 4: React & MobX Cleanup (Medium Risk, Medium Impact)
 
 **Branch: `refactor/react-patterns`**
 
-| Task | Files | Effort |
+| Task | Files | Status |
 |------|-------|--------|
-| Audit `forceUpdate()` usage — add missing `observer()` to children | 43+ components | L |
-| Add `useCallback`/`useMemo` to large components | editor/page.tsx, dataview.tsx, chat/form.tsx | M |
-| Replace prop drilling with direct store access | chat/form.tsx (13 props) | M |
-| Replace jQuery DOM access with React refs | drag/provider.tsx | M |
-| ~~Replace `Object.assign` mutations with spread~~ | ~~sidebar/page/type.tsx~~ | ~~S~~ ✅ |
+| Audit `forceUpdate()` usage — add missing `observer()` | 30 component files | Remaining (L) |
+| Add `useCallback`/`useMemo` to large components | editor/page.tsx, dataview.tsx, chat/form.tsx | Remaining (M) |
+| Replace prop drilling with direct store access | chat/form.tsx (13 props) | Remaining (M) |
+| Replace jQuery DOM access with React refs | drag/provider.tsx | Remaining (M) |
+| ~~Replace `Object.assign` mutations with spread~~ | ~~sidebar/page/type.tsx~~ | ✅ |
 
 ### Phase 5: Architecture (High Risk, High Impact)
 
 **Branch: `refactor/architecture`**
 
-| Task | Files | Effort |
+| Task | Files | Status |
 |------|-------|--------|
-| Replace window globals with DI/module imports | app.tsx, common.ts, electronMock.ts | L |
-| Reduce dispatcher coupling (extract event handlers) | dispatcher.ts, action.ts | XL |
-| Tree-shake barrel exports (use direct imports) | lib/index.ts, interface/index.ts | XL |
-| Unify event system | keyboard.ts, components, dispatcher.ts | XL |
+| Replace window globals with DI/module imports | app.tsx, common.ts, electronMock.ts | Remaining (L) |
+| Reduce dispatcher coupling (extract event handlers) | dispatcher.ts, action.ts | Remaining (XL) |
+| ~~Tree-shake barrel exports (auto-import)~~ | ~~lib/index.ts, ~510 consumer files~~ | ✅ (2026-03-26) |
+| Unify event system | keyboard.ts, components, dispatcher.ts | Remaining (XL) |
 
 ### Effort Key
 
@@ -336,10 +347,76 @@ Four different event handling patterns coexist:
 - **L** = Large (3–5 days)
 - **XL** = Extra Large (1–2 weeks)
 
-### Recommended Order
+---
 
-1. **Phase 1** first — improves safety with minimal risk
-2. **Phase 2** next — quick wins for debuggability
-3. **Phase 3** in parallel per-module branches — biggest maintainability wins
-4. **Phase 4** after Phase 3 — React patterns are easier to fix in smaller files
-5. **Phase 5** last — highest risk, needs careful coordination
+## 12. Low-Hanging Fruit Plan
+
+Quick wins that can be done independently, have low risk, and deliver measurable improvement. Ordered by impact/effort ratio.
+
+### Tier 1: Immediate Wins (< 1 day each, can merge directly to develop)
+
+#### 1.1 Type the dispatcher comment `as any` casts (S)
+**Files:** `lib/api/dispatcher.ts:1091,1098,1147,1149`
+**What:** 4 instances of `commentMsg as any` — align `CommentMessage` type with what `S.Comment.addReply/addPost/updateReply/updatePost` expect.
+**Why:** These are the easiest remaining `as any` in core lib — likely just a missing interface field or union member.
+
+#### 1.2 Type the translate fallback `as any` (S)
+**File:** `lib/translate.ts:24`
+**What:** `(defaultData as any)[key]` — add proper index signature to the default translation data type.
+
+#### 1.3 Type sparkOnboarding message casts (S)
+**Files:** `lib/service/sparkOnboarding.ts:248,291,307,324`, `store/sparkOnboarding.ts:611,626`
+**What:** 6 instances — define message subtypes (`ReconnectMessage`, `TypeMessage`, etc.) and add `icon`/`exampleTitles` to the type interface.
+
+#### 1.4 Fix `makeObservable(this as any)` in DetailStore (S)
+**File:** `store/detail.ts:61`
+**What:** Replace `this as any` with proper generic or explicit observable field map. MobX 6+ supports typed `makeObservable<DetailStore>(this, {...})`.
+
+#### 1.5 Extract `storage.ts` key-resolution duplication (S)
+**File:** `lib/storage.ts:121-128,143-150`
+**What:** Extract the repeated if-else pattern (space/account/default key) into a private `resolveKey()` helper. 2 identical blocks → 1 function.
+
+### Tier 2: Small Refactors (1–2 days each)
+
+#### 2.1 Reduce `forceUpdate` in sidebar components (M)
+**Files:** `sidebar/section/index.tsx`, `sidebar/section/type/title.tsx`, `sidebar/section/type/relation.tsx`, `sidebar/section/type/layout.tsx`, `sidebar/section/type/template.tsx`, `sidebar/right.tsx`, `sidebar/page/object/relation.tsx`
+**What:** 7 sidebar files use forceUpdate. These are likely simpler components where adding `observer()` wrapper or converting the triggering state to MobX observable eliminates the pattern.
+**Why:** Sidebar is a contained area — low blast radius, easy to test manually.
+
+#### 2.2 Reduce `forceUpdate` in header components (M)
+**Files:** `header/index.tsx`, `header/main/object.tsx`, `header/main/history.tsx`, `header/main/chat.tsx`
+**What:** 4 header files. Same pattern — likely missing `observer()` on child components that read store data.
+
+#### 2.3 Extract `embed.ts` URL parsing helpers (S)
+**File:** `lib/util/embed.ts`
+**What:** Multiple processor functions repeat URL parsing patterns (extracting IDs from YouTube, Vimeo, etc.). Extract common `extractUrlId(url, pattern)` helper.
+
+#### 2.4 Extract `menu.ts` match filter helper (S)
+**File:** `lib/util/menu.ts:623-627,656-660`
+**What:** Repeated filter-by-match logic — extract into a shared `filterByMatch(items, filter, getLabel)` function.
+
+### Tier 3: Medium Refactors (2–3 days each)
+
+#### 3.1 Split `util/common.ts` DOM helpers (M)
+**File:** `lib/util/common.ts` (1,678 lines)
+**What:** Extract DOM-related functions (`getScrollContainer`, `getPageContainer`, `getSelectionRange`, etc.) into `lib/util/dom.ts`. ~200-300 lines, pure extraction, no logic change. Leave the rest in `common.ts` for now.
+**Why:** Easiest god-file split — DOM helpers are self-contained with no cross-dependencies.
+
+#### 3.2 Split `keyboard.ts` mouse handling (M)
+**File:** `lib/keyboard.ts` (2,198 lines)
+**What:** Extract mouse event handlers (`onMouseDown`, `onMouseUp`, `onMouseMove`, related state like `isMouseDown`, `isResizing`) into `lib/mouse.ts`. ~200-300 lines.
+**Why:** Mouse and keyboard are logically separate concerns that happen to share a file.
+
+#### 3.3 Type `MenuParam.data` with discriminated union (M–L)
+**File:** `interface/menu.ts`
+**What:** Replace `data?: any` with a discriminated union keyed on menu ID. Start with the 5 most-used menus, use `& Record<string, unknown>` for the rest.
+**Why:** Eliminates the single highest-impact `any` in the codebase — every menu consumer benefits.
+
+### Suggested Execution Order
+
+```
+Week 1: Tier 1 (all 5 items) → commit directly to develop
+Week 2: Tier 2.1 + 2.2 (forceUpdate in sidebar + header) → feature branches
+Week 3: Tier 2.3 + 2.4 + 3.1 (dedup + DOM split) → feature branches
+Week 4: Tier 3.2 + 3.3 (keyboard split + MenuParam typing) → feature branches
+```
