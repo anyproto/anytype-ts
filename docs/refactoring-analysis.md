@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Updated: 2026-03-28 | Scope: `src/ts/` full codebase audit | Phase 1–2 complete, Phase 5.3 complete
+> Generated: 2026-03-15 | Updated: 2026-03-28 | Scope: `src/ts/` full codebase audit | Phase 1–2 complete, Phase 5.3 complete, Low-hanging Tier 1 complete
 
 ---
 
