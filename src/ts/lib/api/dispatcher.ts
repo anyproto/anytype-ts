@@ -1078,7 +1078,7 @@ class Dispatcher {
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg = {
+						const commentMsg: I.CommentMessage = {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
@@ -1088,14 +1088,14 @@ class Dispatcher {
 						};
 
 						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
 
 							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
 							if (post) {
 								set(post, { replyCount: (post.replyCount || 0) + 1 });
 							};
 						} else {
-							S.Comment.addPost(subId, commentMsg as any);
+							S.Comment.addPost(subId, commentMsg);
 						};
 					});
 
@@ -1135,7 +1135,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg = {
+							const commentMsg: Partial<I.CommentMessage> = {
 								id: mapped.message.id,
 								content: {
 									...mapped.message.content,
@@ -1144,9 +1144,9 @@ class Dispatcher {
 							};
 
 							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
 							} else {
-								S.Comment.updatePost(subId, commentMsg as any);
+								S.Comment.updatePost(subId, commentMsg);
 							};
 						} else {
 							S.Chat.update(subId, mapped.message);

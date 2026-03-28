@@ -63,12 +63,12 @@ Files exceeding reasonable size, doing too much, and mixing multiple responsibil
 - ~~**`lib/util/common.ts`** — `list || [] as any[]`, `const map = {} as any`, `let ret: any[] = [] as any[]`~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/mark.ts`** — `I.MarkType[i] as any`, `i as any` (unsafe enum conversions)~~ ✅ Fixed (2026-03-19)
 - ~~**`lib/util/menu.ts`** — `] as any).map(...)`, `] as any[]).map(...)`~~ ✅ Fixed (2026-03-19)
-- **`lib/service/sparkOnboarding.ts`** — Message type casts as `any` (4 instances) — remaining
+- ~~**`lib/service/sparkOnboarding.ts`** — Message type casts as `any` (4 instances)~~ ✅ Fixed (2026-03-28): replaced with proper message interfaces
 - **`lib/api/service.ts`** — gRPC Object/decode casts (7 instances) — low-level, hard to fix
-- **`lib/api/dispatcher.ts`** — Comment message casts (4 instances) — needs Comment type alignment
-- **`lib/translate.ts`** — `(defaultData as any)[key]` (1 instance)
+- ~~**`lib/api/dispatcher.ts`** — Comment message casts (4 instances)~~ ✅ Fixed (2026-03-28): typed as `I.CommentMessage` / `Partial<I.CommentMessage>`
+- ~~**`lib/translate.ts`** — `(defaultData as any)[key]` (1 instance)~~ ✅ Fixed (2026-03-28): added `TranslationData` type alias
 
-**Current count (lib/ + store/, excluding tests): 31 instances** (down from 50+ pre-fix)
+**Current count (lib/ + store/, excluding tests): ~18 instances** (down from 50+ pre-fix)
 
 ### 2.2 `any` in Interfaces (78 occurrences in `src/ts/interface/`)
 
@@ -80,9 +80,9 @@ Files exceeding reasonable size, doing too much, and mixing multiple responsibil
 
 - ~~`store/common.ts:226` — `get config(): any` (should return typed config)~~ ✅ Fixed (2026-03-19): added `I.AppConfig` interface
 - `store/detail.ts:5-8` — Detail interface uses `any` for value
-- `store/detail.ts:61` — `makeObservable(this as any, {...})` bypasses type checking
+- ~~`store/detail.ts:61` — `makeObservable(this as any, {...})` bypasses type checking~~ ✅ Fixed (2026-03-28): used `makeObservable<DetailStore, 'map'>`
 - `store/block.ts:35` — `Map<string, Map<string, any>>` restriction map
-- `store/sparkOnboarding.ts:611,626` — `(type as any).icon`, `(type as any).exampleTitles`
+- ~~`store/sparkOnboarding.ts:611,626` — `(type as any).icon`, `(type as any).exampleTitles`~~ ✅ Fixed (2026-03-28): `SuggestedType` already has these fields
 
 ### 2.4 Enum Overuse (113 enums in `interface/`)
 
@@ -353,28 +353,22 @@ Four different event handling patterns coexist:
 
 Quick wins that can be done independently, have low risk, and deliver measurable improvement. Ordered by impact/effort ratio.
 
-### Tier 1: Immediate Wins (< 1 day each, can merge directly to develop)
+### Tier 1: Immediate Wins (< 1 day each, can merge directly to develop) ✅ COMPLETE
 
-#### 1.1 Type the dispatcher comment `as any` casts (S)
-**Files:** `lib/api/dispatcher.ts:1091,1098,1147,1149`
-**What:** 4 instances of `commentMsg as any` — align `CommentMessage` type with what `S.Comment.addReply/addPost/updateReply/updatePost` expect.
-**Why:** These are the easiest remaining `as any` in core lib — likely just a missing interface field or union member.
+#### ~~1.1 Type the dispatcher comment `as any` casts (S)~~ ✅ Fixed (2026-03-28)
+**Files:** `lib/api/dispatcher.ts` — 4 instances typed as `I.CommentMessage` / `Partial<I.CommentMessage>`.
 
-#### 1.2 Type the translate fallback `as any` (S)
-**File:** `lib/translate.ts:24`
-**What:** `(defaultData as any)[key]` — add proper index signature to the default translation data type.
+#### ~~1.2 Type the translate fallback `as any` (S)~~ ✅ Fixed (2026-03-28)
+**File:** `lib/translate.ts` — added `TranslationData` type alias, eliminated 2 `as any` casts.
 
-#### 1.3 Type sparkOnboarding message casts (S)
-**Files:** `lib/service/sparkOnboarding.ts:248,291,307,324`, `store/sparkOnboarding.ts:611,626`
-**What:** 6 instances — define message subtypes (`ReconnectMessage`, `TypeMessage`, etc.) and add `icon`/`exampleTitles` to the type interface.
+#### ~~1.3 Type sparkOnboarding message casts (S)~~ ✅ Fixed (2026-03-28)
+**Files:** `lib/service/sparkOnboarding.ts`, `store/sparkOnboarding.ts`, `interface/sparkOnboarding.ts` — 6 instances replaced with proper message interfaces (`ReconnectedMessage`, `TypeGeneratedMessage`, `ObjectTitlesGeneratedMessage`, `WorkspaceReadyMessage`). Added `type_name`/`type_key` snake_case fields to `ObjectTitlesGeneratedMessage`.
 
-#### 1.4 Fix `makeObservable(this as any)` in DetailStore (S)
-**File:** `store/detail.ts:61`
-**What:** Replace `this as any` with proper generic or explicit observable field map. MobX 6+ supports typed `makeObservable<DetailStore>(this, {...})`.
+#### ~~1.4 Fix `makeObservable(this as any)` in DetailStore (S)~~ ✅ Fixed (2026-03-28)
+**File:** `store/detail.ts` — replaced with `makeObservable<DetailStore, 'map'>(this, {...})`.
 
-#### 1.5 Extract `storage.ts` key-resolution duplication (S)
-**File:** `lib/storage.ts:121-128,143-150`
-**What:** Extract the repeated if-else pattern (space/account/default key) into a private `resolveKey()` helper. 2 identical blocks → 1 function.
+#### ~~1.5 Extract `storage.ts` key-resolution duplication (S)~~ — Skipped
+On re-inspection, the `get`/`set`/`delete` methods delegate to different typed methods per branch. This is standard delegation, not true duplication.
 
 ### Tier 2: Small Refactors (1–2 days each)
 
@@ -415,7 +409,7 @@ Quick wins that can be done independently, have low risk, and deliver measurable
 ### Suggested Execution Order
 
 ```
-Week 1: Tier 1 (all 5 items) → commit directly to develop
+Week 1: Tier 1 (all 5 items) → ✅ DONE (2026-03-28)
 Week 2: Tier 2.1 + 2.2 (forceUpdate in sidebar + header) → feature branches
 Week 3: Tier 2.3 + 2.4 + 3.1 (dedup + DOM split) → feature branches
 Week 4: Tier 3.2 + 3.3 (keyboard split + MenuParam typing) → feature branches
