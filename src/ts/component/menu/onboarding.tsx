@@ -109,7 +109,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		$('.onboardingElement').remove();
 		$('.onboardingDimmer').remove();
 
-		param.highlightElements.concat([ param.element ]).forEach(selector => {
+		param.highlightElements.concat([ param.element as string ]).forEach(selector => {
 			$(selector).css({ visibility: 'visible' });
 		});
 
