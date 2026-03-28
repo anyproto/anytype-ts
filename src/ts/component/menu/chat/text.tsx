@@ -23,7 +23,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onButton = (e: any, type: I.MarkType) => {
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const win = $(window);
 
 		const menuParam: any = {

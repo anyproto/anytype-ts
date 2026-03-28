@@ -205,7 +205,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
 
-		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Common.getScrollContainer(isPopup)} />;
+		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Dom.getScrollContainer(isPopup)} />;
 	};
 
 	const onOpen = (e: any) => {

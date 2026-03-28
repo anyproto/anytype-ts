@@ -104,7 +104,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const getMaxWidthHeight = () => {
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
 		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
 
@@ -228,7 +228,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const node = $(nodeRef.current);
 		const item = gallery.find(el => el.object?.id == current?.id);
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 
 		if (!item) {
 			return;

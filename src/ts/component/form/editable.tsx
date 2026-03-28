@@ -104,7 +104,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setBlur = () => {
-		U.Common.clearSelection();
+		U.Dom.clearSelection();
 	};
 
 	const setValue = (html: string) => {

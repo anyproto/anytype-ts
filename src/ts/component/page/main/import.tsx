@@ -11,7 +11,7 @@ const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const resize = () => {
 		const win = $(window);
-		const obj = U.Common.getPageFlexContainer(isPopup);
+		const obj = U.Dom.getPageFlexContainer(isPopup);
 		const wh = isPopup ? obj.height() : win.height();
 
 		$(nodeRef.current).css({ height: wh });

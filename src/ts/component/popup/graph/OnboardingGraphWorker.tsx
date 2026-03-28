@@ -99,7 +99,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -129,7 +129,7 @@ const OnboardingGraphWorker = observer(({
 
 		lastMouseMoveRef.current = now;
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -146,7 +146,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};

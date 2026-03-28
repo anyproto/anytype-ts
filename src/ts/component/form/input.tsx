@@ -273,7 +273,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 
 		clone.text(value.substring(0, selectionRange.to));
-		const rect = U.Common.getElementRect(clone.get(0));
+		const rect = U.Dom.getElementRect(clone.get(0));
 
 		clone.remove();
 		return rect;

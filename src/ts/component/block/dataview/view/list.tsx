@@ -28,7 +28,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	useEffect(() => {
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -80,7 +80,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}>
 						{({ height, isScrolling, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (

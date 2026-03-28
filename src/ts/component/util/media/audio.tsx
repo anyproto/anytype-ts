@@ -68,7 +68,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 		isPlaying.current ? pause() : play();
 	};
 

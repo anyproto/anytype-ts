@@ -339,7 +339,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const rect = U.Common.getElementRect($(`#${getId()}`).get(0));
+		const rect = U.Dom.getElementRect($(`#${getId()}`).get(0));
 		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			rect,

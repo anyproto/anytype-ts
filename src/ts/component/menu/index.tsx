@@ -324,7 +324,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		const id = getId();
-		const container = U.Common.getScrollContainer(keyboard.isPopup());
+		const container = U.Dom.getScrollContainer(keyboard.isPopup());
 
 		unbind();
 		$(window).on(`resize.${id} sidebarResize.${id}`, () => position());
@@ -336,7 +336,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	
 	const unbind = () => {
 		const id = getId();
-		const container = U.Common.getScrollContainer(keyboard.isPopup());
+		const container = U.Dom.getScrollContainer(keyboard.isPopup());
 
 		$(window).off(`resize.${id} sidebarResize.${id}`);
 		container.off(`scroll.${id}`);
@@ -386,7 +386,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
-			const winSize = U.Common.getWindowDimensions();
+			const winSize = U.Dom.getWindowDimensions();
 			const borderLeft = getBorderLeft(isFixed);
 			const borderTop = getBorderTop();
 			const borderBottom = getBorderBottom();
@@ -980,7 +980,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const getPosition = (): DOMRect => {
 		const obj = $(`#${getId()}`);
-		return obj.length ? U.Common.getElementRect(obj.get(0)) : null;
+		return obj.length ? U.Dom.getElementRect(obj.get(0)) : null;
 	};
 
 	const getArrowDirection = (): I.MenuDirection => {
@@ -1001,7 +1001,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const getMaxHeight = (isPopup: boolean): number => {
-		return U.Common.getScrollContainer(isPopup).height() - getBorderTop() - getBorderBottom();
+		return U.Dom.getScrollContainer(isPopup).height() - getBorderTop() - getBorderBottom();
 	};
 
 	const menuId = getId();

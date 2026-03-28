@@ -51,7 +51,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
-	const namespace = U.Common.getEventNamespace(isPopup);
+	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
@@ -86,7 +86,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
+		U.Dom.getScrollContainer(isPopup).off(`scroll.${ns}`);
 	};
 
 	const rebind = () => {
@@ -100,7 +100,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		win.on(`reactionUpdate.${ns}`, () => scrollToBottomCheck());
 		win.on(`focus.${ns}`, () => readScrolledMessages());
 
-		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => onScroll(e));
+		U.Dom.getScrollContainer(isPopup).on(`scroll.${ns}`, e => onScroll(e));
 	};
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
@@ -218,8 +218,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						setIsBottom(false);
 					};
 				} else {
-					const y = U.Common.getMaxScrollHeight(isPopup);
-					const top = U.Common.getScrollContainerTop(isPopup);
+					const y = U.Dom.getMaxScrollHeight(isPopup);
+					const top = U.Dom.getScrollContainerTop(isPopup);
 
 					setIsBottom(!(top < y));
 				};
@@ -586,7 +586,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const node = $(nodeRef.current);
 		const dates = node.find('.sectionDate');
 		const offset = J.Size.header + 8;
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container.offset().top;
 
 		raf.cancel(frameRef.current);
@@ -619,9 +619,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onScroll = (e: any) => {
 		const subId = getSubId();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const st = Math.ceil(container.scrollTop());
-		const max = U.Common.getMaxScrollHeight(isPopup);
+		const max = U.Dom.getMaxScrollHeight(isPopup);
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
@@ -743,7 +743,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const getMessagesInViewport = () => {
 		const messages = getMessages();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
 		const ch = container.outerHeight();
 		const max = ch - formHeight;
@@ -851,7 +851,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const top = getMessageScrollPosition(id);
 			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
@@ -886,14 +886,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const y = U.Common.getMaxScrollHeight(isPopup);
-			const top = U.Common.getScrollContainerTop(isPopup);
+			const y = U.Dom.getMaxScrollHeight(isPopup);
+			const top = U.Dom.getScrollContainerTop(isPopup);
 
 			if (top >= y) {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const cb = () => {
 				readScrolledMessages();
 				window.setTimeout(() => setAutoLoadDisabled(false), 50);
@@ -929,7 +929,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const threshold = container.outerHeight() / 2;
 
 			if (getMessageScrollOffset(id) < threshold) {
@@ -1037,7 +1037,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const hasScroll = () => {
-		return U.Common.getMaxScrollHeight(isPopup) > 0;
+		return U.Dom.getMaxScrollHeight(isPopup) > 0;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {
@@ -1109,7 +1109,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const resize = () => {
 		renderDates();
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const ns = block.id + namespace;
 
 		container.off(`scroll.${ns}`);

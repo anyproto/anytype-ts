@@ -288,7 +288,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const { wh } = U.Common.getWindowDimensions();
+					const { wh } = U.Dom.getWindowDimensions();
 					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
 					param = Object.assign(param, {

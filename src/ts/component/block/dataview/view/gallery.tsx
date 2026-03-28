@@ -276,7 +276,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 		content = (
 			<WindowScroller
-				scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+				scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}
 				onScroll={onScroll}
 				scrollTop={topRef.current}
 			>

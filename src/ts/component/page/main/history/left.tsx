@@ -60,7 +60,7 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const onScroll = () => {
 		topRef.current = $(nodeRef.current).scrollTop();
-		U.Common.getScrollContainer(isPopup).trigger('scroll');
+		U.Dom.getScrollContainer(isPopup).trigger('scroll');
 	};
 
 	useEffect(() => {

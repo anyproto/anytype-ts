@@ -34,7 +34,7 @@ Files exceeding reasonable size, doing too much, and mixing multiple responsibil
 | `src/ts/lib/util/menu.ts` | 2,105 | 2,149 | +44 | Menu positioning, filtering, keyboard nav, styling |
 | `src/ts/component/block/chat/form.tsx` | 1,910 | 1,945 | +35 | Chat form, attachments, editing, mention handling |
 | `src/ts/lib/api/mapper.ts` | 1,904 | 1,931 | +27 | Protobuf mapping with long if-chains |
-| `src/ts/lib/util/common.ts` | 1,696 | 1,678 | -18 | Catch-all utility: DOM, math, string, selection, storage |
+| `src/ts/lib/util/common.ts` | 1,696 | **1,310** | **-386** | Catch-all utility — DOM helpers extracted to `lib/util/dom.ts` (404 lines) |
 | `src/ts/component/block/dataview.tsx` | 1,674 | 1,796 | +122 | All dataview types (grid, board, calendar, gallery) |
 | `src/ts/lib/api/dispatcher.ts` | 1,682 | 1,766 | +84 | gRPC lifecycle, event buffering, command queueing, response mapping |
 | `src/ts/component/block/text.tsx` | 1,642 | 1,660 | +18 | Text block with marks, latex, code, mentions |
@@ -312,7 +312,7 @@ Four different event handling patterns coexist:
 | Task | Source File | Target Modules | Effort |
 |------|-----------|----------------|--------|
 | Split keyboard.ts | `lib/keyboard.ts` (2,198 lines) | KeyboardHandler, MouseHandler, MenuKeyboard, FocusManager | L |
-| Split util/common.ts | `lib/util/common.ts` (1,678 lines) | DomUtil, MathUtil, SelectionUtil, (keep StringUtil in string.ts) | L |
+| ~~Split util/common.ts~~ | ~~`lib/util/common.ts` (1,678→1,310 lines)~~ | ~~DOM helpers extracted to `lib/util/dom.ts` (404 lines)~~ | ✅ Partial |
 | ~~Shrink command.ts~~ | ~~`lib/api/command.ts` (2,572→1,975 lines)~~ | ~~-597 lines from cleanup~~ | ✅ Partial |
 | Split editor/page.tsx | `component/editor/page.tsx` (2,767 lines) | Extract hooks: useEditorFocus, useEditorDrag, useEditorKeyboard | XL |
 | Split chat/form.tsx | `component/block/chat/form.tsx` (1,945 lines) | ChatComposer, AttachmentPanel, MentionHandler | L |
@@ -391,10 +391,9 @@ On re-inspection, the `get`/`set`/`delete` methods delegate to different typed m
 
 ### Tier 3: Medium Refactors (2–3 days each)
 
-#### 3.1 Split `util/common.ts` DOM helpers (M)
-**File:** `lib/util/common.ts` (1,678 lines)
-**What:** Extract DOM-related functions (`getScrollContainer`, `getPageContainer`, `getSelectionRange`, etc.) into `lib/util/dom.ts`. ~200-300 lines, pure extraction, no logic change. Leave the rest in `common.ts` for now.
-**Why:** Easiest god-file split — DOM helpers are self-contained with no cross-dependencies.
+#### ~~3.1 Split `util/common.ts` DOM helpers (M)~~ ✅ Fixed (2026-03-28)
+**Files:** `lib/util/common.ts` (1,678→1,310 lines), new `lib/util/dom.ts` (404 lines)
+**What:** Extracted 24 DOM-related methods into `U.Dom` — containers, selection, CSS, media, scroll, resize. Updated 103 caller files. Zero logic changes.
 
 #### 3.2 Split `keyboard.ts` mouse handling (M)
 **File:** `lib/keyboard.ts` (2,198 lines)

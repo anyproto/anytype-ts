@@ -70,7 +70,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 	const childRef = useRef(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
@@ -136,7 +136,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const rebind = () => {
 		const { history } = U.Router;
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
 		unbind();
@@ -185,7 +185,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	return (
 		<div
 			id="pageFlex"
-			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
+			className={[ 'pageFlex', U.Dom.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
 			<div

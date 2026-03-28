@@ -88,7 +88,7 @@ class Focus {
 		};
 
 		if (withRange) {
-			U.Common.clearSelection();
+			U.Dom.clearSelection();
 			keyboard.setFocus(false);
 		};
 
@@ -186,15 +186,15 @@ class Focus {
 			return;
 		};
 
-		let rect = U.Common.getSelectionRect();
+		let rect = U.Dom.getSelectionRect();
 		if (!rect) {
-			rect = U.Common.getElementRect(node.get(0));
+			rect = U.Dom.getElementRect(node.get(0));
 		};
 		if (!rect) {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const ch = container.height();
 		const st = container.scrollTop();
 		const { header } = J.Size;

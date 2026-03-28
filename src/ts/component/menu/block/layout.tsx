@@ -145,7 +145,7 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onResize = (e: any) => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');

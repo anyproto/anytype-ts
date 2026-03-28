@@ -19,7 +19,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		rebind();
 		event();
 		initDimmer();
-		U.Common.renderLinks($(nodeRef.current));
+		U.Dom.renderLinks($(nodeRef.current));
 
 		return () => {
 			unbind();
@@ -43,7 +43,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		scroll();
 		event();
 
-		U.Common.renderLinks(node);
+		U.Dom.renderLinks(node);
 	});
 
 	const getItems = () => {
@@ -81,7 +81,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 					const st = $(window).scrollTop();
 
 					body.append(clone);
-					U.Common.copyCss(element.get(0), clone.get(0));
+					U.Dom.copyCss(element.get(0), clone.get(0));
 
 					if (item.cloneElementClassName) {
 						clone.addClass(item.cloneElementClassName);
@@ -146,7 +146,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
 
@@ -154,7 +154,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		const rect = U.Common.getElementRect(element.get(0));
+		const rect = U.Dom.getElementRect(element.get(0));
 		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };
@@ -286,7 +286,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 	};
 
 	const onVideoClick = (e: any, src: string) => {
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 
 		S.Popup.open('preview', { 
 			preventMenuClose: true,

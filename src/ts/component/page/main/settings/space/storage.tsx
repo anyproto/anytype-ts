@@ -128,7 +128,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const sc = U.Common.getScrollContainer(isPopup);
+		const sc = U.Dom.getScrollContainer(isPopup);
 		const height = sc.height() - J.Size.header - 36;
 
 		node.css({ height });

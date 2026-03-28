@@ -100,7 +100,7 @@ const SidebarProgress: FC = observer(() => {
 	const dy = useRef(0);
 
 	const clampCoords = useCallback((x: number, bottom: number): { x: number; bottom: number } => {
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 		const node = nodeRef.current;
 		const w = node ? node.offsetWidth : 0;
 		const h = node ? node.offsetHeight : 0;
@@ -136,7 +136,7 @@ const SidebarProgress: FC = observer(() => {
 		};
 
 		const node = nodeRef.current;
-		const { wh } = U.Common.getWindowDimensions();
+		const { wh } = U.Dom.getWindowDimensions();
 		const h = node ? node.offsetHeight : 0;
 		const x = e.pageX - dx.current;
 		const bottom = wh - (e.pageY - dy.current) - h;

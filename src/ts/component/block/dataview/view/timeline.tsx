@@ -45,11 +45,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		U.Common.getScrollContainer(isPopup).on('scroll.timeline', e => onScrollVertical(e));
+		U.Dom.getScrollContainer(isPopup).on('scroll.timeline', e => onScrollVertical(e));
 	};
 
 	const unbind = () => {
-		U.Common.getScrollContainer(isPopup).off('scroll.timeline');
+		U.Dom.getScrollContainer(isPopup).off('scroll.timeline');
 	};
 
 	const getData = () => {
@@ -388,8 +388,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const body = $(bodyRef.current);
 		const list = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const pageContainer = U.Common.getPageContainer(isPopup);
+		const scrollContainer = U.Dom.getScrollContainer(isPopup);
+		const pageContainer = U.Dom.getPageContainer(isPopup);
 		const top = body.offset().top - J.Size.header - 14 - scrollContainer.scrollTop();
 		const left = node.offset().left;
 
@@ -668,7 +668,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 								threshold={10}
 							>
 								{({ onRowsRendered }) => (
-									<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+									<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}>
 										{({ height, isScrolling, registerChild, scrollTop }) => (
 											<AutoSizer>
 												{({ width }) => (

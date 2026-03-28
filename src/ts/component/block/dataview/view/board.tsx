@@ -45,7 +45,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 	useEffect(() => {
 		resize();
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -61,7 +61,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		unbind();
 
 		scroll.on('scroll', () => onScrollHorizontal());
-		U.Common.getPageContainer(isPopup).on('scroll.board', onScrollView);
+		U.Dom.getPageContainer(isPopup).on('scroll.board', onScrollView);
 
 		if (!isInline) {
 			stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
@@ -73,7 +73,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 		scroll.off('scroll');
 		stickyScrollRef.current?.unbind();
-		U.Common.getPageContainer(isPopup).off('scroll.board');
+		U.Dom.getPageContainer(isPopup).off('scroll.board');
 	};
 
 	const onScrollHorizontal = () => {
@@ -555,7 +555,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		const node = $(nodeRef.current);
 		const scroll = $(scrollRef.current);
 		const view = node.find('.viewContent');
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = J.Size.dataview.board;
 		const groups = getGroups(false);

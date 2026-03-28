@@ -163,7 +163,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const resize = () => {
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		const sw = sidebar.getDummyWidth();
 		const pw = ww - sw;
 		const breakpoint = {

@@ -68,12 +68,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			subscribe(discussionId);
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const ns = 'commentSection';
 
 		container.on(`scroll.${ns}`, () => {
 			const st = Math.ceil(container.scrollTop());
-			const max = U.Common.getMaxScrollHeight(isPopup);
+			const max = U.Dom.getMaxScrollHeight(isPopup);
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
 
@@ -189,7 +189,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			if (!container.length) {
 				return;
 			};
@@ -428,7 +428,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		resize();
 
 		window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			if (container.length) {
 				isBottom.current = true;
 
@@ -604,7 +604,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		resize();
 
 		window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			if (container.length) {
 				const el = container.get(0);
 				el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });

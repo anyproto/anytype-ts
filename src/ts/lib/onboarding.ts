@@ -178,7 +178,7 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = U.Common.getScrollContainer(isPopup);
+				const container = U.Dom.getScrollContainer(isPopup);
 				const height = container.height();
 				const width = container.width();
 				const scrollTop = $(window).scrollTop();

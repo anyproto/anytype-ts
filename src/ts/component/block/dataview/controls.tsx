@@ -369,7 +369,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		filterRef.current.setActive(true);
@@ -518,7 +518,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	useEffect(() => {
 
 		return () => {
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Dom.getPageFlexContainer(isPopup);
 			const win = $(window);
 
 			container.off('mousedown.filter');

@@ -1356,7 +1356,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			obj.css({ width: 'auto', marginLeft: 0 });
 
 			if (parent.isPage() || parent.isLayoutDiv()) {
-				const container = U.Common.getPageContainer(isPopup);
+				const container = U.Dom.getPageContainer(isPopup);
 
 				maxWidth = container.width() - PADDING;
 				wrapperWidth = getWrapperWidth() + J.Size.blockMenu;

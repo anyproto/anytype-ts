@@ -76,7 +76,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		rebind();
 		resizePage(() => {
 			if (scrollTopRef.current) {
-				U.Common.getScrollContainer(isPopup).scrollTop(scrollTopRef.current);
+				U.Dom.getScrollContainer(isPopup).scrollTop(scrollTopRef.current);
 				scrollTopRef.current = 0;
 			};
 		});
@@ -222,8 +222,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const unbind = () => {
-		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
-		const container = U.Common.getScrollContainer(isPopup);
+		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
+		const container = U.Dom.getScrollContainer(isPopup);
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 		const selection = S.Common.getRef('selectionProvider');
 
@@ -236,8 +236,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const rebind = () => {
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
-		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
-		const container = U.Common.getScrollContainer(isPopup);
+		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
+		const container = U.Dom.getScrollContainer(isPopup);
 		const readonly = isReadonly();
 
 		unbind();
@@ -372,7 +372,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				continue;
 			};
 
-			const rect = U.Common.getElementRect(obj.get(0));
+			const rect = U.Dom.getElementRect(obj.get(0));
 
 			rect.y += st;
 
@@ -410,7 +410,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = U.Common.getElementRect(container.current.get(0));
+			rectContainer = U.Dom.getElementRect(container.current.get(0));
 
 			if (
 				(pageX >= x) && 
@@ -1219,7 +1219,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPageUpDown = (e: any, pressed: string) => {
 		e.preventDefault();
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const containerHeight = container.height();
 		const scrollTop = container.scrollTop();
 		const dir = pressed.match(/up/i) ? -1 : 1;
@@ -1242,7 +1242,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					continue;
 				};
 
-				const rect = U.Common.getElementRect(node.get(0));
+				const rect = U.Dom.getElementRect(node.get(0));
 				const blockY = rect.top + rect.height / 2;
 				const distance = Math.abs(blockY - targetY);
 
@@ -1313,13 +1313,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const element = $(`#block-${U.Common.esc(block.id)}`);
 		const value = element.find('#value');
 
-		let sRect = U.Common.getSelectionRect();
+		let sRect = U.Dom.getSelectionRect();
 		let vRect: any = {};
 		if (value && value.length) {
-			vRect = U.Common.getElementRect(value.get(0));
+			vRect = U.Dom.getElementRect(value.get(0));
 		} else 
 		if (element && element.length) {
-			vRect = U.Common.getElementRect(element.get(0));
+			vRect = U.Dom.getElementRect(element.get(0));
 		};
 
 		if (!sRect) {
@@ -1363,7 +1363,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const mark = Mark.getInRange(marks, type, range);
 		const win = $(window);
 		const menuParam: any = {
@@ -1897,7 +1897,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { rootId } = props;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const win = $(window);
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 
 		if (!block) {
 			return;
@@ -1911,7 +1911,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			subIds: J.Menu.add,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
@@ -1934,7 +1934,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onScroll = () => {
 		const { rootId, isPopup } = props;
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
 		Storage.setScroll('editor', rootId, top, isPopup);
@@ -2175,11 +2175,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			component: 'select',
 			element: `#block-${U.Common.esc(focused)}`,
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			onOpen: () => {
@@ -2598,7 +2598,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const node = $(nodeRef.current);
 			const blocks = node.find('.blocks');
 			const last = node.find('#blockLast');
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const scrollContainer = U.Dom.getScrollContainer(isPopup);
 
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
@@ -2665,7 +2665,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const getWidth = (weight: number) => {
 		weight = Number(weight) || 0;
 
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 		const mw = container.width() - 96;
 		const width = Math.min(mw, J.Size.editor + (mw - J.Size.editor) * weight);
 

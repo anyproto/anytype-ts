@@ -77,7 +77,7 @@ class Sidebar {
 	};
 
 	getData (panel: I.SidebarPanel, isPopup?: boolean): SidebarData {
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
 		const param = this.getSizeParam(panel);
 
@@ -90,7 +90,7 @@ class Sidebar {
 	 */
 	setData (panel: I.SidebarPanel, isPopup: boolean, v: Partial<SidebarData>, save: boolean): void {
 		const storageKey = J.Constant.storageKey.sidebarData;
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
 
 		this.panelData[key] = Object.assign(this.panelData[key] || {}, v);
@@ -596,8 +596,8 @@ class Sidebar {
 			return;
 		};
 
-		const pageFlex = U.Common.getPageFlexContainer(isPopup);
-		const page = U.Common.getPageContainer(isPopup);
+		const pageFlex = U.Dom.getPageFlexContainer(isPopup);
+		const page = U.Dom.getPageContainer(isPopup);
 		const header = page.find('#header');
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
@@ -652,7 +652,7 @@ class Sidebar {
 		widthLeft = Number(widthLeft) || 0;
 		widthRight = Number(widthRight) || 0;
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const pageWidth = pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
@@ -660,7 +660,7 @@ class Sidebar {
 		const offset = singleTab && !alwaysShowTabs ? 0 : 8;
 
 		if (!isPopup) {
-			pageCss.height = U.Common.getAppContainerHeight() - offset;
+			pageCss.height = U.Dom.getAppContainerHeight() - offset;
 		};
 
 		header.css({ width: '' }).toggleClass('sidebarAnimation', animate);
@@ -775,7 +775,7 @@ class Sidebar {
 	};
 
 	rightPanelGetNode (isPopup: boolean): JQuery<HTMLElement> | null {
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 		const ref = S.Common.getRef(`sidebarRight${ns}`);
 
 		return $(ref?.getNode());

@@ -58,7 +58,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 		if (spaceview.isChat || spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
-				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				element: U.Dom.getScrollContainer(isPopup).find(`.header ${element}`),
 				className: 'fixed',
 				classNameWrap: 'fromHeader',
 				horizontal: I.MenuDirection.Right,

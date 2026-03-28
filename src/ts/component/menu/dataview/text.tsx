@@ -103,7 +103,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		const obj = $(`#${getId()}`);
 		const input = obj.find('#input');
-		const { wh } = U.Common.getWindowDimensions();
+		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
 		const cell = $(`#${U.Common.esc(cellId)}`);
 		const lh = parseInt(cell.find('.name').css('line-height'), 10) || 20;

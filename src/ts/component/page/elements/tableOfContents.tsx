@@ -63,7 +63,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const onScroll = () => {
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const top = container.scrollTop();
 			const co = containerOffset.current.top;
 			const currentList = listRef.current;
@@ -84,7 +84,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				};
 			};
 
-			if ((top == U.Common.getMaxScrollHeight(isPopup)) && currentList.length) {
+			if ((top == U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
 				blockId = currentList[currentList.length - 1].id;
 			};
 
@@ -129,7 +129,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const width = container.width();
 
 			containerOffset.current = container.offset();

@@ -133,7 +133,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						playlist={getPlaylist()}
 						onPlay={onPlay}
 						onPause={onPause}
-						getScrollContainer={() => U.Common.getScrollContainer(isPopup)}
+						getScrollContainer={() => U.Dom.getScrollContainer(isPopup)}
 					/>
 				);
 				break;

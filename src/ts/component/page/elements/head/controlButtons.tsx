@@ -200,7 +200,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	};
 
 	const resize = () => {
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		$(nodeRef.current).toggleClass('small', ww <= 900);
 	};
 

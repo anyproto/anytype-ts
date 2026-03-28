@@ -56,7 +56,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 	const rebind = () => {
 		unbind();
-		U.Common.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => onScroll(e));
+		U.Dom.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => onScroll(e));
 	};
 
 	const unbind = () => {
@@ -72,7 +72,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		U.Common.getScrollContainer(isPopup).off('scroll.selection');
+		U.Dom.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
 	const scrollToElement = (id: string, dir: number) => {
@@ -86,7 +86,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const no = node.offset().top;
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
@@ -116,7 +116,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const win = $(window);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const rect = $(rectRef.current);
 
 		rect.toggleClass('fromPopup', isPopup);
@@ -193,7 +193,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 		
-		top.current = U.Common.getScrollContainer(isPopup).scrollTop();
+		top.current = U.Dom.getScrollContainer(isPopup).scrollTop();
 		checkNodes(e);
 		drawRect(e.pageX, e.pageY);
 		hasMoved.current = true;
@@ -207,7 +207,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const st = container.scrollTop();
 		const d = st > top.current ? 1 : -1;
 		const cx = keyboard.mouse.page.x;
@@ -348,7 +348,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const offset = node.obj.offset();
-		const rect = U.Common.getElementRect(node.obj.get(0));
+		const rect = U.Dom.getElementRect(node.obj.get(0));
 		const { x, y } = recalcCoords(offset.left, offset.top);
 
 		cache = { x, y, width: rect.width, height: rect.height };
@@ -599,7 +599,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const getPageContainer = () => {
-		return U.Common.getPageFlexContainer(keyboard.isPopup());
+		return U.Dom.getPageFlexContainer(keyboard.isPopup());
 	};
 
 	const renderSelection = () => {
@@ -644,7 +644,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const st = U.Common.getScrollContainer(isPopup).scrollTop();
+		const st = U.Dom.getScrollContainer(isPopup).scrollTop();
 		const { left, top } = containerOffset.current;
 
 		x -= left;

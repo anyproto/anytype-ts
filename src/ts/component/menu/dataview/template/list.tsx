@@ -163,7 +163,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const list = obj.find('.items');
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));

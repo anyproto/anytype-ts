@@ -46,7 +46,7 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = U.Common.getPageContainer(isPopup);
+			const container = U.Dom.getPageContainer(isPopup);
 			const cw = container.width();
 			const ch = container.height();
 			const mw = cw - PADDING * 2;

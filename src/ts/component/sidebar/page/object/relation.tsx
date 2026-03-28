@@ -143,7 +143,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		const list = obj.find('> .list');
 		const isOpen = list.hasClass('isOpen');
 
-		U.Common.toggle(list, 200, isOpen);
+		U.Dom.toggle(list, 200, isOpen);
 		title.toggleClass('isOpen', !isOpen);
 		Storage.setToggle(page, id, !isOpen);
 

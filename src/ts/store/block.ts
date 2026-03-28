@@ -947,7 +947,7 @@ class BlockStore {
 		Storage.setToggle(rootId, blockId, v);
 		this.incrementToggleVersion();
 
-		U.Common.triggerResizeEditor(keyboard.isPopup());
+		U.Dom.triggerResizeEditor(keyboard.isPopup());
 	};
 
 	/**

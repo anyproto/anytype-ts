@@ -92,7 +92,7 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const resize = () => {
 		const win = $(window);
-		const obj = U.Common.getPageFlexContainer(isPopup);
+		const obj = U.Dom.getPageFlexContainer(isPopup);
 		const node = $(nodeRef.current);
 		const oh = obj.height();
 		const wh = isPopup ? oh : win.height();

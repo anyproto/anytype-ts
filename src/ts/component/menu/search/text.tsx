@@ -38,7 +38,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
 
 	const getRootId = () => keyboard.getRootId(isPopup);
-	const getContainer = () => U.Common.getScrollContainer(isPopup);
+	const getContainer = () => U.Dom.getScrollContainer(isPopup);
 	const getSearchTag = () => Mark.getTag(I.MarkType.Search);
 
 	const getMatchElements = (): NodeListOf<Element> | null => {

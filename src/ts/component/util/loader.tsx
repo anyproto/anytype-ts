@@ -45,7 +45,7 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		$(nodeRef.current).css({ height: container.height() });
 	};
 

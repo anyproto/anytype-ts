@@ -144,14 +144,14 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		unbind();
 
@@ -391,7 +391,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -1667,7 +1667,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const blockNode = getBlockNode();
 		const wrapper = getEditorWrapper();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const hoverArea = blockNode.find('.hoverArea');
 
 		if (hoverArea.length && container.length) {

@@ -25,7 +25,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const isClosingRef = useRef(false);
 
 	const unbind = () => {
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
@@ -33,8 +33,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = U.Common.getEventNamespace(isPopup);
-		const container = U.Common.getScrollContainer(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
@@ -92,7 +92,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const restore = () => {
 					cnt++;
 
-					const container = U.Common.getScrollContainer(isPopup);
+					const container = U.Dom.getScrollContainer(isPopup);
 					const el = container.get(0);
 
 					if (!el) {
@@ -130,7 +130,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
 		Storage.setScroll('set', rootId, top, isPopup);
@@ -147,7 +147,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const ref = blockRefs.current[J.Constant.blockId.dataview];
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
@@ -212,7 +212,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const container = U.Common.getPageContainer(isPopup);
+			const container = U.Dom.getPageContainer(isPopup);
 			const header = container.find('#header');
 			const cover = container.find('.block.blockCover');
 			const hh = isPopup ? header.height() : J.Size.header;

@@ -56,7 +56,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			selection?.renderSelection();
 		};
 
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 	}, [ relations.length, view?.id ]);
 
 	if (!view) {
@@ -65,7 +65,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const rebind = () => {
 		const scroll = $(scrollRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
@@ -79,7 +79,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const unbind = () => {
 		const scroll = $(scrollRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
 		container.off(`scroll.${block.id}`);
@@ -346,7 +346,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const scroll = $(scrollRef.current);
 		const wrap = $(scrollWrapRef.current);
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const cw = container.width();
 		const ch = container.height();
@@ -462,7 +462,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (

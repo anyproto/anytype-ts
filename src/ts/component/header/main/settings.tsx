@@ -99,7 +99,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const onTransferOwnership = () => {
 		S.Menu.open('changeOwner', {
 			recalcRect: () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			classNameWrap: 'fixed',

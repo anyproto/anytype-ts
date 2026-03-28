@@ -188,7 +188,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
+		const element = U.Dom.getScrollContainer(isPopup).find(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,

@@ -54,7 +54,7 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const { ww } = U.Common.getWindowDimensions();
+			const { ww } = U.Dom.getWindowDimensions();
 			const node = $(`<div class="tooltip anim"><div class="txt">${text}</div></div>`);
 
 			if (param.className) {

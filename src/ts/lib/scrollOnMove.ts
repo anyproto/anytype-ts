@@ -36,7 +36,7 @@ class ScrollOnMove {
 			};
 
 			const el = container.get(0);
-			const rect = U.Common.getElementRect(el);
+			const rect = U.Dom.getElementRect(el);
 
 			this.viewportWidth = rect.width;
 			this.viewportHeight = rect.height;

@@ -63,7 +63,7 @@ const Label: FC<Props> = ({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 	}, []);
 

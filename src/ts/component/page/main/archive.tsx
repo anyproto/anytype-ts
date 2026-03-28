@@ -127,7 +127,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		filterRef.current.setActive(true);
 		filterRef.current.focus();
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
@@ -195,7 +195,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		return () => {
 			window.clearTimeout(filterTimeout.current);
-			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
+			U.Dom.getPageFlexContainer(isPopup).off('mousedown.filter');
 			$(window).off('keydown.filter');
 		};
 	}, []);

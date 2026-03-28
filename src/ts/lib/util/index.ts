@@ -1,6 +1,7 @@
 import Common from './common';
 import Data from './data';
 import Date from './date';
+import Dom from './dom';
 import Embed from './embed';
 import File from './file';
 import Graph from './graph';
@@ -19,6 +20,7 @@ export {
 	Common,
 	Data,
 	Date,
+	Dom,
 	Embed,
 	File,
 	Graph,

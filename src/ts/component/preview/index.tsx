@@ -110,7 +110,7 @@ const PreviewIndex = observer(forwardRef(() => {
 	const position = () => {
 		const node = $(nodeRef.current);
 		const poly = $(polygonRef.current);
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = node.outerWidth();
 		const oh = node.outerHeight();

@@ -40,7 +40,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const timeoutRef = useRef<number>(0);
-	const ns = `sidebarPreview${U.Common.getEventNamespace(isPopup)}`;
+	const ns = `sidebarPreview${U.Dom.getEventNamespace(isPopup)}`;
 
 	const show = (v: boolean) => {
 		resize();
@@ -56,7 +56,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	};
 
 	const getNodeSize = (): { width: number; height: number } => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const sidebarLeft = sidebar.leftPanelGetNode();
 		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 

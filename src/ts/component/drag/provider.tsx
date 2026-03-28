@@ -281,7 +281,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(nodeRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -495,7 +495,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const body = $('body');
 

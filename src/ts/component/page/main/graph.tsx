@@ -61,8 +61,8 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const resize = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-		const obj = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const obj = U.Dom.getPageContainer(isPopup);
 		const node = $(nodeRef.current);
 		const wrapper = obj.find('.wrapper');
 		const header = node.find('#header');
