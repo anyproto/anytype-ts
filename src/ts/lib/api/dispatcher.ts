@@ -960,7 +960,7 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
@@ -977,7 +977,7 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
@@ -1498,8 +1498,16 @@ class Dispatcher {
 	 * @param afterId - ID of the record after which to place the item (empty for start)
 	 * @param isAdding - Whether this is a new addition (skip if already exists)
 	 */
+	parseSubId (subId: string): [string, string] {
+		const idx = subId.indexOf('/');
+		if (idx === -1) {
+			return [ subId, '' ];
+		};
+		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
+	};
+
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
-		const [ sid, dep ] = subId.split('/');
+		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};

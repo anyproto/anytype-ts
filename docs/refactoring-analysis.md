@@ -264,10 +264,10 @@ Four different event handling patterns coexist:
 
 ## 9. Code Duplication
 
-- **`lib/api/dispatcher.ts:952,969`** — Identical `split('/')` destructuring pattern repeated
-- **`lib/util/embed.ts`** — URL parsing patterns repeated across multiple processor functions
-- **`lib/util/menu.ts:623-627,656-660`** — Repeated match filter logic
-- **`lib/storage.ts:121-128,143-150`** — Identical if-else pattern for space/account/default key in getter and setter
+- ~~**`lib/api/dispatcher.ts:952,969`** — Identical `split('/')` destructuring pattern repeated~~ ✅ Fixed (2026-03-28): extracted `parseSubId()` method (3 call sites unified)
+- **`lib/util/embed.ts`** — URL parsing patterns repeated across multiple processor functions — On inspection, each processor does fundamentally different URL transformations within a switch-case; not extractable without adding complexity
+- **`lib/util/menu.ts:623-627,656-660`** — Reported as repeated match filter logic — On inspection, these are two consecutive checks (aliases then name) within a single filter callback, not separate duplicated functions
+- **`lib/storage.ts:121-128,143-150`** — Reported as identical if-else pattern — On inspection, this is standard delegation (get/set/delete each route to different typed methods); not true duplication
 
 ---
 
