@@ -66,43 +66,33 @@ const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onPlaceholderToday = () => {
-		C.TemplateSetPlaceholders(rootId, [{ relationKey, values: [{ type: I.PlaceholderType.Today }] }]);
+	const onPlaceholder = (type: I.PlaceholderType) => {
+		C.TemplateSetPlaceholders(rootId, [
+			{ relationKey, values: [ { type } ] },
+		]);
 		close();
 	};
 
 	return (
-		<>
-			<CalendarSelect
-				ref={calendarRef}
-				value={value}
-				onChange={handleChange}
-				isReadonly={false}
-				canClear={canClear}
-				position={position}
-				menuClassNameWrap={classNameWrap}
-				isEmpty={isEmpty}
-				enableKeyboard={!noKeyboard}
-				enableHoverState={true}
-				showFooter={canEdit}
-				getDotMap={getDotMap}
-				onDayClick={onDayClick}
-				onDayContextMenu={onDayContextMenu}
-			/>
-
-			{isTemplate && canEdit ? (
-				<div className="dynamicDates">
-					<div className="sectionName">{translate('menuCalendarDynamicDates')}</div>
-					<div
-						className={[ 'item', (hasPlaceholder ? 'active' : '') ].join(' ')}
-						onClick={onPlaceholderToday}
-					>
-						<Icon name="common/calendar" />
-						<div className="name">{translate('placeholderToday')}</div>
-					</div>
-				</div>
-			) : ''}
-		</>
+		<CalendarSelect
+			ref={calendarRef}
+			value={value}
+			onChange={handleChange}
+			isReadonly={false}
+			canClear={canClear}
+			position={position}
+			menuClassNameWrap={classNameWrap}
+			isEmpty={isEmpty}
+			enableKeyboard={!noKeyboard}
+			enableHoverState={true}
+			showFooter={canEdit}
+			getDotMap={getDotMap}
+			onDayClick={onDayClick}
+			onDayContextMenu={onDayContextMenu}
+			showPlaceholders={isTemplate}
+			hasPlaceholder={hasPlaceholder}
+			onPlaceholder={onPlaceholder}
+		/>
 	);
 
 }));
