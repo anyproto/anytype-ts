@@ -9,7 +9,7 @@ export interface MenuTab {
 	component: string;
 };
 
-export interface MenuParam {
+export interface MenuParam<D = any> {
 	component?: string;
 	title?: string;
 	menuKey?: string;
@@ -26,7 +26,7 @@ export interface MenuParam {
 	width?: number;
 	height?: number;
 	initialTab?: string;
-	data?: any;
+	data?: D;
 	isSub?: boolean;
 	parentId?: string;
 	subIds?: string[];

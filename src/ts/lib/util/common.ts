@@ -1152,8 +1152,6 @@ class UtilCommon {
 		Storage.set('whatsNew', false);
 	};
 
-
-
 	/**
 	 * Checks if the current app version is different from the provided version.
 	 * If different, sets a flag in storage to show the "What's New" popup.
