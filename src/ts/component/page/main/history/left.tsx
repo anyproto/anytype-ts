@@ -59,13 +59,16 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onScroll = () => {
-		topRef.current = $(nodeRef.current).scrollTop();
-		U.Dom.getScrollContainer(isPopup).trigger('scroll');
+		topRef.current = nodeRef.current?.scrollTop ?? 0;
+		U.Dom.getScrollContainer(isPopup)?.dispatchEvent(new Event('scroll'));
 	};
 
 	useEffect(() => {
 		S.Block.updateNumbers(rootId);
-		$(nodeRef.current).scrollTop(topRef.current);
+
+		if (nodeRef.current) {
+			nodeRef.current.scrollTop = topRef.current;
+		};
 	});
 
 	useImperativeHandle(ref, () => ({

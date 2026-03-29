@@ -281,7 +281,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(nodeRef.current);
-		const container = U.Dom.getScrollContainer(isPopup);
+		const containerEl = U.Dom.getScrollContainer(isPopup);
+		const container = containerEl ? $(containerEl) : $();
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -306,7 +307,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
-		
+
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 		Preview.hideAll();
@@ -495,7 +496,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
-		const container = U.Dom.getScrollContainer(isPopup);
+		const endContainerEl = U.Dom.getScrollContainer(isPopup);
+		const endContainer = endContainerEl ? $(endContainerEl) : $();
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const body = $('body');
 
@@ -510,7 +512,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		node.removeClass('isDragging');
 		body.removeClass('isDragging');
 
-		container.off('scroll.drag');
+		endContainer.off('scroll.drag');
 		sidebar.off('scroll.drag');
 
 		$('.isDragging').removeClass('isDragging');

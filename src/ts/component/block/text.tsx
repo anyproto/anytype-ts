@@ -1411,11 +1411,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				window.setTimeout(() => {
 					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
+					const onMouseDown = () => {
+						pageContainer?.removeEventListener('mousedown', onMouseDown);
+						S.Menu.close('blockContext');
+					};
 
-					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
-						pageContainer.off('mousedown.context');
-						S.Menu.close('blockContext'); 
-					});
+					pageContainer?.addEventListener('mousedown', onMouseDown);
 				}, S.Menu.getTimeout());
 			});
 		});

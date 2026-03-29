@@ -106,7 +106,7 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		const node = $(nodeRef.current);
 		const wrap = node.find('.wrap');
 		const container = U.Dom.getPageContainer(isPopup);
-		const mw = container.width() - PADDING * 2;
+		const mw = (container?.clientWidth ?? 0) - PADDING * 2;
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 

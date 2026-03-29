@@ -64,7 +64,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
 			const container = U.Dom.getScrollContainer(isPopup);
-			const top = container.scrollTop();
+			const top = container?.scrollTop || 0;
 			const co = containerOffset.current.top;
 			const currentList = listRef.current;
 
@@ -129,10 +129,15 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				return;
 			};
 
-			const container = U.Dom.getScrollContainer(isPopup);
-			const width = container.width();
+			const containerEl = U.Dom.getScrollContainer(isPopup);
+			if (!containerEl) {
+				return;
+			};
 
-			containerOffset.current = container.offset();
+			const width = containerEl.clientWidth;
+			const containerRect = containerEl.getBoundingClientRect();
+
+			containerOffset.current = { top: containerRect.top, left: containerRect.left };
 
 			node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
 			onScroll();

@@ -134,12 +134,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 		setActive(e.active);
-		U.Dom.getScrollContainer(isPopup).addClass('isDraggingProperty');
+		U.Dom.getScrollContainer(isPopup)?.classList.add('isDraggingProperty');
 	};
 
 	const onSortCancel = () => {
 		keyboard.disableSelection(false);
-		U.Dom.getScrollContainer(isPopup).removeClass('isDraggingProperty');
+		U.Dom.getScrollContainer(isPopup)?.classList.remove('isDraggingProperty');
 		setActive(null);
 	};
 

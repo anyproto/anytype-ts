@@ -146,8 +146,8 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container.scrollTop();
+		const containerEl = U.Dom.getScrollContainer(isPopup);
+		const top = containerEl?.scrollTop || 0;
 		const element = $(param.element);
 
 		if (!element.length) {
@@ -158,13 +158,16 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };
-		if (container.length) {
-			containerOffset = container.offset();
+		if (containerEl) {
+			const containerRect = containerEl.getBoundingClientRect();
+			containerOffset = { top: containerRect.top, left: containerRect.left };
 		};
 
 		if (rect.y < 0) {
 			rect.y -= rect.height + hh + containerOffset.top;
-			container.scrollTop(top + rect.y);
+			if (containerEl) {
+				containerEl.scrollTop = top + rect.y;
+			};
 		};
 	};
 

@@ -63,17 +63,20 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const resize = () => {
 		const container = U.Dom.getScrollContainer(isPopup);
 		const obj = U.Dom.getPageContainer(isPopup);
-		const node = $(nodeRef.current);
-		const wrapper = obj.find('.wrapper');
-		const header = node.find('#header');
-		const height = container.height() - header.height();
+		const node = nodeRef.current;
+		const wrapper = obj?.querySelector('.wrapper') as HTMLElement;
+		const header = node?.querySelector('#header') as HTMLElement;
+		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
-		wrapper.css({ height });
-		
+		if (wrapper) {
+			wrapper.style.height = `${height}px`;
+		};
+
 		if (isPopup) {
-			const element = $('#popupPage .content');
-			if (element.length) {
-				element.css({ minHeight: 'unset', height: '100%' });
+			const element = document.querySelector('#popupPage .content') as HTMLElement;
+			if (element) {
+				element.style.minHeight = 'unset';
+				element.style.height = '100%';
 			};
 		};
 

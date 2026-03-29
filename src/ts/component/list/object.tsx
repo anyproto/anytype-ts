@@ -397,7 +397,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		);
 	} else
 	if (useInfiniteScroll) {
-		const scrollContainer = U.Dom.getScrollContainer(isPopup).get(0);
+		const scrollContainer = U.Dom.getScrollContainer(isPopup);
 
 		body = (
 			<InfiniteLoader

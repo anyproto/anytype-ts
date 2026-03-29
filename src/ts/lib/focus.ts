@@ -195,15 +195,20 @@ class Focus {
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
-		const ch = container.height();
-		const st = container.scrollTop();
+		if (!container) {
+			return;
+		};
+
+		const ch = container.clientHeight;
+		const st = container.scrollTop;
 		const { header } = J.Size;
-		const y = rect.top + st - container.offset().top;
+		const containerRect = container.getBoundingClientRect();
+		const y = rect.top + st - containerRect.top;
 		const top = st + header;
 		const bottom = st + ch;
 
 		if ((y < top) || (y > bottom)) {
-			container.scrollTop(Math.max(0, y - ch / 2));
+			container.scrollTop = Math.max(0, y - ch / 2);
 		};
 	};
 

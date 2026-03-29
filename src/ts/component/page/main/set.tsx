@@ -26,10 +26,16 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 	const unbind = () => {
 		const ns = U.Dom.getEventNamespace(isPopup);
-		const events = [ 'keydown', 'scroll' ];
+		const container = U.Dom.getScrollContainer(isPopup);
 
-		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+		$(window).off(`keydown.set${ns}`);
+
+		if (scrollHandler.current && container) {
+			container.removeEventListener('scroll', scrollHandler.current);
+		};
 	};
+
+	const scrollHandler = useRef<(() => void) | null>(null);
 
 	const rebind = () => {
 		const win = $(window);
@@ -39,7 +45,9 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		unbind();
 
 		win.on(`keydown.set${ns}`, e => onKeyDown(e));
-		container.on(`scroll.set${ns}`, () => onScroll());
+
+		scrollHandler.current = () => onScroll();
+		container?.addEventListener('scroll', scrollHandler.current);
 	};
 
 	const checkDeleted = (): boolean => {
@@ -93,14 +101,13 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 					cnt++;
 
 					const container = U.Dom.getScrollContainer(isPopup);
-					const el = container.get(0);
 
-					if (!el) {
+					if (!container) {
 						return;
 					};
 
-					if ((el.scrollHeight > target) || (cnt >= 30)) {
-						container.scrollTop(target);
+					if ((container.scrollHeight > target) || (cnt >= 30)) {
+						container.scrollTop = target;
 					} else {
 						window.setTimeout(restore, 50);
 					};
@@ -131,7 +138,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container.scrollTop();
+		const top = container?.scrollTop ?? 0;
 
 		Storage.setScroll('set', rootId, top, isPopup);
 		S.Common.getRef('selectionProvider')?.renderSelection();
@@ -212,7 +219,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const container = U.Dom.getPageContainer(isPopup);
+			const container = $(U.Dom.getPageContainer(isPopup));
 			const header = container.find('#header');
 			const cover = container.find('.block.blockCover');
 			const hh = isPopup ? header.height() : J.Size.header;

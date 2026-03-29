@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
 import * as I from 'Interface';
 
@@ -10,11 +9,12 @@ const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const [ error, setError ] = useState('');
 
 	const resize = () => {
-		const win = $(window);
 		const obj = U.Dom.getPageFlexContainer(isPopup);
-		const wh = isPopup ? obj.height() : win.height();
+		const wh = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
-		$(nodeRef.current).css({ height: wh });
+		if (nodeRef.current) {
+			nodeRef.current.style.height = `${wh}px`;
+		};
 	};
 
 	useEffect(() => {

@@ -179,15 +179,16 @@ class Onboarding {
 
 			const recalcRect = () => {
 				const container = U.Dom.getScrollContainer(isPopup);
-				const height = container.height();
-				const width = container.width();
+				const height = container?.clientHeight ?? 0;
+				const width = container?.clientWidth ?? 0;
 				const scrollTop = $(window).scrollTop();
+				const bounds = container?.getBoundingClientRect();
 
 				let offset = { left: 0, top: 0 };
 				let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-	
-				if (container.length) {
-					offset = container.offset();
+
+				if (container && bounds) {
+					offset = { left: bounds.left, top: bounds.top };
 				};
 	
 				switch (param.containerVertical) {

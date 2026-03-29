@@ -32,7 +32,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
-			const width = entries[0]?.target.offsetWidth ?? 0;
+			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
 
 			raf(() => {
 				if (!nodeRef.current) {

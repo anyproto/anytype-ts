@@ -61,8 +61,8 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 
 		return {
-			width: container.width() - sidebarLeft.outerWidth() - sidebarRight.outerWidth(),
-			height: container.height(),
+			width: (container?.clientWidth ?? 0) - sidebarLeft.outerWidth() - sidebarRight.outerWidth(),
+			height: container?.clientHeight ?? 0,
 		};
 	};
 

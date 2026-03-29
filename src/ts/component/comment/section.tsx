@@ -69,10 +69,9 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
-		const ns = 'commentSection';
 
-		container.on(`scroll.${ns}`, () => {
-			const st = Math.ceil(container.scrollTop());
+		const scrollHandler = () => {
+			const st = Math.ceil(container?.scrollTop ?? 0);
 			const max = U.Dom.getMaxScrollHeight(isPopup);
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
@@ -80,10 +79,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			setHidden(true);
 			window.clearTimeout(scrollTimerRef.current);
 			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
-		});
+		};
+
+		container?.addEventListener('scroll', scrollHandler);
 
 		return () => {
-			container.off(`scroll.${ns}`);
+			container?.removeEventListener('scroll', scrollHandler);
 			window.clearTimeout(scrollTimerRef.current);
 
 			if (discussionId) {
@@ -190,16 +191,15 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			};
 
 			const container = U.Dom.getScrollContainer(isPopup);
-			if (!container.length) {
+			if (!container) {
 				return;
 			};
 
-			const containerEl = container.get(0);
 			const elRect = el.getBoundingClientRect();
-			const containerRect = containerEl.getBoundingClientRect();
-			const scrollTop = containerEl.scrollTop + (elRect.top - containerRect.top) - (containerRect.height / 3);
+			const containerRect = container.getBoundingClientRect();
+			const scrollTop = container.scrollTop + (elRect.top - containerRect.top) - (containerRect.height / 3);
 
-			containerEl.scrollTop = Math.max(0, scrollTop);
+			container.scrollTop = Math.max(0, scrollTop);
 
 			el.classList.add('isHighlighted');
 			window.setTimeout(() => el.classList.remove('isHighlighted'), HIGHLIGHT_DURATION);
@@ -429,11 +429,9 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 		window.setTimeout(() => {
 			const container = U.Dom.getScrollContainer(isPopup);
-			if (container.length) {
+			if (container) {
 				isBottom.current = true;
-
-				const el = container.get(0);
-				el.scrollTop = el.scrollHeight;
+				container.scrollTop = container.scrollHeight;
 			};
 		}, 0);
 	}, [ isPopup, resize ]);
@@ -605,9 +603,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 		window.setTimeout(() => {
 			const container = U.Dom.getScrollContainer(isPopup);
-			if (container.length) {
-				const el = container.get(0);
-				el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+			if (container) {
+				container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 			};
 
 			window.setTimeout(() => formRef.current?.focus(), 300);

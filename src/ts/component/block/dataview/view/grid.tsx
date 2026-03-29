@@ -63,6 +63,8 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		return null;
 	};
 
+	const scrollVerticalHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
 		const scroll = $(scrollRef.current);
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -70,7 +72,8 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		unbind();
 
 		scroll.on('scroll', () => onScrollHorizontal());
-		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => onScrollVertical()));
+		scrollVerticalHandlerRef.current = () => raf(() => onScrollVertical());
+		container?.addEventListener('scroll', scrollVerticalHandlerRef.current);
 
 		if (!isInline) {
 			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
@@ -82,7 +85,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
-		container.off(`scroll.${block.id}`);
+		if (scrollVerticalHandlerRef.current) {
+			container?.removeEventListener('scroll', scrollVerticalHandlerRef.current);
+			scrollVerticalHandlerRef.current = null;
+		};
 		stickyScrollbarRef.current?.unbind();
 	};
 
@@ -348,13 +354,13 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const wrap = $(scrollWrapRef.current);
 		const container = U.Dom.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
-		const cw = container.width();
-		const ch = container.height();
+		const cw = container?.clientWidth ?? 0;
+		const ch = container?.clientHeight ?? 0;
 
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = container.find('#editorWrapper');
+					const wrapper = $(container).find('#editorWrapper');
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = Math.max(0, (cw - ww) / 2);
@@ -462,7 +468,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup)}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (

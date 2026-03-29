@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import raf from 'raf';
 import * as I from 'Interface';
 
@@ -95,7 +94,7 @@ class UtilDom {
 	 * Clears the current selection in the document.
 	 */
 	clearSelection () {
-		$(document.activeElement).trigger('blur');
+		(document.activeElement as HTMLElement)?.blur();
 		const selection = window.getSelection();
 		if (selection) {
 			selection.removeAllRanges();
@@ -111,40 +110,20 @@ class UtilDom {
 		return isPopup ? 'isPopup' : 'isFull';
 	};
 
-	/**
-	 * Returns the scroll container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The scroll container.
-	 */
-	getScrollContainer (isPopup: boolean) {
-		return $(`#page.${this.getContainerClassName(isPopup)}`);
+	getScrollContainer (isPopup: boolean): HTMLElement | null {
+		return this.select(`#page.${this.getContainerClassName(isPopup)}`);
 	};
 
-	/**
-	 * Returns the scroll top position of the scroll container.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {number} The scroll top position.
-	 */
-	getScrollContainerTop (isPopup: boolean) {
-		return Math.ceil(this.getScrollContainer(isPopup).scrollTop());
+	getScrollContainerTop (isPopup: boolean): number {
+		return Math.ceil(this.getScrollContainer(isPopup)?.scrollTop ?? 0);
 	};
 
-	/**
-	 * Returns the page flex container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The page flex container.
-	 */
-	getPageFlexContainer (isPopup: boolean) {
-		return $(`#pageFlex.${this.getContainerClassName(isPopup)}`);
+	getPageFlexContainer (isPopup: boolean): HTMLElement | null {
+		return this.select(`#pageFlex.${this.getContainerClassName(isPopup)}`);
 	};
 
-	/**
-	 * Returns the page container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The page container.
-	 */
-	getPageContainer (isPopup: boolean) {
-		return $(`#page.${this.getContainerClassName(isPopup)}`);
+	getPageContainer (isPopup: boolean): HTMLElement | null {
+		return this.select(`#page.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**
@@ -186,37 +165,25 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		$(window).trigger(`resize.editor${this.getEventNamespace(isPopup)}`);
+		window.dispatchEvent(new CustomEvent(`resize.editor${this.getEventNamespace(isPopup)}`));
 	};
 
-	/**
-	 * Get width and height of window DOM node
-	 */
 	getWindowDimensions (): { ww: number; wh: number } {
-		const win = $(window);
-		return { ww: win.width(), wh: win.height() };
+		return { ww: window.innerWidth, wh: window.innerHeight };
 	};
 
-	/**
-	 * Returns the max scroll height of a container.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {number} The max scroll height.
-	 */
 	getMaxScrollHeight (isPopup: boolean): number {
-		const container = this.getScrollContainer(isPopup);
-		if (!container.length) {
+		const el = this.getScrollContainer(isPopup);
+		if (!el) {
 			return 0;
 		};
 
-		const el = container.get(0);
 		return el.scrollHeight - el.clientHeight;
 	};
 
-	/**
-	 * Returns the height of the app container.
-	 */
-	getAppContainerHeight () {
-		return $('#appContainer').height();
+	getAppContainerHeight (): number {
+		const el = this.get('appContainer');
+		return el ? this.contentHeight(el) : 0;
 	};
 
 	/**
@@ -225,15 +192,15 @@ class UtilDom {
 	 * @param {string} v - The value to append.
 	 */
 	addBodyClass (prefix: string, v: string) {
-		const obj = $('html');
+		const el = document.documentElement;
 		const reg = new RegExp(`^${prefix}`);
-		const c = String(obj.attr('class') || '').split(' ').filter(it => !it.match(reg));
+		const c = String(el.className || '').split(' ').filter(it => !it.match(reg));
 
 		if (v) {
 			c.push(U.String.toCamelCase(`${prefix}-${v}`));
 		};
 
-		obj.attr({ class: c.join(' ') });
+		el.className = c.join(' ');
 	};
 
 	/**
@@ -242,11 +209,16 @@ class UtilDom {
 	 * @param {string} css - The CSS string.
 	 */
 	injectCss (id: string, css: string) {
-		const head = $('head');
-		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
+		const existing = this.select(`style#${id}`, document.head);
+		if (existing) {
+			existing.remove();
+		};
 
-		head.find(`style#${id}`).remove();
-		head.append(element);
+		const style = document.createElement('style');
+		style.id = id;
+		style.type = 'text/css';
+		style.textContent = css;
+		document.head.appendChild(style);
 	};
 
 	/**
@@ -298,24 +270,39 @@ class UtilDom {
 	 * Pauses all audio and video elements on the page.
 	 */
 	pauseMedia () {
-		$('audio, video').each((i: number, item: any) => item.pause());
+		this.selectAll('audio, video').forEach((el: HTMLMediaElement) => el.pause());
 	};
 
-	/**
-	 * Attaches click handlers to links in a jQuery object to open URLs or paths.
-	 * @param {any} obj - The jQuery object containing links.
-	 */
 	renderLinks (obj: any) {
-		const links = obj.find('a');
+		if (!obj) {
+			return;
+		};
 
-		links.off('click auxclick');
-		links.on('auxclick', e => e.preventDefault());
-		links.click((e: any) => {
-			const el = $(e.currentTarget);
-			const href = el.attr('href') || el.attr('xlink:href');
+		const root = obj instanceof HTMLElement ? obj : (obj.get ? obj.get(0) : obj);
+		if (!root) {
+			return;
+		};
 
-			e.preventDefault();
-			el.hasClass('path') ? Action.openPath(href) : Action.openUrl(href);
+		const links = root.querySelectorAll('a');
+
+		links.forEach((link: HTMLElement) => {
+			link.removeEventListener('click', link['_rl_click']);
+			link.removeEventListener('auxclick', link['_rl_aux']);
+
+			const onClick = (e: MouseEvent) => {
+				const href = link.getAttribute('href') || link.getAttribute('xlink:href');
+
+				e.preventDefault();
+				link.classList.contains('path') ? Action.openPath(href) : Action.openUrl(href);
+			};
+
+			const onAux = (e: MouseEvent) => e.preventDefault();
+
+			link['_rl_click'] = onClick;
+			link['_rl_aux'] = onAux;
+
+			link.addEventListener('click', onClick);
+			link.addEventListener('auxclick', onAux);
 		});
 	};
 
@@ -327,26 +314,37 @@ class UtilDom {
 	 * @param {function} [callBack] - Optional callback after toggle.
 	 */
 	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
+		const el: HTMLElement = obj instanceof HTMLElement ? obj : (obj?.get ? obj.get(0) : obj);
+		if (!el) {
+			return;
+		};
+
 		if (isOpen) {
-			const height = obj.outerHeight();
+			const height = el.offsetHeight;
 
-			obj.css({ height, overflow: 'hidden' });
+			Object.assign(el.style, { height: `${height}px`, overflow: 'hidden' });
 
-			raf(() => obj.addClass('anim').css({ height: 0 }));
+			raf(() => {
+				this.addClass(el, 'anim');
+				el.style.height = '0px';
+			});
 			window.setTimeout(() => {
-				obj.removeClass('isOpen anim');
+				this.removeClass(el, 'isOpen', 'anim');
 				callBack?.();
 			}, delay);
 		} else {
-			obj.css({ height: 'auto' });
+			el.style.height = 'auto';
 
-			const height = obj.outerHeight();
+			const height = el.offsetHeight;
 
-			obj.css({ height: 0 }).addClass('anim');
+			el.style.height = '0px';
+			this.addClass(el, 'anim');
 
-			raf(() => obj.css({ height }));
+			raf(() => { el.style.height = `${height}px`; });
 			window.setTimeout(() => {
-				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
+				this.removeClass(el, 'anim');
+				this.addClass(el, 'isOpen');
+				Object.assign(el.style, { height: 'auto', overflow: 'visible' });
 				callBack?.();
 			}, delay);
 		};
@@ -411,36 +409,38 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	scrollToHeader (rootId: string, item: any, isPopup: boolean) {
-		const node = $(`.focusable.c${U.Common.esc(item.id)}`);
+		const node = this.select(`.focusable.c${U.Common.esc(item.id)}`);
 
-		if (!node.length) {
+		if (!node) {
 			return;
 		};
 
 		const container = this.getScrollContainer(isPopup);
 
+		if (!container) {
+			return;
+		};
+
 		if (item.block && item.block.isTextTitle()) {
-			container.scrollTop(0);
+			container.scrollTop = 0;
 			return;
 		};
 
 		const toggleClasses = [ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ]
 			.map(s => `.block.${U.Data.blockTextClass(s)}`).join(',');
-		const toggles = node.parents(toggleClasses);
+		const toggle = node.closest(toggleClasses);
 
-		if (toggles.length) {
-			const toggle = $(toggles.get(0));
-			if (!toggle.hasClass('isToggled')) {
-				S.Block.toggle(rootId, toggle.attr('data-id'), true);
-			};
+		if (toggle && !this.hasClass(toggle as HTMLElement, 'isToggled')) {
+			S.Block.toggle(rootId, (toggle as HTMLElement).dataset.id, true);
 		};
 
-		const no = node.offset().top;
-		const st = container.scrollTop();
+		const no = node.getBoundingClientRect().top;
+		const co = container.getBoundingClientRect().top;
+		const st = container.scrollTop;
 		const offset = 20;
-		const y = Math.max(J.Size.header + offset, no - container.offset().top + st - J.Size.header - offset);
+		const y = Math.max(J.Size.header + offset, no - co + st - J.Size.header - offset);
 
-		container.scrollTop(y);
+		container.scrollTop = y;
 	};
 
 };

@@ -686,7 +686,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Dom.getScrollContainer(isPopup).height() });
+		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0 });
 	};
 	
 	const onDragLeave = (e: any) => {
