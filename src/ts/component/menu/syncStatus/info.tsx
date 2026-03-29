@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 

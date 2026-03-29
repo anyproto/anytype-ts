@@ -6,6 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 

@@ -2,6 +2,7 @@ import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const STORAGE_KEY = 'updateBanner';
 

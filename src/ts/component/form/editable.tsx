@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import { getRange, setRange } from 'selection-ranges';
 import raf from 'raf';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props {
 	id?: string;

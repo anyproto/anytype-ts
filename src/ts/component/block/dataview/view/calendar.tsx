@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import Item from './calendar/item';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const PADDING = 16;
 

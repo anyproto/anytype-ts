@@ -2,6 +2,7 @@ import React, { forwardRef, memo } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ChatMessageReaction, I.ChatMessageComponent {
 	onSelect: (icon: string) => void;

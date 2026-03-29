@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	d: number;

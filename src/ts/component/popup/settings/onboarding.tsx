@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { Title, Label, Select, Button, Error } from 'Component';
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) => {
 

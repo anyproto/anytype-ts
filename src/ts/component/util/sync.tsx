@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props {
 	id?: string;

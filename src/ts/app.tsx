@@ -51,8 +51,6 @@ declare global {
 	}
 };
 
-window.$ = $;
-
 if (!isPackaged) {
 	window.Anytype = {
 		Lib: {

@@ -1,6 +1,7 @@
 import * as Docs from 'Docs';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 /**
  * Onboarding manages the user onboarding and tutorial flows.

@@ -7,6 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import WidgetListItem from './item';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;

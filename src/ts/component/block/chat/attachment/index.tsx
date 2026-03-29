@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props {
 	object: any;

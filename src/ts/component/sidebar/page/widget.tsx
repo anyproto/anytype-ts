@@ -6,6 +6,7 @@ import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
