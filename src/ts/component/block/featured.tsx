@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
@@ -255,10 +254,12 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, relationKey: string, text?: string) => {
-		const cell = $(`#${U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId))}`);
+		const cell = U.Dom.get(U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId)));
 		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
-			Preview.tooltipShow({ text, element: cell });
+			if (cell) {
+				Preview.tooltipShow({ text, element: cell });
+			};
 		};
 
 		if (text) {

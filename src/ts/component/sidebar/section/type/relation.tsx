@@ -200,7 +200,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const keys = U.Object.getTypeRelationKeys(object.id).concat('description');
 		const ids = list.data.map(it => it.id);
 
-		S.Menu.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', {
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',

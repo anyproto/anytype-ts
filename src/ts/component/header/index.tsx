@@ -173,7 +173,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const onTooltipShow = (e: any, text: string, caption?: string) => {
 		const t = Preview.tooltipCaption(text, caption);
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
+			Preview.tooltipShow({ text: t, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom });
 		};
 	};
 
