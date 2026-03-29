@@ -497,14 +497,14 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 					return;
 				};
 
-				const item = $(e.currentTarget);
-				const url = String(item.attr('href') || '');
+				const item = e.currentTarget as HTMLElement;
+				const url = String(item.getAttribute('href') || '');
 
 				if (!url) {
 					return;
 				};
 
-				const range = String(item.attr('data-range') || '').split('-');
+				const range = String(item.getAttribute('data-range') || '').split('-');
 				const { target, spaceId, isInside } = U.Common.getLinkParamFromUrl(url);
 
 				const cb = (object) => {

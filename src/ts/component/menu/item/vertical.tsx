@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -199,7 +198,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 		
 		onMouseEnter?.(e);

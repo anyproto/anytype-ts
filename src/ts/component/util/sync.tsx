@@ -49,7 +49,7 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 			id={id}
 			className={cn.join(' ')}
 			onClick={onClickHandler}
-			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom })}
+			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom })}
 			onMouseLeave={() => Preview.tooltipHide(false)}
 		>
 			<Icon name={iconInfo.name} color={iconInfo.color} className={iconCn.join(' ')} />

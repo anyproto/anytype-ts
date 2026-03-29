@@ -58,7 +58,7 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 			const sides = node.find('.sides');
 			const empty = node.find('#empty');
 			const hh = header.height();
-			const oh = container.height() - hh;
+			const oh = (container?.clientHeight ?? 0) - hh;
 
 			sides.css({ height: oh });
 			items.css({ height: oh });

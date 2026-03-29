@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -140,7 +139,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		Preview.tooltipShow({
 			text: translate('menuPublishInfoTooltip'),
 			className: 'big',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
 			delay: 0,

@@ -1,5 +1,4 @@
 import React, { FC, MouseEvent } from 'react';
-import $ from 'jquery';
 import { Label } from 'Component';
 
 interface Segment {
@@ -36,7 +35,7 @@ const ProgressBar: FC<Props> = ({
 		const t = Preview.tooltipCaption(name, caption);
 
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(e.currentTarget) });
+			Preview.tooltipShow({ text: t, element: e.currentTarget as HTMLElement });
 		};
 	};
 

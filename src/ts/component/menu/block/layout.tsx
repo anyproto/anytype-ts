@@ -145,12 +145,13 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onResize = (e: any) => {
-		const container = U.Dom.getPageFlexContainer(isPopup);
+		const containerEl = U.Dom.getPageFlexContainer(isPopup);
+		const container = containerEl ? $(containerEl) : $();
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');
 
-		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => { 
+		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => {
 			if (!$(e.target).parents(`#editorSize`).length) {
 				wrapper.removeClass('isResizing');
 				container.off('mousedown.editorSize');

@@ -4,6 +4,7 @@ import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;

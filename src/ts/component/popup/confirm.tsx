@@ -3,6 +3,7 @@ import { Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 

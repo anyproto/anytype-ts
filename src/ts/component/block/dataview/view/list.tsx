@@ -80,7 +80,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup)}>
 						{({ height, isScrolling, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (

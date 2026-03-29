@@ -598,11 +598,11 @@ class Sidebar {
 
 		const pageFlex = U.Dom.getPageFlexContainer(isPopup);
 		const page = U.Dom.getPageContainer(isPopup);
-		const header = page.find('#header');
-		const footer = page.find('#footer');
-		const loader = page.find('#loader');
+		const header = page?.querySelector('#header') as HTMLElement;
+		const footer = page?.querySelector('#footer') as HTMLElement;
+		const loader = page?.querySelector('#loader') as HTMLElement;
 
-		if (!pageFlex || !pageFlex.length) {
+		if (!pageFlex) {
 			return;
 		};
 
@@ -653,50 +653,63 @@ class Sidebar {
 		widthRight = Number(widthRight) || 0;
 
 		const container = U.Dom.getScrollContainer(isPopup);
-		const pageWidth = pageFlex.width() - widthLeft - widthRight;
+		const pageWidth = (pageFlex?.clientWidth ?? 0) - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
-		const pageCss: any = { width: pageWidth };
+		const pageCss: any = { width: `${pageWidth}px` };
 		const offset = singleTab && !alwaysShowTabs ? 0 : 8;
 
 		if (!isPopup) {
-			pageCss.height = U.Dom.getAppContainerHeight() - offset;
+			pageCss.height = `${U.Dom.getAppContainerHeight() - offset}px`;
 		};
 
-		header.css({ width: '' }).toggleClass('sidebarAnimation', animate);
-		header.css({ width: hw });
+		if (header) {
+			header.style.width = '';
+			U.Dom.toggleClass(header, 'sidebarAnimation', animate);
+			header.style.width = `${hw}px`;
+		};
 
-		footer.css({ width: '' }).toggleClass('sidebarAnimation', animate);
-		footer.css({ width: hw });
+		if (footer) {
+			footer.style.width = '';
+			U.Dom.toggleClass(footer, 'sidebarAnimation', animate);
+			footer.style.width = `${hw}px`;
+		};
 
-		page.toggleClass('sidebarAnimation', animate);
-		page.css(pageCss);
-		pageFlex.toggleClass('withSidebarRight', !!widthRight);
+		if (page) {
+			U.Dom.toggleClass(page, 'sidebarAnimation', animate);
+			Object.assign(page.style, pageCss);
+		};
 
-		loader.css({ width: pageWidth, right: 0 });
+		U.Dom.toggleClass(pageFlex, 'withSidebarRight', !!widthRight);
+
+		if (loader) {
+			Object.assign(loader.style, { width: `${pageWidth}px`, right: '0px' });
+		};
 
 		if (!isPopup) {
-			pageFlex.toggleClass('sidebarAnimation', animate);
+			U.Dom.toggleClass(pageFlex, 'sidebarAnimation', animate);
 
 			dummyLeft.toggleClass('sidebarAnimation', animate);
 			dummyLeft.css({ width: widthLeft });
 
 			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
-			
-			pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			pageFlex.toggleClass('withSidebarLeft', !isLeftClosed);
-			pageFlex.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
 
-			header.toggleClass('withSidebarTotalLeft', !!widthLeft);
-			header.toggleClass('withSidebarLeft', !isLeftClosed);
-			header.toggleClass('withSidebarSubLeft', !isSubLeftClosed);
+			U.Dom.toggleClass(pageFlex, 'withSidebarTotalLeft', !!widthLeft);
+			U.Dom.toggleClass(pageFlex, 'withSidebarLeft', !isLeftClosed);
+			U.Dom.toggleClass(pageFlex, 'withSidebarSubLeft', !isSubLeftClosed);
+
+			if (header) {
+				U.Dom.toggleClass(header, 'withSidebarTotalLeft', !!widthLeft);
+				U.Dom.toggleClass(header, 'withSidebarLeft', !isLeftClosed);
+				U.Dom.toggleClass(header, 'withSidebarSubLeft', !isSubLeftClosed);
+			};
 
 			pageWrapperLeft.toggleClass('sidebarAnimation', animate);
 
 			subPageWrapperLeft.toggleClass('sidebarAnimation', animate);
 			subPageWrapperLeft.toggleClass('withSidebarLeft', !isLeftClosed);
 		} else {
-			objRight.css({ height: container.height() });
+			objRight.css({ height: container?.clientHeight ?? 0 });
 		};
 
 		$(window).trigger('sidebarResize');

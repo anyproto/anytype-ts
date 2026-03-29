@@ -104,7 +104,7 @@ class Keyboard {
 		const { hideSidebar } = S.Common;
 		const isPopup = this.isPopup();
 		const container = U.Dom.getPageContainer(isPopup);
-		const cw = container.width();
+		const cw = container?.clientWidth || 0;
 		const data = sidebar.getData(I.SidebarPanel.Left, false);
 		const threshold = J.Size.sidebar.left.threshold.close;
 
@@ -1301,7 +1301,8 @@ class Keyboard {
 		};
 
 		const menuId = isChat ? 'searchChat' : 'searchText';
-		const element = U.Dom.getScrollContainer(isPopup).find('#header .side.center');
+		const el = U.Dom.getScrollContainer(isPopup)?.querySelector('#header .side.center');
+		const element = el ? $(el) : null;
 		const menuParam: Partial<I.MenuParam> = {
 			element,
 			horizontal: I.MenuDirection.Center,

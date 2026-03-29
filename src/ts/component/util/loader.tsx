@@ -46,7 +46,9 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
-		$(nodeRef.current).css({ height: container.height() });
+		if (nodeRef.current && container) {
+			nodeRef.current.style.height = `${container.clientHeight}px`;
+		};
 	};
 
 	useEffect(() => {

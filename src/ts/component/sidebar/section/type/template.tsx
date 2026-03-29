@@ -4,6 +4,7 @@ import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 

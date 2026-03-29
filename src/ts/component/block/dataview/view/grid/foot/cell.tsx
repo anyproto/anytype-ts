@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } f
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
+
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
 	block?: I.Block;
@@ -154,7 +155,7 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		const t = Preview.tooltipCaption(name, result);
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(nodeRef.current), typeY: I.MenuDirection.Top });
+			Preview.tooltipShow({ text: t, element: nodeRef.current, typeY: I.MenuDirection.Top });
 		};
 	};
 

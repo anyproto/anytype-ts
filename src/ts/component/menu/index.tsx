@@ -324,7 +324,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		const id = getId();
-		const container = U.Dom.getScrollContainer(keyboard.isPopup());
+		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
+		const container = containerEl ? $(containerEl) : $();
 
 		unbind();
 		$(window).on(`resize.${id} sidebarResize.${id}`, () => position());
@@ -333,10 +334,11 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			framePosition.current = raf(() => position());
 		});
 	};
-	
+
 	const unbind = () => {
 		const id = getId();
-		const container = U.Dom.getScrollContainer(keyboard.isPopup());
+		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
+		const container = containerEl ? $(containerEl) : $();
 
 		$(window).off(`resize.${id} sidebarResize.${id}`);
 		container.off(`scroll.${id}`);
@@ -1001,7 +1003,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const getMaxHeight = (isPopup: boolean): number => {
-		return U.Dom.getScrollContainer(isPopup).height() - getBorderTop() - getBorderBottom();
+		return (U.Dom.getScrollContainer(isPopup)?.clientHeight || 0) - getBorderTop() - getBorderBottom();
 	};
 
 	const menuId = getId();

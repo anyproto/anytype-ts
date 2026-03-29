@@ -335,7 +335,7 @@ export interface PageRef {
 };
 
 export interface TooltipParam {
-	element?: any;
+	element?: HTMLElement;
 	title?: string;
 	text?: string;
 	caption?: string;

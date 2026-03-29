@@ -1670,10 +1670,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 		const hoverArea = blockNode.find('.hoverArea');
 
-		if (hoverArea.length && container.length) {
+		if (hoverArea.length && container) {
 			const rect = hoverArea.get(0).getBoundingClientRect();
 			const top = rect.bottom;
-			const containerBottom = container.get(0).getBoundingClientRect().bottom;
+			const containerBottom = container.getBoundingClientRect().bottom;
 			const height = containerBottom - top;
 
 			blockNode.find('.dragOverlay').css({ height });

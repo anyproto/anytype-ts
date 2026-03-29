@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	id: string;

@@ -51,7 +51,9 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	const resize = () => {
 		const container = U.Dom.getPageContainer(isPopup);
 
-		$(nodeRef.current).css({ height: container.height() });
+		if (nodeRef.current && container) {
+			nodeRef.current.style.height = `${container.clientHeight}px`;
+		};
 	};
 
 	useEffect(() => {

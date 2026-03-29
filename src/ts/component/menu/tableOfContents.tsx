@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Label, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const HEIGHT = 28;
 const LIMIT = 20;

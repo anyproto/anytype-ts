@@ -1358,7 +1358,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const container = U.Dom.getPageContainer(isPopup);
 
-				maxWidth = container.width() - PADDING;
+				maxWidth = (container?.clientWidth ?? 0) - PADDING;
 				wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
 
 				wrap.toggleClass('withScroll', width > maxWidth);

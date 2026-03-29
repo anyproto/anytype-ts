@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -98,11 +99,13 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		const node = $(nodeRef.current);
-		const element = node.find(`#record-${U.Common.esc(item.id)}`);
+		const node = nodeRef.current;
+		const element = node?.querySelector(`#record-${U.Common.esc(item.id)}`) as HTMLElement;
 		const name = U.String.shorten(item.name, 50);
 
-		Preview.tooltipShow({ text: name, element });
+		if (element) {
+			Preview.tooltipShow({ text: name, element });
+		};
 	};
 
 	const onMouseLeave = () => {
