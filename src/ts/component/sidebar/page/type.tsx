@@ -41,7 +41,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const disableButton = (v: boolean) => {
-		$(buttonSaveRef.current?.getNode()).toggleClass('disabled', v);
+		U.Dom.toggleClass(buttonSaveRef.current?.getNode(), 'disabled', v);
 	};
 
 	const getType = () => {

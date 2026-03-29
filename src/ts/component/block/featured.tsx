@@ -46,14 +46,17 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const init = () => {
 		const items = getItems().filter(it => it.relationKey != 'description');
-		const node = $(nodeRef.current);
-		const obj = $(`#block-${U.Common.esc(block.id)}`);
+		const node = nodeRef.current;
+		const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
 
-		obj.toggleClass('isHidden', !items.length);
+		U.Dom.toggleClass(obj, 'isHidden', !items.length);
 
 		if (node) {
-			node.find('.cell.first').removeClass('first');
-			node.find('.cell').first().addClass('first');
+			node.querySelectorAll('.cell.first').forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
+			const firstCell = node.querySelector('.cell');
+			if (firstCell) {
+				U.Dom.addClass(firstCell as HTMLElement, 'first');
+			};
 		};
 	};
 

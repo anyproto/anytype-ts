@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
@@ -95,8 +94,10 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	
 	const resize = () => {
 		window.setTimeout(() => {
-			const inner = $(innerRef.current);
-			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
+			const inner = innerRef.current;
+			if (inner) {
+				U.Dom.toggleClass(inner, 'isVertical', inner.offsetWidth <= getWrapperWidth() / 2);
+			};
 		}, 0);
 	};
 

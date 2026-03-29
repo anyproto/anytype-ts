@@ -1,6 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -152,7 +151,7 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	useEffect(() => {
-		$(frameRef.current.getNode()).removeClass('invisible');
+		U.Dom.removeClass(frameRef.current.getNode(), 'invisible');
 		focus();
 	}, []);
 

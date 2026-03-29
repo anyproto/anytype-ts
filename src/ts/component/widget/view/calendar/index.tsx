@@ -76,8 +76,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				classNameWrap: 'fromSidebar',
 				horizontal: I.MenuDirection.Center,
 				noFlipX: true,
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+				onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 				data: {
 					rootId,
 					blockId: J.Constant.blockId.dataview,

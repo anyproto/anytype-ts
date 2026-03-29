@@ -24,7 +24,8 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 	};
 
 	const onMore = (item: any) => {
-		const element = $(`#${getId()} #icon-more-${item.hash}`);
+		const element = `#${getId()} #icon-more-${item.hash}`;
+		const el = U.Dom.select(element);
 		const options: any[] = [
 			{ id: 'copyKey', name: translate('popupSettingsApiCopyKey') },
 			{ id: 'copyMcp', name: translate('popupSettingsApiCopyMcp') },
@@ -35,8 +36,8 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(el, 'active'),
+			onClose: () => U.Dom.removeClass(el, 'active'),
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
@@ -75,7 +76,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 				</div>
 				<div 
 					className="col" 
-					onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: $(e.currentTarget) })} 
+					onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: e.currentTarget as HTMLElement })}
 					onMouseLeave={() => Preview.tooltipHide()}
 				>
 					{U.String.shortMask(item.apiKey, 3)}
