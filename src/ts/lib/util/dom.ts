@@ -4,6 +4,50 @@ import * as I from 'Interface';
 
 class UtilDom {
 
+	get (id: string): HTMLElement | null {
+		return document.getElementById(id);
+	};
+
+	select (selector: string, root: ParentNode = document): HTMLElement | null {
+		return root.querySelector(selector);
+	};
+
+	selectAll (selector: string, root: ParentNode = document): HTMLElement[] {
+		return Array.from(root.querySelectorAll(selector));
+	};
+
+	addClass (el: HTMLElement, ...names: string[]) {
+		if (el) {
+			el.classList.add(...names);
+		};
+	};
+
+	removeClass (el: HTMLElement, ...names: string[]) {
+		if (el) {
+			el.classList.remove(...names);
+		};
+	};
+
+	hasClass (el: HTMLElement, name: string): boolean {
+		return el ? el.classList.contains(name) : false;
+	};
+
+	toggleClass (el: HTMLElement, name: string, force?: boolean) {
+		if (el) {
+			el.classList.toggle(name, force);
+		};
+	};
+
+	contentWidth (el: HTMLElement): number {
+		const style = getComputedStyle(el);
+		return el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+	};
+
+	contentHeight (el: HTMLElement): number {
+		const style = getComputedStyle(el);
+		return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+	};
+
 	/**
 	 * Returns the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.

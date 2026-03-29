@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
 import * as I from 'Interface';
@@ -24,14 +23,14 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		inputRef.current?.setValue('');
 		setError('');
 		buttonRef.current?.setDisabled(true);
-		$(inputWrapperRef.current).removeClass('canClear');
+		U.Dom.removeClass(inputWrapperRef.current, 'canClear');
 	};
 
 	const checkButton = () => {
 		const v = inputRef.current?.getValue();
 
 		buttonRef.current?.setDisabled(!v.length);
-		$(inputWrapperRef.current).toggleClass('canClear', v.length > 0);
+		U.Dom.toggleClass(inputWrapperRef.current, 'canClear', v.length > 0);
 	};
 
 	const onSubmit = (e: any) => {

@@ -187,10 +187,10 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		
-		if (!node.hasClass('withIcon')) {
-			node.toggleClass('withIconObject', !!node.find('.iconObject').length);
+		const node = nodeRef.current;
+
+		if (node && !U.Dom.hasClass(node, 'withIcon')) {
+			U.Dom.toggleClass(node, 'withIconObject', !!node.querySelectorAll('.iconObject').length);
 		};
 	};
 

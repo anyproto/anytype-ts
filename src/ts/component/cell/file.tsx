@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
@@ -47,7 +46,7 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
+		U.Dom.toggleClass(U.Dom.get(U.Common.esc(id)), 'isEditing', isEditing);
 	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({
