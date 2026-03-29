@@ -127,7 +127,7 @@ All ~80 consumer call sites updated across 53 files:
 **Phase 6: Final Cleanup** — NOT STARTED
 - [ ] Remove all remaining `import $ from 'jquery'`
 - [ ] Remove `jquery` from `package.json`
-- [ ] Remove `window.$` type declaration
+- [x] ~~Remove `window.$` type declaration~~ — no separate declaration exists; jQuery types come from the module import
 - [ ] Verify bundle size reduction
 
 ---
