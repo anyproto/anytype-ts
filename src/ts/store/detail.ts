@@ -57,7 +57,7 @@ class DetailStore {
 	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this as any, {
+		makeObservable<DetailStore, 'map'>(this, {
 			map: observable.shallow,
 			set: action,
 			update: action,

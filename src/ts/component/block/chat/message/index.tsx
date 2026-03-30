@@ -31,15 +31,23 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const message = S.Chat.getMessageById(subId, id);
 
 	useEffect(() => {
-		const resizeObserver = new ResizeObserver(() => {
-			raf(() => resize());
+		const resizeObserver = new ResizeObserver((entries) => {
+			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
+
+			raf(() => {
+				if (!nodeRef.current) {
+					return;
+				};
+
+				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
+					el.classList.toggle('isWide', width > 360);
+				});
+			});
 		});
 
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
+		if (bubbleRef.current) {
+			resizeObserver.observe(bubbleRef.current);
 		};
-
-		resize();
 
 		return () => {
 			resizeObserver.disconnect();
@@ -80,8 +88,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
-
-		resize();
 	};
 
 	const onReactionAdd = () => {
@@ -204,14 +210,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 		node.addClass('highlight');
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
-	};
-
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const bubble = $(bubbleRef.current);
-		const width = bubble.outerWidth();
-
-		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
 	if (!message) {

@@ -9,7 +9,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const { isPopup } = props;
 	const headerRef = useRef(null);
 	const rootId = keyboard.getRootId(isPopup);
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 
 	const onOpen = () => {
 		const home = U.Space.getDashboard();

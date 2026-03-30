@@ -48,10 +48,6 @@
         .loaderWrapper { background: var(--color-bg-secondary); }
     }
 
-
-    /* Smile */
-
-
 	/* BlockRelationEdit */
 
 	.menu.menuBlockRelationEdit {
@@ -63,11 +59,6 @@
 	.menu.menuDataviewRelationEdit {
 		.item:hover { background: var(--color-shape-highlight-medium); }
 	}
-
-	/* DataviewFilterValues */
-
-    .menu.menuDataviewFilterValues {
-    }
 
 	/* DataviewFileValues */
 
@@ -121,22 +112,12 @@
 		}
     }
 
-    /* DataviewFilterAdvanced */
-
     /* SyncStatus */
 
     .menu.menuSyncStatus {
         .icons {
-            .iconWrapper.c-accent100 .iconBg { background: #294b0e; }
             .iconWrapper.c-red .iconBg, .iconWrapper.c-darkRed .iconBg { background: #581f0c; }
         }
-
-		.items {
-            .sides {
-                .side.right {
-                }
-            }
-		}
     }
 
 	/* GraphSettings */
@@ -157,13 +138,6 @@
 			.button { color: var(--color-text-primary); }
 		}
 
-	}
-
-	/* Identity */
-
-	.menu.menuIdentity {
-		.content {
-		}
 	}
 
 }

@@ -4,6 +4,7 @@ import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -272,10 +273,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const setActive = (id: string) => {
-		const body = $(bodyRef.current);
+		const body = bodyRef.current;
+		if (!body) {
+			return;
+		};
 
-		body.find('.item.active').removeClass('active');
-		body.find(`#item-${U.Common.esc(id)}`).addClass('active');
+		U.Dom.removeClass(body.querySelector('.item.active'), 'active');
+		U.Dom.addClass(body.querySelector(`#item-${U.Common.esc(id)}`), 'active');
 	};
 
 	const onContext = (item: any) => {

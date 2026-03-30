@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const PREFIX = 'sidebarObjectRelation';
 

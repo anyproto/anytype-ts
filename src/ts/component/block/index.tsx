@@ -363,7 +363,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = S.Block.getChildren(rootId, block.id);
-		const rect = U.Common.getElementRect(node.get(0));
+		const rect = U.Dom.getElementRect(node.get(0));
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
 
@@ -492,19 +492,19 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			});
 
 			item.off('mouseenter.link').on('mouseenter.link', e => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
 
-				const item = $(e.currentTarget);
-				const url = String(item.attr('href') || '');
+				const item = e.currentTarget as HTMLElement;
+				const url = String(item.getAttribute('href') || '');
 
 				if (!url) {
 					return;
 				};
 
-				const range = String(item.attr('data-range') || '').split('-');
+				const range = String(item.getAttribute('data-range') || '').split('-');
 				const { target, spaceId, isInside } = U.Common.getLinkParamFromUrl(url);
 
 				const cb = (object) => {
@@ -617,7 +617,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			});
 
 			clickable.off('mouseenter.mention').on('mouseenter.mention', e => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
@@ -694,7 +694,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			item.off('mouseleave.object').on('mouseleave.object', () => Preview.tooltipHide(false));
 
 			item.off('mouseenter.object').on('mouseenter.object', () => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				const tt = object.isDeleted ? translate('commonDeletedObject') : '';
 
 				if (sr && !sr.collapsed) {

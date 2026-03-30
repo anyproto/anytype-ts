@@ -150,19 +150,23 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-		
+
 		const items = getItems(true);
 		const node = getNode();
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const iconWrap = element.find('.iconWrap');
+		const el = node.find(`#item-${U.Common.esc(item.id)}`).get(0) as HTMLElement;
+		const iconWrap = node.find(`#item-${U.Common.esc(item.id)} .iconWrap`);
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
 		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
-		Preview.tooltipShow({ 
-			text, 
-			element, 
-			className: 'fromVault', 
+		if (!el) {
+			return;
+		};
+
+		Preview.tooltipShow({
+			text,
+			element: el,
+			className: 'fromVault',
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
 			offsetX: node.width() / 2 + iconWrap.width() / 2,
@@ -737,8 +741,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 							onMouseEnter={e => Preview.tooltipShow({ 
 								...tooltipParam(),
 								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
-								text: translate('popupSettingsAccountPersonalInformationTitle'), 
-								element: $(e.currentTarget),
+								text: translate('popupSettingsAccountPersonalInformationTitle'),
+								element: e.currentTarget as HTMLElement,
 							})}
 							onMouseLeave={() => Preview.tooltipHide(false)}
 						>

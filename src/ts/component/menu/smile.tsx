@@ -486,8 +486,8 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const tt = getTooltip(item);
 
 		element.addClass('active');
-		if (tt) {
-			Preview.tooltipShow({ text: tt, element });
+		if (tt && element.length) {
+			Preview.tooltipShow({ text: tt, element: element.get(0) as HTMLElement });
 		};
 	};
 

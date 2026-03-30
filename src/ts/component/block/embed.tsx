@@ -120,6 +120,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		rebind();
 	};
 
+	const scrollHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
 		const win = $(window);
 		const node = $(nodeRef.current);
@@ -142,7 +144,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				S.Menu.close('blockLatex');
 
 				placeholderCheck();
-				save(true, () => { 
+				save(true, () => {
 					setIsEditing(false);
 					S.Menu.close('previewLatex');
 				});
@@ -160,19 +162,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		if (!U.Embed.allowAutoRender(processor)) {
-			const container = U.Common.getScrollContainer(isPopup);
-			container.on(`scroll.${block.id}`, () => onScroll());
+			const container = U.Dom.getScrollContainer(isPopup);
+			scrollHandlerRef.current = () => onScroll();
+			container?.addEventListener('scroll', scrollHandlerRef.current);
 		};
 
 		node.on('edit', e => onEdit(e));
 	};
 
 	const unbind = () => {
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
-		container.off(`scroll.${block.id}`);
+
+		if (scrollHandlerRef.current) {
+			container?.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const onScroll = () => {
@@ -182,16 +189,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		window.clearTimeout(timeoutScrollRef.current);
 		timeoutScrollRef.current = window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const node = $(nodeRef.current);
-			if (!node.length) {
+			if (!node.length || !container) {
 				return;
 			};
 
-			const ch = container.height();
-			const st = container.scrollTop();
-			const rect = U.Common.getElementRect(node.get(0));
-			const top = rect.top - container.offset().top;
+			const ch = container.clientHeight;
+			const st = container.scrollTop;
+			const rect = U.Dom.getElementRect(node.get(0));
+			const containerRect = container.getBoundingClientRect();
+			const top = rect.top - containerRect.top;
 
 			if (top <= st + ch) {
 				setIsShowing(true);
@@ -364,7 +372,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const win = $(window);
 
 		const recalcRect = () => {
-			const rect = element == 'input' ? U.Common.getSelectionRect() : null;
+			const rect = element == 'input' ? U.Dom.getSelectionRect() : null;
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
@@ -435,7 +443,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const updateRect = () => {
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
@@ -795,7 +803,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });
@@ -822,7 +830,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		iframe.css({ height: 'auto' });
 
 		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		keyboard.setResize(false);
@@ -950,10 +958,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	}, [ isEditing ]);
 
 	useEffect(() => {
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (isFullScreen) {
-			scrollTopRef.current = container.scrollTop();
+			scrollTopRef.current = container?.scrollTop ?? 0;
 		};
 
 		const onEscape = (e: KeyboardEvent) => {
@@ -971,8 +979,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		return () => {
 			window.removeEventListener('keydown', onEscape, true);
 
-			if (isFullScreen) {
-				container.scrollTop(scrollTopRef.current);
+			if (isFullScreen && container) {
+				container.scrollTop = scrollTopRef.current;
 			};
 		};
 	}, [ isFullScreen ]);

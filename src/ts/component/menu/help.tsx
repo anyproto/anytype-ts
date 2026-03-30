@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
+import $ from 'jquery';
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

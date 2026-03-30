@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Block } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;

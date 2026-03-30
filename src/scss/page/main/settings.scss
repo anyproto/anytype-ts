@@ -416,9 +416,8 @@
         }
     }
 
-    > .pageSettingsSpaceStorage { padding-bottom: 0px; }
     > .pageSettingsSpaceStorage {
-        > .wrap { height: 100%; display: flex; flex-direction: column; position: relative; }
+        > .wrap { display: flex; flex-direction: column; position: relative; }
 
         .upsellBanner { margin-bottom: 44px; }
 
@@ -482,8 +481,10 @@
                 .label.active { color: var(--color-text-primary);}
             }
 
-			.objectManagerWrapper { flex-grow: 1; height: 0; overflow: hidden; }
+			.objectManagerWrapper { flex-grow: 1; }
 			.objectManagerWrapper {
+				.ReactVirtualized__Grid, .ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
                 .items { padding-top: 8px; }
 				.items {
 					.item { gap: 0px 8px; margin-bottom: 0px; }

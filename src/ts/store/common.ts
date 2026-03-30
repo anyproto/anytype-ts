@@ -919,7 +919,7 @@ class CommonStore {
 	setThemeClass () {
 		const c = this.getThemeClass();
 
-		U.Common.addBodyClass('theme', c);
+		U.Dom.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 	};
 

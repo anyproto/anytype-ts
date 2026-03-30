@@ -27,10 +27,9 @@ class MenuStore {
 
 	/**
 	 * Opens a menu with the given ID and parameters.
-	 * @param {string} id - The menu ID.
-	 * @param {I.MenuParam} param - The menu parameters.
+	 * When a known menu ID is passed, the data property is type-checked against MenuDataMap.
 	 */
-	open (id: string, param: I.MenuParam) {
+	open <K extends string> (id: K, param: I.MenuParam<K extends keyof I.MenuDataMap ? I.MenuDataMap[K] : any>) {
 		if (!id) {
 			return;
 		};
@@ -174,15 +173,16 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : J.Constant.delay.menu;
-		const el = $(`#${U.String.toCamelCase(`menu-${id}`)}`);
+		const el = U.Dom.get(U.String.toCamelCase(`menu-${id}`));
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
 		};
 
-		if (el.length) {
-			el.toggleClass('noAnimation', noAnimation);
-			el.css({ transform: '' }).removeClass('show');
+		if (el) {
+			U.Dom.toggleClass(el, 'noAnimation', noAnimation);
+			el.style.transform = '';
+			U.Dom.removeClass(el, 'show');
 		};
 
 		U.Data.updateTabsDimmer(null, this.menuList.filter(it => it.id != id));

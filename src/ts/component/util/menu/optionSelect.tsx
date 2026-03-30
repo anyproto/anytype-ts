@@ -549,10 +549,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseEnter = (e: MouseEvent, item: SelectItem): void => {
@@ -560,10 +560,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseLeave = (): void => {

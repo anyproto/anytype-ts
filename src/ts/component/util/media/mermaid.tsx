@@ -40,7 +40,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			await mermaid.run({ 
 				querySelector: `#${id} .mermaid`,
 				postRenderCallback: () => {
-					U.Common.renderLinks($(chartRef.current));
+					U.Dom.renderLinks($(chartRef.current));
 				}, 
 			});
 		} catch (e) {

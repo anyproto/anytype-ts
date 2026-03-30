@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
 
@@ -162,7 +161,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
 			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
 			className: 'big',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
 		});

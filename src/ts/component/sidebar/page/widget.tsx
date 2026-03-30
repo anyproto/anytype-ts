@@ -358,9 +358,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		if (isClosed) {
 			S.Common.widgetSectionsSet(sections);
-			U.Common.toggle(list, 200, false);
+			U.Dom.toggle(list, 200, false);
 		} else {
-			U.Common.toggle(list, 200, true, () => {
+			U.Dom.toggle(list, 200, true, () => {
 				S.Common.widgetSectionsSet(sections);
 			});
 		};

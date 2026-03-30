@@ -88,7 +88,7 @@ const InputWithFile: FC<Props> = ({
 				return;
 			};
 
-			const rect = U.Common.getElementRect(node.get(0));
+			const rect = U.Dom.getElementRect(node.get(0));
 
 			let s = Size.Icon;
 			if (rect.width >= Sizes[Size.Small]) {

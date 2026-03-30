@@ -38,12 +38,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
 
 	const getRootId = () => keyboard.getRootId(isPopup);
-	const getContainer = () => U.Common.getScrollContainer(isPopup);
+	const getContainer = () => U.Dom.getScrollContainer(isPopup);
 	const getSearchTag = () => Mark.getTag(I.MarkType.Search);
 
 	const getMatchElements = (): NodeListOf<Element> | null => {
 		const container = getContainer();
-		return container.length ? container.get(0).querySelectorAll(getSearchTag()) : null;
+		return container ? container.querySelectorAll(getSearchTag()) : null;
 	};
 
 	const expandToggle = (el: JQuery<Element>) => {
@@ -157,15 +157,20 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const scrollToMatch = (matchEl: JQuery<Element>) => {
-		const container = getContainer();
-		const scrollTop = container.scrollTop();
+		const containerEl = getContainer();
+		if (!containerEl) {
+			return;
+		};
+
+		const scrollTop = containerEl.scrollTop;
 		const matchTop = matchEl.offset()?.top || 0;
-		const containerTop = container.offset()?.top || 0;
-		const containerHeight = container.height() || 0;
+		const containerRect = containerEl.getBoundingClientRect();
+		const containerTop = containerRect.top || 0;
+		const containerHeight = containerEl.clientHeight || 0;
 		const offset = J.Size.lastBlock + J.Size.header;
 		const targetY = matchTop - containerTop + scrollTop;
 
-		container.scrollTop(targetY - containerHeight + offset);
+		containerEl.scrollTop = targetY - containerHeight + offset;
 	};
 
 	const updateMatchCounter = () => {
@@ -184,9 +189,11 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const container = getContainer();
+		const containerEl = getContainer();
 		const tag = getSearchTag();
-		container.find(`${tag}.active`).removeClass('active');
+		if (containerEl) {
+			containerEl.querySelectorAll(`${tag}.active`).forEach(el => el.classList.remove('active'));
+		};
 
 		const currentEl = $(elements[n.current]);
 		if (!currentEl.length) {
@@ -223,7 +230,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const container = getContainer();
+		const containerEl = getContainer();
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher').removeClass('active');
 
@@ -232,13 +239,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		lastSearchRef.current = value;
 		storageSet({ search: value });
 
-		if (!value) {
+		if (!value || !containerEl) {
 			return;
 		};
 
 		analytics.event('SearchWords', { length: value.length, route });
 
-		findAndReplaceDOMText(container.get(0), {
+		findAndReplaceDOMText(containerEl, {
 			preset: 'prose',
 			find: new RegExp(U.String.regexEscape(value), 'gi'),
 			wrap: getSearchTag(),

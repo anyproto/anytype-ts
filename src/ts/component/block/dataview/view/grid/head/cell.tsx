@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Input, IconObject, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
@@ -343,8 +342,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = $(`#${U.Common.esc(id)}`);
-		const card = viewType == I.ViewType.Grid ? null : $(`#record-${U.Common.esc(record.id)}`);
+		const cell = U.Dom.get(U.Common.esc(id));
+		const card = viewType == I.ViewType.Grid ? null : U.Dom.get(`record-${U.Common.esc(record.id)}`);
 
 		if (isEditing) {
 			let val = value.current;
@@ -392,16 +391,20 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		} else {
 			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
-			cell.find('.cellContent').css({ left: '', right: '' });
+			const cellContent = cell?.querySelector('.cellContent') as HTMLElement;
+			if (cellContent) {
+				cellContent.style.left = '';
+				cellContent.style.right = '';
+			};
 		};
 
-		cell.toggleClass('isEditing', isEditing);
-		if (card && card.length) {
-			card.toggleClass('isEditing', isEditing);
+		U.Dom.toggleClass(cell, 'isEditing', isEditing);
+		if (card) {
+			U.Dom.toggleClass(card, 'isEditing', isEditing);
 		};
 
 		if (S.Common.cellId) {
-			$(`#${U.Common.esc(S.Common.cellId)}`).addClass('isEditing');
+			U.Dom.addClass(U.Dom.get(U.Common.esc(S.Common.cellId)), 'isEditing');
 		};
 	});
 

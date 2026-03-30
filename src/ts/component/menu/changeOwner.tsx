@@ -184,7 +184,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const length = items.length;
-		const { wh } = U.Common.getWindowDimensions();
+		const { wh } = U.Dom.getWindowDimensions();
 
 		let height = 44 + 44 + 56; // title + filter + button
 		if (!length) {

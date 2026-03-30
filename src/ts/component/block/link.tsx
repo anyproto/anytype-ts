@@ -72,7 +72,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		};
 
 		Preview.previewShow({ 
-			element: $(nodeRef.current).find('.cardName .name'), 
+			element: nodeRef.current?.querySelector('.cardName .name') as HTMLElement,
 			object,
 			target: targetBlockId, 
 			noUnlink: true,

@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 

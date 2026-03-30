@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
+
 
 interface Props {
 	id?: string;
@@ -95,7 +95,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 			onFocus(e, value);
 		};
 		keyboard.setFocus(true);
-		$(nodeRef.current).addClass('isFocused');
+		U.Dom.addClass(nodeRef.current, 'isFocused');
 	};
 
 	const onBlurHandler = (e: any) => {
@@ -103,7 +103,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 			onBlur(e, value);
 		};
 		keyboard.setFocus(false);
-		$(nodeRef.current).removeClass('isFocused');
+		U.Dom.removeClass(nodeRef.current, 'isFocused');
 	};
 
 	const onCopyHandler = (e: any) => {
@@ -127,15 +127,15 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 	};
 	
 	const setError = (v: boolean) => {
-		$(nodeRef.current).toggleClass('withError', v);
+		U.Dom.toggleClass(nodeRef.current, 'withError', v);
 	};
 
 	const addClass = (v: string) => {
-		$(nodeRef.current).addClass(v);
+		U.Dom.addClass(nodeRef.current, v);
 	};
 	
 	const removeClass = (v: string) => {
-		$(nodeRef.current).removeClass(v);
+		U.Dom.removeClass(nodeRef.current, v);
 	};
 	
 	useEffect(() => setValue(initialValue));

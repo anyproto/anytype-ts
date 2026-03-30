@@ -60,7 +60,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 	useEffect(() => {
 		Animation.to(() => {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 
 			analytics.removeContext();
 			analytics.event('ScreenIndex');

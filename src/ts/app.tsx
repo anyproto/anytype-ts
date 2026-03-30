@@ -51,8 +51,6 @@ declare global {
 	}
 };
 
-window.$ = $;
-
 if (!isPackaged) {
 	window.Anytype = {
 		Lib: {
@@ -321,7 +319,7 @@ const App: FC = () => {
 		};
 
 		if (css && !config.disableCss) {
-			U.Common.injectCss('anytype-custom-css', css);
+			U.Dom.injectCss('anytype-custom-css', css);
 		};
 
 		body.addClass('over');

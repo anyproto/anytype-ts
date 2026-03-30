@@ -4,6 +4,7 @@ import { Icon, IconObject, ObjectName, Label } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import ChatCounter from 'Component/util/chatCounter';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 

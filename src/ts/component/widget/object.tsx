@@ -6,6 +6,7 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 

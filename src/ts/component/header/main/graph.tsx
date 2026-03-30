@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 

@@ -12,7 +12,7 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 	const onKeyUp = () => {
 		const v = inputRef.current.getValue();
 
-		$(`#${getId()} .button`).toggleClass('disabled', !v.length);
+		U.Dom.toggleClass(U.Dom.select(`#${getId()} .button`), 'disabled', !v.length);
 		setError('');
 	};
 

@@ -364,12 +364,14 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		keyboard.disableSelection(false);
 	};
 
+	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
+
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
 		};
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		filterRef.current.setActive(true);
@@ -379,14 +381,20 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			filterRef.current?.focus();
 		};
 
-		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+		if (filterMouseDownHandler.current && container) {
+			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+		};
+
+		filterMouseDownHandler.current = (e: any) => {
 			const value = filterRef.current.getValue();
 
 			if (!value && !$(e.target).parents(`.filter`).length) {
 				onFilterHide();
-				container.off('mousedown.filter');
+				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
 			};
-		});
+		};
+
+		container?.addEventListener('mousedown', filterMouseDownHandler.current);
 
 		win.off('keydown.filter').on('keydown.filter', (e: any) => {
 			e.stopPropagation();
@@ -518,10 +526,12 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	useEffect(() => {
 
 		return () => {
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Dom.getPageFlexContainer(isPopup);
 			const win = $(window);
 
-			container.off('mousedown.filter');
+			if (filterMouseDownHandler.current && container) {
+				container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			};
 			win.off('keydown.filter');
 		};
 

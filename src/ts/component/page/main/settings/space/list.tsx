@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
@@ -49,12 +48,14 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 	const onMore = (space: any) => {
 		const element = `#${getId()} #icon-more-${space.id}`;
 
+		const el = U.Dom.select(element);
+
 		U.Menu.spaceContext(space, {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: () => U.Dom.addClass(el, 'active'),
+			onClose: () => U.Dom.removeClass(el, 'active'),
 		}, { 
 			withPin: true,
 			withDelete: true,

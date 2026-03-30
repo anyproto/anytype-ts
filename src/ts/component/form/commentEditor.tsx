@@ -1285,7 +1285,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		return;
 	};
 
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -1380,7 +1380,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 };
 
 const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	const win = $(window);
 	const root = editor.getRootElement();
 	const wrap = root?.closest('.commentEditorWrap');
@@ -1655,7 +1655,7 @@ const SelectionToolbarPlugin = () => {
 					element: wrap ? $(wrap) : $(root),
 					classNameWrap: 'fromBlock',
 					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					type: I.MenuType.Horizontal,
@@ -2016,7 +2016,7 @@ const PasteUrlPlugin = () => {
 					component: 'select',
 					element: wrap ? $(wrap) : $(root),
 					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					vertical: I.MenuDirection.Bottom,
@@ -2256,7 +2256,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 let slashMenuContext: any = null;
 
 const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -2516,7 +2516,7 @@ const MentionPlugin = ({ editorId }: { editorId: string }) => {
 };
 
 const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset: React.MutableRefObject<number>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -2742,7 +2742,7 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 };
 
 const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: React.MutableRefObject<number>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};

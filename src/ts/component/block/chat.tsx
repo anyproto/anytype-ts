@@ -51,7 +51,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
-	const namespace = U.Common.getEventNamespace(isPopup);
+	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
@@ -81,12 +81,19 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const messages = S.Chat.getList(subId);
 	const analyticsChatId = getAnalyticsChatId();
 
+	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
+
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
 		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
+
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (container && scrollHandlerRef.current) {
+			container.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
@@ -100,7 +107,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		win.on(`reactionUpdate.${ns}`, () => scrollToBottomCheck());
 		win.on(`focus.${ns}`, () => readScrolledMessages());
 
-		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => onScroll(e));
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (container) {
+			scrollHandlerRef.current = (e: Event) => onScroll(e);
+			container.addEventListener('scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
@@ -218,8 +229,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						setIsBottom(false);
 					};
 				} else {
-					const y = U.Common.getMaxScrollHeight(isPopup);
-					const top = U.Common.getScrollContainerTop(isPopup);
+					const y = U.Dom.getMaxScrollHeight(isPopup);
+					const top = U.Dom.getScrollContainerTop(isPopup);
 
 					setIsBottom(!(top < y));
 				};
@@ -586,8 +597,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const node = $(nodeRef.current);
 		const dates = node.find('.sectionDate');
 		const offset = J.Size.header + 8;
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.offset().top;
+		const container = U.Dom.getScrollContainer(isPopup);
+		const top = container?.getBoundingClientRect().top ?? 0;
 
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
@@ -619,9 +630,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onScroll = (e: any) => {
 		const subId = getSubId();
-		const container = U.Common.getScrollContainer(isPopup);
-		const st = Math.ceil(container.scrollTop());
-		const max = U.Common.getMaxScrollHeight(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const st = Math.ceil(container?.scrollTop ?? 0);
+		const max = U.Dom.getMaxScrollHeight(isPopup);
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
@@ -743,9 +754,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const getMessagesInViewport = () => {
 		const messages = getMessages();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
-		const ch = container.outerHeight();
+		const ch = container?.offsetHeight ?? 0;
 		const max = ch - formHeight;
 		const ret = [];
 
@@ -851,9 +862,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
+				return;
+			};
+
 			const top = getMessageScrollPosition(id);
-			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
+			const y = Math.max(0, top - (container.clientHeight / 2) - J.Size.header);
 
 			setIsBottom(false);
 			setAutoLoadDisabled(true);
@@ -869,9 +884,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			if (animate) {
-				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.scrollTo({ top: y, behavior: 'smooth' });
+				window.setTimeout(cb, 300);
 			} else {
-				container.scrollTop(y);
+				container.scrollTop = y;
 				cb();
 			};
 		});
@@ -886,14 +902,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const y = U.Common.getMaxScrollHeight(isPopup);
-			const top = U.Common.getScrollContainerTop(isPopup);
+			const y = U.Dom.getMaxScrollHeight(isPopup);
+			const top = U.Dom.getScrollContainerTop(isPopup);
 
 			if (top >= y) {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const cb = () => {
 				readScrolledMessages();
 				window.setTimeout(() => setAutoLoadDisabled(false), 50);
@@ -901,11 +917,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			setAutoLoadDisabled(true);
 
-			if (animate) {
-				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
-			} else {
-				container.scrollTop(y);
-				cb();
+			if (container) {
+				if (animate) {
+					container.scrollTo({ top: y, behavior: 'smooth' });
+					window.setTimeout(cb, 300);
+				} else {
+					container.scrollTop = y;
+					cb();
+				};
 			};
 		});
 	};
@@ -929,8 +948,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			const threshold = container.outerHeight() / 2;
+			const container = U.Dom.getScrollContainer(isPopup);
+			const threshold = (container?.offsetHeight ?? 0) / 2;
 
 			if (getMessageScrollOffset(id) < threshold) {
 				onScrollToBottomClick();
@@ -1037,7 +1056,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const hasScroll = () => {
-		return U.Common.getMaxScrollHeight(isPopup) > 0;
+		return U.Dom.getMaxScrollHeight(isPopup) > 0;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {
@@ -1109,12 +1128,19 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const resize = () => {
 		renderDates();
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ns = block.id + namespace;
+		const container = U.Dom.getScrollContainer(isPopup);
 
-		container.off(`scroll.${ns}`);
+		if (container && scrollHandlerRef.current) {
+			container.removeEventListener('scroll', scrollHandlerRef.current);
+		};
+
 		window.clearTimeout(timeoutResize.current);
-		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
+		timeoutResize.current = window.setTimeout(() => {
+			if (container) {
+				scrollHandlerRef.current = (e: Event) => onScroll(e);
+				container.addEventListener('scroll', scrollHandlerRef.current);
+			};
+		}, 50);
 	};
 
 	const setLoaded = (v: boolean) => {

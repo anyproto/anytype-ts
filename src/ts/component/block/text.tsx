@@ -1008,11 +1008,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				element,
 				recalcRect: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
@@ -1060,11 +1060,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			classNameWrap: 'fromBlock',
 			element: `#block-${U.Common.esc(block.id)}`,
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			noFlipX: false,
@@ -1099,11 +1099,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(block.id)}`,
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
@@ -1192,8 +1192,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
 
 				if (editable && editable.contains(selRange.startContainer)) {
-					let from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
-					let to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+					let from = U.Dom.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
+					let to = selRange.collapsed ? from : U.Dom.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
 
 					// Convert DOM offsets to model offsets (strip ZWS cursor anchors)
 					if (Mark.hasZws(editable)) {
@@ -1389,7 +1389,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					classNameWrap: 'fromBlock',
 					element: el,
 					recalcRect: () => { 
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
@@ -1410,12 +1410,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageFlexContainer(isPopup);
+					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
+					const onMouseDown = () => {
+						pageContainer?.removeEventListener('mousedown', onMouseDown);
+						S.Menu.close('blockContext');
+					};
 
-					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
-						pageContainer.off('mousedown.context');
-						S.Menu.close('blockContext'); 
-					});
+					pageContainer?.addEventListener('mousedown', onMouseDown);
 				}, S.Menu.getTimeout());
 			});
 		});

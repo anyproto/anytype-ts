@@ -1,5 +1,4 @@
 import React, { MouseEvent, forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { getIcon } from './icons';
 import * as I from 'Interface';
@@ -72,7 +71,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		onMouseEnter?.(e);

@@ -6,6 +6,7 @@ export * from './progress';
 export * from './popup';
 export * from './preview';
 export * from './menu';
+export * from './menuData';
 export * from './object';
 export * from './restriction';
 export * from './notification';
