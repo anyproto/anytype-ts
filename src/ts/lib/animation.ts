@@ -1,6 +1,6 @@
 import raf from 'raf';
 import $ from 'jquery';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const Duration = {
 	Normal: 0.05,

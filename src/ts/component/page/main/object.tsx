@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, U, J, S, analytics, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 

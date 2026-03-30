@@ -1,8 +1,7 @@
 import React, { forwardRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U, J, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -49,12 +48,14 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 	const onMore = (space: any) => {
 		const element = `#${getId()} #icon-more-${space.id}`;
 
+		const el = U.Dom.select(element);
+
 		U.Menu.spaceContext(space, {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: () => U.Dom.addClass(el, 'active'),
+			onClose: () => U.Dom.removeClass(el, 'active'),
 		}, { 
 			withPin: true,
 			withDelete: true,
@@ -76,7 +77,7 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 				<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
 				<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => onMore(space)} />
+					<Icon id={`icon-more-${space.id}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(space)} />
 				</div>
 			</div>
 		);

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U, Preview, Action, translate, keyboard, analytics, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 const Toast: FC = observer(() => {
 	const nodeRef = useRef(null);
@@ -180,7 +180,7 @@ const Toast: FC = observer(() => {
 
 	useEffect(() => {
 		const node = $(nodeRef.current);
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		const y = 32;
 		const sw = sidebar.getDummyWidth();
 		const x = (ww - sw) / 2 - node.outerWidth() / 2 + sw;
@@ -196,7 +196,7 @@ const Toast: FC = observer(() => {
 		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>
 			<div className="inner">
 
-				{icon ? <Icon className={icon} /> : ''}
+				{icon ? <Icon name={({ check: 'common/tick', notice: 'common/alert' })[icon] || icon} color={icon == 'notice' ? 'red' : ''} /> : ''}
 
 				<div className="message">
 					{textObject}

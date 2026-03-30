@@ -1,9 +1,9 @@
 import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, S, U, focus, translate, analytics, Action, keyboard, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -94,8 +94,10 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	
 	const resize = () => {
 		window.setTimeout(() => {
-			const inner = $(innerRef.current);
-			inner.toggleClass('isVertical', inner.width() <= getWrapperWidth() / 2);
+			const inner = innerRef.current;
+			if (inner) {
+				U.Dom.toggleClass(inner, 'isVertical', inner.offsetWidth <= getWrapperWidth() / 2);
+			};
 		}, 0);
 	};
 
@@ -104,7 +106,7 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

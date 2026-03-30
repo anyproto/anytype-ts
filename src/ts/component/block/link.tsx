@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
-import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -71,7 +72,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		};
 
 		Preview.previewShow({ 
-			element: $(nodeRef.current).find('.cardName .name'), 
+			element: nodeRef.current?.querySelector('.cardName .name') as HTMLElement,
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
@@ -127,7 +128,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

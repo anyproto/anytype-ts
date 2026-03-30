@@ -4,8 +4,8 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, S, U, J, translate, analytics, keyboard, Action, Storage } from 'Lib';
-import { sub } from 'date-fns';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Props {
 	id?: string;
@@ -39,7 +39,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const nodeRef = useRef(null);
 	const worker = useRef(null);
 	const theme = S.Common.getThemeClass();
-	const elementId = [ 'graph', id ].join('-') + U.Common.getEventNamespace(isPopup);
+	const elementId = [ 'graph', id ].join('-') + U.Dom.getEventNamespace(isPopup);
 	const previewId = useRef('');
 	const canvas = useRef(null);
 	const edges = useRef([]);
@@ -290,21 +290,37 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 						return;
 					};
 
+					const w = I.ImageSize.Small;
 					const ratio = img.naturalHeight / img.naturalWidth || 1;
+					const h = Math.round(w * ratio);
 
 					try {
-						createImageBitmap(img, {
-							resizeWidth: I.ImageSize.Small,
-							resizeHeight: I.ImageSize.Small * ratio,
-							resizeQuality: 'high',
-						}).then((res: any) => {
-							if (images.current[src]) {
-								return;
-							};
+						if (src.startsWith('data:')) {
+							const canvas = new OffscreenCanvas(w, h);
+							const ctx = canvas.getContext('2d');
+							ctx.drawImage(img, 0, 0, w, h);
+							createImageBitmap(canvas).then((res: any) => {
+								if (images.current[src]) {
+									return;
+								};
 
-							images.current[src] = true;
-							send('image', { src, bitmap: res });
-						}).catch(() => { /**/ });
+								images.current[src] = true;
+								send('image', { src, bitmap: res });
+							}).catch(() => { /**/ });
+						} else {
+							createImageBitmap(img, {
+								resizeWidth: w,
+								resizeHeight: h,
+								resizeQuality: 'high',
+							}).then((res: any) => {
+								if (images.current[src]) {
+									return;
+								};
+
+								images.current[src] = true;
+								send('image', { src, bitmap: res });
+							}).catch(() => { /**/ });
+						};
 					} catch (e) { /**/ };
 				};
 				img.crossOrigin = 'anonymous';

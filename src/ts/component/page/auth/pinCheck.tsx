@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin, Header } from 'Component';
-import { I, S, U, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 

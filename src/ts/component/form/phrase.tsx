@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, Ke
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { J, S, keyboard, translate } from 'Lib';
 
 interface Props {
 	value?: string;
@@ -265,8 +264,8 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 			</div>
 
 			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
-			<Icon className="show" tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
-			<Icon className="copy withBackground" tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
+			<Icon name={isHidden ? 'common/eye0' : 'common/eye1'} tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
+			<Icon name="menu/action/copy" className="copy" withBackground={true} tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
 		</div>
 	);
 

@@ -1,14 +1,20 @@
-import Struct from 'google-protobuf/google/protobuf/struct_pb.js';
+/**
+ * Struct/Value encoding/decoding for protobuf.
+ *
+ * With ts-proto bindings, Struct and Value fields are represented as plain JS objects.
+ * The encode/decode functions are now identity operations, but we keep the API
+ * for backward compatibility with callers that use Encode.struct() / Decode.struct().
+ */
 
 const prepare = (o: any) => {
 	if (typeof o === 'undefined') {
 		o = null;
-	} else 
+	} else
 	if (typeof o === 'object') {
 		for (const k in o) {
 			if (typeof o[k] === 'object') {
 				o[k] = prepare(o[k]);
-			} else 
+			} else
 			if (typeof o[k] === 'undefined') {
 				o[k] = null;
 			};
@@ -20,26 +26,22 @@ const prepare = (o: any) => {
 export class Encode {
 
 	public static struct (obj: any) {
-		return Struct.Struct.fromJavaScript(prepare(obj));
+		return prepare(obj);
 	};
 
 	public static value (value: any) {
-		return Struct.Value.fromJavaScript(prepare(value));
+		return prepare(value);
 	};
 };
 
 export class Decode {
 
 	public static value (value: any) {
-		let data = null;
-		try { data = value ? value.toJavaScript() : null; } catch (e) { /**/ };
-		return data;
+		return value ?? null;
 	};
 
 	public static struct (struct: any) {
-		let data = {};
-		try { data = struct ? struct.toJavaScript() : {}; } catch (e) { /**/ };
-		return data;
+		return struct ?? {};
 	};
 
 };

@@ -3,7 +3,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 interface Props {
 	id?: string;
 	value?: boolean;
-	color?: string;
+	color?: 'grey' | 'yellow' | 'orange' | 'red' | 'pink' | 'purple' | 'blue' | 'ice' | 'teal' | 'lime';
 	className?: string;
 	readonly?: boolean;
 	onChange?(e: any, value: boolean): void;
@@ -17,7 +17,7 @@ interface SwitchRefProps {
 const Switch = forwardRef<SwitchRefProps, Props>(({
 	id = '',
 	value: initialValue = false,
-	color = 'orange',
+	color = 'blue',
 	className = '',
 	readonly = false,
 	onChange,

@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, C, U, J, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -30,9 +30,9 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let button = null;
 		if (isNew) {
-			button = { id: 'create', icon: 'add', name: translate('menuDataviewOptionEditCreate') };
+			button = { id: 'create', iconParam: { name: 'menu/action/add' }, name: translate('menuDataviewOptionEditCreate') };
 		} else {
-			button = { id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') };
+			button = { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('menuDataviewOptionEditDelete') };
 		};
 
 		return [
@@ -86,7 +86,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.id == 'remove') {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupConfirmRelationOptionRemoveText'),
 					textConfirm: translate('commonDelete'),
@@ -250,7 +250,6 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Filter
 				ref={nameRef}
 				placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
-				className="outlined round"
 				value={option.name}
 				onKeyUp={(e: any, v: string) => onKeyUp(e, v)}
 				onClear={onClear}

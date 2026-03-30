@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import { I, J, Relation, S, translate, U, sidebar } from 'Lib';
 import { EmptyNodes, Title } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	layoutFormat: I.LayoutFormat;
@@ -23,10 +23,10 @@ const LayoutPlug = forwardRef<{}, Props>(({
 }, ref) => {
 
 	const getNodeWidth = (): number => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const sidebarRight = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
-		return container.width() - (sidebarRight.isClosed ? 0 : sidebarRight.width) - sidebar.getDummyWidth();
+		return (container?.clientWidth || 0) - (sidebarRight.isClosed ? 0 : sidebarRight.width) - sidebar.getDummyWidth();
 	};
 
 	const getWidth = () => {

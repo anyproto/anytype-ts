@@ -17,7 +17,10 @@
 			.row {
 				.icon.drag { left: 0px; }
 
-				&.isDone * { color: var(--color-text-secondary); }
+				&.isDone { color: var(--color-text-secondary); }
+				&.isDone {
+					.cellContent.isName { color: var(--color-text-secondary); }
+				}
 				&:not(.editModeOn) {
 					.cellWrapper.isEmpty { margin: 0px !important; display: none; }
 					.cellWrapper.isEmpty {
@@ -43,7 +46,7 @@
 					}
 
 					.cellWrapper.isName {
-						.icon.edit { display: block; }
+						.icon.edit { display: flex; }
 						.chatCounter { display: none; }
 					}
 				}
@@ -95,7 +98,7 @@
 				.cellContent {
 					.name { width: unset; max-width: 100%; }
 				}
-				.icon.edit { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; display: none; }
+				.icon.edit { width: 20px; height: 20px; display: inline-block; display: none; }
 			}
 
 			.cellWrapper:not(.isName) {
@@ -173,7 +176,6 @@
 
 					.regularContent { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; width: 100%; overflow: hidden; }
 					.regularContent {
-						.iconObject { flex-shrink: 0; }
 					}
 
 					.sides { flex: 1 1 0; flex-direction: column; align-items: stretch; justify-content: center; gap: 0px; overflow: hidden; min-width: 0; }

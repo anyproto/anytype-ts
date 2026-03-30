@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -27,7 +27,7 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const hasConflict = U.Object.hasLayoutConflict(object);
 		
 		let align = { id: 'align', name: translate('sidebarSectionLayoutAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
+		let resize = { id: 'resize', iconParam: { name: 'menu/action/resize' }, name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || U.Object.isTaskLayout(object.layout) || U.Object.isInSetLayouts(object.layout)) {
 			align = null;
@@ -41,7 +41,7 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (hasConflict) {
 			sections.unshift({
 				name: translate('menuBlockLayoutConflict'),
-				children: [ { id: 'reset', icon: 'reload', name: translate('menuBlockLayoutReset') } ]
+				children: [ { id: 'reset', iconParam: { name: 'menu/action/reload' }, name: translate('menuBlockLayoutReset') } ]
 			});
 		};
 
@@ -145,12 +145,13 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onResize = (e: any) => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const containerEl = U.Dom.getPageFlexContainer(isPopup);
+		const container = containerEl ? $(containerEl) : $();
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');
 
-		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => { 
+		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => {
 			if (!$(e.target).parents(`#editorSize`).length) {
 				wrapper.removeClass('isResizing');
 				container.off('mousedown.editorSize');

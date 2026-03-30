@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
+import * as I from 'Interface';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -155,7 +155,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		S.Popup.open('confirm', {
 			onClose: onCancel,
 			data: {
-				icon: 'warning-red',
+				iconParam: { name: 'popup/header/warning', color: 'red' },
 				title: translate('popupConfirmUxTypeChangeTitle'),
 				text: translate('popupConfirmUxTypeChangeText'),
 				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
@@ -190,9 +190,9 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		return [
-			{ id: 'invite', name: translate('commonAdd'), icon: 'invite' },
-			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
+			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
+			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
 		];
 	};
 
@@ -315,7 +315,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 						className="btn" 
 						onClick={e => onClick(e, item)}
 					>
-						<Icon className={item.icon} />
+						<Icon {...(item.iconParam || {})} className={item.id} />
 						<Label text={item.name} />
 					</div>
 				))}
@@ -331,7 +331,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className={`settings-ux${spaceview.uxType}`} />
+											<Icon name={spaceview.uxType == I.SpaceUxType.Chat ? 'settings/space/chat' : 'settings/space/space'} className={`settings-ux${spaceview.uxType}`} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
@@ -359,7 +359,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
-											<Icon className="home" />
+											<Icon name="settings/home" />
 
 											<div className="side left">
 												<Title text={translate('commonHomepage')} />
@@ -371,7 +371,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 													<div className="item">
 														<div className="name">{home ? home.name : translate('commonSelect')}</div>
 													</div>
-													<Icon className="arrow black" />
+													<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 												</div>
 											</div>
 										</div>
@@ -380,7 +380,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 
 								<div className="item">
 									<div className="sides">
-										<Icon className="type" />
+										<Icon name="settings/type" className="type" />
 
 										<div className="side left">
 											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
@@ -392,7 +392,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 												<div className="item">
 													<div className="name">{type?.name || translate('commonSelect')}</div>
 												</div>
-												<Icon className="arrow black" />
+												<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 											</div>
 										</div>
 									</div>

@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, U, J, keyboard, translate, analytics, Mark, focus } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const SKIP_TAGS = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
@@ -37,12 +38,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
 
 	const getRootId = () => keyboard.getRootId(isPopup);
-	const getContainer = () => U.Common.getScrollContainer(isPopup);
+	const getContainer = () => U.Dom.getScrollContainer(isPopup);
 	const getSearchTag = () => Mark.getTag(I.MarkType.Search);
 
 	const getMatchElements = (): NodeListOf<Element> | null => {
 		const container = getContainer();
-		return container.length ? container.get(0).querySelectorAll(getSearchTag()) : null;
+		return container ? container.querySelectorAll(getSearchTag()) : null;
 	};
 
 	const expandToggle = (el: JQuery<Element>) => {
@@ -156,15 +157,20 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const scrollToMatch = (matchEl: JQuery<Element>) => {
-		const container = getContainer();
-		const scrollTop = container.scrollTop();
+		const containerEl = getContainer();
+		if (!containerEl) {
+			return;
+		};
+
+		const scrollTop = containerEl.scrollTop;
 		const matchTop = matchEl.offset()?.top || 0;
-		const containerTop = container.offset()?.top || 0;
-		const containerHeight = container.height() || 0;
+		const containerRect = containerEl.getBoundingClientRect();
+		const containerTop = containerRect.top || 0;
+		const containerHeight = containerEl.clientHeight || 0;
 		const offset = J.Size.lastBlock + J.Size.header;
 		const targetY = matchTop - containerTop + scrollTop;
 
-		container.scrollTop(targetY - containerHeight + offset);
+		containerEl.scrollTop = targetY - containerHeight + offset;
 	};
 
 	const updateMatchCounter = () => {
@@ -183,9 +189,11 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const container = getContainer();
+		const containerEl = getContainer();
 		const tag = getSearchTag();
-		container.find(`${tag}.active`).removeClass('active');
+		if (containerEl) {
+			containerEl.querySelectorAll(`${tag}.active`).forEach(el => el.classList.remove('active'));
+		};
 
 		const currentEl = $(elements[n.current]);
 		if (!currentEl.length) {
@@ -222,7 +230,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const container = getContainer();
+		const containerEl = getContainer();
 		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher').removeClass('active');
 
@@ -231,13 +239,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		lastSearchRef.current = value;
 		storageSet({ search: value });
 
-		if (!value) {
+		if (!value || !containerEl) {
 			return;
 		};
 
 		analytics.event('SearchWords', { length: value.length, route });
 
-		findAndReplaceDOMText(container.get(0), {
+		findAndReplaceDOMText(containerEl, {
 			preset: 'prose',
 			find: new RegExp(U.String.regexEscape(value), 'gi'),
 			wrap: getSearchTag(),
@@ -341,7 +349,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div ref={nodeRef} className="wrap">
 			<div className="filterWrapper">
 				<div className="filterContainer">
-					<Icon className="search" />
+					<Icon name="common/search" />
 					<Input
 						ref={inputRef}
 						placeholder={translate('commonSearch')}
@@ -349,12 +357,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onKeyUp={onKeyUp}
 					/>
 					<div id="switcher" className="cnt" />
-					<Icon className="clear" onClick={onClear} />
+					<Icon name="common/clear" color="default" onClick={onClear} />
 				</div>
 
 				<div className="arrowWrapper">
-					<Icon className="arrow up" onClick={() => navigateMatch(-1)} />
-					<Icon className="arrow down" onClick={() => navigateMatch(1)} />
+					<Icon name="arrow/small" className="arrow up" onClick={() => navigateMatch(-1)} />
+					<Icon name="arrow/small" className="arrow down" onClick={() => navigateMatch(1)} />
 				</div>
 			</div>
 		</div>

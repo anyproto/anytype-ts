@@ -4,9 +4,10 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 import Item from 'Component/page/main/navigation/item';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 enum Panel { 
 	Left = 1, 
@@ -51,13 +52,13 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		const node = $(nodeRef.current);
 
 		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const header = node.find('#header');
 			const items = node.find('.items');
 			const sides = node.find('.sides');
 			const empty = node.find('#empty');
 			const hh = header.height();
-			const oh = container.height() - hh;
+			const oh = (container?.clientHeight ?? 0) - hh;
 
 			sides.css({ height: oh });
 			items.css({ height: oh });
@@ -295,8 +296,8 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 			
 				<div className="buttons">
-					<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => onConfirm(e, item)} />
-					{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
+					<Button text={translate('popupNavigationOpen')} size={36} onClick={e => onConfirm(e, item)} />
+					{isPopup ? <Button text={translate('popupNavigationCancel')} size={36} color="blank" onClick={() => S.Popup.close('page')} /> : ''}
 				</div>
 			</div>
 		);

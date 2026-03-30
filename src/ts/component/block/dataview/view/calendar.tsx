@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 const PADDING = 16;
 
@@ -105,8 +106,8 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const wrap = node.find('.wrap');
-		const container = U.Common.getPageContainer(isPopup);
-		const mw = container.width() - PADDING * 2;
+		const container = U.Dom.getPageContainer(isPopup);
+		const mw = (container?.clientWidth ?? 0) - PADDING * 2;
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
@@ -156,9 +157,23 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 				</div>
 
 				<div className="side right">
-					<Icon className="arrow left" onClick={() => onArrow(-1)} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow left" 
+						withBackground={true} 
+						onClick={() => onArrow(1)}
+						width={8}
+						height={12} 
+					/>
 					<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
-					<Icon className="arrow right" onClick={() => onArrow(1)} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow right" 
+						withBackground={true} 
+						onClick={() => onArrow(-1)}
+						width={8}
+						height={12} 
+					/>
 				</div>
 			</div>
 

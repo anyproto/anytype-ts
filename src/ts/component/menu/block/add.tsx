@@ -3,7 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -35,12 +38,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, [])	;
 	
 	useEffect(() => {
-		checkFilter();
-		resize();
-		setActive();
-	});
-
-	useEffect(() => {
 		const items = getItems();
 		const itemsWithoutSections = items.filter(it => !it.isSection);
 
@@ -56,6 +53,12 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		loadObjects();
 	}, [ filter.text ]);
+
+	useEffect(() => {
+		checkFilter();
+		resize();
+		setActive();
+	});
 
 	const checkFilter = () => {
 		$(`#${getId()}`).toggleClass('withFilter', !!filter);
@@ -76,7 +79,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!filter) {
 			itemsRef.current = [];
-			setDummy(dummy + 1);
+			setDummy(d => d + 1);
 			return;
 		};
 
@@ -99,7 +102,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			itemsRef.current = message.records || [];
-			setDummy(dummy + 1);
+			setDummy(d => d + 1);
 		});
 	};
 
@@ -336,7 +339,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const rect = U.Common.getElementRect($(`#${getId()}`).get(0));
+		const rect = U.Dom.getElementRect($(`#${getId()}`).get(0));
 		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			rect,
@@ -430,6 +433,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						menuId = 'searchObject';
 						menuParam.data = Object.assign(menuParam.data, {
 							type: I.NavigationType.Link,
+							placeholder: translate('commonSearchObjects'),
 							withPlural: true,
 							filters: [
 								{ relationKey: 'resolvedLayout', condition, value: U.Object.getFileLayouts() },
@@ -693,11 +697,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseEnter={e => onMouseEnter(e, item)} 
 					style={param.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
-		} else 
+		} else
 		if (item.isRelation) {
 			content = (
 				<div 

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { U } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -70,7 +69,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 		videoRef.current?.play();
 	};
 
@@ -89,7 +88,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 
 			<div className="controls">
 				<Icon className="syncStatus" onClick={onSyncStatusClick} />
-				<Icon className="play" onClick={onPlayClick} />
+				<Icon name="popup/preview/play" className="play" onClick={onPlayClick} />
 			</div>
 		</div>
 	);

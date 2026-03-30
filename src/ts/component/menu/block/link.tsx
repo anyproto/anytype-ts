@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -96,7 +97,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const sections: any[] = [];
 
 		if (urls.length) {
-			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', url: urls[0] });
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), iconParam: { name: 'common/link' }, url: urls[0] });
 		};
 
 		if (items.length) {
@@ -105,7 +106,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), iconParam: { name: 'plus/menu' } },
 			] 
 		});
 
@@ -270,6 +271,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					id={item.id}
 					object={object}
 					icon={item.icon}
+					iconParam={item.iconParam}
 					name={<ObjectName object={item} withPlural={true} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}
@@ -342,8 +344,9 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div className="wrap">
-			<Filter 
-				ref={filterRef} 
+			<Filter
+				ref={filterRef}
+				className="underlined"
 				placeholder={translate('menuBlockLinkFilterPlaceholder')}
 				value={filter}
 				onChange={onFilterChange}

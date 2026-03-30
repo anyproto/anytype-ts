@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Menu } from 'Component';
 import { observer } from 'mobx-react';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 const ListMenu: FC = observer(() => {
 	const { list } = S.Menu;

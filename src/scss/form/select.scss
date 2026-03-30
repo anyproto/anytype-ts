@@ -13,20 +13,19 @@
 	&:not(.round) {
 		.icon.arrow {
 			margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute !important; top: 50%;
-			background-image: url('~img/arrow/select/dark.svg') !important;
 		}
-		.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
 	}
 
 	.item { display: flex; background: none !important; padding: 0px !important; overflow: hidden; }
 	.item {
 		.icon { width: 20px; height: 20px; }
-		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
+		.icon, .iconObject { transition: none; margin-right: 6px; }
 		.name { width: 100%; @include text-overflow-nw; }
 		.caption, .note { display: none; }
 	}
 	.item::before { display: none; }
 
+	.currentSelected { display: flex; align-items: center; gap: 0px 6px; }
 	.clickable { display: flex; width: 100%; }
 }
 
@@ -44,9 +43,9 @@
 }
 .select.round {
 	&.hover, &:hover { background: var(--color-shape-highlight-medium); }
-	&.c36 { height: 36px; border-radius: 12px; }
+	&.size36 { height: 36px; border-radius: 12px; }
 
-	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/round.svg'); }
+	.icon.arrow { width: 8px; height: 8px; }
 }
 
 .select.isReadonly { cursor: default; padding-right: 6px; }

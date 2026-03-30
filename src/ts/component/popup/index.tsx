@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
@@ -34,6 +33,8 @@ import PopupApiCreate from './api/create';
 import PopupAIOnboarding from './aiOnboarding';
 import PopupIntroduceChats from './introduceChats';
 import PopupUpload from './upload';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -106,7 +107,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			const inner = node.find('.innerWrap');
-			const { ww } = U.Common.getWindowDimensions();
+			const { ww } = U.Dom.getWindowDimensions();
 
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();

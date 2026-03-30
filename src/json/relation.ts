@@ -25,6 +25,7 @@ export default {
 		'createdDate',
 		'timestamp',
 		'resolvedLayout',
+		'discussionId',
 	],
 
 	sidebar: [
@@ -149,7 +150,7 @@ export default {
 	],
 
 	space: [
-		'spaceDashboardId',
+		'homepage',
 		'spaceAccountStatus',
 		'spaceLocalStatus',
 		'spaceAccessType',

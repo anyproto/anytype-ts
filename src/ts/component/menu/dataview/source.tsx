@@ -2,8 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
-import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
-import menu from 'json/menu';
+import * as I from 'Interface';
 
 const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -184,7 +183,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					<div className="value">{item.value}</div>
 				</div>
 				<div className="buttons">
-					{canDelete ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+					{canDelete ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 				</div>
 			</div>
 		);

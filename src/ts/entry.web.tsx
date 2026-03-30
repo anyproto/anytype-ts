@@ -28,6 +28,18 @@ if (dataPath) {
 	localStorage.setItem('anytype_dataPath', dataPath);
 }
 
+// Clean config params from URL, keep the pathname
+if (urlParams.has('server') || urlParams.has('dataPath')) {
+	const cleanUrl = window.location.pathname || '/';
+	window.history.replaceState({}, '', cleanUrl);
+}
+
+// Deep link: save initial URL path as redirect for the app to pick up after auth
+const initialPath = window.location.pathname;
+if (initialPath && (initialPath !== '/')) {
+	localStorage.setItem('anytype_redirect', JSON.stringify(initialPath));
+}
+
 // Configure the global config object
 (window as any).AnytypeGlobalConfig = {
 	serverAddress,

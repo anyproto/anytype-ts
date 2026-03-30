@@ -1,4 +1,3 @@
-import { U, J, translate } from 'Lib';
 import { init } from 'emoji-mart';
 
 const DIV = 65039;

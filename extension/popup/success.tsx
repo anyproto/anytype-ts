@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, S, U } from 'Lib';
+import * as I from 'Interface';
 
 const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -21,7 +21,7 @@ const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			<div className="label">{object.description}</div>
 
 			<div className="buttonsWrapper">
-				<Button color="blank" className="c32" text="Open in app" onClick={onOpen} />
+				<Button color="blank" size={32} text="Open in app" onClick={onOpen} />
 			</div>
 		</div>
 	);

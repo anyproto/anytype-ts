@@ -2,13 +2,13 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, SidebarProgress } from 'Component';
-import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
+import * as I from 'Interface';
 
 const Components = {
 	widget:				 PageWidget,

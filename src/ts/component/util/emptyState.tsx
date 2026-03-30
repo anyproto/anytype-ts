@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { U, translate } from 'Lib';
 import { Icon, Label, Button } from 'Component';
 
 interface Props {
@@ -7,7 +6,7 @@ interface Props {
 	className?: string;
 	buttonText?: string;
 	buttonColor?: string;
-	buttonSize?: string;
+	buttonSize?: 16 | 28 | 32 | 36 | 40 | 48;
 	onButton?: () => void;
 };
 
@@ -16,7 +15,7 @@ const EmptyState = forwardRef<HTMLDivElement, Props>(({
 	className= '',
 	buttonText = '',
 	buttonColor = '',
-	buttonSize = '',
+	buttonSize = 28,
 	onButton,
 }, ref) => {
 	if (!text) {
@@ -27,7 +26,7 @@ const EmptyState = forwardRef<HTMLDivElement, Props>(({
 		<div className={[ 'emptyState', className ].join(' ')}>
 			<Icon />
 			<Label text={text} />
-			{buttonText && onButton ? <Button onClick={onButton} text={buttonText} className={buttonSize ? buttonSize : 'c28'} color={buttonColor ? buttonColor : 'blank'} /> : ''}
+			{buttonText && onButton ? <Button onClick={onButton} text={buttonText} size={buttonSize} color={buttonColor ? buttonColor : 'blank'} /> : ''}
 		</div>
 	);
 });

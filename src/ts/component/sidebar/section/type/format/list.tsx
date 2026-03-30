@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Select } from 'Component';
-import { I, U, translate, S, J } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];
@@ -83,7 +83,7 @@ const SidebarSectionTypeLayoutFormatList = observer(forwardRef<{}, Props>((props
 						<div className="item">
 							<div className="name">{type?.name || translate('commonSelect')}</div>
 						</div>
-						<Icon className="arrow light" />
+						<Icon name="arrow/small" className="arrow light" size={12} />
 					</div>
 				</div>
 			</div>

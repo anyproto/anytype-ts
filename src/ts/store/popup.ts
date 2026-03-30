@@ -1,7 +1,8 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const AUTH_IDS = [ 'settings' ];
 const NO_DIMMER_IDS = [
@@ -12,6 +13,8 @@ const NO_DIMMER_IDS = [
 	'phrase',
 	'relation',
 	'inviteQr',
+	'inviteRequest',
+	'inviteConfirm',
 ];
 
 class PopupStore {

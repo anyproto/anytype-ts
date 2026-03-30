@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import { J, S, I } from 'Lib';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
+import * as I from 'Interface';
 
 interface Props {
 	value: string;

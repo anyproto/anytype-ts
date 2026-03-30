@@ -2,8 +2,9 @@ import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, 
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, C, translate, keyboard, Relation, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -142,7 +143,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		const list = obj.find('> .list');
 		const isOpen = list.hasClass('isOpen');
 
-		U.Common.toggle(list, 200, isOpen);
+		U.Dom.toggle(list, 200, isOpen);
 		title.toggleClass('isOpen', !isOpen);
 		Storage.setToggle(page, id, !isOpen);
 
@@ -175,7 +176,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 
 				{allowTypeDetails ? (
 					<div className="side right">
-						<Button color="dark" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={onSetUp} />
+						<Button color="dark" text={translate('sidebarObjectRelationSetUp')} size={28} onClick={onSetUp} />
 					</div>
 				) : ''}
 			</div>
@@ -202,8 +203,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 					let button = null;
 					if ((id == 'local') && allowObjectDetails && !readonly && !isTemplate) {
 						button = (
-							<Icon 
-								className="plus withBackground" 
+							<Icon
+								name="plus/menu" className="plus" withBackground={true}
 								tooltipParam={{ text: translate('commonAddRelation') }}
 								onClick={onAdd}
 							/>
@@ -218,7 +219,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 										<Label text={name} onClick={withToggle ? () => onToggle(id) : null} />
 										{description ? (
 											<Icon
-												className="question"
+												name="common/question"
 												tooltipParam={{ 
 													text: description,
 													className: 'relationGroupDescription',

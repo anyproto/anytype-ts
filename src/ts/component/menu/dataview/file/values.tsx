@@ -6,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, S, U, J, Relation, Renderer, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MENU_ID = 'dataviewFileList';
 
@@ -83,14 +83,14 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 		let value = Relation.getArrayValue(data.value);
 		let options: any[] = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-			{ id: 'download', icon: 'download', name: translate('commonDownload') },
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpen') },
+			{ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') },
 		];
 
 		if (isAllowed) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') },
 			]);
 		};
 
@@ -226,7 +226,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				{...listeners}
 				style={style}
 			>
-				{canEdit ? <Icon className="dnd" /> : ''}
+				{canEdit ? <Icon name="common/dnd" /> : ''}
 				<div
 					className="clickable"
 					onClick={e => U.Object.openEvent(e, item)} 
@@ -236,7 +236,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					{content}
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={e => onMore(e, item)} />
+					<Icon name="common/more" className="more" onClick={e => onMore(e, item)} />
 				</div>
 			</div>
 		);

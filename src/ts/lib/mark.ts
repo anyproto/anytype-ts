@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {
@@ -211,7 +211,7 @@ class Mark {
 			map[type].push(mark);
 		};
 
-		return U.Common.unmap(map).sort(this.sort);
+		return (U.Common.unmap(map) as I.Mark[]).sort(this.sort);
 	};
 
 	/**
@@ -329,7 +329,7 @@ class Mark {
 	 * @returns {I.Mark[]} The adjusted marks.
 	 */
 	adjust(marks: I.Mark[], from: number, length: number) {
-		marks = U.Common.objectCopy(marks || []);
+		marks = (marks || []).map(m => ({ ...m, range: { ...m.range } }));
 
 		for (const mark of marks) {
 			if ((mark.range.from < from) && (mark.range.to > from)) {
@@ -945,8 +945,8 @@ class Mark {
 		const tags: any = {};
 
 		for (const i in I.MarkType) {
-			if (isNaN(I.MarkType[i] as any)) {
-				tags[i] = this.getTag(i as any);
+			if (isNaN(Number(I.MarkType[i]))) {
+				tags[i] = this.getTag(Number(i));
 			};
 		};
 

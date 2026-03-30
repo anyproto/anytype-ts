@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
-import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import * as I from 'Interface';
 
 enum Tab {
 	None	 = 0,
@@ -486,8 +486,8 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const tt = getTooltip(item);
 
 		element.addClass('active');
-		if (tt) {
-			Preview.tooltipShow({ text: tt, element });
+		if (tt && element.length) {
+			Preview.tooltipShow({ text: tt, element: element.get(0) as HTMLElement });
 		};
 	};
 
@@ -886,11 +886,11 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const cnb = [ 'body', `tab${Tab[tab]}` ];
 	
 	const filterElement = (
-		<Filter 
+		<Filter
 			ref={filterRef}
 			value={filter}
-			className={[ 'outlined', 'round', (!noHead ? 'withHead' : '') ].join(' ')}
-			onChange={e => onKeyUp(e, false)} 
+			className={!noHead ? 'withHead' : ''}
+			onChange={e => onKeyUp(e, false)}
 			focusOnMount={true}
 		/>
 	);
@@ -1065,17 +1065,17 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{sections.length ? (
 						<div id="foot" className="foot">
 							{groups.map((group: any, i: number) => (
-								<Icon 
-									key={i} 
+								<Icon
+									key={i}
 									id={`item-${group.id}`}
-									className={group.id} 
-									tooltipParam={{ text: group.name, typeY: I.MenuDirection.Bottom }} 
-									onClick={() => onGroup(group.id)} 
+									name={`emoji/${group.id}`}
+									tooltipParam={{ text: group.name, typeY: I.MenuDirection.Bottom }}
+									onClick={() => onGroup(group.id)}
 								/>
 							))}
-							<Icon 
-								className="random" 
-								tooltipParam={{ text: translate('menuSmileRandom') }} 
+							<Icon
+								name="emoji/random"
+								tooltipParam={{ text: translate('menuSmileRandom') }}
 								onClick={() => onRandom()}
 							/>
 						</div>
@@ -1169,7 +1169,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onDrop={onDrop}
 					onClick={onUploadHandler}
 				>
-					<Icon className="coverUpload" />
+					<Icon name="common/upload" size={28} />
 					<Label text={translate('menuBlockCoverChoose')} />
 				</div>
 			);

@@ -2,8 +2,8 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Cover, Button } from 'Component';
-import { I, U, translate, keyboard } from 'Lib';
 import Block from 'Component/block/help';
+import * as I from 'Interface';
 
 const LIMIT = 1;
 
@@ -98,7 +98,7 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 	});
 
 	useEffect(() => {
-		U.Common.renderLinks($(nodeRef.current));
+		U.Dom.renderLinks($(nodeRef.current));
 	});
 
 	return (
@@ -119,8 +119,8 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 				{isWhatsNew ? (
 					<div className="buttons">
-						{page < length - 1 ? <Button className="c28" text={translate('popupHelpPrevious')} onClick={() => onArrow(1)} /> : ''}
-						{page > 0 ? <Button className="c28" text={translate('popupHelpNext')} onClick={() => onArrow(-1)} /> : ''}
+						{page < length - 1 ? <Button size={28} text={translate('popupHelpPrevious')} onClick={() => onArrow(1)} /> : ''}
+						{page > 0 ? <Button size={28} text={translate('popupHelpNext')} onClick={() => onArrow(-1)} /> : ''}
 					</div>
 				) : ''}
 			</div>

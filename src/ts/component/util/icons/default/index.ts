@@ -1,0 +1,24 @@
+import { registerIcon } from '../registry';
+import Archive from './archive';
+import Bookmark from './bookmark';
+import Chat from './chat';
+import Collection from './collection';
+import Date from './date';
+import Graph from './graph';
+import Page from './page';
+import Set from './set';
+import Settings from './settings';
+import Tag from './tag';
+import Type from './type';
+
+registerIcon('default/archive', Archive);
+registerIcon('default/bookmark', Bookmark);
+registerIcon('default/chat', Chat);
+registerIcon('default/collection', Collection);
+registerIcon('default/date', Date);
+registerIcon('default/graph', Graph);
+registerIcon('default/page', Page);
+registerIcon('default/set', Set);
+registerIcon('default/settings', Settings);
+registerIcon('default/tag', Tag);
+registerIcon('default/type', Type);

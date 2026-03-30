@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -28,9 +28,10 @@ const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 	const getSections = () => {
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 		const name = isHiddenRef.current ? translate('menuDataviewGroupEditShowColumn') : translate('menuDataviewGroupEditHideColumn');
+		const icon = isHiddenRef.current ? 'common/eye0' : 'common/eye1';
 
 		return [
-			{ children: [ { id: 'hide', icon: 'hide', name } ] },
+			{ children: [ { id: 'hide', iconParam: { name: icon }, name } ] },
 			{ children: colors },
 		];
 	};

@@ -1,9 +1,11 @@
-import React, { 
+import React, {
 	useEffect, useRef, useState, forwardRef, useImperativeHandle, ChangeEvent, SyntheticEvent, KeyboardEvent, FormEvent, FocusEvent, ClipboardEvent
 } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
+
+type InputSize = 28 | 36 | 40;
 
 interface Props {
 	id?: string;
@@ -13,6 +15,7 @@ interface Props {
 	value?: string;
 	autoComplete?: string;
 	maxLength?: number;
+	size?: InputSize;
 	className?: string;
 	multiple?: boolean;
 	readonly?: boolean;
@@ -65,6 +68,7 @@ const Input = forwardRef<InputRef, Props>(({
 	value: initialValue = '',
 	placeholder = '',
 	autoComplete = '',
+	size = 28,
 	className = '',
 	readonly = false,
 	maxLength = null,
@@ -102,7 +106,7 @@ const Input = forwardRef<InputRef, Props>(({
 	const rangeRef = useRef<I.TextRange | null>(null);
 	const isComposing = useRef(false);
 	const compositionValue = useRef('');
-	const cn = [ 'input', `input-${inputType}`, className ];
+	const cn = [ 'input', `input-${inputType}`, `size${size}`, className ];
 
 	if (readonly) {
 		cn.push('isReadonly');
@@ -269,7 +273,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 
 		clone.text(value.substring(0, selectionRange.to));
-		const rect = U.Common.getElementRect(clone.get(0));
+		const rect = U.Dom.getElementRect(clone.get(0));
 
 		clone.remove();
 		return rect;

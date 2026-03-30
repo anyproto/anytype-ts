@@ -1,5 +1,6 @@
 import { observable, action, set, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -476,6 +477,15 @@ class RecordStore {
 	 */
 	getChatType () {
 		return this.getTypeByKey(J.Constant.typeKey.chatDerived);
+	};
+
+	/**
+	 * Gets the discussion type object.
+	 * @private
+	 * @returns {any|null} The discussion type object or null.
+	 */
+	getDiscussionType () {
+		return this.getTypeByKey(J.Constant.typeKey.discussion);
 	};
 
 	/**

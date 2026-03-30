@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 const BlockIconPage = observer(forwardRef<{}, I.BlockComponent>(({
 	rootId = '',

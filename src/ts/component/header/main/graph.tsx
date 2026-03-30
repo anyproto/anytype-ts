@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
@@ -72,25 +73,27 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-search" 
-					className="btn-search withBackground" 
-					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSearch} 
+				<Icon
+					id="button-header-search"
+					name="header/search" withBackground={true}
+					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSearch}
 				/>
 
-				<Icon 
-					id="button-header-filter" 
-					className="btn-filter withBackground dn" 
-					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onFilter} 
+				<Icon
+					id="button-header-filter"
+					name="control/dataview/filter"
+					className="btn-filter dn" withBackground={true}
+					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }}
+					onClick={onFilter}
 				/>
 
-				<Icon 
-					id="button-header-settings" 
-					className="btn-settings withBackground" 
-					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSettings} 
+				<Icon
+					id="button-header-settings"
+					name="common/options"
+					className="btn-settings" withBackground={true}
+					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSettings}
 				/>
 			</div>
 		</>

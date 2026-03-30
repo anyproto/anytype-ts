@@ -1,4 +1,4 @@
-import { I, U, J } from 'Lib';
+import * as I from 'Interface';
 
 const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];
@@ -127,8 +127,8 @@ class UtilEmbed {
 			const a = new URL(content);
 
 			p = a.pathname.split('/');
-		} catch (e) { /**/ };
-		
+		} catch (e) { console.warn('[Embed] invalid URL:', e); };
+
 		if (!p.length) {
 			return '';
 		};
@@ -185,7 +185,7 @@ class UtilEmbed {
 			// Apple Music embeds use the query parameter 'i' to point to specific song in an album.
 			// in this case the height of the embed should be smaller since it only shows on single song.
 			if (a.pathname.toLowerCase().includes('album') && a.searchParams.has('i')) height = 150;
-		} catch (e) { /**/ };
+		} catch (e) { console.warn('[Embed] invalid URL:', e); };
 
 		return `<iframe src="${content}" ${IFRAME_PARAM} height=${height} style="background: transparent; width: 100%" allow="autoplay *; encrypted-media *"></iframe>`;
 	};
@@ -260,7 +260,7 @@ class UtilEmbed {
 				try {
 					const a = new URL(url);
 					url = `https://player.vimeo.com/video${a.pathname}`;
-				} catch (e) { /**/ };
+				} catch (e) { console.warn('[Embed] invalid Vimeo URL:', e); };
 				break;
 			};
 
@@ -326,7 +326,7 @@ class UtilEmbed {
 
 					pathname = a.pathname;
 					searchParam = a.searchParams;
-				} catch (e) { /**/ };
+				} catch (e) { console.warn('[Embed] invalid URL:', e); };
 
 				if (!pathname) {
 					break;
@@ -377,7 +377,7 @@ class UtilEmbed {
 						u.searchParams.delete('edit');
 						url = u.toString();
 					};
-				} catch (e) { /**/ };
+				} catch (e) { console.warn('[Embed] invalid URL:', e); };
 				break;
 			};
 
@@ -387,7 +387,7 @@ class UtilEmbed {
 					a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
 					a.searchParams.set('utm_source', 'generator');
 					url = a.toString();
-				} catch (e) { /**/ };
+				} catch (e) { console.warn('[Embed] invalid Spotify URL:', e); };
 				break;
 			};
 
@@ -398,7 +398,7 @@ class UtilEmbed {
 
 					const trackId = a.searchParams.get('i');
 					if (trackId) url += `?i=${trackId}`;
-				} catch (e) { /**/ };
+				} catch (e) { console.warn('[Embed] invalid Apple Music URL:', e); };
 				break;
 			};
 

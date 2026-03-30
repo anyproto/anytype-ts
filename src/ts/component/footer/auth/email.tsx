@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import { Label } from 'Component';
-import { I, U, J, translate } from 'Lib';
+import Label from 'Component/util/label';
+import * as I from 'Interface';
 
 const FooterAuthOnboardEmail = forwardRef<{}, I.FooterComponent>(() => {
 

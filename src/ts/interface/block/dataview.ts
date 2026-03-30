@@ -1,5 +1,5 @@
-import { I } from 'Lib';
 import { MouseEvent } from 'react';
+import * as I from 'Interface';
 
 export enum CardSize {
 	Small			 = 0,

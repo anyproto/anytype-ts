@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, me
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component';
-import { I, S, U, Relation, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -93,6 +93,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 			{canEdit && config.experimental ? (
 				<Icon
+					name="common/edit"
 					className={[ 'edit', (isEditing ? 'enabled' : '') ].join(' ')}
 					onClick={e => onEditModeClick(e, recordId)}
 				/>

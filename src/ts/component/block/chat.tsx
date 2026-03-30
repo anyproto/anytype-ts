@@ -2,12 +2,15 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Storage, Action } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
+import { Icon } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -49,8 +52,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const frameRef = useRef(0);
-	const namespace = U.Common.getEventNamespace(isPopup);
+	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
+	const prevDepsKey = useRef('');
+	const prevReplyKey = useRef('');
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -77,12 +82,19 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const messages = S.Chat.getList(subId);
 	const analyticsChatId = getAnalyticsChatId();
 
+	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
+
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'pinnedStatusUpdate', 'focus' ];
 		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
+
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (container && scrollHandlerRef.current) {
+			container.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
@@ -97,7 +109,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		win.on(`pinnedStatusUpdate.${ns}`, (e, message, isPinned, subIds) => onPinnedStatusUpdate(message, isPinned, subIds));
 		win.on(`focus.${ns}`, () => readScrolledMessages());
 
-		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => onScroll(e));
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (container) {
+			scrollHandlerRef.current = (e: Event) => onScroll(e);
+			container.addEventListener('scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
@@ -105,6 +121,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			loadDeps(getDepsIds(list), callBack);
 		});
 	};
+
 
 	const loadState = (callBack?: () => void) => {
 		const chatId = getChatId();
@@ -214,8 +231,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						setIsBottom(false);
 					};
 				} else {
-					const y = U.Common.getMaxScrollHeight(isPopup);
-					const top = U.Common.getScrollContainerTop(isPopup);
+					const y = U.Dom.getMaxScrollHeight(isPopup);
+					const top = U.Dom.getScrollContainerTop(isPopup);
 
 					setIsBottom(!(top < y));
 				};
@@ -309,6 +326,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevDepsKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevDepsKey.current = key;
+
 		const subId = getSubId();
 		const keys = U.Subscription.chatRelationKeys();
 
@@ -329,6 +355,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			callBack?.();
 			return;
 		};
+
+		const key = [ ...ids ].sort().join(',');
+
+		if (key == prevReplyKey.current) {
+			callBack?.();
+			return;
+		};
+
+		prevReplyKey.current = key;
 
 		const chatId = getChatId();
 		const subId = getSubId();
@@ -524,7 +559,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 						}}
 					>
-						<div className="icon plus" />
+						<Icon name="plus/menu" className="plus" />
 					</div>
 				</div>
 			);
@@ -605,7 +640,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		if (onMore) {
-			menuParam.element = `${message} .icon.more`;
+			menuParam.element = `${message} .icon.commonMore`;
 		} else {
 			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
 		};
@@ -618,8 +653,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const dates = node.find('.sectionDate');
 		const pinnedHeight = node.find('.pinnedMessage').outerHeight() || 0;
 		const offset = J.Size.header + 8 + pinnedHeight;
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.offset().top;
+		const container = U.Dom.getScrollContainer(isPopup);
+		const top = container?.getBoundingClientRect().top ?? 0;
 
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
@@ -651,9 +686,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onScroll = (e: any) => {
 		const subId = getSubId();
-		const container = U.Common.getScrollContainer(isPopup);
-		const st = Math.ceil(container.scrollTop());
-		const max = U.Common.getMaxScrollHeight(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const st = Math.ceil(container?.scrollTop ?? 0);
+		const max = U.Dom.getMaxScrollHeight(isPopup);
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
@@ -775,9 +810,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const getMessagesInViewport = () => {
 		const messages = getMessages();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
-		const ch = container.outerHeight();
+		const ch = container?.offsetHeight ?? 0;
 		const max = ch - formHeight;
 		const ret = [];
 
@@ -798,17 +833,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const options: any[] = [];
 
 		if (!noControls) {
-			options.push({ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') });
+			options.push({ id: 'reply', iconParam: { name: 'chat/buttons/reply' }, name: translate('blockChatReply') });
 		};
 
 		if (message.content.text) {
-			options.push({ id: 'copy', icon: 'clipboard-copy', name: translate('blockChatCopyText') });
+			options.push({ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('blockChatCopyText') });
 		};
 
 		if (downloadable.length == 1) {
 			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
 
-			options.push({ id: 'download', icon: 'download', name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
 		};
 
 		if (!U.Space.getSpaceview().isOneToOne) {
@@ -821,15 +856,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (isSelf) {
 			options.push({ isDiv: true });
-			options.push({ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') });
+			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
-			options.push({ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
 			};
-			options.push({ id: 'link', icon: 'pageLink', name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		return options;
@@ -864,6 +899,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const first = message.messages[0];
 
 			S.Chat.clear(subId);
+			setIsBottom(false);
 			loadMessagesByOrderId(first.orderId, () => {
 				raf(() => scrollToMessage(first.id, true, true));
 			});
@@ -890,9 +926,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
+				return;
+			};
+
 			const top = getMessageScrollPosition(id);
-			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
+			const y = Math.max(0, top - (container.clientHeight / 2) - J.Size.header);
 
 			setIsBottom(false);
 			setAutoLoadDisabled(true);
@@ -908,9 +948,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			if (animate) {
-				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.scrollTo({ top: y, behavior: 'smooth' });
+				window.setTimeout(cb, 300);
 			} else {
-				container.scrollTop(y);
+				container.scrollTop = y;
 				cb();
 			};
 		});
@@ -925,14 +966,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		};
 
 		raf(() => {
-			const y = U.Common.getMaxScrollHeight(isPopup);
-			const top = U.Common.getScrollContainerTop(isPopup);
+			const y = U.Dom.getMaxScrollHeight(isPopup);
+			const top = U.Dom.getScrollContainerTop(isPopup);
 
 			if (top >= y) {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const cb = () => {
 				readScrolledMessages();
 				window.setTimeout(() => setAutoLoadDisabled(false), 50);
@@ -940,11 +981,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			setAutoLoadDisabled(true);
 
-			if (animate) {
-				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
-			} else {
-				container.scrollTop(y);
-				cb();
+			if (container) {
+				if (animate) {
+					container.scrollTo({ top: y, behavior: 'smooth' });
+					window.setTimeout(cb, 300);
+				} else {
+					container.scrollTop = y;
+					cb();
+				};
 			};
 		});
 	};
@@ -960,11 +1004,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const idx = jumpIds.current.length - 1;
 			const id = jumpIds.current[idx];
 			const ref = messageRefs.current[id];
-			const container = U.Common.getScrollContainer(isPopup);
-			const threshold = container.outerHeight() / 2;
 
 			jumpIds.current.splice(idx, 1);
-			if (ref && (getMessageScrollOffset(id) < threshold)) {
+
+			if (!ref) {
+				loadAndScrollToMessage(id);
+				return;
+			};
+
+			const container = U.Dom.getScrollContainer(isPopup);
+			const threshold = (container?.offsetHeight ?? 0) / 2;
+
+			if (getMessageScrollOffset(id) < threshold) {
 				onScrollToBottomClick();
 			} else {
 				scrollToMessage(id, true, true);
@@ -975,6 +1026,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const reloadAndScrollToBottom = () => {
+		jumpIds.current = [];
 		loadMessages(1, true, () => scrollToBottom(true));
 	};
 
@@ -1061,10 +1113,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
-
-		if (v) {
-			jumpIds.current = [];
-		};
 	};
 
 	const setAutoLoadDisabled = (v: boolean) => {
@@ -1072,7 +1120,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const hasScroll = () => {
-		return U.Common.getMaxScrollHeight(isPopup) > 0;
+		return U.Dom.getMaxScrollHeight(isPopup) > 0;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {
@@ -1145,12 +1193,19 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const resize = () => {
 		renderDates();
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ns = block.id + namespace;
+		const container = U.Dom.getScrollContainer(isPopup);
 
-		container.off(`scroll.${ns}`);
+		if (container && scrollHandlerRef.current) {
+			container.removeEventListener('scroll', scrollHandlerRef.current);
+		};
+
 		window.clearTimeout(timeoutResize.current);
-		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
+		timeoutResize.current = window.setTimeout(() => {
+			if (container) {
+				scrollHandlerRef.current = (e: Event) => onScroll(e);
+				container.addEventListener('scroll', scrollHandlerRef.current);
+			};
+		}, 50);
 	};
 
 	const setLoaded = (v: boolean) => {
@@ -1298,9 +1353,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					getMessages={getMessages}
 					getReplyContent={getReplyContent}
 					highlightMessage={highlightMessage}
-					loadDepsAndReplies={loadDepsAndReplies}
+
 					reloadAndScrollToBottom={reloadAndScrollToBottom}
 					isEmpty={isEmpty}
+					isBottom={isBottom}
 				/>
 			) : ''}
 		</div>

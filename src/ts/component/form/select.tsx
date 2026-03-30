@@ -1,11 +1,14 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, U, Relation, Preview } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
+
+type SelectSize = 28 | 36;
 
 interface Props {
 	id: string;
 	initial?: string;
+	size?: SelectSize;
 	className?: string;
 	arrowClassName?: string;
 	element?: string;
@@ -13,6 +16,8 @@ interface Props {
 	options: I.Option[];
 	noFilter?: boolean;
 	isMultiple?: boolean;
+	iconParam?: I.IconParam;
+	arrowParam?: Partial<I.IconParam>;
 	showOn?: 'click' | 'mouseDown' | 'mouseEnter';
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
@@ -30,6 +35,7 @@ interface SelectRefProps {
 const Select = forwardRef<SelectRefProps, Props>(({
 	id = '',
 	initial = '',
+	size = 28,
 	className = '',
 	arrowClassName = '',
 	element = '',
@@ -41,19 +47,17 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	readonly = false,
 	menuParam = {},
 	tooltipParam = {},
-	onChange,	
+	iconParam,
+	arrowParam,
+	onChange,
 }, ref) => {
 
 	const [ value, setValue ] = useState(initialValue);
 	const [ options, setOptions ] = useState(initialOptions);
 	const nodeRef = useRef(null);
-	const cn = [ 'select', className ];
+	const cn = [ 'select', `size${size}`, className ];
 	const acn = [ 'arrow', arrowClassName ];
 	const current: any[] = [];
-
-	if (className) {
-		cn.push(className);
-	};
 
 	if (readonly) {
 		cn.push('isReadonly');
@@ -194,7 +198,7 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 		
 		if (onMouseEnter) {
@@ -238,11 +242,12 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			{current ? (
 				<>
 					<div className="currentSelected">
+						{iconParam ? <Icon {...iconParam} /> : ''}
 						{current.map((item: any, i: number) => (
 							<MenuItemVertical key={i} {...item} />
 						))}
 					</div>
-					<Icon className={acn.join(' ')} />
+					<Icon name="arrow/select" className={acn.join(' ')} {...arrowParam} />
 				</>
 			) : ''}
 		</div>

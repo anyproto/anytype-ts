@@ -1,7 +1,8 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
-import { I, S, U, C, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -93,7 +94,7 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 				<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
 				<div className="col">{U.File.size(item.size)}</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${item.objectId}`} className="more withBackground" onClick={() => onMore(item)} />
+					<Icon id={`icon-more-${item.objectId}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(item)} />
 				</div>
 			</div>
 		);

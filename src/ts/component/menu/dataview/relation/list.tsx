@@ -6,8 +6,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { I, C, S, J, U, keyboard, Relation, Dataview, translate, analytics } from 'Lib';
 import { Icon, Switch } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -150,9 +150,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			return;
 		};
 
-		const ids = items.map(it => it.relationKey);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const oldIndex = view.relations.findIndex(it => it.relationKey == active.id);
+		const newIndex = view.relations.findIndex(it => it.relationKey == over.id);
 
 		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		n.current = newIndex;
@@ -164,6 +163,11 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const view = getView();
 		const object = S.Detail.get(rootId, rootId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
+		const vr = view.getRelation(item.relationKey);
+
+		if (vr) {
+			vr.isVisible = v;
+		};
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
 		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
@@ -237,9 +241,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{!isReadonly ? <Icon className="dnd" /> : ''}
+				{!isReadonly ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
-					<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+					<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 					<div className="name">{item.relation.name}</div>
 				</span>
 				{canHide ? (
@@ -367,7 +371,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('commonAddRelation')}</div>
 					</div>
 				</div>

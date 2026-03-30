@@ -6,7 +6,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
-	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
+	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; user-select: none !important; }
@@ -58,14 +58,6 @@ input, textarea, select { font-family: 'Inter'; }
 	.version { @include text-small; transition-delay: 0.15s; }
 }
 
-#globalFade { 
-	position: fixed; z-index: 23; background: var(--color-bg-primary); right: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0; 
-	transition: opacity 0.3s $easeInQuint;
-}
-#globalFade {
-	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
-}
-#globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; left: 0px; top: 0px; }
 
 #mainAnimation { display: none; }
@@ -164,7 +156,7 @@ a { color: var(--color-text-primary); }
 	}
 	
 	.icon.resize { display: none; }
-	.icon.download { display: none; }
+	.icon.commonDownload { display: none; }
 }
 
 @import "./debug";
@@ -178,6 +170,7 @@ a { color: var(--color-text-primary); }
 @import "./widget/common.scss";
 @import "./popup/common.scss";
 @import "./menu/common.scss";
+@import "./menu/icon.scss";
 @import "./notification/common.scss";
 
 @import "./media/print.scss";

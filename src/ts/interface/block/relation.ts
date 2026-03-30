@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export interface ContentRelation {
 	key: string;

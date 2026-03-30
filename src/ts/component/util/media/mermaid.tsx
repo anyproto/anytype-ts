@@ -3,7 +3,6 @@ import $ from 'jquery';
 import mermaid from 'mermaid';
 import elkLayouts from '@mermaid-js/layout-elk';
 import { observer } from 'mobx-react';
-import { J, S, U } from 'Lib';
 
 mermaid.registerLayoutLoaders(elkLayouts);
 
@@ -41,7 +40,7 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			await mermaid.run({ 
 				querySelector: `#${id} .mermaid`,
 				postRenderCallback: () => {
-					U.Common.renderLinks($(chartRef.current));
+					U.Dom.renderLinks($(chartRef.current));
 				}, 
 			});
 		} catch (e) {

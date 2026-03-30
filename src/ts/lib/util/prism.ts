@@ -1,4 +1,4 @@
-const Components = require(`prismjs/components.js`);
+import Components from 'prismjs/components.js';
 
 class UtilPrism {
 

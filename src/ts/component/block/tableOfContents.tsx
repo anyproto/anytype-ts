@@ -1,7 +1,8 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { Label } from 'Component';
-import { I, S, U, focus, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
@@ -21,7 +22,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 	};
 
 	const onClick = (e: any, item: any) => {
-		U.Common.scrollToHeader(rootId, item, isPopup);
+		U.Dom.scrollToHeader(rootId, item, isPopup);
 	};
 
 	const Item = (item: any) => (

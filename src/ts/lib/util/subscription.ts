@@ -1,5 +1,5 @@
-import { I, S, J, C, U, Action, Relation } from 'Lib';
 import sha1 from 'sha1';
+import * as I from 'Interface';
 
 /**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
@@ -94,7 +94,7 @@ class UtilSubscription {
 		};
 
 		if (ignoreChat) {
-			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
 		};
 
 		if (skipLayouts.length) {
@@ -295,10 +295,11 @@ class UtilSubscription {
 		};
 
 		C.ObjectSubscribeIds(spaceId, subId, ids, keys, noDeps, (message: any) => {
+			const idxMap = new Map<string, number>(ids.map((id, i) => [ id, i ]));
 			(message.records || []).sort((c1: any, c2: any) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-				if (i1 > i2) return 1; 
+				const i1 = idxMap.get(c1.id) ?? ids.length;
+				const i2 = idxMap.get(c2.id) ?? ids.length;
+				if (i1 > i2) return 1;
 				if (i1 < i2) return -1;
 				return 0;
 			});

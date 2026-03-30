@@ -7,7 +7,7 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, S, U, keyboard, Relation, analytics, translate, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -186,12 +186,12 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{allowed ? <Icon className="dnd" /> : ''}
+				{allowed ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable" onClick={() => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more withBackground" onClick={e => onViewContext(e, item)} />
+					<Icon name="common/more" className="more" withBackground={true} onClick={e => onViewContext(e, item)} />
 				</div>
 			</div>
 		);
@@ -319,7 +319,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('menuDataviewViewListAddView')}</div>
 					</div>
 				</div>

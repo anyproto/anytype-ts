@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, PreviewTab } from 'Component';
-import { I, S, U, Preview, Mark, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -110,7 +110,7 @@ const PreviewIndex = observer(forwardRef(() => {
 	const position = () => {
 		const node = $(nodeRef.current);
 		const poly = $(polygonRef.current);
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = node.outerWidth();
 		const oh = node.outerHeight();

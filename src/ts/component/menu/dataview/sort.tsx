@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 48;
 const HEIGHT_DIV = 16;
@@ -355,22 +355,22 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{!isReadonlyValue ? <Icon className="dnd" /> : ''}
+				{!isReadonlyValue ? <Icon name="common/dnd" /> : ''}
 				<div className="sides">
 					<div className="side left">
 						<div className="chip relation" onClick={e => onSortNameClick(e, item)}>
-							<Icon className={`relation ${Relation.className(relation.format)}`} />
+							<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
 						<div className="chip type" onClick={e => onTypeChange(e, item)}>
-							<Icon className={`sortArrow c${item.type}`} />
+							<Icon name="common/sortArrow" className={`sortArrow c${item.type}`} />
 						</div>
 					</div>
 					<div className="side right">
 						{!isReadonlyValue ? (
 							<div className="buttons">
-								<Icon className="more withBackground" onClick={e => onMore(e, item)} />
-								<Icon className="delete withBackground" onClick={e => onRemove(e, item)} />
+								<Icon name="common/more" className="more" withBackground={true} onClick={e => onMore(e, item)} />
+								<Icon name="menu/common/delete" className="delete" withBackground={true} onClick={e => onRemove(e, item)} />
 							</div>
 						) : ''}
 					</div>
@@ -410,7 +410,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseLeave={() => setHover()}
 					style={param.style}
 				>
-					<Icon className={item.id === 'add' ? 'plus' : 'remove'} />
+					<Icon name={item.id === 'add' ? 'plus/menu' : undefined} className={item.id === 'add' ? 'plus' : 'remove'} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

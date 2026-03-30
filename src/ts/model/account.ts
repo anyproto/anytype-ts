@@ -1,5 +1,5 @@
-import { I, U } from 'Lib';
 import { observable, makeObservable } from 'mobx';
+import * as I from 'Interface';
 
 class AccountInfo implements I.AccountInfo {
 	

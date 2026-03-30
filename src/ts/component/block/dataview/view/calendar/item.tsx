@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
-import { I, S, U, C, translate, Preview, Dataview } from 'Lib';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -98,11 +99,13 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		const node = $(nodeRef.current);
-		const element = node.find(`#record-${U.Common.esc(item.id)}`);
+		const node = nodeRef.current;
+		const element = node?.querySelector(`#record-${U.Common.esc(item.id)}`) as HTMLElement;
 		const name = U.String.shorten(item.name, 50);
 
-		Preview.tooltipShow({ text: name, element });
+		if (element) {
+			Preview.tooltipShow({ text: name, element });
+		};
 	};
 
 	const onMouseLeave = () => {
@@ -138,7 +141,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	const onContextHandler = () => {
 		const node = $(nodeRef.current);
 		const options = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') }
 		] as I.Option[];
 
 		if (canCreateValue) {
@@ -295,8 +298,8 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		>
 			<div className="head">
 				{canCreateValue ? (
-					<Icon 
-						className="plus withBackground" 
+					<Icon
+						name="plus/menu" className="plus" withBackground={true}
 						tooltipParam={{ text: translate(`commonNewObject`) }} 
 						onClick={onCreate} 
 					/> 

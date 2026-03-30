@@ -1,6 +1,5 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { Loader } from 'Component';
-import { C, U } from 'Lib';
 
 interface Props {
 	url: string;

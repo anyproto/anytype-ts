@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Select, Button, Switch } from 'Component';
-import { I, S, Action, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 

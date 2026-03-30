@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Title, Label, Button, Icon, Select } from 'Component';
-import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -65,7 +65,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 				<div className="item storageUsage">
 					<div className="side left">
-						<Icon className="drive" />
+						<Icon name="settings/drive" className="drive" />
 
 						<div className="txt">
 							<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
@@ -73,13 +73,13 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 						</div>
 					</div>
 					<div className="side right">
-						<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={onOffload} />
+						<Button color="blank" size={28} text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={onOffload} />
 					</div>
 				</div>
 
 				<div className="item">
 					<div className="side left">
-						<Icon className="offline" />
+						<Icon name="settings/offline" className="offline" />
 
 						<div className="txt">
 							<Title text={translate('popupSettingsDataOfflineAccess')} />
@@ -105,7 +105,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 				<div className="item">
 					<div className="side left">
-						<Icon className="location" />
+						<Icon name="settings/location" className="location" />
 
 						<div className="txt">
 							<Title text={translate('popupSettingsDataManagementDataLocation')} />
@@ -113,7 +113,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 						</div>
 					</div>
 					<div className="side right">
-						<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
+						<Button color="blank" size={28} text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
 					</div>
 				</div>
 			</div>

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import { Title, Label, Select, Switch } from 'Component';
-import { I, S, U, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent>((props, ref) => {
 
@@ -16,10 +16,11 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 
 	const getSpellingLanguages = () => {
 		const { languages } = config;
+		const langSet = new Set(languages);
 
 		return U.Menu.getSpellingLanguages().sort((c1, c2) => {
-			const idx1 = languages.indexOf(c1.id) >= 0;
-			const idx2 = languages.indexOf(c2.id) >= 0;
+			const idx1 = langSet.has(c1.id);
+			const idx2 = langSet.has(c2.id);
 
 			if (!c1.id && c2.id) return -1;
 			if (c1.id && !c2.id) return 1;

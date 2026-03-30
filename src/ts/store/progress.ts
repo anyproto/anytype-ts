@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, set, computed } from 'mobx';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
 class ProgressStore {
 

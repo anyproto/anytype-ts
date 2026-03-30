@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -52,8 +52,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 			objectId: id,
 			data: {
 				relationKeys: J.Relation.default.concat(view.groupRelationKey),
-				allowedCollection: true, 
-				allowedExport: true,
+				allowedCollection: true,
 				allowedLinkTo: true,
 			},
 		});
@@ -66,7 +65,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		more = (
 			<Icon 
 				ref={moreRef} 
-				className="more" 
+				name="common/more" className="more" 
 				onMouseDown={e => onContextHandler(e, true)} 
 				tooltipParam={{ text: translate('widgetOptions') }}
 			/>

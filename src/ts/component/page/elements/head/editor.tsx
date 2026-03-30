@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, S, U, Action, Relation, keyboard, translate } from 'Lib';
 import { Block, Button, DragHorizontal, Loader } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -35,7 +36,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (wrapper.length) {
 			wrapper.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		};
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 	};
 
 	const onScaleStart = (e: any, v: number) => {
@@ -136,7 +137,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				{source ? (
 					<div className="bookmarkButtons">
-						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" className="c36" onClick={() => Action.openUrl(source)} />
+						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" size={36} onClick={() => Action.openUrl(source)} />
 					</div>
 				) : ''}
 

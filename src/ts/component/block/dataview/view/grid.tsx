@@ -6,11 +6,11 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
-import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
+import * as I from 'Interface';
 
 const PADDING = 46;
 const HEIGHT = 48;
@@ -56,21 +56,24 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			selection?.renderSelection();
 		};
 
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 	}, [ relations.length, view?.id ]);
 
 	if (!view) {
 		return null;
 	};
 
+	const scrollVerticalHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
 		const scroll = $(scrollRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
 		scroll.on('scroll', () => onScrollHorizontal());
-		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => onScrollVertical()));
+		scrollVerticalHandlerRef.current = () => raf(() => onScrollVertical());
+		container?.addEventListener('scroll', scrollVerticalHandlerRef.current);
 
 		if (!isInline) {
 			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
@@ -79,10 +82,13 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const unbind = () => {
 		const scroll = $(scrollRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
-		container.off(`scroll.${block.id}`);
+		if (scrollVerticalHandlerRef.current) {
+			container?.removeEventListener('scroll', scrollVerticalHandlerRef.current);
+			scrollVerticalHandlerRef.current = null;
+		};
 		stickyScrollbarRef.current?.unbind();
 	};
 
@@ -183,6 +189,9 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const columns: any = {};
 		
 		relations.forEach(it => {
+			if (!it.relation) {
+				return;
+			};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
 			columns[it.relationKey] = Relation.width(w, it.relation.format);
 		});
@@ -343,15 +352,15 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const scroll = $(scrollRef.current);
 		const wrap = $(scrollWrapRef.current);
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
-		const cw = container.width();
-		const ch = container.height();
+		const cw = container?.clientWidth ?? 0;
+		const ch = container?.clientHeight ?? 0;
 
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = container.find('#editorWrapper');
+					const wrapper = $(container).find('#editorWrapper');
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = Math.max(0, (cw - ww) / 2);
@@ -459,7 +468,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup)}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (

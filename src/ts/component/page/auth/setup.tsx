@@ -1,7 +1,9 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Button, Footer, Error } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -36,7 +38,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 				U.Data.createSession(phrase, '', '', (message: any) => {
 					if (!setErrorHandler(message.error)) {
-						select(accountId, false);
+						select(accountId);
 					};
 				});
 			});
@@ -46,7 +48,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		});
 	};
 
-	const select = (accountId: string, animate: boolean) => {
+	const select = (accountId: string) => {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
@@ -63,10 +65,9 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			Renderer.send('closeOtherWindows');
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { 
+			const routeParam = {
 				replace: true,
-				animate,
-				onFadeIn: () => {
+				onRouteChange: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = Storage.get('multichatsOnboarding');
 
@@ -153,7 +154,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 
 			case 'select': {
-				select(account.id, true);
+				select(account.id);
 				break;
 			};
 		};
@@ -179,7 +180,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 				{error.code ? (
 					<div className="buttons">
 						<div className="animation">
-							<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
+							<Button text={translate('commonBack')} size={28} onClick={onCancel} />
 						</div>
 					</div>
 				) : ''}

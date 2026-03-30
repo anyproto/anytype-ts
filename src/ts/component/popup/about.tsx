@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Title, Icon, Label, Button } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PopupAbout = forwardRef<{}, I.Popup>(() => {
 
@@ -19,7 +19,7 @@ const PopupAbout = forwardRef<{}, I.Popup>(() => {
 				<Button 
 					onClick={() => U.Common.copyToast(translate('commonVersion'), version)} 
 					text={translate('commonCopy')} 
-					className="c28" 
+					size={28}
 					color="blank" 
 				/>
 			</div>

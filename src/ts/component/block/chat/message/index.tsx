@@ -2,13 +2,13 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { motion, AnimatePresence, animate } from 'motion/react';
+import { motion, AnimatePresence, } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import * as I from 'Interface';
 
 interface ChatMessageRefProps {
 	highlight: () => void;
@@ -31,15 +31,23 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const message = S.Chat.getMessageById(subId, id);
 
 	useEffect(() => {
-		const resizeObserver = new ResizeObserver(() => {
-			raf(() => resize());
+		const resizeObserver = new ResizeObserver((entries) => {
+			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
+
+			raf(() => {
+				if (!nodeRef.current) {
+					return;
+				};
+
+				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
+					el.classList.toggle('isWide', width > 360);
+				});
+			});
 		});
 
-		if (nodeRef.current) {
-			resizeObserver.observe(nodeRef.current);
+		if (bubbleRef.current) {
+			resizeObserver.observe(bubbleRef.current);
 		};
-
-		resize();
 
 		return () => {
 			resizeObserver.disconnect();
@@ -80,8 +88,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
-
-		resize();
 	};
 
 	const onReactionAdd = () => {
@@ -206,14 +212,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
 	};
 
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const bubble = $(bubbleRef.current);
-		const width = bubble.outerWidth();
-
-		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
-	};
-
 	if (!message) {
 		return null;
 	};
@@ -253,13 +251,13 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	if (!readonly) {
 		if (!hasReactions && canAddReactionValue) {
-			controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
+			controls.push({ id: 'reaction-add', name: 'chat/buttons/reaction', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
-			controls.push({ className: 'more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -364,7 +362,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
 										<div className="time">
-											<Icon className={cns.join(' ')} />
+											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}
 										</div>
 									</div>
@@ -397,7 +395,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 								{controls.length ? (
 									<div className="controls">
 										{controls.map((item, i) => (
-											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+											<Icon key={i} id={item.id} name={item.name} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
 									</div>
 								) : ''}
@@ -409,7 +407,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										<Reaction key={i} {...item} onSelect={onReactionSelect} />
 									))}
 									{!readonly && canAddReactionValue ? (
-										<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+										<Icon id="reaction-add" name="chat/buttons/reaction" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
 									) : ''}
 								</div>
 							) : ''}

@@ -1,8 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const MAX_HEIGHT = 396;
 
@@ -124,8 +125,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const inner = node.find('.side.left #inner');
-		const container = U.Common.getScrollContainer(isPopup);
-		const wh = container.height() - 182;
+		const container = U.Dom.getScrollContainer(isPopup);
+		const wh = (container?.clientHeight ?? 0) - 182;
 
 		if (blocks.hasClass('vertical')) {
 			inner.css({ minHeight: wh });

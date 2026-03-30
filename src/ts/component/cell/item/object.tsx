@@ -1,7 +1,9 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, Icon } from 'Component';
-import { I, S, U } from 'Lib';
+import Icon from 'Component/util/icon';
+import IconObject from 'Component/util/iconObject';
+import ObjectName from 'Component/util/object/name';
+import * as I from 'Interface';
 
 interface Props {
 	cellId: string;
@@ -54,7 +56,7 @@ const CellItemObject = observer(forwardRef<{}, Props>((props, ref: any) => {
 	};
 	if (canEdit) {
 		cn.push('canEdit');
-		iconRemove = <Icon className="objectRemove" onClick={onRemoveHandler} />;
+		iconRemove = <Icon name="object/remove" size={8} className="objectRemove" onClick={onRemoveHandler} />;
 	};
 
 	if (relation.relationKey != 'type') {

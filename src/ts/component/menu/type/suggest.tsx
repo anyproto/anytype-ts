@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, S, U, J, analytics, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -260,7 +260,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onClick={e => onClickHandler(e, item)} 
 					style={item.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{addName}</div>
 				</div>
 			);
@@ -331,8 +331,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
-					icon="search"
+					iconParam={{ name: 'common/search' }}
 					placeholder={translate('menuTypeSuggestFilterTypes')}
 					value={filter}
 					onChange={onFilterChange} 

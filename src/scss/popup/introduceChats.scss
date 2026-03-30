@@ -131,7 +131,7 @@ $elementsTransition: opacity 0.2s linear;
                             .mask {
                                 .icon {
                                     @include animate(introHeaderMaskIcon);
-                                    position: absolute; left: 112px; top: 12px; width: 20px; height: 20px; background: url('~img/icon/header/widget1.svg');
+                                    position: absolute; left: 112px; top: 12px; width: 20px; height: 20px;
                                 }
                             }
                         }

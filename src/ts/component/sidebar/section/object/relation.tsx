@@ -1,7 +1,8 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
-import { I, S, U, C, Relation, analytics } from 'Lib';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 const PREFIX = 'sidebarObjectRelation';
 
@@ -83,7 +84,7 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 			</div>
 
 			{hasMore ? (
-				<Icon className="more" onClick={e => relation.onMore(e, relation)} /> 
+				<Icon name="common/more" className="more" onClick={e => relation.onMore(e, relation)} /> 
 			) : ''}
 		</div>
 	);

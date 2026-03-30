@@ -1,8 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, keyboard } from 'Lib';
 import Members from './share/members';
+import * as I from 'Interface';
 
 const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -184,7 +184,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 		return {
 			id: String(id),
-			icon: suffix.toLowerCase(),
+			iconParam: { name: `menu/inviteLink/${suffix.toLowerCase()}` },
 			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
 			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
 			withDescription: true,
@@ -208,7 +208,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		return true;
 	};
 
-	const { name, description, icon } = getOptionById(invite.type);
+	const { name, description, iconParam } = getOptionById(invite.type);
 
 	useEffect(() => {
 		init();
@@ -232,7 +232,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 				<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
 				<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', canEdit ? 'canEdit' : '' ].join(' ')} onClick={onInviteMenu}>
-					<Icon className={isLoading ? 'loading' : icon} />
+					<Icon name={isLoading ? '' : iconParam.name} className={isLoading ? 'loading' : ''} />
 					<div className="info">
 						<Title text={name} />
 						<Label text={description} />
@@ -249,7 +249,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 								onClick={() => inputRef.current?.select()} 
 							/>
 						</div>
-						<Button onClick={onCopy} className="c36" color="black" text={translate('commonCopy')} />
+						<Button onClick={onCopy} size={36} color="black" text={translate('commonCopy')} />
 					</div>
 				) : ''}
 			</div>

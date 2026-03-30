@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
-import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 12;
@@ -179,7 +179,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getIconP2P = (syncStatus) => {
 		const { p2p, devicesCounter } = syncStatus;
 
-		let className = '';
+		let iconColor = 'darkGrey';
 		let message = '';
 		let label = '';
 
@@ -195,12 +195,12 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		switch (p2p) {
 			case I.P2PStatus.Connected: {
-				className = 'c-connected';
+				iconColor = 'accent100';
 				break;
 			};
 			case I.P2PStatus.NotPossible: {
 				message = translate('menuSyncStatusP2PRestricted');
-				className = 'c-error';
+				iconColor = 'darkRed';
 				break;
 			};
 		};
@@ -208,7 +208,8 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return {
 			id: 'p2p',
 			label,
-			className,
+			iconName: 'sync/p2p',
+			iconColor,
 			title: translate('menuSyncStatusInfoP2pTitle'),
 			message,
 			buttons: []
@@ -222,7 +223,8 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let id = '';
 		let label = '';
 		let title = '';
-		let className = '';
+		let iconName = 'sync/globe';
+		let iconColor = '';
 		let message = '';
 		let isConnected = false;
 		let isError = false;
@@ -232,25 +234,25 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case I.SyncStatusSpace.Syncing:
 			case I.SyncStatusSpace.Synced: {
 				isConnected = true;
-				className = 'c-connected';
+				iconColor = 'accent100';
 				break;
 			};
 
 			case I.SyncStatusSpace.Upgrade: {
 				isConnected = true;
 				isSlow = true;
-				className = 'c-connectedSlow';
+				iconColor = 'darkOrange';
 				break;
 			};
 
 			case I.SyncStatusSpace.Error: {
 				isError = true;
-				className = 'c-error';
+				iconColor = 'red';
 				break;
 			};
 
 			case I.SyncStatusSpace.Offline: {
-				className = 'c-offline';
+				iconName = 'sync/offline';
 			};
 		};
 
@@ -316,14 +318,15 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case I.SyncStatusNetwork.LocalOnly: {
 				id = 'localOnly';
+				iconName = 'sync/p2p';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');
 				message = translate('menuSyncStatusInfoLocalOnlyMessage');
-				className = '';
+				iconColor = '';
 				break;
 			};
 		};
 
-		return { id, label, className, title, message, buttons };
+		return { id, label, iconName, iconColor, title, message, buttons };
 	};
 
 	const resize = () => {
@@ -366,12 +369,12 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const icons = getIcons();
 
 	const PanelIcon = (item) => {
-		const { id, className, label } = item;
+		const { id, iconName, iconColor, label } = item;
 		const cn = [ 'iconWrapper' ];
 		const cni = [ 'inner' ];
 
-		if (className) {
-			cn.push(className);
+		if (iconColor) {
+			cn.push(`c-${iconColor}`);
 		};
 
 		if (label) {
@@ -386,7 +389,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			>
 				<div className="iconBg" />
 				<div className={cni.join(' ')}>
-					<Icon className={id} />
+					<Icon name={iconName} color={iconColor} />
 					{label ? <Label text={label} /> : ''}
 				</div>
 			</div>
@@ -421,8 +424,8 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						</div>
 					</div>
 					<div className="side right">
-						<Icon className={U.Data.syncStatusClass(item.syncStatus)} />
-						<Icon className="more" onClick={e => onContextMenu(e, item)} />
+						<Icon name={U.Data.syncStatusIcon(item.syncStatus)} className={U.Data.syncStatusClass(item.syncStatus)} />
+						<Icon name="common/more" className="more" onClick={e => onContextMenu(e, item)} />
 					</div>
 				</div>
 			);

@@ -7,11 +7,13 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer } from 'Lib';
+import * as I from 'Interface';
+import Highlight from 'Lib/highlight';
+import Storage from 'Lib/storage';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
-const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_ITEM = 45;
+const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
@@ -148,19 +150,23 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-		
+
 		const items = getItems(true);
 		const node = getNode();
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const iconWrap = element.find('.iconWrap');
+		const el = node.find(`#item-${U.Common.esc(item.id)}`).get(0) as HTMLElement;
+		const iconWrap = node.find(`#item-${U.Common.esc(item.id)} .iconWrap`);
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
 		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
-		Preview.tooltipShow({ 
-			text, 
-			element, 
-			className: 'fromVault', 
+		if (!el) {
+			return;
+		};
+
+		Preview.tooltipShow({
+			text,
+			element: el,
+			className: 'fromVault',
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
 			offsetX: node.width() / 2 + iconWrap.width() / 2,
@@ -278,16 +284,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const iconCreate = () => {
-		const cn = [ 'plus' ];
-
-		if (!vaultIsMinimal) {
-			cn.push('withBackground');
-		};
-
 		return (
 			<Icon
 				id="button-create-space"
-				className={cn.join(' ')}
+				name="plus/menu" className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -406,7 +406,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (!item.hasCounter && item.isPinned) {
 			cn.push('isPinned');
-			icons.push('pin');
+			icons.push({ className: 'pin', name: 'vault/pin' });
 		};
 
 		if (item.notificationMode != I.NotificationMode.All) {
@@ -439,7 +439,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<div className="messageWrapper">
 						{last}
 						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
+							{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 						</div>
 						{counter}
 					</div>
@@ -450,7 +450,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<div className="chatWrapper">
 							{chatName}
 							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
+								{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 							</div>
 							{counter}
 						</div>
@@ -476,7 +476,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<ObjectName object={item} />
 
 					<div className="icons">
-						{icons.map(icon => <Icon key={icon} className={icon} />)}
+						{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 					</div>
 
 					{counter}
@@ -659,8 +659,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{!vaultIsMinimal ? (
 						<>
 							{iconCreate()}
-							<Icon 
-								className="toggle withBackground"
+							<Icon
+								name="widget/sidebarToggle" className="toggle" withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -677,8 +677,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						icon="search"
-						className="outlined round"
+						iconParam={{ name: 'common/search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
@@ -742,8 +741,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 							onMouseEnter={e => Preview.tooltipShow({ 
 								...tooltipParam(),
 								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
-								text: translate('popupSettingsAccountPersonalInformationTitle'), 
-								element: $(e.currentTarget),
+								text: translate('popupSettingsAccountPersonalInformationTitle'),
+								element: e.currentTarget as HTMLElement,
 							})}
 							onMouseLeave={() => Preview.tooltipHide(false)}
 						>
@@ -754,6 +753,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 					<div className="side right">
 						<Icon
+							name="vault/gallery"
 							className="gallery"
 							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}

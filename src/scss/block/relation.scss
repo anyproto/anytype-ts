@@ -6,10 +6,8 @@
 
 	.block.blockRelation {
 		.icon.edit { display: none; }
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; }
+		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; background: none; border: 0px; border-radius: 0px; }
 
 		.sides { display: flex; width: 100%; }
 

@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, J, analytics, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
-import relation from 'json/relation';
+import * as I from 'Interface';
 
 const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

@@ -1,8 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
-import { I, U, S, translate, Animation, analytics, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -58,7 +60,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 	useEffect(() => {
 		Animation.to(() => {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 
 			analytics.removeContext();
 			analytics.event('ScreenIndex');
@@ -83,10 +85,10 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 				<div className="buttons">
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} color="accent" className="c48" onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} color="accent" size={48} onClick={onRegister} />
 					</div>
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" className="c48" onClick={onLogin} />
+						<Button text={translate('authSelectLogin')} color="blank" size={48} onClick={onLogin} />
 					</div>
 				</div>
 

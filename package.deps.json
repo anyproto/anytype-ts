@@ -15,6 +15,8 @@
 	"dist/img/**/*",
 	"dist/css/**/*",
 	"dist/js/**/*",
+	"dist/audio/**/*",
+	"dist/assets/**/*",
 	"dist/*.js",
 	"!dist/js/main.js.map",
 	"dist/anytypeHelper.exe",
@@ -29,77 +31,37 @@
 	{
 		"from": "node_modules/google-protobuf",
 		"to": "node_modules/google-protobuf"
-    },
+	},
 	{
 		"from": "node_modules/grpc-web",
 		"to": "node_modules/grpc-web"
-    },
+	},
 	{
 		"from": "node_modules/lodash.isequal",
 		"to": "node_modules/lodash.isequal"
-    },
-    {
+	},
+	{
 		"from": "node_modules/lodash.escaperegexp",
 		"to": "node_modules/lodash.escaperegexp"
-    },
-    {
-		"from": "node_modules/read-chunk",
-		"to": "node_modules/read-chunk"
 	},
-    {
-		"from": "node_modules/with-open-file",
-		"to": "node_modules/with-open-file"
-    },
-    {
+	{
 		"from": "node_modules/@electron/remote",
 		"to": "node_modules/@electron/remote"
-    },
-    {
-		"from": "node_modules/p-try",
-		"to": "node_modules/p-try"
-    },
+	},
 	{
-		"from": "node_modules/yocto-queue",
-		"to": "node_modules/yocto-queue"
-    },
-	{
-		"from": "node_modules/uri-js",
-		"to": "node_modules/uri-js"
-    },
-	{
-		"from": "node_modules/fast-json-stable-stringify",
-		"to": "node_modules/fast-json-stable-stringify"
-    },
-	{
-		"from": "node_modules/ajv/dist/compile/codegen",
-		"to": "node_modules/ajv/dist/compile/codegen"
-    },
-    {
-		"from": "node_modules/p-finally",
-		"to": "node_modules/p-finally"
-    },
-    {
 		"from": "node_modules/file-type",
 		"to": "node_modules/file-type"
-    },
-    {
+	},
+	{
 		"from": "node_modules/regedit",
 		"to": "node_modules/regedit"
-    },
-    {
-		"from": "node_modules/stream-slicer",
-		"to": "node_modules/stream-slicer"
-    },
-    {
-		"from": "node_modules/util",
-		"to": "node_modules/util"
-    },
-    {
+	},
+	{
 		"from": "node_modules/mime-types",
 		"to": "node_modules/mime-types"
-    },
+	},
 	{
-		"from": "node_modules/mime-db",
-		"to": "node_modules/mime-db"
-    }
+		"from": "node_modules/pako",
+		"to": "node_modules/pako"
+	}
 ]

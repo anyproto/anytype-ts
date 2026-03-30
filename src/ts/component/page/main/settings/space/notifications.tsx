@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
-import { I, U, S, translate, C, Action, Relation, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -132,7 +132,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 									</div>
 								</div>
 								<div className="side right">
-									<Icon onClick={() => onChatModeClick(el)} className="more withBackground" />
+									<Icon onClick={() => onChatModeClick(el)} className="more" withBackground={true} />
 								</div>
 							</div>
 						))}

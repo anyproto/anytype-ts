@@ -1,5 +1,5 @@
-import { I, U, translate, S, J } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const Data = {
 	productHuntChats: () => ({
@@ -16,7 +16,7 @@ const Data = {
 
 		param: {
 			recalcRect: () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			width: 360,
@@ -40,7 +40,7 @@ const Data = {
 
 		param: {
 			recalcRect: () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			classNameWrap: 'fixed fromSidebar',

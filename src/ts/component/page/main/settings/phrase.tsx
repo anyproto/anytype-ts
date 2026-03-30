@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Phrase, QR, Button } from 'Component';
-import { I, C, S, U, translate, analytics, Renderer } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsPhrase = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -84,7 +84,7 @@ const PageMainSettingsPhrase = observer(forwardRef<I.PageRef, I.PageSettingsComp
 				<>
 					<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
 					<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-					<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+					<Button size={36} onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
 				</>
 			) : ''}
 		</>

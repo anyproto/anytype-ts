@@ -11,23 +11,11 @@
 .pageIndexIndex, .pageAuthSelect {
 	.bubbleWrapper {
 		.bubble {
-			.img { background-image: url('#{$themePath}/icon/bubble.svg'); }
+			.img { background-image: url('~img/theme/dark/icon/bubble.svg'); }
 		}
 	}
 }
 
-/* PageAuthOnboard */
-.pageAuthOnboard {
-	.stagePhrase {
-		.learnMore {
-			.icon { background-image: url('#{$themePath}/icon/onboarding/plus0.svg'); }
-
-			&:hover {
-				.icon { background-image: url('#{$themePath}/icon/onboarding/plus1.svg'); }
-			}
-		}
-	}
-}
 
 /* PageMainGraph */
 
@@ -49,81 +37,10 @@
     }
 }
 
-/* PageMainHistory */
-
-.pageMainHistory {
-	#body {
-		> #historySideRight {
-			.section {
-				.head {
-					.icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
-				}
-			}
-
-			.item {
-				.child {
-					.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
-				}
-			}
-		}
-	}
-}
-
-/* PageMainArchive */
-
-.pageMainArchive,
-.pageSettingsArchive {
-	.wrapper {
-		.titleWrapper {
-			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
-		}
-	}
-}
-
 /* PageMainSettings */
 .settingsPageContainer {
-	.pageSettingsSpaceIndex, 
-	.pageSettingsSpaceIndexEmpty {
-		.spaceButtons {
-			.btn {
-				.icon.invite { background-image: url('#{$themePath}/icon/settings/space/buttons/invite.svg'); }
-				.icon.qr { background-image: url('#{$themePath}/icon/settings/space/buttons/qr.svg'); }
-				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/space/buttons/copy.svg'); }
-			}
-		}
-
-		.sections {
-			.section {
-				.sectionContent {
-					> .item {
-						.icon.type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
-						.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
-						.icon.push0 { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
-						.icon.push1,
-						.icon.push2 { background-image: url('#{$themePath}/icon/settings/pushOff.svg'); }
-						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
-					}
-				}
-			}
-		}
-	}
-
 	.pageSettingsSpaceIndex .sectionIntegrations .item:hover,
 	.pageSettingsPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
-
-	.pageSettingsImportNotion {
-		.btn {
-			.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
-		}
-		.btn:hover {
-			.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
-		}
-	}
-
-	.pageSettingsImportNotion,
-	.pageSettingsImportNotionHelp {
-		.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
-	}
 
 	.pageSettingsPersonal {
 		.colorScheme {
@@ -157,22 +74,6 @@
 	}
 
 	.pageSettingsMembership {
-		.membershipIntro {
-			.tiers {
-				.tier {
-					.features {
-						.label:before { background: url('#{$themePath}/icon/membership/tick.svg'); }
-					}
-				}
-			}
-
-			.actions {
-				.action {
-					.icon.activation { background-image: url('#{$themePath}/icon/membership/activation.svg'); }
-					.icon.contact { background-image: url('#{$themePath}/icon/membership/contact.svg'); }
-				}
-			}
-		}
 		.membershipPurchased {
 			.section {
 				.item { background: var(--color-bg-secondary); }
@@ -186,50 +87,9 @@
 		}
 	}
 
-	.pageSettingsDataIndex {
-		.icon.drive { background-image: url('#{$themePath}/icon/settings/drive.svg'); }
-		.icon.sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
-		.icon.location { background-image: url('#{$themePath}/icon/settings/location.svg'); }
-		.icon.offline { background-image: url('#{$themePath}/icon/settings/offline.svg'); }
-	}
 
-	.pageSettingsSpaceShare {
-		.section.sectionInvite {
-			.linkTypeWrapper {
-				.icon.editor { background-image: url('#{$themePath}/icon/menu/inviteLink/editor.svg'); }
-				.icon.viewer { background-image: url('#{$themePath}/icon/menu/inviteLink/viewer.svg'); }
-				.icon.manual { background-image: url('#{$themePath}/icon/menu/inviteLink/manual.svg'); }
-				.icon.none { background-image: url('#{$themePath}/icon/menu/inviteLink/none.svg'); }
-			}
-		}
-	}
 
 	.pageSettingsSpaceNotifications {
         .section { display: flex; flex-direction: column; gap: 8px 0px; }
-        .section {
-            &.options {
-                .item.selected {
-                    &:after { background-image: url('#{$themePath}/icon/menu/chk.svg'); }
-                }
-            }
-
-            &.chats {
-                .side.right {
-                    .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
-                    .icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
-                }
-            }
-        }
     }
-
-	> .pageSettingsIndex,
-	> .pageSettingsAccount {
-		.sections {
-			.section {
-				.anyNameWrapper {
-					.icon.badge { background-image: url('#{$themePath}/icon/membership/badge-bw.svg'); }
-				}
-			}
-		}
-	}
 }

@@ -13,19 +13,13 @@
 	.fileWrap .border { border-bottom: 0.05em solid var(--color-control-active); display: inline-block; line-height: 1; transition: $transitionAllCommon; }
 	.fileWrap:hover .border { color: var(--color-text-primary); }
 
-	.input-text { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: var(--color-text-primary); }
+	.input-text { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; background: none; border-radius: 0px; color: var(--color-text-primary); }
 	.input::placeholder { color: var(--color-control-active); }
 
 	.urlToggle { cursor: text; display: inline-block; }
 	.form { display: inline-block; vertical-align: top; }
 
-	.icon { width: 20px; height: 20px; transition: none; flex-shrink: 0; }
-	.icon.image { background-image: url('~img/icon/menu/action/block/media/image.svg'); }
-	.icon.video { background-image: url('~img/icon/menu/action/block/media/video.svg'); }
-	.icon.file { background-image: url('~img/icon/menu/action/block/media/file.svg'); }
-	.icon.audio { background-image: url('~img/icon/menu/action/block/media/audio.svg'); }
-	.icon.pdf { background-image: url('~img/icon/menu/action/block/media/pdf.svg'); }
-	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark.svg'); }
+	.icon { width: 20px; height: 20px; transition: none; }
 }
 
 .inputWithFile.isReadonly {

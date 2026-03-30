@@ -2,9 +2,10 @@ import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperative
 import $ from 'jquery';
 import raf from 'raf';
 import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
-import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
@@ -115,7 +116,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
@@ -130,7 +131,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		};
 		
 		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		$(nodeRef.current).removeClass('isResizing');
@@ -174,7 +175,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -240,7 +241,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 						{pager}
 
-						<Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;

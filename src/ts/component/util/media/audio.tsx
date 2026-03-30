@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, DragHorizontal, DragVertical, Label } from 'Component';
-import { U } from 'Lib';
 
 interface PlaylistItem {
 	name: string;
@@ -35,10 +34,11 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const timeTextRef = useRef(null);
 	const volumeIconRef = useRef(null);
 	const volumeRef = useRef(null);
-	const playIconRef = useRef(null);
 	const timeoutRef = useRef(0);
 	const frameRef = useRef(0);
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
+	const [ playingState, setPlayingState ] = useState(false);
+	const [ mutedState, setMutedState ] = useState(false);
 	const { src, name }	= current || {};
 
 	const isPlaying = useRef(false);
@@ -68,19 +68,19 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 		isPlaying.current ? pause() : play();
 	};
 
 	const onPlayHandler = () => {
 		isPlaying.current = true;
-		$(playIconRef.current).addClass('active');
+		setPlayingState(true);
 		onPlay?.();
 	};
 
 	const onPauseHandler = () => {
 		isPlaying.current = false;
-		$(playIconRef.current).removeClass('active');
+		setPlayingState(false);
 		onPause?.();
 	};
 
@@ -108,7 +108,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	const checkVolumeClass = () => {
-		$(volumeIconRef.current).toggleClass('isMuted', !(!isMuted.current && volume.current));
+		setMutedState(!(!isMuted.current && volume.current));
 	};
 
 	const onTime = (v: number) => {
@@ -230,7 +230,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	useEffect(() => {
 		rebind();
-		setCurrent(playlist[0]);
+
+		if (playlist.length) {
+			setCurrent(playlist[0]);
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -257,8 +260,8 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 				<div className="controls">
 					<Icon
-						ref={playIconRef}
-						className="play"
+						name={playingState ? 'control/audio/pause' : 'control/audio/play'}
+						color="default"
 						onMouseDown={onPlayClick}
 						onClick={e => e.stopPropagation()}
 					/>
@@ -281,7 +284,8 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 					<div className="volumeWrap" onMouseLeave={onVolumeLeave}>
 						<Icon
 							ref={volumeIconRef}
-							className="volume"
+							name={mutedState ? 'control/audio/mute' : 'control/audio/volume'}
+							color="default"
 							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}
 							onClick={e => e.stopPropagation()}

@@ -3,16 +3,19 @@
 .blocks {
 	.block.blockDataview {
 
+		.viewContent {
+			.cellContent.c-checkbox {
+				.icon { width: 16px; height: 16px; }
+			}
+		}
+
 		.viewContent.viewGrid,
 		.viewContent.viewList {
 			.cell.add { color: var(--color-control-active); line-height: 20px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; transition: $transitionAllCommon; }
 				.btn:hover { color: var(--color-text-primary); }
-				.btn:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-				}
-
+	
 				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
 				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); }
 			}
@@ -33,6 +36,7 @@
 					.cellContent:not(.isName) { 
 						width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; 
 					}
+					.cellContent.c-checkbox { padding-top: 0px; }
 					.cellContent:not(.isName) {
 						.empty, .name { @include text-overflow-nw; width: 100%; }
 					}
@@ -68,7 +72,7 @@
 				.cover.canEdit {
 					.inner { background: none; }
 					.inner {
-						.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/gallery-cover0.svg'); margin: -2px 6px 0px 0px; }
+						.icon.plus { width: 20px; height: 20px; margin: -2px 6px 0px 0px; }
 						.add {
 							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px;
 							top: 50%; margin-top: -10px;
@@ -112,7 +116,7 @@
 				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
-					.input.name { text-indent: 0px; padding: 0px; height: unset; }
+					.input.name { text-indent: 0px; padding: 0px; height: unset; background: none; border: 0px; border-radius: 0px; }
 				}
 			}
 			.card::after {
@@ -141,7 +145,7 @@
 			.icon.edit:hover { background-color: var(--color-bg-primary); }
 
 			.card:hover {
-				.icon.edit { display: block; }
+				.icon.edit { display: flex; }
 			}
 		}
 	}

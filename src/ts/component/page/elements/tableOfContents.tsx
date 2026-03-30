@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, use
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -63,8 +63,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const onScroll = () => {
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			const top = container.scrollTop();
+			const container = U.Dom.getScrollContainer(isPopup);
+			const top = container?.scrollTop || 0;
 			const co = containerOffset.current.top;
 			const currentList = listRef.current;
 
@@ -84,7 +84,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				};
 			};
 
-			if ((top == U.Common.getMaxScrollHeight(isPopup)) && currentList.length) {
+			if ((top == U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
 				blockId = currentList[currentList.length - 1].id;
 			};
 
@@ -129,10 +129,15 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			const width = container.width();
+			const containerEl = U.Dom.getScrollContainer(isPopup);
+			if (!containerEl) {
+				return;
+			};
 
-			containerOffset.current = container.offset();
+			const width = containerEl.clientWidth;
+			const containerRect = containerEl.getBoundingClientRect();
+
+			containerOffset.current = { top: containerRect.top, left: containerRect.left };
 
 			node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
 			onScroll();

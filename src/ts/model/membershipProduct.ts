@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const COLORS = [
 	'green',

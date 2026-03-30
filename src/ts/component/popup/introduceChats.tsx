@@ -1,16 +1,14 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { Title, Label, Button, Icon, IconObject } from 'Component';
-import { I, U, S, translate, analytics } from 'Lib';
+import { Title, Label, Button, Icon, } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
+import * as I from 'Interface';
 
 const SLIDE_COUNT = 5;
 
 const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const nodeRef = useRef(null);
-	const feedRef = useRef(null);
 	const [ step, setStep ] = useState(0);
 	const [ swiperControl, setSwiperControl ] = useState(null);
 	const [ activeSlide, setActiveSlide ] = useState(0);
@@ -26,10 +24,10 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const initGallery = () => {
-		const wrapper = $(nodeRef.current).find('.step1');
+		const wrapper = nodeRef.current?.querySelector('.step1');
 
 		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
+		timeout.current = window.setTimeout(() => U.Dom.removeClass(wrapper, 'init'), 600);
 	};
 
 	const onSlideChange = () => {
@@ -42,7 +40,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	useEffect(() => {
 		onStepChange(0, () => {
-			$(nodeRef.current).find('.step0').removeClass('init');
+			U.Dom.removeClass(nodeRef.current?.querySelector('.step0'), 'init');
 		});
 
 		return () => {
@@ -59,7 +57,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 				<div className="text">
 					<Title text={translate('onboardingChatsTitle')} />
 					<Label text={translate('onboardingChatsDescription')} />
-					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c48" />
+					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} size={48} />
 				</div>
 
 				<div className="grad" />
@@ -76,7 +74,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 									<Label className="description hidden" text={translate(`onboardingChatsSlide${idx}Text`)} />
 									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
 								</>
-							) : <Button onClick={() => close()} className="c36" text={translate('commonSeeUpdates')} />}
+							) : <Button onClick={() => close()} size={36} text={translate('commonSeeUpdates')} />}
 						</div>
 					))}
 				</div>
@@ -85,7 +83,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 						<div className={[ 'img', `slide${activeSlide}` ].join(' ')}>
 							<div className="header">
 								<div className="mask">
-									<Icon />
+									<Icon name="header/widget" />
 								</div>
 								<div className="dots" />
 							</div>

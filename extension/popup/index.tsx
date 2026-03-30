@@ -1,8 +1,9 @@
 import { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, S, U, J, Storage } from 'Lib';
 import Util from '../lib/util';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -101,8 +102,8 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			<Label text="To save in Anytype you need to Pair with the app" />
 
 			<div className="buttonsWrapper">
-				<Button color="pink" className="c32" text="Pair with app" onClick={onOpen} />
-				<Button color="blank" className="c32" text="Download app" onClick={onDownload} />
+				<Button color="pink" size={32} text="Pair with app" onClick={onOpen} />
+				<Button color="blank" size={32} text="Download app" onClick={onDownload} />
 			</div>
 
 			<Error text={error} />

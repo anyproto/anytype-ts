@@ -100,7 +100,8 @@ body.platform-win32.showMenuBar {
 		.icon.close { display: none !important; }
 	}
 
-	.tab.active { color: var(--color-text-primary); }
+	.tab.active { color: var(--color-text-primary); flex-shrink: 0; min-width: auto; }
+	.tab.active .icon.close { opacity: 1; }
 	.tab.active .div { display: none; }
 	.tab.hideDiv .div { display: none; }
 
@@ -139,6 +140,10 @@ body.platform-win32.showMenuBar {
 	}
 	.tab:hover {
 		.icon.close { opacity: 1; }
+		.iconWrapper { display: none; }
+	}
+	.tab.active:hover, .tab.isPinned:hover {
+		.iconWrapper { display: flex; }
 	}
 
 	.tab.isPinned {

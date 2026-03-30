@@ -29,7 +29,7 @@ import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
-import SidebarProgress from './sidebar/progress';
+import SidebarProgress, { ProgressItem } from './sidebar/progress';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -109,6 +109,7 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
+import { CommentSection } from './comment';
 import OptionSelect from './util/menu/optionSelect';
 import CalendarSelect from './util/menu/calendarSelect';
 
@@ -197,6 +198,7 @@ export {
 	SidebarLeft,
 	SidebarRight,
 	SidebarProgress,
+	ProgressItem,
 
 	Widget,
 
@@ -224,4 +226,6 @@ export {
 
 	OptionSelect,
 	CalendarSelect,
+
+	CommentSection,
 };

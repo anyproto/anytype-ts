@@ -24,45 +24,27 @@
 
 		.dropTarget { border-radius: 4px; }
 
-		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; }
+		.iconObject { flex-basis: 20px; margin-right: 6px; }
 
 		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
-		.arrowWrap:hover {
-			.icon.arrow { background-color: var(--color-shape-highlight-medium); }
+		.arrowWrap {
+			&:hover {
+				.icon.arrow { background-color: var(--color-shape-highlight-medium); }
+			}
+
+			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
+			.icon.arrow { transform: rotate(-90deg); }
 		}
 
-		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
-		.icon.set { background-image: url('~img/icon/widget/set.svg'); }
-		.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
-		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
-		
 		.clickable {
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
 			line-height: 20px;
 		}
 		.name { flex-grow: 1; @include text-overflow-nw; }
-
-		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
-		.buttons {
-			.icon { margin: 0px; }
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
-			.icon.preview { background-size: 16px 14px; background-image: url('~img/icon/widget/preview.svg'); }
-		}
-	}
-
-	.item:hover, .item.active {
-		.clickable { width: calc(100% - 66px); }
-		.buttons { display: flex; }
-		.chatCounter { display: none; }
-	}
-	.item.active {
-		.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 
 	.item.hover, .item.active {
 		.inner::before { background: var(--color-shape-highlight-medium); opacity: 1; }
-		.icon.preview { display: block; }
 	}
 	.item.isOpen {
 		.icon.arrow { transform: rotate(0deg); }

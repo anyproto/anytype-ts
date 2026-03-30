@@ -2,17 +2,24 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
+
+// Prism language plugins expect `Prism` on the global scope
+(window as any).Prism = Prism;
+
+// Load language components sequentially to respect dependency order
+(async () => {
+	for (const lang of U.Prism.components) {
+		try { await import(/* @vite-ignore */ `prismjs/components/prism-${lang}.js`); } catch (e) {};
+	};
+})();
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-};
-
-for (const lang of U.Prism.components) {
-	require(`prismjs/components/prism-${lang}.js`);
 };
 
 const TWIN_PAIRS = {
@@ -81,9 +88,20 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
+		// When focused, the local editable DOM may be ahead of the store during
+		// active editing. Skip setValue if the store update is just echoing back
+		// what we already sent — prevents a race where a stale middleware response
+		// overwrites the user's latest keystrokes (e.g. code block text reverting).
+		// Only suppress when text hasn't changed AND marks haven't changed — mark
+		// toggles (bold, italic, etc.) need setValue to re-render markup.
+		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
-			setValue(text);
+
+			if (!isEcho) {
+				setValue(text);
+			};
 
 			prevTextRef.current = text;
 			prevMarksRef.current = marks || [];
@@ -97,7 +115,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Only sync contenteditable from props when not focused or when content changed.
 		// When focused, the local editable state may be ahead of props during active editing
 		// (e.g. RTL flag change triggers re-render before text is saved to middleware).
-		if ((focused != block.id) || textChanged || marksChanged) {
+		if (!isEcho && ((focused != block.id) || textChanged || marksChanged)) {
 			setValue(text);
 		};
 
@@ -498,12 +516,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const processed = lines.map((line, i) => {
 						let removed = 0;
 
+						const match = line.match(/^ {1,4}/);
+
 						if (line.startsWith('\t')) {
 							line = line.substring(1);
 							removed = 1;
 						} else
-						if (line.match(/^ {1,4}/)) {
-							const spaces = line.match(/^ {1,4}/)[0].length;
+						if (match) {
+							const spaces = match[0].length;
 							line = line.substring(spaces);
 							removed = spaces;
 						};
@@ -988,11 +1008,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				element,
 				recalcRect: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
@@ -1030,21 +1050,21 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const win = $(window);
 
 		let value = getTextValue();
+		
 		const firstChar = value.charAt(range.from - 1);
 
 		value = U.String.cut(value, range.from - 2, range.from);
-
 		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
 			element: `#block-${U.Common.esc(block.id)}`,
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			noFlipX: false,
@@ -1079,11 +1099,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(block.id)}`,
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
@@ -1172,8 +1192,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
 
 				if (editable && editable.contains(selRange.startContainer)) {
-					let from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
-					let to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+					let from = U.Dom.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
+					let to = selRange.collapsed ? from : U.Dom.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
 
 					// Convert DOM offsets to model offsets (strip ZWS cursor anchors)
 					if (Mark.hasZws(editable)) {
@@ -1369,7 +1389,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					classNameWrap: 'fromBlock',
 					element: el,
 					recalcRect: () => { 
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
@@ -1390,12 +1410,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageFlexContainer(isPopup);
+					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
+					const onMouseDown = () => {
+						pageContainer?.removeEventListener('mousedown', onMouseDown);
+						S.Menu.close('blockContext');
+					};
 
-					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
-						pageContainer.off('mousedown.context');
-						S.Menu.close('blockContext'); 
-					});
+					pageContainer?.addEventListener('mousedown', onMouseDown);
 				}, S.Menu.getTimeout());
 			});
 		});
@@ -1561,12 +1582,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					<div className="buttons">
 						<div className="btn" onClick={onToggleWrap}>
-							<Icon className="codeWrap" />
+							<Icon name="menu/action/wrap" className="codeWrap" />
 							<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
 						</div>
 
 						<div className="btn" onClick={onCopy}>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 							<div className="txt">{translate('commonCopy')}</div>
 						</div>
 					</div>

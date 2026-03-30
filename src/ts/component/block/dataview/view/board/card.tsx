@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -148,7 +149,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-	});
+	}, [ relations.length ]);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,
@@ -171,6 +172,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			>
 				{canEdit && config.experimental ? (
 					<Icon
+						name="common/edit"
 						className={[ 'edit', isEditing ? 'enabled' : '' ].join(' ')}
 						onClick={e => onEditModeClick(e, record.id)}
 					/>

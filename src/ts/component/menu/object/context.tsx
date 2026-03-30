@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const LIMIT_OPEN = 10;
 
@@ -42,19 +43,19 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
 
-		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') };
-		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
-		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
-		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
-		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
-		let notification: any = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
-		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
-		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
-		let newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
-		let newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
+		let pageCopy = { id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: translate('commonDuplicate') };
+		let pageLink = { id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') };
+		let open = { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') };
+		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let changeType = { id: 'changeType', iconParam: { name: 'common/edit' }, name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
+		let unlink = { id: 'unlink', iconParam: { name: 'common/unlink' }, name: translate('menuObjectContextUnlinkFromCollection') };
+		let relation = { id: 'relation', iconParam: { name: 'header/relation' }, name: translate('menuObjectContextEditRelations') };
+		let notification: any = { id: 'notification', iconParam: { name: 'menu/action/notification' }, name: translate('commonNotifications'), arrow: true };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), iconParam: { name: 'common/edit' } };
+		let exportObject = { id: 'export', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
+		let newTab = { id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') };
+		let newWindow = { id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -133,9 +134,9 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		});
 
 		if (pinCnt == length) {
-			pin = { id: 'unpin', name: translate('commonUnpin') };
+			pin = { id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') };
 		} else {
-			pin = { id: 'pin', name: translate('commonPin') };
+			pin = { id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') };
 		};
 
 		if (length > 1) {
@@ -172,9 +173,9 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			allowedCollection = false;
 			allowedNotification = false;
 			allowedEditChat = false;
-			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
+			archive = { id: 'unarchive', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestoreFromBin') };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
+			archive = { id: 'archive', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') };
 		};
 
 		if (!allowedArchive)	 archive = null;
@@ -195,9 +196,9 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			const isMuted = chatMode != I.NotificationMode.All;
 
 			if (isMuted) {
-				notification = { id: 'unmute', name: translate('commonUnmute'), icon: 'unmute' };
+				notification = { id: 'unmute', name: translate('commonUnmute'), iconParam: { name: 'menu/action/unmute' } };
 			} else {
-				notification = { id: 'mute', name: translate('commonMute'), icon: 'mute' };
+				notification = { id: 'mute', name: translate('commonMute'), iconParam: { name: 'menu/action/mute' } };
 			};
 		};
 		if (!allowedEditChat)	 editChat = null;

@@ -5,8 +5,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { I, U, S, keyboard, translate, analytics } from 'Lib';
 import { Icon, Button, Label } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT = 52;
 
@@ -153,13 +153,14 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					{...listeners}
 					style={style}
 				>
-					{!readonly ? <Icon className="dnd" /> : ''}
+					{!readonly ? <Icon name="common/dnd" /> : ''}
 					<span className="clickable">
 						<div className="name">{item.name}</div>
 					</span>
-					<Icon 
-						className={[ 'eye', (item.isHidden ? 'on' : 'off') ].join(' ')} 
-						onClick={e => onSwitch(item)} 
+					<Icon
+						name={item.isHidden ? 'common/eye1' : 'common/eye0'}
+						className="eye"
+						onClick={e => onSwitch(item)}
 					/>
 				</div>
 			);
@@ -222,7 +223,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 				</DndContext>
 			</div>
 
-			<Button onClick={() => close()} color="accent" className="c40" text={translate('commonDone')} />
+			<Button onClick={() => close()} color="accent" size={40} text={translate('commonDone')} />
 		</div>
 	);
 

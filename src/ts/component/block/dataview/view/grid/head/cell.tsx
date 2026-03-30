@@ -2,8 +2,9 @@ import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { I, S, J, U, keyboard, Relation, Dataview } from 'Lib';
 import { Icon, ObjectName } from 'Component';
+import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -18,6 +19,10 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: relationKey, disabled: !allowed });
 	const relation = S.Record.getRelationByKey(relationKey);
+
+	if (!relation) {
+		return null;
+	};
 
 	if (transform) {
 		transform.scaleX = 1;
@@ -123,7 +128,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 					{...attributes}
 					{...listeners}
 				>
-					<Icon className={`relation ${Relation.className(relation.format)}`} />
+					<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 					<ObjectName object={relation} />
 				</div>
 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
-import { I, J, U, S, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -103,7 +103,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		const obj = $(`#${getId()}`);
 		const input = obj.find('#input');
-		const { wh } = U.Common.getWindowDimensions();
+		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
 		const cell = $(`#${U.Common.esc(cellId)}`);
 		const lh = parseInt(cell.find('.name').css('line-height'), 10) || 20;
@@ -196,7 +196,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 							onFocus={onFocus}
 							onBlur={onBlur}
 						/>
-						<Icon className="clear withBackground" onClick={onClear} />
+						<Icon name="common/clear" withBackground={true} onClick={onClear} />
 					</>
 				) : (
 					<Editable

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, J, translate, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
 
 interface WidgetViewCalendarRefProps {
 	load: (searchIds: string[]) => void;
@@ -39,7 +39,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			data: {
-				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
+				options: [ { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
 				},
@@ -76,8 +76,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				classNameWrap: 'fromSidebar',
 				horizontal: I.MenuDirection.Center,
 				noFlipX: true,
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+				onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 				data: {
 					rootId,
 					blockId: J.Constant.blockId.dataview,
@@ -224,8 +224,22 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				</div>
 
 				<div className="side right">
-					<Icon className="arrow left" onClick={() => onArrow(-1)} />
-					<Icon className="arrow right" onClick={() => onArrow(1)} />
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow left" 
+						withBackground={true} 
+						onClick={() => onArrow(1)}
+						width={8}
+						height={12} 
+					/>
+					<Icon 
+						name="arrow/calendar" 
+						className="arrow right" 
+						withBackground={true} 
+						onClick={() => onArrow(-1)}
+						width={8}
+						height={12} 
+					/>
 				</div>
 			</div>
 

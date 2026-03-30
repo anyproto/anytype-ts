@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { I, U } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 interface Props {
 	text: string;
@@ -17,7 +17,7 @@ const Title = forwardRef<{}, Props>(({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 	}, []);
 

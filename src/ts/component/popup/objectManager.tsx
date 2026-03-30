@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
-import { I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const ROW_HEIGHT = 30;
 
@@ -125,8 +125,8 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			/>
 
 			<div className="buttons">
-				<Button text={button} color={buttonColor} className="c36" onClick={onClick} />
-				<Button text={translate('commonCancel')} color="blank" className="c36" onClick={() => close()} />
+				<Button text={button} color={buttonColor} size={36} onClick={onClick} />
+				<Button text={translate('commonCancel')} color="blank" size={36} onClick={() => close()} />
 			</div>
 		</>
 	);

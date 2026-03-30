@@ -2,14 +2,14 @@ import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
 	const rootId = keyboard.getRootId(isPopup);
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 
 	const onOpen = () => {
 		const home = U.Space.getDashboard();

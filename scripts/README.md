@@ -1,3 +1,21 @@
+# Scripts
+
+## start-dev.js
+
+Development process manager for `bun run start:dev`. Starts Vite dev server and Electron, with proper cleanup on exit — when Electron closes, Vite is killed automatically. Replaces the previous `npm-run-all --parallel` approach which left orphaned Vite/esbuild processes.
+
+Respects `SERVER_PORT` env var (default: 8080).
+
+## wait-for-localhost.js
+
+Polls a localhost port until it responds. Used internally by the dev scripts to wait for Vite before launching Electron.
+
+## start-web.js
+
+Starts anytypeHelper + Vite for browser-only development (no Electron). See `bun run start:web`.
+
+---
+
 # Release Notes Generator
 
 This script automatically generates release notes by extracting Linear task IDs from Git commit messages and fetching their details from the Linear API.

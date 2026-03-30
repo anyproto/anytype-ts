@@ -6,11 +6,13 @@ import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { configure, spy } from 'mobx';
-import { enableLogging } from 'mobx-logger';
+import { configure, } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -37,7 +39,7 @@ declare global {
 
 		isWebVersion: boolean;
 		Config: any;
-		AnytypeGlobalConfig: any;
+		AnytypeGlobalConfig: I.AppConfig;
 	}
 };
 
@@ -48,8 +50,6 @@ declare global {
 		}
 	}
 };
-
-window.$ = $;
 
 if (!isPackaged) {
 	window.Anytype = {
@@ -132,6 +132,10 @@ const App: FC = () => {
 
 		U.Router.init(history);
 		U.Smile.init();
+
+		if (window.isWebVersion) {
+			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
+		}
 
 		console.log('[App] Init', getGlobal('serverAddress'));
 
@@ -265,6 +269,7 @@ const App: FC = () => {
 
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
+
 		if (route) {
 			const rp = U.Router.getParam(route);
 			if (
@@ -314,7 +319,7 @@ const App: FC = () => {
 		};
 
 		if (css && !config.disableCss) {
-			U.Common.injectCss('anytype-custom-css', css);
+			U.Dom.injectCss('anytype-custom-css', css);
 		};
 
 		body.addClass('over');
@@ -324,7 +329,7 @@ const App: FC = () => {
 			bubbleLoader.remove();
 			body.removeClass('over');
 		};
-		const routeParam = { replace: true, onFadeIn: hide };
+		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
@@ -396,7 +401,7 @@ const App: FC = () => {
 		};
 
 		if (!accountId) {
-			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			U.Router.go('/auth/select', { replace: true, onRouteChange: cb });
 			return;
 		};
 
@@ -499,7 +504,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'updated',
+				iconParam: { name: 'popup/header/updated', color: 'lime' },
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -524,7 +529,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
@@ -587,7 +592,6 @@ const App: FC = () => {
 
 					<div id="dragPanel" />
 					<div id="tooltipContainer" />
-					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Toast />

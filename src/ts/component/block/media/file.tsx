@@ -1,7 +1,8 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon, Loader } from 'Component';
-import { I, S, U, focus, translate, Action, analytics } from 'Lib';
+import { InputWithFile, IconObject, Error, ObjectName, Icon, } from 'Component';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
@@ -45,7 +46,7 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

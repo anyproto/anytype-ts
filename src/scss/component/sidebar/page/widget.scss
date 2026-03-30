@@ -12,15 +12,13 @@
 	.widgetSection {
 		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 4px; }
 		> .nameWrap {
-			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
-			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
+			.icon.arrow { width: 12px; height: 12px; transform: rotateZ(-90deg); }
+			.icon.plus { width: 12px; height: 12px; }
 
 			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
 			.name {
+				.icon.hasSvg { color: inherit; }
 				&:hover { color: var(--color-text-primary); }
-				&:hover {
-					.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg'); }
-				}
 			}
 
 			.buttons { 
@@ -30,20 +28,12 @@
 			.buttons {
 				.button.blank { border: 0px; padding: 5px 0px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 				.button.blank {
+					.icon.hasSvg { color: inherit; }
 					&:hover { background: none; color: var(--color-text-primary); }
-					&:hover {
-						.icon.plus { background-image: url('~img/icon/plus/widgetSection1.svg'); }
-					}
 				}	
-				
-				.icon { flex-shrink: 0; }
-				.icon.more { 
-					width: 28px; height: 28px; background-image: url('~img/icon/widget/sectionMore0.svg');
-					margin-right: -8px; background-size: 12px;
-				}
-				.icon.more {
-					&:hover, &.hover { background-image: url('~img/icon/widget/sectionMore1.svg'); }
-				}
+	
+				.icon.commonMore { width: 28px !important; height: 28px !important; margin-right: -8px; }
+				.icon.commonMore:hover, .icon.commonMore.hover { color: var(--color-text-primary); }
 			}
 
 			&:hover, &.active {
@@ -62,7 +52,7 @@
 	}
 
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
-	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
+	> .body.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 

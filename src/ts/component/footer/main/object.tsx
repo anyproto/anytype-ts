@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref) => {
 

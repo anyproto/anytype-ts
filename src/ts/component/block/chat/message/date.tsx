@@ -2,7 +2,6 @@ import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Label } from 'Component';
-import { U, S, J } from 'Lib';
 
 interface Props {
 	date: number;

@@ -1,5 +1,6 @@
-import { EventEmitter } from 'events';
-import { I, U, C } from 'Lib';
+import * as I from 'Interface';
+
+type Listener = (...args: any[]) => void;
 
 interface SparkOnboardingConfig {
 	url?: string;
@@ -7,7 +8,43 @@ interface SparkOnboardingConfig {
 	maxRetries?: number;
 }
 
-export class SparkOnboardingService extends EventEmitter {
+export class SparkOnboardingService {
+
+	private listeners: Map<string, Listener[]> = new Map();
+
+	on (event: string, fn: Listener): this {
+		if (!this.listeners.has(event)) {
+			this.listeners.set(event, []);
+		};
+		this.listeners.get(event)!.push(fn);
+		return this;
+	};
+
+	off (event: string, fn: Listener): this {
+		const fns = this.listeners.get(event);
+		if (fns) {
+			this.listeners.set(event, fns.filter(f => f !== fn));
+		};
+		return this;
+	};
+
+	emit (event: string, ...args: any[]): boolean {
+		const fns = this.listeners.get(event);
+		if (!fns || !fns.length) {
+			return false;
+		};
+		fns.forEach(fn => fn(...args));
+		return true;
+	};
+
+	removeAllListeners (event?: string): this {
+		if (event) {
+			this.listeners.delete(event);
+		} else {
+			this.listeners.clear();
+		};
+		return this;
+	};
 
 	private ws: WebSocket | null = null;
 	private url: string;
@@ -20,8 +57,7 @@ export class SparkOnboardingService extends EventEmitter {
 	private intentionalClose: boolean = false;
 	private clearSessionOnClose: boolean = false;
 
-	constructor( config: SparkOnboardingConfig = {}) {
-		super();
+	constructor (config: SparkOnboardingConfig = {}) {
 		// Use config override or environment variable (with default)
 		// SPARK_ONBOARDING_URL is injected at build time via rspack DefinePlugin
 		this.url = config.url || SPARK_ONBOARDING_URL;
@@ -209,7 +245,7 @@ export class SparkOnboardingService extends EventEmitter {
 
 			case 'reconnected': {
 				// Server restored our session, update state
-				const reconnectMsg = message as any;
+				const reconnectMsg = message as I.ReconnectedMessage;
 				this.sessionId = reconnectMsg.sessionId;
 
 				this.emit('sessionReconnected', reconnectMsg);
@@ -252,8 +288,8 @@ export class SparkOnboardingService extends EventEmitter {
 			};
 
 			case 'type_generated': {
-				const typeMsg = message as any;
-				
+				const typeMsg = message as I.TypeGeneratedMessage;
+
 				// New structure: icon instead of schema
 				this.emit('typeGenerated', typeMsg.typeName, typeMsg.icon, typeMsg.properties);
 				break;
@@ -268,10 +304,10 @@ export class SparkOnboardingService extends EventEmitter {
 			};
 
 			case 'object_titles_generated': {
-				const titlesMsg = message as any;
+				const titlesMsg = message as I.ObjectTitlesGeneratedMessage;
 				// Use typeName for clarity - 'type' in the message is the message type itself
 				this.emit('object_titles_generated', {
-					typeName: titlesMsg.typeName || titlesMsg.type_name, // The actual type name
+					typeName: titlesMsg.typeName || titlesMsg.type_name,
 					typeKey: titlesMsg.typeKey || titlesMsg.type_key,
 					titles: titlesMsg.titles
 				});
@@ -285,7 +321,7 @@ export class SparkOnboardingService extends EventEmitter {
 			};
 
 			case 'workspace_ready': {
-				const workspaceMsg = message as any;
+				const workspaceMsg = message as I.WorkspaceReadyMessage;
 				// New structure: only spaceName and downloadUrl
 				this.emit('workspaceReady', workspaceMsg.downloadUrl, workspaceMsg.spaceName);
 				break;

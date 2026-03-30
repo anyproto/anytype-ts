@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react'; 
-import { I, M, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const DragLayer = observer(forwardRef((_, ref: any) => {
 	
@@ -19,14 +20,15 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(componentNode);
+		const rect = U.Dom.getElementRect(componentNode);
 		const node = $(nodeRef.current);
 		const inner = node.find('#inner').html('');
-		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
+		const containerEl = U.Dom.getPageFlexContainer(keyboard.isPopup());
+		const container = containerEl ? $(containerEl) : $();
 		const wrap = $('<div></div>');
 
 		let width = rect.width;
-		
+
 		switch (type) {
 			case I.DropType.Block: {
 				wrap.addClass('blocks');
@@ -63,7 +65,8 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 			};
 
 			case I.DropType.Relation: {
-				const container = U.Common.getPageFlexContainer(keyboard.isPopup());
+				const relContainerEl = U.Dom.getPageFlexContainer(keyboard.isPopup());
+				const container = relContainerEl ? $(relContainerEl) : $();
 				const add = $('<div class="sidebarPage pageObjectRelation"></div>');
 
 				wrap.addClass('sidebar').append(add);

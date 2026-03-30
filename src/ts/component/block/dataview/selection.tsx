@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	multiSelectAction?: (id: string) => void;
@@ -28,12 +28,12 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const buttons: any[] = [
-		{ id: 'archive', text: translate('commonMoveToBin') },
-		{ id: 'done', text: translate('commonDeselectAll') },
+		{ id: 'archive', name: 'menu/action/remove', text: translate('commonMoveToBin') },
+		{ id: 'done', name: 'common/checkbox0', text: translate('commonDeselectAll') },
 	];
 
 	if (isCollection) {
-		buttons.unshift({ id: 'unlink', text: translate('commonUnlink') });
+		buttons.unshift({ id: 'unlink', name: 'common/unlink', text: translate('commonUnlink') });
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -55,7 +55,7 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 						>
-							<Icon className={item.id} />
+							<Icon name={item.name} />
 							{item.text}
 						</div>
 					))}

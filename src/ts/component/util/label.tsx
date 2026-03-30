@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent, useEffect, useRef } from 'react';
 import $ from 'jquery';
-import { I, Preview, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -50,7 +50,7 @@ const Label: FC<Props> = ({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		onMouseEnter?.(e);
@@ -63,7 +63,7 @@ const Label: FC<Props> = ({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 	}, []);
 

@@ -1,7 +1,8 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, J, translate, Renderer, keyboard, Storage, analytics } from 'Lib';
+import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const STORAGE_KEY = 'updateBanner';
 
@@ -16,7 +17,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 	const dy = useRef(0);
 
 	const checkCoords = useCallback((x: number, y: number): { x: number, y: number } => {
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 
 		width.current = Number(width.current) || 0;
 		height.current = Number(height.current) || 0;
@@ -106,7 +107,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 			<div className="buttons">
 				<Button
 					color="blank"
-					className="c28"
+					size={28}
 					text={translate('commonLater')}
 					onClick={() => {
 						S.Common.updateVersionSet('');
@@ -117,7 +118,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 				/>
 				<Button
 					color="blank"
-					className="c28"
+					size={28}
 					text={translate('commonUpdateApp')}
 					onClick={() => {
 						Renderer.send('updateConfirm');

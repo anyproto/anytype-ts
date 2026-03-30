@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, J, Dataview } from 'Lib';
 import Group from './group';
+import * as I from 'Interface';
 
 interface WidgetViewBoardRefProps {
 	load: (searchIds: string[]) => void;

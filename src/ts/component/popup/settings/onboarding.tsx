@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { Title, Label, Select, Button, Error } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -128,7 +128,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			S.Popup.open('confirm', {
 				className: 'localOnlyWarning',
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
 					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),
@@ -149,7 +149,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 	const onTooltipShow = (e: any, text: string) => {
 		if (text) {
-			Preview.tooltipShow({ text, element: $(e.currentTarget) });
+			Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement });
 		};
 	};
 
@@ -191,7 +191,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 								{config.path ? <Label className="small" text={U.String.shorten(config.path, 32)} /> : ''}
 							</div>
-							<Button className="c28" text={translate('commonLoad')} onClick={onUpload} />
+							<Button size={28} text={translate('commonLoad')} onClick={onUpload} />
 						</div>
 					) : ''}
 
@@ -201,8 +201,8 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 							<Label className="small" text={U.String.shorten(config.userPath, 32)} />
 						</div>
 						<div className="buttons">
-							<Button className="c28" text={translate('commonChange')} onClick={onChangeStorage} />
-							{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={onResetStorage} /> : ''}
+							<Button size={28} text={translate('commonChange')} onClick={onChangeStorage} />
+							{!isDefault ? <Button size={28} text={translate('commonReset')} onClick={onResetStorage} /> : ''}
 						</div>
 					</div>
 

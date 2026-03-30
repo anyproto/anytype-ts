@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const LIMIT = 16;
 const HEIGHT = 56;
@@ -179,9 +179,10 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems().slice(0, LIMIT);
 		const menu = $(`#${getId()}`);
 		const obj = menu.find('.content');
-		const { wh } = U.Common.getWindowDimensions();
-		const header = U.Common.getScrollContainer(data.isPopup).find('#header .side.center');
-		const width = Math.min(header.width(), J.Size.editor);
+		const { wh } = U.Dom.getWindowDimensions();
+		const containerEl = U.Dom.getScrollContainer(data.isPopup);
+		const headerEl = containerEl?.querySelector('#header .side.center') as HTMLElement;
+		const width = Math.min(headerEl?.clientWidth || 0, J.Size.editor);
 
 		let height = 0;
 		if (!isDropdownOpen) {
@@ -322,17 +323,16 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<div className="filterWrapper">
 				<Filter
 					ref={filterRef}
-					className="outlined round"
 					placeholder={translate('commonSearch')}
 					value=""
-					icon="search"
+					iconParam={{ name: 'common/search' }}
 					onChange={onFilterChange}
 					focusOnMount={true}
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 

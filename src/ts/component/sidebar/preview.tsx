@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
 import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
-import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 interface RefProps {
 	update: (object: any) => void;
@@ -40,7 +40,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const timeoutRef = useRef<number>(0);
-	const ns = `sidebarPreview${U.Common.getEventNamespace(isPopup)}`;
+	const ns = `sidebarPreview${U.Dom.getEventNamespace(isPopup)}`;
 
 	const show = (v: boolean) => {
 		resize();
@@ -56,13 +56,13 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	};
 
 	const getNodeSize = (): { width: number; height: number } => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const sidebarLeft = sidebar.leftPanelGetNode();
 		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 
 		return {
-			width: container.width() - sidebarLeft.outerWidth() - sidebarRight.outerWidth(),
-			height: container.height(),
+			width: (container?.clientWidth ?? 0) - sidebarLeft.outerWidth() - sidebarRight.outerWidth(),
+			height: container?.clientHeight ?? 0,
 		};
 	};
 
@@ -101,12 +101,12 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	let icon = null;
 	if (!isFile) {
 		if (isTask) {
-			icon = <Checkbox readonly={true} value={false} />;
+			icon = <IconObject object={{ name, layout: recommendedLayout }} size={32} iconSize={28} />
 		} else
 		if (isHuman) {
 			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
 		} else {
-			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
+			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} name="common/preview" size={isList ? 22 : 56} />;
 		};
 	};
 
@@ -155,7 +155,9 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 					<div className="layoutHeader">
 						{!isNote ? (
 							<div className="titleWrapper">
-								{icon}
+								<div className="iconWrapper">
+									{icon}
+								</div>
 								<Title text={name || translate('defaultNamePage')} />
 							</div>
 						) : ''}

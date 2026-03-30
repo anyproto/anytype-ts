@@ -32,12 +32,15 @@
 		}
 
 		.flex { position: relative; z-index: 2; }
-		.icon.dnd { 
-			width: 12px; height: 100%; background-size: 2px 12px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
+		.icon.commonDnd {
+			width: 12px; height: 100%; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			border: 1px solid var(--color-shape-secondary); border-radius: 6px;
+			display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary);
+
+			svg { width: 2px !important; height: 12px !important; }
 		}
-		.icon.dnd:hover { 
-			background-color: var(--color-shape-tertiary); border-color: var(--color-shape-tertiary); background-image: url('~img/icon/block/menu.svg');
+		.icon.commonDnd:hover {
+			background-color: var(--color-shape-tertiary); border-color: var(--color-shape-tertiary);
 		}
 
 		.inputWithFile { position: relative; }
@@ -70,7 +73,7 @@
 	.block.isReadonly {
 		.colResize { display: none; }
 	}
-	.block.isReadonly > .wrapMenu > .icon.dnd { display: none; }
+	.block.isReadonly > .wrapMenu > .icon.commonDnd { display: none; }
 	
 	.block.align0 > .wrapContent { text-align: left; }
 	.block.align1 > .wrapContent { text-align: center; }
@@ -81,7 +84,7 @@
 	.block.blockText.align2 {
 		> .wrapMenu { text-align: left; }
 		> .wrapMenu {
-			.icon.dnd { right: auto; left: 6px; }
+			.icon.commonDnd { right: auto; left: 6px; }
 		}
 	}
 
@@ -90,7 +93,7 @@
 	
 	.block.isResizing { user-select: none; }
 	.block.isResizing {
-		.icon.dnd { opacity: 1; }
+		.icon.commonDnd { opacity: 1; }
 	}
 	
 	.block.isAdding.top::before {
@@ -101,8 +104,8 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-control-accent); position: absolute; right: 0px; bottom: -2px;
 	}
 	
-	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block:hover > .wrapMenu > .icon.commonDnd { opacity: 1; }
+	.block.showMenu > .wrapMenu > .icon.commonDnd { opacity: 1; }
 
 	.block.isAdding.top > .wrapContent > .selectionTarget > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectionTarget > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
@@ -118,7 +121,7 @@
 
 #dragProvider.isDragging {
 	.block > .wrapContent > .selectionTarget.isSelectionSelected::after { display: none; }
-	.block > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block > .wrapMenu > .icon.commonDnd { opacity: 1; }
 }
 
 @import "./markup";

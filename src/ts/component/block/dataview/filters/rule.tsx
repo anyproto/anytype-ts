@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, translate, Preview } from 'Lib';
 import { Icon, Select, Input, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -97,7 +96,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							key={`${nodeId}-days-${quickOption}`}
 							ref={inputRef}
 							value={value}
-							className="round c36"
+							size={36}
 							placeholder={translate(`placeholderCell${I.RelationType.Number}`)}
 							onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
 							readonly={readonly}
@@ -123,7 +122,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							key={`${nodeId}-date-${quickOption}`}
 							ref={inputRef}
 							value={value ? U.Date.date(inputFormat, value) : ''}
-							className="round c36"
+							size={36}
 							placeholder={ph}
 							maskOptions={{
 								mask,
@@ -159,9 +158,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 				return (
 					<div className="dateWrapper">
 						<Select
-							className="round c36"
+							size={36}
 							key={`${nodeId}-quick-${relationKey}-${condition}`}
 							id={`${nodeId}-quick`}
+							className="round"
 							value={String(quickOption)}
 							options={quickOptions}
 							onChange={v => onUpdate(index, {
@@ -187,7 +187,8 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 						id={`${nodeId}-checkbox`}
 						value={value ? '1' : '0'}
 						options={checkboxOptions}
-						className="round c36"
+						className="round"
+						size={36}
 						onChange={v => onUpdate(index, { value: Boolean(Number(v)) })}
 						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
 						readonly={readonly}
@@ -205,7 +206,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					<Input
 						ref={inputRef}
 						value={value}
-						className="round c36"
+						size={36}
 						placeholder={translate(`placeholderCell${relation.format}`)}
 						onKeyUp={(e: any, v: string) => onUpdate(index, { value: v })}
 						readonly={readonly}
@@ -254,7 +255,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 									<span
 										key={item.id}
 										id={tooltipId}
-										onMouseEnter={() => Preview.tooltipShow({ text: item.name, element: $(`#${tooltipId}`) })}
+										onMouseEnter={() => Preview.tooltipShow({ text: item.name, element: U.Dom.get(tooltipId) })}
 										onMouseLeave={() => Preview.tooltipHide(false)}
 									>
 										{el}
@@ -268,7 +269,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							<div
 								id={restId}
 								className="rest"
-								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: U.Dom.get(restId) })}
 								onMouseLeave={() => Preview.tooltipHide(false)}
 							>
 								+{rest.length}
@@ -305,7 +306,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							<div
 								id={restId}
 								className="rest"
-								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: U.Dom.get(restId) })}
 								onMouseLeave={() => Preview.tooltipHide(false)}
 							>
 								+{rest.length}
@@ -389,10 +390,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		const options: any[] = [];
 
 		if (depth < 2) {
-			options.push({ id: 'group', name: translate('menuDataviewFilterTurnIntoGroup'), icon: 'group' });
+			options.push({ id: 'group', name: translate('menuDataviewFilterTurnIntoGroup'), iconParam: { name: 'menu/action/group' } });
 		};
 
-		options.push({ id: 'delete', name: translate('commonDelete'), icon: 'remove' });
+		options.push({ id: 'delete', name: translate('commonDelete'), iconParam: { name: 'menu/action/remove' } });
 
 		S.Menu.open('select', {
 			element: `#${nodeId} .icon.more`,
@@ -455,14 +456,15 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			)}
 
 			<div className="inner">
-				<div className="relationSelect select round c36" onClick={onRelationClick}>
-					{relation ? <Icon className={`relation ${Relation.className(relation.format)}`} /> : ''}
+				<div className="relationSelect select round size36" onClick={onRelationClick}>
+					{relation ? <Icon name={Relation.registryName(relation.relationKey, relation.format)} /> : ''}
 					<Label text={relation?.name || ''} />
-					<Icon className="arrow" />
+					<Icon name="arrow/button" size={8} className="arrow" />
 				</div>
 
 				<Select
-					className="conditionSelect  round c36"
+					size={36}
+					className="conditionSelect round"
 					key={`${nodeId}-condition-${relationKey}`}
 					ref={conditionRef}
 					id={`${nodeId}-condition`}
@@ -495,7 +497,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 					{valueContent}
 				</div>
 
-				{!readonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+				{!readonly ? <Icon name="common/more" className="more" withBackground={true} onClick={onMore} /> : ''}
 			</div>
 		</div>
 	);

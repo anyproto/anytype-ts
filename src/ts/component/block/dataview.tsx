@@ -6,7 +6,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug, Icon, Label } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -21,6 +20,9 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -142,14 +144,14 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		unbind();
 
@@ -314,7 +316,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -389,7 +391,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -547,7 +549,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				if (isCollection && objects?.length) {
 					// Collection add is handled inside the popup for each file
 				};
-			});
+			}, analytics.route.uploadTypePage);
 		} else
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
 			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
@@ -665,7 +667,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 						menuContext?.close();
 						const objectId = getObjectId();
 						const details = getDetails('');
-						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details);
+						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, undefined, analytics.route.uploadTypePage);
 					} else
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
@@ -1256,6 +1258,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
+			const typeId = getTypeId();
+			const type = S.Record.getTypeById(typeId);
+
+			if (!readonly && type && U.Object.isInFileLayouts(type.recommendedLayout)) {
+				return true;
+			};
 			return false;
 		};
 
@@ -1659,13 +1667,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const blockNode = getBlockNode();
 		const wrapper = getEditorWrapper();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const hoverArea = blockNode.find('.hoverArea');
 
-		if (hoverArea.length && container.length) {
+		if (hoverArea.length && container) {
 			const rect = hoverArea.get(0).getBoundingClientRect();
 			const top = rect.bottom;
-			const containerBottom = container.get(0).getBoundingClientRect().bottom;
+			const containerBottom = container.getBoundingClientRect().bottom;
 			const height = containerBottom - top;
 
 			blockNode.find('.dragOverlay').css({ height });
@@ -1707,6 +1715,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (paths.length) {
 			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths, (message: any) => {
 				U.File.showFileDropError(message);
+
+				if (!message.error.code) {
+					analytics.event('UploadFile', { route: analytics.route.uploadDnDSet, count: paths.length });
+				};
 			});
 		};
 	};
@@ -1770,7 +1782,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon className="dragState" />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>

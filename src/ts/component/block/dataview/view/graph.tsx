@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, Dataview } from 'Lib';
 import { GraphProvider } from 'Component';
+import * as I from 'Interface';
 
 const PADDING = 46;
 
@@ -46,9 +46,9 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = U.Common.getPageContainer(isPopup);
-			const cw = container.width();
-			const ch = container.height();
+			const container = U.Dom.getPageContainer(isPopup);
+			const cw = container?.clientWidth ?? 0;
+			const ch = container?.clientHeight ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
 			const { top } = node.offset();

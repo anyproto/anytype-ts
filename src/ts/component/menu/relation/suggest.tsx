@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
-import { I, S, U, J, analytics, keyboard, Relation, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -103,7 +103,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	const getSections = () => {
 		const reg = new RegExp(U.String.regexEscape(data.filter), 'gi');
 		const systemKeys = Relation.systemKeys();
-		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, icon: `relation ${Relation.className(it.format)}` }));
+		const items = U.Common.objectCopy(itemsRef.current || []).map(it => ({ ...it, iconParam: { name: Relation.registryName(it.relationKey, it.format) } }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const types = data.types || [];
@@ -283,7 +283,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 					onClick={e => onClick(e, item)} 
 					style={param.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -330,7 +330,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
 					placeholder={translate('menuRelationSuggestFilterOrCreateRelation')}
 					value={filter}
 					onChange={onFilterChange}

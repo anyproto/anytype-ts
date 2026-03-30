@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import $ from 'jquery';
+import * as I from 'Interface';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 

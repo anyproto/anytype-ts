@@ -3,8 +3,9 @@
 #tooltipContainer { position: fixed; left: 0px; top: 0px; z-index: 1002; pointer-events: none; }
 
 .tooltip { 
-	position: absolute; border-radius: 4px; background: #373632; padding: 3px 7px; text-transform: none;
-	@include text-small; line-height: 16px; color: var(--color-bg-primary); white-space: nowrap; transform: scale3d(0.7, 0.7, 1); opacity: 0;
+	position: absolute; border-radius: 12px; background: var(--color-bg-primary); padding: 2px 8px; text-transform: none;
+	@include text-small; line-height: 18px; color: var(--color-text-primary); white-space: nowrap; transform: scale3d(0.7, 0.7, 1); opacity: 0;
+	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.08);
 }
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }

@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, S, U, J, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const TEMPLATE_WIDTH = 224;
 
@@ -163,8 +163,8 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const list = obj.find('.items');
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getPageContainer(isPopup);
-		const ww = container.width();
+		const containerEl = U.Dom.getPageContainer(isPopup);
+		const ww = containerEl?.clientWidth || 0;
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));
 		if (columns > length) {
@@ -177,7 +177,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const ItemAdd = () => (
 		<div className="previewObject small">
 			<div className="border" />
-			<Icon className="add" />
+			<Icon name="menu/action/add" className="add" />
 		</div>
 	);
 

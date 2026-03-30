@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
+import * as I from 'Interface';
 
 const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 

@@ -3,7 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
@@ -80,18 +81,18 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		if (canAdd && canWrite) {
 			let name = '';
-			let icon = 'plus';
+			let iconParam: any = { name: 'plus/menu' };
 			let arrow = false;
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.String.sprintf(addParam.nameWithFilter, filter);
-				} else 
+				} else
 				if (addParam.name) {
 					name = addParam.name;
 				};
 				if (addParam.icon) {
-					icon = addParam.icon;
+					iconParam = { name: addParam.icon };
 				};
 				if (addParam.arrow) {
 					arrow = true;
@@ -107,7 +108,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					items.unshift({ isDiv: true });
 				};
 
-				items.unshift({ id: 'add', icon, name, arrow, isAdd: true });
+				items.unshift({ id: 'add', iconParam, name, arrow, isAdd: true });
 			};
 		};
 
@@ -443,8 +444,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
-					icon="search"
+					iconParam={{ name: 'common/search' }}
 					placeholder={placeholder} 
 					value={filter}
 					onChange={onFilterChange} 
