@@ -18,7 +18,6 @@ declare global {
 	}
 };
 
-window.$ = $;
 window.isExtension = true;
 window.Electron = {
 	currentWindow: () => ({}),

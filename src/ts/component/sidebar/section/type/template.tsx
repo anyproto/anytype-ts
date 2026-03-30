@@ -4,6 +4,7 @@ import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
@@ -42,7 +43,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = $(`#sidebarRight #preview-${U.Common.esc(item.id)}`);
+		const node = U.Dom.select(`#sidebarRight #preview-${U.Common.esc(item.id)}`);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -64,8 +65,8 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 				subIds: J.Menu.dataviewTemplate,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
-				onOpen: () => node.addClass('active'),
-				onClose: () => node.removeClass('active'),
+				onOpen: () => U.Dom.addClass(node, 'active'),
+				onClose: () => U.Dom.removeClass(node, 'active'),
 				data: {
 					template: item,
 					isView: false,

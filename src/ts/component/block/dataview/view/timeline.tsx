@@ -43,13 +43,21 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		return getRecords().map(id => S.Detail.get(subId, id));
 	};
 
+	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
+
 	const rebind = () => {
 		unbind();
-		U.Common.getScrollContainer(isPopup).on('scroll.timeline', e => onScrollVertical(e));
+		const container = U.Dom.getScrollContainer(isPopup);
+		scrollHandlerRef.current = (e: Event) => onScrollVertical(e);
+		container?.addEventListener('scroll', scrollHandlerRef.current);
 	};
 
 	const unbind = () => {
-		U.Common.getScrollContainer(isPopup).off('scroll.timeline');
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (scrollHandlerRef.current) {
+			container?.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const getData = () => {
@@ -388,15 +396,15 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const body = $(bodyRef.current);
 		const list = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const pageContainer = U.Common.getPageContainer(isPopup);
-		const top = body.offset().top - J.Size.header - 14 - scrollContainer.scrollTop();
+		const scrollContainer = U.Dom.getScrollContainer(isPopup);
+		const pageContainer = U.Dom.getPageContainer(isPopup);
+		const top = body.offset().top - J.Size.header - 14 - (scrollContainer?.scrollTop ?? 0);
 		const left = node.offset().left;
 
 		if (!isInline) {
 			node.css({ width: 0, marginLeft: 0 });
 
-			const cw = pageContainer.width();
+			const cw = pageContainer?.clientWidth ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
 
@@ -668,7 +676,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 								threshold={10}
 							>
 								{({ onRowsRendered }) => (
-									<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+									<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup)}>
 										{({ height, isScrolling, registerChild, scrollTop }) => (
 											<AutoSizer>
 												{({ width }) => (

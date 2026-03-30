@@ -69,7 +69,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 		videoRef.current?.play();
 	};
 

@@ -49,7 +49,7 @@ const ObjectCover: FC<Props> = ({
 						playlist={[ 
 							{ name: U.File.name(name), src: S.Common.fileUrl(id) },
 						]} 
-						getScrollContainer={() => U.Common.getScrollContainer(isPopup)} 
+						getScrollContainer={() => U.Dom.getScrollContainer(isPopup)} 
 					/>
 				);
 				break;

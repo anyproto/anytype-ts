@@ -2,6 +2,7 @@ import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

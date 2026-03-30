@@ -107,7 +107,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			const inner = node.find('.innerWrap');
-			const { ww } = U.Common.getWindowDimensions();
+			const { ww } = U.Dom.getWindowDimensions();
 
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();

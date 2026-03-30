@@ -1,6 +1,5 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
@@ -163,7 +162,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const resize = () => {
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		const sw = sidebar.getDummyWidth();
 		const pw = ww - sw;
 		const breakpoint = {
@@ -173,7 +172,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		};
 
 		for (const key of Object.keys(breakpoint)) {
-			$(nodeRef.current).toggleClass(key, pw <= breakpoint[key]);
+			U.Dom.toggleClass(nodeRef.current, key, pw <= breakpoint[key]);
 		};
 	};
 

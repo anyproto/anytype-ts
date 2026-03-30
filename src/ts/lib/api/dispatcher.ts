@@ -960,7 +960,7 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
@@ -977,7 +977,7 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
@@ -1078,7 +1078,7 @@ class Dispatcher {
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg = {
+						const commentMsg: I.CommentMessage = {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
@@ -1088,14 +1088,14 @@ class Dispatcher {
 						};
 
 						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
 
 							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
 							if (post) {
 								set(post, { replyCount: (post.replyCount || 0) + 1 });
 							};
 						} else {
-							S.Comment.addPost(subId, commentMsg as any);
+							S.Comment.addPost(subId, commentMsg);
 						};
 					});
 
@@ -1135,7 +1135,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg = {
+							const commentMsg: Partial<I.CommentMessage> = {
 								id: mapped.message.id,
 								content: {
 									...mapped.message.content,
@@ -1144,9 +1144,9 @@ class Dispatcher {
 							};
 
 							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
 							} else {
-								S.Comment.updatePost(subId, commentMsg as any);
+								S.Comment.updatePost(subId, commentMsg);
 							};
 						} else {
 							S.Chat.update(subId, mapped.message);
@@ -1498,8 +1498,16 @@ class Dispatcher {
 	 * @param afterId - ID of the record after which to place the item (empty for start)
 	 * @param isAdding - Whether this is a new addition (skip if already exists)
 	 */
+	parseSubId (subId: string): [string, string] {
+		const idx = subId.indexOf('/');
+		if (idx === -1) {
+			return [ subId, '' ];
+		};
+		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
+	};
+
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
-		const [ sid, dep ] = subId.split('/');
+		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};

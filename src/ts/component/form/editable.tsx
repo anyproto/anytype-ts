@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react
 import { getRange, setRange } from 'selection-ranges';
 import raf from 'raf';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props {
 	id?: string;
@@ -104,7 +105,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setBlur = () => {
-		U.Common.clearSelection();
+		U.Dom.clearSelection();
 	};
 
 	const setValue = (html: string) => {

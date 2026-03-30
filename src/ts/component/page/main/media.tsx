@@ -125,8 +125,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const inner = node.find('.side.left #inner');
-		const container = U.Common.getScrollContainer(isPopup);
-		const wh = container.height() - 182;
+		const container = U.Dom.getScrollContainer(isPopup);
+		const wh = (container?.clientHeight ?? 0) - 182;
 
 		if (blocks.hasClass('vertical')) {
 			inner.css({ minHeight: wh });

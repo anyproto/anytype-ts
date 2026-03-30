@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
@@ -26,11 +25,11 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onPlay = () => {
-		$(nodeRef.current).addClass('isPlaying');
+		U.Dom.addClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onPause = () => {
-		$(nodeRef.current).removeClass('isPlaying');
+		U.Dom.removeClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -133,7 +132,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						playlist={getPlaylist()}
 						onPlay={onPlay}
 						onPause={onPause}
-						getScrollContainer={() => U.Common.getScrollContainer(isPopup)}
+						getScrollContainer={() => U.Dom.getScrollContainer(isPopup)}
 					/>
 				);
 				break;

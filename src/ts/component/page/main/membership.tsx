@@ -26,11 +26,12 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	};
 
 	const resize = () => {
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const obj = U.Common.getPageFlexContainer(isPopup);
+		const obj = U.Dom.getPageFlexContainer(isPopup);
+		const h = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
-		node.css({ height: (isPopup ? obj.height() : win.height()) });
+		if (nodeRef.current) {
+			nodeRef.current.style.height = `${h}px`;
+		};
 	};
 
 	useEffect(() => {

@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import * as I from 'Interface';
+import $ from 'jquery';
 
 interface Props {
 	object: any;
@@ -205,7 +206,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
 
-		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Common.getScrollContainer(isPopup)} />;
+		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Dom.getScrollContainer(isPopup)} />;
 	};
 
 	const onOpen = (e: any) => {

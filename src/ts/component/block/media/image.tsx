@@ -61,7 +61,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });

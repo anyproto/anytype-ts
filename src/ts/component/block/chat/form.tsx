@@ -72,7 +72,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
-	const namespace = U.Common.getEventNamespace(isPopup);
+	const namespace = U.Dom.getEventNamespace(isPopup);
 	const attachmentsSubId = subId + namespace;
 	const spaceview = U.Space.getSpaceview();
 	const electron = U.Common.getElectron();
@@ -114,7 +114,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				element: '#messageBox',
 				recalcRect: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetY: 4,
@@ -686,7 +686,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Common.getScrollContainer(isPopup).height() });
+		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0 });
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -1345,7 +1345,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const openLinkMenu = () => {
 		const { from, to } = range.current;
 		const mark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const win = $(window);
 
 		S.Menu.close('chatText', () => {
@@ -1542,12 +1542,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const caretMenuParam = () => {
 		const win = $(window);
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			vertical: I.MenuDirection.Top,

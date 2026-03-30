@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Select, Input, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
@@ -256,7 +255,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 									<span
 										key={item.id}
 										id={tooltipId}
-										onMouseEnter={() => Preview.tooltipShow({ text: item.name, element: $(`#${tooltipId}`) })}
+										onMouseEnter={() => Preview.tooltipShow({ text: item.name, element: U.Dom.get(tooltipId) })}
 										onMouseLeave={() => Preview.tooltipHide(false)}
 									>
 										{el}
@@ -270,7 +269,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							<div
 								id={restId}
 								className="rest"
-								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: U.Dom.get(restId) })}
 								onMouseLeave={() => Preview.tooltipHide(false)}
 							>
 								+{rest.length}
@@ -307,7 +306,7 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 							<div
 								id={restId}
 								className="rest"
-								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: $(`#${restId}`) })}
+								onMouseEnter={() => Preview.tooltipShow({ text: rest.map(it => it.name).join(', '), element: U.Dom.get(restId) })}
 								onMouseLeave={() => Preview.tooltipHide(false)}
 							>
 								+{rest.length}

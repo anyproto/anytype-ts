@@ -36,7 +36,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (wrapper.length) {
 			wrapper.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		};
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 	};
 
 	const onScaleStart = (e: any, v: number) => {

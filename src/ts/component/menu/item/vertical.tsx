@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -187,10 +186,10 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		
-		if (!node.hasClass('withIcon')) {
-			node.toggleClass('withIconObject', !!node.find('.iconObject').length);
+		const node = nodeRef.current;
+
+		if (node && !U.Dom.hasClass(node, 'withIcon')) {
+			U.Dom.toggleClass(node, 'withIconObject', !!node.querySelectorAll('.iconObject').length);
 		};
 	};
 
@@ -199,7 +198,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 		
 		onMouseEnter?.(e);

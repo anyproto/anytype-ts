@@ -149,7 +149,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 	const onTooltipShow = (e: any, text: string) => {
 		if (text) {
-			Preview.tooltipShow({ text, element: $(e.currentTarget) });
+			Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement });
 		};
 	};
 

@@ -180,7 +180,7 @@ const Toast: FC = observer(() => {
 
 	useEffect(() => {
 		const node = $(nodeRef.current);
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		const y = 32;
 		const sw = sidebar.getDummyWidth();
 		const x = (ww - sw) / 2 - node.outerWidth() / 2 + sw;

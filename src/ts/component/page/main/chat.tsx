@@ -16,7 +16,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
+	const ns = `chat${U.Dom.getEventNamespace(isPopup)}`;
 
 	const unbind = () => {
 		const events = [ 'keydown', 'scrollToMessage' ];

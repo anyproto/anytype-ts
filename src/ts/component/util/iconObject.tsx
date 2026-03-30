@@ -160,7 +160,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const t = Preview.tooltipCaption(text, caption);
 		
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		if (canEdit && U.Object.isTaskLayout(object.layout)) {

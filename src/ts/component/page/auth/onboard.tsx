@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
+import $ from 'jquery';
 
 enum Stage {
 	Phrase 		= 0,

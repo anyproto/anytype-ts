@@ -77,7 +77,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const isBoard = saveParam.current.type == I.ViewType.Board;
 		const isCalendar = saveParam.current.type == I.ViewType.Calendar;
 		const clearGroups = isBoard && saveParam.current.groupRelationKey && (view.groupRelationKey != saveParam.current.groupRelationKey);
-		const ns = block.id + U.Common.getEventNamespace(keyboard.isPopup());
+		const ns = block.id + U.Dom.getEventNamespace(keyboard.isPopup());
 
 		if (isBoard || isCalendar) {
 			const groupOptions = Relation.getGroupOptions(rootId, blockId, saveParam.current.type);

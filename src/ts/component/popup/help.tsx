@@ -98,7 +98,7 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 	});
 
 	useEffect(() => {
-		U.Common.renderLinks($(nodeRef.current));
+		U.Dom.renderLinks($(nodeRef.current));
 	});
 
 	return (

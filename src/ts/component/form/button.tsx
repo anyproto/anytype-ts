@@ -76,7 +76,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		if (onMouseEnter) { 

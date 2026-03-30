@@ -17,7 +17,7 @@ const Title = forwardRef<{}, Props>(({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 	}, []);
 

@@ -4,6 +4,7 @@ import { Icon, Cell } from 'Component';
 import Item from './item';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import $ from 'jquery';
 
 const ANIMATION = 200;
 

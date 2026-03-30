@@ -19,12 +19,14 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 	const componentRef = useRef(null);
 
 	const onPage = (page: string, data?: any): void => {
-		const obj = $(`#${getId()}-innerWrap`);
+		const obj = U.Dom.get(`${getId()}-innerWrap`);
 
 		data = data || {};
 		param.data = Object.assign(param.data, { ...data, page });
 
-		obj.scrollTop(0);
+		if (obj) {
+			obj.scrollTop = 0;
+		};
 	};
 
 	const getAuthor = (author: string): string => {
