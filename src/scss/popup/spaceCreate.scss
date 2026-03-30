@@ -14,20 +14,21 @@
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
-		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; padding: 0px 16px; }
+
+		.step { padding: 0px 0px 16px 0px; }
 
 		/* Step 0 — Select Members */
-		.step.step0 { padding: 0px 16px 16px 16px; }
 		.step.step0 {
-			.filter { margin: 0px 0px 16px 0px; }
+			.filter { padding: 0px 16px; }
 
-			.memberListWrapper { position: relative; margin: 0px 0px 16px 0px; }
+			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
 				.memberList { position: relative; }
 				.memberList {
-					.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
+					.ReactVirtualized__List { padding: 8px 16px; scrollbar-gutter: stable; }
 				}
 
 				.grad {
@@ -39,12 +40,12 @@
 				.memberRow {
 					.name { @include text-common; flex: 1; }
 					.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
+					.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
 				}
 			}
 		}
 
 		/* Step 1 — Name & Icon */
-		.step.step1 { padding: 0px 16px 16px 16px; }
 		.step.step1 {
 			.input.spaceName {
 				height: 56px; background: var(--color-shape-highlight-light); border: 0px; border-radius: 20px;

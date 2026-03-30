@@ -1,8 +1,10 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+
+const SUB_ID = 'popupSpaceCreateParticipants';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, position }, ref) => {
 
@@ -78,21 +80,42 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		});
 	};
 
-	const getMembers = () => {
-		const participant = U.Space.getParticipant();
-		const list = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+	const loadMembers = useCallback(() => {
+		U.Subscription.subscribe({
+			subId: SUB_ID,
+			keys: U.Subscription.participantRelationKeys(),
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'participantStatus', condition: I.FilterCondition.Equal, value: I.ParticipantStatus.Active },
+				{ relationKey: 'identity', condition: I.FilterCondition.NotEqual, value: S.Auth.account?.id },
+			],
+			ignoreHidden: false,
+			noDeps: true,
+			crossSpace: true,
+		});
+	}, []);
 
-		return list.filter(it => {
-			if (participant && (it.id == participant.id)) {
+	const getMembers = () => {
+		const list = S.Record.getRecords(SUB_ID);
+
+		// Deduplicate by identity since the same user can be a participant in multiple spaces
+		const seen = new Set<string>();
+		const unique = list.filter(it => {
+			if (!it.identity || seen.has(it.identity)) {
 				return false;
 			};
 
-			if (search) {
-				return it.name.toLowerCase().includes(search.toLowerCase());
-			};
-
+			seen.add(it.identity);
 			return true;
 		});
+
+		unique.sort(U.Data.sortByName);
+
+		if (search) {
+			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
+		};
+
+		return unique;
 	};
 
 	const onSubmit = () => {
@@ -104,8 +127,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		const submittedName = checkName(name);
 		const usecase = I.Usecase.DataSpace;
 
-		// Resolve identities before space switch since participant objects belong to the current space
-		const identities = U.Space.getParticipantsList([ I.ParticipantStatus.Active ])
+		// Resolve identities from cross-space subscription before space switch
+		const identities = S.Record.getRecords(SUB_ID)
 			.filter(it => selectedMembers.includes(it.id))
 			.map(it => it.identity)
 			.filter(it => it);
@@ -182,6 +205,16 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const object = getObject();
 
 	useEffect(() => {
+		if (isChatSpace) {
+			loadMembers();
+		};
+
+		return () => {
+			U.Subscription.destroyList([ SUB_ID ]);
+		};
+	}, []);
+
+	useEffect(() => {
 		iconRef.current?.setObject(getObject());
 	}, [ iconOption ]);
 
@@ -197,8 +230,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const LIST_HEIGHT = 280;
 
 	const members = getMembers();
-	const selectedMemberObjects = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => selectedMembers.includes(it.id));
-	const listHeight = Math.min(members.length * ROW_HEIGHT, LIST_HEIGHT);
+	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
+	const listHeight = Math.min(members.length * ROW_HEIGHT, LIST_HEIGHT) + 16;
 	const showGrad = (members.length * ROW_HEIGHT) > LIST_HEIGHT;
 
 	const rowRenderer = ({ index, key, style }) => {
