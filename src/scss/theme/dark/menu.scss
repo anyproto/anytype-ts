@@ -48,10 +48,6 @@
         .loaderWrapper { background: var(--color-bg-secondary); }
     }
 
-
-    /* Smile */
-
-
 	/* BlockRelationEdit */
 
 	.menu.menuBlockRelationEdit {
@@ -63,11 +59,6 @@
 	.menu.menuDataviewRelationEdit {
 		.item:hover { background: var(--color-shape-highlight-medium); }
 	}
-
-	/* DataviewFilterValues */
-
-    .menu.menuDataviewFilterValues {
-    }
 
 	/* DataviewFileValues */
 
@@ -147,13 +138,6 @@
 			.button { color: var(--color-text-primary); }
 		}
 
-	}
-
-	/* Identity */
-
-	.menu.menuIdentity {
-		.content {
-		}
 	}
 
 }
