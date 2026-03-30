@@ -433,6 +433,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						menuId = 'searchObject';
 						menuParam.data = Object.assign(menuParam.data, {
 							type: I.NavigationType.Link,
+							placeholder: translate('commonSearchObjects'),
 							withPlural: true,
 							filters: [
 								{ relationKey: 'resolvedLayout', condition, value: U.Object.getFileLayouts() },
