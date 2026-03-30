@@ -85,7 +85,7 @@ const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			isEmpty={isEmpty}
 			enableKeyboard={!noKeyboard}
 			enableHoverState={true}
-			showFooter={canEdit}
+			showFooter={canEdit && !isTemplate}
 			getDotMap={getDotMap}
 			onDayClick={onDayClick}
 			onDayContextMenu={onDayContextMenu}

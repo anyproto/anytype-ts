@@ -58,13 +58,11 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 	const selectedDateRef = useRef<CalendarDay | null>(null);
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
-
 	const { m, y } = U.Date.getCalendarDateParam(displayValue);
 	const valueParam = value ? U.Date.getCalendarDateParam(value) : null;
 	const todayParam = U.Date.getCalendarDateParam(U.Date.now());
 	const days = U.Date.getWeekDays();
 	const data = U.Date.getCalendarMonth(displayValue);
-
 	const cn = [ 'calendarSelect' ];
 
 	if (className) {
@@ -394,13 +392,18 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 				<>
 					<div className="line" />
 					<div className="placeholders">
-						<div className="sectionName">{translate('menuCalendarDynamicDates')}</div>
 						<div
 							className={[ 'item', (hasPlaceholder ? 'active' : '') ].join(' ')}
 							onClick={() => onPlaceholder?.(I.PlaceholderType.Today)}
 						>
 							<Icon name="relation/date" />
 							<div className="name">{translate('placeholderToday')}</div>
+						</div>
+						<div
+							className="item"
+							onClick={onClear}
+						>
+							<div className="name">{translate('commonClear')}</div>
 						</div>
 					</div>
 				</>
