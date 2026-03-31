@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
@@ -277,24 +276,32 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const showAll = node.find('#button-show-all').css('display') != 'none';
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const showAllBtn = U.Dom.select('#button-show-all', node);
+		const showAll = showAllBtn && getComputedStyle(showAllBtn).display != 'none';
 		const bh = showAll ? HEIGHT : 0;
-		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
+		const css: any = { height: `${getTotalHeight() + 8 + bh}px`, paddingBottom: '' };
 
 		if (isPreview) {
-			const head = $(`#widget-${U.Common.esc(parent.id)} .head`);
-			const maxHeight = $('#sidebarPageWidget #body').height() - head.outerHeight(true);
+			const head = U.Dom.select(`#widget-${U.Common.esc(parent.id)} .head`);
+			const body = U.Dom.select('#sidebarPageWidget #body');
+			const bodyHeight = body ? U.Dom.contentHeight(body) : 0;
+			const headHeight = head ? head.offsetHeight + (parseFloat(getComputedStyle(head).marginTop) || 0) + (parseFloat(getComputedStyle(head).marginBottom) || 0) : 0;
+			const maxHeight = bodyHeight - headHeight;
 
-			css.height = Math.min(maxHeight, css.height + 8);
+			css.height = `${Math.min(maxHeight, getTotalHeight() + 8 + bh + 8)}px`;
 		};
 
 		if (!length) {
-			css.paddingBottom = 8;
-			css.height = 20 + css.paddingBottom;
+			css.paddingBottom = '8px';
+			css.height = `${20 + 8}px`;
 		};
 
-		node.css(css);
+		U.Dom.css(node, css);
 	};
 
 	const nodes = loadTree();
@@ -450,7 +457,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		checkShowAllButton(getSubId());
 		resize();
 
-		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', !length);
+		U.Dom.toggleClass(U.Dom.get(`widget-${U.Common.esc(parent.id)}`), 'isEmpty', !length);
 	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
@@ -76,16 +75,22 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const resizeHandler = useRef<() => void>(null);
+
 	const rebind = () => {
 		unbind();
 
 		if (!param.preventResize) {
-			$(window).on(`resize.popup${id}`, () => position());
+			resizeHandler.current = () => position();
+			window.addEventListener('resize', resizeHandler.current);
 		};
 	};
 
 	const unbind = () => {
-		$(window).off(`resize.popup${id}`);
+		if (resizeHandler.current) {
+			window.removeEventListener('resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
 	};
 
 	const animate = () => {
@@ -96,7 +101,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			isAnimatingRef.current = true;
 
-			$(nodeRef.current).addClass('show');
+			U.Dom.addClass(nodeRef.current, 'show');
 			window.setTimeout(() => { isAnimatingRef.current = false; }, S.Popup.getTimeout());
 		});
 	};
@@ -105,12 +110,19 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		childRef.current?.beforePosition?.();
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			const inner = node.find('.innerWrap');
-			const { ww } = U.Dom.getWindowDimensions();
+			const node = nodeRef.current;
+			if (!node) {
+				return;
+			};
 
-			const width = inner.outerWidth();
-			const height = inner.outerHeight();
+			const inner = U.Dom.select('.innerWrap', node);
+			if (!inner) {
+				return;
+			};
+
+			const { ww } = U.Dom.getWindowDimensions();
+			const width = inner.offsetWidth;
+			const height = inner.offsetHeight;
 
 			let sw = 0;
 			if (S.Popup.noDimmerIds().includes(id)) {
@@ -122,7 +134,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				x -= sw / 2;
 			};
 
-			inner.css({ left: x, marginTop: -height / 2, });
+			U.Dom.css(inner, { left: `${x}px`, marginTop: `${-height / 2}px` });
 		});
 	};
 

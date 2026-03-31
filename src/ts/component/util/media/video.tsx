@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Icon } from 'Component';
 
 interface Props {
@@ -30,24 +29,36 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	const rebind = () => {
 		unbind();
 
-		const video = $(videoRef.current);
+		const video = videoRef.current;
+		if (!video) {
+			return;
+		};
 
-		video.on('play', onPlayHandler);
-		video.on('pause', onPause);
-		video.on('ended', onEnded);
-		video.on('canplay', onLoad);
-		video.on('loadedmetadata', onMetaData);
+		video.addEventListener('play', onPlayHandler);
+		video.addEventListener('pause', onPause);
+		video.addEventListener('ended', onEnded);
+		video.addEventListener('canplay', onLoad);
+		video.addEventListener('loadedmetadata', onMetaData);
 	};
 
 	const unbind = () => {
-		$(videoRef.current).off('canplay ended pause play loadedmetadata');
+		const video = videoRef.current;
+		if (!video) {
+			return;
+		};
+
+		video.removeEventListener('play', onPlayHandler);
+		video.removeEventListener('pause', onPause);
+		video.removeEventListener('ended', onEnded);
+		video.removeEventListener('canplay', onLoad);
+		video.removeEventListener('loadedmetadata', onMetaData);
 	};
 
 	const onPlayHandler = (e: any) => {
 		if (videoRef.current) {
 			videoRef.current.controls = true;
 		};
-		$(nodeRef.current).addClass('isPlaying');
+		U.Dom.addClass(nodeRef.current, 'isPlaying');
 
 		onPlay?.(e);
 	};
@@ -56,7 +67,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		if (videoRef.current) {
 			videoRef.current.controls = false;
 		};
-		$(nodeRef.current).removeClass('isPlaying');
+		U.Dom.removeClass(nodeRef.current, 'isPlaying');
 
 		onPause?.(e);
 	};
