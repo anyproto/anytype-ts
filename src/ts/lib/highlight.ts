@@ -31,7 +31,7 @@ class Highlight {
 			return;
 		};
 
-		HIGHLIGHTS_MAP[key].forEach(item => this.add(document.querySelector(item)));
+		HIGHLIGHTS_MAP[key].forEach(item => this.add(U.Dom.select(item)));
 	};
 
 	/**
@@ -42,7 +42,7 @@ class Highlight {
 		Storage.setHighlight(key, false);
 
 		if (HIGHLIGHTS_MAP[key]) {
-			HIGHLIGHTS_MAP[key].forEach(item => this.remove(document.querySelector(item)));
+			HIGHLIGHTS_MAP[key].forEach(item => this.remove(U.Dom.select(item)));
 		};
 	};
 

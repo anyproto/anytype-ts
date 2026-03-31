@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -42,19 +41,26 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		cnb.push('withMessages');
 	};
 
-	const unbind = () => {
-		const events = [ 'keydown', 'keyup' ];
-		const ns = 'sidebarPageVault';
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyupHandler = useRef<(e: any) => void>(null);
 
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+	const unbind = () => {
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (keyupHandler.current) {
+			window.removeEventListener('keyup', keyupHandler.current);
+			keyupHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('keydown.sidebarPageVault', e => onKeyDown(e));
-		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		keyupHandler.current = (e: any) => onKeyUp(e);
+		window.addEventListener('keydown', keydownHandler.current);
+		window.addEventListener('keyup', keyupHandler.current);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -153,8 +159,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		const items = getItems(true);
 		const node = getNode();
-		const el = node.find(`#item-${U.Common.esc(item.id)}`).get(0) as HTMLElement;
-		const iconWrap = node.find(`#item-${U.Common.esc(item.id)} .iconWrap`);
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		const iconWrap = U.Dom.select(`#item-${U.Common.esc(item.id)} .iconWrap`, node);
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
 		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
@@ -169,7 +175,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fromVault',
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: node.width() / 2 + iconWrap.width() / 2,
+			offsetX: U.Dom.contentWidth(node) / 2 + U.Dom.contentWidth(iconWrap) / 2,
 			delay,
 		});
 	};
@@ -333,17 +339,17 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getNode = () => {
-		return $(`#${getId()}`);
+		return U.Dom.get(getId());
 	};
 
 	const setHover = (item: any) => {
 		if (item) {
-			getNode().find(`#item-${U.Common.esc(item.id)}`).addClass('hover');
+			U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, getNode()), 'hover');
 		};
 	};
 
 	const unsetHover = () => {
-		getNode().find('.item.hover').removeClass('hover');
+		U.Dom.selectAll('.item.hover', getNode()).forEach(el => U.Dom.removeClass(el, 'hover'));
 	};
 
 	const onFilterChange = (v: string) => {
@@ -564,10 +570,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 			onOpen: () => {
-				$(`#${getId()} .bottom`).addClass('hover');
+				U.Dom.addClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 			onClose: () => {
-				$(`#${getId()} .bottom`).removeClass('hover');
+				U.Dom.removeClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 		});
 	};
@@ -594,8 +600,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onVaultContext = (e: any) => {
 		U.Menu.vaultStyle({
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-			className: 'vaultStyle fixed',
+			element: '#button-vault-toggle',
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 		});
 	};
@@ -636,8 +642,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
 				scrollTopRef.current = newTop;
 
-				const node = getNode();
-				node.find('.ReactVirtualized__Grid').scrollTop(newTop);
+				const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
+				if (grid) {
+					grid.scrollTop = newTop;
+				};
 			};
 		};
 
@@ -646,7 +654,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	return (
 		<>
-			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
+			<div 
+				id="head" 
+				className={cnh.join(' ')}
+			>
 				<div className="side left">
 					{!vaultIsMinimal ? (
 						<div className="name">
@@ -660,7 +671,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<>
 							{iconCreate()}
 							<Icon
-								name="widget/sidebarToggle" className="toggle" withBackground={true}
+								id="button-vault-toggle"
+								name="widget/sidebarToggle"
+								className="toggle"
+								withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -668,6 +682,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 								}}
 								onClick={() => sidebar.leftPanelToggle(true, true)}
 								onMouseDown={e => e.stopPropagation()}
+								onContextMenu={onVaultContext}
 							/>
 						</>
 					) : ''}
@@ -684,7 +699,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					/>
 				</div>
 			) : ''}
-			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
+			<div 
+				id="body" 
+				className={cnb.join(' ')}
+			>
 				{!items.length && !vaultIsMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}

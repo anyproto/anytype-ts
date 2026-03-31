@@ -949,7 +949,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
-		U.Dom.selectAll('.item.hover', container).forEach(el => el.classList.remove('hover'));
+		U.Dom.selectAll('.item.hover', container).forEach(el => U.Dom.removeClass(el as HTMLElement, 'hover'));
 
 		if (!item) {
 			return;

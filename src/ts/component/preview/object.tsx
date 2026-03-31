@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Cover, Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
@@ -274,23 +273,29 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		);
 	};
 
+	const updateHandler = useRef<() => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on(`updatePreviewObject.${rootId}`, () => update());
+		updateHandler.current = () => update();
+		window.addEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off(`updatePreviewObject.${rootId}`);
+		if (updateHandler.current) {
+			window.removeEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
+			updateHandler.current = null;
+		};
 	};
 
 	const onMouseEnterHandler = (e: any) => {
 		onMouseEnter?.(e);
-		$(nodeRef.current).addClass('hover');
+		U.Dom.addClass(nodeRef.current, 'hover');
 	};
 
 	const onMouseLeaveHandler = (e: any) => {
 		onMouseLeave?.(e);
-		$(nodeRef.current).removeClass('hover');
+		U.Dom.removeClass(nodeRef.current, 'hover');
 	};
 
 	const load = () => {

@@ -135,11 +135,11 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
 			onOpen: () => {
-				U.Dom.addClass(document.querySelector(element), 'active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
 				U.Dom.addClass(node, 'active');
 			},
 			onClose: () => {
-				U.Dom.removeClass(document.querySelector(element), 'active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
 				U.Dom.removeClass(node, 'active');
 			},
 			data: {

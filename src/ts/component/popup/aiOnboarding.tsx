@@ -157,7 +157,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		const wrapper = e.currentTarget;
 		
 		// Add scrolling class
-		wrapper.classList.add('isScrolling');
+		U.Dom.addClass(wrapper, 'isScrolling');
 		
 		// Clear existing timeout
 		if (scrollTimeoutRef.current) {
@@ -166,7 +166,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		
 		// Remove scrolling class after scrolling stops
 		scrollTimeoutRef.current = setTimeout(() => {
-			wrapper.classList.remove('isScrolling');
+			U.Dom.removeClass(wrapper, 'isScrolling');
 		}, 1000); // Hide scrollbar 1 second after scrolling stops
 	}, []);
 	

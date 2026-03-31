@@ -27,9 +27,9 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		const cells = node.querySelectorAll('.cellContent');
 		const first = node.querySelector('.cellContent:not(.isEmpty)');
 
-		cells.forEach(el => el.classList.remove('first'));
+		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
 		if (first) {
-			first.classList.add('first');
+			U.Dom.addClass(first as HTMLElement, 'first');
 		};
 	};
 

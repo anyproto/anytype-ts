@@ -46,7 +46,7 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		U.Dom.toggleClass(U.Dom.get(U.Common.esc(id)), 'isEditing', isEditing);
+		U.Dom.toggleClass(U.Dom.get(id), 'isEditing', isEditing);
 	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({

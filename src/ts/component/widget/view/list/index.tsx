@@ -73,8 +73,8 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		const currentLength = currentItems.length;
 
 		raf(() => {
-			const container = document.querySelector('#sidebarPageWidget #body') as HTMLElement;
-			const obj = document.getElementById(`widget-${U.Common.esc(parent.id)}`);
+			const container = U.Dom.select('#sidebarPageWidget #body');
+			const obj = U.Dom.get(`widget-${parent.id}`);
 			const node = nodeRef.current;
 			if (!node) return;
 

@@ -1689,10 +1689,14 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					const value = Boolean(Number(item.id));
+
+					S.Common.vaultMessagesSet(value);
 					if (isClosed) {
 						sidebar.open(I.SidebarPanel.Left, '', );
 					};
+
+					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
 				},
 			},
 		});

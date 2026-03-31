@@ -130,7 +130,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					id: 'type',
 					itemId: 'type',
 					name: translate('commonObjectType'),
-					customIcon: 'puzzle',
+					customIcon: 'menu/common/puzzle',
 					relationFormat: I.RelationType.Object,
 					layout: I.ObjectLayout.Relation,
 					value: translate('commonNone'),
@@ -138,6 +138,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 				{
 					id: 'relation',
 					itemId: 'relation',
+					customIcon: 'chat/attachment/object',
 					name: translate('blockNameRelation'),
 					relationFormat: I.RelationType.Relations,
 					layout: I.ObjectLayout.Relation,
@@ -172,7 +173,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 		let icon = null;
 		if (item.customIcon) {
-			icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
+			icon = <div className="iconWrapper"><Icon name={item.customIcon} /></div>;
 		} else {
 			icon = <IconObject size={40} object={item} />;
 		};

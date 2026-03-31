@@ -46,7 +46,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const init = () => {
 		const items = getItems().filter(it => it.relationKey != 'description');
 		const node = nodeRef.current;
-		const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const obj = U.Dom.get(`block-${block.id}`);
 
 		U.Dom.toggleClass(obj, 'isHidden', !items.length);
 
@@ -254,7 +254,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, relationKey: string, text?: string) => {
-		const cell = U.Dom.get(U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId)));
+		const cell = U.Dom.get(Relation.cellId(PREFIX, relationKey, rootId));
 		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			if (cell) {

@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
@@ -58,72 +57,69 @@ const CommentPost = observer((props: Props) => {
 			return;
 		};
 
-		const el = $(node);
-
 		// Mentions
-		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Mention), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
 		// Links
-		el.find('a').each((_i: number, item: any) => {
-			item = $(item);
-			const href = String(item.attr('href') || item.attr('data-param') || '');
+		U.Dom.selectAll('a', node).forEach((item: HTMLElement) => {
+			const href = String(item.getAttribute('href') || item.getAttribute('data-param') || '');
 			if (!href) {
 				return;
 			};
 
-			item.off('click.link').on('click.link', (e: any) => {
+			item.onclick = (e: any) => {
 				e.preventDefault();
 				Action.openUrl(href);
-			});
+			};
 		});
 
 		// Object marks
-		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Object), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.object').on('mousedown.object', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
 		// Emoji marks — render as cross-platform images
-		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
-			item = $(item);
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
+			const emojiId = item.getAttribute('data-param');
+			const smile = U.Dom.select('smile', item);
 
-			const id = item.attr('data-param');
-			const smile = item.find('smile');
-
-			if (smile.length) {
+			if (smile) {
 				// Clear native emoji text, keep only the smile mount point
-				item.contents().filter(function () { return this.nodeType === 3; }).remove();
+				Array.from(item.childNodes).forEach(child => {
+					if (child.nodeType === 3) {
+						child.remove();
+					};
+				});
 
-				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+				const container = smile as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
 	}, [ isEditing, parts, subId ]);
@@ -364,9 +360,7 @@ const CommentPost = observer((props: Props) => {
 	}, [ targetId, id, reactions ]);
 
 	const setHover = useCallback((v: boolean) => {
-		if (contentWrapRef.current) {
-			contentWrapRef.current.classList.toggle('hover', v);
-		};
+		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
 	}, []);
 
 	const onReaction = useCallback((e: React.MouseEvent) => {
@@ -374,7 +368,7 @@ const CommentPost = observer((props: Props) => {
 
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
@@ -392,7 +386,7 @@ const CommentPost = observer((props: Props) => {
 	}, [ targetId, id, onReactionSelect, setHover ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
-		const element = $(e.currentTarget);
+		const element = e.currentTarget as HTMLElement;
 		const menuItems: any[] = [];
 
 		if (isSelf) {
