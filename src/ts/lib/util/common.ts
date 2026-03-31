@@ -60,7 +60,7 @@ class UtilCommon {
 	};
 
 	esc (v: any): string {
-		return $.escapeSelector(String(v));
+		return CSS.escape(String(v));
 	};
 
 	/**

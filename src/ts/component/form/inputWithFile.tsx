@@ -1,5 +1,4 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import * as I from 'Interface';
@@ -83,12 +82,11 @@ const InputWithFile: FC<Props> = ({
 		};
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			if (!node.length) {
+			if (!nodeRef.current) {
 				return;
 			};
 
-			const rect = U.Dom.getElementRect(node.get(0));
+			const rect = U.Dom.getElementRect(nodeRef.current);
 
 			let s = Size.Icon;
 			if (rect.width >= Sizes[Size.Small]) {

@@ -257,69 +257,23 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 	const title = translate(isChatSpace ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
 
-	const renderCreateStep = () => (
-		<div className="step step1">
-			<div className="stepTitle">{title}</div>
-
-			<div className="iconWrapper">
-				<IconObject
-					ref={iconRef}
-					size={96}
-					object={object}
-					canEdit={false}
-					menuParam={{ horizontal: I.MenuDirection.Center }}
-					onClick={onIcon}
-				/>
-			</div>
-
-			<Input
-				ref={nameRef}
-				className="spaceName"
-				value={name}
-				placeholder={translate('popupSpaceCreateNamePlaceholder')}
-				onKeyDown={onKeyDown}
-				onChange={onNameChange}
-				maxLength={limit}
-				focusOnMount={true}
-			/>
-
-			{isChatSpace ? (
-				<div className="membersSection">
-					<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
-					<div className="addMembers" onClick={() => setStep(0)}>
-						<Icon name="menu/spaceCreate/group" className="addMember" />
-						<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-					</div>
-					{selectedMemberObjects.map(item => (
-						<div key={item.id} className="memberItem">
-							<IconObject size={32} object={item} />
-							<ObjectName object={item} />
-						</div>
-					))}
-				</div>
-			) : ''}
-
-			<div className="buttons">
-				<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
-			</div>
-		</div>
-	);
-
 	let stepContent = null;
 
 	if (isChatSpace && (step == 0)) {
 		stepContent = (
 			<div className="step step0">
-				<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
+				<div className="wrapper">
+					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
 
-				<Filter
-					ref={filterRef}
-					iconParam={{ name: 'common/search' }}
-					placeholder={translate('popupSpaceCreateStep1Placeholder')}
-					focusOnMount={false}
-					size={36}
-					onChange={v => setSearch(v)}
-				/>
+					<Filter
+						ref={filterRef}
+						iconParam={{ name: 'common/search' }}
+						placeholder={translate('popupSpaceCreateStep1Placeholder')}
+						focusOnMount={false}
+						size={36}
+						onChange={v => setSearch(v)}
+					/>
+				</div>
 
 				<div className="memberListWrapper">
 					{members.length ? (
@@ -345,13 +299,63 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 					)}
 				</div>
 
-				<div className="buttons">
-					<Button className={!selectedMembers.length ? 'disabled' : ''} text={translate('popupSpaceCreateNext')} color="accent" onClick={onNext} />
+				<div className="wrapper">
+					<div className="buttons">
+						<Button className={!selectedMembers.length ? 'disabled' : ''} text={translate('popupSpaceCreateNext')} color="accent" onClick={onNext} />
+					</div>
 				</div>
 			</div>
 		);
 	} else {
-		stepContent = renderCreateStep();
+		stepContent = (
+			<div className="step step1">
+				<div className="wrapper">
+					<div className="stepTitle">{title}</div>
+
+					<div className="iconWrapper">
+						<IconObject
+							ref={iconRef}
+							size={96}
+							object={object}
+							canEdit={false}
+							menuParam={{ horizontal: I.MenuDirection.Center }}
+							onClick={onIcon}
+						/>
+					</div>
+
+					<Input
+						ref={nameRef}
+						className="spaceName"
+						value={name}
+						placeholder={translate('popupSpaceCreateNamePlaceholder')}
+						onKeyDown={onKeyDown}
+						onChange={onNameChange}
+						maxLength={limit}
+						focusOnMount={true}
+					/>
+
+					{isChatSpace ? (
+						<div className="membersSection">
+							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
+							<div className="addMembers" onClick={() => setStep(0)}>
+								<Icon name="menu/spaceCreate/group" className="addMember" />
+								<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+							</div>
+							{selectedMemberObjects.map(item => (
+								<div key={item.id} className="memberItem">
+									<IconObject size={32} object={item} />
+									<ObjectName object={item} />
+								</div>
+							))}
+						</div>
+					) : ''}
+
+					<div className="buttons">
+						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
+					</div>
+				</div>
+			</div>
+		);
 	};
 
 	return (

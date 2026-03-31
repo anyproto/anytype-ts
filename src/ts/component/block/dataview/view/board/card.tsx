@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -92,12 +91,18 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const last = node.find('.cellContent:not(.isEmpty)').last();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('last');
-		if (last.length) {
-			last.addClass('last');
+		const cells = node.querySelectorAll('.cellContent');
+		const nonEmpty = node.querySelectorAll('.cellContent:not(.isEmpty)');
+		const last = nonEmpty.length ? nonEmpty[nonEmpty.length - 1] : null;
+
+		cells.forEach(el => el.classList.remove('last'));
+		if (last) {
+			last.classList.add('last');
 		};
 	};
 

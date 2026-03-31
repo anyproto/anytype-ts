@@ -2,7 +2,6 @@ import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Block } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -114,7 +113,11 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onMouseDown = () => {
 		keyboard.disableSelection(true);
-		$(window).off('mousedown.table-cell').on('mousedown.table-cell', () => keyboard.disableSelection(false));
+		const handler = () => {
+			keyboard.disableSelection(false);
+			window.removeEventListener('mousedown', handler);
+		};
+		window.addEventListener('mousedown', handler);
 	};
 
 	return (

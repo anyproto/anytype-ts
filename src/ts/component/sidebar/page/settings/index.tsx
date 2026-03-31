@@ -53,12 +53,12 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			iconParam: isOwner ? { name: 'menu/action/remove' } : { name: 'menu/action/leave' },
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'darkRed' } : { name: 'menu/action/leave', color: 'darkRed' },
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
 			color: 'red',
 		} : null;
 
-		return [
+		const sections = [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space' },
@@ -82,6 +82,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			});
 			return s;
 		});
+
+		console.log('sections', sections);
+
+		return sections;
 	};
 
 	const getAppSettings = () => {
@@ -242,7 +246,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				cn.push('itemAccount');
 			} else {
 				if (item.iconParam) {
-					icon = <Icon {...item.iconParam} color={item.color} className={`settings-${item.icon || item.id}`} />;
+					icon = <Icon {...item.iconParam} className={`settings-${item.icon || item.id}`} />;
 				} else {
 					const iconKey = item.icon || item.id;
 					const iconNameMap = {

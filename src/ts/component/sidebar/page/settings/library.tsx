@@ -4,7 +4,6 @@ import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -334,8 +333,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			};
 
 			case I.ObjectContainerType.Relation: {
-				const node = $('.containerSettings');
-				const width = node.width() - 32;
+				const node = U.Dom.select('.containerSettings');
+				const width = U.Dom.contentWidth(node) - 32;
 
 				S.Menu.open('blockRelationEdit', {
 					element: `.containerSettings #button-object-create`,

@@ -1,5 +1,4 @@
 import React, { FC, MouseEvent, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 interface Props {
@@ -63,7 +62,7 @@ const Label: FC<Props> = ({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Dom.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 		};
 	}, []);
 

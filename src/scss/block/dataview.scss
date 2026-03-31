@@ -53,8 +53,8 @@
 			.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
 			.icon.arrow { width: 24px !important; height: 24px !important; }
-			.icon.arrow.left { transform: rotateZ(270deg); }
-			.icon.arrow.right { transform: rotateZ(90deg); }
+			.icon.arrow.left { transform: rotateZ(90deg); }
+			.icon.arrow.right { transform: rotateZ(270deg); }
 		}
 
 		.dataviewEmpty { 
@@ -209,8 +209,8 @@
 					border-radius: 16px; color: var(--color-text-secondary);
 				}
 				.filterItem {
-					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
-					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
+					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; transform: rotateZ(180deg); }
+					.icon.sortArrow.c1 { transform: rotateZ(0deg); }
 					.icon.advanced { width: 20px; height: 20px; }
 					.icon.relation { width: 20px; height: 20px; }
 					.icon.arrow { width: 8px; height: 8px; }

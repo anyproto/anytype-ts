@@ -54,7 +54,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		win.on('keydown.search', e => onKeyDown(e));
 		win.on('archiveObject.search', (e: any, data: any) => {
-			const ids = U.Common.objectCopy(data.ids);
+			const d = data || e.originalEvent?.detail;
+			const ids = U.Common.objectCopy(d?.ids);
 			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
 
 			setDummy(dummy + 1);
@@ -304,7 +305,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 		const sorts = [
-			{ relationKey: '_score', type: I.SortType.Desc },
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -331,7 +332,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
 				setIsLoading(false);
 				return;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence, } from 'motion/react';
@@ -75,9 +74,11 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const { account } = S.Auth;
 		const isSelf = creator == account.id;
 		const isReadonly = readonly || !isSelf;
-		const node = $(nodeRef.current);
-		const et = node.find('.bubbleOuter .text');
-		const er = node.find('.reply .text');
+		const node = nodeRef.current;
+		if (!node) return;
+
+		const et = node.querySelector('.bubbleOuter .text');
+		const er = node.querySelector('.reply .text');
 
 		renderMentions(rootId, et, marks, () => text, { subId });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
@@ -91,20 +92,20 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	};
 
 	const onReactionAdd = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		let menuContext = null;
 
 		S.Menu.open('smile', {
-			element: node.find('#reaction-add'),
+			element: node?.querySelector('#reaction-add'),
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
 			onOpen: context => {
-				node.addClass('hover');
+				U.Dom.addClass(node, 'hover');
 				menuContext = context;
 			},
 			onClose: () => {
-				node.removeClass('hover');
+				U.Dom.removeClass(node, 'hover');
 			},
 			data: {
 				noHead: true,
@@ -206,10 +207,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	};
 
 	const highlight = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.addClass('highlight');
-		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
+		U.Dom.addClass(node, 'highlight');
+		window.setTimeout(() => U.Dom.removeClass(node, 'highlight'), J.Constant.delay.highlight);
 	};
 
 	if (!message) {

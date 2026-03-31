@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
@@ -8,11 +7,13 @@ import { focus } from 'Lib/focus';
 
 const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, getSize, close } = props;
+	const { param, getId, getContainer, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
 	const { range } = focus.state;
 	const { blockId, rootId, blockIds, marks, isInsideTable, onChange } = data;
 	const menuContext = useRef(null);
+	const keydownHandler = useRef(null);
+	const clickMousedownHandler = useRef(null);
 
 	useEffect(() => {
 		rebind();
@@ -24,25 +25,34 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	const rebind = () => {
-		const win = $(window);
-		const obj = $(`#${getId()}`);
-
 		unbind();
 
-		obj.on('click mousedown', (e: any) => {
-			const target = $(e.target);
-			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+		clickMousedownHandler.current = (e: any) => {
+			const target = e.target as HTMLElement;
+			if (!target.classList.contains('icon') && !target.classList.contains('inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
-		});
+		};
+		const obj = getContainer();
+		obj?.addEventListener('click', clickMousedownHandler.current);
+		obj?.addEventListener('mousedown', clickMousedownHandler.current);
 
-		win.on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(`#${getId()}`).off('click mousedown');
-		$(window).off('keydown.menu');
+		const obj = getContainer();
+		if (clickMousedownHandler.current) {
+			obj?.removeEventListener('click', clickMousedownHandler.current);
+			obj?.removeEventListener('mousedown', clickMousedownHandler.current);
+			clickMousedownHandler.current = null;
+		};
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -60,8 +70,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		const { from, to } = Mark.trimRange(block.getText(), range);
 		const object = S.Detail.get(rootId, rootId);
-		const element = $(`#${getId()}`);
-		
+		const element = getContainer();
+
 		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
@@ -177,8 +187,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				menuId = 'blockLink';
 				mark = Mark.getInRange(marks, type, { from, to });
 
-				const rect = (element.get(0).getBoundingClientRect() || {}) as DOMRect;
-				rect.y = Number(rect.y) + $(window).scrollTop();
+				const rect = (element?.getBoundingClientRect() || {}) as DOMRect;
+				rect.y = Number(rect.y) + window.scrollY;
 
 				menuParam = Object.assign(menuParam, {
 					offsetY: -rect.height,

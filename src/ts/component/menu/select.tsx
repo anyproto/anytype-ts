@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon } from 'Component';
@@ -14,7 +13,7 @@ const LIMIT = 10;
 
 const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, onKeyDown, position, getId, close, setHover, getMaxHeight } = props;
+	const { param, setActive, onKeyDown, position, getId, getContainer, close, setHover, getMaxHeight } = props;
 	const { data } = param;
 	const {
 		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd,
@@ -27,6 +26,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(-1);
 	const top = useRef(0);
 	const prevItemKeys = useRef('');
+	const keydownHandler = useRef(null);
 	const sections = data.sections || [];
 
 	useEffect(() => {
@@ -86,12 +86,16 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -253,8 +257,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems(true);
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
+		const obj = getContainer();
+		const content = U.Dom.select('.content', obj);
 		const withFilter = isWithFilter();
 		const mh = useMaxWindowHeight ? getMaxHeight?.(keyboard.isPopup()) || 0 : maxHeight;
 
@@ -272,14 +276,14 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = Math.min(mh || 370, height);
 			height = Math.max(44, height);
 
-			content.css({ height });
+			U.Dom.css(content, { height: `${height}px` });
 		};
 
-		obj.toggleClass('withFilter', !!withFilter);
-		obj.toggleClass('withAdd', !!withAdd);
-		obj.toggleClass('noScroll', !!noScroll);
-		obj.toggleClass('noVirtualisation', !!noVirtualisation);
-		obj.toggleClass('withMaxHeight', !!useMaxWindowHeight);
+		U.Dom.toggleClass(obj, 'withFilter', !!withFilter);
+		U.Dom.toggleClass(obj, 'withAdd', !!withAdd);
+		U.Dom.toggleClass(obj, 'noScroll', !!noScroll);
+		U.Dom.toggleClass(obj, 'noVirtualisation', !!noVirtualisation);
+		U.Dom.toggleClass(obj, 'withMaxHeight', !!useMaxWindowHeight);
 	};
 
 	const items = getItems(true);

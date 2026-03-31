@@ -2557,6 +2557,7 @@ var Api = class {
         this.startPinTimer(win, pinTimeout);
       }
       ;
+      window_default.sendToAllTabs("pin-unlocked");
     } else {
       this.stopPinTimer();
     }

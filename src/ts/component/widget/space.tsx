@@ -4,7 +4,6 @@ import { Icon, IconObject, ObjectName, Label } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import ChatCounter from 'Component/util/chatCounter';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -131,12 +130,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const win = $(window);
+		const handler = () => setDummy(dummy => dummy + 1);
 
-		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+		window.addEventListener('objectView', handler);
 
 		return () => {
-			win.off('objectView');
+			window.removeEventListener('objectView', handler);
 		};
 	}, []);
 

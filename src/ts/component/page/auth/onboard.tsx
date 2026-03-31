@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
-import $ from 'jquery';
 
 enum Stage {
 	Phrase 		= 0,
@@ -34,12 +33,12 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
-		$(window).off('keydown.onboarding');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.onboarding', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 	};
 
 	const onKeyDown = e => {
@@ -169,7 +168,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
 		const isValid = U.String.matchEmail(v);
 
-		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
+		U.Dom.toggleClass(nextRef.current?.getNode(), 'disabled', !isValid);
 	};
 
 	const shuffleItems = (stage: string) => {

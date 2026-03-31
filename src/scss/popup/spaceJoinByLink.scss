@@ -4,18 +4,9 @@
 	.popup.popupSpaceJoinByLink {
 		.innerWrap { width: 480px; padding: 0px 16px 16px 16px; border-radius: 32px; position: relative; }
 
-		.icon.close {
-			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
-
-			&:hover { background-color: var(--color-shape-highlight-medium); }
-		}
-
-		.icon.join { width: 40px; height: 40px; margin: 16px auto 0px; }
-
+		.icon.close { position: absolute; right: 14px; top: 14px; z-index: 2; }
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
-
-		.input { margin: 0px 0px 12px 0px; }
-
+		.input { margin: 0px 0px 16px 0px; }
 		.button { width: 100%; }
 	}
 }

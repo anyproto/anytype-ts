@@ -1442,7 +1442,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 									className={`plusButton ${item.className}`} 
 									onClick={item.onClick}
 								>
-									<Icon name="plus/table" />
+									<Icon name="plus/table" size={10} />
 								</div>
 							))}
 						</>

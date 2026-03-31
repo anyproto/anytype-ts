@@ -1126,7 +1126,7 @@ class Dispatcher {
 						Sound.playNotification();
 					};
 
-					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
 					break;
 				};
 
@@ -1153,7 +1153,7 @@ class Dispatcher {
 						};
 					});
 
-					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageUpdate', { detail: { message: mapped.message, subIds: mapped.subIds } }));
 					break;
 				};
 

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { IconObject } from 'Component';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
@@ -14,11 +13,11 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const onClick = (e: any, id: number) => {
@@ -65,10 +64,13 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 	};
 
 	const setActive = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) return;
 
-		node.find('.active').removeClass('active');
-		node.find(`#color-${colors[n.current]}`).addClass('active');
+		const prev = node.querySelector('.active');
+		if (prev) U.Dom.removeClass(prev, 'active');
+		const next = node.querySelector(`#color-${colors[n.current]}`);
+		if (next) U.Dom.addClass(next, 'active');
 	};
 	
 	const Item = (item: any) => (

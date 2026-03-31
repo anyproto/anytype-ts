@@ -6,7 +6,6 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
@@ -65,15 +64,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`);
+		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`);
 
 		S.Menu.open('select', {
-			element: element.find('.icon.more'),
+			element: element?.querySelector('.icon.more'),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(element, 'active'),
+			onClose: () => U.Dom.removeClass(element, 'active'),
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
@@ -163,8 +162,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(over.id)}`);
-		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
+		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(over.id)}`) as HTMLElement;
+		const rect = element ? element.getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
 

@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
 import * as I from 'Interface';
@@ -59,7 +58,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 		if (spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
-				element: $(U.Dom.getScrollContainer(isPopup)).find(`.header ${element}`),
+				element: U.Dom.select(`.header ${element}`, U.Dom.getScrollContainer(isPopup)),
 				className: 'fixed',
 				classNameWrap: 'fromHeader',
 				horizontal: I.MenuDirection.Right,

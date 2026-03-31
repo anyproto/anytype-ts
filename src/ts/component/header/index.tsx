@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
@@ -188,7 +187,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const element = $(U.Dom.getScrollContainer(isPopup)).find(`.header ${elementId}`);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const element = container?.querySelector(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -203,10 +203,13 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
+		const center = node.querySelector('.side.center') as HTMLElement;
+		U.Dom.toggleClass(node, 'isSmall', (center?.offsetWidth ?? 0) <= 200);
 	};
 
 	useEffect(() => {

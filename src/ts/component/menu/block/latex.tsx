@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -24,7 +24,7 @@ const LIMIT = 40;
 
 const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getSize, position, close, setActive, onKeyDown } = props;
+	const { param, getId, getContainer, getSize, position, close, setActive, onKeyDown } = props;
 	const { data, className, classNameWrap } = param;
 	const { onSelect, isTemplate } = data;
 	const { filter } = S.Common;
@@ -45,14 +45,20 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	}, []);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onOver = (e: any, item: any) => {
@@ -162,7 +168,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const resize = () => {
-		const obj = $(`#${getId()} .content`);
 		const offset = 16;
 		const ih = isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 
@@ -178,7 +183,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = 44;
 		};
 
-		obj.css({ height });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 		position();
 	};
 

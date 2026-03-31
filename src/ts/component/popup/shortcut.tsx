@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useRef, } from 'react';
-import $ from 'jquery';
 import { Filter, Icon, Select, Label, } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -19,6 +18,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const current = page || sections[0].id;
 	const section = U.Common.objectCopy(sections.find(it => it.id == current));
 	const timeout = useRef(0);
+	const keydownHandler = useRef<any>(null);
+	const keyupHandler = useRef<any>(null);
 	const id = getId();
 
 	const onClick = (item: any) => {
@@ -287,12 +288,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			clear();
-			$(window).off('keyup.shortcut keydown.shortcut');
+			window.removeEventListener('keyup', keyupHandler.current);
+			window.removeEventListener('keydown', keydownHandler.current);
 		};
 	}, []);
 
 	useEffect(() => {
-		const win = $(window);
 		const codeChecks = [ 'key', 'digit' ];
 		const codes = new Set();
 		const setTimeout = () => {
@@ -373,14 +374,19 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let pressed = [];
 
-		win.off('keyup.shortcut keydown.shortcut');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+		};
+		if (keyupHandler.current) {
+			window.removeEventListener('keyup', keyupHandler.current);
+		};
 		keyboard.setShortcutEditing(!!editingId);
 
 		if (!editingId) {
 			return;
 		};
 
-		win.on('keydown.shortcut', (e: any) => {
+		keydownHandler.current = (e: any) => {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -432,12 +438,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			setEditingKeys(pressed);
 			setTimeout();
-		});
+		};
+		window.addEventListener('keydown', keydownHandler.current);
 
 	}, [ editingId ]);
 
 	useEffect(() => {
-		$(bodyRef.current).scrollTop(0);
+		if (bodyRef.current) {
+			bodyRef.current.scrollTop = 0;
+		};
 	}, [ page ]);
 
 	if (filter) {

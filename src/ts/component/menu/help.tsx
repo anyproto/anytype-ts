@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
-import $ from 'jquery';
+
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -10,15 +10,20 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(-1);
 	const showIncentive = U.Data.isFreeMember();
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const optionMapper = (it: any) => ({ 

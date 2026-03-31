@@ -1,6 +1,6 @@
 # jQuery Removal Plan
 
-> Created: 2026-03-28 | Updated: 2026-03-30 | Status: **In Progress** | jQuery: `^3.7.1` (192 KB minified)
+> Created: 2026-03-28 | Updated: 2026-03-31 | Status: **In Progress** | jQuery: `^3.7.1` (192 KB minified)
 
 ---
 
@@ -8,8 +8,8 @@
 
 | Metric | Start | Now | Target |
 |--------|-------|-----|--------|
-| Files with jQuery | 199 | **211** (+38 made explicit) | 0 |
-| `$(` call sites | ~3,000 | **~1,089** | 0 |
+| Files with jQuery | 199 | **184** (down from 211) | 0 |
+| `$(` call sites | ~3,000 | **~1,057** | 0 |
 | `dom.ts` jQuery-free | No | **Yes** | Yes |
 | `preview.ts` jQuery-free | No | **Yes** | Yes |
 | `window.$ = $` global | Yes | **Removed** | Removed |
@@ -52,12 +52,42 @@
 | `component/util/icon.tsx` | Tooltip element | #2104 |
 | `component/util/progressBar.tsx` | Tooltip element | #2104 |
 | `component/util/sync.tsx` | Tooltip element | #2104 |
+| `component/util/label.tsx` | `renderLinks` ref unwrap | — |
+| `component/util/title.tsx` | `renderLinks` ref unwrap | — |
+| `component/util/media/pdf.tsx` | `.width()` → `U.Dom.contentWidth()` | — |
+| `component/util/tag.tsx` | `.find`, `.css`, `.attr` → native querySelector + getComputedStyle | — |
+| `component/util/toast.tsx` | `.outerWidth`, `.show`, `.css` → `offsetWidth`, `U.Dom.css()` | — |
+| `component/util/deleted.tsx` | `$(window).on/off('resize')` → native addEventListener | — |
+| `component/form/drag/vertical.tsx` | `.css()` → `U.Dom.css()` | — |
+| `component/form/select.tsx` | `.addClass/.removeClass` → `U.Dom.addClass/removeClass` | — |
+| `component/form/filter.tsx` | `.toggleClass`, `.attr` → `U.Dom.toggleClass`, `.setAttribute` | — |
+| `component/form/inputWithFile.tsx` | `$(ref).length`, `.get(0)` → native null check | — |
+| `component/popup/invite/qr.tsx` | `.find('canvas').get(0)` → `querySelector('canvas')` | — |
+| `component/popup/space/create.tsx` | `$('.selector')` → `U.Dom.select`, `.toggleClass/.text` → native | — |
+| `component/popup/upload.tsx` | `$(window).on/off('paste')` → native addEventListener | — |
+| `component/popup/page/usecase/item.tsx` | `.find`, `.toggleClass` → querySelector, `U.Dom.toggleClass` | — |
+| `component/popup/page/usecase/list.tsx` | `$('#id').get(0)` → `U.Dom.get()` | — |
+| `component/notification/index.tsx` | `.addClass/.removeClass` → `U.Dom.addClass/removeClass` | — |
+| `component/page/main/navigation/item.tsx` | `.find`, `.toggleClass` → querySelector, `U.Dom.toggleClass` | — |
+| `component/sidebar/section/object/relation.tsx` | `.find`, `.toggleClass` → querySelector, `U.Dom.toggleClass` | — |
+| `component/sidebar/section/type/template.tsx` | `$(window).trigger()` → `dispatchEvent` | — |
+| `component/sidebar/page/settings/library.tsx` | `$('.selector').width()` → `U.Dom.select`, `U.Dom.contentWidth` | — |
+| `component/menu/oneToOne.tsx` | `.find('canvas').get(0)` → `U.Dom.select('canvas', ...)` | — |
+| `component/block/dataview/view/list/row.tsx` | `.find().first()`, `.addClass/.removeClass` → querySelectorAll | — |
+| `component/block/dataview/view/gallery/card.tsx` | `.find().last()`, `.addClass/.removeClass` → querySelectorAll | — |
+| `component/block/dataview/view/board/card.tsx` | `.find().last()`, `.addClass/.removeClass` → querySelectorAll | — |
+| `component/block/dataview/view/graph.tsx` | `.css()`, `.offset()`, `.length` → `U.Dom.css`, `getBoundingClientRect` | — |
+| `lib/onboarding.ts` | `$(window).scrollTop()` → `window.scrollY` | — |
+| `store/common.ts` | `$(window).trigger()` → `dispatchEvent` | — |
+| `lib/util/common.ts` | `$.escapeSelector()` → `CSS.escape()` (in `U.Common.esc`) | — |
 
 ### Infrastructure Implemented
 
-- [x] `U.Dom.get()`, `U.Dom.select()`, `U.Dom.selectAll()` — DOM query helpers
+- [x] `U.Dom.get()`, `U.Dom.select()`, `U.Dom.selectAll()` — DOM query helpers (with try/catch for invalid selectors)
 - [x] `U.Dom.addClass()`, `U.Dom.removeClass()`, `U.Dom.toggleClass()`, `U.Dom.hasClass()` — null-safe class manipulation
-- [x] `U.Dom.contentWidth()`, `U.Dom.contentHeight()` — jQuery `.width()`/`.height()` drop-in
+- [x] `U.Dom.contentWidth()`, `U.Dom.contentHeight()` — null-safe jQuery `.width()`/`.height()` drop-in
+- [x] `U.Dom.css()` — null-safe batch inline style setter (replaces `$(el).css({...})`)
+- [x] `U.Common.esc()` — now uses `CSS.escape()` instead of `$.escapeSelector()` (jQuery-free)
 - [x] `window.$ = $` removed from `app.tsx` and `extension/entry.tsx`
 - [x] 38 files using global `$` now have explicit `import $ from 'jquery'`
 
@@ -136,9 +166,9 @@ All ~80 consumer call sites updated across 53 files:
 
 ```typescript
 // DOM queries (use instead of raw document.*)
-U.Dom.get(id)                          // getElementById
-U.Dom.select(selector, root?)         // querySelector
-U.Dom.selectAll(selector, root?)      // querySelectorAll
+U.Dom.get(id)                          // getElementById (no escaping needed)
+U.Dom.select(selector, root?)         // querySelector (try/catch, safe on invalid selectors)
+U.Dom.selectAll(selector, root?)      // querySelectorAll (try/catch)
 
 // Class manipulation (null-safe)
 U.Dom.addClass(el, ...names)
@@ -146,9 +176,12 @@ U.Dom.removeClass(el, ...names)
 U.Dom.toggleClass(el, name, force?)
 U.Dom.hasClass(el, name)
 
-// Measurement (exact jQuery .width()/.height() semantics)
+// Measurement (null-safe, exact jQuery .width()/.height() semantics)
 U.Dom.contentWidth(el)                 // content width without padding/border
 U.Dom.contentHeight(el)                // content height without padding/border
+
+// Inline styles (null-safe)
+U.Dom.css(el, { prop: value })         // batch style setter, replaces $(el).css({...})
 ```
 
 ---
@@ -174,7 +207,7 @@ $(el).offset()                         → el.getBoundingClientRect()
 
 // Inline styles
 $(el).css('width', px)                 → el.style.width = `${px}px`
-$(el).css({ left, top })               → Object.assign(el.style, { left: `${left}px`, ... })
+$(el).css({ left, top })               → U.Dom.css(el, { left: `${left}px`, ... })
 
 // Scroll
 $(el).scrollTop()                      → el.scrollTop
@@ -222,3 +255,5 @@ element: $(nodeRef.current)            → element: nodeRef.current
 | `.width()` vs native width | Use `U.Dom.contentWidth()` for pixel math (exact jQuery match) |
 | Layout thrashing | Batch DOM reads before writes; use `requestAnimationFrame` |
 | jQuery `.trigger()` data convention | Custom data moves to `event.detail` — verify listeners |
+| `.offset()` → `getBoundingClientRect()` | jQuery `.offset()` is document-relative (includes scroll); `getBoundingClientRect()` is viewport-relative. When mixing with scroll-dependent math, verify coordinate spaces match |
+| Unescaped selectors in `querySelector` | jQuery was forgiving with invalid selectors; `querySelector` throws. `U.Dom.select()` has try/catch. Always use `U.Common.esc()` (now `CSS.escape`) for dynamic IDs |

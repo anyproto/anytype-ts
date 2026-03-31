@@ -1,7 +1,6 @@
 import * as Docs from 'Docs';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 /**
  * Onboarding manages the user onboarding and tutorial flows.
@@ -182,7 +181,7 @@ class Onboarding {
 				const container = U.Dom.getScrollContainer(isPopup);
 				const height = container?.clientHeight ?? 0;
 				const width = container?.clientWidth ?? 0;
-				const scrollTop = $(window).scrollTop();
+				const scrollTop = window.scrollY;
 				const bounds = container?.getBoundingClientRect();
 
 				let offset = { left: 0, top: 0 };

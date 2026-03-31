@@ -14,14 +14,13 @@
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
-		.buttons { display: flex; flex-direction: column; gap: 8px 0px; padding: 0px 16px; }
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 
 		.step { padding: 0px 0px 16px 0px; }
+		.wrapper { padding: 0px 16px; }
 
 		/* Step 0 — Select Members */
 		.step.step0 {
-			.filter { padding: 0px 16px; }
-
 			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }

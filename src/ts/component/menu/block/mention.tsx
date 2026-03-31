@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -11,7 +11,7 @@ const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, close, position } = props;
+	const { param, getId, getContainer, close, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { pronounId, withCaption, canAdd, skipIds, onChange } = data;
 	const { filterText, space } = S.Common;
@@ -44,14 +44,20 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		load(true);
 	}, [ filterText ]);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => props.onKeyDown(e));
+		keydownHandler.current = (e: any) => props.onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => props.setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getSections = () => {
@@ -110,6 +116,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const load = (clear: boolean, callBack?: (value: any) => void) => {
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => !U.Object.isDateLayout(it) && !U.Object.isTypeLayout(it));
 		const sorts = [
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -134,6 +141,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		U.Subscription.search({
 			filters,
 			sorts,
+			keys: J.Relation.default.concat([ '_final_score' ]),
 			fullText: filterText,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
@@ -243,7 +251,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
 
 		let height = 16;
 		if (!items.length) {
@@ -252,7 +259,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
-		obj.css({ height });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 		position();
 	};
 

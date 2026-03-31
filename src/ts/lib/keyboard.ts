@@ -1325,7 +1325,7 @@ class Keyboard {
 				chatId,
 				route,
 				scrollToMessage: (id: string) => {
-					$(window).trigger('scrollToMessage', { id });
+					window.dispatchEvent(new CustomEvent('scrollToMessage', { detail: { id } }));
 				},
 			});
 		} else {

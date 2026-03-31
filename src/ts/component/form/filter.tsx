@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef } from 'react';
-import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -161,7 +160,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const buttonCheck = () => {
-		$(nodeRef.current).toggleClass('active', Boolean(getValue()));
+		U.Dom.toggleClass(nodeRef.current, 'active', Boolean(getValue()));
 	};
 
 	const getValue = () => {
@@ -177,7 +176,10 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const placeholderSet = (v: string) => {
-		$(inputRef.current?.getNode()).attr('placeholder', v);
+		const node = inputRef.current?.getNode();
+		if (node) {
+			node.setAttribute('placeholder', v);
+		};
 	};
 	
 	const init = () => {

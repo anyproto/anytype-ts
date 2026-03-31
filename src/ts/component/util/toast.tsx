@@ -1,6 +1,5 @@
 import React, { FC, useRef, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
@@ -179,16 +178,21 @@ const Toast: FC = observer(() => {
 	};
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
 		const { ww } = U.Dom.getWindowDimensions();
 		const y = 32;
 		const sw = sidebar.getDummyWidth();
-		const x = (ww - sw) / 2 - node.outerWidth() / 2 + sw;
+		const x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
 
-		node.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
+		node.style.display = 'block';
+		U.Dom.css(node, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
 
 		raf(() => {
-			node.css({ left: x, top: y, opacity: 1, transform: 'scale3d(1,1,1)' });
+			U.Dom.css(node, { left: `${x}px`, top: `${y}px`, opacity: '1', transform: 'scale3d(1,1,1)' });
 		});
 	});
 

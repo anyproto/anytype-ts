@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
+
 
 const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -27,14 +27,20 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		cn.push(className);
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onMouseEnter = (e: any, item: any) => {

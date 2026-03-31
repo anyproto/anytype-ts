@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
-import $ from 'jquery';
 import { Icon, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
@@ -123,14 +122,14 @@ const Select = forwardRef<SelectRefProps, Props>(({
 			element: el,
 			noFlipX: true,
 			onOpen: (context: any) => {
-				window.setTimeout(() => $(el).addClass('isFocused'));
+				window.setTimeout(() => U.Dom.addClass(U.Dom.select(el), 'isFocused'));
 
 				if (onOpen) {
 					onOpen(context);
 				};
 			},
 			onClose: () => { 
-				window.setTimeout(() => $(el).removeClass('isFocused'));
+				window.setTimeout(() => U.Dom.removeClass(U.Dom.select(el), 'isFocused'));
 
 				if (onClose) {
 					onClose();

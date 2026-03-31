@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Icon, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -39,12 +38,12 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.addEventListener('keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDownHandler);
 	};
 	
 	const onKeyDownHandler = (e: any) => {
@@ -73,8 +72,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 	
-		const win = $(window);
-		const isBoard = saveParam.current.type == I.ViewType.Board;
+				const isBoard = saveParam.current.type == I.ViewType.Board;
 		const isCalendar = saveParam.current.type == I.ViewType.Calendar;
 		const clearGroups = isBoard && saveParam.current.groupRelationKey && (view.groupRelationKey != saveParam.current.groupRelationKey);
 		const ns = block.id + U.Dom.getEventNamespace(keyboard.isPopup());
@@ -96,11 +94,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, () => {
 					onSave?.();
-					win.trigger(`updateDataviewData.${ns}`);
+					window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
 				});
 			} else {
 				onSave?.();
-				win.trigger(`updateDataviewData.${ns}`);
+				window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
 			};
 		});
 
@@ -268,11 +266,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			onOpen: context => {
-				$(element).addClass('active');
+				U.Dom.addClass(document.querySelector(element), 'active');
 				menuContext.current = context;
 			},
 			onClose: () => {
-				$(element).removeClass('active');
+				U.Dom.removeClass(document.querySelector(element), 'active');
 				menuContext.current = null;
 			},
 			rebind,

@@ -28,6 +28,7 @@
 	"commonFilterClick": "Click to filter...",
 	"commonFilterEmpty": "No items match filter",
 	"commonFilterObjects": "Filter Objects...",
+	"commonSearchObjects": "Search Objects...",
 	"commonHome": "Home",
 	"commonSubmit": "Submit",
 	"commonValue": "Value",

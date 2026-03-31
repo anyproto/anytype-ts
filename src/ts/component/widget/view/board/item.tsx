@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, MouseEvent, SyntheticEvent } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
@@ -41,14 +40,14 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
-		const element = node.find('.icon.more');
+		const node = nodeRef.current;
+		const element = U.Dom.select('.icon.more', node);
 
-		onContext({ 
-			node, 
-			element, 
-			withElement, 
-			subId, 
+		onContext({
+			node,
+			element,
+			withElement,
+			subId,
 			objectId: id,
 			data: {
 				relationKeys: J.Relation.default.concat(view.groupRelationKey),

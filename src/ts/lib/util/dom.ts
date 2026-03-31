@@ -8,11 +8,21 @@ class UtilDom {
 	};
 
 	select (selector: string, root: ParentNode = document): HTMLElement | null {
-		return root.querySelector(selector);
+		try {
+			return root.querySelector(selector);
+		} catch (e) {
+			console.error('Invalid selector:', selector);
+			return null;
+		};
 	};
 
 	selectAll (selector: string, root: ParentNode = document): HTMLElement[] {
-		return Array.from(root.querySelectorAll(selector));
+		try {
+			return Array.from(root.querySelectorAll(selector));
+		} catch (e) {
+			console.error('Invalid selector:', selector);
+			return [];
+		};
 	};
 
 	addClass (el: HTMLElement, ...names: string[]) {
@@ -37,14 +47,26 @@ class UtilDom {
 		};
 	};
 
-	contentWidth (el: HTMLElement): number {
+	contentWidth (el: HTMLElement | null): number {
+		if (!el) {
+			return 0;
+		};
 		const style = getComputedStyle(el);
 		return el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
 	};
 
-	contentHeight (el: HTMLElement): number {
+	contentHeight (el: HTMLElement | null): number {
+		if (!el) {
+			return 0;
+		};
 		const style = getComputedStyle(el);
 		return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+	};
+
+	css (el: HTMLElement | null, styles: Partial<CSSStyleDeclaration>) {
+		if (el) {
+			Object.assign(el.style, styles);
+		};
 	};
 
 	/**

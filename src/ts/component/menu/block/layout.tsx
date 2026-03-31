@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
@@ -13,12 +12,12 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const getSections = () => {
@@ -146,17 +145,17 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onResize = (e: any) => {
 		const containerEl = U.Dom.getPageFlexContainer(isPopup);
-		const container = containerEl ? $(containerEl) : $();
-		const wrapper = $('#editorWrapper');
+		const wrapper = U.Dom.get('editorWrapper');
 
-		wrapper.addClass('isResizing');
+		U.Dom.addClass(wrapper, 'isResizing');
 
-		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => {
-			if (!$(e.target).parents(`#editorSize`).length) {
-				wrapper.removeClass('isResizing');
-				container.off('mousedown.editorSize');
+		const onMouseDown = (e: any) => {
+			if (!(e.target as HTMLElement).closest('#editorSize')) {
+				U.Dom.removeClass(wrapper, 'isResizing');
+				containerEl?.removeEventListener('mousedown', onMouseDown);
 			};
-		});
+		};
+		containerEl?.addEventListener('mousedown', onMouseDown);
 
 		analytics.event('SetLayoutWidth');
 	};
