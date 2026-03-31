@@ -47,7 +47,7 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 				});
 			});
 		} else {
-			C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Last, U.Space.openDashboard);
+			C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => U.Space.openDashboard());
 		};
 	};
 

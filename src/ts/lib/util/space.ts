@@ -25,7 +25,7 @@ class UtilSpace {
 		param = param || {};
 
 		let home = this.getDashboard();
-		if (home && [ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
+		if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 			home = this.getLastObject();
 		};
 
