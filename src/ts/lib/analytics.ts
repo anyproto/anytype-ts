@@ -808,7 +808,6 @@ class Analytics {
 	popupMapper (params: any): string {
 		const { id } = params;
 		const map = {
-			spaceCreate:		 'ScreenSettingsSpaceCreate',
 		};
 
 		return map[id] || '';

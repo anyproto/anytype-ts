@@ -23,7 +23,7 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 		const option = HOME_OPTIONS.find(it => it.id == selected);
 
-		analytics.event('ChannelSelectHome', { type: selected });
+		analytics.event('CreateHomePage', { type: U.String.ucFirst(selected) });
 
 		if (option.typeKey) {
 			const details: any = {};

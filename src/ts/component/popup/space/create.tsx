@@ -175,6 +175,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 								if (identities.length) {
 									C.SpaceParticipantsAddList(S.Common.space, identities);
+									analytics.event('AddMember', { count: identities.length });
 								};
 							});
 						};
@@ -209,6 +210,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			loadMembers();
 		};
 
+		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
+
 		return () => {
 			U.Subscription.destroyList([ SUB_ID ]);
 		};
@@ -222,6 +225,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		if (step == 0) {
 			setSearch('');
 			filterRef.current?.setValue('');
+
+			if (isChatSpace) {
+				analytics.event('ScreenAddMember');
+			};
 		};
 		position?.();
 	}, [ step ]);
@@ -271,7 +278,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 						placeholder={translate('popupSpaceCreateStep1Placeholder')}
 						focusOnMount={false}
 						size={36}
-						onChange={v => setSearch(v)}
+						onChange={v => {
+							setSearch(v);
+							analytics.event('MemberSearchInput');
+						}}
 					/>
 				</div>
 

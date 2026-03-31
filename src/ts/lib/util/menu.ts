@@ -1626,8 +1626,8 @@ class UtilMenu {
 
 	spaceCreate (param: I.MenuParam, route) {
 		const options = [
-			{ id: 'personal', iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			{ id: 'group', iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			{ id: 'space', iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			{ id: 'chat', iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
 			{ id: 'join', iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
 
@@ -1651,12 +1651,12 @@ class UtilMenu {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'personal': {
+						case 'space': {
 							Action.createSpace(I.SpaceType.Data, route);
 							break;
 						};
 
-						case 'group': {
+						case 'chat': {
 							Action.createSpace(I.SpaceType.Chat, route);
 							break;
 						};
