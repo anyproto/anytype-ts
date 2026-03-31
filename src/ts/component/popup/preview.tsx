@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -25,15 +24,19 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const galleryMapRef = useRef(new Map());
 	const nodeRef = useRef(null);
 
+	const resizeHandler = useRef<() => void>(null);
+
 	const unbind = () => {
-		$(window).off('resize.popupPreview keydown.popupPreview');
+		if (resizeHandler.current) {
+			window.removeEventListener('resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-
-		const win = $(window);
-		win.on('resize.popupPreview', () => reload());
+		resizeHandler.current = () => reload();
+		window.addEventListener('resize', resizeHandler.current);
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -48,9 +51,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onDimmer = (e: MouseEvent) => {
-		const target = $(e.target);
-		const isMedia = target.hasClass('mediaContainer') || target.parents('.mediaContainer').length;
-		const isArrow = target.hasClass('swiper-button-prev') || target.hasClass('swiper-button-next');
+		const target = e.target as HTMLElement;
+		const isMedia = U.Dom.hasClass(target, 'mediaContainer') || !!target.closest('.mediaContainer');
+		const isArrow = U.Dom.hasClass(target, 'swiper-button-prev') || U.Dom.hasClass(target, 'swiper-button-next');
 
 		if (!isMedia && !isArrow) {
 			close();
@@ -84,10 +87,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onError = (idx: number) => {
-		const node = $(`#${getId()}-innerWrap`);
-		const wrap = node.find(`#itemPreview-${idx}`);
+		const node = U.Dom.get(`${getId()}-innerWrap`);
+		const wrap = node ? U.Dom.select(`#itemPreview-${idx}`, node) : null;
 
-		if (!wrap.length) {
+		if (!wrap) {
 			return;
 		};
 
@@ -96,8 +99,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		wrap.addClass('brokenMedia');
-		wrap.find('.loader').remove();
+		U.Dom.addClass(wrap, 'brokenMedia');
+		const loader = U.Dom.select('.loader', wrap);
+		if (loader) {
+			loader.remove();
+		};
 
 		obj.isLoaded = true;
 		galleryMapRef.current.set(idx, obj);

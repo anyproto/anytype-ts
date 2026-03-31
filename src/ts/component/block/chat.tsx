@@ -431,6 +431,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
+		subIds = subIds || [];
+
 		const subId = getSubId();
 
 		if (subIds.includes(subId)) {

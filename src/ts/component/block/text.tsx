@@ -1189,7 +1189,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			if (selection && selection.rangeCount > 0) {
 				const selRange = selection.getRangeAt(0);
-				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
+				const editable = U.Dom.select('.editable', editableRef.current?.getNode());
 
 				if (editable && editable.contains(selRange.startContainer)) {
 					let from = U.Dom.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);

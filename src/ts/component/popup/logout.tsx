@@ -1,7 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -11,27 +10,32 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ n, setN ] = useState(0);
 
 	const setHighlight = () => {
-		const buttons = $(buttonsRef).find('.button');
+		if (!buttonsRef.current) {
+			return;
+		};
+
+		const buttons = U.Dom.selectAll('.button', buttonsRef.current);
 
 		if (buttons[n]) {
-			$(buttonsRef).find('.hover').removeClass('hover');
-			$(buttons[n]).addClass('hover');
+			U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
+			U.Dom.addClass(buttons[n], 'hover');
 		};
 	};
 
 	const onKeyDown = (e) => {
 		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
-			const buttons = $(buttonsRef).find('.button');
+			const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
-			if (buttons[n]) {
-				$(buttons[n]).trigger('click');
+			const btn = buttons[n] as HTMLElement;
+			if (btn) {
+				btn.click();
 			};
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (arrow) => {
 			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? 1 : -1;
-			const buttons = $(buttonsRef).find('.button');
+			const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
 			if (buttons.length < 2) {
 				return;
@@ -73,9 +77,9 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any) => {
-		const buttons = $(buttonsRef).find('.button');
+		const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
-		setN($(buttons).index(e.currentTarget));
+		setN(Array.from(buttons).indexOf(e.currentTarget));
 		setHighlight();
 	};
 
@@ -105,12 +109,17 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
+	const keyHandler = useRef<(e: any) => void>(null);
+
 	useEffect(() => {
 		init();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keyHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keyHandler.current);
 
 		return () => {
-			$(window).off(`keydown.${props.id}`);
+			if (keyHandler.current) {
+				window.removeEventListener('keydown', keyHandler.current);
+			};
 		};
 	}, []);
 
