@@ -185,15 +185,14 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const getButtons = (): any[] => {
-		if (!invite.cid || !invite.key) {
-			return [];
-		};
-
 		return [
 			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
 			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
 			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
-		];
+		].map((el: any) => {
+			el.isDisabled = !invite.cid || !invite.key;
+			return el;
+		});
 	};
 
 	const updateCounters = () => {
@@ -312,7 +311,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div 
 						key={i} 
 						id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)} 
-						className="btn" 
+						className={[ 'btn', (item.isDisabled ? 'disabled' : '') ].join(' ')}
 						onClick={e => onClick(e, item)}
 					>
 						<Icon {...(item.iconParam || {})} className={item.id} />
