@@ -682,7 +682,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			<div className="section">
 				<MenuItemVertical 
 					id="includeTime" 
-					icon="clock" 
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
