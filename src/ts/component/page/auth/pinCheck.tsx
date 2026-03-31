@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin, Header } from 'Component';
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
@@ -10,13 +9,19 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	const { pin } = S.Common;
 	const [ error, setError ] = useState('');
 
+	const focusHandler = useRef(null);
+
 	const unbind = () => {
-		$(window).off('focus.pin');
+		if (focusHandler.current) {
+			window.removeEventListener('focus', focusHandler.current);
+			focusHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('focus.pin', () => pinRef.current?.focus());
+		focusHandler.current = () => pinRef.current?.focus();
+		window.addEventListener('focus', focusHandler.current);
 	};
 
 	const onError = () => {

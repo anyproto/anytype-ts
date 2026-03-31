@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props {
 	object: any;
@@ -130,12 +129,19 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (!src.current) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
-					const node = $(nodeRef.current);
+					const node = nodeRef.current;
 
 					src.current = image;
 
-					node.find('#image').attr({ src: image });
-					node.find('#blur').attr({ backgroundImage: `url(${image})` });
+					const img = node?.querySelector('#image') as HTMLImageElement;
+					const blur = node?.querySelector('#blur') as HTMLElement;
+
+					if (img) {
+						img.src = image;
+					};
+					if (blur) {
+						blur.style.backgroundImage = `url(${image})`;
+					};
 				});
 
 				src.current = './img/space.svg';

@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
 import * as I from 'Interface';
@@ -105,14 +105,20 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const init = () => {

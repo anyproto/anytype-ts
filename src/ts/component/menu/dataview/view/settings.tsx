@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -39,14 +39,20 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		window.setTimeout(() => nameRef.current?.focus(), 15);
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const setName = () => {

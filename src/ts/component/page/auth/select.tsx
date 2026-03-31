@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
@@ -14,7 +13,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 	const [ error, setError ] = useState('');
 
 	const inflate = (callBack: () => void) => {
-		$(introBubbleRef.current).addClass('inflate');
+		U.Dom.addClass(introBubbleRef.current, 'inflate');
 		window.setTimeout(callBack, 1000);
 	};
 
@@ -60,7 +59,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 	useEffect(() => {
 		Animation.to(() => {
-			U.Dom.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 
 			analytics.removeContext();
 			analytics.event('ScreenIndex');

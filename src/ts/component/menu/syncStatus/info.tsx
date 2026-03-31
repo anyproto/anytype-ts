@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
+
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 
@@ -11,14 +11,20 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 	const buttons = data.buttons || [];
 	const n = useRef(-1);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onClick = (e, item) => {
