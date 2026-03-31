@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
 import * as I from 'Interface';
@@ -71,35 +70,42 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const rebind = () => {
-		const node = $(nodeRef.current);
-		const img = node.find('img.media');
-		const wrap = node.find('.block.blockMedia .wrapContent');
-
-		if (!img.length) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
-		img.off('load').on('load', () => {
-			const w = img.width();
-			const h = img.height();
+		const img = node.querySelector('img.media') as HTMLImageElement;
+		const wrap = node.querySelector('.block.blockMedia .wrapContent') as HTMLElement;
 
-			let wh = wrap.height();
+		if (!img) {
+			return;
+		};
+
+		const onLoad = () => {
+			const w = img.naturalWidth;
+			const h = img.naturalHeight;
+
+			let wh = wrap?.clientHeight ?? 0;
 			if (wh < MAX_HEIGHT) {
 				wh = MAX_HEIGHT;
-				wrap.css({ height: MAX_HEIGHT });
+				U.Dom.css(wrap, { height: `${MAX_HEIGHT}px` });
 			};
 
 			if (h < wh) {
-				img.css({ 
+				U.Dom.css(img, {
 					position: 'absolute',
 					left: '50%',
 					top: '50%',
-					width: w, 
-					height: h,
+					width: `${w}px`,
+					height: `${h}px`,
 					transform: 'translate3d(-50%, -50%, 0px)',
 				});
 			};
-		});
+		};
+
+		img.removeEventListener('load', onLoad);
+		img.addEventListener('load', onLoad);
 	};
 
 	const getBlock = (): I.Block => {
@@ -121,19 +127,23 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const blocks = node.find('#blocks');
-		const empty = node.find('#empty');
-		const inner = node.find('.side.left #inner');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const blocks = node.querySelector('#blocks') as HTMLElement;
+		const empty = node.querySelector('#empty') as HTMLElement;
+		const inner = node.querySelector('.side.left #inner') as HTMLElement;
 		const container = U.Dom.getScrollContainer(isPopup);
 		const wh = (container?.clientHeight ?? 0) - 182;
 
-		if (blocks.hasClass('vertical')) {
-			inner.css({ minHeight: wh });
+		if (U.Dom.hasClass(blocks, 'vertical')) {
+			U.Dom.css(inner, { minHeight: `${wh}px` });
 		};
 
-		if (empty.length) {
-			empty.css({ lineHeight: wh + 'px' });
+		if (empty) {
+			U.Dom.css(empty, { lineHeight: `${wh}px` });
 		};
 	};
 

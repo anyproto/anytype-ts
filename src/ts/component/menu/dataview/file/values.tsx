@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -77,7 +77,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const onMore = (e: any, item: any) => {
-		const itemEl = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
+		const itemEl = U.Dom.select(`#item-${U.Common.esc(item.id)}`, U.Dom.get(getId()));
 		const element = `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`;
 		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
@@ -99,12 +99,12 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
 			onOpen: () => {
-				itemEl.addClass('active');
-				$(element).addClass('active');
+				U.Dom.addClass(itemEl, 'active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
 			},
 			onClose: () => {
-				itemEl.removeClass('active');
-				$(element).removeClass('active');
+				U.Dom.removeClass(itemEl, 'active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
 			},
 			data: {
 				value: '',

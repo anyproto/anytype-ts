@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -58,14 +58,20 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filter ]);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onFilterChange = (e: any) => {
@@ -225,7 +231,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const contentEl = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;
@@ -233,7 +239,14 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height += items.reduce((res: number, item: any) => res + getRowHeight(item), offset);
 		};
 
-		obj.css({ height }).toggleClass('initial', !filter);
+		U.Dom.css(contentEl, { height: `${height}px` });
+
+		if (!filter) {
+			U.Dom.addClass(contentEl, 'initial');
+		} else {
+			U.Dom.removeClass(contentEl, 'initial');
+		};
+
 		position();
 	};
 

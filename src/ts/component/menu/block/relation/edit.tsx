@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
@@ -50,13 +49,19 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		position();
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {

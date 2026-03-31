@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { MenuItemVertical } from 'Component';
 import { AutoSizer, CellMeasurer, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -65,14 +65,20 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => props.onKeyDown(e));
+		keydownHandler.current = (e: any) => props.onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => props.setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getItems = () => {
@@ -274,14 +280,13 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${props.getId()} .content`);
 
 		let height = 16;
 		if (items.length) {
 			height = items.reduce((res: number) => res + HEIGHT_ITEM, height);
 		};
 
-		obj.css({ height });
+		U.Dom.css(U.Dom.select('.content', U.Dom.get(props.getId())), { height: `${height}px` });
 	};
 
 	const items = getItems();
