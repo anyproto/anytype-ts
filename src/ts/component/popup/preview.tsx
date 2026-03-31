@@ -105,8 +105,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const getMaxWidthHeight = () => {
 		const { ww, wh } = U.Dom.getWindowDimensions();
-		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
-		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
+		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER) - BORDER * 2;
+		const maxWidth = ww - BORDER * 2;
 
 		return { maxWidth, maxHeight };
 	};
@@ -116,14 +116,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
 
-		let w = 0, h = 0;
-		if ((width > height) && (height < maxHeight)) {
-			w = Math.min(maxWidth, width);
-			h = w / (width / height);
-		} else {
-			h = Math.min(maxHeight, height);
-			w = h / (height / width);
-		};
+		const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+		const w = width * scale;
+		const h = height * scale;
 
 		wrap.css({ width: w, height: h });
 	};
