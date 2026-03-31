@@ -287,7 +287,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const rowHead = $(`${blockEl} #rowHead`);
 		const isFixed = rowHead.hasClass('fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
-		const element = `${blockEl} ${headEl} #cell-add`;
+		const element = `${blockEl} ${headEl} .cellHead.last`;
 		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
@@ -295,6 +295,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
+			noAutoHover: true,
 			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),
 			onClose: () => cellLast.removeClass('hover'),
