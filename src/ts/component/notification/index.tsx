@@ -109,7 +109,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 			className="notification"
 			style={style}
 		>
-			<Icon name="notification/delete" className="delete" onClick={onDelete} />
+			<Icon name="notification/delete" size={10} className="delete" onClick={onDelete} />
 			<div className="content">
 				{title ? <Title text={title} /> : ''}
 				{text ? <Label text={text} /> : ''}
