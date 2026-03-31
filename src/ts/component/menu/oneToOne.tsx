@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, Button, QR } from 'Component';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
@@ -20,7 +19,7 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 	};
 
 	const onDownload = () => {
-		const canvas = $(`#${getId()}`).find('canvas').get(0);
+		const canvas = U.Dom.select('canvas', U.Dom.get(getId())) as HTMLCanvasElement;
 		if (!canvas) {
 			return;
 		};
