@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect, useMemo } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -43,7 +42,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 
 		frame.current = raf(() => {
 			if (nodeRef.current) {
-				setWidth($(nodeRef.current).width());
+				setWidth(U.Dom.contentWidth(nodeRef.current));
 			};
 		});
 	};

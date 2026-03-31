@@ -1,5 +1,4 @@
 import React, { FC, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 
 interface Props {
 	id?: string;
@@ -58,11 +57,17 @@ const Tag: FC<Props> = ({
 	};
 
 	const setColor = () => {
-		const node = $(nodeRef.current);
-		const remove = node.find('#remove');
-		const color = node.css('color');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		remove.attr({ src: removeSvg(color) });
+		const remove = node.querySelector('#remove') as HTMLImageElement;
+		const color = getComputedStyle(node).color;
+
+		if (remove) {
+			remove.src = removeSvg(color);
+		};
 	};
 
 	let icon = null;

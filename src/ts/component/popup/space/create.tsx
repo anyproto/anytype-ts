@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
@@ -167,18 +166,18 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 	};
 
 	const updateCounter = () => {
-		const el = $('.popupSpaceCreate .nameWrapper .counter');
+		const el = U.Dom.select('.popupSpaceCreate .nameWrapper .counter');
 		const counter = limit - nameRef.current?.getTextValue().length;
 		const show = counter <= threshold;
 		const isRed = counter < 0;
 
-		el.toggleClass('show', show);
-		el.toggleClass('red', isRed);
+		U.Dom.toggleClass(el, 'show', show);
+		U.Dom.toggleClass(el, 'red', isRed);
 
 		setCanSave(!isRed);
 
-		if (show) {
-			el.text(counter);
+		if (show && el) {
+			el.textContent = String(counter);
 		};
 	};
 

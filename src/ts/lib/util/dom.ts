@@ -47,6 +47,12 @@ class UtilDom {
 		return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
 	};
 
+	css (el: HTMLElement, styles: Partial<CSSStyleDeclaration>) {
+		if (el) {
+			Object.assign(el.style, styles);
+		};
+	};
+
 	/**
 	 * Returns the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.
