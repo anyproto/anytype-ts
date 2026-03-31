@@ -158,11 +158,11 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
+		const id = space.homepage;
+
 		if (space.isOneToOne) {
 			return this.getChat();
 		};
-
-		const id = space.homepage;
 
 		if (!id) {
 			return null;

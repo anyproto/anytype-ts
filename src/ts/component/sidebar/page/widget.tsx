@@ -629,7 +629,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		);
 
 		const isOwner = U.Space.isMyOwner();
-		const hasDashboard = spaceview.spaceDashboardId && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.spaceDashboardId);
+		const hasDashboard = spaceview.homepage && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.homepage);
 		const bannerData = Storage.get('channelBanner') || {};
 		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
 

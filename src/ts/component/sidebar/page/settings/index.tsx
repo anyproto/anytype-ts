@@ -58,7 +58,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			color: 'red',
 		} : null;
 
-		const sections = [
+		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space' },
@@ -82,10 +82,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			});
 			return s;
 		});
-
-		console.log('sections', sections);
-
-		return sections;
 	};
 
 	const getAppSettings = () => {

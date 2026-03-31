@@ -2228,6 +2228,7 @@
 	"defaultNameRelation": "New Property",
 	"defaultNameBookmark": "Paste Link",
 	"defaultNameView": "New View",
+	"defaultNameGeneral": "General",
 
 	"placeholderBlock": "Type text or \/ for commands",
 	"placeholderBlockDescription": "Add a description",

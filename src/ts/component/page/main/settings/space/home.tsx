@@ -16,6 +16,20 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 	const [ selected, setSelected ] = useState('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
 
+	const setHomepage = (id: string) => {
+		C.WorkspaceSetHomepage(spaceId, id, () => U.Space.openDashboard());
+	};
+
+	const createAndSetHomepage = (details: any, typeKey: string) => {
+		setIsLoading(true);
+		C.ObjectCreate(details, [], '', typeKey, spaceId, (message: any) => {
+			setIsLoading(false);
+			if (!message.error.code) {
+				setHomepage(message.objectId);
+			};
+		});
+	};
+
 	const onCreate = () => {
 		if (isLoading) {
 			return;
@@ -23,37 +37,26 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 		analytics.event('ChannelSelectHome', { type: selected });
 
-		if (selected == 'chat') {
-			C.WorkspaceSetInfo(spaceId, { spaceDashboardId: I.HomePredefinedId.Chat }, () => {
-				U.Space.openDashboard();
-			});
-		} else
-		if (selected == 'empty') {
-			C.WorkspaceSetInfo(spaceId, { spaceDashboardId: I.HomePredefinedId.Last }, () => {
-				U.Space.openDashboard();
-			});
-		} else
-		if (selected == 'page') {
-			setIsLoading(true);
-			C.ObjectCreate({}, [], '', J.Constant.typeKey.page, spaceId, (message: any) => {
-				setIsLoading(false);
-				if (!message.error.code) {
-					C.WorkspaceSetInfo(spaceId, { spaceDashboardId: message.objectId }, () => {
-						U.Space.openDashboard();
-					});
-				};
-			});
-		} else
-		if (selected == 'collection') {
-			setIsLoading(true);
-			C.ObjectCreate({}, [], '', J.Constant.typeKey.collection, spaceId, (message: any) => {
-				setIsLoading(false);
-				if (!message.error.code) {
-					C.WorkspaceSetInfo(spaceId, { spaceDashboardId: message.objectId }, () => {
-						U.Space.openDashboard();
-					});
-				};
-			});
+		switch (selected) {
+			case 'chat': {
+				createAndSetHomepage({ name: translate('defaultNameGeneral') }, J.Constant.typeKey.chatDerived);
+				break;
+			};
+
+			case 'page': {
+				createAndSetHomepage({}, J.Constant.typeKey.page);
+				break;
+			};
+
+			case 'collection': {
+				createAndSetHomepage({}, J.Constant.typeKey.collection);
+				break;
+			};
+
+			case 'empty': {
+				setHomepage(I.HomePredefinedId.Last);
+				break;
+			};
 		};
 	};
 
