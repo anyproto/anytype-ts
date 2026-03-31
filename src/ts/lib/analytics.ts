@@ -111,6 +111,7 @@ class Analytics {
 		uploadTypeWidget: 'TypeWidget',
 		uploadDnDSet: 'DnDSet',
 		uploadDnDEditor: 'DnDEditor',
+		uploadDnDWidget: 'DnDWidget',
 		uploadClipboardPaste: 'ClipboardPaste',
 	};
 

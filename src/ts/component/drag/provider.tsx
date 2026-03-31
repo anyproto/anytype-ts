@@ -253,12 +253,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 					U.File.showFileDropError(message);
 
 					if (!message.error.code) {
+						const isWidget = data && (data.dropType == I.DropType.Widget);
+						const route = isWidget ? analytics.route.uploadDnDWidget : analytics.route.uploadDnDEditor;
+
 						if (filePaths.length) {
-							analytics.event('UploadFile', { route: analytics.route.uploadDnDEditor, count: filePaths.length });
+							analytics.event('UploadFile', { route, count: filePaths.length });
 						};
 
 						if (dirPaths.length) {
-							analytics.event('CreateCollectionFromFolder', { route: analytics.route.uploadDnDEditor, filesCount: filePaths.length });
+							analytics.event('CreateCollectionFromFolder', { route, filesCount: filePaths.length });
 						};
 					};
 
