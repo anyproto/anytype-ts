@@ -69,9 +69,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		unbind();
 		win.on(`updateGraphSettings.${id}`, () => updateSettings());
-		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
+		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => {
+			const d = data || e.originalEvent?.detail;
+			setRootId(d?.id);
+		});
 		win.on(`updateGraphData.${id}`, () => load());
-		win.on(`archiveObject.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`archiveObject.${id}`, (e: any, data: any) => {
+			const d = data || e.originalEvent?.detail;
+			send('onRemoveNode', { ids: U.Common.objectCopy(d?.ids) });
+		});
 		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
@@ -568,7 +574,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			};
 
 			case 'setRootId': {
-				$(window).trigger('updateGraphRoot', { id: data.node });
+				window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: data.node } }));
 				break;
 			};
 
@@ -596,16 +602,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			};
 
 			case 'onTimelineUpdate': {
-				$(window).trigger(`timelineUpdate.${id}`, {
+				window.dispatchEvent(new CustomEvent(`timelineUpdate.${id}`, { detail: {
 					position: data.position,
 					cutoffDate: data.cutoffDate,
 					isPlaying: data.isPlaying,
-				});
+				}}));
 				break;
 			};
 
 			case 'onTimelineComplete': {
-				$(window).trigger(`timelineComplete.${id}`);
+				window.dispatchEvent(new CustomEvent(`timelineComplete.${id}`));
 				break;
 			};
 		};

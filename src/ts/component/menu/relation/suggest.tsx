@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
@@ -51,12 +50,12 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
@@ -254,7 +253,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
@@ -264,7 +263,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		};
 		height = Math.min(height, 376);
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 

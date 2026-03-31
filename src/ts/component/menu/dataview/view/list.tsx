@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -29,12 +28,12 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -151,11 +150,11 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = isAllowed() ? 58 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 

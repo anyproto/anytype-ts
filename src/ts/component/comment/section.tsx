@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import CommentList from './list';
@@ -156,7 +155,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		}, callBack);
 	}, [ targetType, discussionId, targetId ]);
 
-	const onMessageAdd = useCallback((e: any, message: any, eventSubIds: string[]) => {
+	const onMessageAdd = useCallback((e: any) => {
+		const { message, subIds: eventSubIds } = e.detail;
 		if (!eventSubIds.includes(subId)) {
 			return;
 		};
@@ -165,14 +165,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ subId, loadDeps ]);
 
 	useEffect(() => {
-		const ns = 'commentSection';
-		const win = $(window);
-
-		win.on(`messageAdd.${ns}`, onMessageAdd);
-		win.on(`messageUpdate.${ns}`, onMessageAdd);
+		window.addEventListener('messageAdd', onMessageAdd);
+		window.addEventListener('messageUpdate', onMessageAdd);
 
 		return () => {
-			win.off(`messageAdd.${ns} messageUpdate.${ns}`);
+			window.removeEventListener('messageAdd', onMessageAdd);
+			window.removeEventListener('messageUpdate', onMessageAdd);
 		};
 	}, [ onMessageAdd ]);
 

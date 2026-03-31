@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import Item from './calendar/item';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const PADDING = 16;
 
@@ -81,21 +80,22 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 	};
 
 	const scrollToday = () => {
-		const node = $(nodeRef.current);
-		const el = node.find('.day.active');
+		const node = nodeRef.current;
+		if (!node) return;
 
-		if (!el.length) {
-			return;
-		};
+		const el = node.querySelector('.day.active') as HTMLElement;
+		if (!el) return;
 
-		const scroll = node.find('.body');
-		const st = scroll.scrollTop();
-		const ch = scroll.height();
-		const pt = el.position().top;
-		const eh = el.outerHeight();
+		const scroll = node.querySelector('.body') as HTMLElement;
+		if (!scroll) return;
+
+		const st = scroll.scrollTop;
+		const ch = U.Dom.contentHeight(scroll);
+		const pt = el.offsetTop;
+		const eh = el.offsetHeight;
 		const top = Math.max(0, st + pt + eh - ch);
 
-		scroll.scrollTop(top);
+		scroll.scrollTop = top;
 	};
 
 	const resize = () => {
@@ -103,19 +103,22 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 			return;
 		};
 
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
+		const node = nodeRef.current;
+		if (!node) return;
+
+		const wrap = node.querySelector('.wrap') as HTMLElement;
 		const container = U.Dom.getPageContainer(isPopup);
 		const mw = (container?.clientWidth ?? 0) - PADDING * 2;
-		const day = node.find('.day').first();
+		const day = node.querySelector('.day') as HTMLElement;
 		const menu = S.Menu.get('calendarDay');
 
-		wrap.css({ width: mw, marginLeft: -J.Size.blockMenu + PADDING });
-		win.trigger('resize.menuCalendarDay');
+		if (wrap) {
+			U.Dom.css(wrap, { width: `${mw}px`, marginLeft: `${-J.Size.blockMenu + PADDING}px` });
+		};
+		window.dispatchEvent(new CustomEvent('resize.menuCalendarDay'));
 
-		if (menu && !menu.param.data.fromWidget && day.length) {
-			S.Menu.update('calendarDay', { width: day.outerWidth() + 8 });
+		if (menu && !menu.param.data.fromWidget && day) {
+			S.Menu.update('calendarDay', { width: day.offsetWidth + 8 });
 		};
 	};
 

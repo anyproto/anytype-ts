@@ -54,7 +54,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		win.on('keydown.search', e => onKeyDown(e));
 		win.on('archiveObject.search', (e: any, data: any) => {
-			const ids = U.Common.objectCopy(data.ids);
+			const d = data || e.originalEvent?.detail;
+			const ids = U.Common.objectCopy(d?.ids);
 			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
 
 			setDummy(dummy + 1);

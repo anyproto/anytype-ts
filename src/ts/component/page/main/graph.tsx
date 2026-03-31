@@ -24,7 +24,10 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 		unbind();
 		win.on(`keydown.${key}`, e => onKeyDown(e));
-		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => initRootId(data.id));
+		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => {
+			const d = data || e.originalEvent?.detail;
+			initRootId(d?.id);
+		});
 		win.on(`sidebarResize.${key}`, () => resize());
 	};
 

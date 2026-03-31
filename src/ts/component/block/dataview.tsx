@@ -502,7 +502,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						$(window).trigger('updateGraphRoot', { id: object.id });
+						window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: object.id } }));
 					});
 				};
 			};

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -46,12 +45,12 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -428,7 +427,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
 						U.Object.openConfig(null, { id: message.ids[0], layout: object.layout }, {
-							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
+							onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${message.ids[0]}`))
 						});
 
 						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });

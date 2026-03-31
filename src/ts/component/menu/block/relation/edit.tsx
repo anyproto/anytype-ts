@@ -399,7 +399,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 			<div className="section">
 				<MenuItemVertical
 					id="includeTime"
-					icon="clock"
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
@@ -468,10 +468,10 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 			{relation ? (
 				<div className="section">
-					<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
-					{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
-					{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
-					{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
+					<MenuItemVertical iconParam={{ name: 'common/expand' }} name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
+					{canDuplicate ? <MenuItemVertical iconParam={{ name: 'menu/action/duplicate' }} name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
+					{canUnlink ? <MenuItemVertical iconParam={{ name: 'common/unlink' }} name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
+					{canDelete ? <MenuItemVertical iconParam={{ name: 'menu/action/remove' }} name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
 				</div>
 			) : ''}
 		</form>

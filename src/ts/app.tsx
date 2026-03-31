@@ -1,7 +1,6 @@
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
@@ -258,11 +257,11 @@ const App: FC = () => {
 		data = data || {};
 
 		const { id, dataPath, config, isDark, languages, isPinChecked, isPinned, css, isSingleTab, activeTabId } = data;
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const bubbleLoader = $('#bubble-loader');
-		const rootLoader = node.find('#root-loader');
-		const anim = rootLoader.find('.anim');
+		const body = document.body;
+		const node = nodeRef.current;
+		const bubbleLoader = document.getElementById('bubble-loader');
+		const rootLoader = node?.querySelector('#root-loader') as HTMLElement;
+		const anim = rootLoader?.querySelector('.anim') as HTMLElement;
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
@@ -322,29 +321,33 @@ const App: FC = () => {
 			U.Dom.injectCss('anytype-custom-css', css);
 		};
 
-		body.addClass('over');
+		U.Dom.addClass(body, 'over');
 
 		const hide = () => {
-			rootLoader.remove();
-			bubbleLoader.remove();
-			body.removeClass('over');
+			rootLoader?.remove();
+			bubbleLoader?.remove();
+			U.Dom.removeClass(body, 'over');
 		};
 		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
 
-			bubbleLoader.css({ transitionDuration: `${t}ms` });
-			bubbleLoader.addClass('inflate');
-			anim.css({ transitionDuration: `${t}ms` });
+			if (bubbleLoader) {
+				bubbleLoader.style.transitionDuration = `${t}ms`;
+				U.Dom.addClass(bubbleLoader, 'inflate');
+			};
+			if (anim) {
+				anim.style.transitionDuration = `${t}ms`;
+			};
 
 			window.setTimeout(() => {
-				raf(() => anim.removeClass('from'));
+				raf(() => U.Dom.removeClass(anim, 'from'));
 				window.setTimeout(() => {
-					anim.addClass('to');
+					U.Dom.addClass(anim, 'to');
 
 					window.setTimeout(() => {
-						rootLoader.css({ opacity: 0 });
+						if (rootLoader) rootLoader.style.opacity = '0';
 						window.setTimeout(() => hide(), t);
 					}, 0);
 				}, t * 5);

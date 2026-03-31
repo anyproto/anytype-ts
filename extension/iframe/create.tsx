@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -72,14 +71,14 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onSelect = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 
 		S.Menu.open('searchObject', {
-			element: node.find('#select-object'),
+			element: node?.querySelector('#select-object'),
 			data: {
 				value: object ? [ object.id ] : [],
 				canAdd: true,
@@ -97,8 +96,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const getWrapperWidth = () => {
-		const win: any = $(window);
-		return win.width() - 96;
+		return window.innerWidth - 96;
 	};
 
 	const onSave = () => {

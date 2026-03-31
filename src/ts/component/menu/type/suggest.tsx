@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
@@ -98,12 +97,12 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.addEventListener('keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDownHandler);
 	};
 
 	const loadMoreRows = () => {
@@ -237,7 +236,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const resize = () => {
 		const { data } = param;
 		const { noFilter } = data;
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;
 		const itemsHeight = items.length ? items.reduce((res: number, current: any) => res + getRowHeight(current), 0) : 160;
@@ -245,7 +244,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let height = offset + itemsHeight + buttonHeight;
 		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -35,12 +34,12 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.addEventListener('keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -123,10 +122,10 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
