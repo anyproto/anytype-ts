@@ -24,7 +24,7 @@ const LIMIT = 40;
 
 const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getSize, position, close, setActive, onKeyDown } = props;
+	const { param, getId, getContainer, getSize, position, close, setActive, onKeyDown } = props;
 	const { data, className, classNameWrap } = param;
 	const { onSelect, isTemplate } = data;
 	const { filter } = S.Common;
@@ -183,7 +183,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = 44;
 		};
 
-		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: `${height}px` });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 		position();
 	};
 

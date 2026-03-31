@@ -11,7 +11,7 @@ const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, close, position } = props;
+	const { param, getId, getContainer, close, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { pronounId, withCaption, canAdd, skipIds, onChange } = data;
 	const { filterText, space } = S.Common;
@@ -259,7 +259,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
-		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: `${height}px` });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 		position();
 	};
 

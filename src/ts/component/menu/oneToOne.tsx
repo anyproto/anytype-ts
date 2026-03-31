@@ -5,7 +5,7 @@ import * as I from 'Interface';
 
 const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
-	const { getId } = props;
+	const { getId, getContainer } = props;
 	const profile = U.Space.getProfile();
 	const { account } = S.Auth;
 	const { id, info } = account;
@@ -19,7 +19,7 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 	};
 
 	const onDownload = () => {
-		const canvas = U.Dom.select('canvas', U.Dom.get(getId())) as HTMLCanvasElement;
+		const canvas = U.Dom.select('canvas', getContainer()) as HTMLCanvasElement;
 		if (!canvas) {
 			return;
 		};

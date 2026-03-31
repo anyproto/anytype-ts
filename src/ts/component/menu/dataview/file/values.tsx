@@ -12,7 +12,7 @@ const MENU_ID = 'dataviewFileList';
 
 const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { id, param, position, getId, getSize, setHover } = props;
+	const { id, param, position, getId, getContainer, getSize, setHover } = props;
 	const { data, classNameWrap } = param;
 	const { canEdit, onChange, subId } = data;
 	const value = Relation.getArrayValue(data.value);
@@ -77,7 +77,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const onMore = (e: any, item: any) => {
-		const itemEl = U.Dom.select(`#item-${U.Common.esc(item.id)}`, U.Dom.get(getId()));
+		const itemEl = U.Dom.select(`#item-${U.Common.esc(item.id)}`, getContainer());
 		const element = `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`;
 		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 

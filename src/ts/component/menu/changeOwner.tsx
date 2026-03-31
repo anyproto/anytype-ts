@@ -10,7 +10,7 @@ const LIMIT = 10;
 
 const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { setActive, onKeyDown, position, getId, close } = props;
+	const { setActive, onKeyDown, position, getId, getContainer, close } = props;
 	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const [ selected, setSelected ] = useState('');
@@ -198,7 +198,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		height = Math.min(height, wh - 104);
 
-		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: `${height}px` });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 	};
 
 	const scrollToRow = (items: any[], index: number) => {

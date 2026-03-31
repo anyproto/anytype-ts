@@ -14,7 +14,7 @@ const LIMIT_HEIGHT = 6;
 
 const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setActive, onKeyDown, getId, position } = props;
+	const { param, close, setActive, onKeyDown, getId, getContainer, position } = props;
 	const { data } = param;
 	const { type, onChange, filter, onClear, skipIds } = data;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -231,7 +231,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const contentEl = U.Dom.select('.content', U.Dom.get(getId()));
+		const contentEl = U.Dom.select('.content', getContainer());
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;

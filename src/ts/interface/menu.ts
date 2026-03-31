@@ -71,6 +71,7 @@ export interface Menu {
 	storageGet?(): Record<string, any>;
 	storageSet?(data: Record<string, any>): void;
 	getId?(): string;
+	getContainer?(): HTMLElement | null;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
 	getMaxHeight?(isPopup: boolean): number;

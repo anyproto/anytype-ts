@@ -205,6 +205,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const [ tab, setTab ] = useState('');
 	const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
 	const nodeRef = useRef(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 	const childRef = useRef(null);
 	const timeoutPoly = useRef(0);
 	const polyRef = useRef(null);
@@ -971,6 +972,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		return U.String.toCamelCase(`menu-${id}`);
 	};
 
+	const getContainer = (): HTMLElement | null => {
+		return containerRef.current;
+	};
+
 	const getElement = () => {
 		return $(props.param.element).first();
 	};
@@ -1065,9 +1070,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			id={`${menuId}-wrap`} 
 			className="menuWrap"
 		>
-			<div 
-				id={menuId} 
-				className={cn.join(' ')} 
+			<div
+				ref={containerRef}
+				id={menuId}
+				className={cn.join(' ')}
 				onMouseLeave={onMouseLeave}
 			>
 				{tabs.length ? (
@@ -1097,6 +1103,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 						storageGet={storageGet}
 						storageSet={storageSet}
 						getId={getId}
+						getContainer={getContainer}
 						getSize={getSize}
 						getPosition={getPosition}
 						getMaxHeight={getMaxHeight}

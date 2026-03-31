@@ -12,7 +12,7 @@ const LIMIT = 20;
 
 const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setHover, setActive, close, onKeyDown, position } = props;
+	const { param, getId, getContainer, setHover, setActive, close, onKeyDown, position } = props;
 	const { data } = param;
 	const { onChange, maxCount } = data;
 	const [ dummy, setDummy ] = useState(0);
@@ -159,7 +159,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
-		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: items.length ? `${height}px` : '' });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: items.length ? `${height}px` : '' });
 		position();
 	};
 

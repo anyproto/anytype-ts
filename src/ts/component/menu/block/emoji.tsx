@@ -286,7 +286,7 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = items.reduce((res: number) => res + HEIGHT_ITEM, height);
 		};
 
-		U.Dom.css(U.Dom.select('.content', U.Dom.get(props.getId())), { height: `${height}px` });
+		U.Dom.css(U.Dom.select('.content', props.getContainer()), { height: `${height}px` });
 	};
 
 	const items = getItems();
