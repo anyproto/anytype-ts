@@ -160,6 +160,18 @@ const App: FC = () => {
 		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
+		Renderer.on('pin-unlocked', () => {
+			keyboard.isPinChecked = true;
+
+			const { redirect } = S.Common;
+			const { account } = S.Auth;
+
+			if (account) {
+				redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
+			};
+
+			S.Common.redirectSet('');
+		});
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -234,6 +246,7 @@ const App: FC = () => {
 		Renderer.remove('spellcheck');
 		Renderer.remove('pin-set');
 		Renderer.remove('pin-remove');
+		Renderer.remove('pin-unlocked');
 		Renderer.remove('enter-full-screen');
 		Renderer.remove('leave-full-screen');
 		Renderer.remove('config');

@@ -116,6 +116,8 @@ class Api {
 			if (pinTimeout) {
 				this.startPinTimer(win, pinTimeout);
 			};
+
+			WindowManager.sendToAllTabs('pin-unlocked');
 		} else {
 			this.stopPinTimer();
 		};
