@@ -163,9 +163,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
-			const grammar = Prism.languages[lang] || {};
+			const grammar = Prism.languages[lang];
 
-			html = Prism.highlight(html, grammar, lang);
+			html = grammar ? Prism.highlight(html, grammar, lang) : Prism.util.encode(html) as string;
 			langRef.current?.setValue(lang);
 		} else {
 			if (!keyboard.isComposition) {
