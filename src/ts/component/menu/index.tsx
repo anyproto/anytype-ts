@@ -230,7 +230,6 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		rebind();
 		setActive();
 
-		const obj = $(`#${getId()}`);
 		const el = getElement();
 
 		if (!noAutoHover && el && el.length) {
@@ -238,7 +237,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		};
 
 		if (param.height) {
-			obj.css({ height: param.height });
+			U.Dom.css(containerRef.current, { height: `${param.height}px` });
 		};
 
 		if (tabs.length) {
@@ -350,17 +349,18 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const menu = $(`#${getId()}`);
+		const menu = containerRef.current;
 
 		if (noAnimation) {
-			menu.addClass('noAnimation show').css({ transform: 'none' });
+			U.Dom.addClass(menu, 'noAnimation', 'show');
+			U.Dom.css(menu, { transform: 'none' });
 		} else {
 			isAnimating.current = true;
 
 			raf(() => {
-				menu.addClass('show');
+				U.Dom.addClass(menu, 'show');
 				window.setTimeout(() => { 
-					menu.css({ transform: 'none' }); 
+					U.Dom.css(menu, { transform: 'none' });
 					isAnimating.current = false;
 				}, S.Menu.getTimeout());
 			});
@@ -981,13 +981,12 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const getSize = (): { width: number; height: number; } => {
-		const obj = $(`#${getId()}`);
-		return { width: obj.outerWidth(), height: obj.outerHeight() };
+		const el = containerRef.current;
+		return { width: el?.offsetWidth ?? 0, height: el?.offsetHeight ?? 0 };
 	};
 
 	const getPosition = (): DOMRect => {
-		const obj = $(`#${getId()}`);
-		return obj.length ? U.Dom.getElementRect(obj.get(0)) : null;
+		return containerRef.current ? U.Dom.getElementRect(containerRef.current) : null;
 	};
 
 	const getArrowDirection = (): I.MenuDirection => {

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
@@ -7,7 +6,7 @@ import * as I from 'Interface';
 
 const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, position, setActive, onKeyDown, setHover, close } = props;
+	const { param, getId, getContainer, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
 	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect } = data;
 	const relation = S.Record.getRelationByKey(relationKey);
@@ -15,6 +14,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const inputWrapper = useRef(null);
 	const inputRef = useRef(null);
 	const n = useRef(-1);
+	const keydownHandler = useRef(null);
 	const length = value.length;
 	const valueRef = useRef(value);
 
@@ -41,12 +41,16 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		window.setTimeout(() => {
 			setActive();
-			$(window).on('keydown.menu', e => onKeyDownHandler(e));
+			keydownHandler.current = (e: any) => onKeyDownHandler(e);
+			window.addEventListener('keydown', keydownHandler.current);
 		}, 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getValue = () => {
@@ -101,19 +105,20 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			return;
 		};
 
-		const obj = $(`#${getId()}`);
-		const input = obj.find('#input');
+		const obj = getContainer();
+		const input = U.Dom.select('#input', obj);
 		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
-		const cell = $(`#${U.Common.esc(cellId)}`);
-		const lh = parseInt(cell.find('.name').css('line-height'), 10) || 20;
+		const cell = document.getElementById(U.Common.esc(cellId));
+		const nameEl = cell?.querySelector('.name') as HTMLElement;
+		const lh = nameEl ? parseInt(window.getComputedStyle(nameEl).lineHeight, 10) || 20 : 20;
 
 		raf(() => {
-			const sh = input.get(0).scrollHeight;
-			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell.outerHeight(), sh)));
+			const sh = input?.scrollHeight || 0;
+			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell?.offsetHeight || 0, sh)));
 
-			obj.css({ height });
-			input.css({ lineHeight: `${lh}px` });
+			U.Dom.css(obj, { height: `${height}px` });
+			U.Dom.css(input, { lineHeight: `${lh}px` });
 			position();
 		});
 	};
@@ -140,11 +145,11 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onFocus = () => {
 		setHover(null, false);
-		$(inputWrapper.current).addClass('focused');
+		(inputWrapper.current as HTMLElement)?.classList.add('focused');
 	};
 
 	const onBlur = () => {
-		$(inputWrapper.current).removeClass('focused');
+		(inputWrapper.current as HTMLElement)?.classList.remove('focused');
 	};
 
 	const onClear = () => {

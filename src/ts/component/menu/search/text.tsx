@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
 import * as I from 'Interface';
@@ -23,7 +22,7 @@ interface ActiveMatch {
 
 const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, storageGet, storageSet, close, getId } = props;
+	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer } = props;
 	const { data } = param;
 	const { route, isPopup } = data;
 
@@ -46,16 +45,16 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return container ? container.querySelectorAll(getSearchTag()) : null;
 	};
 
-	const expandToggle = (el: JQuery<Element>) => {
-		const toggleParent = el.parents('.block.textToggle:not(.isToggled), .block.textToggleHeader:not(.isToggled)').first();
-		if (!toggleParent.length) {
+	const expandToggle = (el: HTMLElement) => {
+		const toggleParent = el.closest('.block.textToggle:not(.isToggled), .block.textToggleHeader:not(.isToggled)') as HTMLElement;
+		if (!toggleParent) {
 			return;
 		}
 
-		const id = toggleParent.attr('data-id');
+		const id = toggleParent.getAttribute('data-id');
 		if (id && !expandedRef.current.toggles.includes(id)) {
 			expandedRef.current.toggles.push(id);
-			toggleParent.addClass('isToggled');
+			toggleParent.classList.add('isToggled');
 		};
 	};
 
@@ -64,7 +63,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		toggles
 			.filter(id => id !== keepToggleId)
-			.forEach(id => $(`#block-${U.Common.esc(id)}`).removeClass('isToggled'));
+			.forEach(id => document.getElementById(`block-${U.Common.esc(id)}`)?.classList.remove('isToggled'));
 
 		expandedRef.current = { toggles: [] };
 	};
@@ -76,8 +75,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		}
 
 		Array.from(elements).forEach(el => {
-			const $el = $(el);
-			$el.replaceWith($el.html());
+			const parent = el.parentNode;
+			if (parent) {
+				while (el.firstChild) {
+					parent.insertBefore(el.firstChild, el);
+				};
+				parent.removeChild(el);
+			};
 		});
 	};
 
@@ -85,8 +89,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		removeHighlights();
 		collapseExpanded(keepToggleId);
 
-		const node = $(nodeRef.current);
-		node.find('#switcher').removeClass('active');
+		U.Dom.select('#switcher', nodeRef.current)?.classList.remove('active');
 	};
 
 	const isElementVisible = (el: HTMLElement): boolean => {
@@ -100,28 +103,27 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return false;
 		}
 
-		const $el = $(el);
-		expandToggle($el);
+		expandToggle(el);
 
 		return isElementVisible(el);
 	};
 
-	const updateActiveMatch = (matchEl: JQuery<Element>) => {
-		const toggle = matchEl.closest('.block.textToggle, .block.textToggleHeader');
+	const updateActiveMatch = (matchEl: HTMLElement) => {
+		const toggle = matchEl.closest('.block.textToggle, .block.textToggleHeader') as HTMLElement;
 
-		activeMatchRef.current.toggleId = toggle.length ? toggle.attr('data-id') || '' : '';
+		activeMatchRef.current.toggleId = toggle ? toggle.getAttribute('data-id') || '' : '';
 
 		updateActivePosition(matchEl);
 	};
 
-	const updateActivePosition = (matchEl: JQuery<Element>) => {
-		const focusable = matchEl.closest('.focusable');
-		if (!focusable.length) {
+	const updateActivePosition = (matchEl: HTMLElement) => {
+		const focusable = matchEl.closest('.focusable') as HTMLElement;
+		if (!focusable) {
 			activeMatchRef.current.position = null;
 			return;
 		};
 
-		const classList = (focusable.attr('class') || '').split(' ');
+		const classList = (focusable.getAttribute('class') || '').split(' ');
 		const blockClass = classList.find(c => (
 			c.length > 1 &&
 			c.startsWith('c') &&
@@ -135,7 +137,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const blockId = blockClass.substring(1);
-		const containerEl = focusable.find('.editable').get(0);
+		const containerEl = focusable.querySelector('.editable') as HTMLElement;
 
 		if (!containerEl) {
 			activeMatchRef.current.position = null;
@@ -145,10 +147,10 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		try {
 			const range = document.createRange();
 			range.setStart(containerEl, 0);
-			range.setEndBefore(matchEl.get(0));
+			range.setEndBefore(matchEl);
 
 			const from = range.toString().length;
-			const to = from + (matchEl.get(0).textContent?.length || 0);
+			const to = from + (matchEl.textContent?.length || 0);
 
 			activeMatchRef.current.position = { blockId, range: { from, to } };
 		} catch {
@@ -156,14 +158,15 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const scrollToMatch = (matchEl: JQuery<Element>) => {
+	const scrollToMatch = (matchEl: HTMLElement) => {
 		const containerEl = getContainer();
 		if (!containerEl) {
 			return;
 		};
 
 		const scrollTop = containerEl.scrollTop;
-		const matchTop = matchEl.offset()?.top || 0;
+		const matchRect = matchEl.getBoundingClientRect();
+		const matchTop = matchRect.top || 0;
 		const containerRect = containerEl.getBoundingClientRect();
 		const containerTop = containerRect.top || 0;
 		const containerHeight = containerEl.clientHeight || 0;
@@ -174,13 +177,23 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const updateMatchCounter = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const total = matchElementsRef.current?.length || 0;
 		const text = total > 0 ? `${n.current + 1} of ${total}` : '';
+		const switcher = U.Dom.select('#switcher', node);
+		const arrowUp = U.Dom.select('.arrow.up', node);
+		const arrowDown = U.Dom.select('.arrow.down', node);
 
-		node.find('#switcher').text(text).toggleClass('active', total > 0);
-		node.find('.arrow.up').toggleClass('disabled', n.current <= 0);
-		node.find('.arrow.down').toggleClass('disabled', n.current >= total - 1 || total === 0);
+		if (switcher) {
+			switcher.textContent = text;
+			U.Dom.toggleClass(switcher, 'active', total > 0);
+		};
+		if (arrowUp) {
+			U.Dom.toggleClass(arrowUp, 'disabled', n.current <= 0);
+		};
+		if (arrowDown) {
+			U.Dom.toggleClass(arrowDown, 'disabled', n.current >= total - 1 || total === 0);
+		};
 	};
 
 	const focusCurrentMatch = () => {
@@ -195,12 +208,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			containerEl.querySelectorAll(`${tag}.active`).forEach(el => el.classList.remove('active'));
 		};
 
-		const currentEl = $(elements[n.current]);
-		if (!currentEl.length) {
+		const currentEl = elements[n.current] as HTMLElement;
+		if (!currentEl) {
 			return;
 		};
 
-		currentEl.addClass('active');
+		currentEl.classList.add('active');
 		updateActiveMatch(currentEl);
 		updateMatchCounter();
 		scrollToMatch(currentEl);
@@ -231,8 +244,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const containerEl = getContainer();
-		const node = $(nodeRef.current);
-		const switcher = node.find('#switcher').removeClass('active');
+		const switcher = U.Dom.select('#switcher', nodeRef.current);
+
+		switcher?.classList.remove('active');
 
 		n.current = 0;
 		clearSearch();
@@ -254,7 +268,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		matchElementsRef.current = getMatchElements();
-		switcher.toggleClass('active', !!matchElementsRef.current?.length);
+		if (switcher) {
+			U.Dom.toggleClass(switcher, 'active', !!matchElementsRef.current?.length);
+		};
 
 		updateMatchCounter();
 		focusCurrentMatch();
@@ -314,11 +330,11 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const beforePosition = () => {
-		const menu = $(`#${getId()}`);
-		const header = $('#header .side.center');
-		const width = Math.min(header.width(), J.Size.editor);
+		const menu = getMenuContainer();
+		const header = document.querySelector('#header .side.center') as HTMLElement;
+		const width = Math.min(header?.clientWidth || 0, J.Size.editor);
 
-		menu.css({ width });
+		U.Dom.css(menu, { width: `${width}px` });
 	};
 
 	useImperativeHandle(ref, () => ({
