@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
 import * as I from 'Interface';
@@ -16,22 +15,29 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const ns = `chat${U.Dom.getEventNamespace(isPopup)}`;
+	const keydownHandlerRef = useRef<((e: any) => void) | null>(null);
+	const scrollToMessageHandlerRef = useRef<((e: any) => void) | null>(null);
 
 	const unbind = () => {
-		const events = [ 'keydown', 'scrollToMessage' ];
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (keydownHandlerRef.current) {
+			window.removeEventListener('keydown', keydownHandlerRef.current);
+			keydownHandlerRef.current = null;
+		};
+		if (scrollToMessageHandlerRef.current) {
+			window.removeEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
+			scrollToMessageHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.${ns}`, e => onKeyDown(e));
-		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
+		keydownHandlerRef.current = (e: any) => onKeyDown(e);
+		scrollToMessageHandlerRef.current = (e: CustomEvent) => {
+			const { id } = e.detail;
 			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
-		});
+		};
+		window.addEventListener('keydown', keydownHandlerRef.current);
+		window.addEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
 	};
 
 	const open = () => {

@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -113,15 +112,15 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onMore = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const view = getView();
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
 			S.Menu.open('calendarDay', {
 				element: node,
 				horizontal: I.MenuDirection.Center,
-				width: node.outerWidth() + 8,
-				offsetY: -(node.outerHeight() + 4),
+				width: (node?.offsetWidth || 0) + 8,
+				offsetY: -((node?.offsetHeight || 0) + 4),
 				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				data: {
@@ -139,7 +138,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onContextHandler = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const options = [
 			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') }
 		] as I.Option[];
@@ -150,7 +149,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		S.Menu.open('select', {
 			element: node,
-			offsetY: -node.outerHeight() + 32,
+			offsetY: -(node?.offsetHeight || 0) + 32,
 			offsetX: 16,
 			noFlipX: true,
 			noFlipY: true,

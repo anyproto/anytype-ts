@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -24,7 +23,7 @@ const HeaderBanner: FC<Props> = ({
 	const onTemplateMenu = () => {
 		const { sourceObject } = object;
 		const type = S.Record.getTypeById(object.type);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
 			return;
@@ -41,9 +40,9 @@ const HeaderBanner: FC<Props> = ({
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
-				node.addClass('active');
+				U.Dom.addClass(node, 'active');
 			},
-			onClose: () => node.removeClass('active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				fromBanner: true,
 				withTypeSelect: false,

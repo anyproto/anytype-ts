@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
@@ -72,6 +71,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Dom.getEventNamespace(isPopup);
 	const childRef = useRef(null);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
@@ -135,19 +135,16 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const rebind = () => {
-		const { history } = U.Router;
-		const ns = U.Dom.getEventNamespace(isPopup);
-		const key = String(history?.location?.key || '');
-
 		unbind();
-		$(window).on(`resize.page${ns}${key}`, () => resize());
+		resizeHandlerRef.current = () => resize();
+		window.addEventListener('resize', resizeHandlerRef.current);
 	};
 
 	const unbind = () => {
-		const { history } = U.Router;
-		const key = String(history?.location?.key || '');
-
-		$(window).off(`resize.page${ns}${key}`);
+		if (resizeHandlerRef.current) {
+			window.removeEventListener('resize', resizeHandlerRef.current);
+			resizeHandlerRef.current = null;
+		};
 	};
 
 	const resize = () => {

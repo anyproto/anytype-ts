@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
@@ -25,6 +24,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const uxTypeRef = useRef(null);
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
+	const keydownHandlerRef = useRef<((e: any) => void) | null>(null);
 
 	if (isEditing) {
 		cnh.push('isEditing');
@@ -36,8 +36,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const init = () => {
-		const win = $(window);
-
 		if (spaceview.isShared && !invite.cid && !invite.key) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
 				if (cid && key) {
@@ -46,13 +44,17 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			});
 		};
 
-		win.off('keydown.settingsSpace');
+		if (keydownHandlerRef.current) {
+			window.removeEventListener('keydown', keydownHandlerRef.current);
+			keydownHandlerRef.current = null;
+		};
 
 		if (isEditing) {
-			win.on('keydown.settingsSpace', (e: any) => {
+			keydownHandlerRef.current = (e: any) => {
 				keyboard.shortcut('enter', e, () => onSave());
 				keyboard.shortcut('escape', e, () => onCancel());
-			});
+			};
+			window.addEventListener('keydown', keydownHandlerRef.current);
 		};
 
 		modeRef.current?.setValue(String(spaceview.notificationMode));
@@ -196,17 +198,21 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const updateCounters = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const { name, nameThreshold } = J.Constant.limit.space;
-		const el = node.find('.spaceNameWrapper .counter');
+		const el = U.Dom.select('.spaceNameWrapper .counter', node);
 		const counter = name - nameRef.current?.getTextValue().length;
 		const canSave = counter >= 0;
 
-		el.text(counter).toggleClass('show', counter <= nameThreshold);
-		el.toggleClass('red', !canSave);
+		if (el) {
+			el.textContent = String(counter);
+			U.Dom.toggleClass(el, 'show', counter <= nameThreshold);
+			U.Dom.toggleClass(el, 'red', !canSave);
+		};
 
 		canSaveRef.current = canSave;
-		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
+		const saveBtn = U.Dom.select('.spaceHeader .buttonSave', node);
+		U.Dom.toggleClass(saveBtn, 'disabled', !canSave);
 	};
 
 	const buttons = getButtons();
@@ -253,6 +259,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		init();
 
 		return () => {
+			if (keydownHandlerRef.current) {
+				window.removeEventListener('keydown', keydownHandlerRef.current);
+				keydownHandlerRef.current = null;
+			};
 			S.Menu.closeAll([ 'select', 'searchObject' ]);
 		};
 	});

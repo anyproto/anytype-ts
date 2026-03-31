@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 interface Props extends I.WidgetTreeItem {
 	index: number;
@@ -53,14 +52,14 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		onContext({ 
-			node, 
-			element: node, 
-			withElement, 
-			subId, 
-			objectId: id, 
+		onContext({
+			node,
+			element: node,
+			withElement,
+			subId,
+			objectId: id,
 			data: {
 				allowedCollection: true,
 				allowedLinkTo: true,
