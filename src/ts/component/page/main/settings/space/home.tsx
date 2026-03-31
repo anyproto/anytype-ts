@@ -4,9 +4,9 @@ import { Title, Label, Button, Icon, Frame } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const HOME_OPTIONS = [
-	{ id: 'chat', nameKey: 'settingsSpaceHomeOptionChat' },
-	{ id: 'page', nameKey: 'settingsSpaceHomeOptionPage' },
-	{ id: 'collection', nameKey: 'settingsSpaceHomeOptionCollection' },
+	{ id: 'chat', nameKey: 'settingsSpaceHomeOptionChat', typeKey: J.Constant.typeKey.chatDerived, layout: I.ObjectLayout.Chat, details: { name: 'defaultNameGeneral' } },
+	{ id: 'page', nameKey: 'settingsSpaceHomeOptionPage', typeKey: J.Constant.typeKey.page, layout: I.ObjectLayout.Page },
+	{ id: 'collection', nameKey: 'settingsSpaceHomeOptionCollection', typeKey: J.Constant.typeKey.collection, layout: I.ObjectLayout.Collection },
 	{ id: 'empty', nameKey: 'settingsSpaceHomeOptionEmpty' },
 ];
 
@@ -16,47 +16,38 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 	const [ selected, setSelected ] = useState('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
 
-	const setHomepage = (id: string) => {
-		C.WorkspaceSetHomepage(spaceId, id, () => U.Space.openDashboard());
-	};
-
-	const createAndSetHomepage = (details: any, typeKey: string) => {
-		setIsLoading(true);
-		C.ObjectCreate(details, [], '', typeKey, spaceId, (message: any) => {
-			setIsLoading(false);
-			if (!message.error.code) {
-				setHomepage(message.objectId);
-			};
-		});
-	};
-
 	const onCreate = () => {
 		if (isLoading) {
 			return;
 		};
 
+		const option = HOME_OPTIONS.find(it => it.id == selected);
+
 		analytics.event('ChannelSelectHome', { type: selected });
 
-		switch (selected) {
-			case 'chat': {
-				createAndSetHomepage({ name: translate('defaultNameGeneral') }, J.Constant.typeKey.chatDerived);
-				break;
+		if (option.typeKey) {
+			const details: any = {};
+
+			if (option.details) {
+				for (const key in option.details) {
+					details[key] = translate(option.details[key]);
+				};
 			};
 
-			case 'page': {
-				createAndSetHomepage({}, J.Constant.typeKey.page);
-				break;
-			};
+			setIsLoading(true);
+			C.ObjectCreate(details, [], '', option.typeKey, spaceId, (message: any) => {
+				setIsLoading(false);
 
-			case 'collection': {
-				createAndSetHomepage({}, J.Constant.typeKey.collection);
-				break;
-			};
+				if (message.error.code) {
+					return;
+				};
 
-			case 'empty': {
-				setHomepage(I.HomePredefinedId.Last);
-				break;
-			};
+				C.WorkspaceSetHomepage(spaceId, message.objectId, () => {
+					U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId });
+				});
+			});
+		} else {
+			C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Last, U.Space.openDashboard);
 		};
 	};
 
