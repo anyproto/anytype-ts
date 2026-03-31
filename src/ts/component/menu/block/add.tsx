@@ -261,7 +261,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				const blockValue = document.querySelector(`#block-${U.Common.esc(blockId)} .value`);
+				const blockValue = U.Dom.select(`#block-${U.Common.esc(blockId)} .value`);
 				if (blockValue) {
 					blockValue.textContent = text;
 				};
@@ -355,7 +355,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				const blockValue = document.querySelector(`#block-${U.Common.esc(blockId)} .value`);
+				const blockValue = U.Dom.select(`#block-${U.Common.esc(blockId)} .value`);
 				if (blockValue) {
 					blockValue.textContent = text;
 				};
@@ -582,7 +582,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
 						window.setTimeout(() => {
-							const element = document.getElementById(`block-${newBlockId}`);
+							const element = U.Dom.get(`block-${newBlockId}`);
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
@@ -623,7 +623,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		marks = Mark.adjust(marks, filter.from - 1, -1);
 
 		// Hack to prevent onBlur save
-		const blockValueEl = document.querySelector(`#block-${U.Common.esc(blockId)} #value`);
+		const blockValueEl = U.Dom.select(`#block-${U.Common.esc(blockId)} #value`);
 		if (blockValueEl) {
 			blockValueEl.textContent = text;
 		};

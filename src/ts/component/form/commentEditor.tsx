@@ -189,7 +189,7 @@ class LinkTextNode extends TextNode {
 
 	createDOM (config: any): HTMLElement {
 		const el = super.createDOM(config);
-		el.classList.add('commentEditor-link');
+		U.Dom.addClass(el, 'commentEditor-link');
 		return el;
 	};
 
@@ -1280,7 +1280,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		};
 	});
 
-	const wrap = document.getElementById(editorId);
+	const wrap = U.Dom.get(editorId);
 	if (!wrap) {
 		return;
 	};

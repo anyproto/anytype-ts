@@ -8,6 +8,10 @@ class UtilDom {
 	};
 
 	select (selector: string, root: ParentNode = document): HTMLElement | null {
+		if (!root) {
+			return null;
+		};
+
 		try {
 			return root.querySelector(selector);
 		} catch (e) {
@@ -17,6 +21,10 @@ class UtilDom {
 	};
 
 	selectAll (selector: string, root: ParentNode = document): HTMLElement[] {
+		if (!root) {
+			return [];
+		};
+
 		try {
 			return Array.from(root.querySelectorAll(selector));
 		} catch (e) {

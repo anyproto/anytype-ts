@@ -105,7 +105,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = document.getElementById(`item-${item.id}`);
+		const node = U.Dom.get(`item-${item.id}`);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -127,8 +127,8 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				element: `#${getId()} #item-more-${item.id}`,
 				horizontal: I.MenuDirection.Right,
 				subIds: J.Menu.dataviewTemplate,
-				onOpen: () => node?.classList.add('active'),
-				onClose: () => node?.classList.remove('active'),
+				onOpen: () => U.Dom.addClass(node, 'active'),
+				onClose: () => U.Dom.removeClass(node, 'active'),
 				rebind,
 				parentId: id,
 				data: {

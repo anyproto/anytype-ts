@@ -109,7 +109,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const input = U.Dom.select('#input', obj);
 		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
-		const cell = document.getElementById(cellId);
+		const cell = U.Dom.get(cellId);
 		const nameEl = cell?.querySelector('.name') as HTMLElement;
 		const lh = nameEl ? parseInt(window.getComputedStyle(nameEl).lineHeight, 10) || 20 : 20;
 
@@ -145,11 +145,11 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onFocus = () => {
 		setHover(null, false);
-		(inputWrapper.current as HTMLElement)?.classList.add('focused');
+		U.Dom.addClass(inputWrapper.current as HTMLElement, 'focused');
 	};
 
 	const onBlur = () => {
-		(inputWrapper.current as HTMLElement)?.classList.remove('focused');
+		U.Dom.removeClass(inputWrapper.current as HTMLElement, 'focused');
 	};
 
 	const onClear = () => {

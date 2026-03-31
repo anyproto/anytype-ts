@@ -128,7 +128,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	};
 
 	const initToggle = (id: string, isOpen: boolean) => {
-		const obj = document.querySelector(`#sidebarRight #relationGroup-${id}`);
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
 		const title = obj.querySelector('.titleWrap') as HTMLElement;
@@ -140,7 +140,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	};
 
 	const onToggle = (id: string) => {
-		const obj = document.querySelector(`#sidebarRight #relationGroup-${id}`);
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
 		const title = obj.querySelector('.titleWrap') as HTMLElement;

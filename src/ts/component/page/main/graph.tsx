@@ -95,7 +95,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		};
 
 		if (isPopup) {
-			const element = document.querySelector('#popupPage .content') as HTMLElement;
+			const element = U.Dom.select('#popupPage .content');
 			if (element) {
 				element.style.minHeight = 'unset';
 				element.style.height = '100%';

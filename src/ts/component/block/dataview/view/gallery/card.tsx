@@ -46,9 +46,9 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		const nonEmpty = node.querySelectorAll('.cellContent:not(.isEmpty)');
 		const last = nonEmpty.length ? nonEmpty[nonEmpty.length - 1] : null;
 
-		cells.forEach(el => el.classList.remove('last'));
+		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'last'));
 		if (last) {
-			last.classList.add('last');
+			U.Dom.addClass(last as HTMLElement, 'last');
 		};
 	};
 

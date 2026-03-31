@@ -266,11 +266,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			onOpen: context => {
-				U.Dom.addClass(document.querySelector(element), 'active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
 				menuContext.current = context;
 			},
 			onClose: () => {
-				U.Dom.removeClass(document.querySelector(element), 'active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
 				menuContext.current = null;
 			},
 			rebind,

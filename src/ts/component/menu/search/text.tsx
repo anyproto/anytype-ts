@@ -54,7 +54,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const id = toggleParent.getAttribute('data-id');
 		if (id && !expandedRef.current.toggles.includes(id)) {
 			expandedRef.current.toggles.push(id);
-			toggleParent.classList.add('isToggled');
+			U.Dom.addClass(toggleParent, 'isToggled');
 		};
 	};
 
@@ -63,7 +63,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		toggles
 			.filter(id => id !== keepToggleId)
-			.forEach(id => document.getElementById(`block-${id}`)?.classList.remove('isToggled'));
+			.forEach(id => U.Dom.removeClass(U.Dom.get(`block-${id}`), 'isToggled'));
 
 		expandedRef.current = { toggles: [] };
 	};
@@ -89,7 +89,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		removeHighlights();
 		collapseExpanded(keepToggleId);
 
-		U.Dom.select('#switcher', nodeRef.current)?.classList.remove('active');
+		U.Dom.removeClass(U.Dom.select('#switcher', nodeRef.current), 'active');
 	};
 
 	const isElementVisible = (el: HTMLElement): boolean => {
@@ -205,7 +205,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const containerEl = getContainer();
 		const tag = getSearchTag();
 		if (containerEl) {
-			containerEl.querySelectorAll(`${tag}.active`).forEach(el => el.classList.remove('active'));
+			U.Dom.selectAll(`${tag}.active`, containerEl).forEach(el => U.Dom.removeClass(el as HTMLElement, 'active'));
 		};
 
 		const currentEl = elements[n.current] as HTMLElement;
@@ -213,7 +213,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		currentEl.classList.add('active');
+		U.Dom.addClass(currentEl, 'active');
 		updateActiveMatch(currentEl);
 		updateMatchCounter();
 		scrollToMatch(currentEl);
@@ -246,7 +246,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const containerEl = getContainer();
 		const switcher = U.Dom.select('#switcher', nodeRef.current);
 
-		switcher?.classList.remove('active');
+		U.Dom.removeClass(switcher, 'active');
 
 		n.current = 0;
 		clearSearch();
@@ -331,7 +331,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const menu = getMenuContainer();
-		const header = document.querySelector('#header .side.center') as HTMLElement;
+		const header = U.Dom.select('#header .side.center');
 		const width = Math.min(header?.clientWidth || 0, J.Size.editor);
 
 		U.Dom.css(menu, { width: `${width}px` });

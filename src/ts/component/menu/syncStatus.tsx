@@ -77,8 +77,8 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => itemElement?.classList.add('hover'),
-			onClose: () => itemElement?.classList.remove('hover'),
+			onOpen: () => U.Dom.addClass(itemElement, 'hover'),
+			onClose: () => U.Dom.removeClass(itemElement, 'hover'),
 			data: {
 				options,
 				onSelect: (e, option) => {

@@ -89,7 +89,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if (dir > 0) {
 			focus.scroll(isPopup, id);
 		} else {
-			const node = document.querySelector(`.focusable.c${U.Common.esc(id)}`) as HTMLElement;
+			const node = U.Dom.select(`.focusable.c${U.Common.esc(id)}`);
 			if (!node) {
 				return;
 			};
@@ -642,15 +642,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 
 				for (const id of list) {
-					container.querySelector(`#selectionTarget-${U.Common.esc(id)}`)?.classList.add('isSelectionSelected');
+					U.Dom.addClass(U.Dom.select(`#selectionTarget-${U.Common.esc(id)}`, container), 'isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
-						container.querySelector(`#block-${U.Common.esc(id)}`)?.classList.add('isSelectionSelected');
+						U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(id)}`, container), 'isSelectionSelected');
 
 						const childrenIds = getChildrenIds(id);
 						if (childrenIds.length) {
 							childrenIds.forEach(childId => {
-								container.querySelector(`#block-${U.Common.esc(childId)}`)?.classList.add('isSelectionSelected');
+								U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(childId)}`, container), 'isSelectionSelected');
 							});
 						};
 					};
