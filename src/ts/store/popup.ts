@@ -184,12 +184,10 @@ class PopupStore {
 			U.Data.updateTabsDimmer();
 			callBack?.();
 		} else {
-			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
+			const el = U.Dom.get(U.String.toCamelCase(`popup-${id}`));
 
 			raf(() => {
-				if (el.length) {
-					el.removeClass('show');
-				};
+				U.Dom.removeClass(el, 'show');
 				U.Data.updateTabsDimmer(filtered);
 			});
 
