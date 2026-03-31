@@ -1095,8 +1095,8 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessage?.createdAt || c1.spaceJoinDate || c1.creationDate || 0;
-			const d2 = c2.lastMessage?.createdAt || c2.spaceJoinDate || c2.creationDate || 0;
+			const d1 = Math.max(c1.lastMessage?.createdAt || 0, c1.spaceJoinDate || 0, c1.creationDate || 0);
+			const d2 = Math.max(c2.lastMessage?.createdAt || 0, c2.spaceJoinDate || 0, c2.creationDate || 0);
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
