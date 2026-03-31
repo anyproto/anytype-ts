@@ -110,6 +110,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const load = (clear: boolean, callBack?: (value: any) => void) => {
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => !U.Object.isDateLayout(it) && !U.Object.isTypeLayout(it));
 		const sorts = [
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -134,6 +135,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		U.Subscription.search({
 			filters,
 			sorts,
+			keys: J.Relation.default.concat([ '_final_score' ]),
 			fullText: filterText,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
