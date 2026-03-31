@@ -425,7 +425,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ searchIds ]);
 
 	useEffect(() => {
-		U.Dom.toggleClass(U.Dom.get(`widget-${U.Common.esc(parent.id)}`), 'isEmpty', isEmpty);
+		U.Dom.toggleClass(U.Dom.get(`widget-${parent.id}`), 'isEmpty', isEmpty);
 		checkShowAllButton(subId);
 	});
 

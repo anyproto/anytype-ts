@@ -582,7 +582,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
 						window.setTimeout(() => {
-							const element = document.getElementById(`block-${U.Common.esc(newBlockId)}`);
+							const element = document.getElementById(`block-${newBlockId}`);
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {

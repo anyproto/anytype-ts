@@ -759,7 +759,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						const marker = document.getElementById(`marker-${U.Common.esc(item.id)}`);
+						const marker = document.getElementById(`marker-${item.id}`);
 					if (marker) marker.textContent = `${n}.`;
 					} else {
 						n = 0;
@@ -938,7 +938,7 @@ class BlockStore {
 	};
 
 	toggle (rootId: string, blockId: string, v: boolean) {
-		const element = document.getElementById(`block-${U.Common.esc(blockId)}`);
+		const element = document.getElementById(`block-${blockId}`);
 		if (!element) {
 			return;
 		};

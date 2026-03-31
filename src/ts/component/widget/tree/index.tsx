@@ -457,7 +457,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		checkShowAllButton(getSubId());
 		resize();
 
-		U.Dom.toggleClass(U.Dom.get(`widget-${U.Common.esc(parent.id)}`), 'isEmpty', !length);
+		U.Dom.toggleClass(U.Dom.get(`widget-${parent.id}`), 'isEmpty', !length);
 	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({

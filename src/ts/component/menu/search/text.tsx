@@ -63,7 +63,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		toggles
 			.filter(id => id !== keepToggleId)
-			.forEach(id => document.getElementById(`block-${U.Common.esc(id)}`)?.classList.remove('isToggled'));
+			.forEach(id => document.getElementById(`block-${id}`)?.classList.remove('isToggled'));
 
 		expandedRef.current = { toggles: [] };
 	};
