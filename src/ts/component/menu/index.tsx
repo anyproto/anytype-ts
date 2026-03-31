@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 
@@ -223,7 +222,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, getContext);
 
 	useEffect(() => {
-		polyRef.current = $('#menu-polygon');
+		polyRef.current = U.Dom.get('menu-polygon');
 		setClass();
 		position();
 		animate();
@@ -232,8 +231,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		const el = getElement();
 
-		if (!noAutoHover && el && el.length) {
-			el.addClass('hover');
+		if (!noAutoHover && el) {
+			U.Dom.addClass(el, 'hover');
 		};
 
 		if (param.height) {
@@ -252,12 +251,12 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 
 			unbind();
 
-			if (el && el.length) {
-				el.removeClass('hover');
+			if (el) {
+				U.Dom.removeClass(el, 'hover');
 			};
 
-			if (isSub) {
-				polyRef.current.hide();
+			if (isSub && polyRef.current) {
+				polyRef.current.style.display = 'none';
 				window.clearTimeout(timeoutPoly.current);
 			};
 
@@ -268,16 +267,13 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const node = $(nodeRef.current); 
-		const menu = node.find('.menu');
-
 		if (noAnimation) {
-			menu.addClass('noAnimation');
+			U.Dom.addClass(containerRef.current, 'noAnimation');
 		};
 
 		setClass();
 
-		menu.addClass('show');
+		U.Dom.addClass(containerRef.current, 'show');
 		position();
 	});
 
@@ -304,11 +300,10 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const setClass = () => {
-		const node = $(nodeRef.current);
 		const cn = [ 'menuWrap' ];
 
 		if (classNameWrap) {
-			cn.push(classNameWrap);	
+			cn.push(classNameWrap);
 		};
 
 		if (visibleDimmer) {
@@ -319,29 +314,52 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			cn.push('fromPopup');
 		};
 
-		node.attr({ class: cn.join(' ') });
+		if (nodeRef.current) {
+			nodeRef.current.className = cn.join(' ');
+		};
 	};
 
-	const rebind = () => {
-		const id = getId();
-		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
-		const container = containerEl ? $(containerEl) : $();
+	const resizeHandler = useRef<(() => void) | null>(null);
+	const sidebarResizeHandler = useRef<(() => void) | null>(null);
+	const scrollHandler = useRef<(() => void) | null>(null);
+	const scrollContainerRef = useRef<HTMLElement | null>(null);
 
+	const rebind = () => {
 		unbind();
-		$(window).on(`resize.${id} sidebarResize.${id}`, () => position());
-		container.on(`scroll.${id}`, () => {
-			raf.cancel(framePosition.current);
-			framePosition.current = raf(() => position());
-		});
+
+		const handler = () => position();
+		resizeHandler.current = handler;
+		sidebarResizeHandler.current = handler;
+
+		window.addEventListener('resize', handler);
+		window.addEventListener('sidebarResize', handler);
+
+		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
+		if (containerEl) {
+			scrollContainerRef.current = containerEl;
+			const onScroll = () => {
+				raf.cancel(framePosition.current);
+				framePosition.current = raf(() => position());
+			};
+			scrollHandler.current = onScroll;
+			containerEl.addEventListener('scroll', onScroll);
+		};
 	};
 
 	const unbind = () => {
-		const id = getId();
-		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
-		const container = containerEl ? $(containerEl) : $();
-
-		$(window).off(`resize.${id} sidebarResize.${id}`);
-		container.off(`scroll.${id}`);
+		if (resizeHandler.current) {
+			window.removeEventListener('resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
+		if (sidebarResizeHandler.current) {
+			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			sidebarResizeHandler.current = null;
+		};
+		if (scrollHandler.current && scrollContainerRef.current) {
+			scrollContainerRef.current.removeEventListener('scroll', scrollHandler.current);
+			scrollHandler.current = null;
+			scrollContainerRef.current = null;
+		};
 	};
 	
 	const animate = () => {
@@ -385,18 +403,23 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		};
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			const menu = node.find('.menu');
-			const arrow = menu.find('#arrowDirection');
-			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
+			const menuEl = containerRef.current;
+			const nodeEl = nodeRef.current;
+
+			if (!menuEl || !nodeEl) {
+				return;
+			};
+
+			const arrow = U.Dom.select('#arrowDirection', menuEl);
+			const isFixed = (getComputedStyle(menuEl).position == 'fixed') || (getComputedStyle(nodeEl).position == 'fixed');
 			const winSize = U.Dom.getWindowDimensions();
 			const borderLeft = getBorderLeft(isFixed);
 			const borderTop = getBorderTop();
 			const borderBottom = getBorderBottom();
 			const ww = winSize.ww;
 			const wh = winSize.wh;
-			const width = param.width ? param.width : menu.outerWidth();
-			const height = menu.outerHeight();
+			const width = param.width ? param.width : menuEl.offsetWidth;
+			const height = menuEl.offsetHeight;
 
 			let offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			let offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
@@ -420,17 +443,17 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 				oy = Number(rect.y) || 0;
 			} else {
 				const el = getElement();
-				if (!el || !el.length) {
+				if (!el) {
 					console.log('[Menu].position', id, 'element not found', element);
 					return;
 				};
 
-				const { left, top } = el.offset();
+				const elRect = el.getBoundingClientRect();
 
-				ew = el.outerWidth();
-				eh = el.outerHeight();
-				ox = left;
-				oy = top;
+				ew = el.offsetWidth;
+				eh = el.offsetHeight;
+				ox = elRect.left + window.scrollX;
+				oy = elRect.top + window.scrollY;
 			};
 
 			let x = ox;
@@ -449,7 +472,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			switch (vertical) {
 				case I.MenuDirection.Top:
 					y = oy - height + offsetY;
-					
+
 					// Switch
 					if (!noFlipY && (y <= borderTop)) {
 						y = oy + eh - offsetY;
@@ -509,12 +532,12 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
 
-			const css: any = { left: x, top: y };
+			const menuCss: any = { left: `${x}px`, top: `${y}px` };
 			if (param.width) {
-				css.width = param.width;
+				menuCss.width = `${param.width}px`;
 			};
 
-			menu.css(css);
+			U.Dom.css(menuEl, menuCss);
 
 			if (isSub) {
 				const coords = U.Common.objectCopy(keyboard.mouse.page);
@@ -551,29 +574,36 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 					clipPath = `polygon(0 ${height}px, 100% ${height}px, ${ox - x + ew}px 100%, ${ox - x}px 100%)`;
 				};
 
-				polyRef.current.show().css({
-					width: w,
-					height: h,
-					left,
-					top,
-					clipPath,
-					transform,
-					position: (isFixed ? 'fixed' : 'absolute'),
-					zIndex: 100000,
-				});
+				if (polyRef.current) {
+					polyRef.current.style.display = 'block';
+					U.Dom.css(polyRef.current, {
+						width: `${w}px`,
+						height: `${h}px`,
+						left: `${left}px`,
+						top: `${top}px`,
+						clipPath,
+						transform,
+						position: (isFixed ? 'fixed' : 'absolute'),
+						zIndex: '100000',
+					});
+				};
 
 				window.clearTimeout(timeoutPoly.current);
-				timeoutPoly.current = window.setTimeout(() => polyRef.current.hide(), 500);
+				timeoutPoly.current = window.setTimeout(() => {
+					if (polyRef.current) {
+						polyRef.current.style.display = 'none';
+					};
+				}, 500);
 			};
 
 			// Arrow positioning
 
-			if (withArrow) {
+			if (withArrow && arrow) {
 				const arrowDirection = getArrowDirection();
 				const size = getSize();
 				const { width, height } = size;
 				const min = 8;
-				const css: any = { left: '', right: '', top: '', bottom: '' };
+				const arrowCss: any = { left: '', right: '', top: '', bottom: '' };
 
 				switch (arrowDirection) {
 					case I.MenuDirection.Bottom:
@@ -582,41 +612,46 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 						switch (horizontal) {
 							case I.MenuDirection.Left:
 								if (ew > width) {
-									css.left = width / 2 - ARROW_WIDTH / 2;
+									arrowCss.left = width / 2 - ARROW_WIDTH / 2;
 								} else {
-									css.left = ew / 2 - ARROW_WIDTH / 2;
+									arrowCss.left = ew / 2 - ARROW_WIDTH / 2;
 								};
-								css.left = Math.max(min, Math.min(width - min, css.left));
+								arrowCss.left = Math.max(min, Math.min(width - min, arrowCss.left));
 								break;
 
 							case I.MenuDirection.Center:
 								if (ew > width) {
-									css.left = width / 2 - ARROW_WIDTH / 2;
+									arrowCss.left = width / 2 - ARROW_WIDTH / 2;
 								} else {
-									css.left = ox - x + ew / 2 - ARROW_WIDTH / 2;
+									arrowCss.left = ox - x + ew / 2 - ARROW_WIDTH / 2;
 								};
-								css.left = Math.max(min, Math.min(width - min, css.left));
+								arrowCss.left = Math.max(min, Math.min(width - min, arrowCss.left));
 								break;
 
-							case I.MenuDirection.Right: 
+							case I.MenuDirection.Right:
 								if (ew > width) {
-									css.right = width / 2 - ARROW_WIDTH / 2;
+									arrowCss.right = width / 2 - ARROW_WIDTH / 2;
 								} else {
-									css.right = ew / 2 - ARROW_WIDTH / 2;
+									arrowCss.right = ew / 2 - ARROW_WIDTH / 2;
 								};
-								css.right = Math.max(min, Math.min(width - min, css.right));
+								arrowCss.right = Math.max(min, Math.min(width - min, arrowCss.right));
 								break;
 						};
 						break;
-					
+
 					case I.MenuDirection.Left:
 					case I.MenuDirection.Right:
-						css.top = eh / 2 - ARROW_HEIGHT / 2;
-						css.top = Math.max(min, Math.min(height - min, css.top));
+						arrowCss.top = eh / 2 - ARROW_HEIGHT / 2;
+						arrowCss.top = Math.max(min, Math.min(height - min, arrowCss.top));
 						break;
 				};
 
-				arrow.css(css);
+				U.Dom.css(arrow, {
+					left: arrowCss.left !== '' ? `${arrowCss.left}px` : '',
+					right: arrowCss.right !== '' ? `${arrowCss.right}px` : '',
+					top: arrowCss.top !== '' ? `${arrowCss.top}px` : '',
+					bottom: arrowCss.bottom !== '' ? `${arrowCss.bottom}px` : '',
+				});
 			};
 		});
 	};
@@ -635,8 +670,8 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 	
 	const onMouseLeave = (e: any) => {
-		if (isSub) {
-			polyRef.current.hide();
+		if (isSub && polyRef.current) {
+			polyRef.current.style.display = 'none';
 		};
 	};
 
@@ -909,42 +944,46 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 	
 	const setHover = (item?: any, scroll?: boolean) => {
-		const node = $(nodeRef.current);
-		const menu = node.find('.menu');
-		
-		menu.find('.item.hover').removeClass('hover');
+		const container = containerRef.current;
+		if (!container) {
+			return;
+		};
+
+		U.Dom.selectAll('.item.hover', container).forEach(el => el.classList.remove('hover'));
 
 		if (!item) {
 			return;
 		};
 
-		let el = null;
+		let el: HTMLElement | null = null;
 		if (item.itemId) {
-			el = menu.find(`#item-${U.Common.esc(item.itemId)}`);
+			el = U.Dom.select(`#item-${U.Common.esc(item.itemId)}`, container);
 		};
-		if (item.id && (!el || !el.length)) {
-			el = menu.find(`#item-${U.Common.esc(item.id)}`);
+		if (item.id && !el) {
+			el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, container);
 		};
 
-		if (!el || !el.length) {
+		if (!el) {
 			return;
 		};
 
-		el.addClass('hover');
+		U.Dom.addClass(el, 'hover');
 
 		if (scroll) {
-			let scrollWrap = node.find('.scrollWrap');
-			if (!scrollWrap.length) {
-				scrollWrap = node.find('.content');
+			let scrollWrap = nodeRef.current?.querySelector('.scrollWrap') as HTMLElement;
+			if (!scrollWrap) {
+				scrollWrap = nodeRef.current?.querySelector('.content') as HTMLElement;
 			};
 
-			const st = scrollWrap.scrollTop();
-			const pt = el.position().top;
-			const eh = el.outerHeight();
-			const ch = scrollWrap.height();
-			const top = Math.max(0, st + pt + eh - J.Size.menuBorder - ch);
-			
-			scrollWrap.scrollTop(top);
+			if (scrollWrap) {
+				const st = scrollWrap.scrollTop;
+				const pt = el.offsetTop;
+				const eh = el.offsetHeight;
+				const ch = U.Dom.contentHeight(scrollWrap);
+				const top = Math.max(0, st + pt + eh - J.Size.menuBorder - ch);
+
+				scrollWrap.scrollTop = top;
+			};
 		};
 	};
 
@@ -976,8 +1015,14 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		return containerRef.current;
 	};
 
-	const getElement = () => {
-		return $(props.param.element).first();
+	const getElement = (): HTMLElement | null => {
+		const { element } = props.param;
+		if (!element) return null;
+		if (element instanceof HTMLElement) return element;
+		if (typeof element === 'string') return U.Dom.select(element);
+		// jQuery object fallback
+		if (element.get) return element.get(0) || null;
+		return null;
 	};
 
 	const getSize = (): { width: number; height: number; } => {

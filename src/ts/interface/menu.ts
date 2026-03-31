@@ -20,7 +20,7 @@ export interface MenuParam<D = any> {
 	component?: string;
 	title?: string;
 	menuKey?: string;
-	element?: string | JQuery<any>;
+	element?: string | HTMLElement | JQuery<any>;
 	rect?: MenuPosition;
 	type?: MenuType;
 	vertical?: MenuDirection;

@@ -611,6 +611,7 @@ class Sidebar {
 			window.setTimeout(() => {
 				this.setAnimating(false);
 				$(window).trigger('sidebarResize');
+				window.dispatchEvent(new CustomEvent('sidebarResize'));
 			}, J.Constant.delay.sidebar);
 		};
 
@@ -713,6 +714,7 @@ class Sidebar {
 		};
 
 		$(window).trigger('sidebarResize');
+		window.dispatchEvent(new CustomEvent('sidebarResize'));
 	};
 
 	/**
