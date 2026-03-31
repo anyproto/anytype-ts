@@ -44,8 +44,6 @@ const https = require('https');
 const fs = require('fs');
 
 // Configuration
-const LINEAR_API_URL = 'https://api.linear.app/graphql';
-const GITHUB_API_URL = 'https://api.github.com';
 const GITHUB_REPO = 'anyproto/anytype-ts';
 const LINEAR_TASK_PATTERN = /\b([A-Z]+-\d+)\b/g;
 const PR_PATTERN = /#(\d+)/g;
