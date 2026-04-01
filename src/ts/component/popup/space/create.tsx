@@ -193,11 +193,14 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 	};
 
 	const onMemberContext = (e: React.MouseEvent, id: string) => {
+		e.preventDefault();
 		e.stopPropagation();
 
 		S.Menu.open('select', {
-			element: `#${getId()} #member-${U.Common.esc(id)}`,
+			classNameWrap: 'fromPopup',
+			className: 'fixed',
 			horizontal: I.MenuDirection.Center,
+			rect: { x: e.clientX, y: e.clientY, width: 0, height: 0 },
 			data: {
 				options: [
 					{ id: 'remove', name: translate('commonRemove'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' },
@@ -270,7 +273,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
-	const LIST_HEIGHT = 280;
+	const LIST_HEIGHT = 340;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
@@ -344,7 +347,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				<div className="memberListWrapper">
 					{members.length ? (
 						<>
-							<div className="memberList">
+							<div className="memberList" style={{ height: listHeight }}>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
@@ -367,7 +370,12 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 
 				<div className="wrapper">
 					<div className="buttons">
-						<Button className={!selectedMembers.length ? 'disabled' : ''} text={translate('popupSpaceCreateNext')} color="accent" onClick={onNext} />
+						<Button 
+							className={!selectedMembers.length ? 'disabled' : ''} 
+							text={translate('popupSpaceCreateNext')} 
+							color="accent" 
+							onClick={onNext}
+						/>
 					</div>
 				</div>
 			</div>
@@ -410,7 +418,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 							</div>
 
 							{selectedMemberObjects.map(item => (
-								<div key={item.id} id={`member-${item.id}`} className="item" onClick={e => onMemberContext(e, item.id)}>
+								<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
 									<IconObject size={32} object={item} />
 									<ObjectName object={item} />
 								</div>

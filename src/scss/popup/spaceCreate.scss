@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; overflow: visible; }
+		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: visible; }
 
 		#loader { border-radius: 32px; }
 
@@ -39,7 +39,7 @@
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
-				.memberList { position: relative; min-height: 340px; }
+				.memberList { position: relative; height: 340px; }
 				.memberList {
 					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 				}
