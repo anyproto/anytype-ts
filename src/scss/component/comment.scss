@@ -19,6 +19,7 @@
 		user-select: none;
 	}
 	.commentCounter:hover { background: var(--color-shape-secondary); }
+	.commentCounter.isFixed { position: fixed; bottom: 18px; }
 	.commentCounter {
 		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
 		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }

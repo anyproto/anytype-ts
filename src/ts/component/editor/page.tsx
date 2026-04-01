@@ -2626,6 +2626,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const commentSection = node.find('.commentSection');
 				const csh = commentSection.length ? commentSection.outerHeight() : 0;
 
+				const counter = node.find('.commentCounter');
+
 				if (!csh) {
 					const ct = scrollContainer.getBoundingClientRect().top;
 					const ch = scrollContainer.clientHeight;
@@ -2635,6 +2637,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					let height = ch - ct - bt - bh - 8;
 					height = Math.max(J.Size.lastBlock, height);
 					last.css({ height });
+					counter.addClass('isFixed');
+				} else {
+					counter.removeClass('isFixed');
 				};
 			};
 
