@@ -4,7 +4,6 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -35,19 +34,20 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 	
 	const onMouseDown = () => {
-		$('.cell.isEditing').removeClass('isEditing');
+		U.Dom.selectAll('.cell.isEditing').forEach(el => U.Dom.removeClass(el, 'isEditing'));
 		S.Menu.closeAll();
 	};
 
 	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			$(`#block-${U.Common.esc(block.id)} .cell-key-${U.Common.esc(relationKey)}`).addClass('cellKeyHover');
+			const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			U.Dom.selectAll(`.cell-key-${U.Common.esc(relationKey)}`, blockEl).forEach(el => U.Dom.addClass(el, 'cellKeyHover'));
 		};
 	};
 
 	const onMouseLeave = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			$('.cellKeyHover').removeClass('cellKeyHover');
+			U.Dom.selectAll('.cellKeyHover').forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
 		};
 	};
 
@@ -62,11 +62,13 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const blockEl =	`#block-${U.Common.esc(block.id)}`;
-		const rowHead = $(`${blockEl} #rowHead`);
-		const isFixed = rowHead.hasClass('fixed');
+		const blockNode = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const rowHead = U.Dom.select('#rowHead', blockNode);
+		const isFixed = U.Dom.hasClass(rowHead, 'fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
-		const element = `${blockEl} ${headEl} #${U.Common.esc(Relation.cellId('head', relationKey, ''))}`;
-		const obj = $(element);
+		const cellId = U.Common.esc(Relation.cellId('head', relationKey, ''));
+		const element = `${blockEl} ${headEl} #${cellId}`;
+		const obj = U.Dom.select(`${headEl} #${cellId}`, blockNode);
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);
 		const view = getView();
@@ -79,12 +81,12 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		window.setTimeout(() => {
-			S.Menu.open('dataviewRelationEdit', { 
+			S.Menu.open('dataviewRelationEdit', {
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				onOpen: () => obj.addClass('active'),
-				onClose: () => obj.removeClass('active'),
+				onOpen: () => U.Dom.addClass(obj, 'active'),
+				onClose: () => U.Dom.removeClass(obj, 'active'),
 				className: isFixed ? 'fixed' : '',
 				classNameWrap: 'fromBlock',
 				subIds: J.Menu.relationEdit,
