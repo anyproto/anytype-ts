@@ -27,7 +27,7 @@
 
 .commentSection {
 	display: flex; flex-direction: column; flex: 1 1 auto;
-	padding: 0px;
+	padding: 0px; background-color: var(--color-bg-primary);
 }
 .commentSection {
 	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
