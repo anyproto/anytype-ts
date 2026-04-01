@@ -6,8 +6,8 @@ import * as I from 'Interface';
 
 const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getSize, onKeyDown, setActive, position } = props;
-	const { data, className, classNameWrap } = param;
+	const { param, getId, onKeyDown, setActive, position } = props;
+	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly } = data;
 	const nodeRef = useRef(null);
 	const n = useRef(-1);
@@ -120,7 +120,7 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 				position={position}
 			/>
 			<div className="bottom">
-				<MenuItemVertical id="delete" name={translate('menuDataviewFilterDeleteFilter')} icon="remove" onClick={onDelete} />
+				<MenuItemVertical id="delete" name={translate('menuDataviewFilterDeleteFilter')} iconParam={{ name: 'menu/action/remove' }} onClick={onDelete} />
 			</div>
 		</div>
 	);

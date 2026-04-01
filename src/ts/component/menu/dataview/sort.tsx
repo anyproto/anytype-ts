@@ -63,9 +63,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isReadonlyValue) {
 			items.push({ isDiv: true });
-			items.push({ id: 'add', name: translate('menuDataviewSortAddSort') });
+			items.push({ id: 'add', name: translate('menuDataviewSortAddSort'), iconParam: { name: 'plus/menu' } });
+
 			if (sortItems.length) {
-				items.push({ id: 'clear', name: translate('menuDataviewFilterDeleteSort') });
+				items.push({ id: 'clear', name: translate('menuDataviewFilterDeleteSort'), iconParam: { name: 'menu/action/remove' } });
 			};
 		};
 
@@ -410,7 +411,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseLeave={() => setHover()}
 					style={param.style}
 				>
-					<Icon name={item.id === 'add' ? 'plus/menu' : undefined} className={item.id === 'add' ? 'plus' : 'remove'} />
+					<Icon {...item.iconParam} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

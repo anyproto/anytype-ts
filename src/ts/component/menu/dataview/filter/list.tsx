@@ -363,7 +363,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			content = (
 				<MenuItemVertical
 					id={item.id}
-					icon={item.icon}
 					iconParam={item.iconParam}
 					name={item.name}
 					onMouseEnter={e => onMouseEnter(e, item)}
