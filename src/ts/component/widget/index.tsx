@@ -577,8 +577,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],

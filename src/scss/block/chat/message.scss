@@ -11,7 +11,7 @@
 		> .side.left {
 			.iconObject { display: none; }
 		}
-		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; }
+		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; overflow: hidden; }
 	}
 
 	.bubbleOuter { display: flex; flex-direction: column; width: 100%; }
