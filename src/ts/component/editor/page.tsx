@@ -2090,13 +2090,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				from = to = block.getLength();
 
 				keyboard.setFocus(false);
-			} else 
+			} else
 			if (message.caretPosition >= 0) {
 				id = focused;
 				from = to = message.caretPosition;
 			};
 
-			focusSet(id, from, to, !message.isSameBlockCaret);
+			focusSet(id, from, to, id != focused);
 			analytics.event('PasteBlock', { count });
 		});
 	};
@@ -2720,6 +2720,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const width = U.Data.getLayoutWidth(rootId);
 	const readonly = isReadonly();
+	const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+	const isTemplate = U.Object.isTemplateType(object.type);
 
 	return (
 		<div 
@@ -2771,7 +2773,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{S.Common.config.experimental ? (
+				{S.Common.config.experimental && !isTemplate ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}

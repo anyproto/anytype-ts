@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const Tags: { [key: string]: string } = {};
@@ -503,30 +502,38 @@ class Mark {
 		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions and emoji
-		const obj = $(`<div>${html}</div>`);
+		const wrapper = document.createElement('div');
+		wrapper.innerHTML = html;
 
-		obj.find(this.getTag(I.MarkType.Mention)).removeAttr('class').each((i: number, item: any) => {
-			item = $(item);
-			item.html(item.find('name').html());
+		wrapper.querySelectorAll(this.getTag(I.MarkType.Mention)).forEach(item => {
+			item.removeAttribute('class');
+			const nameEl = item.querySelector('name');
+			if (nameEl) {
+				item.innerHTML = nameEl.innerHTML;
+			};
 		});
 
-		obj.find('font').each((i: number, item: any) => {
-			item = $(item);
-			item.replaceWith(item.find('span').html());
+		wrapper.querySelectorAll('font').forEach(item => {
+			const span = item.querySelector('span');
+			if (span) {
+				item.replaceWith(document.createTextNode(span.innerHTML));
+			};
 		});
 
-		obj.find(this.getTag(I.MarkType.Emoji)).removeAttr('class').html(' ');
+		wrapper.querySelectorAll(this.getTag(I.MarkType.Emoji)).forEach(item => {
+			item.removeAttribute('class');
+			item.innerHTML = ' ';
+		});
 
 		// Restore original LaTeX from rendered markuplatex elements
-		obj.find(this.getTag(I.MarkType.Latex)).each((i: number, item: any) => {
-			item = $(item);
-			const original = item.attr('data-latex');
+		wrapper.querySelectorAll(this.getTag(I.MarkType.Latex)).forEach(item => {
+			const original = item.getAttribute('data-latex');
 			if (original) {
 				item.replaceWith(U.String.fromHtmlSpecialChars(original).replace(/&#36;/g, '$'));
 			};
 		});
 
-		return obj;
+		return wrapper;
 	};
 
 	/**
@@ -542,7 +549,7 @@ class Mark {
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
 
-		let text = obj.html();
+		let text = obj.innerHTML;
 
 		text = text.replace(/data-range="[^"]+"/g, '');
 		text = text.replace(/contenteditable="[^"]+"/g, '');

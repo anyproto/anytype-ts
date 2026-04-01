@@ -59,7 +59,10 @@
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
 		
-		.btn.black { color: var(--color-bg-primary); background: rgba(0,0,0,0.5); line-height: 22px; }
+		.btn.black { color: var(--color-text-inversion); background: rgba(0,0,0,0.5); line-height: 22px; }
+		.btn.black {
+			.icon.hasSvg { color: var(--color-text-inversion); }
+		}
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 
 		.btn.withIcon { padding: 0px 8px 0px 6px; }

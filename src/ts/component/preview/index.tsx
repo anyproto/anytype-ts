@@ -95,7 +95,7 @@ const PreviewIndex = observer(forwardRef(() => {
 	useEffect(() => {
 		const handler = (e: any) => {
 			if (e.button === 2) {
-				const preview = document.getElementById('preview');
+				const preview = U.Dom.get('preview');
 				if (preview && preview.contains(e.target)) {
 					$('#preview').hide();
 					Preview.previewHide(true);

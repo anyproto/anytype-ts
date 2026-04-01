@@ -460,7 +460,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		const cell = U.Dom.get(U.Common.esc(Relation.cellId(idPrefix, relation.relationKey, record.id)));
+		const cell = U.Dom.get(Relation.cellId(idPrefix, relation.relationKey, record.id));
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
 

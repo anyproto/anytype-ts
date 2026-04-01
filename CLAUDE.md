@@ -171,6 +171,7 @@ bun run build:pixi
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
+- **Do not change any style or design properties (colors, spacing, sizes, etc.) unless explicitly asked.** Design decisions are intentional — never "fix" or "improve" visual values on your own
 - When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Code Style
@@ -215,6 +216,14 @@ bun run build:pixi
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
+
+### DOM Helpers
+- **Never use raw `document.getElementById()` or `element.querySelector()`** — use `U.Dom` helpers instead:
+  - `U.Dom.get(id)` — wraps `document.getElementById(id)`
+  - `U.Dom.select(selector, root?)` — wraps `root.querySelector(selector)` with error handling
+  - `U.Dom.selectAll(selector, root?)` — wraps `root.querySelectorAll(selector)`
+  - `U.Dom.addClass(el, cn)`, `U.Dom.removeClass(el, cn)`, `U.Dom.hasClass(el, cn)` — class manipulation
+- jQuery (`$`) has been removed from the project. Never use `$()` or import jQuery
 
 ## Directory Documentation
 
@@ -265,6 +274,9 @@ Detailed documentation is available in `docs/` for deeper context on each module
 - [`docs/src/scss/README.md`](docs/src/scss/README.md) - SCSS stylesheets organized to mirror component structure
 - [`docs/src/img/README.md`](docs/src/img/README.md) - Images, icons (SVG), and static assets
 - [`docs/src/json/README.md`](docs/src/json/README.md) - JSON data: translations, constants, colors, keyboard shortcuts
+
+### Code Reviews
+- [`docs/REVIEW-v0.54.11-to-HEAD.md`](docs/REVIEW-v0.54.11-to-HEAD.md) - Review of changes since v0.54.11 stable release
 
 ## Web Mode Development
 

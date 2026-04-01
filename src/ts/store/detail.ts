@@ -570,6 +570,12 @@ class DetailStore {
 			object.name = U.String.shortUrl(object.source);
 		};
 
+		const picture = Relation.getStringValue(object.picture);
+		if (picture && !object.coverId) {
+			object.coverId = picture;
+			object.coverType = I.CoverType.Upload;
+		};
+
 		return object;
 	};
 

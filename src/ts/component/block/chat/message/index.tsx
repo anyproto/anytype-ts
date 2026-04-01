@@ -39,7 +39,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				};
 
 				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
-					el.classList.toggle('isWide', width > 360);
+					U.Dom.toggleClass(el, 'isWide', width > 360);
 				});
 			});
 		});

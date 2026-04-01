@@ -6,7 +6,6 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -143,8 +142,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
 				element: `${element} .icon.plus`,
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+				onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				offsetY: 4,
@@ -183,9 +182,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const more = element.find('.buttons');
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
+		const more = element ? U.Dom.select('.buttons', element) : null;
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
@@ -193,8 +191,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(element, 'active'),
+				onClose: () => U.Dom.removeClass(element, 'active'),
 			});
 		} else {
 			onContext({ node: element, element: more, withElement, subId, objectId: item.id });
@@ -238,6 +236,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...listeners}
 				style={style}
 				onClick={e => U.Object.openEvent(e, item)}
+				onAuxClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left">

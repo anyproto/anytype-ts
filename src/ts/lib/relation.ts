@@ -665,16 +665,8 @@ class Relation {
 
 		const ret: any[] = [
 			{ id: 'none', icon: '', name: translate('commonNone') },
-			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: J.Relation.pageCover, iconParam: { name: 'common/image' }, name: translate('libRelationPageCover') },
 		];
-
-		if (!options.find(it => it.id == 'picture')) {
-			ret.push({
-				id: 'picture',
-				object: { relationFormat: I.RelationType.File, layout: I.ObjectLayout.Relation },
-				name: translate('libRelationPicture'),
-			});
-		};
 
 		return ret.concat(options);
 	};

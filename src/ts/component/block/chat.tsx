@@ -431,6 +431,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
+		subIds = subIds || [];
+
 		const subId = getSubId();
 
 		if (subIds.includes(subId)) {
@@ -861,7 +863,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		raf(() => {
+		const doScroll = () => {
 			const container = U.Dom.getScrollContainer(isPopup);
 			if (!container) {
 				return;
@@ -890,7 +892,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				container.scrollTop = y;
 				cb();
 			};
-		});
+		};
+
+		if (animate) {
+			raf(doScroll);
+		} else {
+			doScroll();
+		};
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
@@ -901,7 +909,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		raf(() => {
+		const doScroll = () => {
 			const y = U.Dom.getMaxScrollHeight(isPopup);
 			const top = U.Dom.getScrollContainerTop(isPopup);
 
@@ -926,7 +934,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					cb();
 				};
 			};
-		});
+		};
+
+		if (animate) {
+			raf(doScroll);
+		} else {
+			doScroll();
+		};
 	};
 
 	const scrollToBottomCheck = () => {

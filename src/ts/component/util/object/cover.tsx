@@ -31,7 +31,7 @@ const ObjectCover: FC<Props> = ({
 				x={coverX}
 				y={coverY}
 				scale={coverScale}
-				withScale={false}
+				withScale={true}
 			/>
 		);
 	} else {

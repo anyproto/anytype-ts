@@ -1,5 +1,4 @@
 
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
 import type { Event } from 'Proto/pb/protos/events';
@@ -204,7 +203,6 @@ class Dispatcher {
 		const traceId = event.traceId;
 		const ctx: string[] = [ event.contextId ];
 		const debugJson = config.flagsMw.json;
-		const win = $(window);
 
 		if (traceId) {
 			ctx.push(traceId);
@@ -801,7 +799,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData`);
+						window.dispatchEvent(new CustomEvent('updateDataviewData'));
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -1309,7 +1307,7 @@ class Dispatcher {
 						};
 					};
 
-					$(window).trigger('reactionUpdate', [ notificationMessage ]);
+					window.dispatchEvent(new CustomEvent('reactionUpdate', { detail: notificationMessage }));
 					break;
 				};
 
@@ -1485,7 +1483,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			$(window).trigger('updateDataviewData');
+			window.dispatchEvent(new CustomEvent('updateDataviewData'));
 		};
 	};
 
@@ -1616,7 +1614,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		$(window).trigger('objectView');
+		window.dispatchEvent(new CustomEvent('objectView'));
 	};
 
 	/**

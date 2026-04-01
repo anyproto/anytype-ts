@@ -334,7 +334,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 
 		if (isPopup) {
-			const popupEl = document.querySelector('.pageMainHistory.isPopup') as HTMLElement;
+			const popupEl = U.Dom.select('.pageMainHistory.isPopup');
 			if (popupEl) {
 				popupEl.style.height = `${height}px`;
 			};

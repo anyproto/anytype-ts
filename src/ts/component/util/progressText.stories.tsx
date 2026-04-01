@@ -16,7 +16,7 @@ const setProgress = (type: I.ProgressType, current: number, total: number) => {
 	S.Progress.listValue = [{
 		id: `storybook-${type}`,
 		type,
-		state: I.ProgressState.InProgress,
+		state: I.ProgressState.Running,
 		current,
 		total,
 		spaceId: '',

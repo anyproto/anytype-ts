@@ -160,12 +160,12 @@
 			padding: 8px 12px; flex-shrink: 0; min-height: 36px;
 		}
 		.formToolbar {
-			.side { display: flex; align-items: center; gap: 0px 12px; }
+			.side { display: flex; align-items: center; gap: 0px 8px; }
 
-			.icon.withBackground { width: 24px; height: 24px; }
+			.icon.withBackground { width: 24px !important; height: 24px !important; }
 			.icon.plus { border-radius: 50%; background-color: var(--color-shape-secondary); }
 
-			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); }
+			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); margin: 0px 4px; }
 
 			.btn.send {
 				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;

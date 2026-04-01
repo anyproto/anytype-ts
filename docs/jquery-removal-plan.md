@@ -8,8 +8,8 @@
 
 | Metric | Start | Now | Target |
 |--------|-------|-----|--------|
-| Files with jQuery | 199 | **184** (down from 211) | 0 |
-| `$(` call sites | ~3,000 | **~1,057** | 0 |
+| Files with jQuery | 199 | **64** | 0 |
+| `$(` call sites | ~3,000 | **~682** | 0 |
 | `dom.ts` jQuery-free | No | **Yes** | Yes |
 | `preview.ts` jQuery-free | No | **Yes** | Yes |
 | `window.$ = $` global | Yes | **Removed** | Removed |
@@ -79,7 +79,28 @@
 | `component/block/dataview/view/graph.tsx` | `.css()`, `.offset()`, `.length` → `U.Dom.css`, `getBoundingClientRect` | — |
 | `lib/onboarding.ts` | `$(window).scrollTop()` → `window.scrollY` | — |
 | `store/common.ts` | `$(window).trigger()` → `dispatchEvent` | — |
-| `lib/util/common.ts` | `$.escapeSelector()` → `CSS.escape()` (in `U.Common.esc`) | — |
+| `lib/util/common.ts` | `$.escapeSelector()` → `CSS.escape()`, `$(decoded)` SVG → `DOMParser` | — |
+| `lib/mark.ts` | `$('<div>')` HTML parsing → `document.createElement` + `querySelectorAll` | — |
+| `lib/api/dispatcher.ts` | `$(window).trigger()` → `dispatchEvent(new CustomEvent(...))` | — |
+| `component/form/button.tsx` | `.hasClass/.toggleClass` → `U.Dom.hasClass/toggleClass` | — |
+| `component/form/editable.tsx` | `.text/.hide/.show/.html/.get(0)` → native, `getNode` returns `HTMLElement` | — |
+| `component/util/media/video.tsx` | `.on/.off` video events → `addEventListener/removeEventListener` | — |
+| `component/menu/dataview/relation/edit.tsx` | `$(window).on/off` + `.addClass/.removeClass` → native | — |
+| `component/menu/graph/settings.tsx` | `$(window).on/off/trigger` + `.find/.text` → native | — |
+| `component/popup/help.tsx` | `$(window).on/off` + `.scrollTop()` → native | — |
+| `component/popup/search.tsx` | `$(window).on/off` + `.find/.addClass/.removeClass` → native | — |
+| `component/popup/objectManager.tsx` | `$(window).on/off` + DOM measuring → native | — |
+| `component/popup/index.tsx` | `$(window).on/off('resize')` + `.addClass/.find/.css` → native | — |
+| `component/preview/object.tsx` | `$(window).on/off` + `.addClass/.removeClass` → native | — |
+| `component/page/elements/head/editor.tsx` | `.parents/.attr/.text` + `.addClass/.removeClass` → native | — |
+| `component/page/elements/tableOfContents.tsx` | `.find/.addClass/.removeClass/.css/.offset/.outerWidth` → native | — |
+| `component/page/main/graph.tsx` | `$(window).on/off/trigger` + `.find/.show/.hide/.css` → native | — |
+| `component/page/main/navigation.tsx` | `$(window).on/off` + `.find/.css/.addClass/.removeClass` → native | — |
+| `component/sidebar/right.tsx` | `$(window).on/off` + `.offset/.outerWidth/.addClass/.removeClass` → native | — |
+| `component/sidebar/page/vault.tsx` | `$(window).on/off` + `.find/.addClass/.removeClass/.width/.scrollTop` → native | — |
+| `component/widget/tree/index.tsx` | `.find/.css/.height/.outerHeight/.toggleClass` → native | — |
+| `component/widget/object.tsx` | `$(element).addClass/removeClass` → `U.Dom.addClass/removeClass` | — |
+| `extension/entry.tsx` | `$('html')/$('body')` DOM creation → `document.createElement` | — |
 
 ### Infrastructure Implemented
 

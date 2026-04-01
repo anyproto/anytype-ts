@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -25,15 +24,19 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const galleryMapRef = useRef(new Map());
 	const nodeRef = useRef(null);
 
+	const resizeHandler = useRef<() => void>(null);
+
 	const unbind = () => {
-		$(window).off('resize.popupPreview keydown.popupPreview');
+		if (resizeHandler.current) {
+			window.removeEventListener('resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-
-		const win = $(window);
-		win.on('resize.popupPreview', () => reload());
+		resizeHandler.current = () => reload();
+		window.addEventListener('resize', resizeHandler.current);
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -48,9 +51,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onDimmer = (e: MouseEvent) => {
-		const target = $(e.target);
-		const isMedia = target.hasClass('mediaContainer') || target.parents('.mediaContainer').length;
-		const isArrow = target.hasClass('swiper-button-prev') || target.hasClass('swiper-button-next');
+		const target = e.target as HTMLElement;
+		const isMedia = U.Dom.hasClass(target, 'mediaContainer') || !!target.closest('.mediaContainer');
+		const isArrow = U.Dom.hasClass(target, 'swiper-button-prev') || U.Dom.hasClass(target, 'swiper-button-next');
 
 		if (!isMedia && !isArrow) {
 			close();
@@ -84,10 +87,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onError = (idx: number) => {
-		const node = $(`#${getId()}-innerWrap`);
-		const wrap = node.find(`#itemPreview-${idx}`);
+		const node = U.Dom.get(`${getId()}-innerWrap`);
+		const wrap = node ? U.Dom.select(`#itemPreview-${idx}`, node) : null;
 
-		if (!wrap.length) {
+		if (!wrap) {
 			return;
 		};
 
@@ -96,8 +99,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		wrap.addClass('brokenMedia');
-		wrap.find('.loader').remove();
+		U.Dom.addClass(wrap, 'brokenMedia');
+		const loader = U.Dom.select('.loader', wrap);
+		if (loader) {
+			loader.remove();
+		};
 
 		obj.isLoaded = true;
 		galleryMapRef.current.set(idx, obj);
@@ -105,33 +111,31 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const getMaxWidthHeight = () => {
 		const { ww, wh } = U.Dom.getWindowDimensions();
-		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
-		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
+		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER) - BORDER * 2;
+		const maxWidth = ww - BORDER * 2;
 
 		return { maxWidth, maxHeight };
 	};
 
 	const resizeMedia = (idx: number, width: number, height: number) => {
 		const { maxWidth, maxHeight } = getMaxWidthHeight();
-		const obj = $(`#${getId()}-innerWrap`);
-		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
+		const node = U.Dom.get(`${getId()}-innerWrap`);
+		const wrap = U.Dom.select(`#itemPreview-${idx} .mediaContainer`, node) as HTMLElement;
 
-		let w = 0, h = 0;
-		if ((width > height) && (height < maxHeight)) {
-			w = Math.min(maxWidth, width);
-			h = w / (width / height);
-		} else {
-			h = Math.min(maxHeight, height);
-			w = h / (height / width);
+		const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+		const w = width * scale;
+		const h = height * scale;
+
+		if (wrap) {
+			wrap.style.width = `${w}px`;
+			wrap.style.height = `${h}px`;
 		};
-
-		wrap.css({ width: w, height: h });
 	};
 
 	const resize = (idx: number) => {
-		const node = $(`#${getId()}-innerWrap`);
-		const element = node.find(`#itemPreview-${idx}`);
-		const loader = element.find('.loader');
+		const node = U.Dom.get(`${getId()}-innerWrap`);
+		const element = U.Dom.select(`#itemPreview-${idx}`, node);
+		const loader = U.Dom.select('.loader', element);
 		const obj = galleryMapRef.current.get(idx);
 		const { src, type, isLoaded, width, height } = obj;
 
@@ -150,7 +154,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					obj.height = img.height;
 					obj.isLoaded = true;
 
-					loader.remove();
+					loader?.remove();
 
 					resizeMedia(idx, obj.width, obj.height);
 					galleryMapRef.current.set(idx, obj);
@@ -169,12 +173,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					break;
 				};
 
-				const video = element.find('video');
-				if (!video.length) {
+				const videoEl = U.Dom.select('video', element) as HTMLVideoElement;
+				if (!videoEl) {
 					break;
 				};
-
-				const videoEl = video.get(0);
 
 				let w = WIDTH_VIDEO;
 				let h = HEIGHT_VIDEO;
@@ -186,15 +188,17 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					obj.isLoaded = true;
 					obj.width = w;
 					obj.height = h;
-					loader.remove();
+					loader?.remove();
 
 					galleryMapRef.current.set(idx, obj);
 					resizeMedia(idx, w, h);
-					video.css({ width: '100%', height: '100%' });
+					videoEl.style.width = '100%';
+					videoEl.style.height = '100%';
 				};
 				videoEl.onerror = () => onError(idx);
 
-				video.css({ width: w, height: h });
+				videoEl.style.width = `${w}px`;
+				videoEl.style.height = `${h}px`;
 				break;
 			};
 		};
@@ -225,7 +229,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
 		const item = gallery.find(el => el.object?.id == current?.id);
 
 		U.Dom.pauseMedia();
@@ -235,7 +238,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (item.type == I.FileType.Video) {
-			const video: any = node.find('.swiper-slide-active video').get(0);
+			const video = U.Dom.select('.swiper-slide-active video', nodeRef.current) as HTMLVideoElement;
 
 			if (video) {
 				video.currentTime = 0;

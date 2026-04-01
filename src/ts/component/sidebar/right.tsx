@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, DragEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 
@@ -55,27 +54,41 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		cn.push('customScrollbar');
 	};
 
+	const mouseMoveHandler = useRef<(e: any) => void>(null);
+	const mouseUpHandler = useRef<(e: any) => void>(null);
+
 	const onResizeStart = (e: DragEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const o = node.offset();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		ox.current = o.left;
-		oy.current = o.top;
+		const rect = node.getBoundingClientRect();
+
+		ox.current = rect.left + window.scrollX;
+		oy.current = rect.top + window.scrollY;
 		sx.current = e.pageX;
-		width.current = node.outerWidth();
+		width.current = node.offsetWidth;
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
-		body.addClass('colResize');
+		U.Dom.addClass(document.body, 'colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', e => onResizeMove(e));
-		win.on('mouseup.sidebar', e => onResizeEnd(e));
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = (e: any) => onResizeMove(e);
+		mouseUpHandler.current = (e: any) => onResizeEnd(e);
+
+		window.addEventListener('mousemove', mouseMoveHandler.current);
+		window.addEventListener('mouseup', mouseUpHandler.current);
 	};
 
 	const onResizeMove = (e: any) => {
@@ -110,8 +123,16 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 		sidebar.setWidth(I.SidebarPanel.Right, isPopup, w, true);
 
-		$('body').removeClass('colResize');
-		$(window).off('mousemove.sidebar mouseup.sidebar');
+		U.Dom.removeClass(document.body, 'colResize');
+
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 	};
 
 	useLayoutEffect(() => {

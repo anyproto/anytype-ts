@@ -114,7 +114,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClear = () => {
-		U.Dom.select('#item-create', nodeRef.current)?.classList.add('disabled');
+		U.Dom.addClass(U.Dom.select('#item-create', nodeRef.current), 'disabled');
 	};
 
 	const remove = () => {

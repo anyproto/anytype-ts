@@ -46,7 +46,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const updateSocialVisibility = useCallback(() => {
 		const loaded = isLoaded.current || !discussionIdRef.current;
 		const shouldHide = !loaded || isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
-		socialRef.current?.classList.toggle('isHidden', shouldHide);
+		U.Dom.toggleClass(socialRef.current, 'isHidden', shouldHide);
 	}, []);
 
 	const setHidden = useCallback((v: boolean) => {
@@ -157,7 +157,9 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 	const onMessageAdd = useCallback((e: any) => {
 		const { message, subIds: eventSubIds } = e.detail;
-		if (!eventSubIds.includes(subId)) {
+		const subIds = eventSubIds || [];
+
+		if (!subIds.includes(subId)) {
 			return;
 		};
 
@@ -199,8 +201,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 			container.scrollTop = Math.max(0, scrollTop);
 
-			el.classList.add('isHighlighted');
-			window.setTimeout(() => el.classList.remove('isHighlighted'), HIGHLIGHT_DURATION);
+			U.Dom.addClass(el as HTMLElement, 'isHighlighted');
+			window.setTimeout(() => U.Dom.removeClass(el as HTMLElement, 'isHighlighted'), HIGHLIGHT_DURATION);
 		}, 100);
 	}, [ isPopup, resize ]);
 
