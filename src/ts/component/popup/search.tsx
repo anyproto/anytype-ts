@@ -817,6 +817,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
 				onClick={e => onClick(e, item)}
+				onAuxClick={e => onClick(e, item)}
 			>
 				{icon}
 				{content}
