@@ -216,6 +216,14 @@ bun run build:pixi
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
 
+### DOM Helpers
+- **Never use raw `document.getElementById()` or `element.querySelector()`** — use `U.Dom` helpers instead:
+  - `U.Dom.get(id)` — wraps `document.getElementById(id)`
+  - `U.Dom.select(selector, root?)` — wraps `root.querySelector(selector)` with error handling
+  - `U.Dom.selectAll(selector, root?)` — wraps `root.querySelectorAll(selector)`
+  - `U.Dom.addClass(el, cn)`, `U.Dom.removeClass(el, cn)`, `U.Dom.hasClass(el, cn)` — class manipulation
+- jQuery (`$`) has been removed from the project. Never use `$()` or import jQuery
+
 ## Directory Documentation
 
 Detailed documentation is available in `docs/` for deeper context on each module:
