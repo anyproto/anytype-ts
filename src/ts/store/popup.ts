@@ -7,7 +7,6 @@ const AUTH_IDS = [ 'settings' ];
 const NO_DIMMER_IDS = [
 	'settingsOnboarding',
 	'shortcut',
-	'page',
 	'export',
 	'phrase',
 	'relation',
