@@ -26,6 +26,12 @@ export enum SpaceType {
 	OneToOne				 = 4,
 };
 
+export enum SpaceCreateType {
+	Personal				 = 0,
+	Group					 = 1,
+	Join					 = 2,
+};
+
 export enum ParticipantPermissions {
 	Reader					 = 0,
 	Writer					 = 1,

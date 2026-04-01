@@ -673,6 +673,11 @@ class Analytics {
 				break;
 			};
 
+			case 'CreateSpace': {
+				data.type = I.SpaceCreateType[Number(data.type) || 0];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

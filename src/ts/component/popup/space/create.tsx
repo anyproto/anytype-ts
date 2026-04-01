@@ -20,9 +20,9 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const { data } = param;
-	const { spaceType } = data;
+	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
-	const isChatSpace = spaceType == I.SpaceType.Chat;
+	const isGroup = type == I.SpaceCreateType.Group;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -45,7 +45,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			name,
 			layout: I.ObjectLayout.SpaceView,
 			iconOption,
-			spaceType,
 		};
 	};
 
@@ -158,7 +157,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 				U.Router.switchSpace(message.objectId, '', true, {
 					onRouteChange: () => {
-						if (isChatSpace) {
+						if (isGroup) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {
 									return;
@@ -174,19 +173,18 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 								});
 
 								if (identities.length) {
-									C.SpaceParticipantsAddList(S.Common.space, identities);
+									C.SpaceParticipantsAddList(S.Common.space, identities, I.ParticipantPermissions.Writer);
 									analytics.event('AddMember', { count: identities.length });
 								};
 							});
 						};
 
 						Action.openSettings('spaceHome', '');
-
 						onCreate?.(message.objectId);
 					}
 				}, false);
 
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, spaceType });
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
 				analytics.event('SelectUsecase', { type: usecase });
 			});
 		});
@@ -206,7 +204,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const object = getObject();
 
 	useEffect(() => {
-		if (isChatSpace) {
+		if (isGroup) {
 			loadMembers();
 		};
 
@@ -226,7 +224,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			setSearch('');
 			filterRef.current?.setValue('');
 
-			if (isChatSpace) {
+			if (isGroup) {
 				analytics.event('ScreenAddMember');
 			};
 		};
@@ -262,11 +260,11 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		);
 	};
 
-	const title = translate(isChatSpace ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
+	const title = translate(isGroup ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
 
 	let stepContent = null;
 
-	if (isChatSpace && (step == 0)) {
+	if (isGroup && (step == 0)) {
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
@@ -344,7 +342,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 						focusOnMount={true}
 					/>
 
-					{isChatSpace ? (
+					{isGroup ? (
 						<div className="membersSection">
 							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
 							<div className="addMembers" onClick={() => setStep(0)}>

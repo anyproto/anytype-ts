@@ -1626,9 +1626,9 @@ class UtilMenu {
 
 	spaceCreate (param: I.MenuParam, route) {
 		const options = [
-			{ id: 'space', iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			{ id: 'chat', iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
-			{ id: 'join', iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
+			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			{ id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
 
 		let prefix = '';
@@ -1651,17 +1651,11 @@ class UtilMenu {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'space': {
-							Action.createSpace(I.SpaceType.Data, route);
+						default:
+							Action.createSpace(item.id, route);
 							break;
-						};
 
-						case 'chat': {
-							Action.createSpace(I.SpaceType.Chat, route);
-							break;
-						};
-
-						case 'join': {
+						case I.SpaceCreateType.Join: {
 							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
 							break;
 						};

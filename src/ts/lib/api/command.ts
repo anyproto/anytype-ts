@@ -1787,10 +1787,11 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	}, callBack);
 };
 
-export const SpaceParticipantsAddList = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+export const SpaceParticipantsAddList = (spaceId: string, identities: string[], permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
 	dispatcher.request('SpaceParticipantsAddList', {
 		spaceId,
 		identities,
+		permissions: permissions as number,
 	}, callBack);
 };
 

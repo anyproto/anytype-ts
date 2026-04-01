@@ -693,9 +693,9 @@ class Action {
 	 * @param {I.SpaceType} spaceType - The UX type for the new space.
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (spaceType: I.SpaceType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string) {
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { spaceType, route } });
+			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
 	};
 
