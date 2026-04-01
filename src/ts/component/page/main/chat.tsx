@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import $ from 'jquery';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -14,10 +15,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const chatRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
+	const ns = `chat${U.Dom.getEventNamespace(isPopup)}`;
 
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const ns = `chat${U.Common.getEventNamespace(isPopup)}`;
-
 	const unbind = () => {
 		$(window).off(`scrollToMessage.${ns}`);
 		keyboard.router.popPageZone(`keydown.${ns}`);

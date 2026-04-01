@@ -1,4 +1,5 @@
-import { I, M, U, Encode, Decode } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 /**
  * Mapper provides bidirectional conversion between protobuf messages
@@ -405,7 +406,7 @@ export const Mapper = {
 				hAlign: obj.align as number,
 				vAlign: obj.verticalAlign as number,
 				bgColor: obj.backgroundColor,
-				content: {} as any,
+				content: {},
 			};
 
 			if (Mapper.From[fm]) {
@@ -611,11 +612,11 @@ export const Mapper = {
 							name: field.name,
 						});
 
-						if (type == I.NotificationType.Import) {
+						if (type === I.NotificationType.Import) {
 							payload.importType = field.importType;
 						};
 
-						if (type == I.NotificationType.Gallery) {
+						if (type === I.NotificationType.Gallery) {
 							payload.spaceName = field.spaceName;
 						};
 						break;
@@ -909,7 +910,7 @@ export const Mapper = {
 			const map = obj?.reactions || {};
 
 			for (const [ emoji, identityList ] of Object.entries(map)) {
-				reactions.push({ icon: emoji, authors: (identityList as any)?.ids || [] });
+				reactions.push({ icon: emoji, authors: (identityList as { ids: string[] })?.ids || [] });
 			};
 
 			return reactions;
@@ -1168,15 +1169,15 @@ export const Mapper = {
 			return {
 				id: obj.id,
 				name: obj.name,
-				type: obj.type as any,
+				type: obj.type as number,
 				coverRelationKey: obj.coverRelationKey,
 				groupRelationKey: obj.groupRelationKey,
 				endRelationKey: obj.endRelationKey,
 				wrapContent: obj.wrapContent,
-				listSize: obj.listSize as any,
+				listSize: obj.listSize as number,
 				groupBackgroundColors: obj.groupBackgroundColors,
 				coverFit: obj.coverFit,
-				cardSize: obj.cardSize as any,
+				cardSize: obj.cardSize as number,
 				hideIcon: obj.hideIcon,
 				pageLimit: obj.pageLimit,
 				relations: obj.relations.map(Mapper.To.ViewRelation),
@@ -1218,7 +1219,7 @@ export const Mapper = {
 
 		InternalFlag: (value: I.ObjectFlag) => {
 			return {
-				value: value as any,
+				value: value as number,
 			};
 		},
 

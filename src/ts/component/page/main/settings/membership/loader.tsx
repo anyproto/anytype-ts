@@ -1,7 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { translate } from 'Lib';
 
 const PageMainSettingsMembershipLoader = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
@@ -10,7 +8,7 @@ const PageMainSettingsMembershipLoader = forwardRef<HTMLDivElement, {}>((props, 
 
 	useEffect(() => {
 		timeoutRef.current = window.setTimeout(() => {
-			$(nodeRef.current).addClass('longWait');
+			U.Dom.addClass(nodeRef.current, 'longWait');
 		}, 5000);
 
 		return () => {

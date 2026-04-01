@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
@@ -12,12 +12,14 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const block = S.Block.getLeaf(rootId, blockId);
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 	};

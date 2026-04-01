@@ -1,7 +1,7 @@
 import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Label } from 'Component';
+import * as I from 'Interface';
 
 interface FilterWithRelation extends I.Filter {
 	relation: any;
@@ -19,8 +19,7 @@ interface Props {
 
 const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { config } = S.Common;
-	const { subId, filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
+	const { subId, filter, readonly, onOver, onClick, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
 
 	if (!relation) {
@@ -147,7 +146,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick={onClick}
 			onContextMenu={onContextMenu}
 		>
-			<Icon className={`relation ${Relation.className(relation.format)}`} />
+			<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 
 			<div className="content">
 				<Label className="name" text={displayName} />
@@ -160,8 +159,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 				) : ''}
 			</div>
 
-			<Icon className="arrow" />
-			{config.experimental ? <Icon className="delete" onClick={onRemove} /> : ''}
+			<Icon name="arrow/button" size={8} className="arrow" />
 		</div>
 	);
 

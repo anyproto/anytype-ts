@@ -7,10 +7,10 @@
 		.wrapContent { z-index: 1; }
 
 		#set-loader { margin: 24px auto; }
-		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+		.icon.plus { width: 20px; height: 20px; }
 		
-		.icon.edit { 
-			display: none; flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
+		.icon.edit {
+			display: none; width: 28px; height: 28px; background-size: 20px; border-radius: 6px;
 			background-color: var(--color-bg-primary); box-shadow: 0px 0px 4px var(--color-shape-highlight-medium);
 			z-index: 1;
 		}
@@ -23,29 +23,21 @@
 
 		.button.expand {
 			&:hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
-			&:hover {
-				.icon { background-image: url('~img/icon/dataview/button/expand1.svg'); }
-			}
 
-			.icon { width: 20px; height: 20px; display: none; background-image: url('~img/icon/dataview/button/expand0.svg'); }
+			.icon { width: 20px; height: 20px; display: none; }
 		}
 
-		.icon.edit { background-image: url('~img/icon/dataview/button/edit0.svg'); }
-		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: var(--color-text-secondary);
 			transition: $transitionAllCommon;
 		}
 		.loadMore {
-			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.icon { width: 20px; height: 20px; }
 			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
 		.loadMore:hover { color: var(--color-text-primary); }
-		.loadMore:hover { 
-			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
-		}
 
 		.dateSelect { padding: 2px 0px 2px 10px; display: flex; flex-direction: row; margin: 0px 0px 12px 0px; justify-content: space-between; }
 		.dateSelect {
@@ -60,13 +52,9 @@
 			.btn { padding: 2px 4px; line-height: 20px; transition: $transitionAllCommon; border-radius: 4px; }
 			.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
-			.icon.arrow { 
-				width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/dateSelect.svg'); border-radius: 4px; 
-				transition: $transitionAllCommon;
-			}
-			.icon.arrow.left { transform: rotateZ(180deg); }
-
-			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.arrow { width: 24px !important; height: 24px !important; }
+			.icon.arrow.left { transform: rotateZ(90deg); }
+			.icon.arrow.right { transform: rotateZ(270deg); }
 		}
 
 		.dataviewEmpty { 
@@ -83,7 +71,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: var(--color-text-primary); }
 		.dataviewHead {
-			.icon.source { background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; flex-shrink: 0; }
+			.icon.source { opacity: 0; }
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
@@ -119,7 +107,6 @@
 						.inner { gap: 0px; height: 100%; }
 						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
 						.line { display: none !important; }
-						.icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
 						.icon.clear { display: none; }
 					}
 					.filter.isActive {
@@ -135,26 +122,20 @@
 					.buttonWrap.withSelect {
 						.button.addRecord { border-radius: 14px 0 0 14px; padding: 0px 4px 0px 12px; }
 						.button.select {
-							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 12px 0px 4px; display: flex; align-items: center; justify-content: center; 
+							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 8px; display: flex; align-items: center; justify-content: center; 
 						}
 						.button.select {
-							.txt { display: none; }
-							&:after { 
-								content: ''; display: block; width: 8px; height: 100%; background: url('~img/arrow/button/white.svg') center no-repeat; flex-shrink: 0;
-							}
+							.icon { margin: 0px; }
 						}
 					}
 				}
 			}
 
 			.icon { position: relative; transition: $transitionAllCommon; }
-			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
-			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+			.icon.btn-filter.on,
+			.icon.btn-sort.on { color: var(--color-system-accent-100); }
 			.icon.btn-filter.on:hover,
 			.icon.btn-sort.on:hover { background-color: var(--color-system-selection) !important; }
-			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
 			.icon.btn-filter {
 				.bullet {
@@ -177,8 +158,8 @@
 				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: var(--color-control-active);
 			}
-			.viewItem { 
-				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+			.viewItem {
+				.icon.arrow { width: 20px; height: 20px; }
 			}
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: var(--color-text-primary); }
@@ -209,9 +190,6 @@
 				}
 				.element {
 					.icon { width: 20px; height: 20px; }
-					.icon.unlink { background-image: url('~img/icon/dataview/selection/unlink.svg'); }
-					.icon.archive { background-image: url('~img/icon/menu/action/remove0.svg'); }
-					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
 				.element:hover { background-color: var(--color-shape-highlight-medium); }
 			}
@@ -231,20 +209,19 @@
 					border-radius: 16px; color: var(--color-text-secondary);
 				}
 				.filterItem {
-					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/dataview/filters/sort.svg'); }
-					.icon.sortArrow.c1 { transform: rotateZ(180deg); }
-					.icon.advanced { width: 20px; height: 20px; background-image: url('~img/icon/dataview/filters/advanced0.svg'); }
-					.icon.relation { width: 20px; height: 20px; flex-shrink: 0; }
-					.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/filterValue0.svg'); }
+					.icon.sortArrow { width: 20px; height: 20px; margin: 0px; transform: rotateZ(180deg); }
+					.icon.sortArrow.c1 { transform: rotateZ(0deg); }
+					.icon.advanced { width: 20px; height: 20px; }
+					.icon.relation { width: 20px; height: 20px; }
+					.icon.arrow { width: 8px; height: 8px; }
 
 					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
 					&.isActive {
 						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
 						.name { font-weight: 500; }
 
-						.icon.advanced { background-image: url('~img/icon/dataview/filters/advanced1.svg'); }
+						.icon.hasSvg { color: var(--color-system-accent-100); }
 						.icon.relation { background-color: var(--color-system-accent-100); }
-						.icon.arrow { background-image: url('~img/arrow/filterValue1.svg'); }
 					}
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); border-color: transparent; }
 
@@ -252,22 +229,13 @@
 					.value { @include text-overflow-nw; }
 
 					.label.condition { text-transform: lowercase; }
-
-					.icon.delete {
-						display: none; position: absolute; right: -4px; top: -4px; width: 16px; height: 16px; border-radius: 50%;
-						background: var(--color-bg-primary) url('~img/icon/menu/delete.svg') 50% 50% / 12px 12px no-repeat; border: 1px solid var(--color-shape-secondary);
-					}
-					.icon.delete:hover { background-color: var(--color-shape-secondary); }
-					&:hover {
-						.icon.delete { display: block; }
-					}
 				}
 
 				.itemAdd { display: flex; align-items: center; height: 28px; gap: 4px; flex-wrap: nowrap; padding: 0px 8px 0px 6px; border-radius: 14px; }
 				.itemAdd {
 					&:hover, &.hover { background-color: var(--color-shape-highlight-medium); }
 
-					.icon.plus { width: 20px; height: 20px; background: url('~img/icon/dataview/filters/plus.svg'); }
+					.icon.plus { width: 20px; height: 20px; }
 					.label { color: var(--color-text-secondary); }
 				}
 
@@ -284,8 +252,8 @@
 		}
 
 		.viewContent {
-			.icon.drag { 
-				z-index: 1; width: 7px; height: 12px; background-image: url('~img/icon/dataview/dnd.svg'); cursor: grab;
+			.icon.drag {
+				z-index: 1; cursor: grab;
 				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 4px; opacity: 0; transition: opacity $transitionCommon;
 			}
 		}
@@ -331,7 +299,7 @@
 	}
 
 	.block.blockDataview.isInline {
-		.wrapMenu > .icon.dnd { height: 60px; }
+		.wrapMenu > .icon.commonDnd { height: 60px; }
 		.dataviewEmpty { 
 			height: auto; padding: 48px 0px; border-top: 1px solid var(--color-shape-secondary); 
 			border-bottom: 1px solid var(--color-shape-secondary); 
@@ -383,7 +351,6 @@
 				display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px 0px;
 			}
 
-			.icon.dragState { width: 58px; height: 58px; background-image: url('~img/icon/chat/dragState.svg'); }
 			.label { @include text-header3; font-weight: 700; color: var(--color-text-tertiary); }
 		}
 	}

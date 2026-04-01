@@ -31,9 +31,8 @@
 			.item.hover::before, .item:hover::before, .item.active::before { background: var(--color-shape-highlight-medium); }
 
             .item {
-				.icon, .iconObject { flex-shrink: 0; }
                 .icon { width: 20px; height: 20px; }
-                .icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+                .icon.logout { width: 22px; height: 22px; }
 
                 .name { @include text-overflow-nw; flex-grow: 1; }
 
@@ -46,7 +45,6 @@
 
             .item.itemAccount { padding: 8px; gap: 0px 12px; align-items: center; }
             .item.itemAccount {
-                .iconObject { flex-shrink: 0; }
                 .name { display: flex; flex-direction: column; justify-content: center; }
                 .name {
                     .userName { @include text-common; @include text-overflow-nw; font-weight: 600; }
@@ -57,7 +55,7 @@
 
         .logout { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 0px 8px; border-radius: 8px; padding: 4px 0px; margin: 0px 8px; }
         .logout {
-            .icon { width: 20px; height: 20px; background-size: 20px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+            .icon { width: 20px; height: 20px; background-size: 20px; }
         }
 		.logout:hover { background-color: var(--color-shape-highlight-medium); }
     }

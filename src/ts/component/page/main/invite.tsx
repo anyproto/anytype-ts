@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Action } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -83,7 +83,7 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		C.SpaceInviteView(cid, key, (message: any) => {
 			U.Space.openDashboardOrVoid({
-				onFadeIn: () => {
+				onRouteChange: () => {
 					window.setTimeout(() => cb(message), J.Constant.delay.popup);
 				},
 			});
@@ -91,13 +91,13 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	};
 
 	const resize = () => {
-		const win = $(window);
-		const obj = U.Common.getPageFlexContainer(isPopup);
-		const node = $(nodeRef.current);
-		const oh = obj.height();
-		const wh = isPopup ? oh : win.height();
+		const obj = U.Dom.getPageFlexContainer(isPopup);
+		const oh = obj?.clientHeight || 0;
+		const wh = isPopup ? oh : window.innerHeight;
 
-		node.css({ height: wh });
+		if (nodeRef.current) {
+			nodeRef.current.style.height = `${wh}px`;
+		};
 		frameRef.current?.resize();
 	};
 

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button } from 'Component';
-import { I, C, S, U, translate, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsImportNotionWarning = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

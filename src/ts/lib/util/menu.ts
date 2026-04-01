@@ -2,9 +2,11 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
-import { Action, analytics, C, Dataview, I, J, keyboard, M, Mark, Preview, Relation, S, sidebar, translate, U, Renderer, focus } from 'Lib';
 import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { focus } from 'Lib/focus';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -91,11 +93,11 @@ class UtilMenu {
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
 	};
-	
+
 	/**
 	 * Returns the list of list block types.
 	 * @returns {any[]} The list of list block types.
@@ -111,7 +113,7 @@ class UtilMenu {
 			{ id: I.TextStyle.ToggleHeader3, lang: 'ToggleHeader3', aliases: [ 'toggle subheading', 'toggled subheading', 'toggle h3', 'toggle heading 3' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
 	};
@@ -122,13 +124,13 @@ class UtilMenu {
 	 */
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image', aliases: [ 'image', 'picture' ] },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video', aliases: [ 'video' ] },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio', aliases: [ 'audio' ] },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
+			{ type: I.BlockType.File, id: I.FileType.File, iconParam: { name: 'menu/block/media/file', color: 'ice' }, lang: 'File', aliases: [ 'file' ] },
+			{ type: I.BlockType.File, id: I.FileType.Image, iconParam: { name: 'menu/block/media/image', color: 'lime' }, lang: 'Image', aliases: [ 'image', 'picture' ] },
+			{ type: I.BlockType.File, id: I.FileType.Video, iconParam: { name: 'menu/block/media/video', color: 'blue' }, lang: 'Video', aliases: [ 'video' ] },
+			{ type: I.BlockType.File, id: I.FileType.Audio, iconParam: { name: 'menu/block/media/audio', color: 'pink' }, lang: 'Audio', aliases: [ 'audio' ] },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, iconParam: { name: 'menu/block/media/pdf', color: 'red' }, lang: 'Pdf', aliases: [ 'pdf' ] },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', iconParam: { name: 'menu/block/common/bookmark', color: 'red' }, lang: 'Bookmark', aliases: [ 'bookmark' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, iconParam: { name: 'menu/block/common/code', color: 'purple' }, lang: 'Code', aliases: [ 'code' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -175,8 +177,9 @@ class UtilMenu {
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
+			const embedName = U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`);
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.iconParam = { name: `menu/block/embed/${embedName}` };
 			return it;
 		});
 	};
@@ -187,9 +190,9 @@ class UtilMenu {
 	 */
 	getBlockLink () {
 		return [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+			{ type: I.BlockType.Page, id: 'existingPage', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', iconParam: { name: 'relation/date' }, lang: 'Date', arrow: true },
 		].map((it: any) => {
 			it = this.mapperBlock(it);
 
@@ -234,12 +237,12 @@ class UtilMenu {
 		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: aliasInline },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: aliasInline },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line', aliases: [ 'hr', 'line divider' ] },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, iconParam: { name: 'menu/block/common/tableOfContents' }, lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, iconParam: { name: 'menu/block/common/table' }, lang: 'SimpleTable', aliases: [ 'table' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', iconParam: { name: 'menu/block/common/collection', color: 'blue' }, lang: 'Collection', aliases: aliasInline },
+			{ type: I.BlockType.Dataview, id: 'set', iconParam: { name: 'menu/block/common/set', color: 'purple' }, lang: 'Set', aliases: aliasInline },
 		].map(this.mapperBlock);
 	};
 
@@ -274,8 +277,8 @@ class UtilMenu {
 	 */
 	getTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot' },
 		].map(this.mapperBlock);
 	};
 
@@ -304,48 +307,48 @@ class UtilMenu {
 		let items: any[] = [];
 
 		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
+			items.push({ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true });
 		};
 
 		if (hasCommon) {
-			items.push({ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true });
+			items.push({ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true });
 		};
 
 		if (hasClipboard) {
 			items = items.concat([
-				{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
-				{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
-				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+				{ id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` },
+				{ id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` },
+				{ id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` },
 			]);
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			items.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') });
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyToClipboard') });
+			items.push({ id: 'copyMedia', iconParam: { name: 'menu/action/clipboard' }, name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
+			items.push({ id: 'copyUrl', iconParam: { name: 'menu/action/clipboard' }, name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
-			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+			items.push({ id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') });
 		};
 
 		if (hasCommon) {
 			items = items.concat([
-				{ id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') },
-				{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+				{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
 			]);
 		};
 
@@ -385,7 +388,7 @@ class UtilMenu {
 		};
 
 		return ret.map((it: any) => {
-			it.icon = U.Data.alignHIcon(it.id);
+			it.iconParam = { name: U.Data.alignHIcon(it.id) };
 			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
 			it.isAlign = true;
 			return it;
@@ -398,7 +401,7 @@ class UtilMenu {
 			{ id: I.BlockVAlign.Middle },
 			{ id: I.BlockVAlign.Bottom },
 		].map((it: any) => {
-			it.icon = U.Data.alignVIcon(it.id);
+			it.iconParam = { name: U.Data.alignVIcon(it.id) };
 			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
 			return it;
 		});
@@ -414,34 +417,8 @@ class UtilMenu {
 		});
 	};
 
-	getLayoutIcon (layout: I.ObjectLayout) {
-		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
-	};
-
-	getLayouts () {
-		return [
-			{ id: I.ObjectLayout.Page },
-			{ id: I.ObjectLayout.Human },
-			{ id: I.ObjectLayout.Task },
-			{ id: I.ObjectLayout.Set },
-			{ id: I.ObjectLayout.File },
-			{ id: I.ObjectLayout.Audio },
-			{ id: I.ObjectLayout.Video },
-			{ id: I.ObjectLayout.Image },
-			{ id: I.ObjectLayout.Pdf },
-			{ id: I.ObjectLayout.Type },
-			{ id: I.ObjectLayout.Relation },
-			{ id: I.ObjectLayout.Note },
-		].map(it => ({ 
-			...it,
-			icon: this.getLayoutIcon(it.id),
-			name: translate(`layout${it.id}`),
-		}));
-	};
-
-	turnLayouts () {
-		const allowed = U.Object.getPageLayouts();
-		return this.getLayouts().filter(it => allowed.includes(it.id));
+	getLayoutIcon (layout: I.ObjectLayout): I.IconParam {
+		return { name: `layout/${I.ObjectLayout[layout].toLowerCase()}` };
 	};
 
 	getViews () {
@@ -463,12 +440,12 @@ class UtilMenu {
 		const views = S.Record.getViews(rootId, blockId);
 
 		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+			{ id: 'edit', iconParam: { name: 'common/options' }, name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') },
 		];
 
 		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+			options.push({ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') });
 		};
 
 		S.Menu.open('select', {
@@ -521,7 +498,7 @@ class UtilMenu {
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
 			it.name = translate(`relationName${it.id}`);
-			it.icon = `relation ${Relation.className(it.id)}`;
+			it.iconParam = { name: Relation.registryName('', it.id) };
 			return it;
 		});
 	};
@@ -618,7 +595,7 @@ class UtilMenu {
 				return w;
 			};
 
-			if (s.toLowerCase() == f.toLowerCase()) {
+			if (s.toLowerCase() === f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
@@ -636,7 +613,7 @@ class UtilMenu {
 
 				let ret = false;
 
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
+				if (c.isBlock && (c.type === I.BlockType.Table)) {
 					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
 					if (match) {
 						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
@@ -854,7 +831,7 @@ class UtilMenu {
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
 			{ id: 'csv', format: I.ImportType.Csv },
-		] as any).map(it => {
+		] as { id: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
 			it.name = names[it.format];
 			return it;
 		});
@@ -952,8 +929,8 @@ class UtilMenu {
 					if (targetSpaceId == S.Common.space) {
 						Action.openSettings(id, route);
 					} else {
-						U.Router.switchSpace(targetSpaceId, '', false, { 
-							onFadeIn: () => Action.openSettings(id, route),
+						U.Router.switchSpace(targetSpaceId, '', false, {
+							onRouteChange: () => Action.openSettings(id, route),
 						}, true);
 					};
 					break;
@@ -980,7 +957,7 @@ class UtilMenu {
 				case 'stopSharing': {
 					S.Popup.open('confirm', {
 						data: {
-							icon: 'noAccessRed',
+							iconParam: { name: 'popup/header/redLock', color: 'red' },
 							title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
 							text: translate(`popupConfirmStopSharingSpaceWarningText`),
 							textConfirm: translate('commonConfirm'),
@@ -1001,7 +978,7 @@ class UtilMenu {
 					this.menuContext?.close(() => {
 						S.Menu.open('widgetSection', {
 							recalcRect: () => {
-								const { ww, wh } = U.Common.getWindowDimensions();
+								const { ww, wh } = U.Dom.getWindowDimensions();
 								return { x: 0, y: 0, width: ww, height: wh };
 							},
 							classNameWrap: 'fixed',
@@ -1038,8 +1015,8 @@ class UtilMenu {
 			if (isSharePage) {
 				if (inviteLink) {
 					sections.general = [
-						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
-						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
 					];
 				};
 
@@ -1054,49 +1031,49 @@ class UtilMenu {
 				};
 			} else {
 				if (!isLoading) {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+					sections.general.push({ id: 'settings', iconParam: { name: 'menu/action/settings' }, name: translate('menuSpaceContextSpaceSettings') });
 				};
 
 				if (!noShare && space.isPrivate) {
-					sections.general.push({ id: 'members', icon: 'inviteMembers', name: translate('commonInviteMembers') });
+					sections.general.push({ id: 'members', iconParam: { name: 'menu/action/inviteMembers' }, name: translate('commonInviteMembers') });
 				};
 
 				if (!noShare && inviteLink) {
 					sections.general = sections.general.concat([
-						{ id: 'link', icon: 'clipboard-copy', name: translate('menuSpaceContextCopyInviteLink') },
-						{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
 					]);
 				};
 
 				if (withPin) {
 					if (space.orderId) {
-						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.general.push({ id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') });
 					} else {
-						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.general.push({ id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') });
 					};
 				};
 
 				if (!space.isPrivate) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.general.push({ id: 'unmute', iconParam: { name: 'menu/action/unmute' }, name: translate('commonUnmute') });
 					} else {
-						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.general.push({ id: 'mute', iconParam: { name: 'menu/action/mute' }, name: translate('commonMute') });
 					};
 				};
 
 				if (withOpenNewTab) {
-					sections.actions.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
+					sections.actions.push({ id: 'openNewTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!noManage) {
-					sections.actions.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
+					sections.actions.push({ id: 'manage', iconParam: { name: 'common/options' }, name: translate('widgetManageSections') });
 				};
 
 				if (withDelete) {
-					const icon = isOwner ? 'remove-red' : 'leave-red';
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'darkRed' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', icon, name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'red' });
 				};
 			};
 
@@ -1148,13 +1125,15 @@ class UtilMenu {
 			return [];
 		};
 
-		const items = U.Common.objectCopy(U.Space.getList()).
-			map(it => {
-				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
-				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
-				it.isPinned = !!it.orderId;
-				return it;
+		const items = U.Space.getList().map(it => {
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				return {
+					...it,
+					counters,
+					hasCounter: counters.mentionCounter || counters.messageCounter,
+					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
+					isPinned: !!it.orderId,
+				};
 			});
 
 		items.sort((c1, c2) => {
@@ -1188,10 +1167,10 @@ class UtilMenu {
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
-			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', layout: I.ObjectLayout.Archive },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin', iconName: 'widget/system/pin' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil', iconName: 'widget/system/pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', iconName: 'widget/system/eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', iconName: 'common/bin', layout: I.ObjectLayout.Archive },
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
@@ -1202,7 +1181,7 @@ class UtilMenu {
 
 		const hasAdvancedFilter = view?.filters?.some(f => f.operator === I.FilterOperator.And);
 		const buttons = (!onAdvancedFilterAdd || hasAdvancedFilter) ? [] : [
-			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), icon: 'advancedFilter' }
+			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), iconParam: { name: 'control/dataview/filter' } }
 		];
 
 		const callBack = (item: any) => {
@@ -1285,8 +1264,8 @@ class UtilMenu {
 	sidebarModeOptions () {
 		return [
 			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
-			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
+		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
 	};
 
 	codeLangOptions (): I.Option[] {
@@ -1298,34 +1277,34 @@ class UtilMenu {
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
-					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, icon: 'comment-header1', name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
-					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, icon: 'comment-header2', name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
-					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, icon: 'comment-header3', name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
 				],
 			},
 			{
 				id: 'list', name: translate('commentSlashMenuLists'),
 				children: [
-					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, icon: 'comment-numbered', name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
-					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, icon: 'comment-bulleted', name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
-					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, icon: 'comment-checkbox', name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
 				],
 			},
 			{
 				id: 'attachments', name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'create', action: 'create', icon: 'comment-createObject', name: translate('commonNewObject'), arrow: true },
-					{ id: 'object', action: 'object', icon: 'comment-plus', name: translate('spaceExisting') },
-					{ id: 'file', action: 'file', icon: 'comment-uploadComputer', name: translate('commonUploadComputer') },
-					{ id: 'embed', action: 'embed', icon: 'comment-embed', name: translate('commentSlashMenuEmbed'), arrow: true },
+					{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
+					{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
+					{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
 				],
 			},
 			{
 				id: 'decorations', name: translate('commentSlashMenuDecorations'),
 				children: [
-					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, icon: 'comment-quote', name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
-					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, icon: 'comment-divider', name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
-					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, icon: 'comment-code', name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 				],
 			},
 		];
@@ -1359,7 +1338,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Long },
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
-		] as any[]).map(it => {
+		] as { id: I.DateFormat; name: string }[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;
 		});
@@ -1413,7 +1392,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1436,7 +1415,7 @@ class UtilMenu {
 
 		const getClipboardData = async () => {
 			let ret = [];
-			try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+			try { ret = await navigator.clipboard.read(); } catch (e) { console.warn('[Menu] clipboard read failed:', e); };
 			return ret;
 		};
 
@@ -1556,7 +1535,7 @@ class UtilMenu {
 
 			if (!flags.noButtons) {
 				buttons.push({ 
-					id: 'add', icon: 'plus', onClick: () => {
+					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
 						this.menuContext?.close();
 
@@ -1567,11 +1546,11 @@ class UtilMenu {
 				});
 
 				if (flags.withImport) {
-					buttons.push({ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true });
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/import' }, name: translate('commonImport'), onClick: onImport, isButton: true });
 				};
 
 				if (items.length) {
-					buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
+					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
 				};
 			};
 
@@ -1615,7 +1594,7 @@ class UtilMenu {
 											cb(object, 0);
 										};
 									};
-								}, route);
+								}, flags.uploadRoute || route);
 							}, S.Menu.getTimeout());
 						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
@@ -1704,20 +1683,19 @@ class UtilMenu {
 		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
 			const suffix = U.String.toUpperCamelCase(id);
+			const description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);;
 
-			let icon = '';
-			let description = '';
-			let withDescription = false;
+			let withDescription = true;
+			let iconParam = { name: `menu/spaceCreate/${id}`, size: 40 };
 
-			if (id != 'join') {
-				icon = id;
-				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
-				withDescription = true;
+			if (id == 'join') {
+				withDescription = false;
+				iconParam = null;
 			};
 
 			return {
 				id,
-				icon,
+				iconParam,
 				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
 				description,
 				withDescription,
@@ -1782,10 +1760,14 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					const value = Boolean(Number(item.id));
+
+					S.Common.vaultMessagesSet(value);
 					if (isClosed) {
 						sidebar.open(I.SidebarPanel.Left, '', );
 					};
+
+					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
 				},
 			},
 		});
@@ -1853,7 +1835,7 @@ class UtilMenu {
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
+		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1866,11 +1848,13 @@ class UtilMenu {
 			value = String(recentEditMode);
 		} else 
 		if (sectionId == I.WidgetSection.Bin) {
-			options = options.concat([
-				{ id: 'openBin', name: translate('commonOpen') },
-				{ id: 'emptyBin', name: translate('commonEmptyBin') },
-				{ isDiv: true },
-			]);
+			options.push({ id: 'openBin', name: translate('commonOpen') });
+
+			if (U.Space.isMyOwner()) {
+				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
+			};
+
+			options.push({ isDiv: true });
 		};
 
 		options.push(toggle);
@@ -2132,7 +2116,7 @@ class UtilMenu {
 											value = String(element.val());
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as any).innerText || '');
+											value = String((element.get(0) as HTMLElement).innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);

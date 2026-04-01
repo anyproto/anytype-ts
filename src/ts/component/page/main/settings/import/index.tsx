@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { Icon, Title, Error } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -41,7 +41,7 @@ const PageMainSettingsImportIndex = observer(forwardRef<I.PageRef, Props>((props
 
 		return (
 			<div className={cn.join(' ')} onClick={() => onClick(item.id)} >
-				<Icon className={`import-${item.id}`} />
+				<Icon name={`import/${item.id}`} size={item.isApp ? 18 : 40} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

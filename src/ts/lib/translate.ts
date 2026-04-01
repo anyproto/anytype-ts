@@ -1,7 +1,8 @@
-import { S, J } from 'Lib';
 import defaultData from 'json/text.json';
 
-const langModules = import.meta.glob('../../dist/lib/json/lang/*.json', { eager: true }) as Record<string, { default: any }>;
+type TranslationData = Record<string, string>;
+
+const langModules = import.meta.glob('../../dist/lib/json/lang/*.json', { eager: true }) as Record<string, { default: TranslationData }>;
 
 /**
  * Translates a key to display text in the user's language.
@@ -13,14 +14,14 @@ const langModules = import.meta.glob('../../dist/lib/json/lang/*.json', { eager:
 export const translate = (key: string, force?: string): string => {
 	const lang = force || S.Common.interfaceLang;
 
-	let data: any = defaultData;
+	let data: TranslationData = defaultData as TranslationData;
 	if (lang != J.Constant.default.interfaceLang) {
 		const langPath = `../../dist/lib/json/lang/${lang}.json`;
 		const mod = langModules[langPath];
 		if (mod) {
-			data = mod.default || mod;
+			data = (mod.default || mod) as TranslationData;
 		};
 	};
 
-	return data[key] || (defaultData as any)[key] || `⚠️${key}⚠️`;
+	return data[key] || (defaultData as TranslationData)[key] || `⚠️${key}⚠️`;
 };

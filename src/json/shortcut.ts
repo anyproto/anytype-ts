@@ -1,4 +1,4 @@
-import { U, translate, keyboard, Storage } from 'Lib';
+import Storage from 'Lib/storage';
 
 const getSections = () => {
 	const isMac = U.Common.isPlatformMac();
@@ -189,7 +189,7 @@ const getSections = () => {
 				{
 					name: translate('popupShortcutMarkdownWhileTyping'),
 					children: [
-						{ name: translate('popupShortcutMarkdownWhileTyping1'), text: '` `' },
+						{ name: translate('popupShortcutMarkdownWhileTyping1'), text: '`' },
 						{ name: translate('popupShortcutMarkdownWhileTyping2'), text: `_ _ ${or} * *` },
 						{ name: translate('popupShortcutMarkdownWhileTyping3'), text: `_ ${or} *` },
 						{ name: translate('popupShortcutMarkdownWhileTyping4'), text: '~ ~' },

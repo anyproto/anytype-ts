@@ -1,8 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard, FocusedPanel, GroupDirection } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
+import { FocusedPanel } from 'Lib/keyboard/router';
+import { GroupDirection } from 'Lib/keyboard/navigation';
 import { useKeyboardGroup } from 'Hook';
 
 interface Props {
@@ -49,13 +51,15 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		itemSelector: '.btn',
 	});
 
+	const resizeHandler = useRef(() => resize());
+
 	const rebind = () => {
 		unbind();
-		$(window).on('resize.controlButtons', () => resize());
+		window.addEventListener('resize', resizeHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('resize.controlButtons');
+		window.removeEventListener('resize', resizeHandler.current);
 	};
 
 	const onIconHandler = (e: any) => {
@@ -87,7 +91,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		e.stopPropagation();
 
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
-		const element = $(e.currentTarget);
+		const element = e.currentTarget as HTMLElement;
 		const { coverType, coverId } = object;
 		const hasCover = coverType != I.CoverType.None;
 		
@@ -97,17 +101,17 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		};
 
 		const options: any[] = [
-			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
+			{ id: 'change', iconParam: { name: 'common/image' }, name: translate('pageHeadControlButtonsChangeCover') },
 		];
 		if (U.Data.coverIsImage(coverType)) {
-			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
+			options.push({ id: 'position', iconParam: { name: 'control/cover/position' }, name: translate('pageHeadControlButtonsReposition') });
 		};
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType) && coverId) {
-			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') });
 		};
 
 		if (hasCover) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
+			options.push({ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonRemove') });
 		};
 
 		S.Menu.open('select', {
@@ -207,8 +211,8 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	};
 
 	const resize = () => {
-		const { ww } = U.Common.getWindowDimensions();
-		$(nodeRef.current).toggleClass('small', ww <= 900);
+		const { ww } = U.Dom.getWindowDimensions();
+		U.Dom.toggleClass(nodeRef.current, 'small', ww <= 900);
 	};
 
 	const { allowedIcon, allowedLayout, allowedCover, allowedDescription, allowedPrefillName } = getAllowedButtons();
@@ -236,35 +240,35 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		>
 			{allowedIcon ? (
 				<div id="button-icon" className="btn white withIcon" onClick={onIconHandler}>
-					<Icon className="icon" />
+					<Icon name="control/editor/icon" />
 					<div className="txt">{translate(`editorControlIcon${Number(check.withIcon)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedCover ? (
 				<div id="button-cover" className="btn white withIcon" onClick={onCoverHandler}>
-					<Icon className="addCover" />
+					<Icon name="control/editor/cover" />
 					<div className="txt">{translate(`editorControlCover${Number(check.withCover)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedDescription ? (
 				<div id="button-description" className="btn white withIcon" onClick={onDescriptionHandler}>
-					<Icon className="description" />
+					<Icon name="control/editor/description" />
 					<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedPrefillName ? (
 				<div id="button-prefill-name" className="btn white withIcon" onClick={onPrefillNameHandler}>
-					<Icon className="preFillName" />
+					<Icon name="control/editor/preFillName" />
 					<div className="txt">{translate(`editorControlPrefillName${prefillType}`)}</div>
 				</div>
 			) : ''}
 
 			{allowedLayout ? (
 				<div id="button-layout" className="btn white withIcon small" onClick={onLayoutHandler}>
-					<Icon className="layout" />
+					<Icon name="control/editor/layout" />
 					{hasConflict ? <div className="dot" /> : ''}
 				</div>
 			) : ''}

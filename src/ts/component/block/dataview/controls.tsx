@@ -7,8 +7,10 @@ import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordin
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter, DropTarget } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
@@ -362,12 +364,14 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		keyboard.disableSelection(false);
 	};
 
+	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
+
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
 		};
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const win = $(window);
 
 		filterRef.current.setActive(true);
@@ -377,14 +381,20 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			filterRef.current?.focus();
 		};
 
-		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+		if (filterMouseDownHandler.current && container) {
+			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+		};
+
+		filterMouseDownHandler.current = (e: any) => {
 			const value = filterRef.current.getValue();
 
 			if (!value && !$(e.target).parents(`.filter`).length) {
 				onFilterHide();
-				container.off('mousedown.filter');
+				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
 			};
-		});
+		};
+
+		container?.addEventListener('mousedown', filterMouseDownHandler.current);
 
 		keyboard.router.popMenuZone('keydown.filter');
 		keyboard.router.pushMenuZone('keydown.filter', (e) => {
@@ -455,9 +465,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
-		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
+		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
+		{ id: 'sort', name: 'common/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
 	const ButtonItem = (item: any) => {
@@ -471,6 +481,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		return (
 			<Icon
 				id={elementId}
+				name={item.name}
 				className={cn.join(' ')} withBackground={true}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
@@ -518,9 +529,11 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	useEffect(() => {
 
 		return () => {
-			const container = U.Common.getPageFlexContainer(isPopup);
+			const container = U.Dom.getPageFlexContainer(isPopup);
 
-			container.off('mousedown.filter');
+			if (filterMouseDownHandler.current && container) {
+				container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			};
 			keyboard.router.popMenuZone('keydown.filter');
 		};
 
@@ -552,7 +565,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						onContextMenu={(e: any) => onViewContext(e, `#block-${U.Common.esc(block.id)} #view-selector`, view)}
 					>
 						<div className="name">{view.name}</div>
-						<Icon className="arrow dark" />
+						<Icon name="arrow/select" className="arrow dark" />
 					</div>
 
 					<DndContext
@@ -572,9 +585,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								))}
 
 								{allowedView ? (
-									<Icon 
-										id={`button-${block.id}-view-add`} 
-										className="plus" withBackground={true}
+									<Icon
+										id={`button-${block.id}-view-add`}
+										name="plus/menu" className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -588,7 +601,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						ref={filterRef}
 						className="underlined"
 						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ className: 'search', withBackground: true }}
+						iconParam={{ name: 'common/search' }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
 						onChange={onFilterChange}
 						onIconClick={onFilterShow}
@@ -613,6 +626,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								<Button
 									id={`button-${block.id}-add-record-select`}
 									color="accent"
+									iconParam={{ name: 'arrow/button', color: 'white', size: 8 }}
 									className="select"
 									size={28}
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
-import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
@@ -58,7 +58,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 		if (spaceview.isChat || spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
-				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				element: U.Dom.select(`.header ${element}`, U.Dom.getScrollContainer(isPopup)),
 				className: 'fixed',
 				classNameWrap: 'fromHeader',
 				horizontal: I.MenuDirection.Right,
@@ -111,39 +111,39 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				<Icon
 					id="button-header-search"
 					tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText'), typeY: I.MenuDirection.Bottom }}
-					className="search" withBackground={true}
+					name="header/search" withBackground={true}
 					onClick={() => keyboard.onSearchText('', analytics.route.header)}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 
 				{showPin ? (
-					<Icon 
-						id="button-header-pin" 
-						tooltipParam={{ 
-							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
-							caption: keyboard.getCaption('addFavorite'), 
+					<Icon
+						id="button-header-pin"
+						tooltipParam={{
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'),
+							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={hasWidget ? 'unpin' : 'pin'} withBackground={true}
+						name={hasWidget ? 'header/pin1' : 'header/pin0'} withBackground={true}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 
 				{showRelations ? (
 					<Icon
 						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')} withBackground={true}
+						name="header/relation" className={rightSidebar.page == 'object/relation' ? 'active' : ''} withBackground={true}
 						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}
 
-				<Icon 
+				<Icon
 					id="button-header-more"
 					tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-					className="more" withBackground={true}
+					name="common/more" withBackground={true}
 					onClick={onMore}
 					onDoubleClick={e => e.stopPropagation()}
 				/>

@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, J, S, U, C, Mark, translate, Action, analytics } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -29,6 +28,7 @@ const CommentPost = observer((props: Props) => {
 	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
+	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
@@ -57,72 +57,69 @@ const CommentPost = observer((props: Props) => {
 			return;
 		};
 
-		const el = $(node);
-
 		// Mentions
-		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Mention), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
 		// Links
-		el.find('a').each((_i: number, item: any) => {
-			item = $(item);
-			const href = String(item.attr('href') || item.attr('data-param') || '');
+		U.Dom.selectAll('a', node).forEach((item: HTMLElement) => {
+			const href = String(item.getAttribute('href') || item.getAttribute('data-param') || '');
 			if (!href) {
 				return;
 			};
 
-			item.off('click.link').on('click.link', (e: any) => {
+			item.onclick = (e: any) => {
 				e.preventDefault();
 				Action.openUrl(href);
-			});
+			};
 		});
 
 		// Object marks
-		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Object), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.object').on('mousedown.object', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
 		// Emoji marks — render as cross-platform images
-		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
-			item = $(item);
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
+			const emojiId = item.getAttribute('data-param');
+			const smile = U.Dom.select('smile', item);
 
-			const id = item.attr('data-param');
-			const smile = item.find('smile');
-
-			if (smile.length) {
+			if (smile) {
 				// Clear native emoji text, keep only the smile mount point
-				item.contents().filter(function () { return this.nodeType === 3; }).remove();
+				Array.from(item.childNodes).forEach(child => {
+					if (child.nodeType === 3) {
+						child.remove();
+					};
+				});
 
-				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+				const container = smile as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
 	}, [ isEditing, parts, subId ]);
@@ -362,14 +359,21 @@ const CommentPost = observer((props: Props) => {
 		C.ChatToggleMessageReaction(targetId, id, icon);
 	}, [ targetId, id, reactions ]);
 
+	const setHover = useCallback((v: boolean) => {
+		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
+	}, []);
+
 	const onReaction = useCallback((e: React.MouseEvent) => {
+		setHover(true);
+
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			noAnimation: true,
+			onClose: () => setHover(false),
 			data: {
 				noHead: true,
 				noUpload: true,
@@ -379,24 +383,25 @@ const CommentPost = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ targetId, id, onReactionSelect ]);
+	}, [ targetId, id, onReactionSelect, setHover ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
-		const element = $(e.currentTarget);
-
+		const element = e.currentTarget as HTMLElement;
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
-		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), icon: 'link' });
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
+		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
 		};
+
+		setHover(true);
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
@@ -404,6 +409,7 @@ const CommentPost = observer((props: Props) => {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onClose: () => setHover(false),
 			data: {
 				options: menuItems,
 				onSelect: (e: any, item: any) => {
@@ -416,7 +422,7 @@ const CommentPost = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete ]);
+	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete, setHover ]);
 
 	const getAttachments = useCallback((): any[] => {
 		return (message.attachments || [])
@@ -530,9 +536,9 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				{canReact ? <Icon className="reaction" withBackground={true} onClick={onReaction} /> : null}
-				<Icon className="reply" withBackground={true} onClick={onReply} />
-				<Icon className="more" withBackground={true} onClick={onMenuClick} />
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				<Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} />
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
@@ -541,20 +547,22 @@ const CommentPost = observer((props: Props) => {
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
-			{renderHoverActions()}
-
-			<IconObject
-				object={{ ...author, layout: I.ObjectLayout.Participant }}
-				size={32}
-			/>
-
-			<div className="postInner">
+			<div ref={contentWrapRef} className="contentWrap">
 				<div className="head">
-					<div className="author">
-						<ObjectName object={author} withBadge={true} />
+					<div className="side left">
+						<IconObject
+							object={{ ...author, layout: I.ObjectLayout.Participant }}
+							size={20}
+						/>
+						<div className="author">
+							<ObjectName object={author} withBadge={true} />
+						</div>
+						<div className="date">
+							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						</div>
 					</div>
-					<div className="date">
-						{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+					<div className="side right">
+						{renderHoverActions()}
 					</div>
 				</div>
 

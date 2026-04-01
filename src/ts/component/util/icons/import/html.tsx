@@ -1,0 +1,12 @@
+import React from 'react';
+
+const Html = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M4 2C4 0.895431 4.89543 0 6 0H34C35.1046 0 36 0.895431 36 2V38C36 39.1046 35.1046 40 34 40H6C4.89543 40 4 39.1046 4 38V2Z" fill="black" fillOpacity="0.05" />
+		<path d="M16 16L11.9761 19.2191C11.4757 19.6195 11.4757 20.3805 11.9761 20.7809L16 24" stroke="#00bba7" strokeWidth="1.5" />
+		<path d="M24 16L28.0239 19.2191C28.5243 19.6195 28.5243 20.3805 28.0239 20.7809L24 24" stroke="#00bba7" strokeWidth="1.5" />
+		<path d="M21.5 13L18.5 27" stroke="#00bba7" strokeWidth="1.5" strokeLinecap="round" />
+	</svg>
+);
+
+export default Html;

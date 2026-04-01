@@ -1,7 +1,8 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
-import { I, C, S, U, Storage, translate, } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -64,7 +65,7 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		case 'info': {
 			content = (
 				<>
-					<Icon className="close" withBackground={true} onClick={() => setScreen('init')} />
+					<Icon name="common/close" withBackground={true} onClick={() => setScreen('init')} />
 
 					<div className="items">
 						<div className="item">

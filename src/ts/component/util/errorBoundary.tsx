@@ -1,5 +1,4 @@
 import React, { Component, ReactNode } from 'react';
-import { U, translate } from 'Lib';
 import { Frame, Button, Label, Icon } from 'Component';
 
 interface Props {
@@ -48,7 +47,7 @@ class ErrorBoundary extends Component<Props, State> {
 
 		return (
 			<Frame className="errorBoundary">
-				<Icon className="errorBoundaryIcon" />
+				<Icon name="common/alert" color="red" className="errorBoundaryIcon" size={56} />
 				<Label className="title" text={translate('errorBoundaryTitle')} />
 				<Label className="description" text={translate('errorBoundaryDescription')} />
 

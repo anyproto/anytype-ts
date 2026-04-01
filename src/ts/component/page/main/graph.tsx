@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, sidebar } from 'Lib';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
+import * as I from 'Interface';
 
 const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -13,6 +13,10 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const graphRef = useRef(null);
 	const rootIdRef = useRef('');
 	const key = J.Constant.graphId.global;
+
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const graphRootHandler = useRef<(e: any) => void>(null);
+	const sidebarResizeHandler = useRef<() => void>(null);
 
 	const unbind = () => {
 		const events = [ 'updateGraphRoot', 'sidebarResize' ];
@@ -30,7 +34,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => U.Dom.get('button-header-search')?.click());
 	};
 
 	const load = () => {
@@ -50,31 +54,37 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const setLoading = (v: boolean) => {
-		const node = $(nodeRef.current);
-		const loader = node.find('#loader');
+		const loader = U.Dom.select('#loader', nodeRef.current);
+		if (!loader) {
+			return;
+		};
 
 		if (v) {
-			loader.show().css({ opacity: 1 });
+			loader.style.display = '';
+			loader.style.opacity = '1';
 		} else {
-			loader.css({ opacity: 0 });
-			window.setTimeout(() => loader.hide(), 200);
+			loader.style.opacity = '0';
+			window.setTimeout(() => { loader.style.display = 'none'; }, 200);
 		};
 	};
 
 	const resize = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-		const obj = U.Common.getPageContainer(isPopup);
-		const node = $(nodeRef.current);
-		const wrapper = obj.find('.wrapper');
-		const header = node.find('#header');
-		const height = container.height() - header.height();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const obj = U.Dom.getPageContainer(isPopup);
+		const node = nodeRef.current;
+		const wrapper = obj?.querySelector('.wrapper') as HTMLElement;
+		const header = node?.querySelector('#header') as HTMLElement;
+		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
-		wrapper.css({ height });
-		
+		if (wrapper) {
+			wrapper.style.height = `${height}px`;
+		};
+
 		if (isPopup) {
-			const element = $('#popupPage .content');
-			if (element.length) {
-				element.css({ minHeight: 'unset', height: '100%' });
+			const element = U.Dom.select('#popupPage .content');
+			if (element) {
+				element.style.minHeight = 'unset';
+				element.style.height = '100%';
 			};
 		};
 

@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import raf from 'raf';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -45,8 +45,10 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		$(nodeRef.current).css({ height: container.height() });
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (nodeRef.current && container) {
+			nodeRef.current.style.height = `${container.clientHeight}px`;
+		};
 	};
 
 	useEffect(() => {

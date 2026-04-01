@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
+import * as I from 'Interface';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -25,6 +24,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const uxTypeRef = useRef(null);
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
+	const keydownHandlerRef = useRef<((e: any) => void) | null>(null);
 
 	if (isEditing) {
 		cnh.push('isEditing');
@@ -153,7 +153,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		S.Popup.open('confirm', {
 			onClose: onCancel,
 			data: {
-				icon: 'warning-red',
+				iconParam: { name: 'popup/header/warning', color: 'red' },
 				title: translate('popupConfirmUxTypeChangeTitle'),
 				text: translate('popupConfirmUxTypeChangeText'),
 				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
@@ -183,29 +183,32 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const getButtons = (): any[] => {
-		if (!invite.cid || !invite.key) {
-			return [];
-		};
-
 		return [
-			{ id: 'invite', name: translate('commonAdd'), icon: 'invite' },
-			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
-			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
-		];
+			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
+			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
+			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
+		].map((el: any) => {
+			el.isDisabled = !invite.cid || !invite.key;
+			return el;
+		});
 	};
 
 	const updateCounters = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const { name, nameThreshold } = J.Constant.limit.space;
-		const el = node.find('.spaceNameWrapper .counter');
+		const el = U.Dom.select('.spaceNameWrapper .counter', node);
 		const counter = name - nameRef.current?.getTextValue().length;
 		const canSave = counter >= 0;
 
-		el.text(counter).toggleClass('show', counter <= nameThreshold);
-		el.toggleClass('red', !canSave);
+		if (el) {
+			el.textContent = String(counter);
+			U.Dom.toggleClass(el, 'show', counter <= nameThreshold);
+			U.Dom.toggleClass(el, 'red', !canSave);
+		};
 
 		canSaveRef.current = canSave;
-		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
+		const saveBtn = U.Dom.select('.spaceHeader .buttonSave', node);
+		U.Dom.toggleClass(saveBtn, 'disabled', !canSave);
 	};
 
 	const buttons = getButtons();
@@ -252,6 +255,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		init();
 
 		return () => {
+			if (keydownHandlerRef.current) {
+				window.removeEventListener('keydown', keydownHandlerRef.current);
+				keydownHandlerRef.current = null;
+			};
 			S.Menu.closeAll([ 'select', 'searchObject' ]);
 		};
 	});
@@ -310,10 +317,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div 
 						key={i} 
 						id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)} 
-						className="btn" 
+						className={[ 'btn', (item.isDisabled ? 'disabled' : '') ].join(' ')}
 						onClick={e => onClick(e, item)}
 					>
-						<Icon className={item.icon} />
+						<Icon {...(item.iconParam || {})} className={item.id} />
 						<Label text={item.name} />
 					</div>
 				))}
@@ -329,7 +336,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className={`settings-ux${spaceview.uxType}`} />
+											<Icon name={spaceview.uxType == I.SpaceUxType.Chat ? 'settings/space/chat' : 'settings/space/space'} className={`settings-ux${spaceview.uxType}`} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
@@ -357,7 +364,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
-											<Icon className="home" />
+											<Icon name="settings/home" />
 
 											<div className="side left">
 												<Title text={translate('commonHomepage')} />
@@ -369,7 +376,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 													<div className="item">
 														<div className="name">{home ? home.name : translate('commonSelect')}</div>
 													</div>
-													<Icon className="arrow black" />
+													<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 												</div>
 											</div>
 										</div>
@@ -378,7 +385,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 
 								<div className="item">
 									<div className="sides">
-										<Icon className="type" />
+										<Icon name="settings/type" className="type" />
 
 										<div className="side left">
 											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
@@ -390,7 +397,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 												<div className="item">
 													<div className="name">{type?.name || translate('commonSelect')}</div>
 												</div>
-												<Icon className="arrow black" />
+												<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 											</div>
 										</div>
 									</div>

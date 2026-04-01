@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
-import { J, analytics, I, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	
@@ -12,6 +12,7 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	const valueRef = useRef('');
 	const [ dummy, setDummy ] = useState(0);
 	const rangeRef = useRef<I.TextRange>(null);
+	const prevObjectId = useRef(object?.id);
 
 	const getRelationKey = (): string => {
 		switch (id) {
@@ -155,12 +156,22 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	}, []);
 
 	useEffect(() => {
-		setValue();
+		if (!nameRef.current?.isFocused()) {
+			setValue();
+		};
 	});
 
 	useEffect(() => {
-		rangeRef.current = null;
-		setValue();
+		const objectChanged = object?.id !== prevObjectId.current;
+
+		if (objectChanged) {
+			prevObjectId.current = object?.id;
+		};
+
+		if (objectChanged || !nameRef.current?.isFocused()) {
+			rangeRef.current = null;
+			setValue();
+		};
 	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({

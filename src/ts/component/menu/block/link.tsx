@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -13,7 +14,7 @@ const LIMIT_HEIGHT = 6;
 
 const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setActive, onKeyDown, getId, position } = props;
+	const { param, close, setActive, onKeyDown, getId, getContainer, position } = props;
 	const { data } = param;
 	const { type, onChange, filter, onClear, skipIds } = data;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -57,12 +58,14 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filter ]);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 	};
@@ -96,7 +99,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const sections: any[] = [];
 
 		if (urls.length) {
-			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', url: urls[0] });
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), iconParam: { name: 'common/link' }, url: urls[0] });
 		};
 
 		if (items.length) {
@@ -105,7 +108,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), iconParam: { name: 'plus/menu' } },
 			] 
 		});
 
@@ -224,7 +227,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const contentEl = U.Dom.select('.content', getContainer());
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;
@@ -232,7 +235,14 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height += items.reduce((res: number, item: any) => res + getRowHeight(item), offset);
 		};
 
-		obj.css({ height }).toggleClass('initial', !filter);
+		U.Dom.css(contentEl, { height: `${height}px` });
+
+		if (!filter) {
+			U.Dom.addClass(contentEl, 'initial');
+		} else {
+			U.Dom.removeClass(contentEl, 'initial');
+		};
+
 		position();
 	};
 
@@ -270,6 +280,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					id={item.id}
 					object={object}
 					icon={item.icon}
+					iconParam={item.iconParam}
 					name={<ObjectName object={item} withPlural={true} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}

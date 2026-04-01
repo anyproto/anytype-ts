@@ -53,7 +53,7 @@ export const WithValue: Story = {
 
 export const WithIcon: Story = {
 	args: {
-		iconParam: { className: 'search' },
+		iconParam: { name: 'common/search' },
 		placeholder: 'Search...',
 	},
 };

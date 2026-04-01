@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, Dataview } from 'Lib';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;

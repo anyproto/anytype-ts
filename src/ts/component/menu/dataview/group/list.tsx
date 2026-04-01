@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -7,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Switch, Cell } from 'Component';
-import { I, C, S, J, Dataview, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -20,7 +19,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const view = getView();
 	const block = S.Block.getLeaf(rootId, blockId);
 	const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-	const cache = useRef({});
+	const cache = useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
 	const n = useRef(-1);
@@ -123,10 +122,10 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
@@ -159,7 +158,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{...listeners}
 				style={style}
 			>
-				{allowedView ? <Icon className="dnd" /> : ''}
+				{allowedView ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable">
 					<Cell 
 						id={`menu-group-${item.id}`} 
@@ -185,6 +184,14 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		);
 	};
 	
+	if (!cache.current) {
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+	};
+
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
 

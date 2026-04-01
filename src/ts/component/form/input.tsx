@@ -3,7 +3,9 @@ import React, {
 } from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, U, keyboard, FocusedPanel } from 'Lib';
+import * as I from 'Interface';
+import { keyboard } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
 
 type InputSize = 28 | 36 | 40;
 
@@ -279,7 +281,7 @@ const Input = forwardRef<InputRef, Props>(({
 		});
 
 		clone.text(value.substring(0, selectionRange.to));
-		const rect = U.Common.getElementRect(clone.get(0));
+		const rect = U.Dom.getElementRect(clone.get(0));
 
 		clone.remove();
 		return rect;

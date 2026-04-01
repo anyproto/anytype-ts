@@ -1,10 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
-import { I, U, translate } from 'Lib';
 
 import FormatPage from './format/page';
 import FormatList from './format/list';
+import * as I from 'Interface';
 
 const Components = [
 	FormatPage,
@@ -68,7 +68,7 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 		return ret.map(id => {
 			return {
 				id,
-				icon: U.Menu.getLayoutIcon(id),
+				iconParam: U.Menu.getLayoutIcon(id),
 				name: translate(`layout${id}`),
 			};
 		});

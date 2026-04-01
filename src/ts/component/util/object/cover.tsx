@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Cover, MediaAudio, MediaVideo } from 'Component';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	object: any;
@@ -49,7 +49,7 @@ const ObjectCover: FC<Props> = ({
 						playlist={[ 
 							{ name: U.File.name(name), src: S.Common.fileUrl(id) },
 						]} 
-						getScrollContainer={() => U.Common.getScrollContainer(isPopup)} 
+						getScrollContainer={() => U.Dom.getScrollContainer(isPopup)} 
 					/>
 				);
 				break;

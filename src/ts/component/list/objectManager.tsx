@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { I, S, U, J, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	isPopup?: boolean;
@@ -54,7 +54,7 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 
 	const Button = (item: any) => (
 		<div className="element" onClick={item.onClick}>
-			<Icon className={item.icon} />
+			{item.iconParam ? <Icon {...item.iconParam} /> : <Icon className={item.icon} />}
 			<div className="name">{item.text}</div>
 		</div>
 	);
@@ -113,14 +113,15 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const [ dummy, setDummy ] = useState(0);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
-	const scrollContainer = scrollElement || U.Common.getScrollContainer(isPopup).get(0);
+	const scrollContainer = scrollElement || U.Dom.getScrollContainer(isPopup);
 
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
 		};
 
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const containerEl = U.Dom.getPageFlexContainer(isPopup);
+		const container = containerEl ? $(containerEl) : $();
 		const win = $(window);
 
 		$(filterWrapperRef.current).addClass('active');
@@ -296,10 +297,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		let buttonsList: I.ButtonComponent[] = [];
 
 		if (selected.current.length) {
-			buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox1' }, text: translate('commonDeselectAll'), onClick: onSelectAll });
 			buttonsList = buttonsList.concat(buttons);
 		} else {
-			buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
+			buttonsList.push({ iconParam: { name: 'common/checkbox0' }, text: translate('commonSelectAll'), onClick: onSelectAll });
 		};
 
 		return buttonsList;
@@ -346,7 +347,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					onChange={e => onClick(e, item)}
 				/>
 			)}
-			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)}>
+			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)} onAuxClick={e => U.Object.openEvent(e, item)}>
 				<IconObject object={item} size={iconSize} />
 
 				<div className="info">
@@ -386,7 +387,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					<Buttons ref={buttonsRef} buttons={getButtons()} />
 				</div>
 				<div className="side right">
-					<Icon className="search" onClick={onFilterShow} />
+					<Icon name="common/search" onClick={onFilterShow} />
 
 					<div ref={filterWrapperRef} id="filterWrapper" className="filterWrapper">
 						<Filter
@@ -481,7 +482,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 		return () => {
 			window.clearTimeout(timeout.current);
-			U.Common.getPageFlexContainer(isPopup).off('mousedown.filter');
+			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
+			if (cleanupEl) {
+				$(cleanupEl).off('mousedown.filter');
+			};
 			keyboard.router.popMenuZone('keydown.filter');
 			checkboxRef.current.clear();
 		};
@@ -511,7 +515,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		if (listRef.current) {
 			listRef.current.recomputeRowHeights();
 
-			if (top.current) {
+			if (!disableHeight && top.current) {
 				listRef.current.scrollToPosition(top.current);
 			};
 		};

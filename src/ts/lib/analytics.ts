@@ -1,5 +1,5 @@
 import amplitude from 'amplitude-js';
-import { I, C, S, U, J, Relation, Renderer } from 'Lib';
+import * as I from 'Interface';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -111,6 +111,7 @@ class Analytics {
 		uploadTypeWidget: 'TypeWidget',
 		uploadDnDSet: 'DnDSet',
 		uploadDnDEditor: 'DnDEditor',
+		uploadDnDWidget: 'DnDWidget',
 		uploadClipboardPaste: 'ClipboardPaste',
 	};
 

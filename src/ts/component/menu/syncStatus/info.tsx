@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
-import { I, S, keyboard, Renderer, Action } from 'Lib';
+import * as I from 'Interface';
+
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 
@@ -10,6 +11,8 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 	const buttons = data.buttons || [];
 	const n = useRef(-1);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 		keyboard.router.pushMenuZone(getId(), onKeyDown);

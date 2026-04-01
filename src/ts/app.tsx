@@ -1,15 +1,17 @@
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -36,7 +38,7 @@ declare global {
 
 		isWebVersion: boolean;
 		Config: any;
-		AnytypeGlobalConfig: any;
+		AnytypeGlobalConfig: I.AppConfig;
 	}
 };
 
@@ -47,8 +49,6 @@ declare global {
 		}
 	}
 };
-
-window.$ = $;
 
 if (!isPackaged) {
 	window.Anytype = {
@@ -132,6 +132,10 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		if (window.isWebVersion) {
+			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
+		}
+
 		console.log('[App] Init', getGlobal('serverAddress'));
 
 		dispatcher.init(getGlobal('serverAddress'));
@@ -156,6 +160,18 @@ const App: FC = () => {
 		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
+		Renderer.on('pin-unlocked', () => {
+			keyboard.isPinChecked = true;
+
+			const { redirect } = S.Common;
+			const { account } = S.Auth;
+
+			if (account) {
+				redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
+			};
+
+			S.Common.redirectSet('');
+		});
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -230,6 +246,7 @@ const App: FC = () => {
 		Renderer.remove('spellcheck');
 		Renderer.remove('pin-set');
 		Renderer.remove('pin-remove');
+		Renderer.remove('pin-unlocked');
 		Renderer.remove('enter-full-screen');
 		Renderer.remove('leave-full-screen');
 		Renderer.remove('config');
@@ -253,17 +270,18 @@ const App: FC = () => {
 		data = data || {};
 
 		const { id, dataPath, config, isDark, languages, isPinChecked, isPinned, css, isSingleTab, activeTabId } = data;
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const bubbleLoader = $('#bubble-loader');
-		const rootLoader = node.find('#root-loader');
-		const anim = rootLoader.find('.anim');
+		const body = document.body;
+		const node = nodeRef.current;
+		const bubbleLoader = document.getElementById('bubble-loader');
+		const rootLoader = node?.querySelector('#root-loader') as HTMLElement;
+		const anim = rootLoader?.querySelector('.anim') as HTMLElement;
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
 
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
+
 		if (route) {
 			const rp = U.Router.getParam(route);
 			if (
@@ -313,32 +331,36 @@ const App: FC = () => {
 		};
 
 		if (css && !config.disableCss) {
-			U.Common.injectCss('anytype-custom-css', css);
+			U.Dom.injectCss('anytype-custom-css', css);
 		};
 
-		body.addClass('over');
+		U.Dom.addClass(body, 'over');
 
 		const hide = () => {
-			rootLoader.remove();
-			bubbleLoader.remove();
-			body.removeClass('over');
+			rootLoader?.remove();
+			bubbleLoader?.remove();
+			U.Dom.removeClass(body, 'over');
 		};
-		const routeParam = { replace: true, onFadeIn: hide };
+		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
 
-			bubbleLoader.css({ transitionDuration: `${t}ms` });
-			bubbleLoader.addClass('inflate');
-			anim.css({ transitionDuration: `${t}ms` });
+			if (bubbleLoader) {
+				bubbleLoader.style.transitionDuration = `${t}ms`;
+				U.Dom.addClass(bubbleLoader, 'inflate');
+			};
+			if (anim) {
+				anim.style.transitionDuration = `${t}ms`;
+			};
 
 			window.setTimeout(() => {
-				raf(() => anim.removeClass('from'));
+				raf(() => U.Dom.removeClass(anim, 'from'));
 				window.setTimeout(() => {
-					anim.addClass('to');
+					U.Dom.addClass(anim, 'to');
 
 					window.setTimeout(() => {
-						rootLoader.css({ opacity: 0 });
+						if (rootLoader) rootLoader.style.opacity = '0';
 						window.setTimeout(() => hide(), t);
 					}, 0);
 				}, t * 5);
@@ -395,7 +417,7 @@ const App: FC = () => {
 		};
 
 		if (!accountId) {
-			U.Router.go('/auth/select', { replace: true, onFadeIn: cb });
+			U.Router.go('/auth/select', { replace: true, onRouteChange: cb });
 			return;
 		};
 
@@ -498,7 +520,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'updated',
+				iconParam: { name: 'popup/header/updated', color: 'lime' },
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -523,7 +545,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
@@ -586,7 +608,6 @@ const App: FC = () => {
 
 					<div id="dragPanel" />
 					<div id="tooltipContainer" />
-					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Toast />

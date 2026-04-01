@@ -6,7 +6,8 @@ import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const MediaMermaid = React.lazy(() => import('Component/util/media/mermaid'));
 const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
@@ -60,7 +61,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { processor } = content;
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
-	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
+	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[processor]}`)}` || 'embed/default';
 	const text = String(content.text || '');
 	const isUnsupported = I.EmbedProcessor[processor] === undefined;
 	const css: any = {};
@@ -118,6 +120,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		rebind();
 	};
 
+	const scrollHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
 		const win = $(window);
 		const node = $(nodeRef.current);
@@ -140,7 +144,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				S.Menu.close('blockLatex');
 
 				placeholderCheck();
-				save(true, () => { 
+				save(true, () => {
 					setIsEditing(false);
 					S.Menu.close('previewLatex');
 				});
@@ -158,19 +162,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		if (!U.Embed.allowAutoRender(processor)) {
-			const container = U.Common.getScrollContainer(isPopup);
-			container.on(`scroll.${block.id}`, () => onScroll());
+			const container = U.Dom.getScrollContainer(isPopup);
+			scrollHandlerRef.current = () => onScroll();
+			container?.addEventListener('scroll', scrollHandlerRef.current);
 		};
 
 		node.on('edit', e => onEdit(e));
 	};
 
 	const unbind = () => {
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
-		container.off(`scroll.${block.id}`);
+
+		if (scrollHandlerRef.current) {
+			container?.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const onScroll = () => {
@@ -180,16 +189,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		window.clearTimeout(timeoutScrollRef.current);
 		timeoutScrollRef.current = window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = U.Dom.getScrollContainer(isPopup);
 			const node = $(nodeRef.current);
-			if (!node.length) {
+			if (!node.length || !container) {
 				return;
 			};
 
-			const ch = container.height();
-			const st = container.scrollTop();
-			const rect = U.Common.getElementRect(node.get(0));
-			const top = rect.top - container.offset().top;
+			const ch = container.clientHeight;
+			const st = container.scrollTop;
+			const rect = U.Dom.getElementRect(node.get(0));
+			const containerRect = container.getBoundingClientRect();
+			const top = rect.top - containerRect.top;
 
 			if (top <= st + ch) {
 				setIsShowing(true);
@@ -362,7 +372,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const win = $(window);
 
 		const recalcRect = () => {
-			const rect = element == 'input' ? U.Common.getSelectionRect() : null;
+			const rect = element == 'input' ? U.Dom.getSelectionRect() : null;
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
@@ -433,7 +443,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const updateRect = () => {
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
@@ -702,6 +712,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				});
 				break;
 			};
+
 		};
 	};
 
@@ -797,7 +808,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });
@@ -824,7 +835,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		iframe.css({ height: 'auto' });
 
 		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		keyboard.setResize(false);
@@ -873,11 +884,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let placeholder = '';
 
 	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
-		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+		resizeIcon = <Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />;
 	};
 
 	if (isExcalidraw) {
-		expandIcon = <Icon className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
+		expandIcon = <Icon name="common/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
@@ -900,11 +911,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		select = (
 			<div id="select" className="select" onMouseDown={onLatexTemplate}>
 				<div className="name">{translate('blockEmbedLatexTemplate')}</div>
-				<Icon className="arrow light" />
+				<Icon name="arrow/button" size={8} className="arrow light" />
 			</div>
 		);
 	} else {
-		source = <Icon className="source" onMouseDown={onEdit} />;
+		source = <Icon name="menu/action/source" className="source" onMouseDown={onEdit} />;
 		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -952,10 +963,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	}, [ isEditing ]);
 
 	useEffect(() => {
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (isFullScreen) {
-			scrollTopRef.current = container.scrollTop();
+			scrollTopRef.current = container?.scrollTop ?? 0;
 		};
 
 		const onEscape = (e: KeyboardEvent) => {
@@ -973,8 +984,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		return () => {
 			window.removeEventListener('keydown', onEscape, true);
 
-			if (isFullScreen) {
-				container.scrollTop(scrollTopRef.current);
+			if (isFullScreen && container) {
+				container.scrollTop = scrollTopRef.current;
 			};
 		};
 	}, [ isFullScreen ]);
@@ -1008,12 +1019,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 				{isUnsupported ? (
 					<div className="preview unsupported">
-						<Icon className="iconEmbed" />
+						<Icon name="embed/default" size={40} className="iconEmbed" />
 						<Label text={translate('blockEmbedUnsupported')} />
 					</div>
 				) : (
 					<>
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
+							<Icon name={embedIconName} size={40} className="iconEmbed" />
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
 						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />

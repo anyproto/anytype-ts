@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, J, analytics, keyboard, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
+import * as I from 'Interface';
+import { keyboard } from 'Lib/keyboard';
 
 const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -15,9 +15,11 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 	const rebind = () => {
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
-		obj.off('click').on('click', () => S.Menu.closeAll(J.Menu.cell));
+		if (obj) {
+			obj.onclick = () => S.Menu.closeAll(J.Menu.cell);
+		};
 
 		unbind();
 		keyboard.router.pushMenuZone(getId(), onKeyDown);

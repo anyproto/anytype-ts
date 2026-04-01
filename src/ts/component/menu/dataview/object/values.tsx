@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -7,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, S, U, keyboard, Relation, translate } from 'Lib';
+import * as I from 'Interface';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
@@ -180,13 +179,13 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16;
 		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
 		listRef.current?.recomputeRowHeights(0);
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
@@ -216,12 +215,12 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{canEdit ? <Icon className="dnd" /> : ''}
+				{canEdit ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
 					<IconObject object={item} />
 					<ObjectName object={item} />
 				</span>
-				{canEdit ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+				{canEdit ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -234,7 +233,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			onClick={e => onClick(e, item)}
 			style={item.style}
 		>
-			<Icon className="plus" />
+			<Icon name="plus/menu" className="plus" />
 			<div className="name">{item.name}</div>
 		</div>
 	);

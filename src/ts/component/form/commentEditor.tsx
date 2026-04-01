@@ -46,10 +46,11 @@ import {
 import { $setBlocksType } from '@lexical/selection';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, J, S, U, keyboard, translate, Storage } from 'Lib';
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
 class HorizontalRuleNode extends DecoratorNode<JSX.Element> {
@@ -188,7 +189,7 @@ class LinkTextNode extends TextNode {
 
 	createDOM (config: any): HTMLElement {
 		const el = super.createDOM(config);
-		el.classList.add('commentEditor-link');
+		U.Dom.addClass(el, 'commentEditor-link');
 		return el;
 	};
 
@@ -1279,12 +1280,12 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		};
 	});
 
-	const wrap = document.getElementById(editorId);
+	const wrap = U.Dom.get(editorId);
 	if (!wrap) {
 		return;
 	};
 
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -1379,7 +1380,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 };
 
 const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	const win = $(window);
 	const root = editor.getRootElement();
 	const wrap = root?.closest('.commentEditorWrap');
@@ -1654,7 +1655,7 @@ const SelectionToolbarPlugin = () => {
 					element: wrap ? $(wrap) : $(root),
 					classNameWrap: 'fromBlock',
 					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					type: I.MenuType.Horizontal,
@@ -1992,11 +1993,12 @@ const PasteUrlPlugin = () => {
 					const section = options[0];
 					const cancel = options[options.length - 1];
 					const sortable = options.slice(1, -1);
+					const orderMap = new Map<string, number>(pasteOrder.map((id: string, i: number) => [ id, i ]));
 
 					sortable.sort((a: any, b: any) => {
-						const ai = pasteOrder.indexOf(a.id);
-						const bi = pasteOrder.indexOf(b.id);
-						return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+						const ai = orderMap.get(a.id) ?? sortable.length;
+						const bi = orderMap.get(b.id) ?? sortable.length;
+						return ai - bi;
 					});
 
 					options.length = 0;
@@ -2014,7 +2016,7 @@ const PasteUrlPlugin = () => {
 					component: 'select',
 					element: wrap ? $(wrap) : $(root),
 					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
+						const rect = U.Dom.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					vertical: I.MenuDirection.Bottom,
@@ -2254,7 +2256,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 let slashMenuContext: any = null;
 
 const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -2514,7 +2516,7 @@ const MentionPlugin = ({ editorId }: { editorId: string }) => {
 };
 
 const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset: React.MutableRefObject<number>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
@@ -2740,7 +2742,7 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 };
 
 const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset: React.MutableRefObject<number>) => {
-	const rect = U.Common.getSelectionRect();
+	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};

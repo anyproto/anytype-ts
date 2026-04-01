@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { IconObject } from 'Component';
-import { I, U, keyboard } from 'Lib';
-import $ from 'jquery';
+import * as I from 'Interface';
 
 const SKINS = [ 1, 2, 3, 4, 5, 6 ];
 
@@ -66,10 +65,13 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 	};
 
 	const setActive = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) return;
 
-		node.find('.active').removeClass('active');
-		node.find(`#skin-${SKINS[n.current]}`).addClass('active');
+		const prev = node.querySelector('.active');
+		if (prev) U.Dom.removeClass(prev, 'active');
+		const next = node.querySelector(`#skin-${SKINS[n.current]}`);
+		if (next) U.Dom.addClass(next, 'active');
 	};
 	
 	const Item = (item: any) => (

@@ -1,7 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Block, HeadSimple } from 'Component';
-import { I, M, S, U, Dataview } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -58,13 +59,16 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onScroll = () => {
-		topRef.current = $(nodeRef.current).scrollTop();
-		U.Common.getScrollContainer(isPopup).trigger('scroll');
+		topRef.current = nodeRef.current?.scrollTop ?? 0;
+		U.Dom.getScrollContainer(isPopup)?.dispatchEvent(new Event('scroll'));
 	};
 
 	useEffect(() => {
 		S.Block.updateNumbers(rootId);
-		$(nodeRef.current).scrollTop(topRef.current);
+
+		if (nodeRef.current) {
+			nodeRef.current.scrollTop = topRef.current;
+		};
 	});
 
 	useImperativeHandle(ref, () => ({

@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { MenuItemVertical } from 'Component';
-import { I, S, U, J, keyboard, Mark, Storage } from 'Lib';
 import { AutoSizer, CellMeasurer, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const HEIGHT_ITEM = 28;
 const LIMIT_INITIAL = 10;
@@ -63,6 +64,8 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			close();
 		};
 	});
+
+	const keydownHandler = useRef(null);
 
 	const rebind = () => {
 		unbind();
@@ -273,14 +276,13 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${props.getId()} .content`);
 
 		let height = 16;
 		if (items.length) {
 			height = items.reduce((res: number) => res + HEIGHT_ITEM, height);
 		};
 
-		obj.css({ height });
+		U.Dom.css(U.Dom.select('.content', props.getContainer()), { height: `${height}px` });
 	};
 
 	const items = getItems();

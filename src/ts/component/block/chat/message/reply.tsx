@@ -1,7 +1,7 @@
 import React, { forwardRef, memo } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
 const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props, ref) => {
 
@@ -27,7 +27,7 @@ const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props,
 		cn.push('withAttachment');
 	} else
 	if (isMultiple) {
-		icon = <Icon className="isMultiple" />;
+		icon = <Icon name="chat/attachment/multiple" className="isMultiple" />;
 		cn.push('withAttachment');
 	};
 

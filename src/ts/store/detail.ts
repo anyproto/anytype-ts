@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { I, S, U, J, Relation, translate } from 'Lib';
 import { memoize } from 'lodash';
+import * as I from 'Interface';
 
 interface Detail {
 	relationKey: string;
@@ -58,7 +58,7 @@ class DetailStore {
 	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this as any, {
+		makeObservable<DetailStore, 'map'>(this, {
 			map: observable.shallow,
 			set: action,
 			update: action,

@@ -2,7 +2,8 @@ import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error } from 'Component';
-import { I, C, S, J, U, translate, focus, Action, keyboard, analytics } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -60,7 +61,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });
@@ -164,7 +165,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -198,8 +199,8 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onClick={handleClick} 
 							onError={handleError} 
 						/>
-						<Icon className={isDownloading ? 'downloading' : 'download'} onClick={handleDownload} />
-						<Icon className="resize" onMouseDown={e => handleResizeStart(e, false)} />
+						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
+						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />
 					</div>
 				);
 				break;

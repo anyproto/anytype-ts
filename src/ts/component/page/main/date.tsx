@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
+import * as I from 'Interface';
 
 const SUB_ID = 'dateListObject';
 
@@ -115,7 +115,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const reload = () => {
-		listRef.current?.getData(1);
+		listRef.current?.reload();
 	};
 
 	const getFilters = (start: number, end: number): I.Filter[] => {
@@ -235,6 +235,8 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					filters={filters}
 					route={analytics.route.screenDate}
 					relationKeys={keys}
+					useInfiniteScroll={true}
+					isPopup={isPopup}
 				/>
 			</>
 		);

@@ -1,8 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
@@ -81,9 +82,9 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			Renderer.send('closeOtherWindows');
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { 
-				replace: true, 
-				onFadeIn: () => Action.checkDiskSpace(),
+			const routeParam = {
+				replace: true,
+				onRouteChange: () => Action.checkDiskSpace(),
 			};
 
 			if (spaceId) {
@@ -150,7 +151,7 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	useEffect(() => {
-		$(frameRef.current.getNode()).removeClass('invisible');
+		U.Dom.removeClass(frameRef.current.getNode(), 'invisible');
 		focus();
 	}, []);
 

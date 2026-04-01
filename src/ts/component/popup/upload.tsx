@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader, Error } from 'Component';
-import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
 
 enum Tab {
 	Upload = 0,
@@ -261,11 +260,11 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(window).on(`paste.popupUpload`, onPaste);
+		window.addEventListener('paste', onPaste);
 		analytics.event('ScreenUploadFile', { route });
 
 		return () => {
-			$(window).off(`paste.popupUpload`);
+			window.removeEventListener('paste', onPaste);
 		};
 	}, []);
 
@@ -299,7 +298,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					onDrop={onDrop}
 					onClick={onClickZone}
 				>
-					<Icon className="upload" />
+					<Icon name="common/upload" size={48} />
 					<div className="label">{translate('popupUploadDropLabel')}</div>
 				</div>
 			) : ''}

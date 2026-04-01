@@ -1,5 +1,4 @@
 import { KeyboardEvent } from 'react';
-import { U, keyboard } from 'Lib';
 
 /**
  * Enhanced keyboard event handler with IME support

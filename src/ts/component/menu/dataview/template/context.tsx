@@ -1,8 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
+import * as I from 'Interface';
 
 const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -60,7 +59,7 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 			case 'edit': {
 				U.Object.openPopup(template, {
-					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
+					onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${template.id}`))
 				});
 
 				analytics.event('EditTemplate', { route });

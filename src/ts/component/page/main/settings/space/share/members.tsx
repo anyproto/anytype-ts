@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
-import { I, C, S, U, translate, Action, analytics, } from 'Lib';
+import * as I from 'Interface';
 
 const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -159,7 +159,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 						<div className="item">
 							<div className="name">{placeholder}</div>
 						</div>
-						<Icon className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} />
+						<Icon name="arrow/small" className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} width={6} height={10} />
 					</div>
 				);
 			};
@@ -173,7 +173,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 
 		return (
 			<div id={`item-${id}`} className={[ 'row', isJoining ? 'isNew' : '' ].join(' ')}>
-				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
+				<div className="side left" onClick={e => U.Object.openEvent(e, item)} onAuxClick={e => U.Object.openEvent(e, item)}>
 					<IconObject size={48} object={item} />
 					<div className="text">
 						<ObjectName object={item} withPronoun={item.id == participant?.id} withBadge={true} />

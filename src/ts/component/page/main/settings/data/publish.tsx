@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
-import { I, S, U, C, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -22,7 +22,7 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 	};
 
 	const onMore = (item: any) => {
-		const element = $(`#${getId()} #icon-more-${item.objectId}`);
+		const elementSelector = `#${getId()} #icon-more-${item.objectId}`;
 		const object = S.Detail.mapper(item.details);
 		const options: any[] = [
 			{ id: 'open', name: translate('menuPublishButtonOpen') },
@@ -33,11 +33,11 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 		];
 
 		S.Menu.open('select', {
-			element,
+			element: elementSelector,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(elementSelector), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(elementSelector), 'active'),
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
@@ -93,7 +93,7 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 				<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
 				<div className="col">{U.File.size(item.size)}</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${item.objectId}`} className="more" withBackground={true} onClick={() => onMore(item)} />
+					<Icon id={`icon-more-${item.objectId}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(item)} />
 				</div>
 			</div>
 		);

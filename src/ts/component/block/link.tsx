@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
-import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -71,7 +71,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		};
 
 		Preview.previewShow({ 
-			element: $(nodeRef.current).find('.cardName .name'), 
+			element: nodeRef.current?.querySelector('.cardName .name') as HTMLElement,
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
@@ -102,11 +102,14 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 
 	const resize = () => {
 		window.setTimeout(() => {
-			const node = $(nodeRef.current);
-			const card = $(cardRef.current);
+			const node = nodeRef.current;
+			const card = cardRef.current;
+			if (!node || !card) {
+				return;
+			};
 
-			card.toggleClass('withIcon', !!node.find('.iconObject').length);
-			card.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
+			U.Dom.toggleClass(card, 'withIcon', !!node.querySelector('.iconObject'));
+			U.Dom.toggleClass(card, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
 		});
 	};
 
@@ -127,7 +130,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);

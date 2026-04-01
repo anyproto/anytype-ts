@@ -1,5 +1,6 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { I, M, U } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 class CommentStore {
 

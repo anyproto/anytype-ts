@@ -3,7 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
-import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	children?: ReactNode;
@@ -219,23 +220,48 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			console.log('[DragProvider].onDrop filePaths', filePaths, 'dirPaths', dirPaths);
 
 			const allPaths = filePaths.concat(dirPaths);
-			const rootObject = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-			const isSetLayout = U.Object.isInSetLayouts(rootObject.layout);
+			let contextId = rootId;
+
+			if (data && (data.dropType == I.DropType.Menu)) {
+				contextId = targetId;
+				targetId = '';
+				position.current = I.BlockPosition.Bottom;
+			};
+
+			if (data && (data.dropType == I.DropType.Widget)) {
+				const { widgets } = S.Block;
+				const childrenIds = S.Block.getChildrenIds(widgets, targetId);
+				const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+				const widgetTargetId = child?.getTargetObjectId();
+
+				if (widgetTargetId) {
+					contextId = widgetTargetId;
+					targetId = '';
+					position.current = I.BlockPosition.Bottom;
+				};
+			};
+
+			const detailsId = (data && (data.dropType == I.DropType.Widget)) ? S.Block.widgets : rootId;
+			const contextObject = S.Detail.get(detailsId, contextId, [ 'layout' ], true);
+			const isSetLayout = U.Object.isInSetLayouts(contextObject.layout);
 
 			if (allPaths.length && isSetLayout) {
 				Preview.toastShow({ text: translate('toastSetFileDrop') });
 			} else
 			if (allPaths.length && !isSetLayout) {
-				C.FileDrop(rootId, targetId, position.current, allPaths, (message: any) => {
+				C.FileDrop(contextId, targetId, position.current, allPaths, (message: any) => {
 					U.File.showFileDropError(message);
 
 					if (!message.error.code) {
+						const isWidget = data && (data.dropType == I.DropType.Widget);
+						const route = isWidget ? analytics.route.uploadDnDWidget : analytics.route.uploadDnDEditor;
+
 						if (filePaths.length) {
-							analytics.event('UploadFile', { route: analytics.route.uploadDnDEditor, count: filePaths.length });
+							analytics.event('UploadFile', { route, count: filePaths.length });
 						};
 
 						if (dirPaths.length) {
-							analytics.event('CreateCollectionFromFolder', { route: analytics.route.uploadDnDEditor, filesCount: filePaths.length });
+							analytics.event('CreateCollectionFromFolder', { route, filesCount: filePaths.length });
 						};
 					};
 
@@ -258,7 +284,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(nodeRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const containerEl = U.Dom.getScrollContainer(isPopup);
+		const container = containerEl ? $(containerEl) : $();
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -283,7 +310,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
-		
+
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 		Preview.hideAll();
@@ -472,7 +499,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
-		const container = U.Common.getScrollContainer(isPopup);
+		const endContainerEl = U.Dom.getScrollContainer(isPopup);
+		const endContainer = endContainerEl ? $(endContainerEl) : $();
 		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const body = $('body');
 
@@ -487,7 +515,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		node.removeClass('isDragging');
 		body.removeClass('isDragging');
 
-		container.off('scroll.drag');
+		endContainer.off('scroll.drag');
 		sidebar.off('scroll.drag');
 
 		$('.isDragging').removeClass('isDragging');

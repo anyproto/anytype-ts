@@ -2,7 +2,10 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, U, Onboarding, analytics, keyboard, focus, FocusedPanel } from 'Lib';
+import * as I from 'Interface';
+import { keyboard } from 'Lib/keyboard';
+import { focus } from 'Lib/focus';
+import { FocusedPanel } from 'Lib/keyboard/router';
 import { navigation } from 'Lib/keyboard/navigation';
 
 const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -10,7 +13,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const { isPopup } = props;
 	const headerRef = useRef(null);
 	const rootId = keyboard.getRootId(isPopup);
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 
 	useEffect(() => {
 		navigation.registerOverflow(FocusedPanel.Page, (direction: number) => {

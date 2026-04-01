@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Banner } from 'Component';
 import { observer } from 'mobx-react';
-import { Renderer, S, translate, U } from 'Lib';
 
 const ListBanner: FC = observer(() => {
 	const { updateVersion } = S.Common;

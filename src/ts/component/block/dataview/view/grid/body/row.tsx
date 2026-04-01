@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
-import { I, U, J, keyboard } from 'Lib';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -115,7 +115,10 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 			<>
 				{!readonly ? (
 					<Icon
+						name="control/dataview/dnd"
 						className="drag"
+						width={7}
+						height={12}
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, record.id)}

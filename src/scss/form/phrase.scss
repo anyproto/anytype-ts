@@ -23,15 +23,12 @@
 		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;
 		top: 50%; cursor: default;
 	}
-	.icon.show { right: 16px; margin: -10px 0px 0px 0px; background-image: url('~img/icon/keyphrase/hide0.svg'); }
-	.icon.show:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
-	.icon.copy { right: -32px; margin: -14px 0px 0px 0px; background-image: url('~img/icon/menu/action/copy0.svg'); display: none; }
+	.icon.hasSvg { right: 16px; margin: -10px 0px 0px 0px; }
+	.icon.hasSvg:hover { color: var(--color-text-primary); }
+	.icon.copy { right: -32px; margin: -14px 0px 0px 0px; display: none; }
 
 	&.isHidden {
 		.word { border-radius: 8px; filter: blur(10px); background-color: var(--color-text-primary); }
-
-		.icon.show { background-image: url('~img/icon/keyphrase/see0.svg'); }
-		.icon.show:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
 	}
 
 	&.isReadonly {

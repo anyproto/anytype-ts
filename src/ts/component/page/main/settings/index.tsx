@@ -1,8 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage, keyboard } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -40,6 +38,8 @@ import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
 import PageMembership from './membership/index';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const Components: any = {
 	index: 				 PageAccount,
@@ -158,7 +158,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
 			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
 			className: 'big',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
 		});

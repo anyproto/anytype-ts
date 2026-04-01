@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button, Header } from 'Component';
-import { I, C, S, U, Action, Survey, analytics, translate, J } from 'Lib';
+import * as I from 'Interface';
 
 const DAYS = 30;
 
@@ -47,10 +47,9 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	};
 
 	const onLogout = () => {
-		U.Router.go('/auth/select', { 
-			replace: true, 
-			animate: true,
-			onFadeIn: () => {
+		U.Router.go('/auth/select', {
+			replace: true,
+			onRouteChange: () => {
 				S.Auth.logout(true, false);
 			},
 		});

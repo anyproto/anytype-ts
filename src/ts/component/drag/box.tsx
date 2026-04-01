@@ -1,5 +1,5 @@
 import React, { FC, useRef, ReactNode, Children, cloneElement } from 'react';
-import { U } from 'Lib';
+import $ from 'jquery';
 
 interface Props {
 	children?: ReactNode;

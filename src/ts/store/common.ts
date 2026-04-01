@@ -1,7 +1,7 @@
-import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
-import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Filter {
 	from: number;
@@ -24,7 +24,7 @@ class CommonStore {
 	public filterObj: Filter = { from: 0, text: '' };
 	public gatewayUrl = '';
 	public toastObj: I.Toast = null;
-	public configObj: any = {};
+	public configObj: I.AppConfig = {};
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
@@ -52,7 +52,9 @@ class CommonStore {
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
+	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
+	public notificationSoundValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -146,6 +148,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
@@ -159,6 +162,7 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
+			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
@@ -181,6 +185,7 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
+			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -211,6 +216,7 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
+			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -223,7 +229,7 @@ class CommonStore {
 		});
 	};
 
-	get config (): any {
+	get config (): I.AppConfig {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
 		return {
@@ -318,6 +324,10 @@ class CommonStore {
 		return this.boolGet('hideSidebar');
 	};
 
+	get hideFileObjectsInTree (): boolean {
+		return this.boolGet('hideFileObjectsInTree');
+	};
+
 	get autoDownload (): number {
 		let ret = this.autoDownloadValue;
 
@@ -366,15 +376,15 @@ class CommonStore {
 		return this.boolGet('showRelativeDates');
 	};
 
-	get linkStyle (): I.LinkCardStyle {
+	get linkStyle (): I.LinkDefaultStyle {
 		let ret = this.linkStyleValue;
 		if (ret === null) {
 			ret = Storage.get('linkStyle');
 		};
 		if (undefined === ret) {
-			ret = I.LinkCardStyle.Card;
+			ret = I.LinkDefaultStyle.Card;
 		};
-		return Number(ret) || I.LinkCardStyle.Text;
+		return Number(ret) || I.LinkDefaultStyle.Text;
 	};
 
 	get fileStyle (): I.FileStyle {
@@ -453,6 +463,17 @@ class CommonStore {
 		};
 		if (ret === undefined) {
 			ret = true;
+		};
+		return ret;
+	};
+
+	get notificationSound (): string {
+		let ret = this.notificationSoundValue;
+		if (ret === null) {
+			ret = Storage.get('notificationSound');
+		};
+		if (ret === undefined) {
+			ret = '';
 		};
 		return ret;
 	};
@@ -540,7 +561,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		$(window).trigger('updateGraphSettings');
+		window.dispatchEvent(new CustomEvent('updateGraphSettings'));
 	};
 
 	/**
@@ -703,6 +724,10 @@ class CommonStore {
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	hideFileObjectsInTreeSet (v: boolean) {
+		this.boolSet('hideFileObjectsInTree', v);
 	};
 
 	autoDownloadSet (v: number) {
@@ -893,7 +918,7 @@ class CommonStore {
 	setThemeClass () {
 		const c = this.getThemeClass();
 
-		U.Common.addBodyClass('theme', c);
+		U.Dom.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 	};
 
@@ -926,7 +951,7 @@ class CommonStore {
 	 * Sets the link style value.
 	 * @param {I.LinkCardStyle} v - The link style value.
 	 */
-	linkStyleSet (v: I.LinkCardStyle) {
+	linkStyleSet (v: I.LinkDefaultStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
@@ -1000,13 +1025,18 @@ class CommonStore {
 		this.boolSet('gridTitleClick', v);
 	};
 
+	notificationSoundSet (v: string) {
+		this.notificationSoundValue = v;
+		Storage.set('notificationSound', v);
+	};
+
 	/**
 	 * Sets the config object, optionally forcing all values.
-	 * @param {any} config - The config object.
+	 * @param {I.AppConfig} config - The config object.
 	 * @param {boolean} force - Whether to force all values.
 	 */
-	configSet (config: any, force: boolean) {
-		let newConfig: any = {};
+	configSet (config: I.AppConfig, force: boolean) {
+		let newConfig: I.AppConfig = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);
 		} else {

@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, ObjectDescription, ObjectType } from 'Component';
-import { I, U, S } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	item: any;
@@ -32,10 +31,13 @@ const NavigationItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('withIcon', !!node.find('.iconObject').length);
-		node.toggleClass('withDescr', !!node.find('.descr').length);
+		U.Dom.toggleClass(node, 'withIcon', !!node.querySelector('.iconObject'));
+		U.Dom.toggleClass(node, 'withDescr', !!node.querySelector('.descr'));
 	});
 
 	return (

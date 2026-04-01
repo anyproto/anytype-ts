@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
-import { I, S, U, C, Relation, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PREFIX = 'sidebarObjectRelation';
 
@@ -16,12 +16,16 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 	});
 
 	const init = () => {
-		const node = $(nodeRef.current);
-		const cell = node.find('.cell');
-		const canEdit = cellRef.current?.canEdit();	
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('canEdit', canEdit);
-		cell.toggleClass('canEdit', canEdit);
+		const cell = node.querySelector('.cell') as HTMLElement;
+		const canEdit = cellRef.current?.canEdit();
+
+		U.Dom.toggleClass(node, 'canEdit', canEdit);
+		U.Dom.toggleClass(cell, 'canEdit', canEdit);
 	};
 
 	const onCellClick = (e: any) => {
@@ -83,7 +87,7 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 			</div>
 
 			{hasMore ? (
-				<Icon className="more" onClick={e => relation.onMore(e, relation)} /> 
+				<Icon name="common/more" className="more" onClick={e => relation.onMore(e, relation)} /> 
 			) : ''}
 		</div>
 	);

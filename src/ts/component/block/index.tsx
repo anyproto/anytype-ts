@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import { createRoot, Root } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -27,6 +26,9 @@ import BlockPdf from './media/pdf';
 import BlockLoader from './media/loader';
 
 import BlockEmbed from './embed';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -361,19 +363,19 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = S.Block.getChildren(rootId, block.id);
-		const rect = U.Common.getElementRect(node.get(0));
+		const rect = U.Dom.getElementRect(node.get(0));
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
 
 		let c = 0;
 		let num = 0;
 
-		for (const i in children) {
+		for (let i = 0; i < children.length; i++) {
 			const child = children[i];
 
 			c += child.fields.width || 1 / length;
 			if ((p >= c * width - sm / 2) && (p <= c * width + sm / 2)) {
-				num = Number(i) + 1;
+				num = i + 1;
 				break;
 			};
 		};
@@ -490,19 +492,19 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			});
 
 			item.off('mouseenter.link').on('mouseenter.link', e => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
 
-				const item = $(e.currentTarget);
-				const url = String(item.attr('href') || '');
+				const item = e.currentTarget as HTMLElement;
+				const url = String(item.getAttribute('href') || '');
 
 				if (!url) {
 					return;
 				};
 
-				const range = String(item.attr('data-range') || '').split('-');
+				const range = String(item.getAttribute('data-range') || '').split('-');
 				const { target, spaceId, isInside } = U.Common.getLinkParamFromUrl(url);
 
 				const cb = (object) => {
@@ -615,7 +617,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			});
 
 			clickable.off('mouseenter.mention').on('mouseenter.mention', e => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
@@ -692,7 +694,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			item.off('mouseleave.object').on('mouseleave.object', () => Preview.tooltipHide(false));
 
 			item.off('mouseenter.object').on('mouseenter.object', () => {
-				const sr = U.Common.getSelectionRange();
+				const sr = U.Dom.getSelectionRange();
 				const tt = object.isDeleted ? translate('commonDeletedObject') : '';
 
 				if (sr && !sr.collapsed) {
@@ -1107,7 +1109,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		);
 	} else {
 		object = (
-			<div id={`selectionTarget-${id}`} className="selectionTarget">
+			<div id={isSelectionDisabled ? undefined : `selectionTarget-${id}`} className="selectionTarget">
 				{object}
 			</div>
 		);
@@ -1129,13 +1131,14 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			{...U.Common.dataProps({ id })}
 		>
 			<div className="wrapMenu">
-				<Icon 
-					id={`button-block-menu-${id}`} 
-					className="dnd" 
-					draggable={true} 
-					onDragStart={onDragStart} 
-					onMouseDown={onMenuDown} 
-					onClick={onMenuClick} 
+				<Icon
+					id={`button-block-menu-${id}`}
+					name="block/menu"
+					className="commonDnd"
+					draggable={true}
+					onDragStart={onDragStart}
+					onMouseDown={onMenuDown}
+					onClick={onMenuClick}
 				/>
 				{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 			</div>

@@ -1,8 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { analytics, I, J, keyboard, Relation, S, Storage, translate, U, sidebar, FocusedPanel } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { keyboard } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -245,7 +248,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 		switch (item.layout) {
 			case I.ObjectLayout.Type: {
-				U.Object.editType(item.id, isPopup);
+				U.Object.editType(item.id, isPopup, false);
 				e = 'ClickSettingsSpaceType'; 
 				break;
 			};
@@ -271,10 +274,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const setActive = (id: string) => {
-		const body = $(bodyRef.current);
+		const body = bodyRef.current;
+		if (!body) {
+			return;
+		};
 
-		body.find('.item.active').removeClass('active');
-		body.find(`#item-${U.Common.esc(id)}`).addClass('active');
+		U.Dom.removeClass(body.querySelector('.item.active'), 'active');
+		U.Dom.addClass(body.querySelector(`#item-${U.Common.esc(id)}`), 'active');
 	};
 
 	const onContext = (item: any) => {
@@ -329,8 +335,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			};
 
 			case I.ObjectContainerType.Relation: {
-				const node = $('.containerSettings');
-				const width = node.width() - 32;
+				const node = U.Dom.select('.containerSettings');
+				const width = U.Dom.contentWidth(node) - 32;
 
 				S.Menu.open('blockRelationEdit', {
 					element: `.containerSettings #button-object-create`,
@@ -421,7 +427,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 					onContextMenu={() => onContext(item)}
 				>
 					{U.Object.isRelationLayout(item.layout) ? (
-						<Icon className={`relation ${Relation.className(item.format)}`} />
+						<Icon name={Relation.registryName(item.relationKey, item.format)} />
 					) : (
 						<IconObject object={item} />
 					)}
@@ -475,13 +481,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back" withBackground={true} onClick={onBack} />
+					<Icon name="common/back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center">
 					<Label text={title} />
 				</div>
 				<div className="side right">
-					<Icon id="button-object-more" className="more" withBackground={true} onClick={onMore} />
+					<Icon id="button-object-more" name="common/more" className="more" withBackground={true} onClick={onMore} />
 				</div>
 			</div>
 
@@ -491,7 +497,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 						<div className="side left">
 							<Filter
 								ref={filterInputRef}
-								iconParam={{ className: 'search' }}
+								iconParam={{ name: 'common/search' }}
 								placeholder={translate('commonSearch')}
 								onChange={onFilterChange}
 								onClear={onFilterClear}

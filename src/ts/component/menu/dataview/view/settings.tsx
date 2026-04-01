@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, translate, Dataview } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
 const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -39,12 +39,14 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		window.setTimeout(() => nameRef.current?.focus(), 15);
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 		keyboard.router.pushMenuZone(getId(), onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 	};
@@ -152,8 +154,8 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		if (view.id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
-					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
-					(views.length > 1 ? { id: 'remove', icon: 'remove', name: translate('menuDataviewViewEditRemoveView') } : null),
+					{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: translate('menuDataviewViewEditDuplicateView') },
+					(views.length > 1 ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('menuDataviewViewEditRemoveView') } : null),
 				]
 			});
 		};

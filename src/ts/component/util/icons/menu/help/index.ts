@@ -1,0 +1,22 @@
+import { registerIcon } from '../../registry';
+import Bell from './bell';
+import Chat from './chat';
+import Community from './community';
+import Contact from './contact';
+import Developer from './developer';
+import Feature from './feature';
+import Keyboard from './keyboard';
+import More from './more';
+import Share from './share';
+import Tutorial from './tutorial';
+
+registerIcon('menu/help/bell', Bell);
+registerIcon('menu/help/chat', Chat);
+registerIcon('menu/help/community', Community);
+registerIcon('menu/help/contact', Contact);
+registerIcon('menu/help/developer', Developer);
+registerIcon('menu/help/feature', Feature);
+registerIcon('menu/help/keyboard', Keyboard);
+registerIcon('menu/help/more', More);
+registerIcon('menu/help/share', Share);
+registerIcon('menu/help/tutorial', Tutorial);

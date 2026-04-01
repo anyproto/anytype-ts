@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button, Loader } from 'Component';
-import { I, U, S, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
@@ -55,26 +54,26 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			return;
 		};
 
-		const node = $(iconRef.current);
-		const img = node.find('.iconImage');
+		const node = iconRef.current;
+		const img = node?.querySelector('.iconImage') as HTMLImageElement;
 
-		if (!img.length) {
+		if (!img) {
 			setIsLoaded(true);
 			return;
 		};
 
 		const onImageLoad = () => setIsLoaded(true);
 
-		img.on('load', onImageLoad);
-		img.on('error', onImageLoad);
+		img.addEventListener('load', onImageLoad);
+		img.addEventListener('error', onImageLoad);
 
-		if ((img.get(0) as HTMLImageElement)?.complete) {
+		if (img.complete) {
 			setIsLoaded(true);
 		};
 
 		return () => {
-			img.off('load', onImageLoad);
-			img.off('error', onImageLoad);
+			img.removeEventListener('load', onImageLoad);
+			img.removeEventListener('error', onImageLoad);
 		};
 	});
 

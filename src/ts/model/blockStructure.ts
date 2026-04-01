@@ -1,5 +1,5 @@
-import { I } from 'Lib';
 import { observable, makeObservable } from 'mobx';
+import * as I from 'Interface';
 
 /**
  * BlockStructure represents the parent-child relationships in the block tree.

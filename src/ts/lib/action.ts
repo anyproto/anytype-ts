@@ -1,7 +1,9 @@
 
-import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
 import * as Diff from 'diff';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 class Action {
 
@@ -252,7 +254,7 @@ class Action {
 		if (isDangerous || (!Storage.get(storageKey) && !isAllowed)) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmOpenExternalLinkTitle'),
 					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
@@ -304,7 +306,7 @@ class Action {
 		if (isDangerous) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmOpenExternalFileTitle'),
 					text: U.String.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
 					textConfirm: translate('commonYes'),
@@ -436,7 +438,14 @@ class Action {
 						if (isPopup) {
 							S.Popup.close('page');
 						} else {
-							U.Space.openDashboard();
+							const history = U.Router.history;
+							const prev = history.entries[history.index - 1];
+
+							if (prev) {
+								history.goBack();
+							} else {
+								U.Space.openDashboard();
+							};
 						};
 					};
 
@@ -724,7 +733,7 @@ class Action {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'confirm',
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
 				title,
 				text,
 				textConfirm: confirm,
@@ -1013,7 +1022,7 @@ class Action {
 				S.Popup.open('confirm', {
 					onClose: callBack,
 					data: {
-						icon: 'warning',
+						iconParam: { name: 'popup/header/warning', color: 'orange' },
 						title: translate('popupConfirmDiskSpaceTitle'),
 						text: translate('popupConfirmDiskSpaceText'),
 						textConfirm: translate('commonOkay'),
@@ -1131,7 +1140,7 @@ class Action {
 			S.Popup.replace('membershipFinalization', 'confirm', {
 				onClose: () => callBack?.(),
 				data: {
-					icon: 'emoji',
+					iconParam: { name: 'popup/header/emoji', width: 232, height: 52 },
 					title,
 					text: translate('popupConfirmMembershipSurveyText'),
 					colorConfirm: 'accent',

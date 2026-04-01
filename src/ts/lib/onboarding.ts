@@ -1,5 +1,6 @@
 import * as Docs from 'Docs';
-import { I, S, U, Storage, } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * Onboarding manages the user onboarding and tutorial flows.
@@ -177,16 +178,17 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = U.Common.getScrollContainer(isPopup);
-				const height = container.height();
-				const width = container.width();
-				const scrollTop = $(window).scrollTop();
+				const container = U.Dom.getScrollContainer(isPopup);
+				const height = container?.clientHeight ?? 0;
+				const width = container?.clientWidth ?? 0;
+				const scrollTop = window.scrollY;
+				const bounds = container?.getBoundingClientRect();
 
 				let offset = { left: 0, top: 0 };
 				let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-	
-				if (container.length) {
-					offset = container.offset();
+
+				if (container && bounds) {
+					offset = { left: bounds.left, top: bounds.top };
 				};
 	
 				switch (param.containerVertical) {

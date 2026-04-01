@@ -1,4 +1,3 @@
-import { S, U, C, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html';

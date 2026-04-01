@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

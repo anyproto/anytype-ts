@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { Icon } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	processor: I.EmbedProcessor;
@@ -179,8 +179,8 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 			{content}
 			{(hasContent && (onEdit || onRemove)) ? (
 				<div className="embedActions">
-					{onEdit ? <Icon className="edit" onClick={onEdit} /> : ''}
-					{onRemove ? <Icon className="remove" onClick={onRemove} /> : ''}
+					{onEdit ? <Icon name="common/edit" className="edit" onClick={onEdit} /> : ''}
+					{onRemove ? <Icon name="menu/action/remove" className="remove" onClick={onRemove} /> : ''}
 				</div>
 			) : ''}
 		</div>

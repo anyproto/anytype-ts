@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard, translate, analytics } from 'Lib';
+import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
+import * as I from 'Interface';
 
 const HIGHLIGHT_DURATION = 2000;
 
@@ -16,6 +16,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
 	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
+	const [ isExpanded, setIsExpanded ] = useState(false);
+	const isHiddenRef = useRef(false);
 	const discussionId = object.discussionId || localDiscussionId || '';
 	const subId = U.Comment.getSubId(targetType, discussionId || targetId);
 	const formRef = useRef<any>(null);
@@ -24,31 +26,65 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const isCreating = useRef(false);
 	const subscribedId = useRef('');
 	const sectionRef = useRef<HTMLDivElement>(null);
+	const socialRef = useRef<HTMLDivElement>(null);
+	const scrollTimerRef = useRef(0);
+	const isSectionVisibleRef = useRef(false);
 	const messageIdHandled = useRef(false);
+
+	const posts = S.Comment.getPosts(subId);
+	const postCount = posts.length;
+	const isOpen = (postCount > 0) || isExpanded;
+	const isOpenRef = useRef(isOpen);
+	isOpenRef.current = isOpen;
+	const discussionIdRef = useRef(discussionId);
+	discussionIdRef.current = discussionId;
 
 	const resize = useCallback(() => {
 		props.resize?.();
 	}, [ props.resize ]);
+
+	const updateSocialVisibility = useCallback(() => {
+		const loaded = isLoaded.current || !discussionIdRef.current;
+		const shouldHide = !loaded || isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
+		U.Dom.toggleClass(socialRef.current, 'isHidden', shouldHide);
+	}, []);
+
+	const setHidden = useCallback((v: boolean) => {
+		if (v === isHiddenRef.current) {
+			return;
+		};
+		isHiddenRef.current = v;
+		updateSocialVisibility();
+	}, [ updateSocialVisibility ]);
+
+	useEffect(() => {
+		updateSocialVisibility();
+		resize();
+	}, [ isOpen, updateSocialVisibility, resize ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
 			subscribe(discussionId);
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ns = 'commentSection';
+		const container = U.Dom.getScrollContainer(isPopup);
 
-		container.on(`scroll.${ns}`, () => {
-			const st = Math.ceil(container.scrollTop());
-			const max = U.Common.getMaxScrollHeight(isPopup);
+		const scrollHandler = () => {
+			const st = Math.ceil(container?.scrollTop ?? 0);
+			const max = U.Dom.getMaxScrollHeight(isPopup);
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
-		});
 
-		resize();
+			setHidden(true);
+			window.clearTimeout(scrollTimerRef.current);
+			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
+		};
+
+		container?.addEventListener('scroll', scrollHandler);
 
 		return () => {
-			container.off(`scroll.${ns}`);
+			container?.removeEventListener('scroll', scrollHandler);
+			window.clearTimeout(scrollTimerRef.current);
 
 			if (discussionId) {
 				unsubscribe(discussionId);
@@ -57,9 +93,46 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ discussionId ]);
 
 	useEffect(() => {
-		window.addEventListener('resize', resize);
-		return () => window.removeEventListener('resize', resize);
-	}, [ resize ]);
+		const onKeyDown = (e: KeyboardEvent) => {
+			const target = e.target as HTMLElement;
+
+			if (!target?.closest('.blocks')) {
+				return;
+			};
+
+			window.clearTimeout(scrollTimerRef.current);
+			setHidden(true);
+		};
+
+		const onMouseMove = () => {
+			setHidden(false);
+		};
+
+		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener('mousemove', onMouseMove);
+
+		return () => {
+			window.removeEventListener('keydown', onKeyDown);
+			window.removeEventListener('mousemove', onMouseMove);
+		};
+	}, [ setHidden ]);
+
+	useEffect(() => {
+		const el = sectionRef.current;
+		if (!el) {
+			isSectionVisibleRef.current = false;
+			updateSocialVisibility();
+			return;
+		};
+
+		const observer = new IntersectionObserver((entries) => {
+			isSectionVisibleRef.current = entries[0]?.isIntersecting || false;
+			updateSocialVisibility();
+		}, { threshold: 0 });
+
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [ updateSocialVisibility ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
@@ -82,8 +155,11 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		}, callBack);
 	}, [ targetType, discussionId, targetId ]);
 
-	const onMessageAdd = useCallback((e: any, message: any, eventSubIds: string[]) => {
-		if (!eventSubIds.includes(subId)) {
+	const onMessageAdd = useCallback((e: any) => {
+		const { message, subIds: eventSubIds } = e.detail;
+		const subIds = eventSubIds || [];
+
+		if (!subIds.includes(subId)) {
 			return;
 		};
 
@@ -91,14 +167,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ subId, loadDeps ]);
 
 	useEffect(() => {
-		const ns = 'commentSection';
-		const win = $(window);
-
-		win.on(`messageAdd.${ns}`, onMessageAdd);
-		win.on(`messageUpdate.${ns}`, onMessageAdd);
+		window.addEventListener('messageAdd', onMessageAdd);
+		window.addEventListener('messageUpdate', onMessageAdd);
 
 		return () => {
-			win.off(`messageAdd.${ns} messageUpdate.${ns}`);
+			window.removeEventListener('messageAdd', onMessageAdd);
+			window.removeEventListener('messageUpdate', onMessageAdd);
 		};
 	}, [ onMessageAdd ]);
 
@@ -116,20 +190,19 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			if (!container.length) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
 				return;
 			};
 
-			const containerEl = container.get(0);
 			const elRect = el.getBoundingClientRect();
-			const containerRect = containerEl.getBoundingClientRect();
-			const scrollTop = containerEl.scrollTop + (elRect.top - containerRect.top) - (containerRect.height / 3);
+			const containerRect = container.getBoundingClientRect();
+			const scrollTop = container.scrollTop + (elRect.top - containerRect.top) - (containerRect.height / 3);
 
-			containerEl.scrollTop = Math.max(0, scrollTop);
+			container.scrollTop = Math.max(0, scrollTop);
 
-			el.classList.add('isHighlighted');
-			window.setTimeout(() => el.classList.remove('isHighlighted'), HIGHLIGHT_DURATION);
+			U.Dom.addClass(el as HTMLElement, 'isHighlighted');
+			window.setTimeout(() => U.Dom.removeClass(el as HTMLElement, 'isHighlighted'), HIGHLIGHT_DURATION);
 		}, 100);
 	}, [ isPopup, resize ]);
 
@@ -330,15 +403,17 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		C.ChatSubscribeLastMessages(id, POST_LIMIT, sid, (message: any) => {
 			if (message.error.code) {
 				isLoaded.current = true;
+				updateSocialVisibility();
 				return;
 			};
 
 			fetchAllMessages(id, sid, () => {
 				isLoaded.current = true;
+				updateSocialVisibility();
 				handleMessageId(id);
 			});
 		});
-	}, [ targetType, fetchAllMessages, handleMessageId ]);
+	}, [ targetType, fetchAllMessages, handleMessageId, updateSocialVisibility ]);
 
 	const unsubscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -353,12 +428,10 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		resize();
 
 		window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			if (container.length) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
 				isBottom.current = true;
-
-				const el = container.get(0);
-				el.scrollTop = el.scrollHeight;
+				container.scrollTop = container.scrollHeight;
 			};
 		}, 0);
 	}, [ isPopup, resize ]);
@@ -522,31 +595,66 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		keyboard.disableSelection(false);
 	}, []);
 
+	const onCounterClick = useCallback(() => {
+		setIsExpanded(true);
+		isSectionVisibleRef.current = true;
+		updateSocialVisibility();
+		resize();
+
+		window.setTimeout(() => {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
+				container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+			};
+
+			window.setTimeout(() => formRef.current?.focus(), 300);
+		}, 50);
+	}, [ isPopup, resize ]);
+
+	const counterLabel = postCount > 0
+		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
+		: translate('commentLeaveComment');
+
+	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
+
 	return (
-		<div ref={sectionRef} className="commentSection" onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-			<div className="sectionTitle">{translate('commentDiscussion')}</div>
+		<>
+			<div ref={sectionRef} className={cn.join(' ')} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+				{postCount > 0 ? (
+					<div className="commentBody">
+						<CommentList
+							rootId={rootId}
+							targetId={discussionId || targetId}
+							targetType={targetType}
+							readonly={readonly}
+							onLoadMore={onLoadMore}
+						/>
+					</div>
+				) : null}
 
-			<div className="commentBody">
-				<CommentList
-					rootId={rootId}
-					targetId={discussionId || targetId}
-					targetType={targetType}
-					readonly={readonly}
-					onLoadMore={onLoadMore}
-				/>
+				{isOpen ? (
+					<div className="commentFormWrap">
+						<CommentForm
+							ref={formRef}
+							rootId={rootId}
+							subId={subId}
+							readonly={readonly}
+							onSubmit={onSubmitPost}
+							onResize={scrollToBottomCheck}
+						/>
+					</div>
+				) : null}
 			</div>
 
-			<div className="commentFormWrap">
-				<CommentForm
-					ref={formRef}
-					rootId={rootId}
-					subId={subId}
-					readonly={readonly}
-					onSubmit={onSubmitPost}
-					onResize={scrollToBottomCheck}
-				/>
+			<div className="socialBlockWrap">
+				<div ref={socialRef} className="socialBlock isHidden">
+					<div className="commentCounter" onClick={onCounterClick}>
+						<Icon name="comment/discussion" className="discussion" size={16} />
+						<span className="count">{counterLabel}</span>
+					</div>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 });
 

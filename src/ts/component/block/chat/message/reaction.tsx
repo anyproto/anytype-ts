@@ -1,7 +1,8 @@
 import React, { forwardRef, memo } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { I, S, U, Preview } from 'Lib';
+import * as I from 'Interface';
+
 
 interface Props extends I.ChatMessageReaction, I.ChatMessageComponent {
 	onSelect: (icon: string) => void;
@@ -30,7 +31,7 @@ const ChatMessageReaction = observer(forwardRef<{}, Props>((props, ref) => {
 		<div 
 			className={cn.join(' ')}
 			onClick={() => onSelect(icon)}
-			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: $(e.currentTarget) })}
+			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: e.currentTarget as HTMLElement })}
 			onMouseLeave={() => Preview.tooltipHide(false)}
 		>
 			<div className="value">

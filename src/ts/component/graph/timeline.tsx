@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react';
-import { DragHorizontal } from 'Component';
-import { S, } from 'Lib';
+import { DragHorizontal, Icon } from 'Component';
 
 interface Props {
 	id: string;
@@ -77,9 +75,8 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 	}, []);
 
 	useEffect(() => {
-		const win = $(window);
-
-		const onTimelineUpdate = (e: any, data: any) => {
+		const onTimelineUpdate = (e: any) => {
+			const data = e.detail;
 			setPosition(data.position);
 			setIsPlaying(data.isPlaying);
 			dragRef.current?.setValue(data.position);
@@ -102,12 +99,14 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 			setDummy(v => v + 1);
 		};
 
-		win.on(`timelineUpdate.${id}`, onTimelineUpdate);
-		win.on(`timelineComplete.${id}`, onTimelineComplete);
-		win.on(`updateGraphSettings.${id}`, onSettingsUpdate);
+		window.addEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
+		window.addEventListener(`timelineComplete.${id}`, onTimelineComplete);
+		window.addEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
 
 		return () => {
-			win.off(`timelineUpdate.${id} timelineComplete.${id} updateGraphSettings.${id}`);
+			window.removeEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
+			window.removeEventListener(`timelineComplete.${id}`, onTimelineComplete);
+			window.removeEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
 			graphRef.current?.timelineReset();
 		};
 	}, []);
@@ -119,8 +118,9 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 	return (
 		<div ref={nodeRef} className="graphTimeline">
 			<div className="controls">
-				<div
-					className={[ 'iconPlay', isPlaying ? 'active' : '' ].join(' ')}
+				<Icon
+					name={isPlaying ? 'control/audio/pause' : 'control/audio/play'}
+					color="default"
 					onMouseDown={onPlay}
 					onClick={e => e.stopPropagation()}
 				/>

@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect, useImperativeHandle, ReactNode } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { U } from 'Lib';
 
 interface Props {
 	children?: ReactNode;
@@ -22,25 +20,27 @@ const Frame = forwardRef<FrameRefProps, Props>(({
 	const nodeRef = useRef<HTMLDivElement | null>(null);
 	const cn = [ 'frame', className ];
 
+	const resizeHandler = useRef(() => resize());
+
 	const unbind = () => {
-		$(window).off('resize.frame');
+		window.removeEventListener('resize', resizeHandler.current);
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('resize.frame', () => resize());
+		window.addEventListener('resize', resizeHandler.current);
 	};
 
 	const resize = () => {
 		raf(() => {
-			if (!nodeRef.current) {
+			const node = nodeRef.current;
+			if (!node) {
 				return;
 			};
-			
-			const node = $(nodeRef.current);
-			node.css({ 
-				marginTop: -node.outerHeight() / 2,
-				marginLeft: -node.outerWidth() / 2,
+
+			U.Dom.css(node, {
+				marginTop: `${-node.offsetHeight / 2}px`,
+				marginLeft: `${-node.offsetWidth / 2}px`,
 			});
 		});
 	};

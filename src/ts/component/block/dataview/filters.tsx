@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, U, translate, S, Relation, C, Dataview, analytics } from 'Lib';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
+import * as I from 'Interface';
 
 interface RefProps {
 	openFilterMenu: (filterId: string) => void;
@@ -207,21 +207,10 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 		openFilterMenu,
 	}));
 
-	const { config } = S.Common;
 	const sorts = view.sorts || [];
 	const sortTitle = sorts.length === 1
 		? (S.Record.getRelationByKey(sorts[0].relationKey)?.name || '')
 		: U.String.sprintf(translate('commonCountSorts'), sorts.length, U.Common.plural(sorts.length, translate('pluralSort')));
-
-	const onSortRemove = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		C.BlockDataviewSortRemove(rootId, blockId, view.id, sorts.map(it => it.id), () => {
-			loadData(view.id, 0, false);
-			closeFilters?.();
-		});
-	};
 
 	const onSortClick = () => {
 		S.Menu.open('dataviewSort', {
@@ -251,12 +240,11 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 					{sorts.length ? (
 						<>
 							<div id="item-sort" className="filterItem isActive" onClick={onSortClick}>
-								<Icon className={`sortArrow c${sorts[0].type}`} />
+								<Icon name="control/dataview/filterSort" className={`sortArrow c${sorts[0].type}`} />
 								<div className="content">
 									<Label className="name" text={sortTitle} />
 								</div>
-								<Icon className="arrow" />
-								{config.experimental ? <Icon className="delete" onClick={onSortRemove} /> : ''}
+								<Icon name="arrow/button" size={8} className="arrow" />
 							</div>
 							<div className="separator vertical" />
 						</>
@@ -291,7 +279,7 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 						);
 					})}
 					<div id="item-add" className="itemAdd" onClick={onAdd}>
-						<Icon className="plus" />
+						<Icon name="control/dataview/filterPlus" className="plus" />
 						<Label text={translate('commonFilter')} />
 					</div>
 

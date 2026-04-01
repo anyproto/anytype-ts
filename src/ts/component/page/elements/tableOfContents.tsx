@@ -1,8 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -25,15 +24,13 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
 
 	const setBlock = (id: string) => {
-		const node = $(nodeRef.current);
-
-		node.find('.item.active').removeClass('active');
+		U.Dom.selectAll('.item.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 
 		if (!id) {
 			return;
 		};
 
-		node.find(`#item-${U.Common.esc(id)}`).addClass('active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(id)}`, nodeRef.current), 'active');
 		blockRef.current = id;
 		S.Menu.updateData('tableOfContents', { blockId: id });
 
@@ -63,28 +60,38 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const onScroll = () => {
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			const top = container.scrollTop();
-			const co = containerOffset.current.top;
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
+				return;
+			};
+
+			const top = container.scrollTop;
+			const co = container.getBoundingClientRect().top;
 			const currentList = listRef.current;
 
 			let blockId = '';
 
 			for (let i = 0; i < currentList.length; ++i) {
 				const block = currentList[i];
-				const el = $(`#block-${U.Common.esc(block.id)}`);
+				const el = U.Dom.get(`block-${block.id}`);
 
-				if (!el.length) {
+				if (!el) {
 					continue;
 				};
 
-				if (el.offset().top - co >= 0) {
+				const elTop = el.getBoundingClientRect().top - co;
+
+				if (elTop <= 0) {
 					blockId = block.id;
+				} else {
+					if (!blockId) {
+						blockId = block.id;
+					};
 					break;
 				};
 			};
 
-			if ((top == U.Common.getMaxScrollHeight(isPopup)) && currentList.length) {
+			if ((top >= U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
 				blockId = currentList[currentList.length - 1].id;
 			};
 
@@ -99,7 +106,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 		S.Menu.open('tableOfContents', {
 			className: 'fixed',
-			element: $(nodeRef.current),
+			element: nodeRef.current,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			noFlipX: true,
@@ -124,17 +131,22 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const resize = () => {
 		raf.cancel(frameResize.current);
 		frameResize.current = raf(() => {
-			const node = $(nodeRef.current);
-			if (!node.length) {
+			const node = nodeRef.current;
+			if (!node) {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			const width = container.width();
+			const containerEl = U.Dom.getScrollContainer(isPopup);
+			if (!containerEl) {
+				return;
+			};
 
-			containerOffset.current = container.offset();
+			const width = containerEl.clientWidth;
+			const containerRect = containerEl.getBoundingClientRect();
 
-			node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
+			containerOffset.current = { top: containerRect.top, left: containerRect.left };
+
+			U.Dom.css(node, { left: `${containerOffset.current.left + width - node.offsetWidth - 6}px` });
 			onScroll();
 		});
 	};

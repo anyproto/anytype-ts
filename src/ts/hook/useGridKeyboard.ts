@@ -136,8 +136,7 @@ export const useGridKeyboard = (props: UseGridKeyboardProps) => {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			const containerEl = container.get(0);
+			const containerEl = U.Dom.getScrollContainer(isPopup);
 
 			if (!containerEl) {
 				return;

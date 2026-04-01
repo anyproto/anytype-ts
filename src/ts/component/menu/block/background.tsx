@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import $ from 'jquery';
+
 import { MenuItemVertical } from 'Component';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -11,13 +11,15 @@ const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const value = String(data.value || '');
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 
 		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 	};

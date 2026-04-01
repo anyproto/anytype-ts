@@ -5,8 +5,9 @@ import { observable } from 'mobx';
 import { arrayMove } from '@dnd-kit/sortable';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon, IconObject } from 'Component';
-import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 

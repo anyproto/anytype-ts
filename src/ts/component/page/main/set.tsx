@@ -3,7 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, Onboarding, Storage } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -24,20 +26,30 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const isClosingRef = useRef(false);
 
 	const unbind = () => {
-		const ns = U.Common.getEventNamespace(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 
-		$(window).off(`scroll.set${ns}`);
+		const sc = U.Dom.getScrollContainer(isPopup);
+		if (sc && scrollHandler.current) {
+			sc.removeEventListener('scroll', scrollHandler.current);
+			scrollHandler.current = null;
+		};
 		keyboard.router.popPageZone(`keydown.set${ns}`);
 	};
 
+	const scrollHandler = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
-		const ns = U.Common.getEventNamespace(isPopup);
-		const container = U.Common.getScrollContainer(isPopup);
+		const ns = U.Dom.getEventNamespace(isPopup);
 
 		unbind();
 
 		keyboard.router.pushPageZone(`keydown.set${ns}`, (e) => onKeyDown(e));
-		container.on(`scroll.set${ns}`, () => onScroll());
+
+		const sc = U.Dom.getScrollContainer(isPopup);
+		if (sc) {
+			scrollHandler.current = () => onScroll();
+			sc.addEventListener('scroll', scrollHandler.current);
+		};
 	};
 
 	const checkDeleted = (): boolean => {
@@ -90,15 +102,14 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const restore = () => {
 					cnt++;
 
-					const container = U.Common.getScrollContainer(isPopup);
-					const el = container.get(0);
+					const container = U.Dom.getScrollContainer(isPopup);
 
-					if (!el) {
+					if (!container) {
 						return;
 					};
 
-					if ((el.scrollHeight > target) || (cnt >= 30)) {
-						container.scrollTop(target);
+					if ((container.scrollHeight > target) || (cnt >= 30)) {
+						container.scrollTop = target;
 					} else {
 						window.setTimeout(restore, 50);
 					};
@@ -128,8 +139,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const top = container?.scrollTop ?? 0;
 
 		Storage.setScroll('set', rootId, top, isPopup);
 		S.Common.getRef('selectionProvider')?.renderSelection();
@@ -145,7 +156,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const ref = blockRefs.current[J.Constant.blockId.dataview];
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
@@ -210,7 +221,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const container = U.Common.getPageContainer(isPopup);
+			const container = $(U.Dom.getPageContainer(isPopup));
 			const header = container.find('#header');
 			const cover = container.find('.block.blockCover');
 			const hh = isPopup ? header.height() : J.Size.header;

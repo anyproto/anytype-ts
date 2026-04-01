@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum PreviewType {
 	None	 = 0,
@@ -28,7 +28,7 @@ export interface Preview {
 	classNameWrap?: string;
 	target?: string; /** object ID or URL */
 	object?: any;
-	element?: JQuery<HTMLElement>;
+	element?: HTMLElement | string;
 	rect?: any;
 	range?: I.TextRange;
 	marks?: I.Mark[];

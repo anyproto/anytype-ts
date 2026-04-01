@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
@@ -54,8 +54,8 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 
 		const options: any[] = [
 			canEdit ? { id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') } : null,
-			canSource ? { id: 'sourceChange', icon: 'source', name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
-			{ id: 'sourceOpen', icon: 'expand', name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
+			canSource ? { id: 'sourceChange', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
+			{ id: 'sourceOpen', iconParam: { name: 'common/expand' }, name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		].filter(it => it);
 
 		S.Menu.open('select', {
@@ -134,7 +134,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						$(nodeRef.current).find('#head-source-select').trigger('click');
+						(nodeRef.current?.querySelector('#head-source-select') as HTMLElement)?.click();
 						onCreate(message, true);
 					});
 				});
@@ -248,7 +248,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 	};
 
 	const checkInput = (isEmpty: boolean) => {
-		$(editableRef.current?.getNode()).toggleClass('isEmpty', isEmpty);
+		U.Dom.toggleClass(editableRef.current?.getNode(), 'isEmpty', isEmpty);
 	};
 
 	const save = () => {
@@ -291,7 +291,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 
 	let icon = null;
 	if (targetObjectId && !isCollection) {
-		icon = <Icon id="head-source-select" className="source" withBackground={true} onClick={onSource} />;
+		icon = <Icon id="head-source-select" name="control/dataview/source" className="source" withBackground={true} onClick={onSource} />;
 	} else {
 		icon = <div id="head-source-select" />;
 	};

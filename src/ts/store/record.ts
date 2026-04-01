@@ -1,5 +1,6 @@
 import { observable, action, set, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 enum KeyMapType {
 	Relation = 'relation',

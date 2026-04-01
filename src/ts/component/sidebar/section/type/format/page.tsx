@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Switch } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];

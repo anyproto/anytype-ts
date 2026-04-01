@@ -24,10 +24,7 @@
 			border: 0;
 			transition: background-color $transitionCommon;
 
-			.icon.upload {
-				width: 48px; height: 48px; margin: 0px 0px 12px 0px;
-				background-image: url('~img/icon/cover/upload.svg'); background-size: 48px 48px;
-			}
+			.icon.commonUpload { margin: 0px 0px 12px 0px; }
 
 			.label { @include text-paragraph; color: var(--color-text-secondary); }
 

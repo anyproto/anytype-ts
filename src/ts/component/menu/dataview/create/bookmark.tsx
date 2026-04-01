@@ -19,6 +19,8 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		cn.push('withPreview');
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
 		keyboard.router.pushMenuZone(getId(), () => {});
@@ -118,7 +120,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			{isLoading ? <Loader /> : ''}
 
 			<div className="inputWrap">
-				<Icon className="link" />
+				<Icon name="common/link" className="link" />
 				<Input 
 					ref={inputRef} 
 					value={value} 

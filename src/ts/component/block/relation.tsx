@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
-import { I, C, S, U, J, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
@@ -102,7 +103,7 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 				<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={onMenu}>
 					{relation ? (
 						<>
-							<Icon className="ghost" />
+							<Icon name="common/ghost" />
 							{translate('commonDeletedRelation')}
 						</>
 					) : translate('menuBlockAddNewRelation')} 

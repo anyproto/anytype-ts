@@ -1,13 +1,13 @@
 
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
-import type { Event, Event_Message } from 'Proto/pb/protos/events';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
+import type { Event } from 'Proto/pb/protos/events';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -182,7 +182,7 @@ class Dispatcher {
 				try {
 					this.event(item.event, false, item.skipDebug);
 				} catch (e) {
-					console.error(e);
+					console.error('[Dispatcher] event processing failed:', e);
 				};
 			};
 		});
@@ -203,7 +203,6 @@ class Dispatcher {
 		const traceId = event.traceId;
 		const ctx: string[] = [ event.contextId ];
 		const debugJson = config.flagsMw.json;
-		const win = $(window);
 
 		if (traceId) {
 			ctx.push(traceId);
@@ -218,7 +217,7 @@ class Dispatcher {
 			};
 
 			if (data) {
-				const d = U.Common.objectClear(data);
+				const d = U.Common.objectClear(U.Common.objectCopy(data));
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 			};
 		};
@@ -800,7 +799,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData`);
+						window.dispatchEvent(new CustomEvent('updateDataviewData'));
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -959,7 +958,7 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
@@ -976,8 +975,8 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep ] = mapped.subId.split('/');
-					
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
+
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
@@ -986,7 +985,7 @@ class Dispatcher {
 
 				case 'SubscriptionGroups': {
 					const { group, remove } = mapped;
-					const [ rootId, blockId ] = mapped.subId.split('-');
+					const [ rootId, blockId = '' ] = mapped.subId.split('-');
 
 					if (remove) {
 						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
@@ -1008,7 +1007,9 @@ class Dispatcher {
 							id: item.id,
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
+							silent: !Sound.isSystem(),
 						});
+						Sound.playNotification();
 					};
 					break;
 				};
@@ -1024,7 +1025,7 @@ class Dispatcher {
 					};
 
 					let payload: any = {};
-					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
+					try { payload = JSON.parse(mapped.payload); } catch (e) { console.warn('[Dispatcher] payload parse failed:', e); };
 
 					Renderer.send('payloadBroadcast', payload);
 					break;
@@ -1075,7 +1076,7 @@ class Dispatcher {
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg = {
+						const commentMsg: I.CommentMessage = {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
@@ -1085,14 +1086,14 @@ class Dispatcher {
 						};
 
 						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
 
 							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
 							if (post) {
 								set(post, { replyCount: (post.replyCount || 0) + 1 });
 							};
 						} else {
-							S.Comment.addPost(subId, commentMsg as any);
+							S.Comment.addPost(subId, commentMsg);
 						};
 					});
 
@@ -1118,10 +1119,12 @@ class Dispatcher {
 							text: notification,
 							cmd: 'openChat',
 							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+							silent: !Sound.isSystem(),
 						});
+						Sound.playNotification();
 					};
 
-					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
 					break;
 				};
 
@@ -1130,7 +1133,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg = {
+							const commentMsg: Partial<I.CommentMessage> = {
 								id: mapped.message.id,
 								content: {
 									...mapped.message.content,
@@ -1139,16 +1142,16 @@ class Dispatcher {
 							};
 
 							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
 							} else {
-								S.Comment.updatePost(subId, commentMsg as any);
+								S.Comment.updatePost(subId, commentMsg);
 							};
 						} else {
 							S.Chat.update(subId, mapped.message);
 						};
 					});
 
-					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageUpdate', { detail: { message: mapped.message, subIds: mapped.subIds } }));
 					break;
 				};
 
@@ -1296,13 +1299,15 @@ class Dispatcher {
 										text,
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+										silent: !Sound.isSystem(),
 									});
+									Sound.playNotification();
 								};
 							};
 						};
 					};
 
-					$(window).trigger('reactionUpdate', [ notificationMessage ]);
+					window.dispatchEvent(new CustomEvent('reactionUpdate', { detail: notificationMessage }));
 					break;
 				};
 
@@ -1478,7 +1483,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			$(window).trigger('updateDataviewData');
+			window.dispatchEvent(new CustomEvent('updateDataviewData'));
 		};
 	};
 
@@ -1491,8 +1496,16 @@ class Dispatcher {
 	 * @param afterId - ID of the record after which to place the item (empty for start)
 	 * @param isAdding - Whether this is a new addition (skip if already exists)
 	 */
+	parseSubId (subId: string): [string, string] {
+		const idx = subId.indexOf('/');
+		if (idx === -1) {
+			return [ subId, '' ];
+		};
+		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
+	};
+
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
-		const [ sid, dep ] = subId.split('/');
+		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};
@@ -1601,7 +1614,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		$(window).trigger('objectView');
+		window.dispatchEvent(new CustomEvent('objectView'));
 	};
 
 	/**
@@ -1626,7 +1639,7 @@ class Dispatcher {
 
 		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			const d = U.Common.objectClear(data);
+			const d = U.Common.objectClear(U.Common.objectCopy(data));
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
@@ -1669,7 +1682,7 @@ class Dispatcher {
 
 				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					const d = U.Common.objectClear(response);
+					const d = U.Common.objectClear(U.Common.objectCopy(response));
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 

@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, S, U, J, analytics, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -237,7 +236,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const resize = () => {
 		const { data } = param;
 		const { noFilter } = data;
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;
 		const itemsHeight = items.length ? items.reduce((res: number, current: any) => res + getRowHeight(current), 0) : 160;
@@ -245,7 +244,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let height = offset + itemsHeight + buttonHeight;
 		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
@@ -260,7 +259,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onClick={e => onClickHandler(e, item)} 
 					style={item.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{addName}</div>
 				</div>
 			);
@@ -331,7 +330,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					placeholder={translate('menuTypeSuggestFilterTypes')}
 					value={filter}
 					onChange={onFilterChange} 

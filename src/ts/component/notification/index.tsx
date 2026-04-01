@@ -1,8 +1,7 @@
 import React, { FC, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, } from 'Component';
-import { I, C, S, U, J, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const Notification: FC<I.NotificationComponent> = observer((props) => {
 
@@ -79,7 +78,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 	const onDelete = (e: any): void => {
 		e.stopPropagation();
 
-		$(nodeRef.current).addClass('to');
+		U.Dom.addClass(nodeRef.current, 'to');
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
@@ -91,12 +90,10 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 	};
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
-
-		node.addClass('from');
+		U.Dom.addClass(nodeRef.current, 'from');
 
 		timeout.current = window.setTimeout(() => {
-			node.removeClass('from');
+			U.Dom.removeClass(nodeRef.current, 'from');
 			window.setTimeout(() => resize(), J.Constant.delay.notification);
 		}, 40);
 
@@ -112,7 +109,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 			className="notification"
 			style={style}
 		>
-			<Icon className="delete" onClick={onDelete} />
+			<Icon name="notification/delete" size={10} className="delete" onClick={onDelete} />
 			<div className="content">
 				{title ? <Title text={title} /> : ''}
 				{text ? <Label text={text} /> : ''}

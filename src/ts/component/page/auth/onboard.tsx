@@ -1,7 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
 enum Stage {
 	Phrase 		= 0,
@@ -59,7 +60,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const onAuth = () => {
 		U.Router.switchSpace(S.Common.space, '', false, {
-			onFadeIn: () => {
+			onRouteChange: () => {
 				Onboarding.startCommon(props.isPopup);
 				analytics.event('OpenAccount');
 			},
@@ -167,7 +168,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
 		const isValid = U.String.matchEmail(v);
 
-		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
+		U.Dom.toggleClass(nextRef.current?.getNode(), 'disabled', !isValid);
 	};
 
 	const shuffleItems = (stage: string) => {
@@ -237,7 +238,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			additional = (
 				<div className="learnMore animation" onClick={onLearnMore}>
-					<Icon />
+					<Icon name="plus/onboarding" size={18} />
 					<Label text={translate('commonLearnMore')} />
 				</div>
 			);

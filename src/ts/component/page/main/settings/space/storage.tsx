@@ -1,7 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, ProgressBar, UpsellBanner } from 'Component';
-import { I, J, U, S, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
+
 
 const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -14,7 +15,6 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const isOwner = U.Space.isMyOwner();
 	const usageCn = [ 'item', 'usageWrapper' ];
 	const canWrite = U.Space.canMyParticipantWrite();
-	const nodeRef = useRef(null);
 	const managersRef = useRef<any>({});
 	const segments: any = {
 		current: { name: currentSpace.name, usage: 0, className: 'current', },
@@ -83,7 +83,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const Manager = (item: any) => {
 		const { refId } = item;
 		const buttons: I.ButtonComponent[] = [
-			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: () => onRemove(refId) }
+			{ iconParam: { name: 'menu/action/remove' }, text: translate('commonDeleteImmediately'), onClick: () => onRemove(refId) }
 		];
 		const filters: I.Filter[] = [
 			{ relationKey: 'syncStatus', condition: I.FilterCondition.In, value: item.filters },
@@ -107,7 +107,8 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				buttons={buttons}
 				info={I.ObjectManagerItemInfo.FileSize}
 				isCompact={true}
-				disableHeight={false}
+				disableHeight={true}
+				isPopup={isPopup}
 				sorts={sorts}
 				filters={filters}
 				keys={U.Subscription.syncStatusRelationKeys().concat([ 'creator' ])}
@@ -126,24 +127,14 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		};
 	};
 
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const sc = U.Common.getScrollContainer(isPopup);
-		const height = sc.height() - J.Size.header - 36;
-
-		node.css({ height });
-	};
-
 	useEffect(() => {
-		resize();
-
 		return () => {
 			U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 		};
 	}, []);
 
 	return (
-		<div ref={nodeRef} className="wrap">
+		<div className="wrap">
 			<UpsellBanner components={[ 'storage' ]} route={analytics.route.settingsStorage} />
 
 			<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />

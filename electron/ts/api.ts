@@ -116,6 +116,8 @@ class Api {
 			if (pinTimeout) {
 				this.startPinTimer(win, pinTimeout);
 			};
+
+			WindowManager.sendToAllTabs('pin-unlocked');
 		} else {
 			this.stopPinTimer();
 		};
@@ -950,8 +952,8 @@ class Api {
 		}, 100);
 	};
 
-	notification (win: AppWindow, param: { id?: string; title?: string; text?: string; cmd?: string; payload?: any }): void {
-		const { id, title, text, cmd, payload } = param || {};
+	notification (win: AppWindow, param: { id?: string; title?: string; text?: string; cmd?: string; payload?: any; silent?: boolean }): void {
+		const { id, title, text, cmd, payload, silent = true } = param || {};
 
 		if (!text) {
 			return;
@@ -972,6 +974,7 @@ class Api {
 		const notification = new Notification({
 			title: String(title || ''),
 			body: String(text || ''),
+			silent,
 		});
 
 		notification.on('click', () => {
@@ -983,6 +986,10 @@ class Api {
 		});
 
 		notification.show();
+	};
+
+	notificationSound (_win: AppWindow): void {
+		shell.beep();
 	};
 
 	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {

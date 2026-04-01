@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, Relation } from 'Lib';
 import { observable } from 'mobx';
+import * as I from 'Interface';
 
 const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -57,7 +57,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			listRef.current?.getData(1);
+			listRef.current?.reload();
 			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 
@@ -381,7 +381,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	};
 
 	if (options && canAdd && !isReadonlyRelation) {
-		const add = <Icon key="optionAdd" className="add" onClick={onOptionAdd} />;
+		const add = <Icon key="optionAdd" name="plus/menu" className="add" onClick={onOptionAdd} />;
 		withMore ? options.unshift(add) : options.push(add);
 	};
 
@@ -430,7 +430,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 						<div className="side right">
 							<Icon
 								id="button-create"
-								className="more" withBackground={true}
+								name="common/more" className="more" withBackground={true}
 								onClick={onMore}
 							/>
 						</div>
@@ -446,6 +446,8 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 							rootId={rootId}
 							columns={columnsObject}
 							route={analytics.route.screenRelation}
+							useInfiniteScroll={true}
+							isPopup={isPopup}
 						/>
 					</div>
 				</div>

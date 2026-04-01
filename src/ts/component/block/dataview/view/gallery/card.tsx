@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component';
-import { I, S, U, Relation, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -38,12 +37,18 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const last = node.find('.cellContent:not(.isEmpty)').last();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('last');
-		if (last.length) {
-			last.addClass('last');
+		const cells = node.querySelectorAll('.cellContent');
+		const nonEmpty = node.querySelectorAll('.cellContent:not(.isEmpty)');
+		const last = nonEmpty.length ? nonEmpty[nonEmpty.length - 1] : null;
+
+		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'last'));
+		if (last) {
+			U.Dom.addClass(last as HTMLElement, 'last');
 		};
 	};
 
@@ -93,6 +98,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 			{canEdit && config.experimental ? (
 				<Icon
+					name="common/edit"
 					className={[ 'edit', (isEditing ? 'enabled' : '') ].join(' ')}
 					onClick={e => onEditModeClick(e, recordId)}
 				/>

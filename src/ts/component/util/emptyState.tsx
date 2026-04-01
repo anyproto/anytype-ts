@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { translate } from 'Lib';
 import { Icon, Label, Button } from 'Component';
 
 interface Props {

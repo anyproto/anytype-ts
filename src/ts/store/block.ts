@@ -1,6 +1,7 @@
-import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 /**
  * BlockStore manages the block data structure for all open objects.
@@ -732,7 +733,7 @@ class BlockStore {
 		const unwrap = (list: any) => {
 			list = list || [];
 
-			const ret = [] as any[];
+			const ret: I.Block[] = [];
 			for (const item of list) {
 				item.childBlocks = item.childBlocks || [];
 
@@ -758,7 +759,8 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$(`#marker-${U.Common.esc(item.id)}`).text(`${n}.`);
+						const marker = U.Dom.get(`marker-${item.id}`);
+					if (marker) marker.textContent = `${n}.`;
 					} else {
 						n = 0;
 					};
@@ -936,16 +938,16 @@ class BlockStore {
 	};
 
 	toggle (rootId: string, blockId: string, v: boolean) {
-		const element = $(`#block-${U.Common.esc(blockId)}`);
-		if (!element.length) {
+		const element = U.Dom.get(`block-${blockId}`);
+		if (!element) {
 			return;
 		};
 
-		element.toggleClass('isToggled', v);
+		U.Dom.toggleClass(element, 'isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		this.incrementToggleVersion();
 
-		U.Common.triggerResizeEditor(keyboard.isPopup());
+		U.Dom.triggerResizeEditor(keyboard.isPopup());
 	};
 
 	/**
@@ -1065,13 +1067,12 @@ class BlockStore {
 	 * @param {string} rootId - The root ID.
 	 */
 	triggerWidgetEvent (code: string, rootId: string) {
-		const win = $(window);
 		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
 
 		blocks.forEach(block => {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
-				win.trigger(`${code}.${block.id}`);
+				window.dispatchEvent(new CustomEvent(`${code}.${block.id}`));
 			};
 		});
 	};

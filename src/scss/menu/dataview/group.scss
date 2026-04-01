@@ -9,7 +9,7 @@
 		.items { flex-grow: 1; }
 		.item { padding: 4px 10px; display: flex; }
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.icon.plus { margin-right: 4px; }
 			.clickable { width: calc(100% - 60px); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 

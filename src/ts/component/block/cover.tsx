@@ -2,8 +2,9 @@ import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
@@ -32,7 +33,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		resize();
 
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 		$(window).off('resize.cover').on('resize.cover', () => resize());
 
@@ -45,7 +46,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		resize();
 
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks($(nodeRef.current));
 		};
 	}, [ coverType, coverId ]);
 	
@@ -170,7 +171,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const cb = () => {
 			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 
-			rectRef.current = U.Common.getElementRect(node.get(0));
+			rectRef.current = U.Dom.getElementRect(node.get(0));
 			onScaleMove($.Event('resize'), object.coverScale);
 			cover.css({ opacity: 1 });
 			dragRef.current?.setValue(object.coverScale);
@@ -264,7 +265,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const rect = U.Common.getElementRect(el);
+		const rect = U.Dom.getElementRect(el);
 
 		rectRef.current.cw = rect.width;
 		rectRef.current.ch = rect.height;
@@ -377,7 +378,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		elements = (
 			<>
 				<div key="btn-drag" className="btn black drag withIcon">
-					<Icon />
+					<Icon name="control/cover/drag" size={16} />
 					<div className="txt">{translate('blockCoverDrag')}</div>
 				</div>
 				

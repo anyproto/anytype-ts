@@ -2,7 +2,8 @@ import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
-import { I, C, S, J, U, translate, focus, Action, keyboard } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -93,7 +94,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
@@ -106,7 +107,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 		
 		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap.get(0));
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
@@ -125,7 +126,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -159,7 +160,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							onPlay={onPlay}
 							onPause={onPause}
 						/>
-						<Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;

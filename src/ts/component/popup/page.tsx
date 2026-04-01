@@ -1,8 +1,8 @@
-import React, { forwardRef, useEffect } from 'react';
-import $ from 'jquery';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, history as historyPopup, keyboard, sidebar } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
 import { Page } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.Popup {};
 
@@ -11,15 +11,24 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 	const { param, getId } = props;
 	const { data } = param;
 	const { matchPopup } = data;
+	const scrollHandlerRef = useRef<(() => void) | null>(null);
+
+	const getInnerWrap = (): HTMLElement | null => {
+		const container = U.Dom.get(getId());
+		return container ? U.Dom.select('.innerWrap', container) : null;
+	};
 
 	const rebind = () => {
 		unbind();
-		
-		$(`#${getId()}`).find('.innerWrap').on('scroll.common', () => S.Menu.resizeAll());
+		scrollHandlerRef.current = () => S.Menu.resizeAll();
+		getInnerWrap()?.addEventListener('scroll', scrollHandlerRef.current);
 	};
 
 	const unbind = () => {
-		$(`#${getId()}`).find('.innerWrap').off('scroll.common');
+		if (scrollHandlerRef.current) {
+			getInnerWrap()?.removeEventListener('scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	useEffect(() => {

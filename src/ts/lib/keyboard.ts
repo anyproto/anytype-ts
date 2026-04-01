@@ -1,5 +1,8 @@
 import $ from 'jquery';
-import { I, C, S, U, J, H, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 import { router } from './keyboard/router';
 import { KeyboardZoneType } from './keyboard/zone';
 
@@ -112,8 +115,8 @@ class Keyboard {
 	onResize () {
 		const { hideSidebar } = S.Common;
 		const isPopup = this.isPopup();
-		const container = U.Common.getPageContainer(isPopup);
-		const cw = container.width();
+		const container = U.Dom.getPageContainer(isPopup);
+		const cw = container?.clientWidth || 0;
 		const data = sidebar.getData(I.SidebarPanel.Left, false);
 		const threshold = J.Size.sidebar.left.threshold.close;
 
@@ -283,8 +286,8 @@ class Keyboard {
 				let canClose = true;
 
 				if (this.isPopup()) {
-					if (U.Common.getSelectionRange()) {
-						U.Common.clearSelection();
+					if (U.Dom.getSelectionRange()) {
+						U.Dom.clearSelection();
 						canClose = false;
 					} else
 					if (selectedBlockIds.length || selectedRecordIds.length) {
@@ -562,7 +565,7 @@ class Keyboard {
 		let vertical = I.MenuDirection.Top;
 
 		if (!$(element).length) {
-			const { ww, wh } = U.Common.getWindowDimensions();
+			const { ww, wh } = U.Dom.getWindowDimensions();
 
 			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
 			horizontal = I.MenuDirection.Center;
@@ -583,7 +586,7 @@ class Keyboard {
 	 * Checks the current selection and updates state.
 	 */
 	checkSelection () {
-		const range = U.Common.getSelectionRange();
+		const range = U.Dom.getSelectionRange();
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
@@ -1019,7 +1022,7 @@ class Keyboard {
 					S.Popup.open('confirm', {
 						className: 'isLeft',
 						data: {
-							icon: 'warning',
+							iconParam: { name: 'popup/header/warning', color: 'orange' },
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
@@ -1198,7 +1201,7 @@ class Keyboard {
 		};
 
 		if (clearTheme) {
-			U.Common.addBodyClass('theme', '');
+			U.Dom.addBodyClass('theme', '');
 		};
 
 		// Set background color for dark mode to ensure it's captured in PDF
@@ -1294,7 +1297,7 @@ class Keyboard {
 			options.margins = { top: 0, bottom: 0, left: 0, right: 0 };
 
 			// Temporarily apply dark theme so CSS variables are active for PDF capture
-			U.Common.addBodyClass('theme', 'dark');
+			U.Dom.addBodyClass('theme', 'dark');
 		};
 
 		this.printApply('print', !isDark);
@@ -1328,7 +1331,8 @@ class Keyboard {
 		};
 
 		const menuId = isChat ? 'searchChat' : 'searchText';
-		const element = U.Common.getScrollContainer(isPopup).find('#header .side.center');
+		const el = U.Dom.getScrollContainer(isPopup)?.querySelector('#header .side.center');
+		const element = el ? $(el) : null;
 		const menuParam: Partial<I.MenuParam> = {
 			element,
 			horizontal: I.MenuDirection.Center,
@@ -1351,7 +1355,7 @@ class Keyboard {
 				chatId,
 				route,
 				scrollToMessage: (id: string) => {
-					$(window).trigger('scrollToMessage', { id });
+					window.dispatchEvent(new CustomEvent('scrollToMessage', { detail: { id } }));
 				},
 			});
 		} else {
@@ -1540,6 +1544,10 @@ class Keyboard {
 
 		ret.route = String(ret.route || '');
 		return ret;
+	};
+
+	isAction (action: string) {
+		return this.getRouteMatch().params.action == action;
 	};
 
 	/**
@@ -2164,7 +2172,7 @@ class Keyboard {
 			U.String.toCamelCase([ prefix, page ].join('-')),
 			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
 			U.String.toCamelCase([ prefix, page, action ].join('-')),
-			U.Common.getContainerClassName(isPopup),
+			U.Dom.getContainerClassName(isPopup),
 			U.Data.spaceClass(spaceview.uxType),
 		].join(' ');
 	};

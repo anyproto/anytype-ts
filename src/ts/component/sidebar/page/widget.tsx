@@ -3,7 +3,13 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, FocusedPanel, GroupDirection } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import $ from 'jquery';
+import { keyboard } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
+import { GroupDirection } from 'Lib/keyboard/navigation';
 import { useKeyboardGroup } from 'Hook';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -367,9 +373,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		if (isClosed) {
 			S.Common.widgetSectionsSet(sections);
-			U.Common.toggle(list, 200, false);
+			U.Dom.toggle(list, 200, false);
 		} else {
-			U.Common.toggle(list, 200, true, () => {
+			U.Dom.toggle(list, 200, true, () => {
 				S.Common.widgetSectionsSet(sections);
 			});
 		};
@@ -549,13 +555,13 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			let buttons = null;
 
 			if (object.isSystem) {
-				icon = <Icon className={object.icon} />;
+				icon = <Icon name={object.iconName} className={object.icon} />;
 			} else {
 				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
 				buttons = (
 					<>
-						<Icon className="expand" withBackground={true} onClick={onExpand} />
-						{hasMenu ? <Icon id="button-widget-more" className="more" withBackground={true} onClick={onMore} /> : ''}
+						<Icon name="common/expand" className="expand" withBackground={true} onClick={onExpand} />
+						{hasMenu ? <Icon id="button-widget-more" name="common/more" className="more" withBackground={true} onClick={onMore} /> : ''}
 					</>
 				);
 			};
@@ -563,7 +569,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon className="back" withBackground={true} onClick={e => {
+						<Icon name="common/back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -602,19 +608,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			<>
 				<div className="side left">
 					<Icon
-						className="vaultToggle" withBackground={true}
+						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{
 							text: translate('commonVault'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-					<Icon 
-						className="widgetPanel" withBackground={true} 
+					<Icon
+						name="header/widget" withBackground={true}
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
@@ -624,7 +630,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 					<Icon 
 						id="button-recently-open"
-						className="clock" withBackground={true}
+						name="common/clock" 
+						withBackground={true}
 						onClick={onRecentlyOpen}
 						tooltipParam={{ 
 							text: translate('widgetRecentOpen'), 
@@ -665,11 +672,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					let buttons = null;
 					if (isSectionType) {
 						if (canWrite) {
-							buttons = <Button icon="plus" color="blank" size={28} text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
+							buttons = <Button iconParam={{ name: 'plus/widgetSection', size: 12 }} color="blank" size={28} text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 						};
 					} else 
 					if (!isSectionUnread) {
-						buttons = <Icon className="more" onClick={() => onSectionContext(section.id)} />;
+						buttons = <Icon name="common/more" size={12} className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 
 					return (
@@ -682,20 +689,18 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 									transition: { duration: 200, delay: i * 0.05 },
 								})}
 							>
-								{!isSectionBin ? (
-									<div 
-										className="nameWrap" 
-										onContextMenu={() => onSectionContext(section.id)}
-									>
-										<div className="name" onClick={() => onToggle(section.id)}>
-											<Icon className="arrow" />
-											{section.name}
-										</div>
-										<div className="buttons">
-											{buttons}
-										</div>
+								<div
+									className="nameWrap"
+									onContextMenu={() => onSectionContext(section.id)}
+								>
+									<div className="name" onClick={() => onToggle(section.id)}>
+										<Icon name="arrow/button" size={8} className="arrow" />
+										{section.name}
 									</div>
-								) : ''}
+									<div className="buttons">
+										{buttons}
+									</div>
+								</div>
 
 								{!ws?.isClosed ? (
 									<div 

@@ -3,7 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
-import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark, } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -45,6 +46,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			topRef.current = scrollTop;
 		};
 	};
+
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const archiveHandler = useRef<(e: any) => void>(null);
 
 	const rebind = () => {
 		unbind();
@@ -202,17 +206,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-
 		nRef.current = getItems().findIndex(it => it.id == item.id);
 		setActiveIndex(nRef.current);
 		unsetActive();
 
-		node.find(`#item-${U.Common.esc(item.id)}`).addClass('active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current), 'active');
 	};
 
 	const unsetActive = () => {
-		$(nodeRef.current).find('.item.active').removeClass('active');
+		U.Dom.selectAll('.item.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 	};
 
 	const onFilterChange = (v: string) => {
@@ -302,7 +304,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 		const sorts = [
-			{ relationKey: '_score', type: I.SortType.Desc },
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -329,7 +331,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
 				setIsLoading(false);
 				return;
@@ -404,26 +406,26 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			let itemsImport: any[] = [];
 			if (canWrite) {
 				itemsImport = ([
-					{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
-					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
-					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
-					{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+					{ id: 'importHtml', iconParam: { name: 'import/html' }, name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+					{ id: 'importText', iconParam: { name: 'import/text' }, name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+					{ id: 'importProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
+					{ id: 'importMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
 				] as any[]).map(it => ({ ...it, isImport: true, isSmall: true }));
 			};
 
 			let settingsSpace: any[] = [
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
 
-				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
-				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
-				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+				{ id: 'exportIndex', iconParam: { name: 'menu/action/export' }, icon: 'settings-export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsExportMarkdownTitle') },
 			];
 
 			if (canWrite) {
 				settingsSpace = settingsSpace.concat([
-					{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
-					{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
-					{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+					{ id: 'importIndex', iconParam: { name: 'menu/action/import' }, icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+					{ id: 'importNotion', iconParam: { name: 'import/notion' }, name: translate('popupSettingsImportNotionTitle') },
+					{ id: 'importCsv', iconParam: { name: 'import/csv' }, name: translate('popupSettingsImportCsvTitle') },
 				]);
 			};
 
@@ -432,27 +434,27 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
+					id: 'personal', iconParam: { name: 'settings/personal' }, icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
 					aliases: [
 						translate('commonLanguage', lang), translate('commonLanguage'),
 						translate('commonSpelling', lang), translate('commonSpelling'),
 					]
 				},
 				{
-					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
+					id: 'personal', iconParam: { name: 'settings/personal' }, icon: 'settings-personal', name: translate('pageSettingsColorMode'),
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ]
 				},
-				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
-				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
-				{ id: 'spaceList', icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
-				{ id: 'dataPublish', icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
-				{ id: 'api', icon: 'settings-api', name: translate('popupSettingsApiTitle') },
+				{ id: 'pinIndex', iconParam: { name: 'settings/pin' }, icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataIndex', iconParam: { name: 'settings/storage' }, icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
+				{ id: 'phrase', iconParam: { name: 'settings/phrase' }, icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+				{ id: 'spaceList', iconParam: { name: 'settings/spaces' }, icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
+				{ id: 'dataPublish', iconParam: { name: 'settings/sites' }, icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'api', iconParam: { name: 'settings/api' }, icon: 'settings-api', name: translate('popupSettingsApiTitle') },
 			];
 
 			const pageItems: any[] = [
-				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('graph')), layout: I.ObjectLayout.Graph },
-				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('navigation')), layout: I.ObjectLayout.Navigation },
+				{ id: 'graph', iconParam: { name: 'header/graph' }, name: translate('commonGraph'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('graph')), layout: I.ObjectLayout.Graph },
+				{ id: 'navigation', iconParam: { name: 'menu/action/navigation' }, name: translate('commonFlow'), shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('navigation')), layout: I.ObjectLayout.Navigation },
 			].map(it => ({ ...it, isSmall: true }));
 
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true, isSmall: true }));
@@ -482,8 +484,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
-			items.push({ id: 'add', name, icon: 'plus', shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
-			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), icon: 'plus', isSmall: true });
+			items.push({ id: 'add', name, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')), isSmall: true });
+			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' }, isSmall: true });
 		};
 
 		return items.map(it => {
@@ -736,7 +738,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (object) {
 			icon = <IconObject object={object} size={size} />;
 		} else {
-			icon = <Icon className={item.icon} />;
+			icon = <Icon className={item.icon} {...(item.iconParam || {})} />;
 		};
 
 		if (item.isObject) {
@@ -749,7 +751,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (item.links.length || item.backlinks.length) {
 				advanced = (
 					<Icon
-						className="advanced"
+						name="common/more" className="advanced"
 						tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
 						onClick={e => onBacklink(e, item)}
 					/>
@@ -806,6 +808,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
 				onClick={e => onClick(e, item)}
+				onAuxClick={e => onClick(e, item)}
 			>
 				{icon}
 				{content}
@@ -894,7 +897,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="head">
 				<Filter
 					className="underlined"
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					value={filterValueRef.current}
 					ref={filterInputRef}
 					placeholder={translate('popupSearchPlaceholder')}

@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, ObjectName, ObjectType } from 'Component';
-import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const LIMIT_HEIGHT = 20;
 const LIMIT_TYPE = 2;
@@ -272,7 +271,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	const resize = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let offset = 16;
 
@@ -286,7 +285,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
@@ -354,7 +353,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 			{!noFilter ? (
 				<Filter
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					ref={filterRef} 
 					placeholder={placeholder}
 					value={filter}

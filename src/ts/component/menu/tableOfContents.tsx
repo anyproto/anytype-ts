@@ -1,20 +1,24 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Label, MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, translate, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
 const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setActive, close, onKeyDown, setHover, getMaxHeight } = props;
+	const { param, getId, getContainer, setActive, close, onKeyDown, setHover, getMaxHeight } = props;
 	const { data } = param;
 	const { rootId, isPopup, blockId } = data;
 	const n = useRef(-1);
 	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const keydownHandler = useRef(null);
+	const mouseenterHandler = useRef(null);
+	const mouseleaveHandler = useRef(null);
 	const itemSidebar = {
 		id: 'sidebar',
 		icon: 'openSidebar',
@@ -29,11 +33,13 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 
-		const obj = $(`#${getId()}`);
-		obj.on('mouseenter', () => S.Common.clearTimeout('tableOfContents'));
-		obj.on('mouseleave', () => S.Common.setTimeout('tableOfContents', 100, () => close()));
+		const obj = getContainer();
+		mouseenterHandler.current = () => S.Common.clearTimeout('tableOfContents');
+		mouseleaveHandler.current = () => S.Common.setTimeout('tableOfContents', 100, () => close());
+		obj?.addEventListener('mouseenter', mouseenterHandler.current);
+		obj?.addEventListener('mouseleave', mouseleaveHandler.current);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 		$(`#${getId()}`).off('mouseenter mouseleave');
@@ -58,7 +64,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId, blockId });
 			close();
 		} else {
-			U.Common.scrollToHeader(rootId, item, isPopup);
+			U.Dom.scrollToHeader(rootId, item, isPopup);
 		};
 	};
 
@@ -92,11 +98,11 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const content = U.Dom.select('.content', getContainer());
 		const offset = 58;
 		const height = Math.max(HEIGHT + offset, Math.min(getMaxHeight(isPopup), items.length * HEIGHT + offset));
 
-		obj.css({ height });
+		U.Dom.css(content, { height: `${height}px` });
 	};
 
 	const items = getItems();

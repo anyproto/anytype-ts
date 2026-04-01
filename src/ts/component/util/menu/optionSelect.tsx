@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, CSSProperties, MouseEvent, ReactElement } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
@@ -7,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const HEIGHT_DIV = 16;
@@ -21,6 +20,7 @@ interface SelectItem {
 	isSection?: boolean;
 	isDiv?: boolean;
 	icon?: string;
+	iconParam?: I.IconParam;
 	isArchived?: boolean;
 	isDeleted?: boolean;
 	_empty_?: boolean;
@@ -527,7 +527,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		S.Menu.open('dataviewOptionEdit', {
 			element,
-			offsetX: getSize?.().width || $(element).outerWidth(),
+			offsetX: getSize?.().width || (U.Dom.select(element)?.offsetWidth ?? 0),
 			vertical: I.MenuDirection.Center,
 			passThrough: false,
 			noFlipY: true,
@@ -548,10 +548,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseEnter = (e: MouseEvent, item: SelectItem): void => {
@@ -559,10 +559,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseLeave = (): void => {
@@ -623,12 +623,14 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const resize = (): void => {
 		const items = getItems();
-		const obj = $(nodeRef.current);
+		const obj = nodeRef.current;
 		const offset = !isReadonly && !noFilter ? 44 : 16;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
-		obj.css({ height });
+		if (obj) {
+			obj.style.height = `${height}px`;
+		};
 		position?.();
 	};
 
@@ -679,7 +681,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					onClick={e => onClick(e, item)}
 					onMouseEnter={e => onMouseEnter(e, item)}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -715,6 +717,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		let icon = null;
+		if (item.iconParam) {
+			icon = <Icon name={item.iconParam.name} />;
+		} else
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
@@ -733,10 +738,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{...(canSort ? listeners : {})}
 			>
 
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'menu/common/checkbox1' : 'menu/common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -753,7 +758,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" onClick={e => onEdit(e, item)} />
+						<Icon name="common/more" className="more" onClick={e => onEdit(e, item)} />
 					</div>
 				) : ''}
 			</div>
@@ -779,9 +784,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				className={cn.join(' ')}
 				style={{ height: HEIGHT }}
 			>
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
+					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />
@@ -797,7 +802,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" />
+						<Icon name="common/more" className="more" />
 					</div>
 				) : ''}
 			</div>

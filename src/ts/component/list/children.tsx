@@ -2,7 +2,8 @@ import React, { forwardRef, Fragment } from 'react';
 import { Block } from 'Component';
 import { observer } from 'mobx-react';
 import { DropTarget } from 'Component';
-import { I, C, S, focus, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	onMouseMove? (e: any): void;

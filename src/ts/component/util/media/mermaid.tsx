@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import mermaid from 'mermaid';
 import elkLayouts from '@mermaid-js/layout-elk';
 import { observer } from 'mobx-react';
-import { J, S, U } from 'Lib';
 
 mermaid.registerLayoutLoaders(elkLayouts);
 
@@ -23,7 +21,6 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 	const themeClass = S.Common.getThemeClass();
 
 	const init = async () => {
-		const obj = $(chartRef.current);
 		const themeVariables = (J.Theme[themeClass] || {}).mermaid || {};
 
 		for (const k in themeVariables) {
@@ -32,8 +29,13 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			};
 		};
 
-		obj.text(chart).removeAttr('data-processed');
-		$(errorRef.current).text('');
+		if (chartRef.current) {
+			chartRef.current.textContent = chart;
+			chartRef.current.removeAttribute('data-processed');
+		};
+		if (errorRef.current) {
+			errorRef.current.textContent = '';
+		};
 
 		try {
 			mermaid.initialize({ theme: 'base', themeVariables });
@@ -41,8 +43,8 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 			await mermaid.run({ 
 				querySelector: `#${id} .mermaid`,
 				postRenderCallback: () => {
-					U.Common.renderLinks($(chartRef.current));
-				}, 
+					U.Dom.renderLinks(chartRef.current);
+				},
 			});
 		} catch (e) {
 			console.error(e);

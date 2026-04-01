@@ -2,13 +2,13 @@ import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react'
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, analytics, keyboard, Relation, Action, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
+import * as I from 'Interface';
 
 interface Props extends I.Cell {
 	elementId?: string;
@@ -288,7 +288,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.LongText: {
 				if (!noInplace) {
-					const { wh } = U.Common.getWindowDimensions();
+					const { wh } = U.Dom.getWindowDimensions();
 					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
 
 					param = Object.assign(param, {
@@ -460,7 +460,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnterHandler = (e: any) => {
-		const cell = $(`#${U.Common.esc(Relation.cellId(idPrefix, relation.relationKey, record.id))}`);
+		const cell = U.Dom.get(Relation.cellId(idPrefix, relation.relationKey, record.id));
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
 
@@ -468,7 +468,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			onMouseEnter(e);
 		};
 
-		if (t) {
+		if (t && cell) {
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: cell });
 		};
 	};

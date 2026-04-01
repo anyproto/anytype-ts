@@ -6,5 +6,6 @@
 		.content { position: relative; }
 		.title { @include text-header3; margin-bottom: 24px; }
 		.error { margin: 0px; position: absolute; width: 100%; text-align: center; left: 0px; bottom: -30px; }
+		.pin { justify-content: center; }
 	}
 }

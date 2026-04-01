@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, U } from 'Lib';
 
 import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
@@ -9,6 +8,7 @@ import TypeTemplate from './type/template';
 
 import ObjectRelation from './object/relation';
 import ObjectTableOfContents from './object/tableOfContents';
+import * as I from 'Interface';
 
 const Components = {
 	'type/title': TypeTitle,

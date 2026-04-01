@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { U } from 'Lib';
 
 describe('UtilCommon', () => {
 

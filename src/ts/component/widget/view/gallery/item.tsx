@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -57,22 +56,21 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		S.Menu.open('objectContext', {
 			element: node,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			offsetX: node.outerWidth(true),
+			offsetX: node?.offsetWidth || 0,
 			vertical: I.MenuDirection.Center,
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
 				allowedCollection: true,
-				allowedExport: true,
 				allowedLinkTo: true,
 				openAfterDuplicate: true,
 			},
@@ -80,9 +78,9 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+		U.Dom.toggleClass(node, 'withIcon', !!node?.querySelector('.iconObject'));
 		onResize?.();
 	};
 
@@ -132,7 +130,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		);
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	return (
 		<div

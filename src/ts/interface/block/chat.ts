@@ -1,5 +1,5 @@
+import * as I from 'Interface';
 
-import { I } from 'Lib';
 
 export enum ChatButton {
 	Object 		 = 0,

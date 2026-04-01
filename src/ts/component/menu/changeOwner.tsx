@@ -1,16 +1,16 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader, EmptySearch } from 'Component';
-import { I, C, J, S, U, keyboard, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const HEIGHT = 56;
 const LIMIT = 10;
 
 const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { setActive, onKeyDown, position, getId, close } = props;
+	const { setActive, onKeyDown, position, getId, getContainer, close } = props;
 	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const [ selected, setSelected ] = useState('');
@@ -38,6 +38,8 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		top.current = 0;
 		listRef.current?.scrollToPosition(top.current);
 	}, [ filter ]);
+
+	const keydownHandler = useRef(null);
 
 	const rebind = () => {
 		unbind();
@@ -114,7 +116,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					analytics.event('ScreenTransferSpaceOwnershipWarning');
 				},
 				data: {
-					icon: 'key-red',
+					iconParam: { name: 'popup/header/key', color: 'red' },
 					title: translate('popupConfirmOwnershipTransferTitle'),
 					text: U.String.sprintf(
 						translate('popupConfirmOwnershipTransferText'),
@@ -156,7 +158,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 											analytics.event('ScreenTransferSpaceOwnershipSuccess');
 										},
 										data: {
-											icon: 'key-green',
+											iconParam: { name: 'popup/header/key', color: 'lime' },
 											title: translate('popupConfirmOwnershipTransferredTitle'),
 											text: U.String.sprintf(
 												translate('popupConfirmOwnershipTransferredText'),
@@ -181,10 +183,8 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
 		const length = items.length;
-		const { wh } = U.Common.getWindowDimensions();
+		const { wh } = U.Dom.getWindowDimensions();
 
 		let height = 44 + 44 + 56; // title + filter + button
 		if (!length) {
@@ -194,7 +194,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		height = Math.min(height, wh - 104);
 
-		content.css({ height });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 	};
 
 	const scrollToRow = (items: any[], index: number) => {
@@ -256,7 +256,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<ObjectName object={item} withBadge={true} />
 						{item.globalName ? <Label className="globalName" text={item.globalName} /> : ''}
 					</div>
-					{isSelected ? <Icon className="chk" /> : ''}
+					{isSelected ? <Icon name="menu/common/chk" /> : ''}
 				</div>
 			</CellMeasurer>
 		);
@@ -281,13 +281,13 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="side left" />
 				<Title text={translate('popupSettingsSpaceShareSelectNewOwner')} />
 				<div className="side right">
-					<Icon className="close" withBackground={true} onClick={e => close()} />
+					<Icon name="common/close" withBackground={true} onClick={e => close()} />
 				</div>
 			</div>
 
 			<Filter
 				ref={filterRef}
-				iconParam={{ className: 'search' }}
+				iconParam={{ name: 'common/search' }}
 				size={32}
 				placeholder={translate('commonSearch')}
 				onChange={onFilterChange}

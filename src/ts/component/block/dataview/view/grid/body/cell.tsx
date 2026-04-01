@@ -1,7 +1,7 @@
 import React, { FC, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, J, U, Relation, translate } from 'Lib';
 import { Cell, Button, Icon } from 'Component';
+import * as I from 'Interface';
 import { gridFocus } from '../gridFocus';
 
 interface Props {
@@ -29,7 +29,12 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 		getIdPrefix, canCellEdit,
 	} = props;
 	const record = getRecord(recordId);
-	const relation: any = S.Record.getRelationByKey(relationKey) || {};
+	const relation: any = S.Record.getRelationByKey(relationKey);
+
+	if (!relation) {
+		return null;
+	};
+
 	const view = getView();
 	const viewRelation = view?.getRelation(relationKey);
 	const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), `align${viewRelation?.align}` ];
@@ -96,6 +101,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 		} else {
 			button = (
 				<Icon
+					name="common/edit"
 					className="edit"
 					onClick={onEdit}
 				/>

@@ -3,7 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	children?: ReactNode;
@@ -52,9 +54,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const target = useRef(null);
 	const contextMenuHandler = useRef<ContextMenuHandler | null>(null);
 
+	const scrollHandler = useRef<((e: Event) => void) | null>(null);
+
 	const rebind = () => {
 		unbind();
-		U.Common.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => onScroll(e));
+		const container = U.Dom.getScrollContainer(keyboard.isPopup());
+		if (container) {
+			scrollHandler.current = (e: Event) => onScroll(e);
+			container.addEventListener('scroll', scrollHandler.current);
+		};
 	};
 
 	const unbind = () => {
@@ -67,10 +75,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 	
 	const unbindKeyboard = () => {
-		const isPopup = keyboard.isPopup();
-
 		$(window).off('keydown.selection keyup.selection');
-		U.Common.getScrollContainer(isPopup).off('scroll.selection');
+		const container = U.Dom.getScrollContainer(keyboard.isPopup());
+		if (container && scrollHandler.current) {
+			container.removeEventListener('scroll', scrollHandler.current);
+			scrollHandler.current = null;
+		};
 	};
 
 	const scrollToElement = (id: string, dir: number) => {
@@ -79,20 +89,24 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if (dir > 0) {
 			focus.scroll(isPopup, id);
 		} else {
-			const node = $(`.focusable.c${U.Common.esc(id)}`);
-			if (!node.length) {
+			const node = U.Dom.select(`.focusable.c${U.Common.esc(id)}`);
+			if (!node) {
 				return;
 			};
 
-			const container = U.Common.getScrollContainer(isPopup);
-			const no = node.offset().top;
-			const nh = node.outerHeight();
-			const st = container.scrollTop();
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
+				return;
+			};
+
+			const no = node.getBoundingClientRect().top;
+			const nh = node.offsetHeight;
+			const st = container.scrollTop;
 			const hh = J.Size.header;
-			const y = no - container.offset().top + st;
+			const y = no - container.getBoundingClientRect().top + st;
 
 			if (y <= st + hh) {
-				container.scrollTop(y - nh - hh);
+				container.scrollTop = y - nh - hh;
 			};
 		};
 	};
@@ -114,7 +128,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const win = $(window);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const rect = $(rectRef.current);
 
 		rect.toggleClass('fromPopup', isPopup);
@@ -122,7 +136,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		y.current = e.pageY;
 		hasMoved.current = false;
 		focusedId.current = focused;
-		top.current = startTop.current = container.scrollTop();
+		top.current = startTop.current = container?.scrollTop || 0;
 		idsOnStart.current = new Map(ids.current);
 		cacheChildrenMap.current.clear();
 		cacheNodeMap.current.clear();
@@ -130,8 +144,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		keyboard.disablePreview(true);
 
-		if (container.length) {
-			containerOffset.current = container.offset();
+		if (container) {
+			const containerRect = container.getBoundingClientRect();
+			containerOffset.current = { left: containerRect.left, top: containerRect.top + (container.scrollTop || 0) };
 			x.current -= containerOffset.current.left;
 			y.current -= containerOffset.current.top - top.current;
 		};
@@ -149,7 +164,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown({ container });
+		scrollOnMove.onMouseDown({ container: container ? $(container) : undefined });
 		unbindMouse();
 
 		win.on(`mousemove.selection`, e => onMouseMove(e));
@@ -157,11 +172,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const initNodes = () => {
-		const list = getPageContainer().find('.selectionTarget');
+		const container = getPageContainer();
+		if (!container) {
+			return;
+		};
 
-		list.each((i: number, item: any) => {
-			item = $(item);
+		const list = container.querySelectorAll('.selectionTarget');
 
+		list.forEach((el: Element) => {
+			const item = $(el);
 			const id = item.attr('data-id');
 			if (!id) {
 				return;
@@ -191,7 +210,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 		
-		top.current = U.Common.getScrollContainer(isPopup).scrollTop();
+		top.current = U.Dom.getScrollContainer(isPopup)?.scrollTop || 0;
 		checkNodes(e);
 		drawRect(e.pageX, e.pageY);
 		hasMoved.current = true;
@@ -205,13 +224,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = U.Common.getScrollContainer(isPopup);
-		const st = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const st = container?.scrollTop || 0;
 		const d = st > top.current ? 1 : -1;
 		const cx = keyboard.mouse.page.x;
 		const cy = keyboard.mouse.page.y + Math.abs(st - top.current) * d;
 		const rect = getRect(x.current, y.current, cx, cy);
-		const wh = container.height();
+		const wh = container?.clientHeight || 0;
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
@@ -242,7 +261,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 			} else {
 				if (keyboard.isCmd(e)) {
-					checkNodes(e);
+					const t = $(e.target).closest('.selectionTarget');
+					const type = t.attr('data-type') as I.SelectType;
+					const startRecordIds = idsOnStart.current.get(I.SelectType.Record) || [];
+
+					if ((type != I.SelectType.Record) || startRecordIds.length) {
+						checkNodes(e);
+					};
 				};
 				
 				const rootId = keyboard.getRootId();
@@ -340,7 +365,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const offset = node.obj.offset();
-		const rect = U.Common.getElementRect(node.obj.get(0));
+		const rect = U.Dom.getElementRect(node.obj.get(0));
 		const { x, y } = recalcCoords(offset.left, offset.top);
 
 		cache = { x, y, width: rect.width, height: rect.height };
@@ -512,7 +537,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		// Sort blocks by their document tree order
 		const rootId = keyboard.getRootId();
-		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
+		const tree = S.Block.getTree(rootId, S.Block.getChildren(rootId, rootId));
 		const treeOrder = S.Block.unwrapTree(tree).map(it => it.id);
 		const orderMap = new Map(treeOrder.map((id, idx) => [ id, idx ]));
 
@@ -591,7 +616,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const getPageContainer = () => {
-		return U.Common.getPageFlexContainer(keyboard.isPopup());
+		return U.Dom.getPageFlexContainer(keyboard.isPopup());
 	};
 
 	const renderSelection = () => {
@@ -604,6 +629,10 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		frame.current = raf(() => {
 			$('.isSelectionSelected').removeClass('isSelectionSelected');
 
+			if (!container) {
+				return;
+			};
+
 			for (const i in I.SelectType) {
 				const type = I.SelectType[i];
 				const list = get(type, true);
@@ -613,15 +642,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 
 				for (const id of list) {
-					container.find(`#selectionTarget-${U.Common.esc(id)}`).addClass('isSelectionSelected');
+					U.Dom.addClass(U.Dom.select(`#selectionTarget-${U.Common.esc(id)}`, container), 'isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
-						container.find(`#block-${U.Common.esc(id)}`).addClass('isSelectionSelected');
+						U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(id)}`, container), 'isSelectionSelected');
 
 						const childrenIds = getChildrenIds(id);
 						if (childrenIds.length) {
 							childrenIds.forEach(childId => {
-								container.find(`#block-${U.Common.esc(childId)}`).addClass('isSelectionSelected');
+								U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(childId)}`, container), 'isSelectionSelected');
 							});
 						};
 					};
@@ -636,7 +665,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const st = U.Common.getScrollContainer(isPopup).scrollTop();
+		const st = U.Dom.getScrollContainer(isPopup)?.scrollTop || 0;
 		const { left, top } = containerOffset.current;
 
 		x -= left;

@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import AutoImport from 'unplugin-auto-import/vite';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -11,6 +12,55 @@ const wasmDir = path.join(pdfjsDistPath, 'wasm');
 
 const srcImgDir = path.resolve(__dirname, 'src/img');
 const distImgDir = path.resolve(__dirname, 'dist/img');
+
+function spaFallbackPlugin(): Plugin {
+	return {
+		name: 'spa-fallback',
+		configureServer(server) {
+			// Return function so this runs AFTER Vite's internal middleware
+			return () => {
+				server.middlewares.use(async (req, res, next) => {
+					const url = req.url || '';
+					const pathname = url.split('?')[0];
+
+					if (
+						pathname.startsWith('/@') ||
+						pathname.startsWith('/node_modules/') ||
+						pathname.startsWith('/src/') ||
+						pathname.startsWith('/dist/') ||
+						pathname.startsWith('/api/') ||
+						pathname.startsWith('/cmaps/') ||
+						pathname.startsWith('/wasm/')
+					) {
+						return next();
+					}
+
+					const htmlPath = path.resolve(__dirname, 'dist/index.web.html');
+
+					if (!fs.existsSync(htmlPath)) {
+						return next();
+					}
+
+					try {
+						const raw = fs.readFileSync(htmlPath, 'utf-8');
+						const html = await server.transformIndexHtml(
+							'/dist/index.web.html',
+							raw,
+							req.originalUrl
+						);
+
+						res.statusCode = 200;
+						res.setHeader('Content-Type', 'text/html');
+						res.end(html);
+					} catch (err) {
+						console.error('[SPA Fallback] Error:', err);
+						next(err);
+					}
+				});
+			};
+		},
+	};
+}
 
 function webUploadPlugin(): Plugin {
 	const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -88,11 +138,13 @@ function webUploadPlugin(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-	const webPort = parseInt(process.env.WEB_PORT || '9090', 10);
+	const webPort = parseInt(process.env.WEB_PORT || '3030', 10);
 
 	return {
+		base: '/',
 		root: '.',
 		publicDir: false,
+		appType: 'mpa',
 
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -225,8 +277,51 @@ export default defineConfig(({ mode }) => {
 		},
 
 		plugins: [
+			spaFallbackPlugin(),
 			react(),
 			webUploadPlugin(),
+
+			AutoImport({
+				imports: [
+					{
+						'Store':     [['*', 'S']],
+						'Hook':      [['*', 'H']],
+						'json':      [['*', 'J']],
+					},
+					{
+						'Lib/api/command':             [['*', 'C']],
+						'Lib/util':                    [['*', 'U']],
+						'Lib/keyboard':                [['keyboard', 'keyboard'], ['Key', 'Key']],
+						'Lib/sidebar':                 [['sidebar', 'sidebar']],
+						'Lib/mark':                    [['default', 'Mark']],
+						'Lib/relation':                [['default', 'Relation']],
+						'Lib/dataview':                [['default', 'Dataview']],
+						'Lib/scrollOnMove':            [['scrollOnMove', 'scrollOnMove']],
+						'Lib/analytics':               [['analytics', 'analytics']],
+						'Lib/action':                  [['default', 'Action']],
+						'Lib/onboarding':              [['default', 'Onboarding']],
+						'Lib/survey':                  [['default', 'Survey']],
+						'Lib/preview':                 [['default', 'Preview']],
+						'Lib/translate':               [['translate', 'translate']],
+						'Lib/sound':                   [['default', 'Sound'], ['SYSTEM_SOUND_ID', 'SYSTEM_SOUND_ID']],
+						'Lib/renderer':                [['default', 'Renderer']],
+						'Lib/api/dispatcher':          [['dispatcher', 'dispatcher']],
+						'Lib/api/mapper':              [['Mapper', 'Mapper']],
+						'Lib/api/struct':              [['Encode', 'Encode'], ['Decode', 'Decode']],
+						'Lib/service/sparkOnboarding': [['getSparkOnboardingService', 'getSparkOnboardingService']],
+					},
+				],
+				dts: false,
+				include: [/\.tsx?$/],
+				exclude: [
+					/node_modules/,
+					/src\/ts\/lib\/index\.ts$/,
+					/src\/ts\/store\/index\.ts$/,
+					/src\/ts\/interface\/index\.ts$/,
+					/src\/ts\/model\/index\.ts$/,
+					/src\/ts\/component\/index\.ts$/,
+				],
+			}),
 
 			// Move index.web.html from dist-web/dist/ to dist-web/ and fix paths
 			{
@@ -236,7 +331,7 @@ export default defineConfig(({ mode }) => {
 					const dest = path.resolve(__dirname, 'dist-web/index.html');
 					if (fs.existsSync(src)) {
 						let html = fs.readFileSync(src, 'utf8');
-						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, './');
+						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, '/');
 						fs.writeFileSync(dest, html);
 						fs.unlinkSync(src);
 						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch {}

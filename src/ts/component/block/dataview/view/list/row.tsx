@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
-import { I, S, U, keyboard, Relation } from 'Lib';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -20,12 +19,17 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const view = getView();
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const first = node.find('.cellContent:not(.isEmpty)').first();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('first');
-		if (first.length) {
-			first.addClass('first');
+		const cells = node.querySelectorAll('.cellContent');
+		const first = node.querySelector('.cellContent:not(.isEmpty)');
+
+		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
+		if (first) {
+			U.Dom.addClass(first as HTMLElement, 'first');
 		};
 	};
 
@@ -162,6 +166,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 				{isName && canEdit ? (
 					<Icon
+						name="common/edit"
 						className={[ 'edit', (isEditing ? 'enabled' : '') ].join(' ')}
 						onClick={e => onEditModeClick(e, recordId)}
 					/>
@@ -229,7 +234,10 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		content = (
 			<>
 				<Icon
+					name="control/dataview/dnd"
 					className="drag"
+					width={7}
+					height={12}
 					draggable={true}
 					onClick={e => onSelectToggle(e, record.id)}
 					onDragStart={e => onDragRecordStart(e, record.id)}

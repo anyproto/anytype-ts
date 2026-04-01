@@ -7,12 +7,18 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer, FocusedPanel, GroupDirection, KeyboardZoneType } from 'Lib';
+import * as I from 'Interface';
+import Highlight from 'Lib/highlight';
+import Storage from 'Lib/storage';
+import { keyboard, Key } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
+import { GroupDirection } from 'Lib/keyboard/navigation';
+import { KeyboardZoneType } from 'Lib/keyboard/zone';
 import { useKeyboardGroup } from 'Hook';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
-const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_ITEM = 45;
+const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
@@ -51,8 +57,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
 		keyboard.router.pushZone({
 			id: 'sidebar:vault',
@@ -62,7 +66,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				return false;
 			},
 		});
-		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
+		$(window).on('keyup.sidebarPageVault', e => onKeyUp(e));
 	};
 
 	const onKeyDown = (e: any) => {
@@ -133,22 +137,26 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-		
+
 		const items = getItems(true);
 		const node = getNode();
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const iconWrap = element.find('.iconWrap');
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		const iconWrap = U.Dom.select(`#item-${U.Common.esc(item.id)} .iconWrap`, node);
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
 		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
-		Preview.tooltipShow({ 
-			text, 
-			element, 
-			className: 'fromVault', 
+		if (!el) {
+			return;
+		};
+
+		Preview.tooltipShow({
+			text,
+			element: el,
+			className: 'fromVault',
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: node.width() / 2 + iconWrap.width() / 2,
+			offsetX: U.Dom.contentWidth(node) / 2 + U.Dom.contentWidth(iconWrap) / 2,
 			delay,
 		});
 	};
@@ -325,7 +333,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		return (
 			<Icon
 				id="button-create-space"
-				className="plus" withBackground={!vaultIsMinimal}
+				name="plus/menu" className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -368,8 +376,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getNode = () => {
-		return $(`#${getId()}`);
+		return U.Dom.get(getId());
 	};
+
+
 
 	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeout.current);
@@ -431,7 +441,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (!item.hasCounter && item.isPinned) {
 			cn.push('isPinned');
-			icons.push('pin');
+			icons.push({ className: 'pin', name: 'vault/pin' });
 		};
 
 		if (item.notificationMode != I.NotificationMode.All) {
@@ -464,7 +474,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<div className="messageWrapper">
 						{last}
 						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
+							{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 						</div>
 						{counter}
 					</div>
@@ -475,7 +485,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<div className="chatWrapper">
 							{chatName}
 							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
+								{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 							</div>
 							{counter}
 						</div>
@@ -501,7 +511,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<ObjectName object={item} />
 
 					<div className="icons">
-						{icons.map(icon => <Icon key={icon} className={icon} />)}
+						{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 					</div>
 
 					{counter}
@@ -589,10 +599,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 			onOpen: () => {
-				$(`#${getId()} .bottom`).addClass('hover');
+				U.Dom.addClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 			onClose: () => {
-				$(`#${getId()} .bottom`).removeClass('hover');
+				U.Dom.removeClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 		});
 	};
@@ -619,8 +629,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onVaultContext = (e: any) => {
 		U.Menu.vaultStyle({
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-			className: 'vaultStyle fixed',
+			element: '#button-vault-toggle',
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 		});
 	};
@@ -661,8 +671,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
 				scrollTopRef.current = newTop;
 
-				const node = getNode();
-				node.find('.ReactVirtualized__Grid').scrollTop(newTop);
+				const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
+				if (grid) {
+					grid.scrollTop = newTop;
+				};
 			};
 		};
 
@@ -684,8 +696,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{!vaultIsMinimal ? (
 						<>
 							{iconCreate()}
-							<Icon 
-								className="toggle" withBackground={true}
+							<Icon
+								id="button-vault-toggle"
+								name="widget/sidebarToggle"
+								className="toggle"
+								withBackground={true}
 								tooltipParam={{ 
 									text: translate('popupShortcutMainBasics15'), 
 									caption: keyboard.getCaption('toggleSidebar'), 
@@ -693,6 +708,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 								}}
 								onClick={() => sidebar.leftPanelToggle(true, true)}
 								onMouseDown={e => e.stopPropagation()}
+								onContextMenu={onVaultContext}
 							/>
 						</>
 					) : ''}
@@ -702,7 +718,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div ref={filterWrapperRef} className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						iconParam={{ className: 'search' }}
+						iconParam={{ name: 'common/search' }}
 						placeholder={translate('commonSearch')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
@@ -766,8 +782,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 							onMouseEnter={e => Preview.tooltipShow({ 
 								...tooltipParam(),
 								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
-								text: translate('popupSettingsAccountPersonalInformationTitle'), 
-								element: $(e.currentTarget),
+								text: translate('popupSettingsAccountPersonalInformationTitle'),
+								element: e.currentTarget as HTMLElement,
 							})}
 							onMouseLeave={() => Preview.tooltipHide(false)}
 						>
@@ -778,6 +794,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 					<div className="side right">
 						<Icon
+							name="vault/gallery"
 							className="gallery"
 							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}

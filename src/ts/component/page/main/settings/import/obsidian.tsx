@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Label, Icon, Error } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainSettingsImportObsidian = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -19,7 +19,7 @@ const PageMainSettingsImportObsidian = observer(forwardRef<I.PageRef, I.PageSett
 
 	return (
 		<>
-			<Icon className="logo" />
+			<Icon name="import/obsidian" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Obsidian]} />
 			<Label className="description" text={translate('popupSettingsImportObsidianDescription')} />
 

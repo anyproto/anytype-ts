@@ -2,18 +2,19 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
 import * as Diff from 'diff';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
 	const rootId = keyboard.getRootId(isPopup);
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 	const cmd = keyboard.cmdKey();
 	const selection = S.Common.getRef('selectionProvider');
 	const nodeRef = useRef(null);
@@ -309,31 +310,42 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const sideLeft = $(leftRef.current?.getNode());
-		const sideRight = $(rightRef.current?.getNode());
-		const editorWrapper = node.find('#editorWrapper');
-		const cover = node.find('.block.blockCover');
-		const container = U.Common.getPageContainer(isPopup);
-		const sc = U.Common.getScrollContainer(isPopup);
-		const header = container.find('#header');
-		const height = sc.height();
-		const hh = header.height();
-		const cssl: any = { height };
+		const node = nodeRef.current;
+		const sideLeft = leftRef.current?.getNode() as HTMLElement;
+		const sideRight = rightRef.current?.getNode() as HTMLElement;
+		const editorWrapper = node?.querySelector('#editorWrapper') as HTMLElement;
+		const cover = node?.querySelector('.block.blockCover') as HTMLElement;
+		const container = U.Dom.getPageContainer(isPopup);
+		const sc = U.Dom.getScrollContainer(isPopup);
+		const header = container?.querySelector('#header') as HTMLElement;
+		const height = sc?.clientHeight || 0;
+		const hh = header?.clientHeight || 0;
 
-		sideRight.css({ height });
+		if (sideRight) {
+			sideRight.style.height = `${height}px`;
+		};
 
-		if (cover.length) {
-			cover.css({ top: hh });
+		if (cover) {
+			cover.style.top = `${hh}px`;
 		};
 
 		if (isPopup) {
-			$('.pageMainHistory.isPopup').css({ height });
-			cssl.paddingTop = hh;
+			const popupEl = U.Dom.select('.pageMainHistory.isPopup');
+			if (popupEl) {
+				popupEl.style.height = `${height}px`;
+			};
+			if (sideLeft) {
+				sideLeft.style.height = `${height}px`;
+				sideLeft.style.paddingTop = `${hh}px`;
+			};
+		} else
+		if (sideLeft) {
+			sideLeft.style.height = `${height}px`;
 		};
 
-		sideLeft.css(cssl);
-		editorWrapper.css({ width: !isSetOrCollection() ? getWrapperWidth() : '' });
+		if (editorWrapper) {
+			editorWrapper.style.width = !isSetOrCollection() ? `${getWrapperWidth()}px` : '';
+		};
 	};
 
 	const getWrapperWidth = (): number => {
@@ -343,8 +355,8 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const getWidth = (weight: number) => {
 		weight = Number(weight) || 0;
 
-		const sideLeft = $(leftRef.current?.getNode());
-		const cw = sideLeft.width();
+		const sideLeft = leftRef.current?.getNode() as HTMLElement;
+		const cw = sideLeft?.clientWidth || 0;
 
 		let width = 0;
 

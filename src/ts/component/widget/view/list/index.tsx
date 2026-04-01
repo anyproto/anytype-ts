@@ -2,11 +2,11 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { I, S, U, J, keyboard } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import WidgetListItem from './item';
+import * as I from 'Interface';
 
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
@@ -16,7 +16,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView, getContentParam } = props;
 	const { layout } = getContentParam();
-	const cache = useRef({});
+	const cache = useRef(null);
 	const nodeRef =	useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
@@ -28,7 +28,9 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
+	if (!cache.current) {
+		cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
+	};
 
 	const onSortStart = () => {
 		keyboard.disableSelection(true);
@@ -62,41 +64,44 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		return items;
 	};
 
+	const getTotalHeight = (list: any[]) => {
+		return list.reduce((r, c) => r + getRowHeight(c, 0, isCompact), 0);
+	};
+
 	const resize = () => {
-		const length = getItems().length;
+		const currentItems = getItems();
+		const currentLength = currentItems.length;
 
 		raf(() => {
-			const container = $('#sidebarPageWidget #body');
-			const obj = $(`#widget-${U.Common.esc(parent.id)}`);
-			const node = $(nodeRef.current);
-			const head = obj.find('.head');
-			const viewSelect = obj.find('#viewSelect');
+			const container = U.Dom.select('#sidebarPageWidget #body');
+			const obj = U.Dom.get(`widget-${parent.id}`);
+			const node = nodeRef.current;
+			if (!node) return;
 
-			let height = getTotalHeight() + (isPreview ? 16 : 0);
+			const head = obj?.querySelector('.head') as HTMLElement;
+			const viewSelect = obj?.querySelector('#viewSelect') as HTMLElement;
+
+			let height = getTotalHeight(currentItems) + (isPreview ? 16 : 0);
 
 			if (isPreview) {
-				let maxHeight = container.height() - head.outerHeight(true);
-				if (viewSelect.length) {
-					maxHeight -= viewSelect.outerHeight(true);
+				let maxHeight = U.Dom.contentHeight(container) - (head?.offsetHeight ?? 0);
+				if (viewSelect) {
+					maxHeight -= viewSelect.offsetHeight;
 				};
 
 				height = Math.min(maxHeight, height);
 			};
 
-			const css: any = { height, paddingTop: '', paddingBottom: 0 };
-			
-			if (!length) {
-				css.paddingTop = 20;
-				css.paddingBottom = 22;
-				css.height = 36 + css.paddingTop + css.paddingBottom;
+			const css: any = { height: `${height}px`, paddingTop: '', paddingBottom: '0px' };
+
+			if (!currentLength) {
+				css.paddingTop = '20px';
+				css.paddingBottom = '22px';
+				css.height = `${36 + 20 + 22}px`;
 			};
 
-			node.css(css);
+			U.Dom.css(node, css);
 		});
-	};
-
-	const getTotalHeight = () => {
-		return getItems().reduce((r, c) => r + getRowHeight(c, 0, isCompact), 0);
 	};
 
 	const getRowHeight = (item: any, index: number, isCompact: boolean) => {
@@ -209,7 +214,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	useEffect(() => {
 		listRef.current?.scrollToPosition(top.current);
 		resize();
-	});
+	}, [ length, isCompact ]);
 
 	useImperativeHandle(ref, () => ({}));
 

@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
+import * as I from 'Interface';
 
 const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -21,13 +20,15 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		snaps.push(i / graphDepth);
 	};
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
 
 		keyboard.router.pushMenuZone(getId(), onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
 		keyboard.router.popMenuZone(getId());
 	};
@@ -86,14 +87,15 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	};
 
 	const onDragMove = (id: string, v: number) => {
-		const node = $(nodeRef.current);
-		const value = node.find(`#value-${id}`);
+		const value = U.Dom.select(`#value-${id}`, nodeRef.current);
 
 		if (id == 'depth') {
 			v = getDepth(v);
 		};
 
-		value.text(v);	
+		if (value) {
+			value.textContent = String(v);
+		};
 	};
 
 	const onDragEnd = (id: string, v: number) => {
@@ -142,7 +144,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		analytics.event('GraphSettings', { id });
 
 		if (id == 'typeEdges') {
-			$(window).trigger('updateGraphData');
+			window.dispatchEvent(new CustomEvent('updateGraphData'));
 		};
 	};
 

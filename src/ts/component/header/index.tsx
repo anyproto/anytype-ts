@@ -1,10 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate, FocusedPanel, GroupDirection } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { useKeyboardGroup } from 'Hook';
+import { keyboard } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
+import { GroupDirection } from 'Lib/keyboard/navigation';
 
 import HeaderAuthIndex from './auth';
 import HeaderAuthLogout from './auth/logout';
@@ -15,6 +16,8 @@ import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainSettings from './main/settings';
 import HeaderMainEmpty from './main/empty';
+import HeaderMainArchive from './main/archive';
+import * as I from 'Interface';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -31,6 +34,7 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainEmpty:			 HeaderMainEmpty,
+	mainArchive:		 HeaderMainArchive,
 	mainSettings: 		 HeaderMainSettings,
 };
 
@@ -84,13 +88,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			bullet = <div className="bullet" />;
 		};
 
-		const cnb = [ 'back', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
-		const cnf = [ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
-
 		return (
 			<>
 				<Icon
-					className="vaultToggle" withBackground={true}
+					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{
 						text: translate('commonVault'),
@@ -98,7 +99,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="widgetPanel" withBackground={true}
+					name="header/widget" withBackground={true}
 					onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 					inner={bullet}
 					tooltipParam={{
@@ -108,7 +109,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="expand" withBackground={true}
+					name="common/expand" withBackground={true}
 					onClick={onOpen || onExpand}
 					tooltipParam={{
 						text: translate('commonOpenObject'),
@@ -119,7 +120,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 				{withNavigation ? (
 					<div className="arrowWrapper">
 						<Icon
-							className={cnb.join(' ')} withBackground={true}
+							name="common/back" className={!keyboard.checkBack(isPopup) ? 'disabled' : ''} withBackground={true}
 							onClick={() => keyboard.onBack(isPopup)}
 							tooltipParam={{
 								text: translate('commonBack'),
@@ -128,7 +129,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							}}
 						/>
 						<Icon
-							className={cnf.join(' ')} withBackground={true}
+							name="common/back" className={[ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ].join(' ')} withBackground={true}
 							onClick={() => keyboard.onForward(isPopup)}
 							tooltipParam={{
 								text: translate('commonForward'),
@@ -141,7 +142,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 				{withGraph ? (
 					<Icon
-						className="graph" withBackground={true}
+						name="header/graph" withBackground={true}
 						onClick={onGraph}
 						tooltipParam={{
 							text: translate('commonGraph'),
@@ -183,7 +184,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const onTooltipShow = (e: any, text: string, caption?: string) => {
 		const t = Preview.tooltipCaption(text, caption);
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
+			Preview.tooltipShow({ text: t, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom });
 		};
 	};
 
@@ -198,7 +199,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const element = container?.querySelector(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -213,10 +215,13 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
+		const center = node.querySelector('.side.center') as HTMLElement;
+		U.Dom.toggleClass(node, 'isSmall', (center?.offsetWidth ?? 0) <= 200);
 	};
 
 	useEffect(() => {

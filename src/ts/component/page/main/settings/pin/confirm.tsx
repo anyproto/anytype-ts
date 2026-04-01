@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef } from 'react';
 import { Title, Label, Pin, Error } from 'Component';
-import { I, S, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const PageMainSettingsPinConfirm = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 

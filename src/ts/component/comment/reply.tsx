@@ -1,12 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, C, Mark, translate, Action } from 'Lib';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
 import { renderParts } from './render';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -22,6 +21,7 @@ const CommentReply = observer((props: Props) => {
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
+	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, createdAt, modifiedAt } = message;
@@ -38,70 +38,67 @@ const CommentReply = observer((props: Props) => {
 			return;
 		};
 
-		const el = $(node);
-
-		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Mention), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
-		el.find('a').each((_i: number, item: any) => {
-			item = $(item);
-			const href = String(item.attr('href') || item.attr('data-param') || '');
+		U.Dom.selectAll('a', node).forEach((item: HTMLElement) => {
+			const href = String(item.getAttribute('href') || item.getAttribute('data-param') || '');
 			if (!href) {
 				return;
 			};
 
-			item.off('click.link').on('click.link', (e: any) => {
+			item.onclick = (e: any) => {
 				e.preventDefault();
 				Action.openUrl(href);
-			});
+			};
 		});
 
 		// Object marks
-		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Object), node).forEach((item: HTMLElement) => {
+			const param = String(item.getAttribute('data-param') || '');
 			if (!param) {
 				return;
 			};
 
 			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.object').on('mousedown.object', (e: any) => {
+			item.onmousedown = (e: any) => {
 				e.preventDefault();
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
-			});
+			};
 		});
 
 		// Emoji marks — render as cross-platform images
-		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
-			item = $(item);
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
+			const emojiId = item.getAttribute('data-param');
+			const smile = U.Dom.select('smile', item);
 
-			const id = item.attr('data-param');
-			const smile = item.find('smile');
-
-			if (smile.length) {
+			if (smile) {
 				// Clear native emoji text, keep only the smile mount point
-				item.contents().filter(function () { return this.nodeType === 3; }).remove();
+				Array.from(item.childNodes).forEach(child => {
+					if (child.nodeType === 3) {
+						child.remove();
+					};
+				});
 
-				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+				const container = smile as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
 	}, [ isEditing, parts, subId ]);
@@ -162,21 +159,27 @@ const CommentReply = observer((props: Props) => {
 		U.Common.copyToast('', text);
 	}, [ parts ]);
 
+	const setHover = useCallback((v: boolean) => {
+		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
+	}, []);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
-		const element = $(e.currentTarget);
+		const element = e.currentTarget as HTMLElement;
 
 		const menuItems: any[] = [];
 
 		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
+			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
 		};
 
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
+		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
 		};
+
+		setHover(true);
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
@@ -184,6 +187,7 @@ const CommentReply = observer((props: Props) => {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onClose: () => setHover(false),
 			data: {
 				options: menuItems,
 				onSelect: (e: any, item: any) => {
@@ -195,7 +199,7 @@ const CommentReply = observer((props: Props) => {
 				},
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onDelete ]);
+	}, [ isSelf, onEdit, onCopyText, onDelete, setHover ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -275,7 +279,7 @@ const CommentReply = observer((props: Props) => {
 		return (
 			<div className="hoverActions">
 				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon className="more" />
+					<Icon name="common/more" className="more" />
 				</div>
 			</div>
 		);
@@ -283,22 +287,27 @@ const CommentReply = observer((props: Props) => {
 
 	return (
 		<div className="commentReply" data-message-id={id}>
-			<div className="head">
-				<IconObject
-					object={{ ...author, layout: I.ObjectLayout.Participant }}
-					size={32}
-				/>
-				<div className="author">
-					<ObjectName object={author} withBadge={true} />
-				</div>
-				<div className="date">
-					{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+			<div ref={contentWrapRef} className="contentWrap">
+				<div className="head">
+					<div className="side left">
+						<IconObject
+							object={{ ...author, layout: I.ObjectLayout.Participant }}
+							size={20}
+						/>
+						<div className="author">
+							<ObjectName object={author} withBadge={true} />
+						</div>
+						<div className="date">
+							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						</div>
+					</div>
+					<div className="side right">
+						{renderHoverActions()}
+					</div>
 				</div>
 
-				{renderHoverActions()}
+				{renderContent()}
 			</div>
-
-			{renderContent()}
 		</div>
 	);
 });

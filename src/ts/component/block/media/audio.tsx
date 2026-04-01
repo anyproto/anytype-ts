@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
-import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -25,11 +25,11 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onPlay = () => {
-		$(nodeRef.current).addClass('isPlaying');
+		U.Dom.addClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onPause = () => {
-		$(nodeRef.current).removeClass('isPlaying');
+		U.Dom.removeClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -99,7 +99,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	if (object.isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -132,7 +132,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						playlist={getPlaylist()}
 						onPlay={onPlay}
 						onPause={onPause}
-						getScrollContainer={() => U.Common.getScrollContainer(isPopup)}
+						getScrollContainer={() => U.Dom.getScrollContainer(isPopup)}
 					/>
 				);
 				break;

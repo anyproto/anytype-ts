@@ -2,9 +2,10 @@ import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, sidebar, translate, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
+import * as I from 'Interface';
+import { keyboard } from 'Lib/keyboard';
 
 const BORDER = 16;
 const WIDTH_VIDEO = 1040;
@@ -25,16 +26,20 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const galleryMapRef = useRef(new Map());
 	const nodeRef = useRef(null);
 
+	const resizeHandler = useRef<() => void>(null);
+
 	const unbind = () => {
-		$(window).off('resize.popupPreview');
+		if (resizeHandler.current) {
+			window.removeEventListener('resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
 		keyboard.router.popPopupZone('preview');
 	};
 
 	const rebind = () => {
 		unbind();
-
-		const win = $(window);
-		win.on('resize.popupPreview', () => reload());
+		resizeHandler.current = () => reload();
+		window.addEventListener('resize', resizeHandler.current);
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -49,9 +54,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onDimmer = (e: MouseEvent) => {
-		const target = $(e.target);
-		const isMedia = target.hasClass('mediaContainer') || target.parents('.mediaContainer').length;
-		const isArrow = target.hasClass('swiper-button-prev') || target.hasClass('swiper-button-next');
+		const target = e.target as HTMLElement;
+		const isMedia = U.Dom.hasClass(target, 'mediaContainer') || !!target.closest('.mediaContainer');
+		const isArrow = U.Dom.hasClass(target, 'swiper-button-prev') || U.Dom.hasClass(target, 'swiper-button-next');
 
 		if (!isMedia && !isArrow) {
 			close();
@@ -85,10 +90,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onError = (idx: number) => {
-		const node = $(`#${getId()}-innerWrap`);
-		const wrap = node.find(`#itemPreview-${idx}`);
+		const node = U.Dom.get(`${getId()}-innerWrap`);
+		const wrap = node ? U.Dom.select(`#itemPreview-${idx}`, node) : null;
 
-		if (!wrap.length) {
+		if (!wrap) {
 			return;
 		};
 
@@ -97,17 +102,20 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		wrap.addClass('brokenMedia');
-		wrap.find('.loader').remove();
+		U.Dom.addClass(wrap, 'brokenMedia');
+		const loader = U.Dom.select('.loader', wrap);
+		if (loader) {
+			loader.remove();
+		};
 
 		obj.isLoaded = true;
 		galleryMapRef.current.set(idx, obj);
 	};
 
 	const getMaxWidthHeight = () => {
-		const { ww, wh } = U.Common.getWindowDimensions();
-		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
-		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
+		const { ww, wh } = U.Dom.getWindowDimensions();
+		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER) - BORDER * 2;
+		const maxWidth = ww - BORDER * 2;
 
 		return { maxWidth, maxHeight };
 	};
@@ -117,14 +125,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
 
-		let w = 0, h = 0;
-		if ((width > height) && (height < maxHeight)) {
-			w = Math.min(maxWidth, width);
-			h = w / (width / height);
-		} else {
-			h = Math.min(maxHeight, height);
-			w = h / (height / width);
-		};
+		const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+		const w = width * scale;
+		const h = height * scale;
 
 		wrap.css({ width: w, height: h });
 	};
@@ -229,7 +232,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const node = $(nodeRef.current);
 		const item = gallery.find(el => el.object?.id == current?.id);
 
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 
 		if (!item) {
 			return;
@@ -291,7 +294,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							<ObjectName object={current} />
 						</div>
 						<div className="side right">
-							<Icon id="button-header-more" tooltipParam={{ text: translate('commonMenu') }} className="more" onClick={onMore} />
+							<Icon id="button-header-more" tooltipParam={{ text: translate('commonMenu') }} name="common/more" className="more" onClick={onMore} />
 						</div>
 					</>
 				) : ''}

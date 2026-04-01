@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Button } from 'Component';
-import { I, C, J, S, U, keyboard, translate, Storage } from 'Lib';
 import CommentEditor from 'Component/form/commentEditor';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Props {
 	rootId: string;
@@ -311,11 +311,10 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const rect = el.getBoundingClientRect();
-		const win = $(window);
 
 		S.Menu.open('dataviewText', {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
+			rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: rect.width, height: rect.height },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
@@ -528,13 +527,13 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onPlusClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		openPlusMenu($(e.currentTarget));
+		openPlusMenu(e.currentTarget as HTMLElement);
 	}, [ openPlusMenu ]);
 
 	const onSlashClick = useCallback((e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		openCommentAddMenu($(e.currentTarget));
+		openCommentAddMenu(e.currentTarget as HTMLElement);
 	}, [ openCommentAddMenu ]);
 
 	const onEmojiClick = useCallback((e: React.MouseEvent) => {
@@ -543,7 +542,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
 			offsetY: -4,
@@ -571,7 +570,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Menu.open('blockMention', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
@@ -672,7 +671,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const isDisabled = isEmpty || isLoading;
-	const showToolbar = isFocused || !isEmpty || isEdit;
+	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
 	if (isEdit) cn.push('isEdit');
@@ -703,11 +702,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{showToolbar ? (
 				<div className="formToolbar">
 					<div className="side left" onMouseDown={e => e.preventDefault()}>
-						<Icon className="plus" withBackground={true} onClick={onPlusClick} />
+						<Icon name="plus/comment" className="plus" withBackground={true} onClick={onPlusClick} />
 						<div className="div" />
-						<Icon className="slash" withBackground={true} onClick={onSlashClick} />
-						<Icon className="emoji" withBackground={true} onClick={onEmojiClick} />
-						<Icon className="mention" withBackground={true} onClick={onMentionClick} />
+						<Icon name="comment/slash" className="slash" withBackground={true} onClick={onSlashClick} />
+						<Icon name="chat/buttons/emoji" className="emoji" withBackground={true} onClick={onEmojiClick} />
+						<Icon name="common/mention" withBackground={true} onClick={onMentionClick} />
 					</div>
 
 					<div className="side right">
@@ -730,7 +729,7 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
 							onClick={onSendClick}
 						>
-							<Icon className="send" />
+							<Icon name="comment/send" className="send" color="white" />
 						</div>
 					)}
 					</div>

@@ -1,5 +1,7 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { I, M, C, S, U, J, Relation, translate, Storage } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 class Dataview {
 
@@ -668,7 +670,9 @@ class Dataview {
 			};
 		};
 
-		for (const filter of view.filters) {
+		const flatFilters = this.flattenFilters(view.filters);
+
+		for (const filter of flatFilters) {
 			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
@@ -691,17 +695,35 @@ class Dataview {
 			if (Relation.isDate(relation.format)) {
 				value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
 			};
-			
+
 			if (!value) {
 				continue;
 			};
-			
+
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
 		};
 
 		return details;
+	};
+
+	flattenFilters (filters: I.Filter[]): I.Filter[] {
+		const result: I.Filter[] = [];
+
+		for (const filter of filters) {
+			const isAdvanced = (!filter.relationKey && filter.nestedFilters?.length);
+
+			if (isAdvanced) {
+				if (filter.operator == I.FilterOperator.And) {
+					result.push(...this.flattenFilters(filter.nestedFilters));
+				};
+			} else {
+				result.push(filter);
+			};
+		};
+
+		return result;
 	};
 
 	/**

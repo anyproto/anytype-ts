@@ -1,6 +1,4 @@
 import { createRoot } from 'react-dom/client';
-import $ from 'jquery';
-import { C, U, J, S } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Auth from './auth';
@@ -19,7 +17,6 @@ declare global {
 	}
 };
 
-window.$ = $;
 window.isExtension = true;
 window.Electron = {
 	currentWindow: () => ({}),
@@ -67,15 +64,13 @@ if (Util.isAuth()) {
 if (!rootId) {
 	console.error('[Entry] rootId is not defined');
 } else {
-	const html = $('html');
-	const body = $('body');
-	const rootEl = $(`<div id="${rootId}"></div>`);
-
-	if (!$(`#${rootId}`).length) {
-		body.append(rootEl);
-		html.addClass(rootId);
+	if (!document.getElementById(rootId)) {
+		const rootEl = document.createElement('div');
+		rootEl.id = rootId;
+		document.body.appendChild(rootEl);
+		document.documentElement.classList.add(rootId);
 	};
 
-	const root = createRoot(rootEl.get(0));
+	const root = createRoot(document.getElementById(rootId));
 	root.render(component);
 };

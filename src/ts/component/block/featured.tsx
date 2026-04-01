@@ -1,9 +1,13 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
-import { I, C, S, U, J, M, Preview, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate, FocusedPanel, GroupDirection } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { keyboard } from 'Lib/keyboard';
+import { FocusedPanel } from 'Lib/keyboard/router';
+import { GroupDirection } from 'Lib/keyboard/navigation';
 import { useKeyboardGroup } from 'Hook';
 
 interface Props extends I.BlockComponent {
@@ -54,14 +58,17 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const init = () => {
 		const items = getItems().filter(it => it.relationKey != 'description');
-		const node = $(nodeRef.current);
-		const obj = $(`#block-${U.Common.esc(block.id)}`);
+		const node = nodeRef.current;
+		const obj = U.Dom.get(`block-${block.id}`);
 
-		obj.toggleClass('isHidden', !items.length);
+		U.Dom.toggleClass(obj, 'isHidden', !items.length);
 
 		if (node) {
-			node.find('.cell.first').removeClass('first');
-			node.find('.cell').first().addClass('first');
+			node.querySelectorAll('.cell.first').forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
+			const firstCell = node.querySelector('.cell');
+			if (firstCell) {
+				U.Dom.addClass(firstCell as HTMLElement, 'first');
+			};
 		};
 	};
 
@@ -260,10 +267,12 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, relationKey: string, text?: string) => {
-		const cell = $(`#${U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId))}`);
+		const cell = U.Dom.get(Relation.cellId(PREFIX, relationKey, rootId));
 		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
-			Preview.tooltipShow({ text, element: cell });
+			if (cell) {
+				Preview.tooltipShow({ text, element: cell });
+			};
 		};
 
 		if (text) {

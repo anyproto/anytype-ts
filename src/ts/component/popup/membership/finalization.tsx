@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader, Icon } from 'Component';
-import { I, C, J, translate, analytics, U } from 'Lib';
+import * as I from 'Interface';
 
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 

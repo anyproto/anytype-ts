@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
-import { I, U, S, J, Action, analytics, translate, Renderer } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	object: any;
@@ -32,6 +32,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 	const nodeRef = useRef(null);
+	const syncIconName = (syncStatus != I.SyncStatusObject.Synced) ? `chat/syncStatus/${I.SyncStatusObject[syncStatus].toLowerCase()}` : '';
 	const src = useRef('');
 
 	if (isDownloadingFile) {
@@ -62,11 +63,14 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="clickable" onClick={e => onOpen(e)}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					{isDownloadingFile ? (
-						<Icon className="downloading" />
-					) : (
-						<Icon onClick={onSyncStatusClick} className="syncStatus" />
-					)}
+					{isDownloadingFile || syncIconName ? (
+						<Icon 
+							name={syncIconName}
+							className="syncStatus" 
+							onClick={onSyncStatusClick} 
+							size={28}
+						/>
+					) : ''}
 				</div>
 
 				<div className="info">
@@ -125,12 +129,19 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (!src.current) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
-					const node = $(nodeRef.current);
+					const node = nodeRef.current;
 
 					src.current = image;
 
-					node.find('#image').attr({ src: image });
-					node.find('#blur').attr({ backgroundImage: `url(${image})` });
+					const img = node?.querySelector('#image') as HTMLImageElement;
+					const blur = node?.querySelector('#blur') as HTMLElement;
+
+					if (img) {
+						img.src = image;
+					};
+					if (blur) {
+						blur.style.backgroundImage = `url(${image})`;
+					};
 				});
 
 				src.current = './img/space.svg';
@@ -175,11 +186,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					style={style}
 				/>
 
-				{(syncStatus != I.SyncStatusObject.Synced) ? (
-					<Icon className="downloading" />
-				) : (
-					<Icon onClick={onSyncStatusClick} className="syncStatus" />
-				)}
+				{syncIconName ? <Icon name={syncIconName} className="syncStatus" onClick={onSyncStatusClick} /> : ''}
 			</div>
 		);
 	};
@@ -205,7 +212,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
 
-		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Common.getScrollContainer(isPopup)} />;
+		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Dom.getScrollContainer(isPopup)} />;
 	};
 
 	const onOpen = (e: any) => {
@@ -287,7 +294,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'warning',
+				iconParam: { name: 'popup/header/warning', color: 'orange' },
 				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
 				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
 				textConfirm,
@@ -409,7 +416,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 		>
 			{content}
-			<Icon className="remove" onClick={onRemoveHandler} />
+			<Icon name="chat/buttons/remove" size={8} onClick={onRemoveHandler} />
 		</div>
 	);
 

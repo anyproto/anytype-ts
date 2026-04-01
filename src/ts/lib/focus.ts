@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, C, U, J, keyboard, Mark } from 'Lib';
+import * as I from 'Interface';
+import { keyboard } from 'Lib/keyboard';
 import { FocusedPanel } from 'Lib/keyboard/router';
 
 /**
@@ -89,7 +90,7 @@ class Focus {
 		};
 
 		if (withRange) {
-			U.Common.clearSelection();
+			U.Dom.clearSelection();
 			keyboard.setFocus(false);
 		};
 
@@ -192,24 +193,29 @@ class Focus {
 			return;
 		};
 
-		let rect = U.Common.getSelectionRect();
+		let rect = U.Dom.getSelectionRect();
 		if (!rect) {
-			rect = U.Common.getElementRect(node.get(0));
+			rect = U.Dom.getElementRect(node.get(0));
 		};
 		if (!rect) {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ch = container.height();
-		const st = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return;
+		};
+
+		const ch = container.clientHeight;
+		const st = container.scrollTop;
 		const { header } = J.Size;
-		const y = rect.top + st - container.offset().top;
+		const containerRect = container.getBoundingClientRect();
+		const y = rect.top + st - containerRect.top;
 		const top = st + header;
 		const bottom = st + ch;
 
 		if ((y < top) || (y > bottom)) {
-			container.scrollTop(Math.max(0, y - ch / 2));
+			container.scrollTop = Math.max(0, y - ch / 2);
 		};
 	};
 

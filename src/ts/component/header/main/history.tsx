@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 interface HeaderMainHistoryRefProps {
 	setVersion: (version: I.HistoryVersion) => void;
@@ -86,21 +86,21 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				) : ''}
 
 				{showRelations ? (
-					<Icon 
-						id="button-header-relation" 
+					<Icon
+						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className="relation" withBackground={true}
-						onClick={onRelation} 
-					/> 
+						name="header/relation" withBackground={true}
+						onClick={onRelation}
+					/>
 				) : ''}
 
 				{showMenu ? (
-					<Icon 
+					<Icon
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-						className="more" withBackground={true}
-						onClick={onMore} 
-					/> 
+						name="common/more" withBackground={true}
+						onClick={onMore}
+					/>
 				) : ''}
 			</div>
 		</>

@@ -6,7 +6,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug, Icon, Label } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -21,6 +20,9 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -142,14 +144,14 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + U.Dom.getEventNamespace(isPopup);
 
 		unbind();
 
@@ -314,7 +316,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -389,7 +391,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -500,7 +502,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						$(window).trigger('updateGraphRoot', { id: object.id });
+						window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: object.id } }));
 					});
 				};
 			};
@@ -1256,6 +1258,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
+			const typeId = getTypeId();
+			const type = S.Record.getTypeById(typeId);
+
+			if (!readonly && type && U.Object.isInFileLayouts(type.recommendedLayout)) {
+				return true;
+			};
 			return false;
 		};
 
@@ -1416,11 +1424,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 
-	const setRecordEditingOn = (e: any, id: string) => {
+	const setRecordEditingOn = (e: any, id: string, retries?: number) => {
 		const ref = recordRefs.current.get(id);
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
 		const win = $(window);
+
+		if (!nameRef && (retries === undefined || retries > 0)) {
+			window.setTimeout(() => setRecordEditingOn(e, id, (retries ?? 5) - 1), 50);
+			return;
+		};
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
@@ -1661,13 +1674,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const blockNode = getBlockNode();
 		const wrapper = getEditorWrapper();
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 		const hoverArea = blockNode.find('.hoverArea');
 
-		if (hoverArea.length && container.length) {
+		if (hoverArea.length && container) {
 			const rect = hoverArea.get(0).getBoundingClientRect();
 			const top = rect.bottom;
-			const containerBottom = container.get(0).getBoundingClientRect().bottom;
+			const containerBottom = container.getBoundingClientRect().bottom;
 			const height = containerBottom - top;
 
 			blockNode.find('.dragOverlay').css({ height });
@@ -1776,7 +1789,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon className="dragState" />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>

@@ -1,5 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
-import { I, M } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 class MembershipStore {
 

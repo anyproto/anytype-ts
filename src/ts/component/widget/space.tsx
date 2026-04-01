@@ -1,9 +1,9 @@
 import React, { useRef, forwardRef, useEffect, useState, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, translate, analytics, keyboard } from 'Lib';
 import MemberCnt from 'Component/util/memberCnt';
 import ChatCounter from 'Component/util/chatCounter';
+import * as I from 'Interface';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -32,18 +32,19 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	);
 
 	const buttons = [
-		canWrite ? { 
-			id: 'create', 
-			name: translate('commonCreate'), 
+		canWrite ? {
+			id: 'create',
+			iconName: 'menu/action/createObject',
+			name: translate('commonCreate'),
 			withArrow: true,
-			arrowTooltipParam: { 
-				text: translate('popupShortcutMainBasics19'), 
-				caption: keyboard.getCaption('selectType'), 
+			arrowTooltipParam: {
+				text: translate('popupShortcutMainBasics19'),
+				caption: keyboard.getCaption('selectType'),
 				typeY: I.MenuDirection.Bottom as any,
 			},
 		} : null,
-		{ id: 'search', name: translate('commonSearch') },
-		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', name: translate('commonMainChat') } : null,
+		{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
+		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: MouseEvent, item: any) => {
@@ -82,12 +83,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
+			uploadRoute: analytics.route.uploadGlobalMenu,
 		}, analytics.route.navigation, object => U.Object.openConfig(null, object));
 	};
 
 	const onMore = () => {
 		U.Menu.spaceContext(U.Space.getSpaceview(), {
-			element: '#widget-space .nameWrap .arrow',
+			element: '#widget-space .nameWrap .icon.arrowButton',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
@@ -105,7 +107,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
-					<Icon className="arrow" />
+					<Icon name="arrow/button" size={8} color="default" />
 				</div>
 
 				<MemberCnt route={route} />
@@ -118,7 +120,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
-						<Icon className="arrow" />
+						<Icon name="arrow/button" size={8} color="default" />
 					</div>
 
 					<MemberCnt route={analytics.route.widget} />
@@ -128,12 +130,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const win = $(window);
+		const handler = () => setDummy(dummy => dummy + 1);
 
-		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+		window.addEventListener('objectView', handler);
 
 		return () => {
-			win.off('objectView');
+			window.removeEventListener('objectView', handler);
 		};
 	}, []);
 
@@ -150,13 +152,15 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 					return (
 						<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
-							<Icon className={item.id} />
+							<Icon name={item.iconName} className={item.id} />
 							<Label text={item.name} />
 							{item.id == 'chat' ? <ChatCounter chatId={chatId} /> : ''}
 							{item.withArrow ? (
 								<Icon
 									id={`button-${item.id}-arrow`}
-									className="arrow" withBackground={true}
+									name="arrow/button"
+									size={8} 
+									withBackground={true}
 									onClick={onArrow}
 									tooltipParam={item.arrowTooltipParam}
 								/>

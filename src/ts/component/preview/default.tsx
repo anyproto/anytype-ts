@@ -1,7 +1,10 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
-import { S, U } from 'Lib';
+import IconObject from 'Component/util/iconObject';
+import Loader from 'Component/util/loader';
+import ObjectName from 'Component/util/object/name';
+import ObjectDescription from 'Component/util/object/description';
+import ObjectType from 'Component/util/object/type';
 
 interface Props {
 	id?: string;
