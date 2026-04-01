@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 const setSyncStatus = (status: I.SyncStatusSpace, network: I.SyncStatusNetwork = I.SyncStatusNetwork.Anytype, error: I.SyncStatusError = I.SyncStatusError.None) => {
 	const spaceId = S.Common.space || 'storybook-space';
-	S.Auth.syncStatusUpdate(spaceId, {
+	S.Auth.syncStatusUpdate({
 		id: spaceId,
 		status,
 		network,

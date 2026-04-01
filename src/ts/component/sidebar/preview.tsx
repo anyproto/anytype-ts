@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } f
 import $ from 'jquery';
 import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
-import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
+import { Title, Label, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
 import * as I from 'Interface';
 
 interface RefProps {
@@ -101,7 +101,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	let icon = null;
 	if (!isFile) {
 		if (isTask) {
-			icon = <IconObject object={{ name, layout: recommendedLayout }} size={32} iconSize={28} />
+			icon = <IconObject object={{ name, layout: recommendedLayout }} size={32} iconSize={28} />;
 		} else
 		if (isHuman) {
 			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
