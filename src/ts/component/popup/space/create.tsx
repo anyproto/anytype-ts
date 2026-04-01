@@ -166,18 +166,14 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 								};
 
 								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
-									if (message.error) {
-										return;
-									};
-
 									analytics.event('ShareSpace');
 									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
-								});
 
-								if (identities.length) {
-									C.SpaceParticipantsAddList(S.Common.space, identities, I.ParticipantPermissions.Writer);
-									analytics.event('AddMember', { count: identities.length });
-								};
+									if (identities.length) {
+										C.SpaceParticipantsAddList(S.Common.space, identities, I.ParticipantPermissions.Writer);
+										analytics.event('AddMember', { count: identities.length });
+									};
+								});
 							});
 						};
 
