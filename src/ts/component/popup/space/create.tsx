@@ -203,7 +203,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 			rect: { x: e.clientX, y: e.clientY, width: 0, height: 0 },
 			data: {
 				options: [
-					{ id: 'remove', name: translate('commonRemove'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' },
+					{ id: 'remove', name: translate('commonRemove'), icon: 'menu/action/remove' },
 				],
 				onSelect: () => {
 					onToggleMember(id);
