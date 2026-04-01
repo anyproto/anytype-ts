@@ -5,8 +5,9 @@
 .input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .input:focus, .input:hover { background: var(--color-shape-highlight-medium); }
 
-.input.size36 { height: 36px; border-radius: 12px; }
-.input.size40 { height: 40px; border-radius: 14px; padding: 0px 16px; }
+.input.size36 { height: 36px; border-radius: 18px; }
+.input.size40 { height: 40px; border-radius: 20px; padding: 0px 16px; }
+.input.size56 { height: 56px; border-radius: 28px; padding: 0px 16px; }
 
 .input.isReadonly { cursor: default; background: var(--color-shape-highlight-light-solid); color: var(--color-text-tertiary); }
 .input.isReadonly:hover, .input.isReadonly:focus { background: var(--color-shape-highlight-light-solid); }
@@ -14,4 +15,3 @@
 
 /* Use CSS text-security instead of type="password" to avoid macOS SecureEventInput blocking third-party input methods */
 .input.isMasked { -webkit-text-security: disc; }
-

@@ -86,7 +86,6 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 						const details = { 
 							name: object.title, 
 							iconOption: U.Common.rand(1, J.Constant.count.icon),
-							spaceUxType: I.SpaceUxType.Data,
 						};
 
 						C.WorkspaceCreate(details, I.Usecase.None, (message: any) => {
@@ -96,7 +95,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 								analytics.event('CreateSpace', { 
 									middleTime: message.middleTime, 
 									route: analytics.route.gallery, 
-									uxType: details.spaceUxType,
+									spaceType: I.SpaceType.Data,
 								});
 							} else {
 								setIsLoading(false);

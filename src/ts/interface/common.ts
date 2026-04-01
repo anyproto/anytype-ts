@@ -139,6 +139,7 @@ export enum HomePredefinedId {
 	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
+	Widget		 = 'widgets',
 };
 
 export interface HeaderComponent {

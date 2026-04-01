@@ -2,24 +2,77 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; padding: 20px 56px 24px 56px; text-align: center; }
+		.innerWrap { width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; }
 
-		.label { @include text-very-small; color: var(--color-text-secondary); text-transform: uppercase; margin: 0px 0px 36px 0px; }
+		#loader { border-radius: 32px; }
 
+		.icon.close {
+			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
+
+			&:hover { background-color: var(--color-shape-highlight-medium); }
+		}
+
+		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
-		.nameWrapper { margin: 0px 0px 28px 0px; position: relative; }
-		.nameWrapper {
-			.counter { position: absolute; right: -44px; bottom: 1px; @include text-small; text-align: right; display: none; }
-			.counter.show { display: block; }
-			.counter.red { color: var(--color-red); }
-		}
-
-		.spaceName { @include text-header1; height: auto; width: 100%; text-align: center; }
-		.spaceName {
-			.editable { position: relative; z-index: 1; }
-			.placeholder { z-index: 0; }
-		}
-
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+
+		.step { padding: 0px 0px 16px 0px; }
+		.wrapper { padding: 0px 16px; }
+
+		/* Step 0 — Select Members */
+		.step.step0 {
+			.memberListWrapper { position: relative; }
+			.memberListWrapper {
+				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
+
+				.memberList { position: relative; }
+				.memberList {
+					.ReactVirtualized__List { padding: 8px 16px; scrollbar-gutter: stable; }
+				}
+
+				.grad {
+					position: absolute; left: 0px; bottom: 0px; width: 100%; height: 36px; pointer-events: none; z-index: 1;
+					background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 100%);
+				}
+
+				.memberRow { display: flex; align-items: center; gap: 12px; padding: 8px 0px; }
+				.memberRow {
+					.name { @include text-common; flex: 1; }
+					.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
+					.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
+				}
+			}
+		}
+
+		/* Step 1 — Name & Icon */
+		.step.step1 {
+			.input.spaceName {
+				height: 56px; background: var(--color-shape-highlight-light); border: 0px; border-radius: 20px;
+				margin: 0px 0px 8px 0px; padding: 0px 16px; @include text-common; outline: none;
+			}
+
+			.membersSection { text-align: left; margin: 0px -8px 16px -8px; padding: 0px 0px; }
+			.membersSection {
+				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; }
+
+				.addMembers {
+					display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px;
+
+					&:hover { background: var(--color-shape-highlight-light); }
+				}
+				.addMembers {
+					.icon.addMember {
+						width: 32px; height: 32px; border-radius: 50%;
+						background: var(--color-shape-highlight-medium);
+					}
+					.name { @include text-common; color: var(--color-text-secondary); }
+				}
+
+				.memberItem { display: flex; align-items: center; gap: 10px; padding: 6px 8px; }
+				.memberItem {
+					.name { @include text-common; }
+				}
+			}
+		}
 	}
 }

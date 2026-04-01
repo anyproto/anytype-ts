@@ -109,6 +109,13 @@ export const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (messa
 	}, callBack);
 };
 
+export const WorkspaceSetHomepage = (spaceId: string, id: string, callBack?: (message: any) => void) => {
+	dispatcher.request('WorkspaceSetHomepage', {
+		spaceId,
+		homepage: id,
+	}, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
@@ -1775,6 +1782,13 @@ export const SpaceParticipantPermissionsChange = (spaceId: string, changes: any[
 
 export const SpaceParticipantRemove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
 	dispatcher.request('SpaceParticipantRemove', {
+		spaceId,
+		identities,
+	}, callBack);
+};
+
+export const SpaceParticipantsAddList = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	dispatcher.request('SpaceParticipantsAddList', {
 		spaceId,
 		identities,
 	}, callBack);

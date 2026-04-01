@@ -306,12 +306,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onClick = (e: any, item: any) => {
 		if (e.ctrlKey || e.metaKey) {
-			Action.openSpaceTab(item.targetSpaceId, item.uxType, analytics.route.vault);
+			Action.openSpaceTab(item.targetSpaceId, item.spaceType, analytics.route.vault);
 			return;
 		};
 
 		if (S.Common.isPinned) {
-			Renderer.send('openSpaceInTab', item.targetSpaceId, item.uxType);
+			Renderer.send('openSpaceInTab', item.targetSpaceId, item.spaceType);
 		} else
 		if (item.targetSpaceId != space) {
 			U.Router.switchSpace(item.targetSpaceId, '', !!space, {}, false);
@@ -382,14 +382,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			);
 		};
 
-		const { targetSpaceId, id, lastMessage, isOneToOne, isChat, isPinned } = item;
+		const { targetSpaceId, id, lastMessage, isOneToOne, isPinned } = item;
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: !isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
 			...item.style,
 		};
-		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
+		const cn = [ 'item', U.Data.spaceClass(item.spaceType) ];
 		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
 		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 
@@ -419,7 +419,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
+		const rawCounters = !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
 		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
@@ -440,7 +440,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (isChat || isOneToOne) {
+			if (isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}

@@ -1,0 +1,13 @@
+.widget.widgetView {
+	.viewList, .viewGrid {
+		.body {
+			.item {
+				.iconObject.isTask, .iconObject.isBookmark { background: none; }
+			}
+		}
+	}
+
+	.viewGallery {
+		.arrowWrap { background-color: var(--color-control-accent); }
+	}
+}

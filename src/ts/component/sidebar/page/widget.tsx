@@ -3,9 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import * as I from 'Interface';
-import * as M from 'Model';
-import Storage from 'Lib/storage';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 import $ from 'jquery';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -35,7 +33,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
-		if (!spaceview.isChat && !spaceview.isOneToOne) {
+		if (!spaceview.isOneToOne) {
 			const chats = U.Data.getWidgetChats();
 			if (chats.length) {
 				ret.push(I.WidgetSection.Unread);
@@ -630,6 +628,25 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			</>
 		);
 
+		const isOwner = U.Space.isMyOwner();
+		const hasDashboard = spaceview.homepage && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.homepage);
+		const bannerData = Storage.get('channelBanner') || {};
+		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
+
+		const onCreateHome = () => {
+			Action.openSettings('spaceHome', analytics.route.widget);
+		};
+
+		const onDismissCreateHome = (e: React.MouseEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const obj = Storage.get('channelBanner') || {};
+
+			obj.home = true;
+			Storage.set('channelBanner', obj);
+		};
+
 		content = (
 			<div className="content">
 				<Widget
@@ -643,6 +660,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
+
+				{showCreateHome ? (
+					<div className="createHome" onClick={onCreateHome}>
+						<Icon name="settings/home" className="home" />
+						<div className="name">{translate('widgetCreateHome')}</div>
+						<Icon name="common/close" className="close" onClick={onDismissCreateHome} />
+					</div>
+				) : ''}
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;

@@ -142,7 +142,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			if (
 				U.Object.isTypeOrRelationLayout(object.layout) ||
 				(
-					(spaceview.isChat || spaceview.isOneToOne) &&
+					spaceview.isOneToOne &&
 					(U.Object.isChatLayout(object.layout) || U.Object.isSpaceLayout(object.layout))
 				)
 			) {

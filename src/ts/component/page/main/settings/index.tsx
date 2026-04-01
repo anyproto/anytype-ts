@@ -32,6 +32,7 @@ import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 import PageSpaceNotifications from './space/notifications';
+import PageSpaceHome from './space/home';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -75,6 +76,7 @@ const Components: any = {
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 	spaceNotifications:	 PageSpaceNotifications,
+	spaceHome:			 PageSpaceHome,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
@@ -104,7 +106,8 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 
 			switch (id) {
-				case 'spaceIndexEmpty': {
+				case 'spaceIndexEmpty':
+				case 'spaceHome': {
 					page = 'widget';
 					break;
 				};
@@ -127,7 +130,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
-			if (id == 'spaceIndexEmpty') {
+			if ([ 'spaceIndexEmpty', 'spaceHome' ].includes(id)) {
 				const dataLeft = sidebar.getData(I.SidebarPanel.Left);
 				const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
 

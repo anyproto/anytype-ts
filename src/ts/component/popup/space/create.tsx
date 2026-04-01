@@ -1,60 +1,57 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import * as I from 'Interface';
+import { AutoSizer, List } from 'react-virtualized';
+import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
+import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
-const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
+const SUB_ID = 'popupSpaceCreateParticipants';
 
-	const { config } = S.Common;
+const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, position }, ref) => {
+
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
+	const filterRef = useRef(null);
 	const [ error, setError ] = useState('');
-	const [ canSave, setCanSave ] = useState(true);
+	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
+	const [ step, setStep ] = useState(0);
+	const [ search, setSearch ] = useState('');
+	const [ name, setName ] = useState('');
+	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const { data } = param;
-	const { uxType } = data;
-	const { name: limit, nameThreshold: threshold } = J.Constant.limit.space;
+	const { spaceType } = data;
+	const { name: limit } = J.Constant.limit.space;
+	const isChatSpace = spaceType == I.SpaceType.Chat;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-
-			onSubmit(false);
+			onSubmit();
 		});
 	};
 
-	const onKeyUp = (e: any) => {
-		nameRef.current?.placeholderCheck();
-		onChange(e, nameRef.current?.getTextValue());
-		updateCounter();
-	};
+	const onNameChange = (e: any, v: string) => {
+		setName(v);
+		setCanSave(v.trim().length > 0);
 
-	const onChange = (e: any, v: string) => {
 		const object = getObject();
-
-		if (!v.trim().length) {
-			v = translate('defaultNamePage');
-		};
-
-		if (iconRef.current) {
-			object.name = v;
-			iconRef.current?.setObject(object);
-		};
+		object.name = v.trim().length ? v : translate('defaultNamePage');
+		iconRef.current?.setObject(object);
 	};
 
 	const getObject = () => {
 		return {
-			name: nameRef.current?.getTextValue(),
+			name,
 			layout: I.ObjectLayout.SpaceView,
 			iconOption,
-			uxType,
+			spaceType,
 		};
 	};
 
 	const checkName = (v: string): string => {
 		if ([
-			translate('defaultNameSpace'), 
+			translate('defaultNameSpace'),
 			translate('defaultNamePage'),
 		].includes(v)) {
 			v = '';
@@ -62,31 +59,88 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		return v;
 	};
 
-	const onSubmit = (withImport: boolean) => {
-		const { onCreate, route } = data;
-		const name = checkName(nameRef.current?.getTextValue());
-		const isChatSpace = uxType == I.SpaceUxType.Chat;
-		const usecase = isChatSpace ? I.Usecase.ChatSpace : I.Usecase.DataSpace;
+	const onNext = () => {
+		if (!selectedMembers.length) {
+			return;
+		};
 
+		const next = step + 1;
+
+		setStep(next);
+		analytics.event('ScreenChannelCreateStep', { step: next });
+	};
+
+	const onToggleMember = (id: string) => {
+		setSelectedMembers(prev => {
+			if (prev.includes(id)) {
+				return prev.filter(it => it != id);
+			} else {
+				return [ ...prev, id ];
+			};
+		});
+	};
+
+	const loadMembers = useCallback(() => {
+		U.Subscription.subscribe({
+			subId: SUB_ID,
+			keys: U.Subscription.participantRelationKeys(),
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'participantStatus', condition: I.FilterCondition.Equal, value: I.ParticipantStatus.Active },
+				{ relationKey: 'identity', condition: I.FilterCondition.NotEqual, value: S.Auth.account?.id },
+			],
+			ignoreHidden: false,
+			noDeps: true,
+			crossSpace: true,
+		});
+	}, []);
+
+	const getMembers = () => {
+		const list = S.Record.getRecords(SUB_ID);
+
+		// Deduplicate by identity since the same user can be a participant in multiple spaces
+		const seen = new Set<string>();
+		const unique = list.filter(it => {
+			if (!it.identity || seen.has(it.identity)) {
+				return false;
+			};
+
+			seen.add(it.identity);
+			return true;
+		});
+
+		unique.sort(U.Data.sortByName);
+
+		if (search) {
+			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
+		};
+
+		return unique;
+	};
+
+	const onSubmit = () => {
 		if (isLoading || !canSave) {
 			return;
 		};
 
+		const { onCreate, route } = data;
+		const submittedName = checkName(name);
+		const usecase = I.Usecase.DataSpace;
+
+		// Resolve identities from cross-space subscription before space switch
+		const identities = S.Record.getRecords(SUB_ID)
+			.filter(it => selectedMembers.includes(it.id))
+			.map(it => it.identity)
+			.filter(it => it);
+
 		setIsLoading(true);
 
 		const details: any = {
-			name,
+			name: submittedName,
 			iconOption,
-			spaceUxType: uxType,
-			spaceAccessType: I.SpaceType.Private,
-			spaceDashboardId: I.HomePredefinedId.Last,
+			spaceAccessType: I.SpaceAccessType.Private,
+			homepage: I.HomePredefinedId.Widget,
 		};
-
-		if (isChatSpace) {
-			details.spaceDashboardId = I.HomePredefinedId.Chat;
-		};
-
-		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
 		C.WorkspaceCreate(details, usecase, (message: any) => {
 			setIsLoading(false);
@@ -96,15 +150,13 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 				return;
 			};
 
-			const startingId = message.startingId;
-
 			C.WorkspaceSetInfo(message.objectId, details, () => {
 				if (message.error.code) {
 					setError(message.error.description);
 					return;
 				};
 
-				U.Router.switchSpace(message.objectId, '', true, { 
+				U.Router.switchSpace(message.objectId, '', true, {
 					onRouteChange: () => {
 						if (isChatSpace) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
@@ -120,27 +172,21 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 									analytics.event('ShareSpace');
 									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
 								});
-							});
-						};
 
-						if (withImport) {
-							close(() => Action.openSettings('importIndex', ''));
-						} else 
-						if (startingId && !isChatSpace) {
-							U.Object.getById(startingId, {}, (object: any) => {
-								if (object) {
-									U.Object.openRoute(object);
+								if (identities.length) {
+									C.SpaceParticipantsAddList(S.Common.space, identities);
+									analytics.event('AddMember', { count: identities.length });
 								};
 							});
-						} else {
-							U.Space.openDashboard();
 						};
 
+						Action.openSettings('spaceHome', '');
+
 						onCreate?.(message.objectId);
-					} 
+					}
 				}, false);
 
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, uxType });
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, spaceType });
 				analytics.event('SelectUsecase', { type: usecase });
 			});
 		});
@@ -157,78 +203,176 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setIconOption(icon);
 	};
 
-	const onAiOnboarding = () => {
-		close(() => {
-			window.setTimeout(() => {
-				S.Popup.open('aiOnboarding', { preventCloseByClick: true });
-			}, J.Constant.delay.popup);
-		});
-	};
-
-	const updateCounter = () => {
-		const el = U.Dom.select('.popupSpaceCreate .nameWrapper .counter');
-		const counter = limit - nameRef.current?.getTextValue().length;
-		const show = counter <= threshold;
-		const isRed = counter < 0;
-
-		U.Dom.toggleClass(el, 'show', show);
-		U.Dom.toggleClass(el, 'red', isRed);
-
-		setCanSave(!isRed);
-
-		if (show && el) {
-			el.textContent = String(counter);
-		};
-	};
-
 	const object = getObject();
 
 	useEffect(() => {
-		const object = getObject();
+		if (isChatSpace) {
+			loadMembers();
+		};
 
-		iconRef.current?.setObject(object);
-		nameRef.current?.setFocus();
+		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
 
-		updateCounter();
+		return () => {
+			U.Subscription.destroyList([ SUB_ID ]);
+		};
+	}, []);
+
+	useEffect(() => {
+		iconRef.current?.setObject(getObject());
 	}, [ iconOption ]);
+
+	useEffect(() => {
+		if (step == 0) {
+			setSearch('');
+			filterRef.current?.setValue('');
+
+			if (isChatSpace) {
+				analytics.event('ScreenAddMember');
+			};
+		};
+		position?.();
+	}, [ step ]);
+
+	const ROW_HEIGHT = 48;
+	const LIST_HEIGHT = 280;
+
+	const members = getMembers();
+	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
+	const listHeight = Math.min(members.length * ROW_HEIGHT, LIST_HEIGHT) + 16;
+	const showGrad = (members.length * ROW_HEIGHT) > LIST_HEIGHT;
+
+	const rowRenderer = ({ index, key, style }) => {
+		const item = members[index];
+
+		if (!item) {
+			return null;
+		};
+
+		return (
+			<div
+				key={key}
+				style={style}
+				className="memberRow"
+				onClick={() => onToggleMember(item.id)}
+			>
+				<IconObject size={32} object={item} />
+				<ObjectName object={item} />
+				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
+			</div>
+		);
+	};
+
+	const title = translate(isChatSpace ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
+
+	let stepContent = null;
+
+	if (isChatSpace && (step == 0)) {
+		stepContent = (
+			<div className="step step0">
+				<div className="wrapper">
+					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
+
+					<Filter
+						ref={filterRef}
+						iconParam={{ name: 'common/search' }}
+						placeholder={translate('popupSpaceCreateStep1Placeholder')}
+						focusOnMount={false}
+						size={36}
+						onChange={v => {
+							setSearch(v);
+							analytics.event('MemberSearchInput');
+						}}
+					/>
+				</div>
+
+				<div className="memberListWrapper">
+					{members.length ? (
+						<>
+							<div className="memberList" style={{ height: listHeight }}>
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											width={width}
+											height={height}
+											rowCount={members.length}
+											rowHeight={ROW_HEIGHT}
+											rowRenderer={rowRenderer}
+											overscanRowCount={10}
+										/>
+									)}
+								</AutoSizer>
+							</div>
+							{showGrad ? <div className="grad" /> : ''}
+						</>
+					) : (
+						<div className="emptyState">{search ? translate('commonFilterEmpty') : translate('commonEmpty')}</div>
+					)}
+				</div>
+
+				<div className="wrapper">
+					<div className="buttons">
+						<Button className={!selectedMembers.length ? 'disabled' : ''} text={translate('popupSpaceCreateNext')} color="accent" onClick={onNext} />
+					</div>
+				</div>
+			</div>
+		);
+	} else {
+		stepContent = (
+			<div className="step step1">
+				<div className="wrapper">
+					<div className="stepTitle">{title}</div>
+
+					<div className="iconWrapper">
+						<IconObject
+							ref={iconRef}
+							size={96}
+							object={object}
+							canEdit={false}
+							menuParam={{ horizontal: I.MenuDirection.Center }}
+							onClick={onIcon}
+						/>
+					</div>
+
+					<Input
+						ref={nameRef}
+						className="spaceName"
+						value={name}
+						placeholder={translate('popupSpaceCreateNamePlaceholder')}
+						onKeyDown={onKeyDown}
+						onChange={onNameChange}
+						maxLength={limit}
+						focusOnMount={true}
+					/>
+
+					{isChatSpace ? (
+						<div className="membersSection">
+							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
+							<div className="addMembers" onClick={() => setStep(0)}>
+								<Icon name="menu/spaceCreate/group" className="addMember" />
+								<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+							</div>
+							{selectedMemberObjects.map(item => (
+								<div key={item.id} className="memberItem">
+									<IconObject size={32} object={item} />
+									<ObjectName object={item} />
+								</div>
+							))}
+						</div>
+					) : ''}
+
+					<div className="buttons">
+						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
+					</div>
+				</div>
+			</div>
+		);
+	};
 
 	return (
 		<>
 			{isLoading ? <Loader id="loader" /> : ''}
-			<Label text={translate('popupSpaceCreateLabel')} />
-
-			<div className="iconWrapper">
-				<IconObject
-					ref={iconRef}
-					size={96}
-					object={object}
-					canEdit={false}
-					menuParam={{ horizontal: I.MenuDirection.Center }}
-					onClick={onIcon}
-				/>
-			</div>
-
-			<div className="nameWrapper">
-				<Editable
-					classNameWrap="spaceName"
-					ref={nameRef}
-					onKeyDown={onKeyDown}
-					onKeyUp={onKeyUp}
-					placeholder={translate('defaultNamePage')}
-					maxLength={limit}
-				/>
-				<div className="counter" />
-			</div>
-
-			<div className="buttons">
-				<>
-					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
-					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
-
-					{config.experimental ? <Button text={translate('popupSpaceCreateAIOnboarding')} color="blank" onClick={onAiOnboarding} className="aiOnboarding" /> : ''}
-				</>
-			</div>
-
+			<Icon name="common/close" className="close" onClick={() => close()} />
+			{stepContent}
 			<Error text={error} />
 		</>
 	);

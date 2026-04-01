@@ -23,7 +23,7 @@ export interface TabView extends WebContentsView {
 export interface TabData {
 	route?: string;
 	spaceId?: string;
-	uxType?: number;
+	spaceType?: number;
 	isPinned?: boolean;
 };
 

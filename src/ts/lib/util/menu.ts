@@ -7,6 +7,7 @@ import React, { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
+import item from 'Component/block/dataview/view/calendar/item';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -678,15 +679,14 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
+			C.WorkspaceSetHomepage(space, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { homepage: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -700,78 +700,28 @@ class UtilMenu {
 			});
 		};
 
-		let options = [];
-		if (spaceview.isChat || spaceview.isOneToOne) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
-		} else {
-			options = [
-				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-			];
-		};
-
 		analytics.event('ClickChangeSpaceDashboard');
 
-		S.Menu.open('select', {
+		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds,
-			onOpen: context => this.setContext(context),
-			onClose: () => S.Menu.closeAll(subIds),
 			data: {
-				options,
-				onOver: (e: any, item: any) => {
-					if (!this.menuContext) {
-						return;
-					};
-
-					if (!item.arrow) {
-						S.Menu.closeAll(subIds);
-						return;
-					};
-
-					switch (item.id) {
-						case I.HomePredefinedId.Existing: {
-							S.Menu.open('searchObject', {
-								element: `#${this.menuContext.getId()} #item-${U.Common.esc(item.id)}`,
-								offsetX: this.menuContext.getSize().width,
-								vertical: I.MenuDirection.Center,
-								isSub: true,
-								data: {
-									withPlural: true,
-									filters: [
-										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-									],
-									canAdd: true,
-									onSelect: el => {
-										onSelect(el, true);
-										this.menuContext?.close();
-
-										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
-									},
-								}
-							});
-							break;
-						};
-					};
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+				],
+				dataChange: (_ctx: any, items: any) => {
+					return [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
+						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
+					].concat(items);
 				},
-				onSelect: (e: any, item: any) => {
-					if (item.arrow) {
-						return;
-					};
+				onSelect: el => {
+					onSelect(el, true);
 
-					switch (item.id) {
-						case I.HomePredefinedId.Graph:
-						case I.HomePredefinedId.Chat:
-						case I.HomePredefinedId.Last: {
-							onSelect({ id: item.id }, false);
-
-							analytics.event('ChangeSpaceDashboard', { type: item.id });
-							break;
-						};
-					};
+					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
 		});
@@ -870,7 +820,7 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId, uxType } = space;
+		const { targetSpaceId, spaceType } = space;
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
@@ -888,7 +838,7 @@ class UtilMenu {
 					};
 
 					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: space.spaceType, route });
 					break;
 				};
 
@@ -991,7 +941,7 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					Action.openSpaceTab(targetSpaceId, uxType, route);
+					Action.openSpaceTab(targetSpaceId, spaceType, route);
 					break;
 				};
 
@@ -1145,23 +1095,18 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessage?.createdAt || 0;
-			const d2 = c2.lastMessage?.createdAt || 0;
+			const d1 = Math.max(c1.lastMessage?.createdAt || 0, c1.spaceJoinDate || 0, c1.creationDate || 0);
+			const d2 = Math.max(c2.lastMessage?.createdAt || 0, c2.spaceJoinDate || 0, c2.creationDate || 0);
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
-
 			if (c1.hasCounter && !c2.hasCounter) return -1;
 			if (!c1.hasCounter && c2.hasCounter) return 1;
 
-			if (c1.creationDate > c2.creationDate) return -1;
-			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
+		
 		return items;
 	};
 
@@ -1680,27 +1625,11 @@ class UtilMenu {
 	};
 
 	spaceCreate (param: I.MenuParam, route) {
-		const ids = [ 'chat', 'space', 'join' ];
-		const options = ids.map(id => {
-			const suffix = U.String.toUpperCamelCase(id);
-			const description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);;
-
-			let withDescription = true;
-			let iconParam = { name: `menu/spaceCreate/${id}`, size: 40 };
-
-			if (id == 'join') {
-				withDescription = false;
-				iconParam = null;
-			};
-
-			return {
-				id,
-				iconParam,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description,
-				withDescription,
-			};
-		});
+		const options = [
+			{ id: 'space', iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			{ id: 'chat', iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			{ id: 'join', iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
+		];
 
 		let prefix = '';
 		switch (route) {
@@ -1722,13 +1651,13 @@ class UtilMenu {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'chat': {
-							Action.createSpace(I.SpaceUxType.Chat, route);
+						case 'space': {
+							Action.createSpace(I.SpaceType.Data, route);
 							break;
 						};
 
-						case 'space': {
-							Action.createSpace(I.SpaceUxType.Data, route);
+						case 'chat': {
+							Action.createSpace(I.SpaceType.Chat, route);
 							break;
 						};
 
@@ -1773,11 +1702,11 @@ class UtilMenu {
 		});
 	};
 
-	uxTypeOptions (): I.Option[] {
+	spaceTypeOptions (): I.Option[] {
 		return [
-			{ id: I.SpaceUxType.Data },
-			{ id: I.SpaceUxType.Chat },
-		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+			{ id: I.SpaceType.Data },
+			{ id: I.SpaceType.Chat },
+		].map(it => ({ ...it, name: translate(`spaceType${it.id}`) }));
 	};
 
 	notificationModeOptions (forSettings?: boolean): I.Option[] {

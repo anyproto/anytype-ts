@@ -2,14 +2,11 @@
 
 .popups {
 	.popup.popupSpaceJoinByLink {
-		.innerWrap { width: 480px; padding: 10px 16px 16px 16px; text-align: center; }
+		.innerWrap { width: 480px; padding: 0px 16px 16px 16px; border-radius: 32px; position: relative; }
 
-		.label { @include text-paragraph; font-weight: 600; margin: 0px 0px 26px 0px; }
-
-		.icon { width: 96px; height: 96px; margin: 0px 0px 18px 0px; }
-
-		.input { margin: 0px 0px 12px 0px; height: 36px; border-radius: 12px; }
-
+		.icon.close { position: absolute; right: 14px; top: 14px; z-index: 2; }
+		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
+		.input { margin: 0px 0px 16px 0px; }
 		.button { width: 100%; }
 	}
 }

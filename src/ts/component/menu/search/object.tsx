@@ -368,7 +368,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const cn = [];
 		const props = {
 			...item,
-			object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
+			object: (item.isAdd || item.isSection || item.isSystem || item.iconParam ? undefined : item),
 			withPlural,
 		};
 

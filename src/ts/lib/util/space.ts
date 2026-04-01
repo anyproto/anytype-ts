@@ -25,7 +25,7 @@ class UtilSpace {
 		param = param || {};
 
 		let home = this.getDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
+		if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 			home = this.getLastObject();
 		};
 
@@ -121,9 +121,8 @@ class UtilSpace {
 
 		const details: any = {
 			oneToOneIdentity: id,
-			spaceUxType: I.SpaceUxType.OneToOne,
-			spaceAccessType: I.SpaceType.Shared,
-			spaceDashboardId: I.HomePredefinedId.Chat,
+			spaceAccessType: I.SpaceAccessType.Shared,
+			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
 		};
 
@@ -147,7 +146,7 @@ class UtilSpace {
 			analytics.event('CreateSpace', { 
 				usecase: I.Usecase.ChatSpace,
 				middleTime: message.middleTime, 
-				uxType: I.SpaceUxType.OneToOne,
+				spaceType: I.SpaceType.OneToOne,
 				route,
 			});
 		});
@@ -159,11 +158,11 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
-		if (space.isChat || space.isOneToOne) {
+		const id = space.homepage;
+
+		if (space.isOneToOne) {
 			return this.getChat();
 		};
-
-		const id = space.spaceDashboardId;
 
 		if (!id) {
 			return null;
@@ -181,6 +180,8 @@ class UtilSpace {
 				break;
 			};
 
+			case '':
+			case I.HomePredefinedId.Widget:
 			case I.HomePredefinedId.Last: {
 				ret = this.getLastOpened();
 				break;
@@ -204,7 +205,7 @@ class UtilSpace {
 	 * @returns {string[]} The list of system dashboard IDs.
 	 */
 	getSystemDashboardIds () {
-		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
+		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
 	};
 
 	/**
@@ -225,8 +226,8 @@ class UtilSpace {
 	 */
 	getLastOpened () {
 		return { 
-			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'),
+			id: I.HomePredefinedId.Widget,
+			name: translate('commonEmpty'),
 		};
 	};
 
@@ -256,7 +257,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
+			name: translate(`spaceType${I.SpaceType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};

@@ -19,7 +19,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	let object = null;
-	if (spaceview.isChat || spaceview.isOneToOne) {
+	if (spaceview.isOneToOne) {
 		object = spaceview;
 	} else {
 		object = S.Detail.get(rootId, rootId, []);
@@ -27,8 +27,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
-	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
+	const showRelations = !isDeleted && !spaceview.isOneToOne;
+	const showPin = canWrite && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	if (object.isArchived) {
@@ -56,7 +56,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const onMore = () => {
 		const element = '#button-header-more';
 
-		if (spaceview.isChat || spaceview.isOneToOne) {
+		if (spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
 				element: U.Dom.select(`.header ${element}`, U.Dom.getScrollContainer(isPopup)),
 				className: 'fixed',
@@ -101,7 +101,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isOneToOne, !spaceview.isOneToOne, onOpen)}</div>
 
 			<div className={cnc.join(' ')}>
 				{center}

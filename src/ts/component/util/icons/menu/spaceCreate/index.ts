@@ -1,10 +1,8 @@
 import { registerIcon } from '../../registry';
-import Chat from './chat';
-import Import from './import';
+import Group from './group';
 import Join from './join';
-import Space from './space';
+import Personal from './personal';
 
-registerIcon('menu/spaceCreate/chat', Chat);
-registerIcon('menu/spaceCreate/import', Import);
+registerIcon('menu/spaceCreate/group', Group);
 registerIcon('menu/spaceCreate/join', Join);
-registerIcon('menu/spaceCreate/space', Space);
+registerIcon('menu/spaceCreate/personal', Personal);

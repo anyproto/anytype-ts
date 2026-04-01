@@ -51,6 +51,24 @@
 		}
 	}
 
+	.createHome {
+		display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 8px 16px; margin: 0px 8px;
+		border-radius: 8px; transition: background $transitionCommon;
+	}
+	.createHome {
+		.icon.home { width: 20px; height: 20px; flex-shrink: 0; }
+		.name { flex-grow: 1; @include text-common; color: var(--color-text-primary); }
+		.icon.close {
+			width: 20px; height: 20px; flex-shrink: 0; opacity: 0;
+			transition: opacity $transitionCommon;
+		}
+
+		&:hover { background: var(--color-shape-highlight-medium); }
+		&:hover {
+			.icon.close { opacity: 1; }
+		}
+	}
+
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {

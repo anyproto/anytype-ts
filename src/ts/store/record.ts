@@ -566,7 +566,7 @@ class RecordStore {
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, spaceview.isChat || spaceview.isOneToOne) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isOneToOne) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});

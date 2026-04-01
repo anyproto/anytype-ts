@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 
@@ -21,6 +21,11 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 	];
 
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
+
+	useEffect(() => {
+		analytics.event('ScreenHitShareSpaceLimit');
+	}, []);
+
 	const onClick = () => {
 		Action.membershipUpgrade({ type: 'SpaceWarning', route });
 	};

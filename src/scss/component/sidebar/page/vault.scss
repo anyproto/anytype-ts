@@ -63,6 +63,7 @@
 
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; line-height: 20px; }
 		.label { @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
+		.label.lastMessage { @include text-overflow-nw; }
 		.label.chatName { font-weight: 500; @include text-overflow-nw; }
 
 		&::before {
@@ -91,14 +92,6 @@
 					width: 20px; height: 20px; background: url('~img/icon/loader.svg'); animation: rotate 0.8s infinite linear;
 				}
 			}
-		}
-
-		&:not(.spaceChat) {
-			.label.lastMessage { @include text-overflow-nw; }
-		}
-
-		&.spaceChat {
-			.label.lastMessage { @include clamp2; }
 		}
 	}
 
