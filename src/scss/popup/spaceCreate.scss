@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; }
+		.innerWrap { width: 480px; border-radius: 32px; max-height: calc(100vh - 32px); position: relative; overflow: visible; }
 
 		#loader { border-radius: 32px; }
 
@@ -19,58 +19,55 @@
 		.step { padding: 0px 0px 16px 0px; }
 		.wrapper { padding: 0px 16px; }
 
+		.item { display: flex; align-items: center; gap: 12px; padding: 6px 8px; position: relative; }
+		.item {
+			&::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+				background: transparent; z-index: 0; pointer-events: none; border-radius: 8px;
+			}
+
+			&:hover::before { background: var(--color-shape-highlight-light); }
+
+			.name { flex: 1; }
+			.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
+			.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
+		}
+
 		/* Step 0 — Select Members */
 		.step.step0 {
 			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
-				.memberList { position: relative; }
+				.memberList { position: relative; min-height: 340px; }
 				.memberList {
-					.ReactVirtualized__List { padding: 8px 16px; scrollbar-gutter: stable; }
+					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 				}
 
 				.grad {
 					position: absolute; left: 0px; bottom: 0px; width: 100%; height: 36px; pointer-events: none; z-index: 1;
 					background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 100%);
 				}
-
-				.memberRow { display: flex; align-items: center; gap: 12px; padding: 8px 0px; }
-				.memberRow {
-					.name { @include text-common; flex: 1; }
-					.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
-					.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
-				}
 			}
+		}
+
+		/* Step Join — Join by link */
+		.step.stepJoin {
+			.input { margin: 0px 0px 16px 0px; }
+			.button { width: 100%; }
 		}
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
-			.input.spaceName {
-				height: 56px; background: var(--color-shape-highlight-light); border: 0px; border-radius: 20px;
-				margin: 0px 0px 8px 0px; padding: 0px 16px; @include text-common; outline: none;
-			}
+			.input.spaceName { margin: 0px 0px 8px 0px; }
 
 			.membersSection { text-align: left; margin: 0px -8px 16px -8px; padding: 0px 0px; }
 			.membersSection {
 				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; }
 
-				.addMembers {
-					display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px;
-
-					&:hover { background: var(--color-shape-highlight-light); }
-				}
-				.addMembers {
-					.icon.addMember {
-						width: 32px; height: 32px; border-radius: 50%;
-						background: var(--color-shape-highlight-medium);
-					}
-					.name { @include text-common; color: var(--color-text-secondary); }
-				}
-
-				.memberItem { display: flex; align-items: center; gap: 10px; padding: 6px 8px; }
-				.memberItem {
-					.name { @include text-common; }
+				.item.add {
+					.icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-shape-highlight-medium); }
+					.name { color: var(--color-text-secondary); }
 				}
 			}
 		}

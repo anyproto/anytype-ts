@@ -5,7 +5,7 @@ import $ from 'jquery';
 import Inputmask from 'inputmask';
 import * as I from 'Interface';
 
-type InputSize = 28 | 36 | 40 | 56;
+type InputSize = 28 | 36 | 40 | 52 | 56;
 
 interface Props {
 	id?: string;

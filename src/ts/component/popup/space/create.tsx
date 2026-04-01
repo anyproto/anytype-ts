@@ -6,11 +6,12 @@ import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
 
-const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, position }, ref) => {
+const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const filterRef = useRef(null);
+	const joinInputRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -23,6 +24,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
 	const isGroup = type == I.SpaceCreateType.Group;
+	const isJoin = type == I.SpaceCreateType.Join;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -190,6 +192,42 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 		});
 	};
 
+	const onMemberContext = (e: React.MouseEvent, id: string) => {
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: `#${getId()} #member-${U.Common.esc(id)}`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options: [
+					{ id: 'remove', name: translate('commonRemove'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' },
+				],
+				onSelect: () => {
+					onToggleMember(id);
+				},
+			},
+		});
+	};
+
+	const onJoinSubmit = (e: any) => {
+		e.preventDefault();
+
+		const route = U.Common.getRouteFromUrl(joinInputRef.current?.getValue());
+
+		if (route) {
+			close(() => U.Router.go(route, {}));
+		} else {
+			setError(translate('popupSpaceJoinByLinkError'));
+		};
+	};
+
+	const onJoinKeyUp = () => {
+		const v = joinInputRef.current?.getValue();
+
+		U.Dom.toggleClass(U.Dom.select(`#${getId()} .button`), 'disabled', !v?.length);
+		setError('');
+	};
+
 	const onIcon = () => {
 		let icon = iconOption;
 
@@ -250,7 +288,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 			<div
 				key={key}
 				style={style}
-				className="memberRow"
+				className="item"
 				onClick={() => onToggleMember(item.id)}
 			>
 				<IconObject size={32} object={item} />
@@ -264,6 +302,26 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 
 	let stepContent = null;
 
+	if (isJoin) {
+		stepContent = (
+			<div className="step stepJoin">
+				<div className="wrapper">
+					<div className="stepTitle">{translate('popupSpaceJoinByLinkLabel')}</div>
+					<form onSubmit={onJoinSubmit}>
+						<Input
+							type="text"
+							ref={joinInputRef}
+							size={40}
+							onKeyUp={onJoinKeyUp}
+							placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')}
+							focusOnMount={true}
+						/>
+						<Button className="disabled" color="accent" text={translate('popupInviteRequestRequestToJoin')} onClick={onJoinSubmit} />
+					</form>
+				</div>
+			</div>
+		);
+	} else
 	if (isGroup && (step == 0)) {
 		stepContent = (
 			<div className="step step0">
@@ -286,7 +344,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 				<div className="memberListWrapper">
 					{members.length ? (
 						<>
-							<div className="memberList" style={{ height: listHeight }}>
+							<div className="memberList">
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
@@ -340,17 +398,19 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close, 
 						onChange={onNameChange}
 						maxLength={limit}
 						focusOnMount={true}
+						size={52}
 					/>
 
 					{isGroup ? (
 						<div className="membersSection">
 							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
-							<div className="addMembers" onClick={() => setStep(0)}>
-								<Icon name="menu/spaceCreate/group" className="addMember" />
+							<div className="item add" onClick={() => setStep(0)}>
+								<Icon name="menu/spaceCreate/group" />
 								<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
 							</div>
+
 							{selectedMemberObjects.map(item => (
-								<div key={item.id} className="memberItem">
+								<div key={item.id} id={`member-${item.id}`} className="item" onClick={e => onMemberContext(e, item.id)}>
 									<IconObject size={32} object={item} />
 									<ObjectName object={item} />
 								</div>

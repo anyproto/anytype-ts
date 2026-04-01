@@ -104,14 +104,16 @@
 				> .side.right {
 					.filter { color: var(--color-text-primary); padding: 0px; }
 					.filter {
-						.inner { gap: 0px; height: 100%; }
+						.inner { gap: 0px; height: 100%; background: none; padding: 0px 4px; }
+						.inner:hover { background-color: var(--color-shape-highlight-medium); }
 						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
 						.line { display: none !important; }
-						.icon.clear { display: none; }
+						.icon.commonClear { display: none; }
 					}
 					.filter.isActive {
+						.inner { background-color: var(--color-shape-highlight-medium); }
 						.icon:hover { background-color: unset; }
-						.icon.clear { display: block; }
+						.icon.commonClear { display: block; }
 						.filterInputWrap { width: 120px; }
 					}
 
@@ -121,10 +123,10 @@
 					}
 					.buttonWrap.withSelect {
 						.button.addRecord { border-radius: 14px 0 0 14px; padding: 0px 4px 0px 12px; }
-						.button.select {
+						.button.isArrow {
 							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 8px; display: flex; align-items: center; justify-content: center; 
 						}
-						.button.select {
+						.button.isArrow {
 							.icon { margin: 0px; }
 						}
 					}
@@ -170,8 +172,6 @@
 				.icon:hover, .icon.active { background-color: transparent !important; }
 				.name { @include text-overflow-nw; }
 			}
-
-			.button { padding: 0px 8px; @include text-common; }
 		}
 		.dataviewControls.small {
 			.side.left {

@@ -597,7 +597,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				<div id="dataviewControlsSideRight" className="side right">
 					<Filter
 						ref={filterRef}
-						className="underlined"
 						placeholder={translate('blockDataviewSearch')}
 						iconParam={{ name: 'common/search' }}
 						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
@@ -625,7 +624,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 									id={`button-${block.id}-add-record-select`}
 									color="accent"
 									iconParam={{ name: 'arrow/button', color: 'white', size: 8 }}
-									className="select"
+									className="isArrow"
 									size={28}
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}

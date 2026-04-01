@@ -1650,16 +1650,7 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						default:
-							Action.createSpace(item.id, route);
-							break;
-
-						case I.SpaceCreateType.Join: {
-							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
-							break;
-						};
-					};
+					Action.createSpace(item.id, route);
 
 					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
 				},
