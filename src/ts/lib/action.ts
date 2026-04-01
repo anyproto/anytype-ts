@@ -438,7 +438,14 @@ class Action {
 						if (isPopup) {
 							S.Popup.close('page');
 						} else {
-							U.Space.openDashboard();
+							const history = U.Router.history;
+							const prev = history.entries[history.index - 1];
+
+							if (prev) {
+								history.goBack();
+							} else {
+								U.Space.openDashboard();
+							};
 						};
 					};
 
