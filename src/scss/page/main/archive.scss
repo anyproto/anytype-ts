@@ -117,7 +117,10 @@
 		.archiveTree {
 			.table {
 				.cellContent.isName {
-					.name { width: auto; min-width: 0; }
+					.name {
+						width: auto;
+						min-width: 0;
+					}
 				}
 
 				.row:not(.isHead) {
