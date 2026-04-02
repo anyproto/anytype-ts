@@ -14,7 +14,7 @@ interface Props extends I.FooterComponent {
 const Components = {
 	authIndex:			 FooterAuthIndex,
 	authDisclaimer:		 FooterAuthDisclaimer,
-	authOnboardEmail:		 	 FooterAuthOnboardEmail,
+	authOnboardEmail:	 FooterAuthOnboardEmail,
 	mainObject:			 FooterMainObject,
 };
 

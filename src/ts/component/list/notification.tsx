@@ -101,8 +101,8 @@ const ListNotification = observer(forwardRef(() => {
 		>
 			{list.length ? (
 				<div className="head">
-					<Icon name="menu/action/hide" className="hide" onClick={onHide} />
-					<Icon name="common/clear" onClick={onClear} />
+					<Icon name="notification/hide" width={12} height={8} onClick={onHide} />
+					<Icon name="notification/delete" size={10} onClick={onClear} />
 				</div>
 			) : ''}
 
