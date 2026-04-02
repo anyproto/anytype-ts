@@ -99,7 +99,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const placeholderShow = () => {
 		if (placeholderRef.current) {
-			placeholderRef.current.style.display = '';
+			placeholderRef.current.style.display = 'block';
 		};
 	};
 
