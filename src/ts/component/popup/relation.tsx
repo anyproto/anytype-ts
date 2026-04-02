@@ -261,7 +261,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			
 			const ref = cellRefs.current.get(id);
 			if (ref) {
-				ref.onClick($.Event('click'));
+				ref.onClick(new MouseEvent('click'));
 			};
 		};
 	});

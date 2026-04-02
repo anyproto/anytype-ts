@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import { createRoot } from 'react-dom/client';
-import $ from 'jquery';
+
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
@@ -87,14 +87,25 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		return data.findIndex(it => U.Date.date('j-n-Y', it.ts) == U.Date.date('j-n-Y', t));
 	};
 
+	const timelineDragHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const timelineDragEndHandlerRef = useRef<((e: Event) => void) | null>(null);
+
 	const onDragStart = (e: DragEvent, item: any) => {
 		e.stopPropagation();
 
-		const win = $(window);
-		const unbind = () => win.off('drag.timeline dragend.timeline');
+		const unbind = () => {
+			if (timelineDragHandlerRef.current) {
+				window.removeEventListener('drag', timelineDragHandlerRef.current);
+				timelineDragHandlerRef.current = null;
+			};
+			if (timelineDragEndHandlerRef.current) {
+				window.removeEventListener('dragend', timelineDragEndHandlerRef.current);
+				timelineDragEndHandlerRef.current = null;
+			};
+		};
 		const x = e.pageX;
-		const body = $(bodyRef.current);
-		const line = $(lineRef.current);
+		const body = bodyRef.current;
+		const line = lineRef.current;
 
 		keyboard.setDragging(true);
 
@@ -112,13 +123,14 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				{ key: startKey, value: item[startKey] },
 				{ key: endKey, value: item[endKey] }
 			];
-				
+
 			S.Detail.update(subId, { id: item.id, details: { [startKey]: item[startKey], [endKey]: item[endKey] } }, false);
 			C.ObjectListSetDetails([ item.id ], details, cb);
 		};
 
-		win.on('drag.timeline', (e: any) => {
-			const { top } = body.offset();
+		timelineDragHandlerRef.current = (e: any) => {
+			const bodyRect = body?.getBoundingClientRect();
+			const top = (bodyRect?.top ?? 0) + window.scrollY;
 			const dx = Math.ceil((e.pageX - x) / WIDTH);
 
 			setHover(item[startKey] + dx * J.Constant.day, item[endKey] + dx * J.Constant.day);
@@ -126,12 +138,16 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			if (isCollection) {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
 				if ((dy >= 0) && (dy != item.index) && (dy != item.index + 1)) {
-					line.css({ top: dy * HEIGHT + 1 }).show();
+					if (line) {
+						line.style.top = `${dy * HEIGHT + 1}px`;
+						line.style.display = '';
+					};
 				};
 			};
-		});
+		};
+		window.addEventListener('drag', timelineDragHandlerRef.current);
 
-		win.on('dragend.timeline', (e: any) => {
+		timelineDragEndHandlerRef.current = (e: any) => {
 			e.stopPropagation();
 
 			save(Math.ceil((e.pageX - x) / WIDTH), () => {
@@ -145,27 +161,44 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 			unbind();
 			keyboard.setDragging(false);
-			line.hide();
-		});
+			if (line) {
+				line.style.display = 'none';
+			};
+		};
+		window.addEventListener('dragend', timelineDragEndHandlerRef.current);
 	};
+
+	const resizeMoveHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const resizeUpHandlerRef = useRef<((e: Event) => void) | null>(null);
 
 	const onResizeStart = (e: MouseEvent, item: any, dir: number) => {
 		e.stopPropagation();
 		e.preventDefault();
 
-		const win = $(window);
-		const unbind = () => win.off('mousemove.timeline mouseup.timeline');
-		const node = $(nodeRef.current);
-		const el = node.find(`#item-${U.Common.esc(item.id)}`);
-		const { left } = el.offset();
-		const width = Math.floor(el.outerWidth());
-		const body = $('body');
-		const sl = node.scrollLeft();
+		const unbind = () => {
+			if (resizeMoveHandlerRef.current) {
+				window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+				resizeMoveHandlerRef.current = null;
+			};
+			if (resizeUpHandlerRef.current) {
+				window.removeEventListener('mouseup', resizeUpHandlerRef.current);
+				resizeUpHandlerRef.current = null;
+			};
+		};
+		const node = nodeRef.current;
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		if (!el) {
+			return;
+		};
+		const elRect = el.getBoundingClientRect();
+		const left = elRect.left + window.scrollX;
+		const width = Math.floor(el.offsetWidth);
+		const sl = node?.scrollLeft ?? 0;
 		const duration = getDuration(item);
 
 		unbind();
 		keyboard.setResize(true);
-		body.addClass(dir > 0 ? 'eResize' : 'wResize');
+		U.Dom.addClass(document.body, dir > 0 ? 'eResize' : 'wResize');
 
 		let d = 0;
 
@@ -195,7 +228,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			};
 		};
 
-		win.on('mousemove.timeline', (e: any) => {
+		resizeMoveHandlerRef.current = (e: any) => {
 			if (dir < 0) {
 				d = e.pageX - left;
 			};
@@ -209,20 +242,20 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			if (d) {
 				d = Math.ceil(d / WIDTH);
 
-				const css: any = {};
-
 				let start = item[startKey];
 				let end = item[endKey];
 
 				if (dir < 0) {
-					css.left = left - node.offset().left + sl + d * WIDTH;
-					css.width = width - d * WIDTH;
+					const nodeRect = node?.getBoundingClientRect();
+					const nodeLeft = (nodeRect?.left ?? 0) + window.scrollX;
+					el.style.left = `${left - nodeLeft + sl + d * WIDTH}px`;
+					el.style.width = `${width - d * WIDTH}px`;
 
 					start += d * J.Constant.day;
 				};
 
 				if (dir > 0) {
-					css.width = width + d * WIDTH;
+					el.style.width = `${width + d * WIDTH}px`;
 
 					end += d * J.Constant.day;
 				};
@@ -231,19 +264,21 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					return;
 				};
 
-				el.css(css);
 				setHover(start, end);
 			};
-		});
+		};
+		window.addEventListener('mousemove', resizeMoveHandlerRef.current);
 
-		win.on('mouseup.timeline', (e: any) => {
+		resizeUpHandlerRef.current = (e: any) => {
 			e.stopPropagation();
 
 			unbind();
 			save(true);
 			window.setTimeout(() => keyboard.setResize(false), 20);
-			body.removeClass('eResize wResize');
-		});
+			U.Dom.removeClass(document.body, 'eResize');
+			U.Dom.removeClass(document.body, 'wResize');
+		};
+		window.addEventListener('mouseup', resizeUpHandlerRef.current);
 	};
 
 	const setHover = (start: number, end: number) => {
@@ -257,26 +292,26 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const slice = data.slice(idx1, idx2);
 
 		onMouseLeave();
 
 		for (let i = 0; i < slice.length; i++) {
 			const it = slice[i];
-			const el = node.find(`#day-${it.d}-${it.m}-${it.y}`);
+			const el = U.Dom.select(`#day-${it.d}-${it.m}-${it.y}`, node);
 
-			if (!el.length) {
+			if (!el) {
 				continue;
 			};
 
-			el.addClass('hover');
+			U.Dom.addClass(el, 'hover');
 
 			if (i == 0) {
-				el.addClass('first');
+				U.Dom.addClass(el, 'first');
 			};
 			if (i == slice.length - 1) {
-				el.addClass('last');
+				U.Dom.addClass(el, 'last');
 			};
 		};
 	};
@@ -286,7 +321,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const onMouseLeave = () => {
-		$(nodeRef.current).find('.day').removeClass('hover first last');
+		U.Dom.selectAll('.day', nodeRef.current).forEach(el => {
+			U.Dom.removeClass(el, 'hover');
+			U.Dom.removeClass(el, 'first');
+			U.Dom.removeClass(el, 'last');
+		});
 	};
 
 	const getDuration = (item: any): number => {
@@ -386,35 +425,44 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		if (!node.length) {
+		if (!node) {
 			return;
 		};
 
 		const items = getItems();
-		const body = $(bodyRef.current);
-		const list = $(itemsRef.current);
-		const tooltips = $(tooltipRef.current);
+		const body = bodyRef.current;
+		const list = itemsRef.current;
+		const tooltips = tooltipRef.current;
 		const scrollContainer = U.Dom.getScrollContainer(isPopup);
 		const pageContainer = U.Dom.getPageContainer(isPopup);
-		const top = body.offset().top - J.Size.header - 14 - (scrollContainer?.scrollTop ?? 0);
-		const left = node.offset().left;
+		const bodyRect = body?.getBoundingClientRect();
+		const top = (bodyRect?.top ?? 0) + window.scrollY - J.Size.header - 14 - (scrollContainer?.scrollTop ?? 0);
+		const nodeRect = node.getBoundingClientRect();
+		const left = nodeRect.left + window.scrollX;
 
 		if (!isInline) {
-			node.css({ width: 0, marginLeft: 0 });
+			node.style.width = '0';
+			node.style.marginLeft = '0';
 
 			const cw = pageContainer?.clientWidth ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
 
-			node.css({ width: cw, marginLeft: -margin - 2 });
+			node.style.width = `${cw}px`;
+			node.style.marginLeft = `${-margin - 2}px`;
 		};
 
-		const width = node.width();
+		const width = U.Dom.contentWidth(node);
 
-		list.css({ height: Math.max(20, items.length) * HEIGHT });
-		tooltips.css({ transform: `translate3d(${left}px, ${top}px, 0)`, width });
+		if (list) {
+			list.style.height = `${Math.max(20, items.length) * HEIGHT}px`;
+		};
+		if (tooltips) {
+			tooltips.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+			tooltips.style.width = `${width}px`;
+		};
 	};
 
 	const onClick = (e: MouseEvent, item: any) => {
@@ -442,7 +490,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	};
 
 	const scrollTo = (t: number, animate: boolean) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const idx = getIndex(t);
 
 		if (idx < 0) {
@@ -454,18 +502,20 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
-		const el = node.find(`#day-${item.d}-${item.m}-${item.y}`);
+		const el = U.Dom.select(`#day-${item.d}-${item.m}-${item.y}`, node);
 
-		if (!el.length) {
+		if (!el) {
 			return;
 		};
 
-		const left = el.position().left - node.width() / 2 + WIDTH / 2;
+		const left = el.offsetLeft - U.Dom.contentWidth(node) / 2 + WIDTH / 2;
 
 		if (animate) {
-			node.animate({ scrollLeft: left }, 200);
+			node?.scrollTo({ left, behavior: 'smooth' });
 		} else {
-			node.scrollLeft(left);
+			if (node) {
+				node.scrollLeft = left;
+			};
 		};
 	};
 
@@ -495,15 +545,20 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const sl = node.scrollLeft();
-		const wrap = node.find('.viewContent');
-		const nw = node.width();
-		const nl = node.offset().left;
-		const width = wrap.width() - nw;
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const sl = node.scrollLeft;
+		const wrap = U.Dom.select('.viewContent', node);
+		const nw = U.Dom.contentWidth(node);
+		const nodeRect = node.getBoundingClientRect();
+		const nl = nodeRect.left + window.scrollX;
+		const width = U.Dom.contentWidth(wrap) - nw;
 		const first = data[0];
 		const last = data[data.length - 1];
-		const list = node.find('.item');
+		const list = U.Dom.selectAll('.item', node);
 
 		if (first && (sl <= 0)) {
 			setValue(first.ts);
@@ -513,23 +568,25 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			setValue(last.ts);
 		};
 
-		list.each((i, item: any) => {
-			item = $(item);
-
-			const { left } = item.offset();
-			const w = item.outerWidth();
-			const id = item.attr('data-id');
+		list.forEach((itemEl: HTMLElement) => {
+			const itemRect = itemEl.getBoundingClientRect();
+			const left = itemRect.left + window.scrollX;
+			const w = itemEl.offsetWidth;
+			const id = itemEl.getAttribute('data-id');
 			const object = items.find(it => it.id == id);
 			const isLeft = left <= -w;
 			const isRight = left - nl >= nw;
 
-			const createElement = () => {
-				el = $(`<div id="tooltipItem-${id}" class="tooltipItem" />`).appendTo(tooltipRef.current);
+			const createElement = (): HTMLElement => {
+				el = document.createElement('div');
+				el.id = `tooltipItem-${id}`;
+				el.className = 'tooltipItem';
+				tooltipRef.current?.appendChild(el);
 
-				const root = createRoot(el.get(0));
+				const root = createRoot(el);
 				root.render(<Tooltip {...object} />);
 
-				el.off('click').on('click', (e: any) => {
+				el.addEventListener('click', (e: any) => {
 					e.stopPropagation();
 					e.preventDefault();
 
@@ -539,19 +596,21 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				return el;
 			};
 
-			let el = $(`#tooltipItem-${id}`);
+			let el = U.Dom.get(`tooltipItem-${id}`);
 
-			el.css({ top: item.position().top });
+			if (el) {
+				el.style.top = `${itemEl.offsetTop}px`;
+			};
 
 			if (isLeft || isRight) {
-				if (!el.length) {
+				if (!el) {
 					el = createElement();
 				};
 
-				el.toggleClass('isLeft', isLeft);
-				el.toggleClass('isRight', isRight);
-			} else 
-			if (el.length) {
+				U.Dom.toggleClass(el, 'isLeft', isLeft);
+				U.Dom.toggleClass(el, 'isRight', isRight);
+			} else
+			if (el) {
 				el.remove();
 			};
 		});

@@ -314,7 +314,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				<MenuItemVertical
 					id={item.id}
 					object={item.isSystem ? null : item}
-					icon={item.icon}
+					iconParam={item.icon ? { name: item.icon } : undefined}
 					name={<ObjectName object={item} />}
 					onMouseEnter={e => onOver(e, item)}
 					onClick={e => onClick(e, item)}

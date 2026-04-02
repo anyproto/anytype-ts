@@ -79,7 +79,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			classNameWrap: 'fromSidebar',
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
 				],
 				onSelect: (e, option) => {

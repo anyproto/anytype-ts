@@ -44,10 +44,10 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const getSections = () => {
 		const sections: any[] = [];
-		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
+		const turnText = { id: 'turnText', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
+		const turnList = { id: 'turnList', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
+		const turnDiv = { id: 'turnDiv', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
+		const turnFile = { id: 'turnFile', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;

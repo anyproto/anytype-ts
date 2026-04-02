@@ -33,6 +33,8 @@ import TypeLayout from './typeLayout';
 import Unlink from './unlink';
 import SwitchView from './switchView';
 import SwitchViewDetailed from './switchViewDetailed';
+import SwitchViewStacked from './switchViewStacked';
+import SwitchViewTree from './switchViewTree';
 import Upload from './upload';
 import Empty from './empty';
 
@@ -67,6 +69,8 @@ registerIcon('common/search', Search);
 registerIcon('common/sort', Sort);
 registerIcon('common/switchView', SwitchView);
 registerIcon('common/switchViewDetailed', SwitchViewDetailed);
+registerIcon('common/switchViewStacked', SwitchViewStacked);
+registerIcon('common/switchViewTree', SwitchViewTree);
 registerIcon('common/sortArrow', SortArrow);
 registerIcon('common/tick', Tick);
 registerIcon('common/typeLayout', TypeLayout);

@@ -20,7 +20,7 @@ export interface MenuParam<D = any> {
 	component?: string;
 	title?: string;
 	menuKey?: string;
-	element?: string | HTMLElement | JQuery<any>;
+	element?: string | HTMLElement;
 	rect?: MenuPosition;
 	type?: MenuType;
 	vertical?: MenuDirection;
@@ -106,7 +106,6 @@ export interface IconParam {
 
 export interface MenuItem {
 	id?: string;
-	icon?: string;
 	iconParam?: IconParam;
 	object?: Record<string, unknown>;
 	name?: string | React.ReactNode;

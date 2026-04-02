@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
@@ -86,10 +86,11 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, [ tab ]);
 	
 	useEffect(() => {
-		const node = $(nodeRef.current);
-		
-		if (idRef.current) {
-			node.find(`#item-${U.Common.esc(idRef.current)}`).addClass('active');
+		const node = nodeRef.current;
+
+		if (idRef.current && node) {
+			const el = U.Dom.select(`#item-${U.Common.esc(idRef.current)}`, node);
+			U.Dom.addClass(el, 'active');
 			idRef.current = '';
 		};
 
@@ -101,13 +102,16 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load();
 	}, [ tab, filter ]);
 
+	const keydownHandler = useRef<(e: any) => void>(() => {});
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', keydownHandler.current);
 	};
 
 	const load = () => {
@@ -466,15 +470,21 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setActive = (item?: any, row?: number) => {
-		const node = $(nodeRef.current);
-		const items = node.find('.items');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const itemsContainer = U.Dom.select('.items', node);
 
 		if (row && listRef.current) {
 			listRef.current.scrollToRow(Math.max(0, row));
 		};
 
 		Preview.tooltipHide(false);
-		items.find('.active').removeClass('active');
+		if (itemsContainer) {
+			U.Dom.selectAll('.active', itemsContainer).forEach(el => U.Dom.removeClass(el, 'active'));
+		};
 
 		active.current = item;
 
@@ -482,12 +492,12 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
 		const tt = getTooltip(item);
 
-		element.addClass('active');
-		if (tt && element.length) {
-			Preview.tooltipShow({ text: tt, element: element.get(0) as HTMLElement });
+		U.Dom.addClass(element, 'active');
+		if (tt && element) {
+			Preview.tooltipShow({ text: tt, element });
 		};
 	};
 
@@ -601,8 +611,9 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 	
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onMouseDown = (e: any, item: any) => {
-		const win = $(window);
 		const timeout = tab == Tab.Icon ? 0 : 200;
 
 		const callBack = (id, color) => {
@@ -615,12 +626,19 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			if (hasSkins(item)) {
 				timeoutMenu.current = window.setTimeout(() => {
-					win.off('mouseup.smile');
+					if (mouseUpHandler.current) {
+						window.removeEventListener('mouseup', mouseUpHandler.current);
+						mouseUpHandler.current = null;
+					};
 					onSkin(e, item);
 				}, timeout);
 			};
 
-			win.off('mouseup.smile').on('mouseup.smile', () => {
+			if (mouseUpHandler.current) {
+				window.removeEventListener('mouseup', mouseUpHandler.current);
+			};
+
+			mouseUpHandler.current = () => {
 				if (S.Menu.isOpen('smileColor')) {
 					return;
 				};
@@ -631,8 +649,13 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				window.clearTimeout(timeoutMenu.current);
-				win.off('mouseup.smile');
-			});
+				if (mouseUpHandler.current) {
+					window.removeEventListener('mouseup', mouseUpHandler.current);
+					mouseUpHandler.current = null;
+				};
+			};
+
+			window.addEventListener('mouseup', mouseUpHandler.current);
 		};
 
 		switch (tab) {
@@ -769,11 +792,19 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setActiveGroup = (id: string) => {
-		const node = $(nodeRef.current);
-		const foot = node.find('#foot');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		foot.find('.active').removeClass('active');
-		foot.find(`#item-${U.Common.esc(id)}`).addClass('active');
+		const foot = U.Dom.select('#foot', node);
+		if (!foot) {
+			return;
+		};
+
+		U.Dom.selectAll('.active', foot).forEach(el => U.Dom.removeClass(el, 'active'));
+		const item = U.Dom.select(`#item-${U.Common.esc(id)}`, foot);
+		U.Dom.addClass(item, 'active');
 	};
 
 	const onDragOver = (e: any) => {
@@ -781,7 +812,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 		
-		$(dropzoneRef.current).addClass('isDraggingOver');
+		U.Dom.addClass(dropzoneRef.current, 'isDraggingOver');
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -789,9 +820,9 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 		
-		$(dropzoneRef.current).removeClass('isDraggingOver');
+		U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 	};
-	
+
 	const onDrop = (e: any) => {
 		if (!U.File.checkDropFiles(e)) {
 			return;
@@ -800,7 +831,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		
-		$(dropzoneRef.current).removeClass('isDraggingOver');
+		U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		setIsLoading(true);
 		keyboard.disableCommonDrop(true);
 		

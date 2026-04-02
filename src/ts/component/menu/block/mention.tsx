@@ -291,10 +291,9 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<MenuItemVertical 
+				<MenuItemVertical
 					id={item.id}
 					object={object}
-					icon={item.icon}
 					name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}

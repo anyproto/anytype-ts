@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
-import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -84,9 +83,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const checkSendButton = () => {
-		const button = $(sendRef.current);
-
-		canSend() || isSending.current ? button.show() : button.hide();
+		if (sendRef.current) {
+			sendRef.current.style.display = (canSend() || isSending.current) ? '' : 'none';
+		};
 	};
 
 	const onSelect = () => {
@@ -102,8 +101,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-
 		S.Common.setTimeout('chatText', 150, () => {
 			// Don't open text menu if context is disabled (e.g., during spellcheck)
 			if (keyboard.isContextOpenDisabled) {
@@ -115,7 +112,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				element: '#messageBox',
 				recalcRect: () => {
 					const rect = U.Dom.getSelectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 				},
 				offsetY: 4,
 				offsetX: -8,
@@ -239,7 +236,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
-			$(window).trigger('resize');
+			window.dispatchEvent(new Event('resize'));
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -441,8 +438,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onInput = () => {
 		const value = getTextValue();
 		const checkRtl = U.String.checkRtl(value);
+		const editNode = editableRef.current?.getNode();
 
-		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
+		if (editNode) {
+			U.Dom.toggleClass(editNode, 'isRtl', checkRtl);
+		};
 	};
 
 	const onCopy = () => {
@@ -686,7 +686,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0 });
+		if (nodeRef.current) {
+			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
+			nodeRef.current.style.height = (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px';
+		};
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -719,7 +722,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clearDragState = () => {
-		$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
+		if (nodeRef.current) {
+			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
+			nodeRef.current.style.height = '';
+		};
 	};
 
 	const onEmoji = () => {
@@ -937,20 +943,20 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
+		const send = sendRef.current;
+		const loader = loaderRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
 
-		send.addClass('isLoading');
-		loader.addClass('active');
+		U.Dom.addClass(send, 'isLoading');
+		U.Dom.addClass(loader, 'active');
 		isSending.current = true;
 
 		raf(() => {
-			send.addClass('anim');
+			U.Dom.addClass(send, 'anim');
 		});
 		
 		const callBack = () => {
@@ -1087,19 +1093,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
-
 		isSending.current = false;
-		send.removeClass('isLoading anim');
-		loader.removeClass('active');
+		U.Dom.removeClass(sendRef.current, 'isLoading');
+		U.Dom.removeClass(sendRef.current, 'anim');
+		U.Dom.removeClass(loaderRef.current, 'active');
 
 		onEditClear();
 		onReplyClear();
 		checkSpeedLimit();
 		historyClearState();
 
-		$(window).trigger('resize');
+		window.dispatchEvent(new Event('resize'));
 	};
 
 	const onEditClear = () => {
@@ -1263,7 +1267,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
-		$(window).trigger('resize');
+		window.dispatchEvent(new Event('resize'));
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {
@@ -1346,12 +1350,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const mark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
 		const rect = U.Dom.getSelectionRect();
-		const win = $(window);
 
 		S.Menu.close('chatText', () => {
 			S.Menu.open('blockLink', {
 				classNameWrap: 'fromBlock',
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 				horizontal: I.MenuDirection.Center,
 				offsetY: 4,
 				data: {
@@ -1541,14 +1544,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const caretMenuParam = () => {
-		const win = $(window);
 		const rect = U.Dom.getSelectionRect();
 		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
@@ -1630,8 +1632,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const getValue = () => String(message.content.text || '');
 		const marks = message.content.marks || [];
-		const node = $(nodeRef.current);
-		const head = node.find('.head');
+		const node = nodeRef.current;
+		const head = node ? U.Dom.select('.head', node) : null;
 		const param = { subId, iconSize: 16 };
 
 		renderMentions(rootId, head, marks, getValue, param);
@@ -1643,21 +1645,28 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const updateCounter = (v?: string) => {
 		v = v || getTextValue();
 
-		const el = $(counterRef.current);
+		const el = counterRef.current;
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		el.toggleClass('red', l > limit);
+		if (el) {
+			U.Dom.toggleClass(el, 'red', l > limit);
 
-		if (l > limit - 50) {
-			el.addClass('show').text(limit - l);
-		} else {
-			el.removeClass('show');
+			if (l > limit - 50) {
+				U.Dom.addClass(el, 'show');
+				el.textContent = String(limit - l);
+			} else {
+				U.Dom.removeClass(el, 'show');
+			};
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show').removeClass('red');
+		if (counterRef.current) {
+			counterRef.current.textContent = '';
+			U.Dom.removeClass(counterRef.current, 'show');
+			U.Dom.removeClass(counterRef.current, 'red');
+		};
 	};
 
 	const checkSpeedLimit = () => {

@@ -113,7 +113,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						horizontal: I.MenuDirection.Right,
 						data: {
 							options: [
-								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 							],
 							onSelect: (e, option) => {
 								switch (option.id) {
@@ -200,7 +200,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', {
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',

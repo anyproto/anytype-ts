@@ -1020,8 +1020,6 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		if (!element) return null;
 		if (element instanceof HTMLElement) return element;
 		if (typeof element === 'string') return U.Dom.select(element);
-		// jQuery object fallback
-		if (element.get) return element.get(0) || null;
 		return null;
 	};
 

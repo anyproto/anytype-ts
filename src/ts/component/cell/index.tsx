@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
@@ -86,10 +85,9 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const win = $(window);
-		const cell = $(`#${U.Common.esc(cellId)}`);
+		const cell = U.Dom.get(U.Common.esc(cellId));
 		const className = [];
-		const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
+		const cellContent = U.Dom.hasClass(cell, 'cellContent') ? cell : U.Dom.select('.cellContent', cell);
 
 		if (menuParam.className) {
 			className.push(menuParam.className);
@@ -99,7 +97,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			className.push('isInline');
 		};
 
-		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
+		let width = Math.max(J.Size.dataview.cell.edit, cell?.offsetWidth ?? 0);
 		let closeIfOpen = true;
 		let menuId = '';
 
@@ -112,11 +110,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				return;
 			};
 
-			if (!isGrid && isName) {
-				cellContent.css({ height: cellContent.outerHeight() });
+			if (!isGrid && isName && cellContent) {
+				cellContent.style.height = `${cellContent.offsetHeight}px`;
 			};
 
-			cell.addClass('isEditing');
+			U.Dom.addClass(cell, 'isEditing');
 
 			if (cellPosition) {
 				cellPosition(cellId);
@@ -132,7 +130,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			keyboard.disableSelection(true);
-			win.trigger('resize');
+			window.dispatchEvent(new Event('resize'));
 		};
 
 		const setOff = () => {
@@ -144,15 +142,15 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				childRef.current.setEditing?.(false);
 			};
 
-			if (!isGrid && isName) {
-				cellContent.css({ height: '' });
+			if (!isGrid && isName && cellContent) {
+				cellContent.style.height = '';
 			};
 
-			$(`#${U.Common.esc(cellId)}`).removeClass('isEditing');
+			U.Dom.removeClass(U.Dom.get(U.Common.esc(cellId)), 'isEditing');
 			S.Common.cellId = '';
 		};
 
-		const element = cell.hasClass('cellContent') ? `#${U.Common.esc(cellId)}` : `#${U.Common.esc(cellId)} .cellContent`;
+		const element = U.Dom.hasClass(cell, 'cellContent') ? `#${U.Common.esc(cellId)}` : `#${U.Common.esc(cellId)} .cellContent`;
 
 		let ret = false;
 		let param: I.MenuParam = { 
@@ -163,11 +161,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			passThrough: true,
 			...menuParam,
 			onOpen: () => {
-				$(element).addClass('withMenu');
+				U.Dom.addClass(U.Dom.select(element), 'withMenu');
 				setOn();
 			},
 			onClose: () => {
-				$(element).removeClass('withMenu');
+				U.Dom.removeClass(U.Dom.select(element), 'withMenu');
 				setOff();
 			},
 			data: { 
@@ -289,7 +287,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.LongText: {
 				if (!noInplace) {
 					const { wh } = U.Dom.getWindowDimensions();
-					const height = Math.min(wh - J.Size.header - 20, cell.outerHeight());
+					const height = Math.min(wh - J.Size.header - 20, cell?.offsetHeight ?? 0);
 
 					param = Object.assign(param, {
 						noFlipX: true,
@@ -313,11 +311,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
 				const options = [
-					{ id: 'go', icon: `go-${I.RelationType[relation.format].toLowerCase()}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('commonCopy') },
+					{ id: 'go', iconParam: { name: `go-${I.RelationType[relation.format].toLowerCase()}` }, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', iconParam: { name: 'copy' }, name: translate('commonCopy') },
 				];
 				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
+					options.push({ id: 'reload', iconParam: { name: 'reload' }, name: translate('menuDataviewUrlActionGoReload') });
 				};
 
 				const onSelect = (event: any, item: any) => {
@@ -395,23 +393,24 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		if (ret) {
-			cell.removeClass('isEditing');
+			U.Dom.removeClass(cell, 'isEditing');
 			return;
 		};
 
 		const bindContainerClick = () => {
-			const win = $(window);
+			const handler = (e: any) => {
+				const target = e.target as HTMLElement;
 
-			win.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => {
-				const target = $(e.target);
-
-				if (!target.parents(`#${U.Common.esc(cellId)}`).length && !target.parents('.menus').length) {
+				if (!target.closest(`#${U.Common.esc(cellId)}`) && !target.closest('.menus')) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
-					win.off(`mousedown.cell${cellId}`);
+					window.removeEventListener('mousedown', handler);
 				};
-			});
+			};
+
+			window.removeEventListener('mousedown', handler);
+			window.addEventListener('mousedown', handler);
 		};
 
 		if (menuId) {
@@ -431,7 +430,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				bindContainerClick();
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
+					window.addEventListener('blur', () => S.Menu.closeAll(J.Menu.cell), { once: true });
 				};
 			} else 
 			if (closeIfOpen) {

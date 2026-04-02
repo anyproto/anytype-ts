@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode, MouseEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -70,12 +69,36 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		unbindKeyboard();
 	};
 	
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+	const blurHandler = useRef<((e: any) => void) | null>(null);
+	const keyDownHandler = useRef<((e: any) => void) | null>(null);
+	const keyUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const unbindMouse = () => {
-		$(window).off('mousemove.selection mouseup.selection');
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
+		if (blurHandler.current) {
+			window.removeEventListener('blur', blurHandler.current);
+			blurHandler.current = null;
+		};
 	};
 	
 	const unbindKeyboard = () => {
-		$(window).off('keydown.selection keyup.selection');
+		if (keyDownHandler.current) {
+			window.removeEventListener('keydown', keyDownHandler.current);
+			keyDownHandler.current = null;
+		};
+		if (keyUpHandler.current) {
+			window.removeEventListener('keyup', keyUpHandler.current);
+			keyUpHandler.current = null;
+		};
 		const container = U.Dom.getScrollContainer(keyboard.isPopup());
 		if (container && scrollHandler.current) {
 			container.removeEventListener('scroll', scrollHandler.current);
@@ -127,11 +150,10 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		
 		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
-		const win = $(window);
 		const container = U.Dom.getScrollContainer(isPopup);
-		const rect = $(rectRef.current);
+		const rect = rectRef.current;
 
-		rect.toggleClass('fromPopup', isPopup);
+		U.Dom.toggleClass(rect, 'fromPopup', isPopup);
 		x.current = e.pageX;
 		y.current = e.pageY;
 		hasMoved.current = false;
@@ -152,11 +174,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		initNodes();
-		target.current = $(e.target).closest('.selectionTarget');
+		target.current = (e.target as HTMLElement).closest('.selectionTarget');
 
 		if (e.shiftKey && focused) {
-			const type = target.current.attr('data-type') as I.SelectType;
-			const id = target.current.attr('data-id');
+			const type = target.current?.getAttribute('data-type') as I.SelectType;
+			const id = target.current?.getAttribute('data-id');
 			const ids = get(type);
 
 			if (!ids.length && (id != focused)) {
@@ -164,11 +186,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown({ container: container ? $(container) : undefined });
+		scrollOnMove.onMouseDown({ container: container || undefined });
 		unbindMouse();
 
-		win.on(`mousemove.selection`, e => onMouseMove(e));
-		win.on(`blur.selection mouseup.selection`, e => onMouseUp(e));
+		mouseMoveHandler.current = (e: any) => onMouseMove(e);
+		mouseUpHandler.current = (e: any) => onMouseUp(e);
+		blurHandler.current = (e: any) => onMouseUp(e);
+
+		window.addEventListener('mousemove', mouseMoveHandler.current);
+		window.addEventListener('mouseup', mouseUpHandler.current);
+		window.addEventListener('blur', blurHandler.current);
 	};
 
 	const initNodes = () => {
@@ -180,14 +207,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const list = container.querySelectorAll('.selectionTarget');
 
 		list.forEach((el: Element) => {
-			const item = $(el);
-			const id = item.attr('data-id');
+			const id = el.getAttribute('data-id');
 			if (!id) {
 				return;
 			};
 
-			const type = item.attr('data-type');
-			const node = { id, type, obj: item };
+			const type = el.getAttribute('data-type');
+			const node = { id, type, obj: el };
 
 			nodes.current.push(node);
 
@@ -257,12 +283,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					initIds();
 					renderSelection();
 
-					$(window).trigger('selectionClear');
+					window.dispatchEvent(new CustomEvent('selectionClear'));
 				};
 			} else {
 				if (keyboard.isCmd(e)) {
-					const t = $(e.target).closest('.selectionTarget');
-					const type = t.attr('data-type') as I.SelectType;
+					const t = (e.target as HTMLElement).closest('.selectionTarget');
+					const type = t?.getAttribute('data-type') as I.SelectType;
 					const startRecordIds = idsOnStart.current.get(I.SelectType.Record) || [];
 
 					if ((type != I.SelectType.Record) || startRecordIds.length) {
@@ -272,11 +298,11 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				
 				const rootId = keyboard.getRootId();
 				const currentIds = get(I.SelectType.Block, false);
-				const target = $(e.target).closest('.selectionTarget');
-				const id = target.attr('data-id');
-				const type = target.attr('data-type') as I.SelectType;
+				const target = (e.target as HTMLElement).closest('.selectionTarget') as HTMLElement;
+				const id = target?.getAttribute('data-id');
+				const type = target?.getAttribute('data-type') as I.SelectType;
 
-				if (target.length && e.shiftKey && (type == I.SelectType.Block)) {
+				if (target && e.shiftKey && (type == I.SelectType.Block)) {
 					const first = (currentIds.length && currentIds[0]) ? currentIds[0] : focusedId.current;
 
 					if (first && id && (first !== id)) {
@@ -299,7 +325,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 			};
 		} else {
-			$(window).trigger('selectionEnd');
+			window.dispatchEvent(new CustomEvent('selectionEnd'));
 		};
 		
 		scrollOnMove.onMouseUp();
@@ -333,15 +359,22 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			oy = containerOffset.current.top - top.current;
 		};
 
-		const el = $(rectRef.current);
+		const el = rectRef.current;
 		const x1 = x.current + ox;
 		const y1 = y.current + oy;
 		const rect = getRect(x1, y1, dx, dy);
 
+		if (!el) {
+			return;
+		};
+
 		if (allowRect.current) {
-			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+			el.style.display = '';
+			el.style.transform = `translate3d(${rect.x}px, ${rect.y}px, 0px)`;
+			el.style.width = `${rect.width}px`;
+			el.style.height = `${rect.height}px`;
 		} else {
-			el.hide();	
+			el.style.display = 'none';
 		};
 	};
 	
@@ -364,8 +397,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return cache;
 		};
 
-		const offset = node.obj.offset();
-		const rect = U.Dom.getElementRect(node.obj.get(0));
+		const elRect = node.obj.getBoundingClientRect();
+		const offset = { left: elRect.left + window.scrollX, top: elRect.top + window.scrollY };
+		const rect = U.Dom.getElementRect(node.obj);
 		const { x, y } = recalcCoords(offset.left, offset.top);
 
 		cache = { x, y, width: rect.width, height: rect.height };
@@ -423,7 +457,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		const length = (list[I.SelectType.Block] || []).length;
 
-		if ((!target.current.length && !allowRect.current) || isAllowedRect()) {
+		if ((!target.current && !allowRect.current) || isAllowedRect()) {
 			allowRect.current = true;
 		};
 
@@ -433,19 +467,19 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		if ((length == 1) && !keyboard.isCmd(e)) {
-			const selected = $(`#block-${U.Common.esc(list[I.SelectType.Block][0])}`);
-			const value = selected.find('#value');
+			const selected = U.Dom.get(`block-${U.Common.esc(list[I.SelectType.Block][0])}`);
+			const value = selected ? U.Dom.select('#value', selected) : null;
 
-			if (!value.length) {
+			if (!value) {
 				renderSelection();
 				return;
 			};
 
-			const el = value.get(0) as Element;
+			const el = value as Element;
 			const rc = getRange(el);
 
 			if (!range.current) {
-				focusedId.current = selected.attr('data-id');
+				focusedId.current = selected?.getAttribute('data-id');
 				range.current = rc;
 			} else 
 			if (rc) {
@@ -494,7 +528,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const hide = () => {
-		$(rectRef.current).hide();
+		if (rectRef.current) {
+			rectRef.current.style.display = 'none';
+		};
 		unbindMouse();
 	};
 	
@@ -503,7 +539,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		renderSelection();
 		clearState();
 
-		$(window).trigger('selectionClear');
+		window.dispatchEvent(new CustomEvent('selectionClear'));
 	};
 
 	const clearState = () => {
@@ -627,7 +663,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		frame.current = raf(() => {
-			$('.isSelectionSelected').removeClass('isSelectionSelected');
+			U.Dom.selectAll('.isSelectionSelected').forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
 
 			if (!container) {
 				return;
@@ -676,7 +712,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	
 	const setIsSelecting = (v: boolean) => {
 		isSelecting.current = v;
-		$('html').toggleClass('isSelecting', v);
+		U.Dom.toggleClass(document.documentElement, 'isSelecting', v);
 	};
 
 	const handleContextMenu = (e: MouseEvent) => {
@@ -693,9 +729,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		// Check if clicking on a block that will handle its own context menu
-		const el = $(e.target);
+		const el = e.target as HTMLElement;
 		const block = el.closest('.block');
-		if (block.length && block.find('.dropTarget').length) {
+		if (block && U.Dom.select('.dropTarget', block)) {
 			return;
 		};
 

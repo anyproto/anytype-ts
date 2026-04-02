@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
@@ -463,7 +462,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								$(`#button-${U.Common.esc(blockId)}-settings`).trigger('click');
+								U.Dom.get(`button-${U.Common.esc(blockId)}-settings`)?.click();
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};
@@ -558,7 +557,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
+			iconParam: { name: `widget-${id}` },
 			withDescription: true,
 		}));
 	};
@@ -1188,8 +1187,8 @@ class UtilMenu {
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 			data: {
 				rootId,
 				blockId,
@@ -1208,9 +1207,9 @@ class UtilMenu {
 
 	sidebarModeOptions () {
 		return [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'all', iconParam: { name: 'sidebar-all' }, name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
+		];
 	};
 
 	codeLangOptions (): I.Option[] {
@@ -1868,18 +1867,17 @@ class UtilMenu {
 		keyboard.disableContextOpen(true);
 
 		const { focused } = focus.state;
-		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
-		const element = $(document.elementFromPoint(x, y));
-		const isInput = element.is('input');
-		const isTextarea = element.is('textarea');
-		const isEditable = element.is('.editable');
+		const element = document.elementFromPoint(x, y) as HTMLElement;
+		const isInput = element?.tagName === 'INPUT';
+		const isTextarea = element?.tagName === 'TEXTAREA';
+		const isEditable = element?.classList.contains('editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			recalcRect: () => rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			onOpen: () => S.Menu.closeAll([ 'blockContext', 'chatText' ]),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
@@ -1904,12 +1902,12 @@ class UtilMenu {
 
 										// Get the text content and find word boundaries
 										if (container.nodeType === Node.TEXT_NODE) {
-											const editable = $(container).closest('.editable');
-											if (editable.length) {
+											const editable = (container as HTMLElement).parentElement?.closest('.editable') as HTMLElement;
+											if (editable) {
 												// Calculate the absolute offset in the block text
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													editable.get(0),
+													editable,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -1958,11 +1956,11 @@ class UtilMenu {
 									};
 								} else
 								if (isInput || isTextarea || isEditable) {
-									const isMessageBox = element.attr('id') === 'messageBox';
+									const isMessageBox = element?.id === 'messageBox';
 
 									if (isMessageBox) {
 										// Handle chat form's messageBox with marks preservation
-										const html = String(element.html() || '');
+										const html = String(element.innerHTML || '');
 										const parsed = Mark.fromHtml(html, []);
 										const { text } = parsed;
 										let { marks } = parsed;
@@ -1978,7 +1976,7 @@ class UtilMenu {
 											if (container.nodeType === Node.TEXT_NODE) {
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													element.get(0),
+													element,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -2017,29 +2015,28 @@ class UtilMenu {
 											marks = Mark.adjust(marks, wordIndex + misspelledWord.length, lengthDiff);
 
 											const newHtml = Mark.toHtml(newText, marks);
-											element.html(U.String.sanitize(newHtml, true));
+											element.innerHTML = U.String.sanitize(newHtml, true);
 
 											const cursorPos = wordIndex + item.id.length;
-											const el = element.get(0) as HTMLElement;
-											el.focus();
-											setRange(el, { start: cursorPos, end: cursorPos });
+											element.focus();
+											setRange(element, { start: cursorPos, end: cursorPos });
 										};
 									} else {
 										let value = '';
 										if (isInput || isTextarea) {
-											value = String(element.val());
+											value = String((element as HTMLInputElement).value);
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as HTMLElement).innerText || '');
+											value = String(element.innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
 
 										if (isInput || isTextarea) {
-											element.val(value);
+											(element as HTMLInputElement).value = value;
 										} else
 										if (isEditable) {
-											element.text(value);
+											element.textContent = value;
 										};
 									};
 								};

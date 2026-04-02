@@ -279,9 +279,9 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 			<div className="bottom">
 				<div className="line" />
-				<MenuItemVertical 
-					id="upload" 
-					icon="plus" 
+				<MenuItemVertical
+					id="upload"
+					iconParam={{ name: 'plus' }}
 					name={translate('commonUpload')} 
 					onClick={onUpload}
 					onMouseEnter={() => setHover({ id: 'upload' })}

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
+import ArchiveListTree from './archiveListTree';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
@@ -14,7 +14,9 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const filterRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
-	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
+	const [ viewMode, setViewMode ] = useState<'tree' | 'compact' | 'detailed'>(() => {
+		return (Storage.get('binViewMode') as 'tree' | 'compact' | 'detailed') || 'tree';
+	});
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
 	const spaceview = U.Space.getSpaceview();
@@ -46,7 +48,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		});
 	};
 
-	const relationKeys = [ 'lastModifiedDate', 'creator' ];
+	const relationKeys = [ 'lastModifiedDate', 'creator', 'createdInContext' ];
 
 	const getRecordIds = (): string[] => {
 		return S.Record.getRecordIds(subId, '');
@@ -112,12 +114,28 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
 	};
 
-	const onSwitchView = () => {
-		const v = !isDetailed;
+	const nextViewMode = { tree: 'compact', compact: 'detailed', detailed: 'tree' } as const;
 
-		setIsDetailed(v);
-		Storage.set('binViewDetailed', v);
+	const onSwitchView = () => {
+		const next = nextViewMode[viewMode];
+		setViewMode(next);
+		Storage.set('binViewMode', next);
 	};
+
+	const onSelectTree = (ids: string[], e: MouseEvent) => {
+		e.stopPropagation();
+		let next = [ ...selectedIds ];
+		const allPresent = ids.every(id => next.includes(id));
+		if (allPresent) {
+			next = next.filter(id => !ids.includes(id));
+		} else {
+			next = [ ...new Set([ ...next, ...ids ]) ];
+		};
+		setSelectedIds(next);
+	};
+
+	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
+	const filterKeydownHandler = useRef<((e: any) => void) | null>(null);
 
 	const onFilterShow = () => {
 		if (!filterRef.current) {
@@ -127,25 +145,33 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		filterRef.current.setActive(true);
 		filterRef.current.focus();
 
-		const containerEl = U.Dom.getPageFlexContainer(isPopup);
-		const container = containerEl ? $(containerEl) : $();
-		const win = $(window);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 
-		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
+		if (filterMouseDownHandler.current && container) {
+			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+		};
+		if (filterKeydownHandler.current) {
+			window.removeEventListener('keydown', filterKeydownHandler.current);
+		};
+
+		filterMouseDownHandler.current = (e: any) => {
 			const value = filterRef.current?.getValue();
 
-			if (!value && !$(e.target).parents('.filter').length) {
+			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container.off('mousedown.filter');
+				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
 			};
-		});
+		};
 
-		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				win.off('keydown.filter');
+				window.removeEventListener('keydown', filterKeydownHandler.current);
 			});
-		});
+		};
+
+		container?.addEventListener('mousedown', filterMouseDownHandler.current);
+		window.addEventListener('keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -190,6 +216,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		});
 	}, []);
 
+	const archiveKeydownHandler = useRef<((e: any) => void) | null>(null);
+
 	useEffect(() => {
 		analytics.event('ScreenBin');
 		sidebar.rightPanelClose(isPopup, false);
@@ -197,27 +225,31 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		return () => {
 			window.clearTimeout(filterTimeout.current);
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
-			if (cleanupEl) {
-				$(cleanupEl).off('mousedown.filter');
+			if (filterMouseDownHandler.current && cleanupEl) {
+				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
 			};
-			$(window).off('keydown.filter');
+			if (filterKeydownHandler.current) {
+				window.removeEventListener('keydown', filterKeydownHandler.current);
+			};
 		};
 	}, []);
 
 	useEffect(() => {
-		const win = $(window);
-
-		win.on('keydown.archive', (e: any) => onKeyDown(e));
-		return () => { win.off('keydown.archive'); };
+		archiveKeydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', archiveKeydownHandler.current);
+		return () => {
+			if (archiveKeydownHandler.current) {
+				window.removeEventListener('keydown', archiveKeydownHandler.current);
+			};
+		};
 	}, []);
 
 	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
-	const cnWrapper = [ 'wrapper' ];
-
-	if (isDetailed) {
-		cnWrapper.push('isDetailed');
-	};
+	const isDetailed = viewMode === 'detailed';
+	const switchIconMap = { tree: 'menu/widget/tree', compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
+	const switchTooltipMap = { tree: 'binSwitchToCompact', compact: 'binSwitchToDetailed', detailed: 'binSwitchToTree' };
+	const cnWrapper = [ 'wrapper', ...(isDetailed ? [ 'isDetailed' ] : []) ];
 
 	return (
 		<>
@@ -256,9 +288,9 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 								<Icon
 									className="archiveAction"
-									name={isDetailed ? 'common/switchViewDetailed' : 'common/switchView'}
+									name={switchIconMap[viewMode]}
 									withBackground={true}
-									tooltipParam={{ text: translate('commonSwitchView') }}
+									tooltipParam={{ text: translate(switchTooltipMap[viewMode]) }}
 									onClick={onSwitchView}
 								/>
 
@@ -276,31 +308,44 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					</div>
 				</div>
 
-				<ListObject
-					ref={listRef}
-					subId={subId}
-					rootId=""
-					spaceId={S.Common.space}
-					route={analytics.route.archive}
-					columns={columns}
-					filters={getFilters()}
-					relationKeys={relationKeys}
-					ignoreArchived={false}
-					skipLayoutFilter={true}
-					withDescription={isDetailed}
-					iconSize={isDetailed ? 32 : null}
-					rowHeight={isDetailed ? 64 : 40}
-					emptyText={translate('pageMainArchiveEmpty')}
-					defaultSortId="lastModifiedDate"
-					defaultSortType={I.SortType.Desc}
-					selectable={canWrite}
-					selectedIds={selectedIds}
-					isAllSelected={isAllSelected}
-					onSelect={onSelect}
-					onSelectAll={onSelectAll}
-					useInfiniteScroll={true}
-					isPopup={isPopup}
-				/>
+				{viewMode === 'tree' ? (
+					<ArchiveListTree
+						subId={subId}
+						canWrite={canWrite}
+						isShared={isShared}
+						selectedIds={selectedIds}
+						filterText={filterText}
+						onSelectChange={onSelectTree}
+						onSelectAll={onSelectAll}
+						isAllSelected={isAllSelected}
+					/>
+				) : (
+					<ListObject
+						ref={listRef}
+						subId={subId}
+						rootId=""
+						spaceId={S.Common.space}
+						route={analytics.route.archive}
+						columns={columns}
+						filters={getFilters()}
+						relationKeys={relationKeys}
+						ignoreArchived={false}
+						skipLayoutFilter={true}
+						withDescription={isDetailed}
+						iconSize={isDetailed ? 32 : null}
+						rowHeight={isDetailed ? 64 : 40}
+						emptyText={translate('pageMainArchiveEmpty')}
+						defaultSortId="lastModifiedDate"
+						defaultSortType={I.SortType.Desc}
+						selectable={canWrite}
+						selectedIds={selectedIds}
+						isAllSelected={isAllSelected}
+						onSelect={onSelect}
+						onSelectAll={onSelectAll}
+						useInfiniteScroll={true}
+						isPopup={isPopup}
+					/>
+				)}
 			</div>
 
 			<Footer {...props} component="mainObject" />

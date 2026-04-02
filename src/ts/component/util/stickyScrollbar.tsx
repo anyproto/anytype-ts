@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 interface Props {
@@ -11,24 +10,22 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const trackRef = useRef<HTMLDivElement>(null);
-	const scrollElementRef = useRef<JQuery<HTMLElement>>(null);
+	const scrollElementRef = useRef<HTMLElement>(null);
 	const isSyncing = useRef(false);
+	const scrollHandler = useRef<(() => void) | null>(null);
 
 	const resize = (config) => {
 		if (!nodeRef.current || !trackRef.current) {
 			return;
 		};
 
-		const stickyScrollbar = $(nodeRef.current);
-		const track = $(trackRef.current);
-
-		stickyScrollbar.css({
+		U.Dom.css(nodeRef.current, {
 			width: config.width,
 			left: config.left,
 			paddingLeft: config.paddingLeft,
 			display: config.display,
 		});
-		track.css({ width: config.trackWidth });
+		trackRef.current.style.width = config.trackWidth;
 	};
 
 	const bind = (scrollElement, status) => {
@@ -39,27 +36,34 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 		scrollElementRef.current = scrollElement;
 		isSyncing.current = status;
 
-		const node = $(nodeRef.current);
+		if (scrollHandler.current) {
+			nodeRef.current.removeEventListener('scroll', scrollHandler.current);
+		};
 
-		node.off('scroll.sticky').on('scroll.sticky', () => {
-			if (scrollElementRef.current) {
+		scrollHandler.current = () => {
+			if (scrollElementRef.current && nodeRef.current) {
 				isSyncing.current = U.StickyScrollbar.syncFromSticky(
 					scrollElementRef.current,
-					node,
+					nodeRef.current,
 					isSyncing.current
 				);
 			};
-		});
+		};
+
+		nodeRef.current.addEventListener('scroll', scrollHandler.current);
 	};
 
 	const unbind = () => {
-		$(nodeRef.current).off('scroll.sticky');
+		if (nodeRef.current && scrollHandler.current) {
+			nodeRef.current.removeEventListener('scroll', scrollHandler.current);
+		};
+		scrollHandler.current = null;
 		scrollElementRef.current = null;
 		isSyncing.current = null;
 	};
 
 	const sync = (element, isSyncing) => {
-		return U.StickyScrollbar.syncFromMain(element, $(nodeRef.current), isSyncing);
+		return U.StickyScrollbar.syncFromMain(element, nodeRef.current, isSyncing);
 	};
 
 	useImperativeHandle(ref, () => ({
