@@ -98,6 +98,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const getMembers = () => {
 		const list = S.Record.getRecords(SUB_ID);
 
+		// Count spaces per identity for sorting
+		const spaceCounts = new Map<string, number>();
+		list.forEach(it => {
+			if (it.identity) {
+				spaceCounts.set(it.identity, (spaceCounts.get(it.identity) || 0) + 1);
+			};
+		});
+
 		// Deduplicate by identity since the same user can be a participant in multiple spaces
 		const seen = new Set<string>();
 		const unique = list.filter(it => {
@@ -109,7 +117,17 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			return true;
 		});
 
-		unique.sort(U.Data.sortByName);
+		// Sort by number of shared spaces (desc), then by name (asc)
+		unique.sort((a, b) => {
+			const ca = spaceCounts.get(a.identity) || 0;
+			const cb = spaceCounts.get(b.identity) || 0;
+
+			if (ca != cb) {
+				return cb - ca;
+			};
+
+			return U.Data.sortByName(a, b);
+		});
 
 		if (search) {
 			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
