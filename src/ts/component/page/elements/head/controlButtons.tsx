@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -21,7 +20,7 @@ interface ControlButtonsRef {
 	forceUpdate: () => void;
 };
 
-const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref) => {
+const ControlButtons = forwardRef<ControlButtonsRef, Props>((props, ref) => {
 
 	const { rootId, readonly, onIcon, onLayout, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload, onCoverSelect } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -265,6 +264,6 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		</div>
 	) : null;
 
-}));
+});
 
 export default ControlButtons;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Icon, Button, EmptyState } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { dateFormat } = S.Common;
@@ -127,6 +126,6 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsApi;

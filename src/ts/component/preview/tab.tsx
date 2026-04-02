@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { ObjectName, IconObject, Label } from 'Component';
 import * as I from 'Interface';
 
@@ -9,7 +8,7 @@ interface Props {
 	position?: () => void;
 };
 
-const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
+const PreviewTab = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		spaceview = {},
@@ -100,6 +99,6 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PreviewTab;

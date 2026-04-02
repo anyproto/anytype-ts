@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, } from '@dnd-kit/sortable';
@@ -12,7 +11,7 @@ const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
 const HEIGHT_LIST = 64;
 
-const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
+const WidgetViewList = forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 
 	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView, getContentParam } = props;
 	const { layout } = getContentParam();
@@ -224,6 +223,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default WidgetViewList;

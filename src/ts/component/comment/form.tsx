@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Button } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
@@ -23,7 +22,7 @@ interface RefProps {
 	clear: () => void;
 };
 
-const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, subId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
@@ -745,6 +744,6 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			/>
 		</div>
 	);
-}));
+});
 
 export default CommentForm;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -12,7 +11,7 @@ const LIMIT_HEIGHT = 15;
 
 const isMac = U.Common.isPlatformMac();
 
-const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
@@ -956,6 +955,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupSearch;

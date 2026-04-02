@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 
-const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -484,6 +483,6 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockContext;

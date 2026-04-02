@@ -1,11 +1,10 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
 
-const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
+const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const nodeRef = useRef(null);
 	const phraseRef = useRef(null);
@@ -193,6 +192,6 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthLogin;

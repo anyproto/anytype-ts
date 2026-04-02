@@ -1,10 +1,9 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
 import Section from 'Component/sidebar/section';
 import * as I from 'Interface';
 
-const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
+const SidebarPageTableOfContents = forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
 
 	const { rootId, isPopup } = props;
 	const object = S.Detail.get(rootId, rootId);
@@ -34,6 +33,6 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageTableOfContents;

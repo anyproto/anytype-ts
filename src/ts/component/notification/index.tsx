@@ -1,9 +1,8 @@
 import React, { FC, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, } from 'Component';
 import * as I from 'Interface';
 
-const Notification: FC<I.NotificationComponent> = observer((props) => {
+const Notification: FC<I.NotificationComponent> = (props) => {
 
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
@@ -125,6 +124,6 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 		</div>
 	);
 
-});
+};
 
 export default Notification;

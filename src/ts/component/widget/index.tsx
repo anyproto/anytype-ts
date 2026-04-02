@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, ChatCounter } from 'Component';
 
 import WidgetSpace from './space';
@@ -22,7 +21,7 @@ interface Props extends I.WidgetComponent {
 	onDrag?: (e: MouseEvent, block: I.Block) => void;
 };
 
-const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
+const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
@@ -906,6 +905,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		</AnimatePresence>	
 	);
 
-}));
+});
 
 export default WidgetIndex;

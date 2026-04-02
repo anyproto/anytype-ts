@@ -5,9 +5,8 @@ import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
-import { observer } from 'mobx-react';
 
-const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const [ pages, setPages ] = useState(0);
 	const [ page, setPage ] = useState(1);
@@ -274,6 +273,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		</div>
 	);
 
-}));
+});
 
 export default BlockPdf;

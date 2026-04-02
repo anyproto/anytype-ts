@@ -1,11 +1,10 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, Button, Footer, Error } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
 
-const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
 	const { isPopup } = props;
@@ -190,6 +189,6 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthSetup;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -8,7 +7,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -372,6 +371,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuRelationSuggest;

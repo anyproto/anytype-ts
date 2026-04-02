@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Input, IconObject, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
 
-const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
+const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
@@ -424,6 +423,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		</>
 	);
 
-}));
+});
 
 export default CellText;

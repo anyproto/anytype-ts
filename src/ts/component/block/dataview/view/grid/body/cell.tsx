@@ -1,5 +1,4 @@
 import React, { FC, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Cell, Button, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -21,7 +20,7 @@ interface Props {
 	canCellEdit?(relation: any, recordId: any): boolean;
 };
 
-const BodyCell: FC<Props> = observer((props, ref) => {
+const BodyCell: FC<Props> = (props, ref) => {
 
 	const {
 		rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRefCell, onCellClick, onCellChange,
@@ -129,6 +128,6 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 			{button}
 		</div>
 	);
-});
+};
 
 export default BodyCell;

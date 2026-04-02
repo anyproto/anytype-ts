@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, position } = props;
 	const { data, menuKey } = param;
@@ -488,6 +487,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuSearchObject;

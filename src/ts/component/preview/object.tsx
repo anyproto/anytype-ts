@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Cover, Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -20,7 +19,7 @@ interface Props {
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 const TRACE_ID = 'preview';
 
-const PreviewObject = observer(forwardRef<{}, Props>(({
+const PreviewObject = forwardRef<{}, Props>(({
 	id = '',
 	rootId = '',
 	size = I.PreviewSize.Small,
@@ -467,6 +466,6 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			</div>
 		</div>
 	);
-}));
+});
 
 export default PreviewObject;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { IconObject, Pager, ObjectName, ObjectDescription, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
 import * as I from 'Interface';
@@ -166,7 +165,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 	);
 };
 
-const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
+const ListObject = forwardRef<ListObjectRefProps, Props>(({
 	spaceId = '',
 	subId = '',
 	rootId = '',
@@ -475,6 +474,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default ListObject;

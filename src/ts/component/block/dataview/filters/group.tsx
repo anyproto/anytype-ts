@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical, Select, Label } from 'Component';
 import Rule from './rule';
 import * as I from 'Interface';
@@ -23,7 +22,7 @@ interface Props {
 	position?: () => void;
 };
 
-const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterGroup = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, blockId, filter, depth, parentPath, getView, getTarget, isInline, loadData, readonly, onDelete, onUpdate, position } = props;
 	const { index, parentOperator, onParentOperatorChange } = props;
@@ -254,6 +253,6 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterGroup;

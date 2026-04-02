@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, Mo
 import { createRoot } from 'react-dom/client';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT = 36;
 const WIDTH = 40;
 const PADDING = 46;
 
-const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
+const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, className, isCollection, isPopup, readonly, isInline, 
@@ -765,6 +764,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default ViewTimeline;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics, translate } from 'Lib';
 
-const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
@@ -166,6 +165,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return content;
 
-}));
+});
 
 export default PageMainChat;

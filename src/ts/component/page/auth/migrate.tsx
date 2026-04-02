@@ -1,10 +1,9 @@
 import React, { forwardRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthMigrate = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { dataPath } = S.Common;
 	const accountId = Storage.get('accountId');
@@ -119,6 +118,6 @@ const PageAuthMigrate = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</Frame>
 	);
 
-}));
+});
 
 export default PageAuthMigrate;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Select, Input, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
 import * as I from 'Interface';
@@ -23,7 +22,7 @@ interface Props {
 	onTurnIntoGroup: (index: number) => void;
 };
 
-const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterRule = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		rootId, blockId, rule, index, depth, parentPath, operator, getView, getTarget, isInline, loadData,
@@ -502,6 +501,6 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterRule;

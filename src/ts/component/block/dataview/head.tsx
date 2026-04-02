@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import * as I from 'Interface';
 
-const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const BlockDataviewHead = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, readonly, className, isCollection, getTarget, onSourceSelect, onSourceTypeSelect, loadData,
@@ -317,6 +316,6 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataviewHead;

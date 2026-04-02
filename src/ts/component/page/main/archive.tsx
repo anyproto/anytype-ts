@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { dateFormat } = S.Common;
@@ -324,6 +323,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</>
 	);
 
-}));
+});
 
 export default PageMainArchive;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 
 import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
@@ -31,7 +30,7 @@ interface Ref extends I.SidebarSectionRef {
 	getObject(): any;
 };
 
-const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
+const SidebarSectionIndex = forwardRef<Ref, Props>((props, ref) => {
 	
 	const { component, item, onDragStart, withState } = props;
 	const [ stateObject, setStateObject ] = useState(null);
@@ -96,6 +95,6 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionIndex;

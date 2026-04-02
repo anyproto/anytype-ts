@@ -1,13 +1,12 @@
 import React, { forwardRef, useState } from 'react';
 import { Icon, Title, Error } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;
 };
 
-const PageMainSettingsImportIndex = observer(forwardRef<I.PageRef, Props>((props, ref) => {
+const PageMainSettingsImportIndex = forwardRef<I.PageRef, Props>((props, ref) => {
 
 	const { onPage } = props;
 	const [ error, setError ] = useState('');
@@ -75,6 +74,6 @@ const PageMainSettingsImportIndex = observer(forwardRef<I.PageRef, Props>((props
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsImportIndex;

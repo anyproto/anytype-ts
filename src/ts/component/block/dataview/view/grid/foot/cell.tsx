@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 
@@ -12,7 +11,7 @@ interface Ref {
 	calculate: () => void;
 };
 
-const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
+const FootCell = forwardRef<Ref, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, getView } = props;
 	const [ result, setResult ] = useState<any>(null);
@@ -185,6 +184,6 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default FootCell;

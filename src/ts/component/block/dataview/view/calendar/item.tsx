@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import * as I from 'Interface';
 
@@ -17,7 +16,7 @@ interface Ref {
 
 const LIMIT = 4;
 
-const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
+const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, block, className, d, m, y, isToday, isCollection, readonly, getSubId, getView, onContext, getKeys, getTarget, getSearchIds, isAllowedObject,
@@ -319,6 +318,6 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CalendarItem;

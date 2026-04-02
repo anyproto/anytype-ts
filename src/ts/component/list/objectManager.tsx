@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import * as I from 'Interface';
@@ -37,7 +36,7 @@ interface ObjectManagerRefProps {
 	onFilterShow(): void;
 };
 
-const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
+const Buttons = forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
 	buttons: initialButtons = [],
 }, ref) => {
 
@@ -66,10 +65,10 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 		</>
 	);
 
-}));
+});
 
 
-const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
+const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
 	buttons,
@@ -546,6 +545,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			{content}
 		</div>
 	);
-}));
+});
 
 export default ObjectManager;

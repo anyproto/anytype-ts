@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
 import * as I from 'Interface';
 
-const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageType = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	
 	const { rootId, isPopup, page, previous, noPreview } = props;
 	const { space } = S.Common;
@@ -309,6 +308,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageType;

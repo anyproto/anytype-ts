@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -30,7 +29,7 @@ const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.Pdf,
 ];
 
-const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
+const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const { account } = S.Auth;
@@ -1324,6 +1323,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default BlockChat;

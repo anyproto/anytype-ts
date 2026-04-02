@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 
@@ -191,7 +190,7 @@ interface RefProps extends I.MenuRef {
 	props: I.Menu;
 };
 
-const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
+const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const { id, param } = props;
 	const { 
@@ -1162,6 +1161,6 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Menu;

@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -290,6 +289,6 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainMedia;

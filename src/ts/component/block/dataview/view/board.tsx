@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import raf from 'raf';
@@ -10,7 +9,7 @@ import * as I from 'Interface';
 
 const PADDING = 46;
 
-const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate } = props;
 	const view = getView();
@@ -720,6 +719,6 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		</div>
 	);	
 
-}));
+});
 
 export default ViewBoard;

@@ -1,10 +1,9 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const wrapRef = useRef<any>(null);
@@ -195,6 +194,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockVideo;

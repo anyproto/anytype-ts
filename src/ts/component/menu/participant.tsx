@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button, Loader } from 'Component';
 import * as I from 'Interface';
 
-const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
+const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -102,6 +101,6 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		</>
 	) : <EmptySearch text={translate('commonNotFound')} />;
 
-}));
+});
 
 export default MenuParticipant;

@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 
 import UpsellStorage from './storage';
 import UpsellSpace from './space';
@@ -18,7 +17,7 @@ const Components = {
 	members: UpsellMembers,
 };
 
-const UpsellBanner = observer(forwardRef<{}, Props>(({
+const UpsellBanner = forwardRef<{}, Props>(({
 	components = [],
 	route = '',
 	className = '',
@@ -128,6 +127,6 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 	return <Component className={className} route={route} isRed={isRed} />;
 
 
-}));
+});
 
 export default UpsellBanner;

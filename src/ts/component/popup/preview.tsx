@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
@@ -12,7 +11,7 @@ const HEIGHT_VIDEO = 585;
 const HEIGHT_HEADER = 52;
 const HEIGHT_FOOTER = 96;
 
-const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close, getId } = props;
 	const { data } = param;
@@ -345,6 +344,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupPreview;

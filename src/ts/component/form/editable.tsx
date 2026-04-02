@@ -92,15 +92,11 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const placeholderHide = () => {
-		if (placeholderRef.current) {
-			placeholderRef.current.style.display = 'none';
-		};
+		U.Dom.css(placeholderRef.current, { display: 'none' });
 	};
 
 	const placeholderShow = () => {
-		if (placeholderRef.current) {
-			placeholderRef.current.style.display = '';
-		};
+		U.Dom.css(placeholderRef.current, { display: '' });
 	};
 
 	const setFocus = () => {

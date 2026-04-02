@@ -1,5 +1,4 @@
 import React, { forwardRef, memo } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import * as I from 'Interface';
 
@@ -8,7 +7,7 @@ interface Props extends I.ChatMessageReaction, I.ChatMessageComponent {
 	onSelect: (icon: string) => void;
 };
 
-const ChatMessageReaction = observer(forwardRef<{}, Props>((props, ref) => {
+const ChatMessageReaction = forwardRef<{}, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -43,6 +42,6 @@ const ChatMessageReaction = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default memo(ChatMessageReaction);

@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName } from 'Component';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -7,7 +6,7 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import * as I from 'Interface';
 
-const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, isPopup, object, onChange } = props;
 	const nodeRef = useRef(null);
@@ -396,6 +395,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeRelation;

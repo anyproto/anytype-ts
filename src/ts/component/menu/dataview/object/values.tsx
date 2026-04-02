@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -13,7 +12,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -350,6 +349,6 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</DndContext>
 	);
 
-}));
+});
 
 export default MenuObjectValues;

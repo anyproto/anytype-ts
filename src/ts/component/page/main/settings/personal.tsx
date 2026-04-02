@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -8,7 +7,7 @@ enum ChatKey {
 	CmdEnter = 'cmdEnter',
 };
 
-const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
@@ -268,6 +267,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsPersonal;

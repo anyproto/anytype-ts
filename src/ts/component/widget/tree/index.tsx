@@ -1,6 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useRef, useState, MouseEvent } from 'react';
 import sha1 from 'sha1';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Filter, Button } from 'Component';
 import Item from './item';
@@ -20,7 +19,7 @@ interface WidgetTreeRefProps {
 	getFilter: () => string;
 };
 
-const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
+const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
 	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
 	const targetId = block?.getTargetObjectId();
@@ -490,6 +489,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		</div>
 	);
 
-}));
+});
 
 export default WidgetTree;

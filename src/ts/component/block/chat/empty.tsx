@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label, Title } from 'Component';
 import { translate } from 'Lib';
 
-const ChatEmpty = observer(forwardRef<{}, {}>(() => {
+const ChatEmpty = forwardRef<{}, {}>(() => {
 
 	return (
 		<div className="chatEmptyState">
@@ -25,6 +24,6 @@ const ChatEmpty = observer(forwardRef<{}, {}>(() => {
 		</div>
 	);
 
-}));
+});
 
 export default ChatEmpty;

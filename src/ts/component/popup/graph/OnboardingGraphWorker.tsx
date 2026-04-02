@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { getIconSvg } from 'Component/util/icons';
 
@@ -10,7 +9,7 @@ interface OnboardingGraphWorkerProps {
 	popupHeight?: number;
 }
 
-const OnboardingGraphWorker = observer(({ 
+const OnboardingGraphWorker = ({ 
 	width, 
 	height, 
 	popupWidth = 720,
@@ -403,6 +402,6 @@ const OnboardingGraphWorker = observer(({
 		</div>
 	);
 
-});
+};
 
 export default OnboardingGraphWorker;

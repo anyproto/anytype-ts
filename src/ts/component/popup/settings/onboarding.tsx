@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { Title, Label, Select, Button, Error } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close } = props;
 	const { networkConfig } = S.Auth;
@@ -217,6 +216,6 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default PopupSettingsOnboarding;

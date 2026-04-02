@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader, Error } from 'Component';
 import * as I from 'Interface';
 
@@ -8,7 +7,7 @@ enum Tab {
 	Link = 1,
 };
 
-const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupUpload = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -322,6 +321,6 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupUpload;

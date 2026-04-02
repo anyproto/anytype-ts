@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { config, space } = S.Common;
 	const { param, onKeyDown, setActive, close, getId, getSize } = props;
@@ -611,6 +610,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuObject;

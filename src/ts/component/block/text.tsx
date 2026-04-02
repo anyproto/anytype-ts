@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -37,7 +36,7 @@ const TWIN_PAIRS = {
 	'$': '$',
 };
 
-const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, readonly, isPopup, isInsideTable,
@@ -1652,6 +1651,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockText;

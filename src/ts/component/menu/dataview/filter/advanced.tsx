@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
 import * as I from 'Interface';
 
-const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, onKeyDown, setActive, position } = props;
 	const { data } = param;
@@ -125,6 +124,6 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default MenuFilterAdvanced;

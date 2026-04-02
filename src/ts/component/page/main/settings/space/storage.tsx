@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, ProgressBar, UpsellBanner } from 'Component';
 import * as I from 'Interface';
 
 
-const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsStorage = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { spaceStorage } = S.Common;
@@ -182,6 +181,6 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsStorage;

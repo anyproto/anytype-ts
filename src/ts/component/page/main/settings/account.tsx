@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { IconObject, Input, Title, Icon, Label, Button } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsAccount = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config } = S.Common;
 	const { account } = S.Auth;
@@ -144,6 +143,6 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsAccount;

@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
 import Cell from './cell';
 import * as I from 'Interface';
@@ -13,7 +12,7 @@ interface Props extends I.ViewComponent {
 	onUpdate?: () => void;
 };
 
-const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
+const BodyRow = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		rootId, block, style, recordId, readonly, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths,
@@ -154,6 +153,6 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default BodyRow;

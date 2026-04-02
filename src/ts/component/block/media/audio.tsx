@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const playerRef = useRef<any>(null);
@@ -153,6 +152,6 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default BlockAudio;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import * as I from 'Interface';
 
@@ -12,7 +11,7 @@ interface Props {
 	onMouseLeave?: (item: any) => void;
 };
 
-const NavigationItem = observer(forwardRef<{}, Props>((props, ref) => {
+const NavigationItem = forwardRef<{}, Props>((props, ref) => {
 	
 	const { item, style, onClick, onContext, onMouseEnter, onMouseLeave } = props;
 	const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
@@ -67,6 +66,6 @@ const NavigationItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default NavigationItem;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
-const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, close } = props;
 	const { data } = param;
@@ -174,6 +173,6 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			</div>
 		</div>
 	);
-}));
+});
 
 export default MenuCommentToolbar;

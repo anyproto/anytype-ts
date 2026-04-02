@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
@@ -24,7 +23,7 @@ interface SidebarLeftRefProps {
 	getNode: () => HTMLElement | null;
 };
 
-const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
+const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { vaultIsMinimal } = S.Common;
 	const nodeRef = useRef(null);
@@ -290,6 +289,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default SidebarLeft;

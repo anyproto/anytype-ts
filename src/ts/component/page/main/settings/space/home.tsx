@@ -1,5 +1,4 @@
 import React, { forwardRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Frame } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
 
@@ -10,7 +9,7 @@ const HOME_OPTIONS = [
 	{ id: 'empty', nameKey: 'settingsSpaceHomeOptionEmpty' },
 ];
 
-const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const spaceId = S.Common.space;
 	const [ selected, setSelected ] = useState('chat');
@@ -83,6 +82,6 @@ const PageMainSettingsSpaceHome = observer(forwardRef<I.PageRef, I.PageSettingsC
 		</Frame>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceHome;

@@ -1,5 +1,4 @@
 import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import Icon from 'Component/util/icon';
 import Label from 'Component/util/label';
 import * as I from 'Interface';
@@ -87,7 +86,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 
 const STORAGE_KEY = 'sidebarProgress';
 
-const SidebarProgress: FC = observer(() => {
+const SidebarProgress: FC = () => {
 
 	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
 	const [ isExpanded, setIsExpanded ] = useState(false);
@@ -244,6 +243,6 @@ const SidebarProgress: FC = observer(() => {
 		</div>
 	);
 
-});
+};
 
 export default SidebarProgress;

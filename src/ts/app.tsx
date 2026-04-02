@@ -4,8 +4,7 @@ import * as Sentry from '@sentry/browser';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'mobx-react';
-import { configure, } from 'mobx';
+import { configure } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
@@ -595,8 +594,7 @@ const App: FC = () => {
 	
 	return (
 		<Router history={history}>
-			<Provider {...S}>
-				<div id="appContainer" ref={nodeRef}>
+			<div id="appContainer" ref={nodeRef}>
 					{isLoading ? (
 						<div id="root-loader" className="loaderWrapper">
 							<div className="inner">
@@ -627,8 +625,7 @@ const App: FC = () => {
 							</Switch>
 						</DragProvider>
 					</SelectionProvider>
-				</div>
-			</Provider>
+			</div>
 		</Router>
 	);
 

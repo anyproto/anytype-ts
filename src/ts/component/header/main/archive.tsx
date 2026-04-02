@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainArchive = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainArchive = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { renderLeftIcons, menuOpen, isPopup } = props;
 	const isOwner = U.Space.isMyOwner();
@@ -56,6 +55,6 @@ const HeaderMainArchive = observer(forwardRef<{}, I.HeaderComponent>((props, ref
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainArchive;

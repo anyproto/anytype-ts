@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
@@ -220,6 +219,6 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewText;

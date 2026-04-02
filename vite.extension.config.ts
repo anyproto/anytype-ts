@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 
 function stubSubpathPlugin(): Plugin {
@@ -178,6 +179,7 @@ export default defineConfig({
 	plugins: [
 		stubSubpathPlugin(),
 		react(),
+		autoObserverPlugin(),
 		extensionManifestPlugin(),
 	],
 });

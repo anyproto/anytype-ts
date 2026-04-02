@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 const ROW_HEIGHT = 30;
 
-const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupObjectManager = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, getId, close, position } = props;
 	const { data } = param;
@@ -140,6 +139,6 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PopupObjectManager;

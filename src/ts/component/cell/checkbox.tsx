@@ -1,9 +1,8 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { Icon, Label } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellCheckbox = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const { 
 		withLabel = false, 
@@ -50,6 +49,6 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default CellCheckbox;

@@ -1,5 +1,4 @@
 import React, { forwardRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
@@ -17,7 +16,7 @@ interface Props {
 	onContextMenu?: (e: MouseEvent) => void;
 };
 
-const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterItem = forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, filter, readonly, onOver, onClick, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
@@ -163,6 +162,6 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterItem;

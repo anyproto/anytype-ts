@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
 import { history as historyPopup } from 'Lib/history';
@@ -14,7 +13,7 @@ interface Props extends I.BlockComponent {
 const PREFIX = 'blockFeatured';
 const SOURCE_LIMIT = 1;
 
-const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockFeatured = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { rootId, traceId, block, size = 18, iconSize = 18, isPopup, readonly, isInsidePreview, onKeyDown, onKeyUp } = props;
 	const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -738,6 +737,6 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockFeatured;

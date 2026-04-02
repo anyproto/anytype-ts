@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 
@@ -22,7 +21,7 @@ const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, getSize, position, close, setActive, onKeyDown } = props;
 	const { data, className, classNameWrap } = param;
@@ -316,6 +315,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockLatex;

@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockStyle = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
@@ -137,6 +136,6 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockStyle;

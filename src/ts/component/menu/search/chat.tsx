@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
 import * as I from 'Interface';
@@ -17,7 +16,7 @@ interface ChatSearchResult {
 	message: I.ChatMessage;
 };
 
-const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, getContainer, close } = props;
 	const { data } = param;
@@ -376,6 +375,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuSearchChat;

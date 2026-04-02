@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -49,7 +48,7 @@ const getViz = async (): Promise<any> => {
 	return _vizLoading;
 };
 
-const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
@@ -1114,6 +1113,6 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default memo(BlockEmbed);

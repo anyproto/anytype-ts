@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import Item from './calendar/item';
 import * as I from 'Interface';
 
 const PADDING = 16;
 
-const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, isCollection, className, isInline, isPopup, getView, getTypeId, getTemplateId, getTarget } = props;
 	const view = getView();
@@ -231,6 +230,6 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default ViewCalendar;

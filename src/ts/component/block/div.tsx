@@ -1,9 +1,8 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockDiv = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { block, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
@@ -51,6 +50,6 @@ const BlockDiv = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockDiv;

@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import AutoImport from 'unplugin-auto-import/vite';
+import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -279,6 +280,7 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			spaFallbackPlugin(),
 			react(),
+			autoObserverPlugin(),
 			webUploadPlugin(),
 
 			AutoImport({
