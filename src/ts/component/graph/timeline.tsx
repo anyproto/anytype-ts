@@ -100,12 +100,12 @@ const GraphTimeline = forwardRef<{}, Props>(({
 
 		window.addEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
 		window.addEventListener(`timelineComplete.${id}`, onTimelineComplete);
-		window.addEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
+		window.addEventListener('updateGraphSettings', onSettingsUpdate);
 
 		return () => {
 			window.removeEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
 			window.removeEventListener(`timelineComplete.${id}`, onTimelineComplete);
-			window.removeEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
+			window.removeEventListener('updateGraphSettings', onSettingsUpdate);
 			graphRef.current?.timelineReset();
 		};
 	}, []);

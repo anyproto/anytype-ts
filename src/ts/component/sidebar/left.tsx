@@ -162,8 +162,8 @@ const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(panel, '', min);
-				} else 
+					sidebar.open(panel, '', min, panel == I.SidebarPanel.Left ? false : undefined);
+				} else
 				if (w > closeWidth) {
 					sidebar.setWidth(panel, false, w, false);
 				};
