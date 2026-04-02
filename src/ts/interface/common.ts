@@ -420,9 +420,9 @@ export interface ImageParam {
 
 export interface StickyScrollbarRef {
 	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
-	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	bind: (element: HTMLElement, isSyncing: boolean) => void;
 	unbind: () => void;
-	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+	sync: (element: HTMLElement, isSyncing: boolean) => boolean;
 };
 
 export enum ClipboardMode {

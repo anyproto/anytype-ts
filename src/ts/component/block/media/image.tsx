@@ -1,5 +1,4 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error } from 'Component';
 import * as I from 'Interface';
@@ -34,59 +33,72 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		Action.upload(I.FileType.Image, rootId, block.id, '', path);
 	};
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const handleResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const node = $(nodeRef.current);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
 		keyboard.disableSelection(true);
-		node.addClass('isResizing');
+		U.Dom.addClass(nodeRef.current, 'isResizing');
 
-		win.off('mousemove.media mouseup.media');
-		win.on('mousemove.media', e => handleResize(e, checkMax));
-		win.on('mouseup.media', e => handleResizeEnd(e, checkMax));
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => handleResize(e, checkMax);
+		mouseUpHandler.current = e => handleResizeEnd(e, checkMax);
+		window.addEventListener('mousemove', mouseMoveHandler.current);
+		window.addEventListener('mouseup', mouseUpHandler.current);
 	};
 
 	const handleResize = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
 
-		const rect = U.Dom.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrap.css({ width: (w * 100) + '%' });
+		wrapRef.current.style.width = (w * 100) + '%';
 	};
 
 	const handleResizeEnd = (e: any, checkMax: boolean) => {
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const win = $(window);
-		const ox = wrap.offset().left;
+		const ox = wrapRef.current.getBoundingClientRect().left + window.scrollX;
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
-		win.off('mousemove.media mouseup.media');
-		node.removeClass('isResizing');
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
+
+		U.Dom.removeClass(nodeRef.current, 'isResizing');
 		keyboard.disableSelection(false);
 
 		C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { width: w } } ]);
 	};
 
 	const handleError = () => {
-		$(wrapRef.current).addClass('brokenMedia');
+		U.Dom.addClass(wrapRef.current, 'brokenMedia');
 	};
 
 	const handleClick = (e: any) => {
@@ -140,14 +152,14 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = $(`#selectionTarget-${U.Common.esc(block.id)}`);
+		const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
 		const width = Number(block.fields.width) || 1;
 
-		if (!el.length) {
+		if (!el) {
 			return width;
 		};
-		
-		const ew = el.width();
+
+		const ew = U.Dom.contentWidth(el);
 		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 
 		return Math.min(1, Math.max(0, w / ew));

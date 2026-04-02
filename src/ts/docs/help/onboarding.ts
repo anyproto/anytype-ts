@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import * as I from 'Interface';
 
 const Data = {
@@ -83,7 +82,7 @@ const Data = {
 					param: {
 						element: '#sidebarPageWidget',
 						vertical: I.MenuDirection.Center,
-						offsetX: $('#sidebarPageWidget').width() + 8,
+						offsetX: U.Dom.contentWidth(U.Dom.select('#sidebarPageWidget')) + 8,
 					}
 				},
 			],
@@ -105,7 +104,7 @@ const Data = {
 
 		const getOffset = (el: string) => {
 			const offset = el == 'widgetSpace' ? 20 : 8;
-			return $(elements[el]).width() + offset;
+			return U.Dom.contentWidth(U.Dom.select(elements[el])) + offset;
 		};
 
 		return {
@@ -207,7 +206,7 @@ const Data = {
 						highlightElements: [ elements.widgetSpace ],
 						stickToElementEdge: null,
 						vertical: I.MenuDirection.Bottom,
-						offsetY: -$(elements.widgetSpace).height() - 24,
+						offsetY: -U.Dom.contentHeight(U.Dom.select(elements.widgetSpace)) - 24,
 						offsetX: getOffset('widgetSpace'),
 					}
 				},
@@ -222,8 +221,8 @@ const Data = {
 			width: 288,
 			offsetX: -304,
 			offsetY: () => {
-				const $element = $('.containerSettings #item-membership');
-				return -$element.outerHeight();
+				const el = U.Dom.select('.containerSettings #item-membership');
+				return -(el?.offsetHeight || 0);
 			},
 		},
 		items: [
@@ -408,7 +407,7 @@ const Data = {
 		const controls = '#page.isFull .editorControls';
 		const btn = `${controls} #button-description`;
 
-		if (!$(btn).length) {
+		if (!U.Dom.select(btn)) {
 			return;
 		};
 
@@ -424,8 +423,8 @@ const Data = {
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				offsetY: 16,
-				onOpen: () => $(controls).addClass('active'),
-				onClose: () => $(controls).removeClass('active'),
+				onOpen: () => U.Dom.addClass(U.Dom.select(controls), 'active'),
+				onClose: () => U.Dom.removeClass(U.Dom.select(controls), 'active'),
 			},
 		};
 	},

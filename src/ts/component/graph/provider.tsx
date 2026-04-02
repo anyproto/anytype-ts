@@ -1,6 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
@@ -64,28 +63,42 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		} catch (e) { /**/ };
 	};
 
-	const rebind = () => {
-		const win = $(window);
+	const windowHandlers = useRef<{ [key: string]: (e: any) => void }>({});
 
+	const rebind = () => {
 		unbind();
-		win.on(`updateGraphSettings.${id}`, () => updateSettings());
-		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => {
-			const d = data || e.originalEvent?.detail;
-			setRootId(d?.id);
-		});
-		win.on(`updateGraphData.${id}`, () => load());
-		win.on(`archiveObject.${id}`, (e: any, data: any) => {
-			const d = data || e.originalEvent?.detail;
-			send('onRemoveNode', { ids: U.Common.objectCopy(d?.ids) });
-		});
-		win.on(`keydown.${id}`, e => onKeyDown(e));
+
+		windowHandlers.current = {
+			updateGraphSettings: () => updateSettings(),
+			updateGraphRoot: (e: any) => {
+				const d = e.detail;
+				setRootId(d?.id);
+			},
+			updateGraphData: () => load(),
+			archiveObject: (e: any) => {
+				const d = e.detail;
+				send('onRemoveNode', { ids: U.Common.objectCopy(d?.ids) });
+			},
+			keydown: (e: any) => onKeyDown(e),
+		};
+
+		for (const [ event, handler ] of Object.entries(windowHandlers.current)) {
+			window.addEventListener(event, handler);
+		};
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'archiveObject', 'keydown' ];
+		for (const [ event, handler ] of Object.entries(windowHandlers.current)) {
+			window.removeEventListener(event, handler);
+		};
+		windowHandlers.current = {};
 
-		$(window).off(events.map(it => `${it}.${id}`).join(' '));
-		$(canvas.current).off('touchstart touchmove');
+		if (canvas.current) {
+			canvas.current.removeEventListener('touchstart', (canvas.current as any)._touchStartHandler);
+			canvas.current.removeEventListener('touchmove', (canvas.current as any)._touchMoveHandler);
+			delete (canvas.current as any)._touchStartHandler;
+			delete (canvas.current as any)._touchMoveHandler;
+		};
 	};
 
 	const getTouchDistance = (touches: TouchList): number => {
@@ -96,12 +109,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const init = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
 		const density = window.devicePixelRatio;
-		const width = node.width();
-		const height = node.height();
+		const width = U.Dom.contentWidth(node);
+		const height = U.Dom.contentHeight(node);
 		const settings = S.Common.getGraph(storageKey);
-		const cnv = $(canvas.current);
 		const graphData = Storage.getGraphData();
 
 		images.current = {};
@@ -115,19 +131,20 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		// Start loading images in batches after initial setup
 		loadNodeImages(nodes.current);
 
-		node.find('canvas').remove();
-
-		canvas.current = d3.select(`#${elementId}`).append('canvas')
-		.attr('width', (width * density) + 'px')
-		.attr('height', (height * density) + 'px')
-		.node();
+		const existingCanvas = U.Dom.selectAll('canvas', node);
+		existingCanvas.forEach(c => c.remove());
 
 		let touchStartDist = null;
 		let touchStartZoom = null;
 
-		cnv.off('touchstart touchmove');
-		cnv.on('touchstart', e => {
-			const t = e.originalEvent.touches;
+		const cnv = canvas.current;
+		if (cnv) {
+			cnv.removeEventListener('touchstart', (cnv as any)._touchStartHandler);
+			cnv.removeEventListener('touchmove', (cnv as any)._touchMoveHandler);
+		};
+
+		const touchStartHandler = (e: TouchEvent) => {
+			const t = e.touches;
 
 			if (t.length != 2) {
 				return;
@@ -136,12 +153,12 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			e.preventDefault();
 			touchStartDist = getTouchDistance(t);
 			touchStartZoom = d3.zoomTransform(canvas.current).k;
-		});
+		};
 
-		cnv.on('touchmove', e => {
+		const touchMoveHandler = (e: TouchEvent) => {
 			e.preventDefault();
 
-			const t = e.originalEvent.touches;
+			const t = e.touches;
 
 			if (!touchStartDist || (t.length != 2)) {
 				return;
@@ -152,7 +169,19 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			const newZoom = touchStartZoom * scaleChange;
 
 			d3.select(canvas.current).call(zoom.current.scaleTo, newZoom);
-		});
+		};
+
+		canvas.current = d3.select(`#${elementId}`).append('canvas')
+		.attr('width', (width * density) + 'px')
+		.attr('height', (height * density) + 'px')
+		.node();
+
+		if (canvas.current) {
+			canvas.current.addEventListener('touchstart', touchStartHandler);
+			canvas.current.addEventListener('touchmove', touchMoveHandler);
+			(canvas.current as any)._touchStartHandler = touchStartHandler;
+			(canvas.current as any)._touchMoveHandler = touchMoveHandler;
+		};
 
 		const transfer = canvas.current.transferControlToOffscreen();
 
@@ -361,13 +390,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onDragMove = (e: any) => {
 		const p = d3.pointer(e, d3.select(canvas.current));
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		if (!node || !node.length) {
+		if (!node) {
 			return;
 		};
 
-		const { left, top } = node.offset();
+		const nodeRect = node.getBoundingClientRect();
+		const left = nodeRect.left + window.scrollX;
+		const top = nodeRect.top + window.scrollY;
 
 		send('onDragMove', { 
 			subjectId: subject.current?.id, 
@@ -387,8 +418,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onZoomStart = ({ sourceEvent }) => {
 		if (sourceEvent && (sourceEvent.type == 'mousedown') && sourceEvent.shiftKey) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
-			const node = $(nodeRef.current);
-			const { left, top } = node.offset();
+			const node = nodeRef.current;
+			const nodeRect = node.getBoundingClientRect();
+			const left = nodeRect.left + window.scrollX;
+			const top = nodeRect.top + window.scrollY;
 
 			isDraggingToSelect.current = true;
 			send('onDragToSelectStart', { x: p[0] - left, y: p[1] - top });
@@ -402,8 +435,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		if (isDraggingToSelect.current) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
-			const node = $(nodeRef.current);
-			const { left, top } = node.offset();
+			const node = nodeRef.current;
+			const nodeRect = node.getBoundingClientRect();
+			const left = nodeRect.left + window.scrollX;
+			const top = nodeRect.top + window.scrollY;
 
 			send('onDragToSelectMove', { x: p[0] - left, y: p[1] - top });
 		} else {
@@ -426,8 +461,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			return;
 		};
 
-		const container = $('#graphPreview');
-		const el = container.get(0) as any;
+		const el = U.Dom.get('graphPreview') as any;
 		if (!el) {
 			return;
 		};
@@ -439,10 +473,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			el._reactRoot = root;
 		};
 
-		const item = $('#graphPreviewItem');
+		const item = U.Dom.get('graphPreviewItem');
 		const isSameSubject = previewId.current == subject.current.id;
 
-		if (!item.length || !isSameSubject) {
+		if (!item || !isSameSubject) {
 			previewId.current = subject.current.id;
 
 			root.render(
@@ -459,37 +493,36 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				layout: subject.current.layout,
 			});
 		} else {
-			item.show();
+			item.style.display = '';
 		};
 
 		previewPosition(data);
 	};
 
 	const previewPosition = (data: any) => {
-		const item = $('#graphPreviewItem');
-		if (!item.length) {
+		const item = U.Dom.get('graphPreviewItem');
+		if (!item) {
 			return;
-		}
+		};
 
-		const node = $(nodeRef.current);
-		const offset = node.offset();
-		if (!offset) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
-		}
+		};
 
-		const { left, top } = offset;
-		const st = $(window).scrollTop();
+		const nodeRect = node.getBoundingClientRect();
+		const left = nodeRect.left + window.scrollX;
+		const top = nodeRect.top + window.scrollY;
+		const st = window.scrollY;
 
-		item.css({
-			left: data.x + left - item.outerWidth() / 2,
-			top: data.y + top + 20 - st,
-		});
+		item.style.left = `${data.x + left - item.offsetWidth / 2}px`;
+		item.style.top = `${data.y + top + 20 - st}px`;
 	};
 
 	const onPreviewHide = () => {
-		const item = $('#graphPreviewItem');
-		if (item.length) {
-			item.hide();
+		const item = U.Dom.get('graphPreviewItem');
+		if (item) {
+			item.style.display = 'none';
 		};
 
 		previewId.current = null;
@@ -498,13 +531,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const onMessage = (e) => {
 		const settings = S.Common.getGraph(storageKey);
 		const { id: msgId, data } = e.data;
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		if (!node || !node.length) {
+		if (!node) {
 			return;
 		};
 
-		const { left, top } = node.offset();
+		const nodeRect = node.getBoundingClientRect();
+		const left = nodeRect.left + window.scrollX;
+		const top = nodeRect.top + window.scrollY;
 		const menuParam = {
 			classNameWrap: 'fromGraph',
 			onOpen: () => isPreviewDisabled.current = true,
@@ -618,7 +653,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => U.Dom.get('button-header-search')?.click());
 
 		if (!ids.current.length) {
 			return;
@@ -759,11 +794,14 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		send('resize', { 
-			width: node.width(), 
-			height: node.height(),
+		send('resize', {
+			width: U.Dom.contentWidth(node),
+			height: U.Dom.contentHeight(node),
 			density: window.devicePixelRatio,
 		});
 	};
