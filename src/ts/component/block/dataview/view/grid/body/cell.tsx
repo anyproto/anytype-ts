@@ -82,7 +82,7 @@ const BodyCell: FC<Props> = (props, ref) => {
 			button = (
 				<Button
 					color="blank"
-					icon="expand"
+					iconParam={{ name: 'common/expand' }}
 					className="expand"
 					size={32}
 					text={translate('commonOpen')}
