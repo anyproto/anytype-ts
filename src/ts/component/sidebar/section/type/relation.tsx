@@ -113,7 +113,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						horizontal: I.MenuDirection.Right,
 						data: {
 							options: [
-								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 							],
 							onSelect: (e, option) => {
 								switch (option.id) {

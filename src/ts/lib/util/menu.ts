@@ -557,7 +557,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
+			iconParam: { name: `widget-${id}` },
 			withDescription: true,
 		}));
 	};
@@ -1207,9 +1207,9 @@ class UtilMenu {
 
 	sidebarModeOptions () {
 		return [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'all', iconParam: { name: 'sidebar-all' }, name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
+		];
 	};
 
 	codeLangOptions (): I.Option[] {

@@ -169,11 +169,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const actions = U.Menu.getActions({ count: 1 });
 
 			if (block.canTurnPage()) {
-				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
+				actions.push({ id: 'turnObject', iconParam: { name: 'object' }, name: translate('commonTurnIntoObject'), arrow: true });
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
+				{ id: 'action', iconParam: { name: 'action' }, name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
@@ -185,13 +185,13 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					restricted.push(I.BlockHAlign.Center);
 				};
 
-				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
+				sections.push({ id: 'align', iconParam: { name: 'align' }, name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
+				sections.push({ id: 'color', iconParam: { name: 'color' }, name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
+				sections.push({ id: 'bgColor', iconParam: { name: 'bgColor' }, name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
 			};
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);

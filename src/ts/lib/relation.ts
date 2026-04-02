@@ -360,7 +360,7 @@ class Relation {
 		return ret;
 	};
 
-	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
+	public getFilterTemplateOption (id: string): { id: string, name: string, iconParam: I.IconParam, templateType: I.FilterValueTemplate } {
 		return this.getFilterTemplateOptions().find(it => it.id == id);
 	};
 
@@ -664,7 +664,7 @@ class Relation {
 		}));
 
 		const ret: any[] = [
-			{ id: 'none', icon: '', name: translate('commonNone') },
+			{ id: 'none', name: translate('commonNone') },
 			{ id: J.Relation.pageCover, iconParam: { name: 'common/image' }, name: translate('libRelationPageCover') },
 		];
 

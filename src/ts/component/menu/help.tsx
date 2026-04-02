@@ -35,10 +35,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getItems = () => {
 		return [
 			{ 
-				id: 'whatsNew', icon: 'bell', document: 'whatsNew', 
-				caption: <Button size={16} text={U.Common.getElectron().version.app} /> 
+				id: 'whatsNew', iconParam: { name: 'bell' }, document: 'whatsNew',
+				caption: <Button size={16} text={U.Common.getElectron().version.app} />
 			},
-			{ id: 'shortcut', icon: 'keyboard', caption: keyboard.getCaption('shortcut') },
+			{ id: 'shortcut', iconParam: { name: 'keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'share' },
 			{ id: 'community' },

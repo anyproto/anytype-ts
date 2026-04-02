@@ -25,7 +25,7 @@ const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const object = S.Detail.get(rootId, rootId);
 		const hasConflict = U.Object.hasLayoutConflict(object);
 		
-		let align = { id: 'align', name: translate('sidebarSectionLayoutAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: translate('sidebarSectionLayoutAlign'), iconParam: { name: U.Data.alignHIcon(object.layoutAlign) }, arrow: true };
 		let resize = { id: 'resize', iconParam: { name: 'menu/action/resize' }, name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || U.Object.isTaskLayout(object.layout) || U.Object.isInSetLayouts(object.layout)) {

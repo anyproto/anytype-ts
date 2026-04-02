@@ -20,7 +20,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	const mouseleaveHandler = useRef(null);
 	const itemSidebar = {
 		id: 'sidebar',
-		icon: 'openSidebar',
+		iconParam: { name: 'openSidebar' },
 		name: translate('sidebarOpen'),
 		depth: 0,
 		isCommon: true,

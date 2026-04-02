@@ -1225,9 +1225,9 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const innerBackground = <div className={[ 'inner', `bgColor bgColor-${current?.bgColor || 'default'}` ].join(' ')} />;
 
 		return [
-			{ id: 'color', icon: 'color', name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
-			{ id: 'background', icon: 'color', name: translate('blockTableOptionsColorBackground'), inner: innerBackground, arrow: true },
-			{ id: 'style', icon: 'paragraph', name: translate('blockTableOptionsColorStyle'), arrow: true },
+			{ id: 'color', iconParam: { name: 'color' }, name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
+			{ id: 'background', iconParam: { name: 'color' }, name: translate('blockTableOptionsColorBackground'), inner: innerBackground, arrow: true },
+			{ id: 'style', iconParam: { name: 'paragraph' }, name: translate('blockTableOptionsColorStyle'), arrow: true },
 			{ id: 'clearStyle', iconParam: { name: 'menu/action/clear' }, name: translate('blockTableOptionsColorClearStyle') },
 			{ isDiv: true },
 		];
@@ -1237,8 +1237,8 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const current = S.Block.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: U.Data.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
-			{ id: 'vertical', icon: U.Data.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
+			{ id: 'horizontal', iconParam: { name: U.Data.alignHIcon(current?.hAlign) }, name: translate('blockTableOptionsAlignText'), arrow: true },
+			{ id: 'vertical', iconParam: { name: U.Data.alignVIcon(current?.vAlign) }, name: translate('blockTableOptionsAlignVertical'), arrow: true },
 		];
 	};
 

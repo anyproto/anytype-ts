@@ -150,7 +150,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					options: [
 						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), iconParam: { name: U.Data.alignHIcon(block.hAlign) }, arrow: true },
 						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {

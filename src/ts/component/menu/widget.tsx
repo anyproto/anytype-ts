@@ -260,7 +260,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = {
 					noClose: true,
 					value: String(layout),
-					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, icon: it.icon })),
+					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, iconParam: it.iconParam })),
 					onSelect: (e: any, option: any) => onSelectOption('layout', option.id),
 				};
 				break;
