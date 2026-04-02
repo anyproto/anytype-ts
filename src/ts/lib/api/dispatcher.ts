@@ -1099,6 +1099,7 @@ class Dispatcher {
 
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						const title = [];
+						let canNotify = true;
 
 						if (spaceview) {
 							title.push(U.String.shorten(spaceview.name, 32));
@@ -1109,19 +1110,21 @@ class Dispatcher {
 							if (!chat._empty_) {
 								title.push(U.String.shorten(chat.name, 32));
 							} else {
-								break;
+								canNotify = false;
 							};
 						};
 
-						Renderer.send('notification', {
-							id: message.id,
-							title: title.join(' - '),
-							text: notification,
-							cmd: 'openChat',
-							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
-							silent: !Sound.isSystem(),
-						});
-						Sound.playNotification();
+						if (canNotify) {
+							Renderer.send('notification', {
+								id: message.id,
+								title: title.join(' - '),
+								text: notification,
+								cmd: 'openChat',
+								payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+								silent: !Sound.isSystem(),
+							});
+							Sound.playNotification();
+						};
 					};
 
 					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
