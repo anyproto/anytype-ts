@@ -758,7 +758,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
+			transition: { type: 'tween' as const, duration: 0.2, ease: [ 0.22, 1, 0.36, 1 ], ...param.transition },
 		};
 	};
 

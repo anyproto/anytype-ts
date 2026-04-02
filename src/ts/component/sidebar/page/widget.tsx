@@ -735,7 +735,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 								className={cns.join(' ')} 
 								key={`${section.id}-motion`}
 								{...U.Common.animationProps({
-									transition: { duration: 200, delay: i * 0.05 },
+									transition: { duration: 0.2, delay: i * 0.05 },
 								})}
 							>
 								<div

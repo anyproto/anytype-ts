@@ -60,7 +60,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
-					{ id: 'spaceIndex', iconParam: { name: 'space' } },
+					{ id: 'spaceIndex', iconParam: { name: 'settings/space/space' } },
 					spaceview.isPersonal ? null : { id: 'spaceShare', iconParam: { name: 'menu/action/members' } },
 					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'menu/action/notification' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },

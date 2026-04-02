@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Title, Label, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
 import * as I from 'Interface';
 

@@ -10,9 +10,9 @@ $amber-warm: #FFB74D;
 $amber-light: #FFE4C4;
 $teal-accent: #fe9a00; // Changed from cyan to orange/yellow to match spark
 
-// Animation curves
-$spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
-$smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
+// Animation curves (use shared variables from _mixins.scss)
+$spring-curve: $easeSpring;
+$smooth-curve: $easeSmooth;
 
 // Status message with wave animation
 .statusMessage {
