@@ -9,15 +9,6 @@ if (typeof globalThis.window === 'undefined') {
 (globalThis as any).window.AnytypeGlobalConfig = {};
 (globalThis as any).window.getSelection = () => ({});
 
-// Mock jQuery
-vi.mock('jquery', () => {
-	const $ = (selector: any) => ({
-		find: () => ({ off: () => ({}), removeAttr: () => ({ each: () => ({}) }), each: () => ({}), html: () => ({}) }),
-		html: () => '',
-	});
-	$.escapeSelector = (s: string) => s;
-	return { default: $ };
-});
 
 // Mock raf
 vi.mock('raf', () => ({
