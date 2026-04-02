@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
 import PageHeadEditor from 'Component/page/elements/head/editor';
@@ -17,7 +16,7 @@ interface Props extends I.PageComponent {
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const { rootId, isPopup, onOpen } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -2823,6 +2822,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default EditorPage;

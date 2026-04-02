@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { Icon, PreviewObject, EmptySearch } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 const TEMPLATE_WIDTH = 224;
 
-const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuTemplateList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, setHover, onKeyDown, getId, getContainer, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -265,6 +264,6 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuTemplateList;

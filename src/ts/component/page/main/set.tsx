@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect, useLayoutEffect, useState, useRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 
-const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
@@ -330,6 +329,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		</>
 	);
 
-}));
+});
 
 export default PageMainSet;

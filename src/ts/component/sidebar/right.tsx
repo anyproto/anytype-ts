@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, DragEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -24,7 +23,7 @@ const Components = {
 	widget:					 PageWidget,
 };
 
-const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
+const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
@@ -188,6 +187,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default SidebarRight;

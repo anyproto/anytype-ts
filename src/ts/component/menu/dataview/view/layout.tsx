@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Icon, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { config } = S.Common;
 	const { param, setActive, onKeyDown, getId, getSize } = props;
@@ -521,6 +520,6 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewLayout;

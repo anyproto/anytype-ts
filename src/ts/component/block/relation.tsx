@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockRelation = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, isPopup, passParam, onKeyDown, onKeyUp } = props;
 	const relationKey = block.content.key;
@@ -148,6 +147,6 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default BlockRelation;

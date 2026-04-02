@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
@@ -13,7 +12,7 @@ interface Props extends I.ViewComponent {
 	onClear?: () => void;
 };
 
-const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) => {
+const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, block, className, isInline, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget, closeFilters } = props;
 	const blockId = block.id;
@@ -296,6 +295,6 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataviewFilters;

@@ -1,10 +1,9 @@
 import React, { forwardRef } from 'react';
 import Button from 'Component/form/button';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
 
-const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderAuthLogout = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const onLogout = () => {
 		S.Auth.logout(true, false);
@@ -22,6 +21,6 @@ const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 			</div>
 		</>
 	);
-}));
+});
 
 export default HeaderAuthLogout;

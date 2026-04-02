@@ -1,6 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 interface TableOfContentsRefProps {
@@ -9,7 +8,7 @@ interface TableOfContentsRefProps {
 	forceUpdate?: () => void;
 };
 
-const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComponent>((props, ref) => {
+const TableOfContents = forwardRef<TableOfContentsRefProps, I.BlockComponent>((props, ref) => {
 
 	const { rootId, isPopup } = props;
 	const [ dummy, setDummy] = useState(0);
@@ -195,6 +194,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		</div>
 	);
 
-}));
+});
 
 export default TableOfContents;

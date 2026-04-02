@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover);
@@ -283,6 +282,6 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		</div>
 	);
 
-}));
+});
 
 export default BlockLink;

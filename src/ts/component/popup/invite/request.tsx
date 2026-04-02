@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Error, IconObject } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupInviteRequest = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { account } = S.Auth;
@@ -111,6 +110,6 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PopupInviteRequest;

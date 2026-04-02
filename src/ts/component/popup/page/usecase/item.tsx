@@ -2,10 +2,9 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecasePageItem = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, onPage, getId, close, param } = props;
 	const { data } = param;
@@ -185,6 +184,6 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecasePageItem;

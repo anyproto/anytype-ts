@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { OptionSelect } from 'Component';
 import * as I from 'Interface';
 
 const SUB_ID = 'dataviewOptionList';
 
-const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
+const MenuOptionList = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const { id, param, close, position, setActive, getId, getContainer, onKeyDown, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -148,6 +147,6 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		/>
 	);
 
-}));
+});
 
 export default MenuOptionList;

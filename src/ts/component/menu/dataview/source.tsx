@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewSource = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getSize, close, onKeyDown, setActive } = props;
 	const { data, className, classNameWrap } = param;
@@ -234,6 +233,6 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewSource;

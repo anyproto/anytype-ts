@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewGroupEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
@@ -153,6 +152,6 @@ const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</>
 	);
 
-}));
+});
 
 export default MenuDataviewGroupEdit;

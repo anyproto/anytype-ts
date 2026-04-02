@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -148,6 +147,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainSettings;

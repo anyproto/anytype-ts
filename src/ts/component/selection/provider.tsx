@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -28,7 +27,7 @@ interface SelectionRefProps {
 
 const THRESHOLD = 20;
 
-const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, ref) => {
+const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 	const x = useRef(0);
 	const y = useRef(0);
@@ -776,6 +775,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default SelectionProvider;

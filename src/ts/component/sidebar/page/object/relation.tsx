@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import Section from 'Component/sidebar/section';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
 	const { rootId, readonly, page, isPopup } = props;
@@ -273,6 +272,6 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageObjectRelation;

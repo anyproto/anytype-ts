@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 
-import { observer } from 'mobx-react'; 
 import * as I from 'Interface';
 import * as M from 'Model';
 
-const DragLayer = observer(forwardRef((_, ref: any) => {
+const DragLayer = forwardRef((_, ref: any) => {
 	
 	const nodeRef = useRef(null);
 
@@ -163,6 +162,6 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 		</div>
 	);
 
-}));
+});
 
 export default DragLayer;

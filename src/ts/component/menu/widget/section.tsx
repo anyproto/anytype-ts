@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -9,7 +8,7 @@ import * as I from 'Interface';
 
 const HEIGHT = 52;
 
-const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, onKeyDown, position, close } = props;
 	const { data } = param;
@@ -226,6 +225,6 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default MenuWidgetSection;

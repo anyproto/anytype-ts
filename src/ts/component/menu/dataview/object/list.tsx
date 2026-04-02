@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, ObjectName, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -12,7 +11,7 @@ const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, close, position, getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -396,6 +395,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewObjectList;

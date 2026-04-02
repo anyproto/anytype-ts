@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -23,7 +22,7 @@ interface ControlsRefProps {
 	getNode: () => any,
 };
 
-const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
+const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
@@ -645,6 +644,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Controls;

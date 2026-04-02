@@ -1,6 +1,5 @@
 import React, { forwardRef, Fragment } from 'react';
 import { Block } from 'Component';
-import { observer } from 'mobx-react';
 import { DropTarget } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -11,7 +10,7 @@ interface Props extends I.BlockComponent {
 	onResizeStart? (e: any, index: number): void;
 };
 
-const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
+const ListChildren = forwardRef<{}, Props>((props, ref) => {
 	const {
 		rootId = '',
 		block,
@@ -114,6 +113,6 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default ListChildren;

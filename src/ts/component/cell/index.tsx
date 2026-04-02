@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -17,7 +16,7 @@ interface Props extends I.Cell {
 	editModeOn?: boolean;
 };
 
-const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
+const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix,
@@ -594,6 +593,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		</div> 
 	);
 
-}));
+});
 
 export default Cell;

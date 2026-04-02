@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -9,7 +8,7 @@ interface Props {
 	onClick: (e: any) => void;
 };
 
-const Sync = observer(forwardRef<HTMLDivElement, Props>(({
+const Sync = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	className = '',
 	onClick,
@@ -56,6 +55,6 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default Sync;

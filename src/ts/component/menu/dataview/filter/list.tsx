@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Label } from 'Component';
 import * as I from 'Interface';
@@ -9,7 +8,7 @@ const HEIGHT_FILTER = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, onKeyDown, setActive } = props;
 	const { data } = param;
@@ -487,6 +486,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuFilterList;

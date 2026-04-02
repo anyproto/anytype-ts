@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewTemplateContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, onKeyDown, setActive } = props;
 	const { data } = param;
@@ -133,6 +132,6 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewTemplateContext;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 
 import { MenuItemVertical } from 'Component';
 import { AutoSizer, CellMeasurer, List, CellMeasurerCache } from 'react-virtualized';
@@ -36,7 +35,7 @@ const getEntries = (): EmojiEntry[] => {
 	return cachedEntries;
 };
 
-const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockEmoji = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, position } = props;
 	const { data } = param;
@@ -353,6 +352,6 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuBlockEmoji;

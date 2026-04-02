@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
@@ -9,7 +8,7 @@ import * as I from 'Interface';
 const HEIGHT = 378;
 const LIMIT = 2;
 
-const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecasePageList = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, position, onPage } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -271,6 +270,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecasePageList;

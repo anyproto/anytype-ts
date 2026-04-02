@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
 import * as I from 'Interface';
 
-const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam, viewType } = props;
 	const entryRef = useRef(null);
@@ -345,6 +344,6 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellSelect;

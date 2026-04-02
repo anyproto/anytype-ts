@@ -62,7 +62,7 @@
         "mime-types": "^3.0.1",
         "mobx": "^6.15.0",
         "mobx-logger": "^0.7.1",
-        "mobx-react": "^9.2.1",
+        "mobx-react-lite": "^4.1.0",
         "motion": "^12.23.24",
         "node-gyp": "^12.1.0",
         "p-finally": "^2.0.1",
@@ -1740,8 +1740,6 @@
     "mobx": ["mobx@6.15.0", "", {}, "sha512-UczzB+0nnwGotYSgllfARAqWCJ5e/skuV2K/l+Zyck/H6pJIhLXuBnz+6vn2i211o7DtbE78HQtsYEKICHGI+g=="],
 
     "mobx-logger": ["mobx-logger@0.7.1", "", { "peerDependencies": { "mobx": ">= 4.0.0" } }, "sha512-kAcNjzDGjILjvNiVrQZfVY6Bxs5YKt35rtwNuU/uneLq+E9zF5grnGmr95EMqqYSVpE6RjJLID3y3j0yQ/cvRA=="],
-
-    "mobx-react": ["mobx-react@9.2.1", "", { "dependencies": { "mobx-react-lite": "^4.1.1" }, "peerDependencies": { "mobx": "^6.9.0", "react": "^16.8.0 || ^17 || ^18 || ^19" } }, "sha512-WJNNm0FB2n0Z0u+jS1QHmmWyV8l2WiAj8V8I/96kbUEN2YbYCoKW+hbbqKKRUBqElu0llxM7nWKehvRIkhBVJw=="],
 
     "mobx-react-lite": ["mobx-react-lite@4.1.1", "", { "dependencies": { "use-sync-external-store": "^1.4.0" }, "peerDependencies": { "mobx": "^6.9.0", "react": "^16.8.0 || ^17 || ^18 || ^19" } }, "sha512-iUxiMpsvNraCKXU+yPotsOncNNmyeS2B5DKL+TL6Tar/xm+wwNJAubJmtRSeAoYawdZqwv8Z/+5nPRHeQxTiXg=="],
 

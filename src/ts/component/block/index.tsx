@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { observer } from 'mobx-react';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -41,7 +40,7 @@ interface Ref {
 
 const SNAP = 0.01;
 
-const Block = observer(forwardRef<Ref, Props>((props, ref) => {
+const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
@@ -1183,6 +1182,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Block;

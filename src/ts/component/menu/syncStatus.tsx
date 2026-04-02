@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
 import * as I from 'Interface';
@@ -8,7 +7,7 @@ const HEIGHT = 28;
 const LIMIT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, getId, getContainer, onKeyDown, position, close } = props;
 	const { classNameWrap } = param;
@@ -512,6 +511,6 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuSyncStatus;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import * as I from 'Interface';
 
@@ -19,7 +18,7 @@ interface RefProps {
 	getPreviewItem: () => any;
 };
 
-const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 
@@ -420,6 +419,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default ChatAttachment;

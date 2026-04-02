@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Input, Label, Switch, Button, Icon, Error, Loader } from 'Component';
 import * as I from 'Interface';
 
-const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -260,6 +259,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuPublish;

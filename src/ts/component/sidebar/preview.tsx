@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
 import * as I from 'Interface';
 
@@ -10,7 +9,7 @@ interface RefProps {
 	show: (v: boolean) => void;
 };
 
-const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
+const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ object, setObject ] = useState({
@@ -238,6 +237,6 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default SidebarLayoutPreview;

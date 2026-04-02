@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observable } from 'mobx';
-import { observer } from 'mobx-react';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, getSize, close } = props;
 	const { data, classNameWrap } = param;
@@ -477,6 +476,6 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</form>
 	);
 
-}));
+});
 
 export default MenuBlockRelationEdit;

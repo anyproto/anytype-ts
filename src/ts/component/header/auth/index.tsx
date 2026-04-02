@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import Icon from 'Component/util/icon';
 import Select from 'Component/form/select';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
 
@@ -9,7 +8,7 @@ interface Props extends I.HeaderComponent {
 	onBack?: () => void;
 };
 
-const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
+const HeaderAuthIndex = forwardRef<{}, Props>((props, ref) => {
 
 	const { onBack } = props;
 	const { interfaceLang } = S.Common;
@@ -61,6 +60,6 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			</div>
 		</>
 	);
-}));
+});
 
 export default HeaderAuthIndex;

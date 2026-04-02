@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Input, Button, Loader, Error, Title, Icon, Textarea } from 'Component';
 import * as I from 'Interface';
 
-const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
+const PopupApiCreate = forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
 	const nameRef = useRef(null);
 	const [ error, setError ] = useState('');
@@ -106,6 +105,6 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 		</>
 	);
 
-}));
+});
 
 export default PopupApiCreate;

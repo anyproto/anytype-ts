@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import sha1 from 'sha1';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
@@ -41,7 +40,7 @@ interface RefProps {
 	onAttachment: () => void;
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -1950,6 +1949,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default memo(ChatForm);

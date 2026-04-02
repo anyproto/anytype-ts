@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
@@ -197,6 +196,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainObject;

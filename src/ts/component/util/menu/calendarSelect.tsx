@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 
-import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -41,7 +40,7 @@ export interface CalendarSelectRefProps {
 	setSelectedDate: (date: CalendarDay | null) => void;
 };
 
-const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
+const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
 
 	const {
 		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
@@ -392,6 +391,6 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		</div>
 	);
 
-}));
+});
 
 export default CalendarSelect;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, List } from 'react-virtualized';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import * as I from 'Interface';
@@ -19,7 +18,7 @@ const Tabs = [
 	{ id: Tab.Upload },
 ].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
-const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -653,6 +652,6 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockCover;

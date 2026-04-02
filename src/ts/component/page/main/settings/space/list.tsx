@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpacesList = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 
@@ -101,6 +100,6 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpacesList;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 let _katex: any = null;
@@ -15,7 +14,7 @@ const getKatex = (): any => {
 	return null;
 };
 
-const MenuPreviewLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuPreviewLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param } = props;
 	const { data } = param;
@@ -49,6 +48,6 @@ const MenuPreviewLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuPreviewLatex;

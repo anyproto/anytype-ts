@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, } from 'react';
 
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Button, Icon, Label, ProgressBar } from 'Component';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import * as I from 'Interface';
 
-const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
+const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
 	const { param, position, close, getId, getSize } = props;
 	const { data, noClose, highlightElements } = param;
@@ -442,6 +441,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		</div>
 	);
 
-}));
+});
 
 export default MenuOnboarding;

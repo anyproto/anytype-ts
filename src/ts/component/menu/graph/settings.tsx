@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical, DragHorizontal } from 'Component';
 import * as I from 'Interface';
 
-const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuGraphSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, onKeyDown, setActive, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -317,6 +316,6 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default MenuGraphSettings;

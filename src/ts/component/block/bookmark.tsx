@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const { state, targetObjectId } = block.content;
@@ -220,6 +219,6 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default BlockBookmark;

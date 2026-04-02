@@ -9,7 +9,7 @@ import Util from '../lib/util';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Create = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const nameRef = useRef<Input>(null);
@@ -475,6 +475,6 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Create;

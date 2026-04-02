@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { history as historyPopup } from 'Lib/history';
 import { Page } from 'Component';
 import * as I from 'Interface';
 
 interface Props extends I.Popup {};
 
-const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
+const PopupPage = forwardRef<{}, Props>((props, ref) => {
 	
 	const { param, getId } = props;
 	const { data } = param;
@@ -56,6 +55,6 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupPage;

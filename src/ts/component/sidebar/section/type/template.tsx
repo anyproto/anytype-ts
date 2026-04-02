@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 import * as I from 'Interface';
 
-const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeTemplate = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, object, readonly, onChange } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -167,6 +166,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeTemplate;

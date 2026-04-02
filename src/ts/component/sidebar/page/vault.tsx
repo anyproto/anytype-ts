@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -16,7 +15,7 @@ const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
-const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { space, vaultMessages, vaultIsMinimal } = S.Common;
@@ -790,6 +789,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		</>
 	);
 
-}));
+});
 
 export default memo(SidebarPageVault);

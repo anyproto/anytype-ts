@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Label } from 'Component';
 import * as I from 'Interface';
 
-const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionObjectTableOfContents = forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, isPopup, blockId } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -52,6 +51,6 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionObjectTableOfContents;

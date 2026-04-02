@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Icon, ObjectName } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const BlockLoader = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockLoader = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block } = props;
 	const { content } = block;
@@ -25,6 +24,6 @@ const BlockLoader = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockLoader;

@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import ItemObject from './item/object';
 import * as I from 'Interface';
 
-const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -373,6 +372,6 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellObject;

@@ -1624,6 +1624,12 @@ class UtilMenu {
 	};
 
 	spaceCreate (param: I.MenuParam, route) {
+		const analyticsName = {
+			[I.SpaceCreateType.Personal]: 'Space',
+			[I.SpaceCreateType.Group]: 'Chat',
+			[I.SpaceCreateType.Join]: 'Join',
+		};
+
 		const options = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
 			{ id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
@@ -1651,7 +1657,7 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					Action.createSpace(item.id, route);
 
-					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
 			}
 		});

@@ -45,7 +45,6 @@ import {
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 
-import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
@@ -294,7 +293,7 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 
 };
 
-const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data: any }) => {
+const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const subId = useContext(CommentSubIdContext);
 
@@ -315,7 +314,7 @@ const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data
 			}}
 		/>
 	);
-});
+};
 
 function $createAttachmentNode (data: any): AttachmentNode {
 	return new AttachmentNode(data);

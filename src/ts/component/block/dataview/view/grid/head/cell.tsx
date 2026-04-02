@@ -1,5 +1,4 @@
 import React, { forwardRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, ObjectName } from 'Component';
@@ -12,7 +11,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadCell = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, onResizeStart, getView, readonly } = props;
 	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
@@ -144,6 +143,6 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HeadCell;

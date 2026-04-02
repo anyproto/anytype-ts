@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
+const GalleryCard = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, recordId, isPopup, style, isInline, isCollection, getRecord, getView, onRefCell, onContext, getIdPrefix, getVisibleRelations, 
@@ -171,6 +170,6 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default memo(GalleryCard);

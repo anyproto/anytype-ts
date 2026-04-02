@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import Row from './table/row';
@@ -11,7 +10,7 @@ import { focus } from 'Lib/focus';
 const PADDING = 46;
 const SNAP = 10;
 
-const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, isPopup, onKeyDown, getWrapperWidth } = props;
 	const data = S.Block.getTableData(rootId, block.id);
@@ -1562,6 +1561,6 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockTable;

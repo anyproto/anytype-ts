@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Select, Button, Switch } from 'Component';
 import * as I from 'Interface';
 
-const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close, storageGet, storageSet, position } = props;
 	const { data } = param;
@@ -196,6 +195,6 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PopupExport;

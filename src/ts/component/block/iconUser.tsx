@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Loader } from 'Component';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface BlockIconUserRefProps {
 	setLoading: (v: boolean) => void;
 };
 
-const BlockIconUser = observer(forwardRef<BlockIconUserRefProps, I.BlockComponent>(({
+const BlockIconUser = forwardRef<BlockIconUserRefProps, I.BlockComponent>(({
 	rootId = '',
 	readonly = false,
 }, ref) => {
@@ -47,6 +46,6 @@ const BlockIconUser = observer(forwardRef<BlockIconUserRefProps, I.BlockComponen
 			/>
 		</div>
 	);
-}));
+});
 
 export default BlockIconUser;

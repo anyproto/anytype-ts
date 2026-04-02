@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -11,7 +10,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, onKeyDown, position } = props;
 	const { data } = param;
@@ -296,6 +295,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuGroupList;

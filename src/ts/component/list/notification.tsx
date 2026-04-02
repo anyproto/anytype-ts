@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Notification, Icon } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 const LIMIT = 5;
 
-const ListNotification = observer(forwardRef(() => {
+const ListNotification = forwardRef(() => {
 
 	const nodeRef = useRef(null);
 	const { list } = S.Notification;
@@ -119,6 +118,6 @@ const ListNotification = observer(forwardRef(() => {
 		</div>
 	);
 
-}));
+});
 
 export default ListNotification;
