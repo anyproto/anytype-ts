@@ -139,7 +139,9 @@
 						transition: transform 0.15s ease;
 						color: var(--color-text-secondary);
 
-						&.isExpanded { transform: rotate(0deg); }
+						&.isExpanded {
+							transform: rotate(0deg);
+						}
 					}
 				}
 			}
