@@ -37,7 +37,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 					return;
 				};
 
-				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
+				U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
 					U.Dom.toggleClass(el, 'isWide', width > 360);
 				});
 			});
@@ -55,6 +55,14 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 
 	useEffect(() => {
 		init();
+
+		if (bubbleRef.current && nodeRef.current) {
+			const width = bubbleRef.current.offsetWidth;
+
+			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
+				U.Dom.toggleClass(el, 'isWide', width > 360);
+			});
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
