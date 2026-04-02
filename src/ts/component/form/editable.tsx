@@ -96,7 +96,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const placeholderShow = () => {
-		U.Dom.css(placeholderRef.current, { display: '' });
+		U.Dom.css(placeholderRef.current, { display: 'block' });
 	};
 
 	const setFocus = () => {
