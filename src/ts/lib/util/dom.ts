@@ -35,13 +35,13 @@ class UtilDom {
 
 	addClass (el: HTMLElement, ...names: string[]) {
 		if (el) {
-			el.classList.add(...names);
+			el.classList.add(...names.flatMap(n => n.split(/\s+/).filter(Boolean)));
 		};
 	};
 
 	removeClass (el: HTMLElement, ...names: string[]) {
 		if (el) {
-			el.classList.remove(...names);
+			el.classList.remove(...names.flatMap(n => n.split(/\s+/).filter(Boolean)));
 		};
 	};
 
