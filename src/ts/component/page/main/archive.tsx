@@ -4,6 +4,8 @@ import ArchiveListTree from './archiveListTree';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
+type ViewMode = 'tree' | 'compact' | 'detailed';
+
 const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
@@ -13,8 +15,8 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const filterRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
-	const [ viewMode, setViewMode ] = useState<'tree' | 'compact' | 'detailed'>(() => {
-		return (Storage.get('binViewMode') as 'tree' | 'compact' | 'detailed') || 'tree';
+	const [ viewMode, setViewMode ] = useState<ViewMode>(() => {
+		return (Storage.get('binViewMode') as ViewMode) || 'tree';
 	});
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
@@ -113,7 +115,7 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
 	};
 
-	const nextViewMode = { tree: 'compact', compact: 'detailed', detailed: 'tree' } as const;
+	const nextViewMode: Record<ViewMode, ViewMode> = { tree: 'compact', compact: 'detailed', detailed: 'tree' };
 
 	const onSwitchView = () => {
 		const next = nextViewMode[viewMode];
