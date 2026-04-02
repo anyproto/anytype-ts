@@ -1,5 +1,4 @@
 import React, { useState, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Checkbox, Icon } from 'Component';
 import { TreeNode } from 'Lib/util/data';
 import * as I from 'Interface';
@@ -15,7 +14,7 @@ interface Props {
 	isAllSelected: boolean;
 }
 
-const ArchiveListTree = observer(({ subId, canWrite, isShared, selectedIds, filterText, onSelectChange, onSelectAll, isAllSelected }: Props) => {
+const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, onSelectChange, onSelectAll, isAllSelected }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
 	const [ sortId, setSortId ] = useState('lastModifiedDate');
@@ -220,6 +219,6 @@ const ArchiveListTree = observer(({ subId, canWrite, isShared, selectedIds, filt
 		</div>
 	);
 
-});
+};
 
 export default ArchiveListTree;
