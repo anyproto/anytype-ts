@@ -62,7 +62,7 @@ const Tag: FC<Props> = ({
 			return;
 		};
 
-		const remove = node.querySelector('#remove') as HTMLImageElement;
+		const remove = U.Dom.select('#remove', node) as HTMLImageElement;
 		const color = getComputedStyle(node).color;
 
 		if (remove) {

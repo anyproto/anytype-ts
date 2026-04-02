@@ -63,10 +63,10 @@ const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSect
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`);
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 
 		S.Menu.open('select', {
-			element: element?.querySelector('.icon.more'),
+			element: U.Dom.select('.icon.more', element),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
@@ -161,7 +161,7 @@ const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSect
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(over.id)}`) as HTMLElement;
+		const element = U.Dom.select(`#item-${U.Common.esc(over.id)}`, nodeRef.current);
 		const rect = element ? element.getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;

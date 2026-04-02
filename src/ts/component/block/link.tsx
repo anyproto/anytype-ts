@@ -70,7 +70,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 
 		Preview.previewShow({ 
-			element: nodeRef.current?.querySelector('.cardName .name') as HTMLElement,
+			element: U.Dom.select('.cardName .name', nodeRef.current),
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
@@ -107,7 +107,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
-			U.Dom.toggleClass(card, 'withIcon', !!node.querySelector('.iconObject'));
+			U.Dom.toggleClass(card, 'withIcon', !!U.Dom.select('.iconObject', node));
 			U.Dom.toggleClass(card, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
 		});
 	};

@@ -68,9 +68,9 @@ const MenuSmileSkin = forwardRef<{}, I.Menu>((props, ref) => {
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const prev = node.querySelector('.active');
+		const prev = U.Dom.select('.active', node);
 		if (prev) U.Dom.removeClass(prev, 'active');
-		const next = node.querySelector(`#skin-${SKINS[n.current]}`);
+		const next = U.Dom.select(`#skin-${SKINS[n.current]}`, node);
 		if (next) U.Dom.addClass(next, 'active');
 	};
 	

@@ -84,8 +84,8 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 		const obj = U.Dom.getPageContainer(isPopup);
 		const node = nodeRef.current;
-		const wrapper = obj?.querySelector('.wrapper') as HTMLElement;
-		const header = node?.querySelector('#header') as HTMLElement;
+		const wrapper = U.Dom.select('.wrapper', obj);
+		const header = U.Dom.select('#header', node);
 		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
 		if (wrapper) {

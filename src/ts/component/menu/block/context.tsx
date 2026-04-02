@@ -28,7 +28,7 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		clickMousedownHandler.current = (e: any) => {
 			const target = e.target as HTMLElement;
-			if (!target.classList.contains('icon') && !target.classList.contains('inner')) {
+			if (!U.Dom.hasClass(target, 'icon') && !U.Dom.hasClass(target, 'inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};

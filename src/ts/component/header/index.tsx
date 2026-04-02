@@ -187,7 +187,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
 		const container = U.Dom.getScrollContainer(isPopup);
-		const element = container?.querySelector(`.header ${elementId}`);
+		const element = U.Dom.select(`.header ${elementId}`, container);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -207,7 +207,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const center = node.querySelector('.side.center') as HTMLElement;
+		const center = U.Dom.select('.side.center', node);
 		U.Dom.toggleClass(node, 'isSmall', (center?.offsetWidth ?? 0) <= 200);
 	};
 

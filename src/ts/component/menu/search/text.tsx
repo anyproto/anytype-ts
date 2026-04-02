@@ -31,7 +31,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const searchTimeoutRef = useRef(0);
 	const lastSearchRef = useRef('');
 	const n = useRef(0);
-	const matchElementsRef = useRef<NodeListOf<Element> | null>(null);
+	const matchElementsRef = useRef<HTMLElement[] | null>(null);
 
 	const expandedRef = useRef<ExpandedState>({ toggles: [] });
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
@@ -40,9 +40,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getContainer = () => U.Dom.getScrollContainer(isPopup);
 	const getSearchTag = () => Mark.getTag(I.MarkType.Search);
 
-	const getMatchElements = (): NodeListOf<Element> | null => {
+	const getMatchElements = (): HTMLElement[] | null => {
 		const container = getContainer();
-		return container ? container.querySelectorAll(getSearchTag()) : null;
+		return container ? U.Dom.selectAll(getSearchTag(), container) : null;
 	};
 
 	const expandToggle = (el: HTMLElement) => {
@@ -137,7 +137,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const blockId = blockClass.substring(1);
-		const containerEl = focusable.querySelector('.editable') as HTMLElement;
+		const containerEl = U.Dom.select('.editable', focusable);
 
 		if (!containerEl) {
 			activeMatchRef.current.position = null;

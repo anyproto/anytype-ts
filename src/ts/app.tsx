@@ -271,9 +271,9 @@ const App: FC = () => {
 		const { id, dataPath, config, isDark, languages, isPinChecked, isPinned, css, isSingleTab, activeTabId } = data;
 		const body = document.body;
 		const node = nodeRef.current;
-		const bubbleLoader = document.getElementById('bubble-loader');
-		const rootLoader = node?.querySelector('#root-loader') as HTMLElement;
-		const anim = rootLoader?.querySelector('.anim') as HTMLElement;
+		const bubbleLoader = U.Dom.get('bubble-loader');
+		const rootLoader = U.Dom.select('#root-loader', node);
+		const anim = U.Dom.select('.anim', rootLoader);
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();

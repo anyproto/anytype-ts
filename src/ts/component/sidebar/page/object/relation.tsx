@@ -130,8 +130,8 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
-		const title = obj.querySelector('.titleWrap') as HTMLElement;
-		const list = obj.querySelector(':scope > .list') as HTMLElement;
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
 
 		U.Dom.toggleClass(title, 'isOpen', isOpen);
 		U.Dom.toggleClass(list, 'isOpen', isOpen);
@@ -142,9 +142,9 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
-		const title = obj.querySelector('.titleWrap') as HTMLElement;
-		const list = obj.querySelector(':scope > .list') as HTMLElement;
-		const isOpen = list?.classList.contains('isOpen');
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
+		const isOpen = U.Dom.hasClass(list, 'isOpen');
 
 		U.Dom.toggle(list, 200, isOpen);
 		U.Dom.toggleClass(title, 'isOpen', !isOpen);

@@ -35,8 +35,8 @@ const NavigationItem = forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		U.Dom.toggleClass(node, 'withIcon', !!node.querySelector('.iconObject'));
-		U.Dom.toggleClass(node, 'withDescr', !!node.querySelector('.descr'));
+		U.Dom.toggleClass(node, 'withIcon', !!U.Dom.select('.iconObject', node));
+		U.Dom.toggleClass(node, 'withDescr', !!U.Dom.select('.descr', node));
 	});
 
 	return (

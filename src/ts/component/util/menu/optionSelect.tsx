@@ -547,7 +547,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			setActive(item, false);
 		};
 
-		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		if (el) {
 			Preview.tooltipShow({ text: item.name, element: el });
 		};
@@ -558,7 +558,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			setActive(item, false);
 		};
 
-		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		if (el) {
 			Preview.tooltipShow({ text: item.name, element: el });
 		};

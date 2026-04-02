@@ -50,10 +50,10 @@ const BlockFeatured = forwardRef<I.BlockRef, Props>((props, ref) => {
 		U.Dom.toggleClass(obj, 'isHidden', !items.length);
 
 		if (node) {
-			node.querySelectorAll('.cell.first').forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
-			const firstCell = node.querySelector('.cell');
+			U.Dom.selectAll('.cell.first', node).forEach(el => U.Dom.removeClass(el, 'first'));
+			const firstCell = U.Dom.select('.cell', node);
 			if (firstCell) {
-				U.Dom.addClass(firstCell as HTMLElement, 'first');
+				U.Dom.addClass(firstCell, 'first');
 			};
 		};
 	};

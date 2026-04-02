@@ -203,7 +203,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const list = container.querySelectorAll('.selectionTarget');
+		const list = U.Dom.selectAll('.selectionTarget', container);
 
 		list.forEach((el: Element) => {
 			const id = el.getAttribute('data-id');

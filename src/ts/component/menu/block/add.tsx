@@ -585,12 +585,12 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
-								element?.querySelector(`.info`)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+								U.Dom.select('.info', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-open BlockEmbed edit mode
 							if (param.type == I.BlockType.Embed) {
-								element?.querySelector(`.focusable`)?.dispatchEvent(new CustomEvent('edit', { bubbles: true }));
+								U.Dom.select('.focusable', element)?.dispatchEvent(new CustomEvent('edit', { bubbles: true }));
 							};
 
 							// Auto-open BlockDataview source menu
@@ -600,12 +600,12 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 							// Auto-open BlockFile upload dialog
 							if (param.type == I.BlockType.File) {
-								element?.querySelector(`.fileWrap`)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+								U.Dom.select('.fileWrap', element)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 							};
 
 							// Auto-focus bookmark input field
 							if (param.type == I.BlockType.Bookmark) {
-								element?.querySelector('.urlToggle')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+								U.Dom.select('.urlToggle', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 						}, S.Menu.getTimeout());
 					});

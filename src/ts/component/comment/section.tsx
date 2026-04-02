@@ -184,7 +184,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const el = node.querySelector(`[data-message-id="${msgId}"]`);
+			const el = U.Dom.select(`[data-message-id="${msgId}"]`, node);
 			if (!el) {
 				return;
 			};

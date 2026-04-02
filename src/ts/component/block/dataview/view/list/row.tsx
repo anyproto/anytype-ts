@@ -23,12 +23,12 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
-		const cells = node.querySelectorAll('.cellContent');
-		const first = node.querySelector('.cellContent:not(.isEmpty)');
+		const cells = U.Dom.selectAll('.cellContent', node);
+		const first = U.Dom.select('.cellContent:not(.isEmpty)', node);
 
-		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
+		cells.forEach(el => U.Dom.removeClass(el, 'first'));
 		if (first) {
-			U.Dom.addClass(first as HTMLElement, 'first');
+			U.Dom.addClass(first, 'first');
 		};
 	};
 

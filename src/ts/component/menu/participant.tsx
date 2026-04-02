@@ -54,7 +54,7 @@ const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 		};
 
 		const node = iconRef.current;
-		const img = node?.querySelector('.iconImage') as HTMLImageElement;
+		const img = U.Dom.select('.iconImage', node) as HTMLImageElement;
 
 		if (!img) {
 			setIsLoaded(true);

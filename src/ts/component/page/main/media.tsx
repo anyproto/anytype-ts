@@ -74,8 +74,8 @@ const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const img = node.querySelector('img.media') as HTMLImageElement;
-		const wrap = node.querySelector('.block.blockMedia .wrapContent') as HTMLElement;
+		const img = U.Dom.select('img.media', node) as HTMLImageElement;
+		const wrap = U.Dom.select('.block.blockMedia .wrapContent', node);
 
 		if (!img) {
 			return;
@@ -131,9 +131,9 @@ const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		const blocks = node.querySelector('#blocks') as HTMLElement;
-		const empty = node.querySelector('#empty') as HTMLElement;
-		const inner = node.querySelector('.side.left #inner') as HTMLElement;
+		const blocks = U.Dom.select('#blocks', node);
+		const empty = U.Dom.select('#empty', node);
+		const inner = U.Dom.select('.side.left #inner', node);
 		const container = U.Dom.getScrollContainer(isPopup);
 		const wh = (container?.clientHeight ?? 0) - 182;
 

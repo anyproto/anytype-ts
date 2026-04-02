@@ -20,7 +20,7 @@ const SidebarSectionObjectRelation = forwardRef<I.SidebarSectionRef, I.SidebarSe
 			return;
 		};
 
-		const cell = node.querySelector('.cell') as HTMLElement;
+		const cell = U.Dom.select('.cell', node);
 		const canEdit = cellRef.current?.canEdit();
 
 		U.Dom.toggleClass(node, 'canEdit', canEdit);

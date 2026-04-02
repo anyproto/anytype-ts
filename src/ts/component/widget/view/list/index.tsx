@@ -77,8 +77,8 @@ const WidgetViewList = forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 			const node = nodeRef.current;
 			if (!node) return;
 
-			const head = obj?.querySelector('.head') as HTMLElement;
-			const viewSelect = obj?.querySelector('#viewSelect') as HTMLElement;
+			const head = U.Dom.select('.head', obj);
+			const viewSelect = U.Dom.select('#viewSelect', obj);
 
 			let height = getTotalHeight(currentItems) + (isPreview ? 16 : 0);
 

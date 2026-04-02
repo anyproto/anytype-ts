@@ -133,7 +133,7 @@ const BlockDataviewHead = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						(nodeRef.current?.querySelector('#head-source-select') as HTMLElement)?.click();
+						U.Dom.select('#head-source-select', nodeRef.current)?.click();
 						onCreate(message, true);
 					});
 				});

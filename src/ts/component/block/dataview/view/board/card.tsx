@@ -95,13 +95,13 @@ const BoardCard = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
-		const cells = node.querySelectorAll('.cellContent');
-		const nonEmpty = node.querySelectorAll('.cellContent:not(.isEmpty)');
+		const cells = U.Dom.selectAll('.cellContent', node);
+		const nonEmpty = U.Dom.selectAll('.cellContent:not(.isEmpty)', node);
 		const last = nonEmpty.length ? nonEmpty[nonEmpty.length - 1] : null;
 
-		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'last'));
+		cells.forEach(el => U.Dom.removeClass(el, 'last'));
 		if (last) {
-			U.Dom.addClass(last as HTMLElement, 'last');
+			U.Dom.addClass(last, 'last');
 		};
 	};
 

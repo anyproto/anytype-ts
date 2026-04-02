@@ -55,7 +55,7 @@ class Highlight {
 			return;
 		};
 
-		if (node.querySelector('.highlightMark')) {
+		if (U.Dom.select('.highlightMark', node)) {
 			return;
 		};
 
@@ -73,7 +73,7 @@ class Highlight {
 			return;
 		};
 
-		const mark = node.querySelector('.highlightMark');
+		const mark = U.Dom.select('.highlightMark', node);
 		if (mark) {
 			mark.remove();
 		};

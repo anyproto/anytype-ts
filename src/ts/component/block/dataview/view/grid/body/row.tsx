@@ -57,10 +57,10 @@ const BodyRow = forwardRef<{}, Props>((props, ref) => {
 					const target = mutation.target as HTMLElement;
 					const oldValue = mutation.oldValue || '';
 					const hadEditing = oldValue.includes('isEditing');
-					const hasEditing = target.classList.contains('isEditing');
+					const hasEditing = U.Dom.hasClass(target, 'isEditing');
 
 					// Check if a cell just exited edit mode (had isEditing, now doesn't)
-					if (target.classList.contains('cell') && hadEditing && !hasEditing) {
+					if (U.Dom.hasClass(target, 'cell') && hadEditing && !hasEditing) {
 						// Use requestAnimationFrame to ensure DOM has fully updated
 						requestAnimationFrame(() => onUpdate());
 						break;

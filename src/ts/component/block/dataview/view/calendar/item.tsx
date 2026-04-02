@@ -98,7 +98,7 @@ const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 
 	const onMouseEnter = (e: any, item: any) => {
 		const node = nodeRef.current;
-		const element = node?.querySelector(`#record-${U.Common.esc(item.id)}`) as HTMLElement;
+		const element = U.Dom.select(`#record-${U.Common.esc(item.id)}`, node);
 		const name = U.String.shorten(item.name, 50);
 
 		if (element) {

@@ -664,9 +664,9 @@ class Sidebar {
 
 		const pageFlex = U.Dom.getPageFlexContainer(isPopup);
 		const page = U.Dom.getPageContainer(isPopup);
-		const header = page?.querySelector('#header') as HTMLElement;
-		const footer = page?.querySelector('#footer') as HTMLElement;
-		const loader = page?.querySelector('#loader') as HTMLElement;
+		const header = U.Dom.select('#header', page);
+		const footer = U.Dom.select('#footer', page);
+		const loader = U.Dom.select('#loader', page);
 
 		if (!pageFlex) {
 			return;

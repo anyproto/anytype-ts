@@ -83,7 +83,7 @@ const WidgetListItem = forwardRef<{}, Props>((props, ref) => {
 		const node = nodeRef.current;
 		if (!node) return;
 
-		U.Dom.toggleClass(node, 'withIcon', !!node.querySelector('.iconObject'));
+		U.Dom.toggleClass(node, 'withIcon', !!U.Dom.select('.iconObject', node));
 	};
 
 	useEffect(() => resize(), [ id, hideIcon ]);

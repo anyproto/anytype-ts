@@ -390,7 +390,7 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		} else {
 			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
-			const cellContent = cell?.querySelector('.cellContent') as HTMLElement;
+			const cellContent = U.Dom.select('.cellContent', cell);
 			if (cellContent) {
 				cellContent.style.left = '';
 				cellContent.style.right = '';

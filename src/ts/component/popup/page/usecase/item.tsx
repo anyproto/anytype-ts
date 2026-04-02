@@ -35,8 +35,8 @@ const PopupUsecasePageItem = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 			return;
 		};
 
-		const arrowLeft = nodeRef.current.querySelector('#arrowLeft') as HTMLElement;
-		const arrowRight = nodeRef.current.querySelector('#arrowRight') as HTMLElement;
+		const arrowLeft = U.Dom.select('#arrowLeft', nodeRef.current);
+		const arrowRight = U.Dom.select('#arrowRight', nodeRef.current);
 		const idx = swiperRef.current.activeIndex;
 		const length = (swiperRef.current.slides || []).length;
 

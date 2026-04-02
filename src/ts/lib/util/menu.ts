@@ -1877,7 +1877,7 @@ class UtilMenu {
 		const element = document.elementFromPoint(x, y) as HTMLElement;
 		const isInput = element?.tagName === 'INPUT';
 		const isTextarea = element?.tagName === 'TEXTAREA';
-		const isEditable = element?.classList.contains('editable');
+		const isEditable = U.Dom.hasClass(element, 'editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 

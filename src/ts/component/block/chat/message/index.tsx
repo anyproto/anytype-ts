@@ -84,8 +84,8 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const et = node.querySelector('.bubbleOuter .text');
-		const er = node.querySelector('.reply .text');
+		const et = U.Dom.select('.bubbleOuter .text', node);
+		const er = U.Dom.select('.reply .text', node);
 
 		renderMentions(rootId, et, marks, () => text, { subId });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
@@ -103,7 +103,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		let menuContext = null;
 
 		S.Menu.open('smile', {
-			element: node?.querySelector('#reaction-add'),
+			element: U.Dom.select('#reaction-add', node),
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,

@@ -82,10 +82,10 @@ const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const el = node.querySelector('.day.active') as HTMLElement;
+		const el = U.Dom.select('.day.active', node);
 		if (!el) return;
 
-		const scroll = node.querySelector('.body') as HTMLElement;
+		const scroll = U.Dom.select('.body', node);
 		if (!scroll) return;
 
 		const st = scroll.scrollTop;
@@ -105,10 +105,10 @@ const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const wrap = node.querySelector('.wrap') as HTMLElement;
+		const wrap = U.Dom.select('.wrap', node);
 		const container = U.Dom.getPageContainer(isPopup);
 		const mw = (container?.clientWidth ?? 0) - PADDING * 2;
-		const day = node.querySelector('.day') as HTMLElement;
+		const day = U.Dom.select('.day', node);
 		const menu = S.Menu.get('calendarDay');
 
 		if (wrap) {

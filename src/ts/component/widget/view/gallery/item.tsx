@@ -79,7 +79,7 @@ const WidgetGalleryItem = forwardRef<{}, Props>(({
 	const resize = () => {
 		const node = nodeRef.current;
 
-		U.Dom.toggleClass(node, 'withIcon', !!node?.querySelector('.iconObject'));
+		U.Dom.toggleClass(node, 'withIcon', !!U.Dom.select('.iconObject', node));
 		onResize?.();
 	};
 

@@ -276,8 +276,8 @@ const SidebarPageSettingsLibrary = forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		U.Dom.removeClass(body.querySelector('.item.active'), 'active');
-		U.Dom.addClass(body.querySelector(`#item-${U.Common.esc(id)}`), 'active');
+		U.Dom.removeClass(U.Dom.select('.item.active', body), 'active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(id)}`, body), 'active');
 	};
 
 	const onContext = (item: any) => {

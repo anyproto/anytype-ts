@@ -969,9 +969,9 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 		U.Dom.addClass(el, 'hover');
 
 		if (scroll) {
-			let scrollWrap = nodeRef.current?.querySelector('.scrollWrap') as HTMLElement;
+			let scrollWrap = U.Dom.select('.scrollWrap', nodeRef.current);
 			if (!scrollWrap) {
-				scrollWrap = nodeRef.current?.querySelector('.content') as HTMLElement;
+				scrollWrap = U.Dom.select('.content', nodeRef.current);
 			};
 
 			if (scrollWrap) {

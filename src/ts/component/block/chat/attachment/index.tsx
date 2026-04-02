@@ -132,8 +132,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
 					src.current = image;
 
-					const img = node?.querySelector('#image') as HTMLImageElement;
-					const blur = node?.querySelector('#blur') as HTMLElement;
+					const img = U.Dom.select('#image', node) as HTMLImageElement;
+					const blur = U.Dom.select('#blur', node);
 
 					if (img) {
 						img.src = image;

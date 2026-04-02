@@ -109,7 +109,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
 		const cell = U.Dom.get(cellId);
-		const nameEl = cell?.querySelector('.name') as HTMLElement;
+		const nameEl = U.Dom.select('.name', cell) as HTMLElement;
 		const lh = nameEl ? parseInt(window.getComputedStyle(nameEl).lineHeight, 10) || 20 : 20;
 
 		raf(() => {

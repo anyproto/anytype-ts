@@ -184,7 +184,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const content = U.Dom.select('.content', menu);
 		const { wh } = U.Dom.getWindowDimensions();
 		const containerEl = U.Dom.getScrollContainer(data.isPopup);
-		const headerEl = containerEl?.querySelector('#header .side.center') as HTMLElement;
+		const headerEl = U.Dom.select('#header .side.center', containerEl);
 		const width = Math.min(headerEl?.clientWidth || 0, J.Size.editor);
 
 		let height = 0;
