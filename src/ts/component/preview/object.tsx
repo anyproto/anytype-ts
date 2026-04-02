@@ -455,7 +455,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		>
 			{onMore ? (
 				<div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}>
-					<Icon />
+					<Icon name="common/more" />
 				</div>
 			) : ''}
 
