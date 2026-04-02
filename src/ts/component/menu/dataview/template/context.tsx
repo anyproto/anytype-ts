@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -14,12 +13,12 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -60,7 +59,7 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 			case 'edit': {
 				U.Object.openPopup(template, {
-					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
+					onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${template.id}`))
 				});
 
 				analytics.event('EditTemplate', { route });

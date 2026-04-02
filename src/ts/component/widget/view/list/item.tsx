@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -66,12 +65,12 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		onContext({ 
-			node, 
-			element: $(moreRef.current), 
-			withElement, 
+		onContext({
+			node,
+			element: moreRef.current,
+			withElement,
 			subId, 
 			objectId: id,
 			data: {
@@ -82,9 +81,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) return;
 
-		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+		U.Dom.toggleClass(node, 'withIcon', !!node.querySelector('.iconObject'));
 	};
 
 	useEffect(() => resize(), [ id, hideIcon ]);

@@ -8,7 +8,8 @@
 	padding: 26px 0px 12px 0px;
 	background: linear-gradient(to bottom, transparent, var(--color-bg-primary) 50%);
 	transition: opacity 0.3s $easeInQuint;
-
+}
+.socialBlock {
 	&.isHidden { opacity: 0; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
 
 	.commentCounter {
@@ -16,9 +17,10 @@
 		padding: 7px 10px 7px 8px; border-radius: 18px;
 		background: var(--color-shape-tertiary);
 		user-select: none;
-
-		&:hover { background: var(--color-shape-secondary); }
-
+	}
+	.commentCounter:hover { background: var(--color-shape-secondary); }
+	.commentCounter.isFixed { position: fixed; bottom: 18px; }
+	.commentCounter {
 		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
 		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
 	}
@@ -26,11 +28,13 @@
 
 .commentSection {
 	display: flex; flex-direction: column; flex: 1 1 auto;
-	padding: 0px;
-
+	padding: 0px; background-color: var(--color-bg-primary);
+}
+.commentSection {
 	&.isSelectionSelected, .isSelectionSelected { background-color: unset !important; outline: none !important; }
 
 	&.isVisible {
+		position: relative; z-index: 3;
 		padding-top: 16px;
 		border-top: 1px solid var(--color-shape-secondary);
 	}
@@ -38,12 +42,12 @@
 	.commentBody { flex: 1 1 auto; }
 	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
+	.head { display: flex; align-items: center; justify-content: space-between; }
 	.head {
-		display: flex; align-items: center; justify-content: space-between;
-
 		.side.left {
 			display: flex; align-items: center; gap: 0px 8px; min-width: 0;
-
+		}
+		.side.left {
 			.iconObject { flex-shrink: 0; }
 			.author { @include text-small; font-weight: 500; line-height: 18px; }
 			.date { @include text-small; color: var(--color-text-secondary); line-height: 18px; flex-shrink: 0; }
@@ -62,27 +66,24 @@
 		gap: 0px; position: relative;
 		background: var(--color-shape-highlight-light);
 		transition: background-color 0.3s ease;
-
+	}
+	.commentPost {
 		.content, .content * { user-select: text !important; }
+		.content { word-break: break-word; }
 
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-		.content { word-break: break-word; }
 
 		.head { margin: 0px 0px 4px 0px; }
 
+		.hoverActions { display: flex; align-items: center; gap: 0px 4px; }
 		.hoverActions {
-			display: flex; align-items: center; gap: 0px 4px;
-
 			.icon.withBackground { width: 24px; height: 24px; }
 		}
 
-		.replyList {
-			width: 100%; margin: 0px; padding: 0px;
-		}
+		.replyList { width: 100%; margin: 0px; padding: 0px; }
 
+		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 0px; }
 		.replyFormWrap {
-			width: 100%; margin: 0px; padding: 12px 0px 0px 0px;
-
 			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
 		}
@@ -90,7 +91,8 @@
 		.reactions {
 			padding: 12px 0px 0px 0px;
 			display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center;
-
+		}
+		.reactions {
 			.reaction {
 				display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center;
 				@include text-small; font-weight: 500;
@@ -107,18 +109,19 @@
 		margin: 16px 0px 0px 0px; padding: 16px 0px 0px 0px; position: relative;
 		border-top: 1px solid var(--color-shape-highlight-medium);
 		transition: background-color 0.3s ease;
-
+	}
+	.commentReply {
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
 		.content {
 			margin: 4px 0px 0px 0px; line-height: 20px; word-break: break-word;
-
+		}
+		.content {
 			&, * { user-select: text !important; }
 		}
 
+		.hoverActions { display: flex; align-items: center; gap: 0px 2px; }
 		.hoverActions {
-			display: flex; align-items: center; gap: 0px 2px;
-
 			.hoverBtn {
 				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
 				border-radius: 4px; user-select: none;
@@ -136,15 +139,14 @@
 		display: flex; flex-direction: column; border-radius: inherit;
 		background-color: var(--color-shape-highlight-light);
 		max-height: 360px; overflow: hidden;
-
+	}
+	.commentForm {
 		&.isReply { max-height: 280px; }
 		&.isEdit { background-color: transparent; max-height: none; overflow: visible; }
-
 		&.isEdit {
 			.contentArea { padding: 0px; }
 			.formToolbar { padding: 8px 0px 0px 0px; }
 		}
-
 		&.isEdit.isReply {
 			max-height: 280px; overflow: hidden;
 
@@ -156,20 +158,20 @@
 		.formToolbar {
 			display: flex; align-items: center; justify-content: space-between;
 			padding: 8px 12px; flex-shrink: 0; min-height: 36px;
+		}
+		.formToolbar {
+			.side { display: flex; align-items: center; gap: 0px 8px; }
 
-			.side { display: flex; align-items: center; gap: 0px 12px; }
+			.icon.withBackground { width: 24px !important; height: 24px !important; }
+			.icon.plus { border-radius: 50%; background-color: var(--color-shape-secondary); }
 
-			.icon.withBackground { width: 24px; height: 24px; }
-			.icon.plus {
-				border-radius: 50%; background-color: var(--color-shape-secondary);
-			}
-
-			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); }
+			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); margin: 0px 4px; }
 
 			.btn.send {
 				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
 				border-radius: 50%; background: var(--color-system-accent-100); user-select: none;
-
+			}
+			.btn.send {
 				&.isDisabled { opacity: 0; pointer-events: none; }
 				.icon.send { width: 20px; height: 20px; }
 			}
@@ -186,9 +188,8 @@
 
 	/* ---- Lexical Editor ---- */
 
+	.commentEditorWrap { position: relative; }
 	.commentEditorWrap {
-		position: relative;
-
 		.commentEditorInput {
 			min-height: 20px; padding: 0px; border: 0px; background-color: transparent;
 			outline: none; line-height: 20px; word-break: break-word;
@@ -234,7 +235,8 @@
 	.codeLangOverlay {
 		position: absolute; top: 0; left: 0; right: 0; bottom: 0;
 		pointer-events: none; z-index: 1;
-
+	}
+	.codeLangOverlay {
 		.codeLangBtn {
 			position: absolute; padding: 2px 8px; pointer-events: auto;
 			@include text-very-small; color: var(--color-text-secondary); font-family: var(--fontFamily);
@@ -258,14 +260,14 @@
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
 	.commentEditor-attachment { padding: 8px 8px 4px 0px; }
-
 	.commentEditor-attachment {
 		.attachment {
 			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
 			border-radius: 8px; border: 1px solid var(--color-shape-tertiary);
 			background: var(--color-bg-primary);
 			box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
-
+		}
+		.attachment {
 			.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 12px; width: 100%; }
 			.iconObject { background-color: var(--color-shape-tertiary); border-radius: 6px; }
 			.info { flex-grow: 1; width: 100%; }
@@ -278,7 +280,8 @@
 				position: relative; max-height: 200px; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
 				border-radius: 12px; width: 100%; height: 100%;
-
+			}
+			.mediaWrapper {
 				.blur {
 					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px;
 					background-size: cover; filter: blur(64px);
@@ -330,11 +333,13 @@
 	.commentEmbedPreview {
 		position: relative; border-radius: 8px; border: 1px solid var(--color-shape-tertiary);
 		background: var(--color-bg-primary); overflow: hidden; user-select: none;
-
+	}
+	.commentEmbedPreview {
 		.empty {
 			display: flex; flex-direction: column; align-items: center; justify-content: center;
 			padding: 24px 16px; gap: 4px 0px;
-
+		}
+		.empty {
 			.processorName { font-weight: 500; }
 			.hint { @include text-small; color: var(--color-text-secondary); }
 		}
@@ -346,7 +351,8 @@
 		.embedActions {
 			position: absolute; top: 4px; right: 4px; display: flex; gap: 0px 2px;
 			opacity: 0; transition: $transitionAllCommon;
-
+		}
+		.embedActions {
 			.icon {
 				width: 28px; height: 28px; border-radius: 6px;
 				background-color: var(--color-bg-primary);
@@ -375,7 +381,8 @@
 		background: var(--color-shape-highlight-light); border-radius: 8px;
 		font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 		white-space: pre-wrap; tab-size: 4; overflow-x: auto;
-
+	}
+	.commentCodeBlock {
 		code { font-family: inherit; font-size: inherit; }
 
 		.codeLang {
@@ -390,7 +397,8 @@
 	.content, .commentParagraph, .commentH1, .commentH2, .commentH3, .commentBlockquote {
 		markupmention {
 			color: var(--color-system-accent-100); font-weight: 500;
-
+		}
+		markupmention {
 			smile, .space { display: none; }
 			name { color: inherit; font-weight: inherit; }
 		}
@@ -400,19 +408,20 @@
 
 		markupobject {
 			color: var(--color-system-accent-100); font-weight: 500;
-
+		}
+		markupobject {
 			smile, .space { display: none; }
 			name { color: inherit; font-weight: inherit; }
 		}
 	}
 
 	/* Rendered attachments in posts */
+	.commentAttachments { display: flex; flex-direction: column; gap: 8px; }
 	.commentAttachments {
-		display: flex; flex-direction: column; gap: 8px;
-
 		.attachment {
 			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
-
+		}
+		.attachment {
 			.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 12px; width: 100%; }
 			.iconObject { background-color: var(--color-shape-tertiary); border-radius: 6px; }
 			.info { flex-grow: 1; width: 100%; }
@@ -425,7 +434,8 @@
 				position: relative; max-height: 360px; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
 				border-radius: 12px; width: 100%; height: 100%;
-
+			}
+			.mediaWrapper {
 				.blur {
 					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px;
 					background-size: cover; filter: blur(64px);
@@ -464,7 +474,8 @@
 
 	.commentCheckbox {
 		display: flex; align-items: flex-start; gap: 0px 6px; padding: 1px 0px; line-height: 20px;
-
+	}
+	.commentCheckbox {
 		.checkboxMark {
 			width: 20px; height: 20px; min-width: 20px;
 			background-size: 20px 20px; background-repeat: no-repeat;
@@ -476,5 +487,4 @@
 	}
 
 	.content > :first-child:not(.commentCodeBlock) { padding-top: 0px; }
-
 }

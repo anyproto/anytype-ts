@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
@@ -31,9 +30,13 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const lastValidTarget = useRef<{ data: any, position: I.BlockPosition } | null>(null);
 	const dragData = useRef<any>(null);
 
+	const dragHandler = useRef<((e: any) => void) | null>(null);
+	const dragEndHandler = useRef<((e: any) => void) | null>(null);
+	const dragOverHandler = useRef<((e: any) => void) | null>(null);
+
 	const getContainer = () => {
 		const isPopup = keyboard.isPopup();
-		return $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
+		return isPopup ? U.Dom.get('popupPage-innerWrap') : U.Dom.get('dragProvider');
 	};
 
 	const initData = () => {
@@ -44,18 +47,19 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		clearState();
 		isInitialised.current = true;
 
-		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
-			const data = initNode(el, i);
-			if (data) {
-				objectData.current.set(data.cacheKey, data);
-			};
-		});
+		const cnt = getContainer();
+		if (cnt) {
+			U.Dom.selectAll('.dropTarget.isDroppable', cnt).forEach((el: HTMLElement, i: number) => {
+				const data = initNode(el, i);
+				if (data) {
+					objectData.current.set(data.cacheKey, data);
+				};
+			});
+		};
 	};
 
 	const initNode = (el: any, index: number) => {
-		const item = $(el);
-
-		if (!item.length) {
+		if (!el) {
 			return null;
 		};
 
@@ -73,35 +77,35 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const data: any = {};
 
 		keys.forEach(key => {
-			data[U.String.toCamelCase(key)] = item.attr(`data-${key}`);
+			data[U.String.toCamelCase(key)] = el.getAttribute(`data-${key}`);
 		});
 
 		return {
 			...data,
-			obj: item,
+			obj: el,
 			index,
-			...getNodeRect(item, data),
-			isTargetTop: item.hasClass('targetTop'),
-			isTargetBot: item.hasClass('targetBot'),
-			isTargetCol: item.hasClass('targetCol'),
-			isEmptyToggle: item.hasClass('emptyToggle'),
+			...getNodeRect(el, data),
+			isTargetTop: U.Dom.hasClass(el, 'targetTop'),
+			isTargetBot: U.Dom.hasClass(el, 'targetBot'),
+			isTargetCol: U.Dom.hasClass(el, 'targetCol'),
+			isEmptyToggle: U.Dom.hasClass(el, 'emptyToggle'),
 		};
 	};
 
 	const getNodeRect = (el: any, data: any): { x: number, y: number, width: number, height: number } => {
-		const { left, top } = el.offset();
-		const x = left;
-		const width = el.width();
+		const elRect = el.getBoundingClientRect();
+		const x = elRect.left + window.scrollX;
+		const width = U.Dom.contentWidth(el);
 
-		let y = top;
-		let height = el.height();
+		let y = elRect.top + window.scrollY;
+		let height = U.Dom.contentHeight(el);
 
 		// Add block's paddings to height
 		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-			const block = $(`#block-${U.Common.esc(data.id)}`);
-			if (block.length) {
-				const top = parseInt(block.css('paddingTop'));
-				const bot = parseInt(block.css('paddingBottom'));
+			const block = U.Dom.get(`block-${U.Common.esc(data.id)}`);
+			if (block) {
+				const top = parseInt(getComputedStyle(block).paddingTop);
+				const bot = parseInt(getComputedStyle(block).paddingBottom);
 
 				y -= top + 2;
 				height += top + bot + 2;
@@ -151,9 +155,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		// DOM-based fallback for Linux where coordinate tracking may fail
 		if (!data && !isFileDrop) {
-			const dropEl = $(e.target).closest('.dropTarget.isDroppable');
-			if (dropEl.length) {
-				data = initNode(dropEl.get(0), 0);
+			const dropEl = (e.target as HTMLElement).closest('.dropTarget.isDroppable');
+			if (dropEl) {
+				data = initNode(dropEl, 0);
 				if (data) {
 					const dropX = e.pageX || e.clientX || lastKnownCoords.current.x || 0;
 					const dropY = e.pageY || e.clientY || lastKnownCoords.current.y || 0;
@@ -253,12 +257,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 					U.File.showFileDropError(message);
 
 					if (!message.error.code) {
+						const isWidget = data && (data.dropType == I.DropType.Widget);
+						const route = isWidget ? analytics.route.uploadDnDWidget : analytics.route.uploadDnDEditor;
+
 						if (filePaths.length) {
-							analytics.event('UploadFile', { route: analytics.route.uploadDnDEditor, count: filePaths.length });
+							analytics.event('UploadFile', { route, count: filePaths.length });
 						};
 
 						if (dirPaths.length) {
-							analytics.event('CreateCollectionFromFolder', { route: analytics.route.uploadDnDEditor, filesCount: filePaths.length });
+							analytics.event('CreateCollectionFromFolder', { route, filesCount: filePaths.length });
 						};
 					};
 
@@ -279,13 +286,10 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const containerEl = U.Dom.getScrollContainer(isPopup);
-		const container = containerEl ? $(containerEl) : $();
-		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
-		const layer = $('#dragLayer');
-		const body = $('body');
+		const sidebarEl = S.Common.getRef('sidebarLeft')?.getNode();
+		const layer = U.Dom.get('dragLayer');
 		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
 
 		origin.current = component;
@@ -301,36 +305,47 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		initData();
 		unbind();
 
-		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
+		if (layer) {
+			e.dataTransfer.setDragImage(layer, 0, 0);
+		};
 		e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
 		e.dataTransfer.setData(`data-${JSON.stringify(dataTransfer)}`, '1');
 
-		node.addClass('isDragging');
-		body.addClass('isDragging');
+		U.Dom.addClass(node, 'isDragging');
+		U.Dom.addClass(document.body, 'isDragging');
 
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 		Preview.hideAll();
 
-		win.on('drag.drag', e => onDrag(e));
-		win.on('dragend.drag', e => onDragEnd(e));
-
-		// Safety net: ensure preventDefault is called even if React onDragOver doesn't fire (Linux)
-		win.on('dragover.drag', e => {
+		dragHandler.current = (e: any) => onDrag(e);
+		dragEndHandler.current = (e: any) => onDragEnd(e);
+		dragOverHandler.current = (e: any) => {
 			e.preventDefault();
 			const ox = e.pageX || e.clientX || 0;
 			const oy = e.pageY || e.clientY || 0;
 			if (ox || oy) {
 				lastKnownCoords.current = { x: ox, y: oy };
 			};
-		});
+		};
 
-		container.off('scroll.drag').on('scroll.drag', e => onScroll(e));
-		sidebar.off('scroll.drag').on('scroll.drag', e => onScroll(e));
+		window.addEventListener('drag', dragHandler.current);
+		window.addEventListener('dragend', dragEndHandler.current);
+		window.addEventListener('dragover', dragOverHandler.current);
 
-		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown({ 
-			container,
+		const scrollDragHandler = (e: any) => onScroll(e);
+		if (containerEl) {
+			containerEl.addEventListener('scroll', scrollDragHandler);
+			(containerEl as any)._scrollDragHandler = scrollDragHandler;
+		};
+		if (sidebarEl) {
+			sidebarEl.addEventListener('scroll', scrollDragHandler);
+			(sidebarEl as any)._scrollDragHandler = scrollDragHandler;
+		};
+
+		U.Dom.selectAll('.colResize.active').forEach(el => U.Dom.removeClass(el, 'active'));
+		scrollOnMove.onMouseDown({
+			container: containerEl || undefined,
 			onMouseUp: () => onDragEnd(e),
 		});
 
@@ -443,9 +458,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				if (x || y) {
 					const el = document.elementFromPoint(x, y);
 					if (el) {
-						const dropEl = $(el).closest('.dropTarget.isDroppable');
-						if (dropEl.length) {
-							target = initNode(dropEl.get(0), 0);
+						const dropEl = (el as HTMLElement).closest('.dropTarget.isDroppable');
+						if (dropEl) {
+							target = initNode(dropEl, 0);
 							if (target) {
 								const col1 = target.x - J.Size.blockMenu / 4;
 								const col2 = target.x + target.width;
@@ -495,11 +510,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		dragData.current = null;
 
 		const isPopup = keyboard.isPopup();
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const endContainerEl = U.Dom.getScrollContainer(isPopup);
-		const endContainer = endContainerEl ? $(endContainerEl) : $();
-		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
-		const body = $('body');
+		const sidebarEl = S.Common.getRef('sidebarLeft')?.getNode();
 
 		layerRef.current.hide();
 		clearState();
@@ -509,13 +522,19 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		keyboard.setDragging(false);
 		keyboard.disableSelection(false);
 
-		node.removeClass('isDragging');
-		body.removeClass('isDragging');
+		U.Dom.removeClass(node, 'isDragging');
+		U.Dom.removeClass(document.body, 'isDragging');
 
-		endContainer.off('scroll.drag');
-		sidebar.off('scroll.drag');
+		if (endContainerEl && (endContainerEl as any)._scrollDragHandler) {
+			endContainerEl.removeEventListener('scroll', (endContainerEl as any)._scrollDragHandler);
+			delete (endContainerEl as any)._scrollDragHandler;
+		};
+		if (sidebarEl && (sidebarEl as any)._scrollDragHandler) {
+			sidebarEl.removeEventListener('scroll', (sidebarEl as any)._scrollDragHandler);
+			delete (sidebarEl as any)._scrollDragHandler;
+		};
 
-		$('.isDragging').removeClass('isDragging');
+		U.Dom.selectAll('.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
 		scrollOnMove.onMouseUp(true);
 
 		window.clearTimeout(timeoutDragOver.current);
@@ -527,7 +546,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
 
-		const win = $(window);
 		const { rootId, dropType, withAlt } = data;
 		const ids = data.ids || [];
 		const contextId = rootId;
@@ -547,7 +565,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 				selection?.renderSelection();
 				raf(() => {
-					win.trigger('resize');
+					window.dispatchEvent(new Event('resize'));
 				});
 			};
 
@@ -767,26 +785,28 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			return;
 		};
 
-		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
-			const item = $(el);
-			const cacheKey = item.attr('data-cache-key');
+		const cnt = getContainer();
+		if (cnt) {
+			U.Dom.selectAll('.dropTarget.isDroppable', cnt).forEach((el: HTMLElement, i: number) => {
+				const cacheKey = el.getAttribute('data-cache-key');
 
-			let data = {};
+				let data = {};
 
-			if (objectData.current.has(cacheKey)) {
-				data = objectData.current.get(cacheKey);
+				if (objectData.current.has(cacheKey)) {
+					data = objectData.current.get(cacheKey);
 
-				objectData.current.set(cacheKey, {
-					...data,
-					...getNodeRect(item, data),
-				});
-			} else {
-				const data = initNode(el, i);
-				if (data) {
-					objectData.current.set(data.cacheKey, data);
+					objectData.current.set(cacheKey, {
+						...data,
+						...getNodeRect(el, data),
+					});
+				} else {
+					const data = initNode(el, i);
+					if (data) {
+						objectData.current.set(data.cacheKey, data);
+					};
 				};
-			};
-		});
+			});
+		};
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
@@ -864,11 +884,11 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				isTargetCol = hd.isTargetCol;
 				isEmptyToggle = hd.isEmptyToggle;
 
-				obj = $(hd.obj);
-				type = obj.attr('data-type');
-				style = Number(obj.attr('data-style')) || 0;
-				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
-				isReversed = Number(obj.attr('data-reversed')) || 0;
+				obj = hd.obj;
+				type = obj.getAttribute('data-type');
+				style = Number(obj.getAttribute('data-style')) || 0;
+				canDropMiddle = Number(obj.getAttribute('data-drop-middle')) || 0;
+				isReversed = Number(obj.getAttribute('data-reversed')) || 0;
 
 				col1 = x - J.Size.blockMenu / 4;
 				col2 = x + width;
@@ -1016,14 +1036,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			if (targetChanged && prevKey) {
 				const prevData = objectData.current.get(prevKey);
 				if (prevData && prevData.obj) {
-					$(prevData.obj).removeClass('isOver top bottom left right middle');
+					U.Dom.removeClass(prevData.obj, 'isOver top bottom left right middle');
 				};
 			};
 
 			// Apply new styles
 			if (shouldShow && currentObj) {
 				// Remove direction classes first, then add current ones
-				currentObj.removeClass('top bottom left right middle').addClass(`isOver ${dirClass}`);
+				U.Dom.removeClass(currentObj, 'top bottom left right middle');
+				U.Dom.addClass(currentObj, `isOver ${dirClass}`);
 			} else
 			if (targetChanged && !shouldShow) {
 				// Clear all styles if we're not hovering anything valid
@@ -1043,10 +1064,10 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const setClass = (ids: string[]) => {
-		$('.block.isDragging').removeClass('isDragging');
-		
+		U.Dom.selectAll('.block.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
+
 		for (const id of ids) {
-			$(`#block-${U.Common.esc(id)}`).addClass('isDragging');
+			U.Dom.addClass(U.Dom.get(`block-${U.Common.esc(id)}`), 'isDragging');
 		};
 	};
 
@@ -1090,7 +1111,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const clearStyle = () => {
-		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver top bottom left right middle'));
 	};
 
 	const clearState = () => {
@@ -1125,7 +1146,18 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const unbind = () => {
-		$(window).off('drag.drag dragover.drag dragend.drag');
+		if (dragHandler.current) {
+			window.removeEventListener('drag', dragHandler.current);
+			dragHandler.current = null;
+		};
+		if (dragEndHandler.current) {
+			window.removeEventListener('dragend', dragEndHandler.current);
+			dragEndHandler.current = null;
+		};
+		if (dragOverHandler.current) {
+			window.removeEventListener('dragover', dragOverHandler.current);
+			dragOverHandler.current = null;
+		};
 	};
 
 	useEffect(() => {

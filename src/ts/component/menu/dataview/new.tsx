@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -17,12 +16,12 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const loadTemplate = () => {
@@ -180,7 +179,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const resize = () => {
-		$(`#${getId()} .content`).css({ height: 'auto' });
+		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: 'auto' });
 		position();
 	};
 

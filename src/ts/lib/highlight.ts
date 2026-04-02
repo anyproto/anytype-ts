@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Storage from 'Lib/storage';
 
 const HIGHLIGHTS_MAP = {
@@ -32,7 +31,7 @@ class Highlight {
 			return;
 		};
 
-		HIGHLIGHTS_MAP[key].forEach(item => this.add($(item)));
+		HIGHLIGHTS_MAP[key].forEach(item => this.add(U.Dom.select(item)));
 	};
 
 	/**
@@ -43,37 +42,41 @@ class Highlight {
 		Storage.setHighlight(key, false);
 
 		if (HIGHLIGHTS_MAP[key]) {
-			HIGHLIGHTS_MAP[key].forEach(item => { this.remove($(item)); });
+			HIGHLIGHTS_MAP[key].forEach(item => this.remove(U.Dom.select(item)));
 		};
 	};
 
 	/**
 	 * Adds a highlight mark to a node.
-	 * @param {JQuery<HTMLElement>} node - The node to add the highlight to.
+	 * @param {HTMLElement} node - The node to add the highlight to.
 	 */
-	add (node) {
-		if (!node || !node.length) {
+	add (node: HTMLElement) {
+		if (!node) {
 			return;
 		};
 
-		if (node.find('.highlightMark').length) {
+		if (node.querySelector('.highlightMark')) {
 			return;
 		};
 
-		const dot = $('<div />').addClass('highlightMark');
-		node.append(dot);
+		const dot = document.createElement('div');
+		dot.className = 'highlightMark';
+		node.appendChild(dot);
 	};
 
 	/**
 	 * Removes a highlight mark from a node.
-	 * @param {JQuery<HTMLElement>} node - The node to remove the highlight from.
+	 * @param {HTMLElement} node - The node to remove the highlight from.
 	 */
-	remove (node) {
-		if (!node || !node.length) {
+	remove (node: HTMLElement) {
+		if (!node) {
 			return;
 		};
 
-		node.find('.highlightMark').remove();
+		const mark = node.querySelector('.highlightMark');
+		if (mark) {
+			mark.remove();
+		};
 	};
 
 };

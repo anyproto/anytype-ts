@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
@@ -20,12 +19,17 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const view = getView();
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const first = node.find('.cellContent:not(.isEmpty)').first();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('first');
-		if (first.length) {
-			first.addClass('first');
+		const cells = node.querySelectorAll('.cellContent');
+		const first = node.querySelector('.cellContent:not(.isEmpty)');
+
+		cells.forEach(el => U.Dom.removeClass(el as HTMLElement, 'first'));
+		if (first) {
+			U.Dom.addClass(first as HTMLElement, 'first');
 		};
 	};
 

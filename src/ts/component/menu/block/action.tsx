@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -41,14 +41,20 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.updateData(props.id, { filter: v });
 	};
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -540,7 +546,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => $(window).trigger(`updateDataviewData`), 50);
+					window.setTimeout(() => window.dispatchEvent(new CustomEvent('updateDataviewData')), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {

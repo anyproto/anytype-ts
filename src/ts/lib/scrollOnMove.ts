@@ -6,8 +6,8 @@ const SPEED_DIV = 100; // bigger → slower overall
 interface Param {
 	speed?: number;
 	step?: number;
-	isWindow?: boolean; 
-	container?: JQuery;
+	isWindow?: boolean;
+	container?: HTMLElement;
 	onMouseUp?: () => void;
 };
 
@@ -31,17 +31,16 @@ class ScrollOnMove {
 
 		const { isWindow, container } = this.param;
 		if (!isWindow) {
-			if (!container || !container.length) {
+			if (!container) {
 				return;
 			};
 
-			const el = container.get(0);
-			const rect = U.Dom.getElementRect(el);
+			const rect = U.Dom.getElementRect(container);
 
 			this.viewportWidth = rect.width;
 			this.viewportHeight = rect.height;
-			this.documentWidth = el.scrollWidth;
-			this.documentHeight = el.scrollHeight;
+			this.documentWidth = container.scrollWidth;
+			this.documentHeight = container.scrollHeight;
 			this.ox = rect.left;
 			this.oy = rect.top;
 		} else {
@@ -120,8 +119,8 @@ class ScrollOnMove {
 		};
 
 		// Current scroll positions
-		const curX = isWindow ? window.pageXOffset : container.scrollLeft();
-		const curY = isWindow ? window.pageYOffset : container.scrollTop();
+		const curX = isWindow ? window.pageXOffset : container.scrollLeft;
+		const curY = isWindow ? window.pageYOffset : container.scrollTop;
 
 		// Max scroll offsets
 		const maxX = Math.max(0, this.documentWidth - this.viewportWidth);
@@ -149,8 +148,8 @@ class ScrollOnMove {
 		if (isWindow) {
 			window.scrollTo(nextX, nextY);
 		} else {
-			container.scrollLeft(nextX);
-			container.scrollTop(nextY);
+			container.scrollLeft = nextX;
+			container.scrollTop = nextY;
 		};
 
 		return true;

@@ -7,7 +7,6 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import WidgetListItem from './item';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
@@ -74,32 +73,34 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		const currentLength = currentItems.length;
 
 		raf(() => {
-			const container = $('#sidebarPageWidget #body');
-			const obj = $(`#widget-${U.Common.esc(parent.id)}`);
-			const node = $(nodeRef.current);
-			const head = obj.find('.head');
-			const viewSelect = obj.find('#viewSelect');
+			const container = U.Dom.select('#sidebarPageWidget #body');
+			const obj = U.Dom.get(`widget-${parent.id}`);
+			const node = nodeRef.current;
+			if (!node) return;
+
+			const head = obj?.querySelector('.head') as HTMLElement;
+			const viewSelect = obj?.querySelector('#viewSelect') as HTMLElement;
 
 			let height = getTotalHeight(currentItems) + (isPreview ? 16 : 0);
 
 			if (isPreview) {
-				let maxHeight = container.height() - head.outerHeight(true);
-				if (viewSelect.length) {
-					maxHeight -= viewSelect.outerHeight(true);
+				let maxHeight = U.Dom.contentHeight(container) - (head?.offsetHeight ?? 0);
+				if (viewSelect) {
+					maxHeight -= viewSelect.offsetHeight;
 				};
 
 				height = Math.min(maxHeight, height);
 			};
 
-			const css: any = { height, paddingTop: '', paddingBottom: 0 };
+			const css: any = { height: `${height}px`, paddingTop: '', paddingBottom: '0px' };
 
 			if (!currentLength) {
-				css.paddingTop = 20;
-				css.paddingBottom = 22;
-				css.height = 36 + css.paddingTop + css.paddingBottom;
+				css.paddingTop = '20px';
+				css.paddingBottom = '22px';
+				css.height = `${36 + 20 + 22}px`;
 			};
 
-			node.css(css);
+			U.Dom.css(node, css);
 		});
 	};
 

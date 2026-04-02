@@ -22,6 +22,7 @@ const SPACE_KEYS = new Set([
 	'graphDataview',
 	'recentEditMode',
 	'widgetSections',
+	'channelBanner',
 	'binViewDetailed',
 ]);
 

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
@@ -562,7 +561,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		$(window).trigger('updateGraphSettings');
+		window.dispatchEvent(new CustomEvent('updateGraphSettings'));
 	};
 
 	/**

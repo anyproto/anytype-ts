@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Label } from 'Component';
@@ -35,12 +34,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const getFilterItems = () => {
@@ -364,7 +363,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			content = (
 				<MenuItemVertical
 					id={item.id}
-					icon={item.icon}
 					iconParam={item.iconParam}
 					name={item.name}
 					onMouseEnter={e => onMouseEnter(e, item)}
@@ -436,12 +434,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const beforePosition = () => {
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const items = getItems();
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT_ITEM + 16, Math.min(400, itemsHeight + 16));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	useImperativeHandle(ref, () => ({

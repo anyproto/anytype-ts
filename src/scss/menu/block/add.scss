@@ -21,6 +21,16 @@
 				.info { width: 154px; }
 			}
 
+			.icon.menuBlockTextParagraph,
+			.icon.menuBlockTextHeader,
+			.icon.menuBlockTextCallout,
+			.icon.menuBlockTextBulleted,
+			.icon.menuBlockTextNumbered,
+			.icon.menuBlockTextToggle,
+			.icon.menuBlockTextToggleHeader,
+			.icon.menuBlockTextQuote { color: var(--color-control-accent); }
+			.icon.menuBlockTextCheckbox { color: var(--color-system-accent-100); }
+
 			&.empty { padding-top: 16px; padding-bottom: 16px; @include text-small; }
 			&.empty::before { display: none; }
 

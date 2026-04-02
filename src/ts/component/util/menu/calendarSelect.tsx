@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import * as I from 'Interface';
@@ -114,13 +114,19 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		};
 	}, [ value ]);
 
+	const keydownHandler = useRef(null);
+
 	const bindKeyboard = (): void => {
 		unbindKeyboard();
-		$(window).on('keydown.calendarSelect', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbindKeyboard = (): void => {
-		$(window).off('keydown.calendarSelect');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any): void => {

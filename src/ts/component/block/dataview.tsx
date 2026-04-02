@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect, MouseEvent, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -51,6 +50,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const recordRefs = useRef<Map<string, any>>(new Map());
 	const [ searchIds, setSearchIds ] = useState<string[] | null>(null);
 	const [ dummy, setDummy ] = useState<number>(0);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
+	const sidebarResizeHandlerRef = useRef<(() => void) | null>(null);
+	const updateDataviewDataHandlerRef = useRef<(() => void) | null>(null);
+	const setDataviewSourceHandlerRef = useRef<(() => void) | null>(null);
+	const selectionEndHandlerRef = useRef<(() => void) | null>(null);
+	const selectionClearHandlerRef = useRef<(() => void) | null>(null);
+	const selectionSetHandlerRef = useRef<(() => void) | null>(null);
+	const recordMouseDownHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const recordKeyDownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
 	const analyticsRoute = isCollection ? analytics.route.collection : analytics.route.set;
 
 	useEffect(() => {
@@ -135,30 +143,64 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, [ searchIds ]);
 
 	const init = () => {
-		const node = $(nodeRef.current);
-		const head = node.find(`#block-head-${block.id}`);
+		const node = nodeRef.current;
+		const head = node ? U.Dom.select(`#block-head-${block.id}`, node) : null;
 		const object = getTarget();
 
-		head.toggleClass('isDeleted', object.isDeleted);
+		if (head) {
+			U.Dom.toggleClass(head, 'isDeleted', object.isDeleted);
+		};
 	};
 
 	const unbind = () => {
-		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
-		const ns = block.id + U.Dom.getEventNamespace(isPopup);
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (resizeHandlerRef.current) {
+			window.removeEventListener('resize', resizeHandlerRef.current);
+			resizeHandlerRef.current = null;
+		};
+		if (sidebarResizeHandlerRef.current) {
+			window.removeEventListener('sidebarResize', sidebarResizeHandlerRef.current);
+			sidebarResizeHandlerRef.current = null;
+		};
+		if (updateDataviewDataHandlerRef.current) {
+			window.removeEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
+			updateDataviewDataHandlerRef.current = null;
+		};
+		if (setDataviewSourceHandlerRef.current) {
+			window.removeEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
+			setDataviewSourceHandlerRef.current = null;
+		};
+		if (selectionEndHandlerRef.current) {
+			window.removeEventListener('selectionEnd', selectionEndHandlerRef.current);
+			selectionEndHandlerRef.current = null;
+		};
+		if (selectionClearHandlerRef.current) {
+			window.removeEventListener('selectionClear', selectionClearHandlerRef.current);
+			selectionClearHandlerRef.current = null;
+		};
+		if (selectionSetHandlerRef.current) {
+			window.removeEventListener('selectionSet', selectionSetHandlerRef.current);
+			selectionSetHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-		const ns = block.id + U.Dom.getEventNamespace(isPopup);
-
 		unbind();
 
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => resize());
-		win.on(`updateDataviewData.${ns}`, () => loadData(getView().id, 0, true));
-		win.on(`setDataviewSource.${ns}`, () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => onSelectEnd());
+		resizeHandlerRef.current = () => resize();
+		sidebarResizeHandlerRef.current = () => resize();
+		updateDataviewDataHandlerRef.current = () => loadData(getView().id, 0, true);
+		setDataviewSourceHandlerRef.current = () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 });
+		selectionEndHandlerRef.current = () => onSelectEnd();
+		selectionClearHandlerRef.current = () => onSelectEnd();
+		selectionSetHandlerRef.current = () => onSelectEnd();
+
+		window.addEventListener('resize', resizeHandlerRef.current);
+		window.addEventListener('sidebarResize', sidebarResizeHandlerRef.current);
+		window.addEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
+		window.addEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
+		window.addEventListener('selectionEnd', selectionEndHandlerRef.current);
+		window.addEventListener('selectionClear', selectionClearHandlerRef.current);
+		window.addEventListener('selectionSet', selectionSetHandlerRef.current);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -371,23 +413,23 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const getMenuParam = (e: any, dir: number): any => {
-		const node = $(nodeRef.current);
-		const hoverArea = node.find('.hoverArea');
+		const node = nodeRef.current;
+		const hoverArea = node ? U.Dom.select('.hoverArea', node) : null;
 
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
 				menuContext.current = context;
-				hoverArea.addClass('active');
+				U.Dom.addClass(hoverArea, 'active');
 			},
 			onClose: () => {
 				isCreating.current = false;
-				hoverArea.removeClass('active');
+				U.Dom.removeClass(hoverArea, 'active');
 			},
 		};
 
 		if (dir) {
-			menuParam.element = $(e.currentTarget);
+			menuParam.element = e.currentTarget;
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
@@ -502,7 +544,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						$(window).trigger('updateGraphRoot', { id: object.id });
+						window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: object.id } }));
 					});
 				};
 			};
@@ -873,12 +915,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const onSelect = (item: any, isNew: boolean) => {
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-				const button = $(nodeRef.current).find('#head-source-select');
+				const button = nodeRef.current ? U.Dom.select('#head-source-select', nodeRef.current) : null;
 
 				S.Detail.update(rootId, { id: item.id, details: item }, false);
 
-				if (!isCollection && isNew && button.length) {
-					button.trigger('click');
+				if (!isCollection && isNew && button) {
+					button.click();
 				};
 
 				if (message.views && message.views.length) {
@@ -910,7 +952,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		S.Menu.open('searchObject', Object.assign({
-			element: $(element),
+			element,
 			className: 'single',
 			classNameWrap: 'fromBlock',
 			data: {
@@ -930,15 +972,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const onSourceTypeSelect = (obj: any) => {
 		const objectId = getObjectId();
-		const element = $(obj);
+		const element = (typeof obj === 'string') ? U.Dom.select(obj) : obj;
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				classNameWrap: 'fromBlock',
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => element.addClass('active'), 
-				onClose: () => element.removeClass('active'), 
+				onOpen: () => U.Dom.addClass(element, 'active'),
+				onClose: () => U.Dom.removeClass(element, 'active'),
 				data: {
 					rootId,
 					objectId,
@@ -955,8 +997,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const record = getRecord(recordId);
 		const ids = selection?.get(I.SelectType.Record) || [];
-		const con = $(controlsRef.current?.getNode());
-		const sel = $(selectRef.current?.getNode());
+		const con = controlsRef.current?.getNode();
+		const sel = selectRef.current?.getNode();
 
 		if (!ids.length) {
 			ids.push(record.id);
@@ -976,8 +1018,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onViewDrop: onViewDrop,
 		});
 
-		con.show();
-		sel.hide();
+		if (con) con.style.display = '';
+		if (sel) sel.style.display = 'none';
 	};
 
 	const onRecordDrop = (targetId: string, ids: string[], position: I.BlockPosition) => {
@@ -1363,13 +1405,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const con = $(controlsRef.current.getNode());
-		const sel = $(selectRef.current.getNode());
+		const con = controlsRef.current.getNode();
+		const sel = selectRef.current.getNode();
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		length ? con.hide() : con.show();
-		length ? sel.show() : sel.hide();
+		if (con) con.style.display = length ? 'none' : '';
+		if (sel) sel.style.display = length ? '' : 'none';
 	};
 
 	const onSelectEnd = () => {
@@ -1424,11 +1466,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 
-	const setRecordEditingOn = (e: any, id: string) => {
+	const setRecordEditingOn = (e: any, id: string, retries?: number) => {
 		const ref = recordRefs.current.get(id);
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
-		const win = $(window);
+
+		if (!nameRef && (retries === undefined || retries > 0)) {
+			window.setTimeout(() => setRecordEditingOn(e, id, (retries ?? 5) - 1), 50);
+			return;
+		};
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
@@ -1437,24 +1483,40 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		nameRef?.onClick(e);
 
-		win.on(`mousedown.record-${id}`, (e: any) => {
-			if ($(e.target).parents(`#record-${U.Common.esc(id)}, .menu`).length > 0) {
+		if (recordMouseDownHandlerRef.current) {
+			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+		};
+		if (recordKeyDownHandlerRef.current) {
+			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+		};
+
+		recordMouseDownHandlerRef.current = (e: globalThis.MouseEvent) => {
+			if ((e.target as HTMLElement)?.closest(`#record-${U.Common.esc(id)}, .menu`)) {
 				return;
 			};
 
 			setRecordEditingOff(id);
-		});
+		};
 
-		win.on(`keydown.record-${id}`, (e) => {
+		recordKeyDownHandlerRef.current = (e: KeyboardEvent) => {
 			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
-		});
+		};
+
+		window.addEventListener('mousedown', recordMouseDownHandlerRef.current);
+		window.addEventListener('keydown', recordKeyDownHandlerRef.current);
 	};
 
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
-		const win = $(window);
 
-		win.off(`mousedown.record-${id} keydown.record-${id}`);
+		if (recordMouseDownHandlerRef.current) {
+			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+			recordMouseDownHandlerRef.current = null;
+		};
+		if (recordKeyDownHandlerRef.current) {
+			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+			recordKeyDownHandlerRef.current = null;
+		};
 
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
@@ -1502,10 +1564,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		frame.current = raf(() => {
 			if (getWrapperWidth) {
-				const node = $(nodeRef.current);
-				const obj = $(`#block-${U.Common.esc(block.id)}`);
+				const node = nodeRef.current;
+				const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
 
-				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
+				if (obj && node) {
+					U.Dom.toggleClass(obj, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
+				};
 			};
 
 			controlsRef.current?.resize?.();
@@ -1646,17 +1710,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		);
 	};
 
-	const getEditorWrapper = () => {
-		return $(nodeRef.current).closest('.editorWrapper');
+	const getEditorWrapper = (): HTMLElement | null => {
+		return nodeRef.current?.closest('.editorWrapper') ?? null;
 	};
 
-	const getBlockNode = () => {
-		return $(nodeRef.current).closest('.block.blockDataview');
+	const getBlockNode = (): HTMLElement | null => {
+		return nodeRef.current?.closest('.block.blockDataview') ?? null;
 	};
 
 	const onFileDragOver = (e: any) => {
-		const oe = e.originalEvent || e;
-		if (!U.File.checkDropFiles(oe)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 
@@ -1668,18 +1731,21 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const blockNode = getBlockNode();
 		const wrapper = getEditorWrapper();
 		const container = U.Dom.getScrollContainer(isPopup);
-		const hoverArea = blockNode.find('.hoverArea');
+		const hoverArea = blockNode ? U.Dom.select('.hoverArea', blockNode) : null;
 
-		if (hoverArea.length && container) {
-			const rect = hoverArea.get(0).getBoundingClientRect();
+		if (hoverArea && container) {
+			const rect = hoverArea.getBoundingClientRect();
 			const top = rect.bottom;
 			const containerBottom = container.getBoundingClientRect().bottom;
 			const height = containerBottom - top;
 
-			blockNode.find('.dragOverlay').css({ height });
+			const dragOverlay = blockNode ? U.Dom.select('.dragOverlay', blockNode) : null;
+			if (dragOverlay) {
+				dragOverlay.style.height = height + 'px';
+			};
 		};
 
-		wrapper.addClass('isDraggingOver');
+		U.Dom.addClass(wrapper, 'isDraggingOver');
 	};
 
 	const onFileDragLeave = (e: any) => {
@@ -1688,7 +1754,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		window.clearTimeout(timeoutDrag.current);
 		timeoutDrag.current = window.setTimeout(() => {
-			getEditorWrapper().removeClass('isDraggingOver');
+			U.Dom.removeClass(getEditorWrapper(), 'isDraggingOver');
 		}, 100);
 	};
 
@@ -1696,10 +1762,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 		window.clearTimeout(timeoutDrag.current);
-		getEditorWrapper().removeClass('isDraggingOver');
+		U.Dom.removeClass(getEditorWrapper(), 'isDraggingOver');
 
 		const electron = U.Common.getElectron();
-		const files = e.originalEvent?.dataTransfer?.files;
+		const files = e.dataTransfer?.files;
 		if (!files || !files.length) {
 			return;
 		};
@@ -1735,14 +1801,19 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const wrapper = getEditorWrapper();
-		const ns = `.dataviewDrag-${block.id}`;
 
-		wrapper.on(`dragover${ns}`, onFileDragOver);
-		wrapper.on(`dragleave${ns}`, onFileDragLeave);
-		wrapper.on(`drop${ns}`, onFileDrop);
+		if (wrapper) {
+			wrapper.addEventListener('dragover', onFileDragOver);
+			wrapper.addEventListener('dragleave', onFileDragLeave);
+			wrapper.addEventListener('drop', onFileDrop);
+		};
 
 		return () => {
-			wrapper.off(ns);
+			if (wrapper) {
+				wrapper.removeEventListener('dragover', onFileDragOver);
+				wrapper.removeEventListener('dragleave', onFileDragLeave);
+				wrapper.removeEventListener('drop', onFileDrop);
+			};
 			window.clearTimeout(timeoutDrag.current);
 		};
 	}, [ readonly ]);

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
 import * as I from 'Interface';
@@ -14,22 +13,42 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const rootIdRef = useRef('');
 	const key = J.Constant.graphId.global;
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const graphRootHandler = useRef<(e: any) => void>(null);
+	const sidebarResizeHandler = useRef<() => void>(null);
+
 	const unbind = () => {
-		const events = [ 'keydown', 'updateGraphRoot', 'sidebarResize' ];
-		$(window).off(events.map(it => `${it}.${key}`).join(' '));
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (graphRootHandler.current) {
+			window.removeEventListener('updateGraphRoot', graphRootHandler.current);
+			graphRootHandler.current = null;
+		};
+		if (sidebarResizeHandler.current) {
+			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			sidebarResizeHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.${key}`, e => onKeyDown(e));
-		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => initRootId(data.id));
-		win.on(`sidebarResize.${key}`, () => resize());
+
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		graphRootHandler.current = (e: any) => {
+			const d = e.detail;
+			initRootId(d?.id);
+		};
+		sidebarResizeHandler.current = () => resize();
+
+		window.addEventListener('keydown', keydownHandler.current);
+		window.addEventListener('updateGraphRoot', graphRootHandler.current);
+		window.addEventListener('sidebarResize', sidebarResizeHandler.current);
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => U.Dom.get('button-header-search')?.click());
 	};
 
 	const load = () => {
@@ -49,14 +68,17 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const setLoading = (v: boolean) => {
-		const node = $(nodeRef.current);
-		const loader = node.find('#loader');
+		const loader = U.Dom.select('#loader', nodeRef.current);
+		if (!loader) {
+			return;
+		};
 
 		if (v) {
-			loader.show().css({ opacity: 1 });
+			loader.style.display = '';
+			loader.style.opacity = '1';
 		} else {
-			loader.css({ opacity: 0 });
-			window.setTimeout(() => loader.hide(), 200);
+			loader.style.opacity = '0';
+			window.setTimeout(() => { loader.style.display = 'none'; }, 200);
 		};
 	};
 
@@ -73,7 +95,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		};
 
 		if (isPopup) {
-			const element = document.querySelector('#popupPage .content') as HTMLElement;
+			const element = U.Dom.select('#popupPage .content');
 			if (element) {
 				element.style.minHeight = 'unset';
 				element.style.height = '100%';

@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import CommentList from './list';
@@ -47,7 +46,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	const updateSocialVisibility = useCallback(() => {
 		const loaded = isLoaded.current || !discussionIdRef.current;
 		const shouldHide = !loaded || isHiddenRef.current || (isOpenRef.current && isSectionVisibleRef.current);
-		socialRef.current?.classList.toggle('isHidden', shouldHide);
+		U.Dom.toggleClass(socialRef.current, 'isHidden', shouldHide);
 	}, []);
 
 	const setHidden = useCallback((v: boolean) => {
@@ -156,8 +155,11 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		}, callBack);
 	}, [ targetType, discussionId, targetId ]);
 
-	const onMessageAdd = useCallback((e: any, message: any, eventSubIds: string[]) => {
-		if (!eventSubIds.includes(subId)) {
+	const onMessageAdd = useCallback((e: any) => {
+		const { message, subIds: eventSubIds } = e.detail;
+		const subIds = eventSubIds || [];
+
+		if (!subIds.includes(subId)) {
 			return;
 		};
 
@@ -165,14 +167,12 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ subId, loadDeps ]);
 
 	useEffect(() => {
-		const ns = 'commentSection';
-		const win = $(window);
-
-		win.on(`messageAdd.${ns}`, onMessageAdd);
-		win.on(`messageUpdate.${ns}`, onMessageAdd);
+		window.addEventListener('messageAdd', onMessageAdd);
+		window.addEventListener('messageUpdate', onMessageAdd);
 
 		return () => {
-			win.off(`messageAdd.${ns} messageUpdate.${ns}`);
+			window.removeEventListener('messageAdd', onMessageAdd);
+			window.removeEventListener('messageUpdate', onMessageAdd);
 		};
 	}, [ onMessageAdd ]);
 
@@ -201,8 +201,8 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 
 			container.scrollTop = Math.max(0, scrollTop);
 
-			el.classList.add('isHighlighted');
-			window.setTimeout(() => el.classList.remove('isHighlighted'), HIGHLIGHT_DURATION);
+			U.Dom.addClass(el as HTMLElement, 'isHighlighted');
+			window.setTimeout(() => U.Dom.removeClass(el as HTMLElement, 'isHighlighted'), HIGHLIGHT_DURATION);
 		}, 100);
 	}, [ isPopup, resize ]);
 

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
@@ -14,7 +13,7 @@ const LIMIT = 10;
 
 const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, getSize, close, setActive, onKeyDown, position } = props;
+	const { param, getId, getContainer, getSize, close, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, onSelect, blockCreate } = data;
 	const { filter } = S.Common;
@@ -25,6 +24,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const itemsRef = useRef([]);
 	const emptyLength = useRef(0);
 	const n = useRef(0);
+	const keydownHandler = useRef(null);
 
 	useEffect(() => {
 		rebind();
@@ -61,17 +61,21 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	});
 
 	const checkFilter = () => {
-		$(`#${getId()}`).toggleClass('withFilter', !!filter);
+		U.Dom.toggleClass(getContainer(), 'withFilter', !!filter);
 	};
-	
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const loadObjects = () => {
@@ -257,7 +261,10 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				$(`#block-${U.Common.esc(blockId)} .value`).text(text);
+				const blockValue = U.Dom.select(`#block-${U.Common.esc(blockId)} .value`);
+				if (blockValue) {
+					blockValue.textContent = text;
+				};
 
 				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 					focus.set(blockId, { from: length, to: length });
@@ -270,7 +277,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let menuId = '';
 
-		switch (item.itemId) {	
+		switch (item.itemId) {
 			case 'move': {
 				menuId = 'searchObject';
 				menuParam.offsetY = -36;
@@ -323,7 +330,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		
 		keyboard.setFocus(false);
 
-		const win = $(window);
 		const text = String(data.text || '');
 		const length = text.length;
 		const onCommand = (id: string) => {
@@ -339,7 +345,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const rect = U.Dom.getElementRect($(`#${getId()}`).get(0));
+		const rect = U.Dom.getElementRect(getContainer());
 		const menuParam: I.MenuParam = Object.assign(getMenuParam(), {
 			menuKey: item.itemId,
 			rect,
@@ -349,7 +355,10 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		menuParam.data = Object.assign(menuParam.data, {
 			position,
 			onSelect: () => {
-				$(`#block-${U.Common.esc(blockId)} .value`).text(text);
+				const blockValue = U.Dom.select(`#block-${U.Common.esc(blockId)} .value`);
+				if (blockValue) {
+					blockValue.textContent = text;
+				};
 
 				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 					focus.set(blockId, { from: length, to: length });
@@ -433,6 +442,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						menuId = 'searchObject';
 						menuParam.data = Object.assign(menuParam.data, {
 							type: I.NavigationType.Link,
+							placeholder: translate('commonSearchObjects'),
 							withPlural: true,
 							filters: [
 								{ relationKey: 'resolvedLayout', condition, value: U.Object.getFileLayouts() },
@@ -571,32 +581,32 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						window.setTimeout(() => { 
-							const element = $(`#block-${U.Common.esc(newBlockId)}`);
+						window.setTimeout(() => {
+							const element = U.Dom.get(`block-${newBlockId}`);
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
-								element.find(`.info`).trigger('click');
+								element?.querySelector(`.info`)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-open BlockEmbed edit mode
 							if (param.type == I.BlockType.Embed) {
-								element.find(`.focusable`).trigger('edit');
+								element?.querySelector(`.focusable`)?.dispatchEvent(new CustomEvent('edit', { bubbles: true }));
 							};
 
 							// Auto-open BlockDataview source menu
 							if (param.type == I.BlockType.Dataview) {
-								win.trigger(`setDataviewSource.${newBlockId}`);
+								window.dispatchEvent(new CustomEvent(`setDataviewSource.${newBlockId}`));
 							};
 
 							// Auto-open BlockFile upload dialog
 							if (param.type == I.BlockType.File) {
-								element.find(`.fileWrap`).trigger('mousedown');
+								element?.querySelector(`.fileWrap`)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 							};
 
 							// Auto-focus bookmark input field
 							if (param.type == I.BlockType.Bookmark) {
-								element.find('.urlToggle').trigger('click');
+								element?.querySelector('.urlToggle')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 						}, S.Menu.getTimeout());
 					});
@@ -613,7 +623,10 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		marks = Mark.adjust(marks, filter.from - 1, -1);
 
 		// Hack to prevent onBlur save
-		$(`#block-${U.Common.esc(blockId)} #value`).first().text(text);
+		const blockValueEl = U.Dom.select(`#block-${U.Common.esc(blockId)} #value`);
+		if (blockValueEl) {
+			blockValueEl.textContent = text;
+		};
 		U.Data.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 
@@ -630,15 +643,15 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const resize = () => {
 		const items = getItems().slice(0, LIMIT);
-		const obj = $(`#${getId()} .content`);
-		
+		const content = U.Dom.select('.content', getContainer());
+
 		let height = 16;
 		for (let i = 0; i < items.length; ++i) {
 			height += getRowHeight(items[i], i);
 		};
 		height = Math.max(HEIGHT_ITEM + 18, height);
 
-		obj.css({ height });
+		U.Dom.css(content, { height: `${height}px` });
 		position();
 	};
 

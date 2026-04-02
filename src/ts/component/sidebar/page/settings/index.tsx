@@ -53,7 +53,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			iconParam: isOwner ? { name: 'menu/action/remove' } : { name: 'menu/action/leave' },
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'darkRed' } : { name: 'menu/action/leave', color: 'darkRed' },
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
 			color: 'red',
 		} : null;
@@ -63,7 +63,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', icon: 'space' },
 					spaceview.isPersonal ? null : { id: 'spaceShare', iconParam: { name: 'menu/action/members' } },
-					(spaceview.isOneToOne || spaceview.isChat) ? null : { id: 'spaceNotifications', iconParam: { name: 'menu/action/notification' } },
+					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'menu/action/notification' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
 				],
@@ -242,7 +242,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				cn.push('itemAccount');
 			} else {
 				if (item.iconParam) {
-					icon = <Icon {...item.iconParam} color={item.color} className={`settings-${item.icon || item.id}`} />;
+					icon = <Icon {...item.iconParam} className={`settings-${item.icon || item.id}`} />;
 				} else {
 					const iconKey = item.icon || item.id;
 					const iconNameMap = {

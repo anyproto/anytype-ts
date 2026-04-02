@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconEmoji } from 'Component';
 
@@ -135,7 +134,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
-	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted, uxType } = object || {};
+	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted, spaceType } = object || {};
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -426,7 +425,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.SpaceView: {
 			icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
-			cn.push('withImage', U.Data.spaceClass(uxType));
+			cn.push('withImage', U.Data.spaceClass(spaceType));
 
 			if (iconImage) {
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
@@ -444,32 +443,62 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const setErrorIcon = () => {
-		const node = $(nodeRef.current);
-		const svgMarkup = getIconSvg('type/image', { style: { width: iconSize, height: iconSize } });
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.append(`<div class="iconError c${iconSize}">${svgMarkup}</div>`).addClass('withImageError');
+		const svgMarkup = getIconSvg('type/image', { style: { width: iconSize, height: iconSize } });
+		const existing = U.Dom.select('.iconError', node);
+		if (existing) {
+			existing.remove();
+		};
+
+		const div = document.createElement('div');
+		div.className = `iconError c${iconSize}`;
+		div.innerHTML = svgMarkup;
+		node.appendChild(div);
+		U.Dom.addClass(node, 'withImageError');
 	};
 
 	const unsetErrorIcon = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.iconError').remove();
-		node.removeClass('withImageError');
+		const errorEl = U.Dom.select('.iconError', node);
+		if (errorEl) {
+			errorEl.remove();
+		};
+		U.Dom.removeClass(node, 'withImageError');
 	};
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
-		const img = node.find('img');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		img.off('error load');
-		img.on('load', () => unsetErrorIcon());
-		img.on('error', () => setErrorIcon());
+		const img = U.Dom.select('img', node) as HTMLImageElement;
+		if (!img) {
+			return;
+		};
+
+		const onLoad = () => unsetErrorIcon();
+		const onError = () => setErrorIcon();
+
+		img.addEventListener('load', onLoad);
+		img.addEventListener('error', onError);
+
+		return () => {
+			img.removeEventListener('load', onLoad);
+			img.removeEventListener('error', onError);
+		};
 	}, []);
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
-
-		if (node.hasClass('withImageError')) {
+		if (U.Dom.hasClass(nodeRef.current, 'withImageError')) {
 			setErrorIcon();
 		};
 	}, [ theme ]);

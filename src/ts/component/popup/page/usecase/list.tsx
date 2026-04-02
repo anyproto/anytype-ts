@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const HEIGHT = 378;
 const LIMIT = 2;
@@ -247,7 +246,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				{!items.length ? (
 					<EmptySearch text={textEmpty} />
 				) : (
-					<WindowScroller scrollElement={$('#popupUsecase-innerWrap').get(0)}>
+					<WindowScroller scrollElement={U.Dom.get('popupUsecase-innerWrap')}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true} className="scrollArea" onResize={onResize}>
 								{({ width }) => (

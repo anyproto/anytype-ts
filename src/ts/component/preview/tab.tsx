@@ -33,7 +33,7 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(position);
 
 	const load = (loadId: number) => {
-		const isChat = (object?.layout == I.ObjectLayout.SpaceView) && (spaceview.isOneToOne || spaceview.isChat);
+		const isChat = (object?.layout == I.ObjectLayout.SpaceView) && spaceview.isOneToOne;
 
 		if (isChat) {
 			setDisplayObject({ layout: I.ObjectLayout.Chat, name: translate('commonMainChat') });

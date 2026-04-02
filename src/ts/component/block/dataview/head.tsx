@@ -2,7 +2,6 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
@@ -135,7 +134,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						$(nodeRef.current).find('#head-source-select').trigger('click');
+						(nodeRef.current?.querySelector('#head-source-select') as HTMLElement)?.click();
 						onCreate(message, true);
 					});
 				});
@@ -249,7 +248,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 	};
 
 	const checkInput = (isEmpty: boolean) => {
-		$(editableRef.current?.getNode()).toggleClass('isEmpty', isEmpty);
+		U.Dom.toggleClass(editableRef.current?.getNode(), 'isEmpty', isEmpty);
 	};
 
 	const save = () => {

@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
@@ -25,15 +24,13 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
 
 	const setBlock = (id: string) => {
-		const node = $(nodeRef.current);
-
-		node.find('.item.active').removeClass('active');
+		U.Dom.selectAll('.item.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 
 		if (!id) {
 			return;
 		};
 
-		node.find(`#item-${U.Common.esc(id)}`).addClass('active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(id)}`, nodeRef.current), 'active');
 		blockRef.current = id;
 		S.Menu.updateData('tableOfContents', { blockId: id });
 
@@ -64,27 +61,37 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
 			const container = U.Dom.getScrollContainer(isPopup);
-			const top = container?.scrollTop || 0;
-			const co = containerOffset.current.top;
+			if (!container) {
+				return;
+			};
+
+			const top = container.scrollTop;
+			const co = container.getBoundingClientRect().top;
 			const currentList = listRef.current;
 
 			let blockId = '';
 
 			for (let i = 0; i < currentList.length; ++i) {
 				const block = currentList[i];
-				const el = $(`#block-${U.Common.esc(block.id)}`);
+				const el = U.Dom.get(`block-${block.id}`);
 
-				if (!el.length) {
+				if (!el) {
 					continue;
 				};
 
-				if (el.offset().top - co >= 0) {
+				const elTop = el.getBoundingClientRect().top - co;
+
+				if (elTop <= 0) {
 					blockId = block.id;
+				} else {
+					if (!blockId) {
+						blockId = block.id;
+					};
 					break;
 				};
 			};
 
-			if ((top == U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
+			if ((top >= U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
 				blockId = currentList[currentList.length - 1].id;
 			};
 
@@ -99,7 +106,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 		S.Menu.open('tableOfContents', {
 			className: 'fixed',
-			element: $(nodeRef.current),
+			element: nodeRef.current,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			noFlipX: true,
@@ -124,8 +131,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const resize = () => {
 		raf.cancel(frameResize.current);
 		frameResize.current = raf(() => {
-			const node = $(nodeRef.current);
-			if (!node.length) {
+			const node = nodeRef.current;
+			if (!node) {
 				return;
 			};
 
@@ -139,7 +146,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			containerOffset.current = { top: containerRect.top, left: containerRect.left };
 
-			node.css({ left: containerOffset.current.left + width - node.outerWidth() - 6 });
+			U.Dom.css(node, { left: `${containerOffset.current.left + width - node.offsetWidth - 6}px` });
 			onScroll();
 		});
 	};

@@ -356,8 +356,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = U.Dom.get(U.Common.esc(id));
-		const card = viewType == I.ViewType.Grid ? null : U.Dom.get(`record-${U.Common.esc(record.id)}`);
+		const cell = U.Dom.get(id);
+		const card = viewType == I.ViewType.Grid ? null : U.Dom.get(`record-${record.id}`);
 
 		if (isEditing) {
 			let val = value.current;
@@ -420,7 +420,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		if (S.Common.cellId) {
-			U.Dom.addClass(U.Dom.get(U.Common.esc(S.Common.cellId)), 'isEditing');
+			U.Dom.addClass(U.Dom.get(S.Common.cellId), 'isEditing');
 		};
 	});
 

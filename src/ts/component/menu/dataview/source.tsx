@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import * as I from 'Interface';
@@ -11,14 +11,20 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 	const { readonly, rootId, objectId } = data;
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onRemove = (e: any, item: any) => {
@@ -124,7 +130,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					id: 'type',
 					itemId: 'type',
 					name: translate('commonObjectType'),
-					customIcon: 'puzzle',
+					customIcon: 'menu/common/puzzle',
 					relationFormat: I.RelationType.Object,
 					layout: I.ObjectLayout.Relation,
 					value: translate('commonNone'),
@@ -132,6 +138,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 				{
 					id: 'relation',
 					itemId: 'relation',
+					customIcon: 'chat/attachment/object',
 					name: translate('blockNameRelation'),
 					relationFormat: I.RelationType.Relations,
 					layout: I.ObjectLayout.Relation,
@@ -166,7 +173,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 		let icon = null;
 		if (item.customIcon) {
-			icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
+			icon = <div className="iconWrapper"><Icon name={item.customIcon} /></div>;
 		} else {
 			icon = <IconObject size={40} object={item} />;
 		};

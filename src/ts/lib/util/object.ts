@@ -115,7 +115,7 @@ class UtilObject {
 			spaceId: String(spaceview?.targetSpaceId || ''),
 			layout: object.layout,
 			isImage: object.iconImage,
-			uxType: spaceview?.uxType,
+			spaceType: spaceview?.spaceType,
 			objectData: { id: object.id, type: object.type, layout: object.layout },
 			route,
 			routeParam: { action: '', id: '' },

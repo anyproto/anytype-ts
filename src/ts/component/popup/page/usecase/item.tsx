@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
@@ -33,18 +32,17 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	};
 
 	const checkArrows = () => {
-		if (!swiperRef.current) {
+		if (!swiperRef.current || !nodeRef.current) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
+		const arrowLeft = nodeRef.current.querySelector('#arrowLeft') as HTMLElement;
+		const arrowRight = nodeRef.current.querySelector('#arrowRight') as HTMLElement;
 		const idx = swiperRef.current.activeIndex;
 		const length = (swiperRef.current.slides || []).length;
 
-		arrowLeft.toggleClass('hide', !idx);
-		arrowRight.toggleClass('hide', idx >= length - 1);
+		U.Dom.toggleClass(arrowLeft, 'hide', !idx);
+		U.Dom.toggleClass(arrowRight, 'hide', idx >= length - 1);
 	};
 
 	const getSpaceOptions = (): any[] => {
@@ -88,7 +86,6 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 						const details = { 
 							name: object.title, 
 							iconOption: U.Common.rand(1, J.Constant.count.icon),
-							spaceUxType: I.SpaceUxType.Data,
 						};
 
 						C.WorkspaceCreate(details, I.Usecase.None, (message: any) => {
@@ -98,7 +95,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 								analytics.event('CreateSpace', { 
 									middleTime: message.middleTime, 
 									route: analytics.route.gallery, 
-									uxType: details.spaceUxType,
+									spaceType: I.SpaceType.Data,
 								});
 							} else {
 								setIsLoading(false);

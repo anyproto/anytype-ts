@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
+
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
@@ -93,19 +93,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
-	const unbind = () => {
-		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
+	const updateDataHandler = useRef<() => void>(() => childRef.current?.updateData?.());
+	const updateViewsHandler = useRef<() => void>(() => childRef.current?.updateViews?.());
 
-		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+	const unbind = () => {
+		window.removeEventListener('updateWidgetData', updateDataHandler.current);
+		window.removeEventListener('updateWidgetViews', updateViewsHandler.current);
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
 
-		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData?.());
-		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews?.());
+		updateDataHandler.current = () => childRef.current?.updateData?.();
+		updateViewsHandler.current = () => childRef.current?.updateViews?.();
+
+		window.addEventListener('updateWidgetData', updateDataHandler.current);
+		window.addEventListener('updateWidgetViews', updateViewsHandler.current);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
@@ -122,7 +125,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const route = param.route || analytics.route.widget;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -215,8 +218,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
 				element: `#widget-${U.Common.esc(block.id)} ${param.element}`,
-				onOpen: () => node.addClass('active'),
-				onClose: () => node.removeClass('active'),
+				onOpen: () => U.Dom.addClass(node, 'active'),
+				onClose: () => U.Dom.removeClass(node, 'active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				offsetY: 4,
@@ -256,9 +259,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const { x, y } = keyboard.mouse.page;
-		
+
 		S.Menu.open('widget', {
 			element: `#widget-${U.Common.esc(block.id)} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
@@ -266,8 +269,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				...param,
 				target: object,
@@ -286,16 +289,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const innerWrap = node.find('#innerWrap');
-		const icon = node.find('.icon.collapse');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const innerWrap = U.Dom.select('#innerWrap', node);
+		const icon = U.Dom.select('.icon.collapse', node);
 		const isOpen = getIsOpen();
 
 		if (!isPreview) {
-			node.toggleClass('isClosed', !isOpen);
-			icon.toggleClass('isClosed', !isOpen);
+			U.Dom.toggleClass(node, 'isClosed', !isOpen);
+			U.Dom.toggleClass(icon, 'isClosed', !isOpen);
 
-			isOpen ? innerWrap.show() : innerWrap.hide();
+			if (innerWrap) {
+				innerWrap.style.display = isOpen ? '' : 'none';
+			};
 		};
 	};
 
@@ -310,51 +319,85 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const open = () => {
-		const node = $(nodeRef.current);
-		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
-		const wrapper = node.find('#wrapper').css({ height: 'auto' });
-		const height = wrapper.outerHeight();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const icon = U.Dom.select('.icon.collapse', node);
+		const innerWrap = U.Dom.select('#innerWrap', node);
+		const wrapper = U.Dom.select('#wrapper', node);
 		const minHeight = getMinHeight();
 
-		node.addClass('isClosed');
-		icon.removeClass('isClosed');
-		wrapper.css({ height: minHeight });
+		if (innerWrap) {
+			innerWrap.style.display = '';
+			innerWrap.style.height = '';
+			innerWrap.style.opacity = '0';
+		};
+
+		if (wrapper) {
+			wrapper.style.height = 'auto';
+		};
+
+		const height = wrapper?.offsetHeight ?? 0;
+
+		U.Dom.addClass(node, 'isClosed');
+		U.Dom.removeClass(icon, 'isClosed');
+
+		if (wrapper) {
+			wrapper.style.height = `${minHeight}px`;
+		};
 
 		if (childRef.current?.onOpen) {
 			childRef.current?.onOpen();
 		};
 
-		raf(() => { 
-			wrapper.css({ height }); 
-			innerWrap.css({ opacity: 1 });
+		raf(() => {
+			if (wrapper) {
+				wrapper.style.height = `${height}px`;
+			};
+			if (innerWrap) {
+				innerWrap.style.opacity = '1';
+			};
 		});
 
 		window.clearTimeout(timeoutOpen.current);
-		timeoutOpen.current = window.setTimeout(() => { 
+		timeoutOpen.current = window.setTimeout(() => {
 			const isOpen = getIsOpen();
 
 			if (isOpen) {
-				node.removeClass('isClosed');
-				wrapper.css({ height: 'auto' });
+				U.Dom.removeClass(node, 'isClosed');
+				if (wrapper) {
+					wrapper.style.height = 'auto';
+				};
 			};
 		}, J.Constant.delay.widget);
 	};
 
 	const close = () => {
-		const node = $(nodeRef.current);
-		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#wrapper');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const icon = U.Dom.select('.icon.collapse', node);
+		const innerWrap = U.Dom.select('#innerWrap', node);
+		const wrapper = U.Dom.select('#wrapper', node);
 		const minHeight = getMinHeight();
 
-		wrapper.css({ height: wrapper.outerHeight() });
-		icon.addClass('isClosed');
-		innerWrap.css({ opacity: 0 });
+		if (wrapper) {
+			wrapper.style.height = `${wrapper.offsetHeight}px`;
+		};
+		U.Dom.addClass(icon, 'isClosed');
+		if (innerWrap) {
+			innerWrap.style.opacity = '0';
+		};
 
-		raf(() => { 
-			node.addClass('isClosed'); 
-			wrapper.css({ height: minHeight });
+		raf(() => {
+			U.Dom.addClass(node, 'isClosed');
+			if (wrapper) {
+				wrapper.style.height = `${minHeight}px`;
+			};
 		});
 
 		window.clearTimeout(timeoutOpen.current);
@@ -362,8 +405,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const isOpen = getIsOpen();
 
 			if (!isOpen) {
-				wrapper.css({ height: '' });
-				innerWrap.hide();
+				if (wrapper) {
+					wrapper.style.height = '';
+				};
+				if (innerWrap) {
+					innerWrap.style.display = 'none';
+				};
 			};
 		}, J.Constant.delay.widget);
 	};
@@ -536,10 +583,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const innerWrap = node.find('#innerWrap');
-		const button = innerWrap.find('#button-show-all');
-		
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const innerWrap = U.Dom.select('#innerWrap', node);
+		const button = innerWrap ? U.Dom.select('#button-show-all', innerWrap) : null;
+
 		let total = 0;
 		let show = false;
 
@@ -568,7 +619,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		button.css({ display: show ? 'flex' : 'none' });
+		if (button) {
+			button.style.display = show ? 'flex' : 'none';
+		};
 	};
 
 	const onContext = (param: any) => {
@@ -577,8 +630,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],

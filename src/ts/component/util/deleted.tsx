@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
 import * as I from 'Interface';
 
@@ -21,7 +20,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			const home = U.Space.getDashboard();
 
 			let last = null;
-			if (home && (home.id == I.HomePredefinedId.Last)) {
+			if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 				last = U.Space.getLastObject();
 			};
 
@@ -40,14 +39,6 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	};
 	const textButton = isPopup ? translate('commonClose') : translate('utilDeletedBackToDashboard');
 
-	const unbind = () => {
-		$(window).off('resize.deleted');
-	};
-
-	const rebind = () => {
-		$(window).on('resize.deleted', () => resize());
-	};
-
 	const resize = () => {
 		const container = U.Dom.getPageContainer(isPopup);
 
@@ -57,10 +48,12 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	};
 
 	useEffect(() => {
-		rebind();
+		const handler = () => resize();
+
+		window.addEventListener('resize', handler);
 		resize();
 
-		return () => unbind();
+		return () => window.removeEventListener('resize', handler);
 	});
 
 	useLayoutEffect(() => resize());

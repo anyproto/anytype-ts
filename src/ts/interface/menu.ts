@@ -20,7 +20,7 @@ export interface MenuParam<D = any> {
 	component?: string;
 	title?: string;
 	menuKey?: string;
-	element?: string | JQuery<any>;
+	element?: string | HTMLElement;
 	rect?: MenuPosition;
 	type?: MenuType;
 	vertical?: MenuDirection;
@@ -71,6 +71,7 @@ export interface Menu {
 	storageGet?(): Record<string, any>;
 	storageSet?(data: Record<string, any>): void;
 	getId?(): string;
+	getContainer?(): HTMLElement | null;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
 	getMaxHeight?(isPopup: boolean): number;

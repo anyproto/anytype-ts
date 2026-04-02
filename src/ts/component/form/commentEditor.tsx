@@ -44,7 +44,7 @@ import {
 	TextNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
@@ -189,7 +189,7 @@ class LinkTextNode extends TextNode {
 
 	createDOM (config: any): HTMLElement {
 		const el = super.createDOM(config);
-		el.classList.add('commentEditor-link');
+		U.Dom.addClass(el, 'commentEditor-link');
 		return el;
 	};
 
@@ -405,11 +405,10 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 		};
 
 		const rect = el.getBoundingClientRect();
-		const win = $(window);
 
 		S.Menu.open('dataviewText', {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
+			rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: rect.width, height: rect.height },
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
@@ -1280,7 +1279,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		};
 	});
 
-	const wrap = document.getElementById(editorId);
+	const wrap = U.Dom.get(editorId);
 	if (!wrap) {
 		return;
 	};
@@ -1290,11 +1289,9 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		return;
 	};
 
-	const win = $(window);
-
 	S.Menu.open('blockLink', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		horizontal: I.MenuDirection.Center,
 		offsetY: -8,
 		noAnimation: true,
@@ -1381,9 +1378,8 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 
 const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	const rect = U.Dom.getSelectionRect();
-	const win = $(window);
 	const root = editor.getRootElement();
-	const wrap = root?.closest('.commentEditorWrap');
+	const wrap = root?.closest('.commentEditorWrap') as HTMLElement;
 
 	const menuParam: any = {
 		classNameWrap: 'fromBlock',
@@ -1413,9 +1409,9 @@ const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	};
 
 	if (rect) {
-		menuParam.rect = { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height };
+		menuParam.rect = { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height };
 	} else {
-		menuParam.element = wrap ? $(wrap) : $(root);
+		menuParam.element = wrap || root;
 	};
 
 	S.Menu.open('smile', menuParam);
@@ -1440,8 +1436,6 @@ const SelectionToolbarPlugin = () => {
 				if (!root) {
 					return;
 				};
-
-				const win = $(window);
 
 				const getActiveFormats = () => {
 					let formats: any = {};
@@ -1649,14 +1643,14 @@ const SelectionToolbarPlugin = () => {
 					return;
 				};
 
-				const wrap = root.closest('.commentEditorWrap');
+				const wrap = root.closest('.commentEditorWrap') as HTMLElement;
 
 				S.Menu.open('commentToolbar', {
-					element: wrap ? $(wrap) : $(root),
+					element: wrap || root,
 					classNameWrap: 'fromBlock',
 					recalcRect: () => {
 						const rect = U.Dom.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: -8,
@@ -2008,16 +2002,15 @@ const PasteUrlPlugin = () => {
 				event.preventDefault();
 
 				const root = editor.getRootElement();
-				const wrap = root?.closest('.commentEditorWrap');
-				const win = $(window);
+				const wrap = root?.closest('.commentEditorWrap') as HTMLElement;
 
 				S.Menu.open('selectPasteUrl', {
 					classNameWrap: 'fromBlock',
 					component: 'select',
-					element: wrap ? $(wrap) : $(root),
+					element: wrap || root,
 					recalcRect: () => {
 						const rect = U.Dom.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Left,
@@ -2261,8 +2254,6 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 		return;
 	};
 
-	const win = $(window);
-
 	const removeSlashText = (filterLen: number) => {
 		editor.update(() => {
 			const root = $getRoot();
@@ -2297,7 +2288,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	S.Menu.open('commentAdd', {
 		classNameWrap: 'fromBlock',
 		component: 'select',
-		rect: { ...rect, y: rect.y + win.scrollTop() + 4, x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY + 4, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Bottom,
 		horizontal: I.MenuDirection.Left,
 		offsetY: 4,
@@ -2521,7 +2512,6 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 		return;
 	};
 
-	const win = $(window);
 	const space = S.Common.space;
 	const participantId = U.Space.getParticipantId(space, S.Auth.account?.id);
 
@@ -2529,7 +2519,7 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 
 	S.Menu.open('blockMention', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -2747,13 +2737,11 @@ const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset
 		return;
 	};
 
-	const win = $(window);
-
 	S.Common.filterSet(0, '');
 
 	S.Menu.open('blockEmoji', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -3196,7 +3184,7 @@ const CodeBlockPlugin = () => {
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,

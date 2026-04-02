@@ -438,7 +438,14 @@ class Action {
 						if (isPopup) {
 							S.Popup.close('page');
 						} else {
-							U.Space.openDashboard();
+							const history = U.Router.history;
+							const prev = history.entries[history.index - 1];
+
+							if (prev) {
+								history.goBack();
+							} else {
+								U.Space.openDashboard();
+							};
 						};
 					};
 
@@ -683,12 +690,12 @@ class Action {
 
 	/**
 	 * Creates a new space with the given UX type and route.
-	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * @param {I.SpaceType} spaceType - The UX type for the new space.
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (uxType: I.SpaceUxType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string) {
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { uxType, route } });
+			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
 	};
 
@@ -1095,7 +1102,7 @@ class Action {
 
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
-		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
+		analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: I.SpaceType.Data, route });
 	};
 
 	/**
@@ -1153,9 +1160,9 @@ class Action {
 		});
 	};
 
-	openSpaceTab (spaceId: string, uxType: I.SpaceUxType, analyticsRoute?: string) {
-		Renderer.send('openTab', { spaceId, uxType }, { setActive: false });
-		analytics.event('AddTab', { route: analyticsRoute, uxType });
+	openSpaceTab (spaceId: string, spaceType: I.SpaceType, analyticsRoute?: string) {
+		Renderer.send('openTab', { spaceId, spaceType }, { setActive: false });
+		analytics.event('AddTab', { route: analyticsRoute, spaceType });
 	};
 
 };

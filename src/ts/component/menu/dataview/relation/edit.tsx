@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
@@ -51,13 +50,19 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		props.position();
 	});
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -335,8 +340,8 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						element: `#button-${U.Common.esc(blockId)}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
-						onOpen: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).addClass('active'),
-						onClose: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).removeClass('active'),
+						onOpen: () => U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
+						onClose: () => U.Dom.removeClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
 						data: {
 							...data,
 							view: observable.box(view),
@@ -682,7 +687,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			<div className="section">
 				<MenuItemVertical 
 					id="includeTime" 
-					icon="clock" 
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}

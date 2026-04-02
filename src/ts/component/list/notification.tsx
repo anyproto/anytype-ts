@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Notification, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import * as I from 'Interface';
@@ -19,7 +18,7 @@ const ListNotification = observer(forwardRef(() => {
 			return;
 		};
 
-		$(nodeRef.current).addClass('isExpanded');
+		U.Dom.addClass(nodeRef.current, 'isExpanded');
 		isExpanded.current = true;
 		resize();
 	};
@@ -31,7 +30,7 @@ const ListNotification = observer(forwardRef(() => {
 			return;
 		};
 
-		$(nodeRef.current).removeClass('isExpanded');
+		U.Dom.removeClass(nodeRef.current, 'isExpanded');
 		isExpanded.current = false;
 		resize();
 	};
@@ -42,8 +41,12 @@ const ListNotification = observer(forwardRef(() => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const items = node.find('.notification');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const items = U.Dom.selectAll('.notification', node) as HTMLElement[];
 
 		let listHeight = 0;
 		let firstHeight = 0;
@@ -51,15 +54,11 @@ const ListNotification = observer(forwardRef(() => {
 		let bottom = 0;
 
 		window.setTimeout(() => {
-			items.each((i: number, item: any) => {
-				item = $(item);
+			items.forEach((item, i) => {
+				item.style.width = isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`;
+				item.style.right = isExpanded.current ? '0px' : `${4 * i}px`;
 
-				item.css({ 
-					width: (isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`),
-					right: (isExpanded.current ? 0 : 4 * i),
-				});
-				
-				const h = item.outerHeight();
+				const h = item.offsetHeight;
 
 				if (i == 0) {
 					firstHeight = h;
@@ -76,18 +75,18 @@ const ListNotification = observer(forwardRef(() => {
 					listHeight += h + o;
 				};
 
-				item.css({ bottom });
+				item.style.bottom = `${bottom}px`;
 				height = h;
 			});
 
 			if (!isExpanded.current) {
 				listHeight = firstHeight + 4 * items.length;
-			} else 
+			} else
 			if (items.length) {
 				listHeight += 38;
 			};
 
-			node.css({ height: listHeight });
+			node.style.height = `${listHeight}px`;
 		}, 50);
 	};
 
@@ -102,8 +101,8 @@ const ListNotification = observer(forwardRef(() => {
 		>
 			{list.length ? (
 				<div className="head">
-					<Icon name="menu/action/hide" className="hide" onClick={onHide} />
-					<Icon name="common/clear" onClick={onClear} />
+					<Icon name="notification/hide" width={12} height={8} onClick={onHide} />
+					<Icon name="notification/delete" size={10} onClick={onClear} />
 				</div>
 			) : ''}
 

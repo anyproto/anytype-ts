@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -93,11 +92,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	});
 
 	const initNodes = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		container.current = node.find('.editor');
-		buttonAdd.current = node.find('#button-block-add');
-		blockFeatured.current = node.find(`#block-${U.Common.esc(J.Constant.blockId.featured)}`);
+		container.current = U.Dom.select('.editor', node);
+		buttonAdd.current = U.Dom.select('#button-block-add', node);
+		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
 	};
 
 	const getWrapperWidth = (): number => {
@@ -230,7 +232,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 		const selection = S.Common.getRef('selectionProvider');
 
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		events.forEach(it => {
+			const handler = (window as any)[`_editorHandler_${it}_${ns}`];
+			if (handler) {
+				window.removeEventListener(it, handler);
+				delete (window as any)[`_editorHandler_${it}_${ns}`];
+			};
+		});
 
 		const sc = U.Dom.getScrollContainer(isPopup);
 		if (sc && scrollHandlerRef.current) {
@@ -244,25 +252,29 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const rebind = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
 		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
 		const sc = U.Dom.getScrollContainer(isPopup);
 		const readonly = isReadonly();
 
 		unbind();
 
-		if (!readonly) {
-			win.on(`mousemove.${ns}`, throttle(e => onMouseMove(e), THROTTLE));
+		const storeHandler = (event: string, handler: (e: any) => void) => {
+			(window as any)[`_editorHandler_${event}_${ns}`] = handler;
+			window.addEventListener(event, handler);
 		};
 
-		win.on(`keydown.${ns}`, e => onKeyDownEditor(e));
-		win.on(`paste.${ns}`, (e: any) => {
+		if (!readonly) {
+			storeHandler('mousemove', throttle(e => onMouseMove(e), THROTTLE));
+		};
+
+		storeHandler('keydown', e => onKeyDownEditor(e));
+		storeHandler('paste', (e: any) => {
 			if (!keyboard.isFocused) {
 				onPasteEvent(e, props);
 			};
 		});
 
-		win.on(`focus.${ns}`, () => {
+		storeHandler('focus', () => {
 			const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 			const menuOpen = menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
@@ -281,7 +293,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		});
 
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => resizePage());
+		const resizeHandler = () => resizePage();
+		storeHandler('resize', resizeHandler);
+		storeHandler('sidebarResize', resizeHandler);
 
 		if (sc) {
 			scrollHandlerRef.current = () => onScroll();
@@ -321,28 +335,31 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onMouseMove = (e: any) => {
 		if (
-			!buttonAdd.current.length || 
-			!container.current.length
+			!buttonAdd.current ||
+			!container.current
 		) {
 			return;
 		};
 		
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = isReadonly();
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const menuOpen = menuCheck();
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
-		const st = $(window).scrollTop();
+		const st = window.scrollY;
 
 		const clear = () => {
-			node.find('.block.showMenu').removeClass('showMenu');
-			node.find('.block.isAdding').removeClass('isAdding top bottom');
+			if (!node) {
+				return;
+			};
+			U.Dom.selectAll('.block.showMenu', node).forEach(el => U.Dom.removeClass(el, 'showMenu'));
+			U.Dom.selectAll('.block.isAdding', node).forEach(el => U.Dom.removeClass(el, 'isAdding top bottom'));
 		};
 
 		const out = () => {
 			window.clearTimeout(timeoutMove.current);
 			timeoutMove.current = window.setTimeout(() => {
-				buttonAdd.current.removeClass('show');
+				U.Dom.removeClass(buttonAdd.current, 'show');
 				clear();
 			}, 100);
 		};
@@ -378,17 +395,18 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 
-		if (blockFeatured.current.length) {
-			offset = blockFeatured.current.offset().top + blockFeatured.current.outerHeight() - BUTTON_OFFSET;
+		if (blockFeatured.current) {
+			const bfRect = blockFeatured.current.getBoundingClientRect();
+			offset = bfRect.top + window.scrollY + blockFeatured.current.offsetHeight - BUTTON_OFFSET;
 		};
 
 		for (const block of blocks) {
-			const obj = $(`#block-${U.Common.esc(block.id)}`);
-			if (!obj.length || obj.hasClass('noPlus')) {
+			const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			if (!obj || U.Dom.hasClass(obj, 'noPlus')) {
 				continue;
 			};
 
-			const rect = U.Dom.getElementRect(obj.get(0));
+			const rect = U.Dom.getElementRect(obj);
 
 			rect.y += st;
 
@@ -426,7 +444,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = U.Dom.getElementRect(container.current.get(0));
+			rectContainer = U.Dom.getElementRect(container.current);
 
 			if (
 				(pageX >= x) && 
@@ -448,11 +466,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
 			clear();
-			buttonAdd.current.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
-			hovered.addClass('showMenu');
+			U.Dom.addClass(buttonAdd.current, 'show');
+			buttonAdd.current.style.transform = `translate3d(${buttonX}px,${buttonY}px,0px)`;
+			U.Dom.addClass(hovered, 'showMenu');
 
 			if (pageX <= x + 20) {
-				hovered.addClass(`isAdding ${hoverPosition.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
+				U.Dom.addClass(hovered, `isAdding ${hoverPosition.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 			};
 		});
 	};
@@ -1255,12 +1274,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			let closestDistance = Infinity;
 
 			for (const block of blocks) {
-				const node = $(`.focusable.c${U.Common.esc(block.id)}`);
-				if (!node.length) {
+				const node = U.Dom.select(`.focusable.c${U.Common.esc(block.id)}`);
+				if (!node) {
 					continue;
 				};
 
-				const rect = U.Dom.getElementRect(node.get(0));
+				const rect = U.Dom.getElementRect(node);
 				const blockY = rect.top + rect.height / 2;
 				const distance = Math.abs(blockY - targetY);
 
@@ -1326,25 +1345,24 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-		const st = win.scrollTop();
-		const element = $(`#block-${U.Common.esc(block.id)}`);
-		const value = element.find('#value');
+		const st = window.scrollY;
+		const element = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const value = element ? U.Dom.select('#value', element) : null;
 
 		let sRect = U.Dom.getSelectionRect();
 		let vRect: any = {};
-		if (value && value.length) {
-			vRect = U.Dom.getElementRect(value.get(0));
-		} else 
-		if (element && element.length) {
-			vRect = U.Dom.getElementRect(element.get(0));
+		if (value) {
+			vRect = U.Dom.getElementRect(value);
+		} else
+		if (element) {
+			vRect = U.Dom.getElementRect(element);
 		};
 
 		if (!sRect) {
 			sRect = vRect;
 		};
 
-		const lh = parseInt(value.css('line-height'));
+		const lh = parseInt(value ? getComputedStyle(value).lineHeight : '0');
 		const sy = sRect.y + st;
 		const vy = vRect.y + st;
 
@@ -1383,10 +1401,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const rect = U.Dom.getSelectionRect();
 		const mark = Mark.getInRange(marks, type, range);
-		const win = $(window);
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
 			data: {
@@ -1906,7 +1923,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		focus.clear(true);
 
 		blockCreate(block.id, hoverPosition.current, { type: I.BlockType.Text }, (blockId: string) => {
-			$(`.placeholder.c${blockId}`).text(translate('placeholderFilter'));
+			const placeholder = U.Dom.select(`.placeholder.c${blockId}`);
+			if (placeholder) {
+				placeholder.textContent = translate('placeholderFilter');
+			};
 			onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
@@ -1914,7 +1934,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onMenuAdd = (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) => {
 		const { rootId } = props;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const win = $(window);
 		const rect = U.Dom.getSelectionRect();
 
 		if (!block) {
@@ -1927,7 +1946,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(blockId)}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			offsetX: () => {
 				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
@@ -1936,7 +1955,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onClose: () => {
 				focus.apply();
 				S.Common.filterSet(0, '');
-				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
+				const ph = U.Dom.select(`.placeholder.c${blockId}`);
+				if (ph) {
+					ph.textContent = translate('placeholderBlock');
+				};
 			},
 			data: {
 				blockId,
@@ -2090,13 +2112,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				from = to = block.getLength();
 
 				keyboard.setFocus(false);
-			} else 
+			} else
 			if (message.caretPosition >= 0) {
 				id = focused;
 				from = to = message.caretPosition;
 			};
 
-			focusSet(id, from, to, !message.isSameBlockCaret);
+			focusSet(id, from, to, id != focused);
 			analytics.event('PasteBlock', { count });
 		});
 	};
@@ -2137,7 +2159,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
-		const win = $(window);
 		const length = block.getLength();
 		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const processor = U.Embed.getProcessorByUrl(url);
@@ -2194,7 +2215,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(focused)}`,
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
 				const rect = U.Dom.getSelectionRect();
@@ -2289,7 +2310,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							if (processor !== null) {
 								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
-									$(`#block-${U.Common.esc(blockId)} .preview`).trigger('click');
+									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${U.Common.esc(blockId)}`));
+									if (previewEl) {
+										previewEl.click();
+									};
 								});
 							};
 							break;
@@ -2613,28 +2637,37 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const resizePage = (callBack?: () => void) => {
 		raf.cancel(frameResize.current);
 		frameResize.current = raf(() => {
-			const node = $(nodeRef.current);
-			const blocks = node.find('.blocks');
-			const last = node.find('#blockLast');
+			const node = nodeRef.current;
+			if (!node) {
+				return;
+			};
+
+			const blocks = U.Dom.select('.blocks', node);
+			const last = U.Dom.select('#blockLast', node);
 			const scrollContainer = U.Dom.getScrollContainer(isPopup);
 
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
-			if (blocks.length && last.length && scrollContainer) {
-				last.css({ height: '' });
+			if (blocks && last && scrollContainer) {
+				last.style.height = '';
 
-				const commentSection = node.find('.commentSection');
-				const csh = commentSection.length ? commentSection.outerHeight() : 0;
+				const commentSection = U.Dom.select('.commentSection', node);
+				const csh = commentSection ? commentSection.offsetHeight : 0;
+
+				const counter = U.Dom.select('.commentCounter', node);
 
 				if (!csh) {
 					const ct = scrollContainer.getBoundingClientRect().top;
 					const ch = scrollContainer.clientHeight;
-					const bt = blocks.offset().top;
-					const bh = blocks.outerHeight();
+					const bt = blocks.getBoundingClientRect().top + window.scrollY;
+					const bh = blocks.offsetHeight;
 
 					let height = ch - ct - bt - bh - 8;
 					height = Math.max(J.Size.lastBlock, height);
-					last.css({ height });
+					last.style.height = `${height}px`;
+					U.Dom.addClass(counter, 'isFixed');
+				} else {
+					U.Dom.removeClass(counter, 'isFixed');
 				};
 			};
 
@@ -2669,12 +2702,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const setLayoutWidth = (v: number) => {
 		v = Number(v) || 0;
 
-		const node = $(nodeRef.current);
-		const width = getWidth(v);
-		const elements = node.find('#elements');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.css({ width });
-		elements.css({ width, marginLeft: -width / 2 });
+		const width = getWidth(v);
+		const elements = U.Dom.select('#elements', node);
+
+		node.style.width = `${width}px`;
+		if (elements) {
+			elements.style.width = `${width}px`;
+			elements.style.marginLeft = `${-width / 2}px`;
+		};
 
 		headerRef.current?.refDrag?.setValue(v);
 		headerRef.current?.setPercent(v);
@@ -2715,6 +2755,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const width = U.Data.getLayoutWidth(rootId);
 	const readonly = isReadonly();
+	const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+	const isTemplate = U.Object.isTemplateType(object.type);
 
 	return (
 		<div 
@@ -2766,7 +2808,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{S.Common.config.experimental ? (
+				{S.Common.config.experimental && !isTemplate ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}

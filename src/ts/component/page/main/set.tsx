@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useLayoutEffect, useState, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
@@ -24,27 +23,28 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const scrollTopRef = useRef(0);
 	const isClosingRef = useRef(false);
 
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
+	const scrollHandler = useRef<(() => void) | null>(null);
+
 	const unbind = () => {
-		const ns = U.Dom.getEventNamespace(isPopup);
 		const container = U.Dom.getScrollContainer(isPopup);
 
-		$(window).off(`keydown.set${ns}`);
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+		};
 
 		if (scrollHandler.current && container) {
 			container.removeEventListener('scroll', scrollHandler.current);
 		};
 	};
 
-	const scrollHandler = useRef<(() => void) | null>(null);
-
 	const rebind = () => {
-		const win = $(window);
-		const ns = U.Dom.getEventNamespace(isPopup);
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
-		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+		keydownHandler.current = e => onKeyDown(e);
+		window.addEventListener('keydown', keydownHandler.current);
 
 		scrollHandler.current = () => onScroll();
 		container?.addEventListener('scroll', scrollHandler.current);
@@ -159,7 +159,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			$(bodyRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
+			const searchIcon = U.Dom.select('#dataviewControls .filter .icon.search', bodyRef.current) as HTMLElement;
+			searchIcon?.click();
 		});
 
 		keyboard.shortcut('createObject', e, () => {
@@ -179,7 +180,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 
-				$(window).trigger('selectionSet');
+				window.dispatchEvent(new CustomEvent('selectionSet'));
 			});
 
 			if (count && !S.Menu.isOpen()) {
@@ -219,13 +220,13 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const container = $(U.Dom.getPageContainer(isPopup));
-			const header = container.find('#header');
-			const cover = container.find('.block.blockCover');
-			const hh = isPopup ? header.height() : J.Size.header;
+			const container = U.Dom.getPageContainer(isPopup);
+			const header = U.Dom.select('#header', container);
+			const cover = U.Dom.select('.block.blockCover', container);
+			const hh = isPopup ? (header?.clientHeight ?? 0) : J.Size.header;
 
-			if (cover.length) {
-				cover.css({ top: hh });
+			if (cover) {
+				cover.style.top = `${hh}px`;
 			};
 		});
 	};

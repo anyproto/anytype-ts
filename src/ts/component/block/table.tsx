@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import $ from 'jquery';
+
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -54,7 +54,9 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	useEffect(() => {
 		initSize();
-		$(scrollRef.current).scrollLeft(scrollX.current);
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollX.current;
+		};
 	});
 	
 	const onHandleColumn = (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => {
@@ -131,7 +133,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		e.stopPropagation();
 
 		const current: any = S.Block.getLeaf(rootId, cellId) || {};
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const options: any[] = getOptions(type, rowId, columnId, cellId);
 		
 		let blockIds = [];
@@ -157,7 +159,8 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			case I.BlockType.TableRow: {
 				style = optionsStyle('');
 
-				element = node.find(`#row-${rowId} .handleRow`);
+				const rowEl = U.Dom.select(`#row-${rowId}`, node);
+				element = rowEl ? U.Dom.select('.handleRow', rowEl) : null;
 				menuParam = Object.assign(menuParam, {
 					offsetX: 16,
 					offsetY: -28,
@@ -173,10 +176,10 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			case I.BlockType.TableColumn: {
 				style = optionsStyle('');
 
-				element = node.find(`#cell-${U.Common.esc(cellId)}`).first();
+				element = U.Dom.select(`#cell-${U.Common.esc(cellId)}`, node);
 				menuParam = Object.assign(menuParam, {
-					offsetX: element.outerWidth() + 2,
-					offsetY: -element.outerHeight(),
+					offsetX: (element?.offsetWidth ?? 0) + 2,
+					offsetY: -(element?.offsetHeight ?? 0),
 				});
 
 				fill = (callBack: () => void) => {
@@ -189,7 +192,9 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			default: {
 				style = optionsStyle(cellId);
 
-				element = node.find(`#cell-${U.Common.esc(cellId)} .icon.menu .inner`);
+				const cellEl = U.Dom.select(`#cell-${U.Common.esc(cellId)}`, node);
+				const iconMenu = cellEl ? U.Dom.select('.icon.menu', cellEl) : null;
+				element = iconMenu ? U.Dom.select('.inner', iconMenu) : null;
 				menuParam = Object.assign(menuParam, {
 					vertical: I.MenuDirection.Center,
 					offsetX: 12,
@@ -466,31 +471,46 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onOptionsOpen = (type: I.BlockType, rowId: string, columnId: string, cellId: string) => {
 		onOptionsClose();
 
-		const table = $(tableRef.current);
+		const table = tableRef.current;
 
 		switch (type) {
 			case I.BlockType.TableColumn: {
-				const cells = table.find(`.cell.column${columnId}`);
+				const cells = U.Dom.selectAll(`.cell.column${columnId}`, table);
 
-				cells.addClass('isHighlightedColumn');
-				cells.first().addClass('isFirst');
-				cells.last().addClass('isLast');
-				cells.find('.handleColumn').addClass('isActive');
+				cells.forEach(el => U.Dom.addClass(el, 'isHighlightedColumn'));
+				if (cells.length) {
+					U.Dom.addClass(cells[0], 'isFirst');
+					U.Dom.addClass(cells[cells.length - 1], 'isLast');
+				};
+				cells.forEach(el => {
+					const handle = U.Dom.select('.handleColumn', el);
+					if (handle) {
+						U.Dom.addClass(handle, 'isActive');
+					};
+				});
 				break;
 			};
 
 			case I.BlockType.TableRow: {
-				const row = table.find(`#row-${rowId}`);
+				const row = U.Dom.select(`#row-${rowId}`, table);
 
 				rowRef.current = rowId;
 
-				row.addClass('isHighlightedRow');
-				row.find('.handleRow').addClass('isActive');
+				if (row) {
+					U.Dom.addClass(row, 'isHighlightedRow');
+					const handle = U.Dom.select('.handleRow', row);
+					if (handle) {
+						U.Dom.addClass(handle, 'isActive');
+					};
+				};
 				break;
 			};
 
 			default: {
-				table.find(`#cell-${U.Common.esc(cellId)}`).addClass('isHighlightedCell');
+				const cellEl = U.Dom.select(`#cell-${U.Common.esc(cellId)}`, table);
+				if (cellEl) {
+					U.Dom.addClass(cellEl, 'isHighlightedCell');
+				};
 				break;
 			};
 		};
@@ -500,14 +520,18 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onOptionsClose = () => {
-		const table = $(tableRef.current);
-	
-		table.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
-		table.find('.isHighlightedRow').removeClass('isHighlightedRow');
-		table.find('.isHighlightedCell').removeClass('isHighlightedCell');
+		const table = tableRef.current;
 
-		table.find('.handleColumn.isActive').removeClass('isActive');
-		table.find('.handleRow.isActive').removeClass('isActive');
+		U.Dom.selectAll('.isHighlightedColumn', table).forEach(el => {
+			U.Dom.removeClass(el, 'isHighlightedColumn');
+			U.Dom.removeClass(el, 'isFirst');
+			U.Dom.removeClass(el, 'isLast');
+		});
+		U.Dom.selectAll('.isHighlightedRow', table).forEach(el => U.Dom.removeClass(el, 'isHighlightedRow'));
+		U.Dom.selectAll('.isHighlightedCell', table).forEach(el => U.Dom.removeClass(el, 'isHighlightedCell'));
+
+		U.Dom.selectAll('.handleColumn.isActive', table).forEach(el => U.Dom.removeClass(el, 'isActive'));
+		U.Dom.selectAll('.handleRow.isActive', table).forEach(el => U.Dom.removeClass(el, 'isActive'));
 
 		rowRef.current = '';
 		setEditing('');
@@ -582,19 +606,21 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const plusC = node.find('#plus-c');
-		const plusV = node.find('#plus-v');
-		const plusH = node.find('#plus-h');
+		const node = nodeRef.current;
+		const plusC = U.Dom.select('#plus-c', node);
+		const plusV = U.Dom.select('#plus-v', node);
+		const plusH = U.Dom.select('#plus-h', node);
 
-		plusC.addClass('active');
-
-		if (isLastColumn) {
-			plusV.addClass('active');
+		if (plusC) {
+			U.Dom.addClass(plusC, 'active');
 		};
 
-		if (isLastRow) {
-			plusH.addClass('active');
+		if (isLastColumn && plusV) {
+			U.Dom.addClass(plusV, 'active');
+		};
+
+		if (isLastRow && plusH) {
+			U.Dom.addClass(plusH, 'active');
 		};
 	};
 
@@ -608,19 +634,21 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const plusC = node.find('#plus-c');
-		const plusV = node.find('#plus-v');
-		const plusH = node.find('#plus-h');
+		const node = nodeRef.current;
+		const plusC = U.Dom.select('#plus-c', node);
+		const plusV = U.Dom.select('#plus-v', node);
+		const plusH = U.Dom.select('#plus-h', node);
 
-		plusC.removeClass('active');
-
-		if (isLastColumn) {
-			plusV.removeClass('active');
+		if (plusC) {
+			U.Dom.removeClass(plusC, 'active');
 		};
 
-		if (isLastRow) {
-			plusH.removeClass('active');
+		if (isLastColumn && plusV) {
+			U.Dom.removeClass(plusV, 'active');
+		};
+
+		if (isLastRow && plusH) {
+			U.Dom.removeClass(plusH, 'active');
 		};
 	};
 
@@ -669,11 +697,14 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const setEditing = (id: string) => {
 		cellRef.current = id;
 
-		const node = $(nodeRef.current);
-		node.find('.cell.isEditing').removeClass('isEditing');
+		const node = nodeRef.current;
+		U.Dom.selectAll('.cell.isEditing', node).forEach(el => U.Dom.removeClass(el, 'isEditing'));
 
 		if (id) {
-			node.find(`#cell-${U.Common.esc(id)}`).addClass('isEditing');
+			const cellEl = U.Dom.select(`#cell-${U.Common.esc(id)}`, node);
+			if (cellEl) {
+				U.Dom.addClass(cellEl, 'isEditing');
+			};
 			
 			frameRemove([ I.BlockPosition.None ]);
 			frameAdd(I.BlockType.Text, '', '', id, I.BlockPosition.None);
@@ -682,26 +713,38 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	};
 
+	const tableResizeMoveRef = useRef<((e: MouseEvent) => void) | null>(null);
+	const tableResizeEndRef = useRef<((e: MouseEvent) => void) | null>(null);
+
 	const onResizeStart = (e: any, id: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const el = node.find(`.cell.column${id}`);
+		const node = nodeRef.current;
+		const cells = U.Dom.selectAll(`.cell.column${id}`, node);
 
-		if (el.length) {
-			offsetX.current = el.first().offset().left;
+		if (cells.length) {
+			const rect = cells[0].getBoundingClientRect();
+			offsetX.current = rect.left + window.scrollX;
 		};
 
 		setEditing('');
 		focus.clear(true);
 
-		body.addClass('colResize');
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		win.on(`mousemove.${block.id}`, throttle(e => onResizeMove(e, id), 40));
-		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, id));
+		U.Dom.addClass(document.body, 'colResize');
+
+		if (tableResizeMoveRef.current) {
+			window.removeEventListener('mousemove', tableResizeMoveRef.current);
+		};
+		if (tableResizeEndRef.current) {
+			window.removeEventListener('mouseup', tableResizeEndRef.current);
+		};
+
+		tableResizeMoveRef.current = throttle((e: MouseEvent) => onResizeMove(e, id), 40);
+		tableResizeEndRef.current = (e: MouseEvent) => onResizeEnd(e, id);
+
+		window.addEventListener('mousemove', tableResizeMoveRef.current);
+		window.addEventListener('mouseup', tableResizeEndRef.current);
 
 		keyboard.setResize(true);
 	};
@@ -726,8 +769,15 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{ blockId: id, fields: { width } },
 		]);
 
-		$(window).off(`mousemove.${block.id} mouseup.${block.id}`);
-		$('body').removeClass('colResize');
+		if (tableResizeMoveRef.current) {
+			window.removeEventListener('mousemove', tableResizeMoveRef.current);
+			tableResizeMoveRef.current = null;
+		};
+		if (tableResizeEndRef.current) {
+			window.removeEventListener('mouseup', tableResizeEndRef.current);
+			tableResizeEndRef.current = null;
+		};
+		U.Dom.removeClass(document.body, 'colResize');
 		keyboard.setResize(false);
 	};
 
@@ -742,43 +792,61 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const setColumnWidths = (widths: number[]) => {
-		const node = $(nodeRef.current);
-		const rows = node.find('.row');
+		const node = nodeRef.current;
+		const rowEls = U.Dom.selectAll('.row', node);
 		const gridTemplateColumns = widths.map(it => `${it}px`).join(' ');
 
-		rows.each((i, item) => {
+		rowEls.forEach((item) => {
 			item.style.gridTemplateColumns = gridTemplateColumns;
 		});
 	};
 
+	const tableDragOverRef = useRef<((e: Event) => void) | null>(null);
+	const tableDragColumnMoveRef = useRef<((e: Event) => void) | null>(null);
+	const tableDragColumnEndRef = useRef<((e: Event) => void) | null>(null);
+	const tableDragRowMoveRef = useRef<((e: Event) => void) | null>(null);
+	const tableDragRowEndRef = useRef<((e: Event) => void) | null>(null);
+
 	const onDragStartColumn = (e: any, id: string) => {
 		e.stopPropagation();
 
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const table = $('<div />').addClass('table isClone');
+		const node = nodeRef.current;
+		const table = document.createElement('div');
+		table.className = 'table isClone';
 		const widths = getColumnWidths();
 		const idx = columns.findIndex(it => it.id == id);
+		const cells = U.Dom.selectAll(`.cell.column${id}`, node);
 
 		rows.forEach((row: I.Block, i: number) => {
-			const rowElement = $('<div />').addClass('row');
-			const cell = $(node.find(`.cell.column${id}`).get(i));
-			const clone = cell.clone();
-
-			clone.css({ height: cell.outerHeight() });
-
-			rowElement.append(clone);
-			table.append(rowElement);
+			const rowElement = document.createElement('div');
+			rowElement.className = 'row';
+			const cell = cells[i];
+			if (cell) {
+				const clone = cell.cloneNode(true) as HTMLElement;
+				clone.style.height = `${cell.offsetHeight}px`;
+				rowElement.appendChild(clone);
+			};
+			table.appendChild(rowElement);
 		});
 
-		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		node.append(table);
+		table.style.width = `${widths[idx]}px`;
+		table.style.zIndex = '10000';
+		table.style.position = 'fixed';
+		table.style.left = '-10000px';
+		table.style.top = '-10000px';
+		node?.appendChild(table);
 
-		$(document).off('dragover').on('dragover', e => e.preventDefault());
-		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), 0);
+		if (tableDragOverRef.current) {
+			document.removeEventListener('dragover', tableDragOverRef.current);
+		};
+		tableDragOverRef.current = (e: Event) => e.preventDefault();
+		document.addEventListener('dragover', tableDragOverRef.current);
+		e.dataTransfer.setDragImage(table, table.offsetWidth, 0);
 
-		win.on('drag.tableColumn', throttle(e => onDragMoveColumn(e, id), 40));
-		win.on('dragend.tableColumn', e => onDragEndColumn(e, id));
+		tableDragColumnMoveRef.current = throttle((e: Event) => onDragMoveColumn(e, id), 40);
+		tableDragColumnEndRef.current = (e: Event) => onDragEndColumn(e, id);
+		window.addEventListener('drag', tableDragColumnMoveRef.current);
+		window.addEventListener('dragend', tableDragColumnEndRef.current);
 
 		onSortStart();
 		initCache(I.BlockType.TableColumn);
@@ -827,8 +895,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onDragEndColumn = (e: any, id: string) => {
 		e.preventDefault();
 
-		const node = $(nodeRef.current);
-		const win = $(window);
+		const node = nodeRef.current;
 
 		if (frame.current) {
 			raf.cancel(frame.current);
@@ -843,31 +910,53 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 
-		win.off('drag.tableColumn dragend.tableColumn');
-		node.find('.table.isClone').remove();
-		node.find('.cell.isOver').removeClass('isOver left right');
+		if (tableDragColumnMoveRef.current) {
+			window.removeEventListener('drag', tableDragColumnMoveRef.current);
+			tableDragColumnMoveRef.current = null;
+		};
+		if (tableDragColumnEndRef.current) {
+			window.removeEventListener('dragend', tableDragColumnEndRef.current);
+			tableDragColumnEndRef.current = null;
+		};
+		U.Dom.selectAll('.table.isClone', node).forEach(el => el.remove());
+		U.Dom.selectAll('.cell.isOver', node).forEach(el => {
+			U.Dom.removeClass(el, 'isOver');
+			U.Dom.removeClass(el, 'left');
+			U.Dom.removeClass(el, 'right');
+		});
 	};
 
 	const onDragStartRow = (e: any, id: string) => {
 		e.stopPropagation();
 
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const layer = $('<div />');
-		const el = node.find(`#row-${id}`);
-		const clone = el.clone();
-		const table = $('<div />').addClass('table isClone');
+		const node = nodeRef.current;
+		const layer = document.createElement('div');
+		const el = U.Dom.select(`#row-${id}`, node);
+		const clone = el?.cloneNode(true) as HTMLElement;
+		const table = document.createElement('div');
+		table.className = 'table isClone';
 
-		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		node.append(layer);
-		layer.append(table);
-		table.append(clone);
-		
-		$(document).off('dragover').on('dragover', e => e.preventDefault());
-		e.dataTransfer.setDragImage(layer.get(0), 0, table.outerHeight());
+		layer.style.zIndex = '10000';
+		layer.style.position = 'fixed';
+		layer.style.left = '-10000px';
+		layer.style.top = '-10000px';
+		node?.appendChild(layer);
+		layer.appendChild(table);
+		if (clone) {
+			table.appendChild(clone);
+		};
 
-		win.on('drag.tableRow', throttle(e => onDragMoveRow(e, id), 40));
-		win.on('dragend.tableRow', e => onDragEndRow(e, id));
+		if (tableDragOverRef.current) {
+			document.removeEventListener('dragover', tableDragOverRef.current);
+		};
+		tableDragOverRef.current = (e: Event) => e.preventDefault();
+		document.addEventListener('dragover', tableDragOverRef.current);
+		e.dataTransfer.setDragImage(layer, 0, table.offsetHeight);
+
+		tableDragRowMoveRef.current = throttle((e: Event) => onDragMoveRow(e, id), 40);
+		tableDragRowEndRef.current = (e: Event) => onDragEndRow(e, id);
+		window.addEventListener('drag', tableDragRowMoveRef.current);
+		window.addEventListener('dragend', tableDragRowEndRef.current);
 
 		onSortStart();
 		initCache(I.BlockType.TableRow);
@@ -921,8 +1010,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const onDragEndRow = (e: any, id: string) => {
 		e.preventDefault();
 
-		const node = $(nodeRef.current);
-		const win = $(window);
+		const node = nodeRef.current;
 
 		if (frame.current) {
 			raf.cancel(frame.current);
@@ -937,34 +1025,46 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 
-		win.off('drag.tableRow dragend.tableRow');
-		node.find('.table.isClone').remove();
-		node.find('.row.isOver').removeClass('isOver top bottom');
+		if (tableDragRowMoveRef.current) {
+			window.removeEventListener('drag', tableDragRowMoveRef.current);
+			tableDragRowMoveRef.current = null;
+		};
+		if (tableDragRowEndRef.current) {
+			window.removeEventListener('dragend', tableDragRowEndRef.current);
+			tableDragRowEndRef.current = null;
+		};
+		U.Dom.selectAll('.table.isClone', node).forEach(el => el.remove());
+		U.Dom.selectAll('.row.isOver', node).forEach(el => {
+			U.Dom.removeClass(el, 'isOver');
+			U.Dom.removeClass(el, 'top');
+			U.Dom.removeClass(el, 'bottom');
+		});
 	};
 
 	const onScroll = (e: any) => {
-		scrollX.current = $(scrollRef.current).scrollLeft();
+		scrollX.current = scrollRef.current?.scrollLeft ?? 0;
 	};
 
 	const initCache = (type: I.BlockType) => {
 		cache.current = {};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		switch (type) {
 			case I.BlockType.TableColumn: {
 				columns.forEach((column: I.Block, i: number) => {
-					const cell = node.find(`.cell.column${column.id}`).first();
-					if (!cell.length) {
+					const cells = U.Dom.selectAll(`.cell.column${column.id}`, node);
+					const cell = cells.length ? cells[0] : null;
+					if (!cell) {
 						return;
 					};
 
-					const { left } = cell.offset();
+					const rect = cell.getBoundingClientRect();
 
 					cache.current[column.id] = {
-						x: left,
+						x: rect.left + window.scrollX,
 						y: 0,
 						height: 1,
-						width: cell.outerWidth(),
+						width: cell.offsetWidth,
 						index: i,
 					};
 				});
@@ -972,20 +1072,20 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.BlockType.TableRow: {
-				const width = node.width();
+				const width = U.Dom.contentWidth(node);
 
 				rows.forEach((row: I.Block, i: number) => {
-					const el = node.find(`#row-${row.id}`).first();
-					if (!el.length) {
+					const el = U.Dom.select(`#row-${row.id}`, node);
+					if (!el) {
 						return;
 					};
 
-					const { left, top } = el.offset();
+					const rect = el.getBoundingClientRect();
 
 					cache.current[row.id] = {
-						x: left,
-						y: top,
-						height: el.height(),
+						x: rect.left + window.scrollX,
+						y: rect.top + window.scrollY,
+						height: U.Dom.contentHeight(el),
 						width: width,
 						index: i,
 					};
@@ -996,7 +1096,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onSortStart = () => {
-		$('body').addClass('grab');
+		U.Dom.addClass(document.body, 'grab');
 		keyboard.disableSelection(true);
 	};
 
@@ -1006,7 +1106,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		C.BlockTableColumnMove(rootId, id, targetId, position);
-		$('body').removeClass('grab');
+		U.Dom.removeClass(document.body, 'grab');
 		keyboard.disableSelection(false);
 	};
 
@@ -1019,7 +1119,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			frameRemove([ I.BlockPosition.None ]);
 		});
 
-		$('body').removeClass('grab');
+		U.Dom.removeClass(document.body, 'grab');
 		keyboard.disableSelection(false);
 	};
 
@@ -1190,13 +1290,14 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const frameAdd = (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) => {
-		const node = $(nodeRef.current);
-		const table = node.find('#table');
-		const frameContainer = node.find('#selectionFrameContainer');
-		const containerOffset = frameContainer.offset();
+		const node = nodeRef.current;
+		const table = U.Dom.select('#table', node);
+		const frameContainer = U.Dom.select('#selectionFrameContainer', node);
+		const containerRect = frameContainer?.getBoundingClientRect();
+		const containerOffset = { left: (containerRect?.left ?? 0) + window.scrollX, top: (containerRect?.top ?? 0) + window.scrollY };
 		const id = [ type, rowId, columnId, cellId, position ].join('-');
 
-		let obj: any = null;
+		let obj: HTMLElement | null = null;
 		let offset: any = null;
 		let x = 0;
 		let y = 0;
@@ -1209,17 +1310,18 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					return;
 				};
 
-				obj = table.find(`#row-${rowId}`);
-				if (!obj.length) {
+				obj = U.Dom.select(`#row-${rowId}`, table);
+				if (!obj) {
 					return;
 				};
 
-				offset = obj.offset();
+				const objRect = obj.getBoundingClientRect();
+				offset = { left: objRect.left + window.scrollX, top: objRect.top + window.scrollY };
 
 				x = offset.left - containerOffset.left;
 				y = offset.top - containerOffset.top;
-				w = obj.outerWidth();
-				h = obj.outerHeight();
+				w = obj.offsetWidth;
+				h = obj.offsetHeight;
 				break;
 			};
 
@@ -1228,19 +1330,18 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					return;
 				};
 
-				const cells = table.find(`.cell.column${columnId}`);
+				const cells = U.Dom.selectAll(`.cell.column${columnId}`, table);
 
-				cells.each((i: number, obj: any) => {
-					obj = $(obj);
-
+				cells.forEach((cellEl: HTMLElement, i: number) => {
 					if (i == 0) {
-						offset = obj.offset();
+						const cellRect = cellEl.getBoundingClientRect();
+						offset = { left: cellRect.left + window.scrollX, top: cellRect.top + window.scrollY };
 						x = offset.left - containerOffset.left;
 						y = offset.top - containerOffset.top;
-						w = obj.outerWidth();
+						w = cellEl.offsetWidth;
 					};
 
-					h += obj.outerHeight();
+					h += cellEl.offsetHeight;
 				});
 				break;
 			};
@@ -1250,17 +1351,18 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					return;
 				};
 
-				obj = table.find(`#cell-${U.Common.esc(cellId)}`);
-				if (!obj.length) {
+				obj = U.Dom.select(`#cell-${U.Common.esc(cellId)}`, table);
+				if (!obj) {
 					return;
 				};
 
-				offset = obj.offset();
+				const objRect = obj.getBoundingClientRect();
+				offset = { left: objRect.left + window.scrollX, top: objRect.top + window.scrollY };
 
 				x = offset.left - containerOffset.left;
 				y = offset.top - containerOffset.top;
-				w = obj.outerWidth();
-				h = obj.outerHeight();
+				w = obj.offsetWidth;
+				h = obj.offsetHeight;
 				break;
 			};
 		};
@@ -1284,33 +1386,37 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const frameRemove = (positions: I.BlockPosition[]) => {
-		const node = $(nodeRef.current);
-		const frameContainer = node.find('#selectionFrameContainer');
+		const node = nodeRef.current;
+		const frameContainer = U.Dom.select('#selectionFrameContainer', node);
 
 		frames.current = frames.current.filter(it => !positions.includes(it.position));
 
 		positions.forEach((it: I.BlockPosition) => {
 			const c = getClassByPosition(it);
-			frameContainer.find(`.selectionFrame${c ? `.${c}` : ''}`).remove();
+			U.Dom.selectAll(`.selectionFrame${c ? `.${c}` : ''}`, frameContainer).forEach(el => el.remove());
 		});
 	};
 
 	const frameRender = (item: any) => {
-		const node = $(nodeRef.current);
-		const frameContainer = node.find('#selectionFrameContainer');
+		const node = nodeRef.current;
+		const frameContainer = U.Dom.select('#selectionFrameContainer', node);
 		const c = getClassByPosition(item.position);
 
-		let obj = frameContainer.find(`#frame-${item.id}`);
-		if (!obj.length) {
-			const frame = $('<div class="selectionFrame"></div>');
-
-			frameContainer.append(frame);
-			frame.attr({ id: `frame-${item.id}` }).addClass(c);
-
-			obj = frame;
+		let obj = U.Dom.select(`#frame-${item.id}`, frameContainer);
+		if (!obj) {
+			obj = document.createElement('div');
+			obj.className = 'selectionFrame';
+			obj.id = `frame-${item.id}`;
+			if (c) {
+				U.Dom.addClass(obj, c);
+			};
+			frameContainer?.appendChild(obj);
 		};
 
-		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
+		obj.style.left = `${item.x}px`;
+		obj.style.top = `${item.y}px`;
+		obj.style.width = `${item.w}px`;
+		obj.style.height = `${item.h}px`;
 	};
 
 	const framesUpdate = () => {
@@ -1338,10 +1444,10 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const wrap = $(scrollRef.current);
-		const row = node.find(`#row-${U.Common.esc(rows[0].id)}`);
-		const obj = $(`#block-${U.Common.esc(block.id)}`);
+		const node = nodeRef.current;
+		const wrap = scrollRef.current;
+		const row = U.Dom.select(`#row-${U.Common.esc(rows[0].id)}`, node);
+		const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
 
 		if (frameResize.current) {
 			raf.cancel(frameResize.current);
@@ -1352,8 +1458,12 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			let maxWidth = 0;
 			let wrapperWidth = 0;
 
-			String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
-			obj.css({ width: 'auto', marginLeft: 0 });
+			const gridCols = row ? getComputedStyle(row).gridTemplateColumns : '';
+			String(gridCols || '').split(' ').forEach(it => width += parseInt(it));
+			if (obj) {
+				obj.style.width = 'auto';
+				obj.style.marginLeft = '0';
+			};
 
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const container = U.Dom.getPageContainer(isPopup);
@@ -1361,20 +1471,20 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				maxWidth = (container?.clientWidth ?? 0) - PADDING;
 				wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
 
-				wrap.toggleClass('withScroll', width > maxWidth);
+				U.Dom.toggleClass(wrap, 'withScroll', width > maxWidth);
 				width = Math.max(wrapperWidth, Math.min(maxWidth, width));
 
-				obj.css({
-					width: (width >= wrapperWidth) ? width : 'auto',
-					marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-				});
+				if (obj) {
+					obj.style.width = (width >= wrapperWidth) ? `${width}px` : 'auto';
+					obj.style.marginLeft = (width >= wrapperWidth) ? `${Math.min(0, (wrapperWidth - width) / 2)}px` : '';
+				};
 			} else {
-				const parentObj = $(`#block-${U.Common.esc(parent.id)}`);
-				if (parentObj.length) {
-					maxWidth = parentObj.width() - J.Size.blockMenu;
+				const parentObj = U.Dom.get(`block-${U.Common.esc(parent.id)}`);
+				if (parentObj) {
+					maxWidth = U.Dom.contentWidth(parentObj) - J.Size.blockMenu;
 				};
 
-				wrap.toggleClass('withScroll', width > maxWidth);
+				U.Dom.toggleClass(wrap, 'withScroll', width > maxWidth);
 			};
 		});
 	};
@@ -1442,7 +1552,7 @@ const BlockTable = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 									className={`plusButton ${item.className}`} 
 									onClick={item.onClick}
 								>
-									<Icon name="plus/table" />
+									<Icon name="plus/table" size={10} />
 								</div>
 							))}
 						</>

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
 import Card from './card';
@@ -128,7 +127,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const element = `#button-${U.Common.esc(id)}-more`;
 
 		S.Menu.open('dataviewGroupEdit', {
@@ -136,12 +135,12 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
 			onOpen: () => {
-				$(element).addClass('active');
-				node.addClass('active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
+				U.Dom.addClass(node, 'active');
 			},
 			onClose: () => {
-				$(element).removeClass('active');
-				node.removeClass('active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
+				U.Dom.removeClass(node, 'active');
 			},
 			data: {
 				rootId,

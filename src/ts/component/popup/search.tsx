@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
@@ -47,22 +46,34 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const archiveHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
 
-		const win = $(window);
-
-		win.on('keydown.search', e => onKeyDown(e));
-		win.on('archiveObject.search', (e: any, data: any) => {
-			const ids = U.Common.objectCopy(data.ids);
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		archiveHandler.current = (e: any) => {
+			const d = e.detail;
+			const ids = U.Common.objectCopy(d?.ids);
 			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
 
 			setDummy(dummy + 1);
-		});
+		};
+
+		window.addEventListener('keydown', keydownHandler.current);
+		window.addEventListener('archiveObject', archiveHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.search archiveObject.search');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (archiveHandler.current) {
+			window.removeEventListener('archiveObject', archiveHandler.current);
+			archiveHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -204,17 +215,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-
 		nRef.current = getItems().findIndex(it => it.id == item.id);
 		setActiveIndex(nRef.current);
 		unsetActive();
 
-		node.find(`#item-${U.Common.esc(item.id)}`).addClass('active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current), 'active');
 	};
 
 	const unsetActive = () => {
-		$(nodeRef.current).find('.item.active').removeClass('active');
+		U.Dom.selectAll('.item.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 	};
 
 	const onFilterChange = (v: string) => {
@@ -304,7 +313,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 		const sorts = [
-			{ relationKey: '_score', type: I.SortType.Desc },
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -331,7 +340,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
 				setIsLoading(false);
 				return;
@@ -808,6 +817,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
 				onClick={e => onClick(e, item)}
+				onAuxClick={e => onClick(e, item)}
 			>
 				{icon}
 				{content}

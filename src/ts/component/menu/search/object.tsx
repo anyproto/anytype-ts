@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
@@ -62,12 +61,12 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.addEventListener('keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		window.removeEventListener('keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -346,7 +345,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const resize = () => {
 		const items = getItems().slice(0, LIMIT);
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
@@ -355,7 +354,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 		position();
 	};
 
@@ -369,7 +368,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const cn = [];
 		const props = {
 			...item,
-			object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
+			object: (item.isAdd || item.isSection || item.isSystem || item.iconParam ? undefined : item),
 			withPlural,
 		};
 

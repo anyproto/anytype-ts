@@ -1,5 +1,4 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
 import * as I from 'Interface';
@@ -22,24 +21,24 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
 
-		if (!el.length) {
+		if (!el) {
 			return width;
 		};
-		
-		const ew = el.width();
+
+		const ew = U.Dom.contentWidth(el);
 		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
-		
+
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
 	const onPlay = () => {
-		$(nodeRef.current).addClass('isPlaying');
+		U.Dom.addClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onPause = () => {
-		$(nodeRef.current).removeClass('isPlaying');
+		U.Dom.removeClass(nodeRef.current, 'isPlaying');
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -66,55 +65,70 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		Action.upload(I.FileType.Video, rootId, id, '', path);
 	};
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		
+
 		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
-		$(nodeRef.current).addClass('isResizing');
+		U.Dom.addClass(nodeRef.current, 'isResizing');
 
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
-		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onResizeMove(e, checkMax);
+		mouseUpHandler.current = e => onResizeEnd(e, checkMax);
+		window.addEventListener('mousemove', mouseMoveHandler.current);
+		window.addEventListener('mouseup', mouseUpHandler.current);
 	};
-	
+
 	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+
+		if (!wrapRef.current) {
 			return;
 		};
-		
-		const rect = U.Dom.getElementRect(wrap.get(0));
+
+		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
-		wrap.css({ width: (w * 100) + '%' });
+
+		wrapRef.current.style.width = (w * 100) + '%';
 	};
-	
+
 	const onResizeEnd = (e: any, checkMax: boolean) => {
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
-		
-		const win = $(window);
-		const rect = U.Dom.getElementRect(wrap.get(0));
+
+		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(nodeRef.current).removeClass('isResizing');
+
+		if (mouseMoveHandler.current) {
+			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			window.removeEventListener('mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
+
+		U.Dom.removeClass(nodeRef.current, 'isResizing');
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
-		
+
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);

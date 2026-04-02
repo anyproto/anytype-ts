@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { AutoSizer, List } from 'react-virtualized';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import * as I from 'Interface';
@@ -64,16 +63,24 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	}, [ filter, tab, items ]);
 
+	const pasteHandler = useRef<((e: any) => void) | null>(null);
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
+
 	const unbind = () => {
-		$(window).off('paste.menu keydown.menu');
+		if (pasteHandler.current) {
+			window.removeEventListener('paste', pasteHandler.current);
+		};
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('paste.menu', e => onPaste(e));
-		win.on('keydown.menu', e => onKeyDown(e));
+		pasteHandler.current = e => onPaste(e);
+		keydownHandler.current = e => onKeyDown(e);
+		window.addEventListener('paste', pasteHandler.current);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const load = () => {
@@ -216,25 +223,25 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onDragOver = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(dropzoneRef.current).addClass('isDraggingOver');
+			U.Dom.addClass(dropzoneRef.current, 'isDraggingOver');
 		};
 	};
-	
+
 	const onDragLeave = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(dropzoneRef.current).removeClass('isDraggingOver');
+			U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		};
 	};
-	
+
 	const onDrop = (e: any) => {
 		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
-		
+
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		
-		$(dropzoneRef.current).removeClass('isDraggingOver');
+
+		U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
@@ -378,9 +385,9 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setActive = (item: any, index: number, scroll: boolean) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.find('.item.hover').removeClass('hover');
+		U.Dom.selectAll('.item.hover', node).forEach(el => U.Dom.removeClass(el, 'hover'));
 
 		active.current = item;
 		if (index !== undefined) {
@@ -391,8 +398,8 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		element.addClass('hover');
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		U.Dom.addClass(element, 'hover');
 
 		if (!scroll || !listRef.current || (index === undefined)) {
 			return;

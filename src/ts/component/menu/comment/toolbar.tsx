@@ -104,8 +104,8 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 	const extraActions = [
 		{ id: 'link', icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink'), isActive: activeFormats.link, onClick: onLinkClick },
-		{ id: 'quote', icon: 'quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
-		{ id: 'code', icon: 'codeSnippet', name: translate('blockNameCode'), isActive: blockStyle == 'code', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Code); } },
+		{ id: 'quote', icon: 'comment/menu/quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
+		{ id: 'code', icon: 'comment/menu/code', name: translate('blockNameCode'), isActive: blockStyle == 'code', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Code); } },
 	];
 
 	const styleIcon = (() => {
@@ -149,26 +149,17 @@ const MenuCommentToolbar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			</div>
 
 			<div className="section">
-				{extraActions.map((action) => {
-					const cn = [];
-					if (action.isActive) {
-						cn.push('active');
-					};
-
-					const isRegistered = action.icon.includes('/');
-
-					return (
-						<Icon
-							id={`button-${action.id}`}
-							key={action.id}
-							name={isRegistered ? action.icon : undefined}
-							color={action.isActive ? 'default' : ''}
-							className={[ (!isRegistered ? action.icon : ''), ...cn ].join(' ')} withBackground={true}
-							tooltipParam={{ text: action.name, caption: action.caption }}
-							onMouseDown={action.onClick}
-						/>
-					);
-				})}
+				{extraActions.map((action) => (
+					<Icon
+						id={`button-${action.id}`}
+						key={action.id}
+						name={action.icon}
+						color={action.isActive ? 'default' : ''}
+						className={action.isActive ? 'active' : ''} withBackground={true}
+						tooltipParam={{ text: action.name, caption: action.caption }}
+						onMouseDown={action.onClick}
+					/>
+				))}
 			</div>
 
 			<div className="section last">

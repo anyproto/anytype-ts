@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
-import $ from 'jquery';
+
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
@@ -163,9 +163,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
-			const grammar = Prism.languages[lang] || {};
+			const grammar = Prism.languages[lang];
 
-			html = Prism.highlight(html, grammar, lang);
+			html = grammar ? Prism.highlight(html, grammar, lang) : Prism.util.encode(html) as string;
 			langRef.current?.setValue(lang);
 		} else {
 			if (!keyboard.isComposition) {
@@ -989,8 +989,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-		const element = $(`#block-${U.Common.esc(block.id)}`);
+		const element = `#block-${U.Common.esc(block.id)}`;
 
 		let value = getTextValue();
 
@@ -1009,7 +1008,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				element,
 				recalcRect: () => {
 					const rect = U.Dom.getSelectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 				},
 				offsetX: () => {
 					const rect = U.Dom.getSelectionRect();
@@ -1047,10 +1046,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-
 		let value = getTextValue();
-		
+
 		const firstChar = value.charAt(range.from - 1);
 
 		value = U.String.cut(value, range.from - 2, range.from);
@@ -1061,7 +1058,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(block.id)}`,
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
 				const rect = U.Dom.getSelectionRect();
@@ -1090,7 +1087,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onSmile = () => {
-		const win = $(window);
 		const range = getRange();
 
 		let value = getTextValue();
@@ -1100,7 +1096,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
 				const rect = U.Dom.getSelectionRect();
@@ -1189,7 +1185,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			if (selection && selection.rangeCount > 0) {
 				const selRange = selection.getRangeAt(0);
-				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
+				const editable = U.Dom.select('.editable', editableRef.current?.getNode());
 
 				if (editable && editable.contains(selRange.startContainer)) {
 					let from = U.Dom.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
@@ -1347,8 +1343,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
-		const win = $(window);
-		const el = $(`#block-${U.Common.esc(block.id)}`);
+		const el = `#block-${U.Common.esc(block.id)}`;
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (S.Menu.isOpen('blockContext') && !keyboard.isContextCloseDisabled) {
@@ -1388,9 +1383,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				S.Menu.open('blockContext', {
 					classNameWrap: 'fromBlock',
 					element: el,
-					recalcRect: () => { 
+					recalcRect: () => {
 						const rect = U.Dom.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: -8,

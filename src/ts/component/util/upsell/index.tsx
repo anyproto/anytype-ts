@@ -49,7 +49,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 			case 'members': {
 				const space = U.Space.getSpaceview();
-				if (!space || space.isChat || space.isOneToOne) {
+				if (!space || space.isOneToOne) {
 					return { isShown, isRed };
 				};
 

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
@@ -50,13 +49,19 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		position();
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		window.addEventListener('keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -394,7 +399,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 			<div className="section">
 				<MenuItemVertical
 					id="includeTime"
-					icon="clock"
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
@@ -463,10 +468,10 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 			{relation ? (
 				<div className="section">
-					<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
-					{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
-					{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
-					{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
+					<MenuItemVertical iconParam={{ name: 'common/expand' }} name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
+					{canDuplicate ? <MenuItemVertical iconParam={{ name: 'menu/action/duplicate' }} name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
+					{canUnlink ? <MenuItemVertical iconParam={{ name: 'common/unlink' }} name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
+					{canDelete ? <MenuItemVertical iconParam={{ name: 'menu/action/remove' }} name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
 				</div>
 			) : ''}
 		</form>

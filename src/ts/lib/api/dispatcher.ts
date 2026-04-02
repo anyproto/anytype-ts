@@ -1,5 +1,4 @@
 
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
 import type { Event } from 'Proto/pb/protos/events';
@@ -204,7 +203,6 @@ class Dispatcher {
 		const traceId = event.traceId;
 		const ctx: string[] = [ event.contextId ];
 		const debugJson = config.flagsMw.json;
-		const win = $(window);
 
 		if (traceId) {
 			ctx.push(traceId);
@@ -801,7 +799,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData`);
+						window.dispatchEvent(new CustomEvent('updateDataviewData'));
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -1106,7 +1104,7 @@ class Dispatcher {
 							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
-						if (!spaceview.isChat && !spaceview.isOneToOne) {
+						if (!spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
 								title.push(U.String.shorten(chat.name, 32));
@@ -1126,7 +1124,7 @@ class Dispatcher {
 						Sound.playNotification();
 					};
 
-					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
 					break;
 				};
 
@@ -1153,7 +1151,7 @@ class Dispatcher {
 						};
 					});
 
-					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
+					window.dispatchEvent(new CustomEvent('messageUpdate', { detail: { message: mapped.message, subIds: mapped.subIds } }));
 					break;
 				};
 
@@ -1309,7 +1307,7 @@ class Dispatcher {
 						};
 					};
 
-					$(window).trigger('reactionUpdate', [ notificationMessage ]);
+					window.dispatchEvent(new CustomEvent('reactionUpdate', { detail: notificationMessage }));
 					break;
 				};
 
@@ -1439,7 +1437,7 @@ class Dispatcher {
 
 		const { space } = S.Common;
 		const keys = Object.keys(details);
-		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
+		const check = [ 'creator', 'homepage', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
 		if (subIds.length) {
@@ -1485,7 +1483,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			$(window).trigger('updateDataviewData');
+			window.dispatchEvent(new CustomEvent('updateDataviewData'));
 		};
 	};
 
@@ -1616,7 +1614,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		$(window).trigger('objectView');
+		window.dispatchEvent(new CustomEvent('objectView'));
 	};
 
 	/**

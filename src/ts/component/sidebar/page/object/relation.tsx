@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import Section from 'Component/sidebar/section';
@@ -110,8 +109,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			return acc.concat(keys);
 		}, []);
 
-		S.Menu.open('relationSuggest', { 
-			element: $(e.currentTarget),
+		S.Menu.open('relationSuggest', {
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -129,22 +128,27 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	};
 
 	const initToggle = (id: string, isOpen: boolean) => {
-		const obj = $(`#sidebarRight #relationGroup-${id}`);
-		const title = obj.find('.titleWrap');
-		const list = obj.find('> .list');
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		if (!obj) return;
 
-		title.toggleClass('isOpen', isOpen);
-		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+		const title = obj.querySelector('.titleWrap') as HTMLElement;
+		const list = obj.querySelector(':scope > .list') as HTMLElement;
+
+		U.Dom.toggleClass(title, 'isOpen', isOpen);
+		U.Dom.toggleClass(list, 'isOpen', isOpen);
+		if (list) list.style.height = isOpen ? 'auto' : '0px';
 	};
 
 	const onToggle = (id: string) => {
-		const obj = $(`#sidebarRight #relationGroup-${id}`);
-		const title = obj.find('.titleWrap');
-		const list = obj.find('> .list');
-		const isOpen = list.hasClass('isOpen');
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		if (!obj) return;
+
+		const title = obj.querySelector('.titleWrap') as HTMLElement;
+		const list = obj.querySelector(':scope > .list') as HTMLElement;
+		const isOpen = list?.classList.contains('isOpen');
 
 		U.Dom.toggle(list, 200, isOpen);
-		title.toggleClass('isOpen', !isOpen);
+		U.Dom.toggleClass(title, 'isOpen', !isOpen);
 		Storage.setToggle(page, id, !isOpen);
 
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
