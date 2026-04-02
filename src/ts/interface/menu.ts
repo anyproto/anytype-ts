@@ -106,7 +106,7 @@ export interface IconParam {
 
 export interface MenuItem {
 	id?: string;
-	icon?: string;
+	//icon?: string;
 	iconParam?: IconParam;
 	object?: Record<string, unknown>;
 	name?: string | React.ReactNode;

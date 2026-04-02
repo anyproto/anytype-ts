@@ -141,7 +141,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			{...animation}
 		>
 			{SvgComponent ? <SvgComponent style={{ width: w, height: h }} /> : ''}
-			{arrow ? <div className="icon arrow" /> : ''}
+			{arrow ? <div className="icon arrow hasSvg">{getIcon('arrow/button')?.({ style: { width: 8, height: 8 } })}</div> : ''}
 			{inner}
 		</motion.div>
 	);

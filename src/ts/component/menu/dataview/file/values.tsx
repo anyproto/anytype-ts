@@ -281,7 +281,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					<div className="line" />
 					<MenuItemVertical 
 						id="add" 
-						icon="plus" 
+						iconParam={{ name: 'plus/menu' }}
 						name={translate('commonAdd')} 
 						onClick={onAdd}
 						onMouseEnter={() => setHover({ id: 'add' })}

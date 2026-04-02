@@ -283,7 +283,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical 
 					id={item.id}
 					object={object}
-					icon={item.icon}
 					iconParam={item.iconParam}
 					name={<ObjectName object={item} withPlural={true} />}
 					onMouseEnter={e => onOver(e, item)} 

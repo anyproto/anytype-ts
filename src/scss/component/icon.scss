@@ -36,6 +36,16 @@
 .icon.iconColor-accent50 { color: var(--color-system-accent-50); }
 .icon.iconColor-accent25 { color: var(--color-system-accent-25); }
 
+.icon.menuBlockTextParagraph,
+.icon.menuBlockTextHeader,
+.icon.menuBlockTextCallout,
+.icon.menuBlockTextBulleted,
+.icon.menuBlockTextNumbered,
+.icon.menuBlockTextToggle,
+.icon.menuBlockTextToggleHeader,
+.icon.menuBlockTextQuote { color: var(--color-control-accent); }
+.icon.menuBlockTextCheckbox { color: var(--color-system-accent-100); }
+
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.forward, .icon.rotated { transform: rotateZ(180deg); }
