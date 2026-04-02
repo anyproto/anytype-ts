@@ -61,6 +61,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const SvgComponent = name ? getIcon(name) : null;
+	const ArrowComponent = arrow ? getIcon('arrow/button') : null;
 
 	if (icon) {
 		style.backgroundImage = `url("${icon}")`;
@@ -141,7 +142,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			{...animation}
 		>
 			{SvgComponent ? <SvgComponent style={{ width: w, height: h }} /> : ''}
-			{arrow ? <div className="icon arrow hasSvg">{getIcon('arrow/button')?.({ style: { width: 8, height: 8 } })}</div> : ''}
+			{ArrowComponent ? <div className="icon arrow hasSvg"><ArrowComponent style={{ width: 8, height: 8 }} /></div> : ''}
 			{inner}
 		</motion.div>
 	);
