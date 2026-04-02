@@ -37,7 +37,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 		};
 	}, []);
 
-	// No checkbox column — cellCheck is position:absolute (same as ListObject)
+	// cellCheck is not a grid column — it overlaps the row via absolute positioning (archive.scss)
 	const widths = [ 'minmax(0, 1fr)', '20%' ];
 	if (isShared) {
 		widths.push('20%');
@@ -81,6 +81,8 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 		return v || 0;
 	};
 
+	// Sorting applies to root nodes only. Children retain their natural order
+	// (parent-context grouping) regardless of the selected sort column — intentional.
 	const visibleRoots = forest
 		.filter(n => matchesFilter(n, filterText))
 		.sort((a, b) => {
@@ -92,6 +94,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 			if (va > vb) cmp = 1;
 			return sortType === I.SortType.Asc ? cmp : -cmp;
 		});
+
+	const columns = [
+		{ key: 'name', label: translate('commonName') },
+		{ key: 'lastModifiedDate', label: translate('commonDeleted') },
+		...(isShared ? [ { key: 'creator', label: translate('commonCreatedBy') } ] : []),
+	];
 
 	const isExpanded = (id: string) => expandedIds.includes(id);
 
@@ -198,7 +206,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 							<Checkbox value={isAllSelected} onChange={() => onSelectAll()} />
 						</div>
 					)}
-					{[ { key: 'name', label: translate('commonName') }, { key: 'lastModifiedDate', label: translate('commonDeleted') }, ...(isShared ? [ { key: 'creator', label: translate('commonCreatedBy') } ] : []) ].map(col => {
+					{columns.map(col => {
 						const isSorted = sortId === col.key;
 						const cn = [ 'cell', 'isHead', ...(isSorted ? [ 'isSorted' ] : []) ];
 						const arrow = isSorted ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;

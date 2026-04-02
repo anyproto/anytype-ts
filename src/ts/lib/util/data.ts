@@ -1393,9 +1393,20 @@ class UtilData {
 
 	treeFromRecords (ids: string[], getParent: (id: string) => string): TreeNode[] {
 		const idSet = new Set(ids);
+		const childrenMap = new Map<string, string[]>();
+
+		for (const id of ids) {
+			const parent = getParent(id);
+			if (parent && idSet.has(parent)) {
+				if (!childrenMap.has(parent)) {
+					childrenMap.set(parent, []);
+				};
+				childrenMap.get(parent).push(id);
+			};
+		};
 
 		const buildNode = (id: string): TreeNode => {
-			const children = ids.filter(x => getParent(x) === id).map(buildNode);
+			const children = (childrenMap.get(id) || []).map(buildNode);
 			return { id, children };
 		};
 

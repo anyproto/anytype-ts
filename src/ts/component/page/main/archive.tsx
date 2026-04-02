@@ -133,7 +133,6 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		setSelectedIds(next);
 	};
 
-
 	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
 	const filterKeydownHandler = useRef<((e: any) => void) | null>(null);
 
