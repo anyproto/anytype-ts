@@ -248,7 +248,7 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
 	const isDetailed = viewMode === 'detailed';
-	const switchIconMap = { tree: 'menu/widget/tree', compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
+	const switchIconMap = { tree: 'common/switchViewTree', compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
 	const switchTooltipMap = { tree: 'binSwitchToCompact', compact: 'binSwitchToDetailed', detailed: 'binSwitchToTree' };
 	const cnWrapper = [ 'wrapper', ...(isDetailed ? [ 'isDetailed' ] : []) ];
 
