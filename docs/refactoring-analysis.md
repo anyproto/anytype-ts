@@ -185,7 +185,31 @@ Key locations: `editor/page.tsx`, `controlButtons.tsx`, `set.tsx`, `popup/relati
 
 ---
 
-## 7. MobX Misuse
+## 7. MobX Modernization
+
+### 7.1 Switch `mobx-react` to `mobx-react-lite` (S)
+
+Currently using `mobx-react@9.2.1` (~260 files import `observer` from it). The project only uses function components -- no `Provider`, no `inject`, no class components. `mobx-react` is just `mobx-react-lite` + legacy class support we don't need.
+
+- Mechanical find-replace: `'mobx-react'` -> `'mobx-react-lite'` in ~260 files
+- Smaller bundle (~2KB), clearer intent
+- Already used in anytype-bun
+
+### 7.2 Auto-observer plugin (M) -- HIGH IMPACT
+
+Add a Vite/Babel plugin to automatically wrap all exported components with `observer()`. This directly addresses the `forceUpdate()` problem (section 6.1, ~63 files) at the root -- components that are missing `observer()` wrappers would get them automatically.
+
+- Eliminates ~260 manual `import { observer }` + wrapping boilerplate
+- Prevents future regressions (new components are auto-observed)
+- Already proven in anytype-bun
+
+### 7.3 Migrate stores to `makeAutoObservable` (M)
+
+All 15 stores use verbose `makeObservable(this, { prop: observable, method: action, ... })` with explicit annotations. `makeAutoObservable` infers them automatically, cutting ~200 lines of boilerplate. Already used in anytype-bun.
+
+Needs care: `makeAutoObservable` can't handle subclassing or certain private property patterns -- audit each store individually.
+
+### 7.4 Direct Mutation
 
 - `store/detail.ts:287` -- `object[item.relationKey] = item.value` (direct assignment)
 - `store/block.ts:737,744,783` -- `item.childBlocks = ...` (direct mutation of tree items)
@@ -273,15 +297,23 @@ Triaged items found to be false positives on inspection:
 | Split editor/page.tsx | `component/editor/page.tsx` (2,827 lines) | Extract hooks: useEditorFocus, useEditorDrag, useEditorKeyboard | XL |
 | Split chat/form.tsx | `component/block/chat/form.tsx` (1,954 lines) | ChatComposer, AttachmentPanel, MentionHandler | L |
 
-### Phase 5: React & MobX Cleanup -- 3 remaining tasks
+### Phase 5: MobX Modernization -- 3 tasks (NEW)
 
 | Task | Files | Effort |
 |------|-------|--------|
-| Audit `forceUpdate()` usage -- add missing `observer()` | ~63 component files | L |
+| Switch `mobx-react` to `mobx-react-lite` | ~260 component files (mechanical replace) | S |
+| Add auto-observer Vite plugin | vite.config.ts + remove manual `observer()` wraps | M |
+| Migrate stores to `makeAutoObservable` | 15 store files | M |
+
+### Phase 6: React Cleanup -- 3 remaining tasks
+
+| Task | Files | Effort |
+|------|-------|--------|
+| Audit `forceUpdate()` -- add missing `observer()` (or rely on auto-observer) | ~63 component files | L |
 | Add `useCallback`/`useMemo` to large components | editor/page.tsx, dataview.tsx, chat/form.tsx | M |
 | Replace prop drilling with direct store access | chat/form.tsx (13 props) | M |
 
-### Phase 6: Architecture -- 2 remaining tasks
+### Phase 7: Architecture -- 2 remaining tasks
 
 | Task | Files | Effort |
 |------|-------|--------|
@@ -297,8 +329,9 @@ Triaged items found to be false positives on inspection:
 ## 13. Suggested Execution Order
 
 ```
-Next:  Phase 1 (DOM optimization) -- scoped queries + EventNamespace utility
-Then:  Phase 5 (forceUpdate audit) -- biggest React perf win
-Then:  Phase 4 (god file splits) -- keyboard.ts, chat/form.tsx
-Later: Phase 2 + 6 (type safety + architecture)
+Next:  Phase 5.1 (mobx-react-lite swap) -- quick win, unblocks auto-observer
+Then:  Phase 5.2 (auto-observer plugin) -- fixes forceUpdate at the root
+Then:  Phase 1 (DOM optimization) -- scoped queries + EventNamespace
+Then:  Phase 5.3 (makeAutoObservable) + Phase 4 (god file splits)
+Later: Phase 2 + 7 (type safety + architecture)
 ```
