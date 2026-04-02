@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -7,7 +6,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
 
-const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
+const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
@@ -289,6 +288,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		</>
 	);
 
-}));
+});
 
 export default WidgetObject;

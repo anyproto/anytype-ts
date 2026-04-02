@@ -165,7 +165,7 @@
 		"mime-types": "^3.0.1",
 		"mobx": "^6.15.0",
 		"mobx-logger": "^0.7.1",
-		"mobx-react": "^9.2.1",
+		"mobx-react-lite": "^4.1.0",
 		"motion": "^12.23.24",
 		"node-gyp": "^12.1.0",
 		"p-finally": "^2.0.1",

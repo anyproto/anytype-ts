@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
-const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChatText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -100,6 +99,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			})}
 		</div>
 	);
-}));
+});
 
 export default MenuChatText;

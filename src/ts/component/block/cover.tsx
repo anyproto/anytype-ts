@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { rootId, block, readonly, isPopup } = props;
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -464,6 +463,6 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockCover;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Cell } from 'Component';
 import Item from './item';
 import * as I from 'Interface';
@@ -13,7 +12,7 @@ interface Props extends I.WidgetViewComponent {
 	searchIds: string[];
 };
 
-const Group = observer(forwardRef<{}, Props>((props, ref) => {
+const Group = forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { rootId, block, id, value, canCreate, searchIds, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
@@ -204,6 +203,6 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Group;

@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsPinIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onPage, setConfirmPin } = props;
 	const { pin } = S.Common;
@@ -69,6 +68,6 @@ const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsPinIndex;

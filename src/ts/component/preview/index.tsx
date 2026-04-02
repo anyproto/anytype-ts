@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, PreviewTab } from 'Component';
 import * as I from 'Interface';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewIndex = observer(forwardRef(() => {
+const PreviewIndex = forwardRef(() => {
 
 	const nodeRef = useRef(null);
 	const polygonRef = useRef(null);
@@ -282,6 +281,6 @@ const PreviewIndex = observer(forwardRef(() => {
 		</div>
 	) : null;
 
-}));
+});
 
 export default PreviewIndex;

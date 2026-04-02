@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, EmptySearch } from 'Component';
 
 import * as Diff from 'diff';
@@ -10,7 +9,7 @@ const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
 const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
-const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupRelation = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -333,6 +332,6 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupRelation;

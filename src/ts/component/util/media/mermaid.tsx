@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import mermaid from 'mermaid';
 import elkLayouts from '@mermaid-js/layout-elk';
-import { observer } from 'mobx-react';
 
 mermaid.registerLayoutLoaders(elkLayouts);
 
@@ -10,7 +9,7 @@ interface Props {
 	chart: string;
 };
 
-const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
+const MediaMermaid = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	chart = '',
 }, ref) => {
@@ -62,6 +61,6 @@ const MediaMermaid = observer(forwardRef<HTMLDivElement, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default MediaMermaid;

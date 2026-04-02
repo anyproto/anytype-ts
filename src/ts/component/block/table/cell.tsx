@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Block } from 'Component';
 import * as I from 'Interface';
 
@@ -10,7 +9,7 @@ interface Props extends I.BlockComponentTable {
 	column: I.Block;
 };
 
-const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
+const BlockTableCell = forwardRef<{}, Props>((props, ref) => {
 
 	const { 
 		readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
@@ -160,6 +159,6 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockTableCell;

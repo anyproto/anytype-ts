@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, EmptySearch, ObjectName, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -10,7 +9,7 @@ const HEIGHT_DIV = 16;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT = 20;
 
-const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, setHover, setActive, close, onKeyDown, position } = props;
 	const { data } = param;
@@ -291,6 +290,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewFileList;

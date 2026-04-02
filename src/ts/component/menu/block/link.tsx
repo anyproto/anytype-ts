@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
 
-import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -12,7 +11,7 @@ const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
 const LIMIT_HEIGHT = 6;
 
-const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, setActive, onKeyDown, getId, getContainer, position } = props;
 	const { data } = param;
@@ -369,6 +368,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockLink;

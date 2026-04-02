@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -11,7 +10,7 @@ interface Props {
 
 const OFFSET = 100;
 
-const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
+const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
 	const { children } = props;
 	const nodeRef = useRef(null);
@@ -1184,6 +1183,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default DragProvider;

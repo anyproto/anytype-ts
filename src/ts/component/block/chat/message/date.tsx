@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Label } from 'Component';
 
@@ -7,7 +6,7 @@ interface Props {
 	date: number;
 };
 
-const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
+const SectionDate = forwardRef<{}, Props>((props, ref) => {
 
 	const { date } = props;
 	const nodeRef = useRef(null);
@@ -29,6 +28,6 @@ const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default SectionDate;

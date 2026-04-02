@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import sha1 from 'sha1';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
 import * as I from 'Interface';
 
@@ -19,7 +18,7 @@ interface Ref {
 const LIMIT_RECORDS = 1000;
 const LIMIT_AUTHORS = 5;
 
-const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
+const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 
 	const [ versions, setVersions ] = useState<I.HistoryVersion[]>([]);
 	const [ version, setVersion ] = useState<I.HistoryVersion>(null);
@@ -542,6 +541,6 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HistoryRight;

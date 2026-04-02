@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconEmoji } from 'Component';
 
 import { getIcon, getIconSvg } from './icons';
@@ -103,7 +102,7 @@ const CheckboxTask = {
 	2: 'object/checkbox2',
 };
 
-const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
+const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 	const {
 		className = '',
 		canEdit = false,
@@ -531,6 +530,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default IconObject;

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -8,7 +7,7 @@ import * as I from 'Interface';
 const HEIGHT = 56;
 const LIMIT = 10;
 
-const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChangeOwner = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { setActive, onKeyDown, position, getId, getContainer, close } = props;
 	const { space } = S.Common;
@@ -347,6 +346,6 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuChangeOwner;

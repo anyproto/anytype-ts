@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Header, Footer } from 'Component';
-import { observer } from 'mobx-react';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -85,7 +84,7 @@ const Components: any = {
 
 const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
-const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
@@ -212,6 +211,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 	return content;
 
-}));
+});
 
 export default PageMainSettingsIndex;

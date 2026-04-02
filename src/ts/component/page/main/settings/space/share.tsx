@@ -1,10 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
 import Members from './share/members';
 import * as I from 'Interface';
 
-const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
@@ -259,6 +258,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceShare;

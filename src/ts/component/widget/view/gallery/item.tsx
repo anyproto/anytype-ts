@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
 import * as I from 'Interface';
 
@@ -10,7 +9,7 @@ interface Props extends I.WidgetViewComponent {
 	onResize?: () => void;
 };
 
-const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
+const WidgetGalleryItem = forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
 	block,
@@ -142,6 +141,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default WidgetGalleryItem;

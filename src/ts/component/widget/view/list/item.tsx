@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
@@ -16,7 +15,7 @@ interface Props extends I.WidgetViewComponent {
 	hideIcon?: boolean;
 };
 
-const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
+const WidgetListItem = forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, block, isCompact, isSection, hideIcon, onContext } = props;
 	const { space } = S.Common;
@@ -213,6 +212,6 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default WidgetListItem;

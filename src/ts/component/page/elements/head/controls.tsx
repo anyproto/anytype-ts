@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import ControlButtons from './controlButtons';
 import * as I from 'Interface';
@@ -15,7 +14,7 @@ interface RefProps {
 	forceUpdate: () => void;
 };
 
-const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
+const Controls = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, readonly, isPopup, resize, onLayoutSelect } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -173,6 +172,6 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Controls;

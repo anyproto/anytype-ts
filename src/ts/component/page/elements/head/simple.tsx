@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -29,7 +28,7 @@ const EDITORS = [
 
 const SUB_ID_CHECK = 'headSimple-check';
 
-const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
+const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 
 	const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup, relationKey, getDotMap } = props;
 	const check = U.Data.checkDetails(rootId, '', []);
@@ -446,6 +445,6 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HeadSimple;

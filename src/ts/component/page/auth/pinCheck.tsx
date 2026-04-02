@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin, Header } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
+const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
 	const { pin } = S.Common;
@@ -65,6 +64,6 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 		</>
 	);
 
-}));
+});
 
 export default PageAuthPinCheck;

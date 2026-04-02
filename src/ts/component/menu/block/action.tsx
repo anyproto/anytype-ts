@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -7,7 +6,7 @@ import { focus } from 'Lib/focus';
 
 const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 
-const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, setActive, onKeyDown, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -801,6 +800,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockAction;

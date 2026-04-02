@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -9,7 +8,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT_HEIGHT = 10;
 
-const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, close, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -359,6 +358,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</>
 	);
 	
-}));
+});
 
 export default MenuBlockMention;

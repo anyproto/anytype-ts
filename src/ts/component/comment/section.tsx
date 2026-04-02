@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
@@ -11,7 +10,7 @@ const POST_LIMIT = 20;
 const REPLY_LIMIT = 10;
 const SCROLL_THRESHOLD = 16;
 
-const CommentSection = observer((props: I.CommentSectionProps) => {
+const CommentSection = (props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
@@ -656,6 +655,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			</div>
 		</>
 	);
-});
+};
 
 export default CommentSection;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
@@ -10,7 +9,7 @@ const Components: any = {
 	item: PopupUsecasePageItem,
 };
 
-const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecase = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { param, getId } = props;
 	const { data } = param;
@@ -75,6 +74,6 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecase;

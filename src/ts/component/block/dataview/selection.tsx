@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -12,7 +11,7 @@ interface Ref {
 	getNode: () => any;
 };
 
-const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
+const BlockDataviewSelection = forwardRef<Ref, Props>((props, ref) => {
 
 	const { className, isInline, isCollection, multiSelectAction } = props;
 	const [ ids, setIds ] = useState<string[]>([]);
@@ -64,6 +63,6 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataviewSelection;

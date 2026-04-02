@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import * as I from 'Interface';
@@ -24,7 +23,7 @@ const HEIGHT_LIBRARY_ITEM = 96;
 
 const ID_RECENT = 'recent';
 
-const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const [ filter, setFilter ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -1243,6 +1242,6 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuSmile;

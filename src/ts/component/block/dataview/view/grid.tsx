@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
 import HeadRow from './grid/head/row';
@@ -15,7 +14,7 @@ import * as I from 'Interface';
 const PADDING = 46;
 const HEIGHT = 48;
 
-const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords, 
@@ -588,6 +587,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default ViewGrid;

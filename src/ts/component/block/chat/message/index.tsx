@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence, } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 
@@ -15,7 +14,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
@@ -419,6 +418,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default memo(ChatMessage);

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
 	className?: string;
 };
 
-const UpsellSpace = observer(forwardRef<{}, Props>(({
+const UpsellSpace = forwardRef<{}, Props>(({
 	route = '',
 	className = '',
 }, ref) => {
@@ -40,6 +39,6 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default UpsellSpace;

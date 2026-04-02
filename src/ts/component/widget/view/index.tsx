@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Label, Filter, Button } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
@@ -23,7 +22,7 @@ interface WidgetViewRefProps {
 	getFilter: () => string;
 };
 
-const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
+const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
@@ -460,6 +459,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		</div>
 	);
 
-}));
+});
 
 export default WidgetView;

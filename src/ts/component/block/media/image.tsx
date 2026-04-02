@@ -1,10 +1,9 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { width } = block.fields || {};
@@ -234,6 +233,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{element}
 		</div>
 	);
-}));
+});
 
 export default BlockImage;

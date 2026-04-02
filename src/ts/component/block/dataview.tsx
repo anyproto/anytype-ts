@@ -2,7 +2,6 @@ import React, { forwardRef, useState, useRef, useEffect, MouseEvent, useImperati
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug, Icon, Label } from 'Component';
 
@@ -27,7 +26,7 @@ interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { rootId, block, isPopup, isInline, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const views = S.Record.getViews(rootId, block.id);
@@ -1862,6 +1861,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataview;

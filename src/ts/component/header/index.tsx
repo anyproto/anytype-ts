@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import raf from 'raf';
 import { Icon } from 'Component';
-import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderAuthLogout from './auth/logout';
@@ -34,7 +33,7 @@ const Components = {
 	mainSettings: 		 HeaderMainSettings,
 };
 
-const Header = observer(forwardRef<{}, Props>((props, ref) => {
+const Header = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		component,
@@ -268,6 +267,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Header;

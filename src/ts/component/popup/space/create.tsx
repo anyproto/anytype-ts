@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
 
-const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
+const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
@@ -439,6 +438,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 		</>
 	);
 
-}));
+});
 
 export default PopupSpaceCreate;

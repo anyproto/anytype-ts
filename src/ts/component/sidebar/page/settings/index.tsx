@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
-const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
 	const { data } = S.Membership;
@@ -350,6 +349,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageSettingsIndex;

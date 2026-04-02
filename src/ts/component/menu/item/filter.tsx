@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, IconObject, ObjectName } from 'Component';
@@ -16,7 +15,7 @@ interface Props extends I.Menu, I.Filter {
 	onRemove?: (e: any) => void;
 };
 
-const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
+const MenuItemFilter = forwardRef<{}, Props>((props, ref) => {
 
 	const { id, relation, condition, quickOption, subId, readonly, onOver, onClick, onRemove } = props;
 	const isDictionary = Relation.isDictionary(relation.relationKey);
@@ -194,6 +193,6 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuItemFilter;

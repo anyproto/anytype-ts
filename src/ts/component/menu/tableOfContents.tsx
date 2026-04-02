@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Label, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -7,7 +6,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, setActive, close, onKeyDown, setHover, getMaxHeight } = props;
 	const { data } = param;
@@ -185,6 +184,6 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		</div>
 	);
 
-}));
+});
 
 export default MenuTableOfContents;

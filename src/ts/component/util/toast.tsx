@@ -1,10 +1,9 @@
 import React, { FC, useRef, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
 
-const Toast: FC = observer(() => {
+const Toast: FC = () => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
 	const { count, action, text, value, object, target, origin, ids, icon, uploadCounts } = toast || {};
@@ -221,6 +220,6 @@ const Toast: FC = observer(() => {
 		</div>
 	) : null;
 
-});
+};
 
 export default Toast;

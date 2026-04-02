@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { GraphProvider } from 'Component';
 import * as I from 'Interface';
 
 const PADDING = 46;
 
-const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGraph = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, className, isCollection, isPopup, isInline, getView, getSearchIds, getTarget } = props;
 	const cn = [ 'viewContent', className ];
@@ -89,6 +88,6 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default ViewGraph;

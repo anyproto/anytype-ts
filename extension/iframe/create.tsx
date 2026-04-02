@@ -6,7 +6,7 @@ import * as M from 'Model';
 
 const ROOT_ID = 'preview';
 
-const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Create = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const spaceRef = useRef<Select>(null);
@@ -177,6 +177,6 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Create;

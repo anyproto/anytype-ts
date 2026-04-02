@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { id, param, getId, getContainer, close, setActive, onKeyDown } = props;
 	const { data } = param;
@@ -269,6 +268,6 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuOptionEdit;

@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
 import * as I from 'Interface';
 
-const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainEdit = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const headerRef = useRef(null);
@@ -66,6 +65,6 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		</>
 	);
 
-}));
+});
 
 export default PageMainEdit;

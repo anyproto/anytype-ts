@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -10,7 +9,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 
-const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageSettingsLibrary = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
@@ -535,6 +534,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageSettingsLibrary;

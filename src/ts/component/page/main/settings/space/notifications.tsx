@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { space } = S.Common;
@@ -143,6 +142,6 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsNotifications;

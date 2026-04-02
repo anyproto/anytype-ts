@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -8,7 +7,7 @@ import * as Diff from 'diff';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
@@ -438,6 +437,6 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default PageMainHistory;

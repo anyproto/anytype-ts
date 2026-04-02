@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { LoadMore } from 'Component';
 import BodyRow from './list/row';
@@ -9,7 +8,7 @@ import * as I from 'Interface';
 const HEIGHT_COMPACT = 32;
 const HEIGHT_REGULAR = 64;
 
-const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewList = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmptyView, getRecords, onRefRecord, loadData } = props;
 	const view = getView();
@@ -133,6 +132,6 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default ViewList;

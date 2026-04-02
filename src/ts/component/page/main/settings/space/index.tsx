@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
 
-const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -362,6 +361,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceIndex;

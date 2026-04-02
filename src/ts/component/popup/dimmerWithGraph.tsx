@@ -1,13 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
 
 interface DimmerWithGraphProps {
 	onClick?: () => void;
 };
 
-const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
+const DimmerWithGraph = ({ onClick }: DimmerWithGraphProps) => {
 
 	const [ shouldRenderGraph, setShouldRenderGraph ] = useState(false);
 	const [ graphDimensions, setGraphDimensions ] = useState({
@@ -113,6 +112,6 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		</div>
 	);
 
-});
+};
 
 export default DimmerWithGraph;

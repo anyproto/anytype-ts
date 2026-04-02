@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Block, Button, DragHorizontal, Loader } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -13,7 +12,7 @@ interface RefProps {
 	setPercent: (v: number) => void;
 };
 
-const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
+const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
 	const dragRef = useRef(null);
@@ -204,6 +203,6 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PageHeadEditor;

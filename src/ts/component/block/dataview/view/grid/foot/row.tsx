@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import Cell from './cell';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
+const FootRow = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, isInline, isCollection, getView, getKeys, getSources, getVisibleRelations, getColumnWidths, getSearchIds } = props;
 	const widths = getColumnWidths('', 0);
@@ -73,6 +72,6 @@ const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default FootRow;

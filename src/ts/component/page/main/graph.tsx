@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
 import * as I from 'Interface';
 
-const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ data, setData ] = useState({ edges: [], nodes: [] });
@@ -179,6 +178,6 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainGraph;

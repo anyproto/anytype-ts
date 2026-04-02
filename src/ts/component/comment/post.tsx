@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
 import CommentReply from './reply';
@@ -18,7 +17,7 @@ interface Props {
 
 const REPLY_LIMIT = 10;
 
-const CommentPost = observer((props: Props) => {
+const CommentPost = (props: Props) => {
 
 	const { rootId, targetId, message, readonly } = props;
 	const { space } = S.Common;
@@ -619,6 +618,6 @@ const CommentPost = observer((props: Props) => {
 		</div>
 	);
 
-});
+};
 
 export default CommentPost;

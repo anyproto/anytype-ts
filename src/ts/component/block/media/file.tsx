@@ -1,10 +1,9 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { InputWithFile, IconObject, Error, ObjectName, Icon, } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
@@ -103,6 +102,6 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockFile;

@@ -1,7 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as d3 from 'd3';
-import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -26,7 +25,7 @@ interface GraphRefProps {
 	timelineReset: () => void;
 };
 
-const Graph = observer(forwardRef<GraphRefProps, Props>(({
+const Graph = forwardRef<GraphRefProps, Props>(({
 	id = '',
 	isPopup = false,
 	rootId = '',
@@ -844,6 +843,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			<div id="graphPreview" />
 		</div>
 	);
-}));
+});
 
 export default Graph;
