@@ -8,6 +8,7 @@ import type { Plugin } from 'vite';
  *   export default memo(ComponentName);    → export default memo(observer(ComponentName));
  *
  * Only processes .tsx files under src/ts/component/ (or extension/ for the extension build).
+ * Skips class components (observer() only works with function components).
  * Skips files without a matching default export.
  */
 export function autoObserverPlugin(): Plugin {
@@ -18,6 +19,11 @@ export function autoObserverPlugin(): Plugin {
 		transform(code, id) {
 			if (!id.endsWith('.tsx')) return null;
 			if (!id.includes('/src/ts/component/') && !id.includes('/extension/')) return null;
+
+			// Skip class components — observer() only works with function components
+			if (/\bclass\s+\w+\s+extends\s+(React\.)?(Component|PureComponent)\b/.test(code)) {
+				return null;
+			}
 
 			// Pattern A: export default <Component>;
 			const plainExport = code.match(/^(export\s+default\s+)([A-Z]\w+)(\s*;)/m);
