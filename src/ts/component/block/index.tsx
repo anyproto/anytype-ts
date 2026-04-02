@@ -1046,7 +1046,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		case I.BlockType.Featured: {
-			canDrop = false;
+			canDrop = canSelect = false;
 
 			blockComponent = <BlockFeatured key={key} ref={childRef} {...props} />;
 			break;
@@ -1127,7 +1127,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		);
 	} else {
 		object = (
-			<div id={isSelectionDisabled ? undefined : `selectionTarget-${id}`} className="selectionTarget">
+			<div id={(isSelectionDisabled || !canSelect) ? undefined : `selectionTarget-${id}`} className="selectionTarget">
 				{object}
 			</div>
 		);
