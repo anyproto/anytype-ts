@@ -99,10 +99,12 @@ class Sidebar {
 		};
 	};
 
-	open (panel: I.SidebarPanel, subPage?: string, width?: number): void {
+	open (panel: I.SidebarPanel, subPage?: string, width?: number, animate?: boolean): void {
+		const anim = animate !== undefined ? animate : true;
+
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				this.leftPanelOpen(width, true, true);
+				this.leftPanelOpen(width, anim, true);
 				break;
 			};
 
@@ -111,21 +113,23 @@ class Sidebar {
 					subPage = S.Common.getLeftSidebarState().subPage;
 				};
 
-				this.leftPanelSubPageOpen(subPage, true, true);
+				this.leftPanelSubPageOpen(subPage, anim, true);
 				break;
 			};
 		};
 	};
 
-	close (panel: I.SidebarPanel): void {
+	close (panel: I.SidebarPanel, animate?: boolean): void {
+		const anim = animate !== undefined ? animate : true;
+
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				this.leftPanelClose(true, true);
+				this.leftPanelClose(anim, true);
 				break;
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				this.leftPanelSubPageClose(true, true);
+				this.leftPanelSubPageClose(anim, true);
 				break;
 			};
 		};
@@ -339,7 +343,7 @@ class Sidebar {
 		const dummyLeft = U.Dom.get('sidebarDummyLeft');
 
 		if (subPageWrapperLeft) {
-			U.Dom.addClass(subPageWrapperLeft, 'sidebarAnimation isClosing');
+			U.Dom.addClass(subPageWrapperLeft, 'sidebarAnimation');
 			subPageWrapperLeft.style.transform = 'translate3d(-100%,0px,0px)';
 		};
 
@@ -353,10 +357,10 @@ class Sidebar {
 			dummyLeft.style.width = width + 'px';
 		};
 
+		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, save);
 		this.resizePage(false, width, null, animate);
 
 		this.timeoutSubPage = window.setTimeout(() => {
-			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, save);
 			this.setStyle(I.SidebarPanel.SubLeft, false, { isClosed: true });
 
 			if (objLeft) {
@@ -365,7 +369,7 @@ class Sidebar {
 			};
 
 			if (subPageWrapperLeft) {
-				U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation isClosing');
+				U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation');
 				subPageWrapperLeft.style.transform = '';
 			};
 
@@ -407,7 +411,7 @@ class Sidebar {
 		const newWidth = width + dataSubLeft.width;
 
 		if (subPageWrapperLeft) {
-			U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation isOpening isClosing');
+			U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation');
 			subPageWrapperLeft.style.transform = 'translate3d(-100%,0px,0px)';
 		};
 
@@ -421,8 +425,8 @@ class Sidebar {
 
 		void subPageWrapperLeft?.offsetHeight;
 
-		this.resizePage(false, newWidth, null, animate);
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, save);
+		this.resizePage(false, newWidth, null, animate);
 		this.setStyle(I.SidebarPanel.SubLeft, false, { width: dataSubLeft.width, isClosed: false });
 
 		raf(() => {
@@ -431,7 +435,7 @@ class Sidebar {
 			};
 
 			if (subPageWrapperLeft) {
-				U.Dom.addClass(subPageWrapperLeft, 'sidebarAnimation isOpening');
+				U.Dom.addClass(subPageWrapperLeft, 'sidebarAnimation');
 				subPageWrapperLeft.style.transform = 'translate3d(0px,0px,0px)';
 			};
 
@@ -451,7 +455,7 @@ class Sidebar {
 				};
 
 				if (subPageWrapperLeft) {
-					U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation isOpening');
+					U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation');
 					subPageWrapperLeft.style.transform = '';
 				};
 
@@ -631,7 +635,7 @@ class Sidebar {
 		};
 
 		if (subPageWrapperLeft) {
-			U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation isClosing isOpening');
+			U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation');
 			subPageWrapperLeft.style.transform = '';
 		};
 

@@ -56,9 +56,8 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const settings = S.Common.getGraph(key);
 
 		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.typeEdges, (message: any) => {
-			setLoading(false);
-
 			if (message.error.code) {
+				setLoading(false);
 				return;
 			};
 
@@ -133,7 +132,11 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-		graphRef.current?.init();
+
+		if (data.nodes.length || data.edges.length) {
+			graphRef.current?.init();
+			setLoading(false);
+		};
 	}, [ data ]);
 
 	useEffect(() => resize());
