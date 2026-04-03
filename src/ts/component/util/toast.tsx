@@ -223,9 +223,9 @@ const Toast: FC = () => {
 			return;
 		};
 
-		U.Dom.css(node, { 
-			display: 'block', 
-			opacity: '0', 
+		U.Dom.css(node, {
+			display: 'block',
+			opacity: '0',
 			transform: 'scale3d(0.7,0.7,1)',
 		});
 
@@ -249,13 +249,24 @@ const Toast: FC = () => {
 		};
 
 		raf(() => {
-			U.Dom.css(node, { 
-				left: `${x}px`, 
-				top: `${y}px`, 
-				opacity: '1', 
+			U.Dom.css(node, {
+				left: `${x}px`,
+				top: `${y}px`,
+				opacity: '1',
 				transform: 'scale3d(1,1,1)',
 			});
 		});
+
+		const onEnter = () => Preview.toastPauseHide();
+		const onLeave = () => Preview.toastResumeHide();
+
+		node.addEventListener('mouseenter', onEnter);
+		node.addEventListener('mouseleave', onLeave);
+
+		return () => {
+			node.removeEventListener('mouseenter', onEnter);
+			node.removeEventListener('mouseleave', onLeave);
+		};
 	});
 
 	return toast ? (

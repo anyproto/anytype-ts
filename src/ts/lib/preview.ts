@@ -18,8 +18,6 @@ class Preview {
 
 	private clickTooltipHandler: ((e: Event) => void) | null = null;
 	private previewLeaveHandler: ((e: Event) => void) | null = null;
-	private toastEnterHandler: ((e: Event) => void) | null = null;
-	private toastLeaveHandler: ((e: Event) => void) | null = null;
 
 	tooltipShow (param: Partial<I.TooltipParam>) {
 		const el = param.element instanceof HTMLElement ? param.element : null;
@@ -267,31 +265,21 @@ class Preview {
 	};
 
 	toastShow (param: I.Toast) {
-		const setTimeout = () => {
-			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
-		};
-
 		S.Common.toastSet(param);
+		this.toastStartHideTimer();
+	};
 
-		const obj = U.Dom.get('toast');
+	toastStartHideTimer () {
+		window.clearTimeout(this.timeout.toast);
+		this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
+	};
 
-		setTimeout();
+	toastPauseHide () {
+		window.clearTimeout(this.timeout.toast);
+	};
 
-		if (obj) {
-			if (this.toastEnterHandler) {
-				obj.removeEventListener('mouseenter', this.toastEnterHandler);
-			};
-			if (this.toastLeaveHandler) {
-				obj.removeEventListener('mouseleave', this.toastLeaveHandler);
-			};
-
-			this.toastEnterHandler = () => window.clearTimeout(this.timeout.toast);
-			this.toastLeaveHandler = () => setTimeout();
-
-			obj.addEventListener('mouseenter', this.toastEnterHandler);
-			obj.addEventListener('mouseleave', this.toastLeaveHandler);
-		};
+	toastResumeHide () {
+		this.toastStartHideTimer();
 	};
 
 	toastHide (force?: boolean) {
