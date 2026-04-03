@@ -1426,7 +1426,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			filter = mark.param;
 			newType = mark.type;
 		} else {
-			filter = block.getText().substring(range.from, range.to);
+			filter = text.substring(range.from, range.to);
 		};
 
 		switch (type) {
