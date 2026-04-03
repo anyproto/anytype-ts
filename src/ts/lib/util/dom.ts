@@ -77,6 +77,14 @@ class UtilDom {
 		};
 	};
 
+	addEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
+		events.forEach(([ name, handler ]) => target.addEventListener(name, handler));
+	};
+
+	removeEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
+		events.forEach(([ name, handler ]) => target.removeEventListener(name, handler));
+	};
+
 	/**
 	 * Returns the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.

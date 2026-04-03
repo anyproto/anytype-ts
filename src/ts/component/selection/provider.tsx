@@ -52,56 +52,33 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	const target = useRef(null);
 	const contextMenuHandler = useRef<ContextMenuHandler | null>(null);
 
-	const scrollHandler = useRef<((e: Event) => void) | null>(null);
+	const mouseEvents = useRef<[string, EventListener][]>([]);
+	const scrollContainer = useRef<EventTarget | null>(null);
+	const scrollEvent = useRef<[string, EventListener][]>([]);
 
 	const rebind = () => {
 		unbind();
 		const container = U.Dom.getScrollContainer(keyboard.isPopup());
 		if (container) {
-			scrollHandler.current = (e: Event) => onScroll(e);
-			container.addEventListener('scroll', scrollHandler.current);
+			scrollContainer.current = container;
+			scrollEvent.current = [ [ 'scroll', (e: Event) => onScroll(e) ] ];
+			U.Dom.addEvents(container, scrollEvent.current);
+		};
+	};
+
+	const unbindMouse = () => {
+		if (mouseEvents.current.length) {
+			U.Dom.removeEvents(window, mouseEvents.current);
+			mouseEvents.current = [];
 		};
 	};
 
 	const unbind = () => {
 		unbindMouse();
-		unbindKeyboard();
-	};
-	
-	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
-	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
-	const blurHandler = useRef<((e: any) => void) | null>(null);
-	const keyDownHandler = useRef<((e: any) => void) | null>(null);
-	const keyUpHandler = useRef<((e: any) => void) | null>(null);
-
-	const unbindMouse = () => {
-		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
-			mouseMoveHandler.current = null;
-		};
-		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
-			mouseUpHandler.current = null;
-		};
-		if (blurHandler.current) {
-			window.removeEventListener('blur', blurHandler.current);
-			blurHandler.current = null;
-		};
-	};
-	
-	const unbindKeyboard = () => {
-		if (keyDownHandler.current) {
-			window.removeEventListener('keydown', keyDownHandler.current);
-			keyDownHandler.current = null;
-		};
-		if (keyUpHandler.current) {
-			window.removeEventListener('keyup', keyUpHandler.current);
-			keyUpHandler.current = null;
-		};
-		const container = U.Dom.getScrollContainer(keyboard.isPopup());
-		if (container && scrollHandler.current) {
-			container.removeEventListener('scroll', scrollHandler.current);
-			scrollHandler.current = null;
+		if (scrollContainer.current && scrollEvent.current.length) {
+			U.Dom.removeEvents(scrollContainer.current, scrollEvent.current);
+			scrollContainer.current = null;
+			scrollEvent.current = [];
 		};
 	};
 
@@ -188,13 +165,12 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		scrollOnMove.onMouseDown({ container: container || undefined });
 		unbindMouse();
 
-		mouseMoveHandler.current = (e: any) => onMouseMove(e);
-		mouseUpHandler.current = (e: any) => onMouseUp(e);
-		blurHandler.current = (e: any) => onMouseUp(e);
-
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
-		window.addEventListener('blur', blurHandler.current);
+		mouseEvents.current = [
+			[ 'mousemove', (e: any) => onMouseMove(e) ],
+			[ 'mouseup', (e: any) => onMouseUp(e) ],
+			[ 'blur', (e: any) => onMouseUp(e) ],
+		];
+		U.Dom.addEvents(window, mouseEvents.current);
 	};
 
 	const initNodes = () => {
