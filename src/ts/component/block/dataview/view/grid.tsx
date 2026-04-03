@@ -28,6 +28,8 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	const scrollWrapRef = useRef(null);
 	const view = getView();
 	const relations = getVisibleRelations();
+	const relationsRef = useRef(relations);
+	relationsRef.current = relations;
 
 	useEffect(() => {
 		resize();
@@ -180,11 +182,12 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const resizeColumns = (relationKey: string, width: number) => {
 		const node = nodeRef.current;
+		const rels = relationsRef.current;
 		const widths = getColumnWidths(relationKey, width);
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const str = rels.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const size = J.Size.dataview.cell;
 
-		relations.forEach(it => {
+		rels.forEach(it => {
 			const width = widths[it.relationKey];
 			const el = U.Dom.select(`#${U.Common.esc(Relation.cellId('head', it.relationKey, ''))}`, node);
 
@@ -201,8 +204,8 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const getColumnWidths = (relationKey: string, width: number): any => {
 		const columns: any = {};
-		
-		relations.forEach(it => {
+
+		relationsRef.current.forEach(it => {
 			if (!it.relation) {
 				return;
 			};

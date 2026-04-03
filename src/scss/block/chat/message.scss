@@ -90,7 +90,7 @@
 		}
 	}
 
-	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; }
+	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; max-width: calc(100% - 12px); }
 	.author {
 		.name { @include text-small; @include text-overflow-nw; font-weight: 500; }
 	}

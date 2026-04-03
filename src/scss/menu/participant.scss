@@ -18,7 +18,7 @@
 			}
 		}
 
-		.head { padding: 16px 0px 12px 0px; }
+		.head { padding: 16px 0px 12px 0px; overflow: hidden; width: 100%; }
 		.head {
 			.label { 
 				color: var(--color-text-secondary); @include text-overflow-nw; @include text-small; max-width: 100%; font-weight: 500;
