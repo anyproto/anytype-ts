@@ -469,7 +469,7 @@ class Action {
 				return;
 			};
 
-			Preview.toastShow({ action: I.ToastAction.Archive, ids });
+			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();
 		});
@@ -537,7 +537,7 @@ class Action {
 				S.Detail.update(id, { id, details: { isArchived: false } }, false);
 			});
 
-			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			Preview.toastShow({ action: I.ToastAction.Restore, ids, autoRestoredIds: message.autoRestoredIds || [] });
 			callBack?.();
 			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});

@@ -288,6 +288,30 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ObjectAutoArchive': {
+					// For RPC responses (isSync=true) auto-archived IDs are merged into the
+					// Archive toast by the calling action via message.autoArchivedIds.
+					// For stream events (isSync=false) show a standalone AutoArchive toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoArchive, ids: objectIds });
+						};
+					};
+					break;
+				};
+
+				case 'ObjectAutoRestore': {
+					// Same pattern as ObjectAutoArchive but for the Restore toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoRestore, ids: objectIds });
+						};
+					};
+					break;
+				};
+
 				case 'FileSpaceUsage': {
 					const { spaces } = S.Common.spaceStorage;
 					const space = spaces.find(it => it.spaceId == mapped.spaceId);
@@ -1690,6 +1714,14 @@ class Dispatcher {
 				};
 
 				if (message.event) {
+					message.autoArchivedIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoArchive?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoArchive.objectIds);
+
+					message.autoRestoredIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoRestore?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoRestore.objectIds);
+
 					runInAction(() => this.event(message.event, true, true));
 				};
 

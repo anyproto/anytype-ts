@@ -50,6 +50,8 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	autoArchivedIds?: string[];
+	autoRestoredIds?: string[];
 	icon?: string;
 	uploadCounts?: { [key: string]: number };
 };
@@ -66,6 +68,8 @@ export enum ToastAction {
 	Widget			 = 8,
 	Restore			 = 9,
 	Upload			 = 10,
+	AutoArchive		 = 11,
+	AutoRestore		 = 12,
 };
 
 export interface Option {

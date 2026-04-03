@@ -6,7 +6,7 @@ import * as I from 'Interface';
 const Toast: FC = () => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
-	const { count, action, text, value, object, target, origin, ids, icon, uploadCounts } = toast || {};
+	const { count, action, text, value, object, target, origin, ids, autoArchivedIds, autoRestoredIds, icon, uploadCounts } = toast || {};
 
 	let buttons = [];
 	let textObject = null;
@@ -106,6 +106,11 @@ const Toast: FC = () => {
 			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedToBin'), cnt);
 
+			if (autoArchivedIds?.length) {
+				const autoCnt = U.String.sprintf(translate('commonCountObjects'), autoArchivedIds.length, U.Common.plural(autoArchivedIds.length, translate('pluralObject')));
+				textAction += '<br>' + U.String.sprintf(translate('toastAutoArchivedToBin'), autoCnt);
+			};
+
 			buttons = buttons.concat([
 				{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
 			]);
@@ -119,6 +124,11 @@ const Toast: FC = () => {
 
 			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedFromBin'), cnt);
+
+			if (autoRestoredIds?.length) {
+				const autoCnt = U.String.sprintf(translate('commonCountObjects'), autoRestoredIds.length, U.Common.plural(autoRestoredIds.length, translate('pluralObject')));
+				textAction += '<br>' + U.String.sprintf(translate('toastAutoRestoredFromBin'), autoCnt);
+			};
 
 			buttons = buttons.concat([
 				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
@@ -135,6 +145,30 @@ const Toast: FC = () => {
 			if (breakdown) {
 				textAction = U.String.sprintf(translate('toastUploaded'), breakdown);
 			};
+			break;
+		};
+
+		case I.ToastAction.AutoArchive: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
+			textAction = U.String.sprintf(translate('toastAutoArchivedToBin'), cnt);
+
+			buttons = buttons.concat([
+				{ action: 'openBin', label: translate('commonBin') }
+			]);
+			break;
+		};
+
+		case I.ToastAction.AutoRestore: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
+			textAction = U.String.sprintf(translate('toastAutoRestoredFromBin'), cnt);
 			break;
 		};
 	};
@@ -170,6 +204,12 @@ const Toast: FC = () => {
 			case 'manageStorage': {
 				Action.openSettings('storageManager', analytics.route.toast);
 				S.Common.toastClear();
+				break;
+			};
+
+			case 'openBin': {
+				U.Object.openRoute({ layout: I.ObjectLayout.Archive });
+				break;
 			};
 		};
 
