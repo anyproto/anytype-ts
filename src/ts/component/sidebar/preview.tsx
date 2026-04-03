@@ -122,6 +122,8 @@ const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props
 	const unbind = () => {
 		window.removeEventListener('resize', resizeHandler.current);
 		window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+		resizeHandler.current = null;
+		sidebarResizeHandler.current = null;
 	};
 
 	const rebind = () => {

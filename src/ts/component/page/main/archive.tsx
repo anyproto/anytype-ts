@@ -235,9 +235,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
 			if (filterMouseDownHandler.current && cleanupEl) {
 				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
+				filterMouseDownHandler.current = null;
 			};
 			if (filterKeydownHandler.current) {
 				window.removeEventListener('keydown', filterKeydownHandler.current);
+				filterKeydownHandler.current = null;
 			};
 		};
 	}, []);

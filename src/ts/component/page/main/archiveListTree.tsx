@@ -138,7 +138,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, s
 			U.Object.openEvent(e, obj);
 		};
 
-		const handleCheck = (e: MouseEvent) => {
+		const handleCheck = (e: any) => {
 			e.stopPropagation();
 			onSelectChange(subtreeIds, e);
 		};

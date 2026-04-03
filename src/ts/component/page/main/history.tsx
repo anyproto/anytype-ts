@@ -24,6 +24,7 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const unbind = () => {
 		if (keydownHandler.current) {
 			window.removeEventListener('keydown', keydownHandler.current);
+			keydownHandler.current = null;
 		};
 	};
 

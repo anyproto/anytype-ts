@@ -83,9 +83,10 @@ const Toast: FC = () => {
 		case I.ToastAction.StorageFull: {
 			textAction = translate('toastUploadLimitExceeded');
 
-			buttons = buttons.concat([ 
+			buttons = buttons.concat([
 				{ action: 'manageStorage', label: translate('toastManageFiles') }
 			]);
+			break;
 		};
 
 		case I.ToastAction.TemplateCreate: {
@@ -230,6 +231,11 @@ const Toast: FC = () => {
 
 		const isPopup = keyboard.isPopup();
 		const container = U.Dom.getScrollContainer(isPopup);
+
+		if (!container) {
+			return;
+		};
+
 		const rect = container.getBoundingClientRect();
 		const y = rect.top + 32;
 		let x = 0;
