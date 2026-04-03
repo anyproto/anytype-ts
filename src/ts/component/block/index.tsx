@@ -1046,7 +1046,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		case I.BlockType.Featured: {
-			canDrop = canSelect = false;
+			canDrop = false;
 
 			blockComponent = <BlockFeatured key={key} ref={childRef} {...props} />;
 			break;
