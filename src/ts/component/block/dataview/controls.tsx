@@ -447,7 +447,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		// With flex-grow: 1, sideLeft expands to fill all space, making the measurement
 		// equal to container width regardless of actual content, which breaks at non-standard zoom levels
 		if (sideLeft) {
-			sideLeft.style.flexGrow = '0';
+			U.Dom.css(sideLeft, { flexGrow: '0' });
 		};
 
 		// Force synchronous reflow before measuring widths
@@ -456,7 +456,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + (sideRight?.offsetWidth ?? 0));
 
 		if (sideLeft) {
-			sideLeft.style.flexGrow = '';
+			U.Dom.css(sideLeft, { flexGrow: '' });
 		};
 
 		if (width + 16 > nw) {

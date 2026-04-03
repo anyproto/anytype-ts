@@ -135,7 +135,7 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 
 		U.Dom.toggleClass(title, 'isOpen', isOpen);
 		U.Dom.toggleClass(list, 'isOpen', isOpen);
-		if (list) list.style.height = isOpen ? 'auto' : '0px';
+		if (list) U.Dom.css(list, { height: isOpen ? 'auto' : '0px' });
 	};
 
 	const onToggle = (id: string) => {

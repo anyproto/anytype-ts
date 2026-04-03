@@ -86,10 +86,12 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 					};
 
 					U.Dom.addClass(clone, 'onboardingElement');
-					clone.style.position = 'fixed';
-					clone.style.top = `${rect.top}px`;
-					clone.style.left = `${rect.left}px`;
-					clone.style.zIndex = '1000';
+					U.Dom.css(clone, {
+						position: 'fixed',
+						top: `${rect.top}px`,
+						left: `${rect.left}px`,
+						zIndex: '1000',
+					});
 				});
 			});
 		});
@@ -111,7 +113,7 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 
 		param.highlightElements.concat([ param.element as string ]).forEach(selector => {
 			U.Dom.selectAll(selector).forEach(el => {
-				el.style.visibility = 'visible';
+				U.Dom.css(el, { visibility: 'visible' });
 			});
 		});
 

@@ -84,11 +84,10 @@ const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props
 		w = Math.max(300, w);
 
 		if (nodeRef.current) {
-			nodeRef.current.style.width = `${size.width}px`;
-			nodeRef.current.style.height = `${size.height}px`;
+			U.Dom.css(nodeRef.current, { width: `${size.width}px`, height: `${size.height}px` });
 		};
 		if (previewRef.current) {
-			previewRef.current.style.width = `${w}px`;
+			U.Dom.css(previewRef.current, { width: `${w}px` });
 		};
 	};
 

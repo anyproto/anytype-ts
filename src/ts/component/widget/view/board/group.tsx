@@ -85,7 +85,7 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 
 		U.Dom.addClass(item, 'isExpanded');
 		if (children) {
-			children.style.display = '';
+			U.Dom.css(children, { display: '' });
 		};
 	};
 
@@ -109,11 +109,11 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 			U.Dom.css(children, { overflow: 'hidden', height: `${height}px` });
 
 			window.setTimeout(() => U.Dom.css(children, { height: '0px' }), 15);
-			window.setTimeout(() => { children.style.display = 'none'; }, ANIMATION + 15);
+			window.setTimeout(() => { U.Dom.css(children, { display: 'none' }); }, ANIMATION + 15);
 		} else {
 			U.Dom.addClass(item, 'isExpanded');
 
-			children.style.display = '';
+			U.Dom.css(children, { display: '' });
 			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
 			height = children.offsetHeight;
 

@@ -796,7 +796,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const gridTemplateColumns = widths.map(it => `${it}px`).join(' ');
 
 		rowEls.forEach((item) => {
-			item.style.gridTemplateColumns = gridTemplateColumns;
+			U.Dom.css(item, { gridTemplateColumns });
 		});
 	};
 
@@ -822,17 +822,13 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			const cell = cells[i];
 			if (cell) {
 				const clone = cell.cloneNode(true) as HTMLElement;
-				clone.style.height = `${cell.offsetHeight}px`;
+				U.Dom.css(clone, { height: `${cell.offsetHeight}px` });
 				rowElement.appendChild(clone);
 			};
 			table.appendChild(rowElement);
 		});
 
-		table.style.width = `${widths[idx]}px`;
-		table.style.zIndex = '10000';
-		table.style.position = 'fixed';
-		table.style.left = '-10000px';
-		table.style.top = '-10000px';
+		U.Dom.css(table, { width: `${widths[idx]}px`, zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px' });
 		node?.appendChild(table);
 
 		if (tableDragOverRef.current) {
@@ -935,10 +931,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const table = document.createElement('div');
 		table.className = 'table isClone';
 
-		layer.style.zIndex = '10000';
-		layer.style.position = 'fixed';
-		layer.style.left = '-10000px';
-		layer.style.top = '-10000px';
+		U.Dom.css(layer, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px' });
 		node?.appendChild(layer);
 		layer.appendChild(table);
 		if (clone) {
@@ -1412,10 +1405,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			frameContainer?.appendChild(obj);
 		};
 
-		obj.style.left = `${item.x}px`;
-		obj.style.top = `${item.y}px`;
-		obj.style.width = `${item.w}px`;
-		obj.style.height = `${item.h}px`;
+		U.Dom.css(obj, { left: `${item.x}px`, top: `${item.y}px`, width: `${item.w}px`, height: `${item.h}px` });
 	};
 
 	const framesUpdate = () => {
@@ -1460,8 +1450,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			const gridCols = row ? getComputedStyle(row).gridTemplateColumns : '';
 			String(gridCols || '').split(' ').forEach(it => width += parseInt(it));
 			if (obj) {
-				obj.style.width = 'auto';
-				obj.style.marginLeft = '0';
+				U.Dom.css(obj, { width: 'auto', marginLeft: '0' });
 			};
 
 			if (parent.isPage() || parent.isLayoutDiv()) {
@@ -1474,8 +1463,10 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				width = Math.max(wrapperWidth, Math.min(maxWidth, width));
 
 				if (obj) {
-					obj.style.width = (width >= wrapperWidth) ? `${width}px` : 'auto';
-					obj.style.marginLeft = (width >= wrapperWidth) ? `${Math.min(0, (wrapperWidth - width) / 2)}px` : '';
+					U.Dom.css(obj, {
+						width: (width >= wrapperWidth) ? `${width}px` : 'auto',
+						marginLeft: (width >= wrapperWidth) ? `${Math.min(0, (wrapperWidth - width) / 2)}px` : '',
+					});
 				};
 			} else {
 				const parentObj = U.Dom.get(`block-${parent.id}`);

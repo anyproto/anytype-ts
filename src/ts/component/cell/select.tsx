@@ -91,11 +91,11 @@ const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		const value = getValue();
 
 		if (listRef.current) {
-			listRef.current.style.display = value.existing.length ? '' : 'none';
+			U.Dom.css(listRef.current, { display: value.existing.length ? '' : 'none' });
 		};
 
 		if (placeholderRef.current) {
-			placeholderRef.current.style.display = (value.new || value.existing.length) ? 'none' : '';
+			U.Dom.css(placeholderRef.current, { display: (value.new || value.existing.length) ? 'none' : '' });
 		};
 	};
 

@@ -302,7 +302,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			U.Dom.toggleClass(icon, 'isClosed', !isOpen);
 
 			if (innerWrap) {
-				innerWrap.style.display = isOpen ? '' : 'none';
+				U.Dom.css(innerWrap, { display: isOpen ? '' : 'none' });
 			};
 		};
 	};
@@ -329,13 +329,11 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		const minHeight = getMinHeight();
 
 		if (innerWrap) {
-			innerWrap.style.display = '';
-			innerWrap.style.height = '';
-			innerWrap.style.opacity = '0';
+			U.Dom.css(innerWrap, { display: '', height: '', opacity: '0' });
 		};
 
 		if (wrapper) {
-			wrapper.style.height = 'auto';
+			U.Dom.css(wrapper, { height: 'auto' });
 		};
 
 		const height = wrapper?.offsetHeight ?? 0;
@@ -344,7 +342,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		U.Dom.removeClass(icon, 'isClosed');
 
 		if (wrapper) {
-			wrapper.style.height = `${minHeight}px`;
+			U.Dom.css(wrapper, { height: `${minHeight}px` });
 		};
 
 		if (childRef.current?.onOpen) {
@@ -353,10 +351,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 
 		raf(() => {
 			if (wrapper) {
-				wrapper.style.height = `${height}px`;
+				U.Dom.css(wrapper, { height: `${height}px` });
 			};
 			if (innerWrap) {
-				innerWrap.style.opacity = '1';
+				U.Dom.css(innerWrap, { opacity: '1' });
 			};
 		});
 
@@ -367,7 +365,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			if (isOpen) {
 				U.Dom.removeClass(node, 'isClosed');
 				if (wrapper) {
-					wrapper.style.height = 'auto';
+					U.Dom.css(wrapper, { height: 'auto' });
 				};
 			};
 		}, J.Constant.delay.widget);
@@ -385,17 +383,17 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		const minHeight = getMinHeight();
 
 		if (wrapper) {
-			wrapper.style.height = `${wrapper.offsetHeight}px`;
+			U.Dom.css(wrapper, { height: `${wrapper.offsetHeight}px` });
 		};
 		U.Dom.addClass(icon, 'isClosed');
 		if (innerWrap) {
-			innerWrap.style.opacity = '0';
+			U.Dom.css(innerWrap, { opacity: '0' });
 		};
 
 		raf(() => {
 			U.Dom.addClass(node, 'isClosed');
 			if (wrapper) {
-				wrapper.style.height = `${minHeight}px`;
+				U.Dom.css(wrapper, { height: `${minHeight}px` });
 			};
 		});
 
@@ -405,10 +403,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 
 			if (!isOpen) {
 				if (wrapper) {
-					wrapper.style.height = '';
+					U.Dom.css(wrapper, { height: '' });
 				};
 				if (innerWrap) {
-					innerWrap.style.display = 'none';
+					U.Dom.css(innerWrap, { display: 'none' });
 				};
 			};
 		}, J.Constant.delay.widget);
@@ -619,7 +617,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (button) {
-			button.style.display = show ? 'flex' : 'none';
+			U.Dom.css(button, { display: show ? 'flex' : 'none' });
 		};
 	};
 

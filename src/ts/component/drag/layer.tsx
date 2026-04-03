@@ -69,7 +69,7 @@ const DragLayer = forwardRef((_, ref: any) => {
 							const value = U.Dom.select('#value', clone);
 							if (value) value.remove();
 							const preview = U.Dom.select('.preview', clone);
-							if (preview) preview.style.display = 'block';
+							if (preview) U.Dom.css(preview, { display: 'block' });
 						};
 					};
 				});
@@ -90,7 +90,7 @@ const DragLayer = forwardRef((_, ref: any) => {
 					if (el) {
 						const clone = el.cloneNode(true) as HTMLElement;
 						add.appendChild(clone);
-						clone.style.width = `${el.offsetWidth}px`;
+						U.Dom.css(clone, { width: `${el.offsetWidth}px` });
 					};
 				});
 				break;
@@ -122,7 +122,7 @@ const DragLayer = forwardRef((_, ref: any) => {
 						const clone = el.cloneNode(true) as HTMLElement;
 						U.Dom.addClass(clone, 'record');
 						view.appendChild(clone);
-						clone.style.width = `${el.offsetWidth}px`;
+						U.Dom.css(clone, { width: `${el.offsetWidth}px` });
 					};
 				});
 				break;
@@ -134,7 +134,7 @@ const DragLayer = forwardRef((_, ref: any) => {
 		};
 
 		if (node) {
-			node.style.width = `${width}px`;
+			U.Dom.css(node, { width: `${width}px` });
 		};
 		U.Dom.selectAll('.block', node).forEach(el => el.id = '');
 		U.Dom.selectAll('.selectionTarget', node).forEach(el => el.id = '');

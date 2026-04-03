@@ -2648,7 +2648,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks && last && scrollContainer) {
-				last.style.height = '';
+				U.Dom.css(last, { height: '' });
 
 				const commentSection = U.Dom.select('.commentSection', node);
 				const csh = commentSection ? commentSection.offsetHeight : 0;
@@ -2663,7 +2663,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					let height = ch - ct - bt - bh - 8;
 					height = Math.max(J.Size.lastBlock, height);
-					last.style.height = `${height}px`;
+					U.Dom.css(last, { height: `${height}px` });
 					U.Dom.addClass(counter, 'isFixed');
 				} else {
 					U.Dom.removeClass(counter, 'isFixed');
@@ -2709,10 +2709,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const width = getWidth(v);
 		const elements = U.Dom.select('#elements', node);
 
-		node.style.width = `${width}px`;
+		U.Dom.css(node, { width: `${width}px` });
 		if (elements) {
-			elements.style.width = `${width}px`;
-			elements.style.marginLeft = `${-width / 2}px`;
+			U.Dom.css(elements, { width: `${width}px`, marginLeft: `${-width / 2}px` });
 		};
 
 		headerRef.current?.refDrag?.setValue(v);

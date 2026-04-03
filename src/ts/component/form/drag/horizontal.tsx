@@ -156,10 +156,9 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 
 		const w = Math.min(nw, x + (iconIsOutside ? iw : 0));
 
-		icon.style.left = `${x}px`;
-		back.style.left = `${w + iw + ib * 2}px`;
-		back.style.width = `${nw - w - iw - ib * 2}px`;
-		fill.style.width = `${w + (iconIsOutside ? 0 : iw) - ib * 2}px`;
+		U.Dom.css(icon, { left: `${x}px` });
+		U.Dom.css(back, { left: `${w + iw + ib * 2}px`, width: `${nw - w - iw - ib * 2}px` });
+		U.Dom.css(fill, { width: `${w + (iconIsOutside ? 0 : iw) - ib * 2}px` });
 	};
 
 	const end = (e) => {

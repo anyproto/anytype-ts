@@ -110,7 +110,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (!isGrid && isName && cellContent) {
-				cellContent.style.height = `${cellContent.offsetHeight}px`;
+				U.Dom.css(cellContent, { height: `${cellContent.offsetHeight}px` });
 			};
 
 			U.Dom.addClass(cell, 'isEditing');
@@ -142,7 +142,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (!isGrid && isName && cellContent) {
-				cellContent.style.height = '';
+				U.Dom.css(cellContent, { height: '' });
 			};
 
 			U.Dom.removeClass(U.Dom.get(U.Common.esc(cellId)), 'isEditing');

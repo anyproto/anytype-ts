@@ -302,8 +302,8 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
 
-		if (prevNode) prevNode.style.width = w1 * 100 + '%';
-		if (currentNode) currentNode.style.width = w2 * 100 + '%';
+		if (prevNode) U.Dom.css(prevNode, { width: w1 * 100 + '%' });
+		if (currentNode) U.Dom.css(currentNode, { width: w2 * 100 + '%' });
 	};
 
 	const onResizeEnd = (e: any, index: number, offset: number) => {

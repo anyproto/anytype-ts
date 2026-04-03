@@ -110,7 +110,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const clone = U.Dom.select('#rowHeadClone', node);
 
 		if (clone) {
-			clone.style.transform = `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)`;
+			U.Dom.css(clone, { transform: `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)` });
 		};
 
 		if (stickyScrollbarRef) {
@@ -162,10 +162,12 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		};
 
 		if (top <= J.Size.header) {
-			clone.style.left = `${left + sx}px`;
-			clone.style.top = `${J.Size.header}px`;
-			clone.style.width = `${rowHead.offsetWidth + 2}px`;
-			clone.style.transform = `translate3d(${-sx}px,0px,0px)`;
+			U.Dom.css(clone, {
+				left: `${left + sx}px`,
+				top: `${J.Size.header}px`,
+				width: `${rowHead.offsetWidth + 2}px`,
+				transform: `translate3d(${-sx}px,0px,0px)`,
+			});
 		} else {
 			clone.remove();
 		};
@@ -189,9 +191,9 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			};
 		});
 
-		U.Dom.selectAll('.rowHead', node).forEach(el => el.style.gridTemplateColumns = str);
-		U.Dom.selectAll('.rowFoot', node).forEach(el => el.style.gridTemplateColumns = str);
-		U.Dom.selectAll('.row .selectionTarget', node).forEach(el => el.style.gridTemplateColumns = str);
+		U.Dom.selectAll('.rowHead', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.rowFoot', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.row .selectionTarget', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
 	};
 
 	const getColumnWidths = (relationKey: string, width: number): any => {
@@ -232,12 +234,10 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const ww = U.Dom.contentWidth(container);
 		const rx = x - sx + width;
 
-		content.style.left = '0';
-		content.style.right = 'auto';
+		U.Dom.css(content, { left: '0', right: 'auto' });
 
 		if ((rx >= ww - 92) || (rx > sw)) {
-			content.style.left = 'auto';
-			content.style.right = '0';
+			U.Dom.css(content, { left: 'auto', right: '0' });
 		};
 	};
 
@@ -406,20 +406,17 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					const offset = 8;
 
 					if (scroll) {
-						scroll.style.width = `${cw}px`;
-						scroll.style.marginLeft = `${-margin}px`;
+						U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px` });
 					};
 					if (wrap) {
-						wrap.style.width = `${vw + margin - offset}px`;
-						wrap.style.paddingLeft = `${margin}px`;
-						wrap.style.paddingRight = `${offset * 2}px`;
+						U.Dom.css(wrap, { width: `${vw + margin - offset}px`, paddingLeft: `${margin}px`, paddingRight: `${offset * 2}px` });
 					};
 				} else {
 					const parentObj = U.Dom.get(`block-${parent.id}`);
 					const vw = parentObj ? (U.Dom.contentWidth(parentObj) - J.Size.blockMenu) : 0;
 
 					if (wrap) {
-						wrap.style.width = `${Math.max(vw, width)}px`;
+						U.Dom.css(wrap, { width: `${Math.max(vw, width)}px` });
 					};
 				};
 			};
@@ -431,15 +428,16 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			const scrollRect = scroll?.getBoundingClientRect();
 
 			if (scroll) {
-				scroll.style.width = `${cw - 4}px`;
-				scroll.style.marginLeft = `${-margin - 2}px`;
-				scroll.style.paddingLeft = `${margin}px`;
-				scroll.style.minHeight = `${ch - (scrollRect?.top ?? 0)}px`;
+				U.Dom.css(scroll, {
+					width: `${cw - 4}px`,
+					marginLeft: `${-margin - 2}px`,
+					paddingLeft: `${margin}px`,
+					minHeight: `${ch - (scrollRect?.top ?? 0)}px`,
+				});
 			};
 
 			if (wrap) {
-				wrap.style.width = `${vw}px`;
-				wrap.style.paddingRight = `${pr}px`;
+				U.Dom.css(wrap, { width: `${vw}px`, paddingRight: `${pr}px` });
 			};
 
 			stickyScrollbarRef.current?.resize({

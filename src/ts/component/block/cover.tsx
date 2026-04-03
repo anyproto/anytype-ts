@@ -123,7 +123,7 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const setLoading = (v: boolean) => {
 		if (loaderRef.current) {
-			loaderRef.current.style.display = v ? '' : 'none';
+			U.Dom.css(loaderRef.current, { display: v ? '' : 'none' });
 		};
 	};
 	
@@ -183,7 +183,7 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 			rectRef.current = U.Dom.getElementRect(node);
 			onScaleMove(null, object.coverScale);
-			cover.style.opacity = '1';
+			U.Dom.css(cover, { opacity: '1' });
 			dragRef.current?.setValue(object.coverScale);
 
 			if (!loadedRef.current) {
@@ -195,7 +195,7 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		if (loadedRef.current) {
 			cb();
 		} else {
-			cover.style.opacity = '0';
+			U.Dom.css(cover, { opacity: '0' });
 			setLoading(true);
 
 			cover.onload = cb;
@@ -287,8 +287,7 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			value.textContent = Math.ceil(v) + '%';
 		};
 		if (cover) {
-			cover.style.height = 'auto';
-			cover.style.width = v + '%';
+			U.Dom.css(cover, { height: 'auto', width: v + '%' });
 		};
 
 		if (!cover) {

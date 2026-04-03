@@ -1192,8 +1192,8 @@ class Keyboard {
 		if (U.Dom.hasClass(html, 'themeDark') && !clearTheme) {
 			const bgColor = getComputedStyle(body).getPropertyValue('--color-bg-primary').trim();
 			if (bgColor) {
-				html.style.backgroundColor = bgColor;
-				body.style.backgroundColor = bgColor;
+				U.Dom.css(html, { backgroundColor: bgColor });
+				U.Dom.css(body, { backgroundColor: bgColor });
 			};
 		};
 
@@ -1225,8 +1225,8 @@ class Keyboard {
 		const body = document.body;
 
 		U.Dom.removeClass(html, 'withPopup printMedia print save');
-		html.style.backgroundColor = '';
-		body.style.backgroundColor = '';
+		U.Dom.css(html, { backgroundColor: '' });
+		U.Dom.css(body, { backgroundColor: '' });
 
 		S.Common.setThemeClass();
 

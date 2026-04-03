@@ -195,10 +195,7 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		U.Dom.addClass(target, 'isDragging');
 		clone.id = '';
 		U.Dom.addClass(clone, 'isClone');
-		clone.style.zIndex = '10000';
-		clone.style.position = 'fixed';
-		clone.style.left = '-10000px';
-		clone.style.top = '-10000px';
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px' });
 		viewEl?.appendChild(clone);
 
 		if (dragOverHandlerRef.current) {
@@ -638,13 +635,10 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			const pr = width > mw ? PADDING : 0;
 
 			if (scroll) {
-				scroll.style.width = `${cw - 4}px`;
-				scroll.style.marginLeft = `${-margin - 2}px`;
-				scroll.style.paddingLeft = `${margin}px`;
+				U.Dom.css(scroll, { width: `${cw - 4}px`, marginLeft: `${-margin - 2}px`, paddingLeft: `${margin}px` });
 			};
 			if (viewEl) {
-				viewEl.style.width = `${vw}px`;
-				viewEl.style.paddingRight = `${pr}px`;
+				U.Dom.css(viewEl, { width: `${vw}px`, paddingRight: `${pr}px` });
 			};
 
 			stickyScrollRef.current?.resize({
@@ -661,12 +655,10 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			const margin = (cw - ww) / 2;
 
 			if (scroll) {
-				scroll.style.width = `${cw}px`;
-				scroll.style.marginLeft = `${-margin}px`;
-				scroll.style.paddingLeft = `${margin}px`;
+				U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px`, paddingLeft: `${margin}px` });
 			};
 			if (viewEl) {
-				viewEl.style.width = `${width + margin + 2}px`;
+				U.Dom.css(viewEl, { width: `${width + margin + 2}px` });
 			};
 		};
 	};

@@ -327,29 +327,28 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const hh = header?.clientHeight || 0;
 
 		if (sideRight) {
-			sideRight.style.height = `${height}px`;
+			U.Dom.css(sideRight, { height: `${height}px` });
 		};
 
 		if (cover) {
-			cover.style.top = `${hh}px`;
+			U.Dom.css(cover, { top: `${hh}px` });
 		};
 
 		if (isPopup) {
 			const popupEl = U.Dom.select('.pageMainHistory.isPopup');
 			if (popupEl) {
-				popupEl.style.height = `${height}px`;
+				U.Dom.css(popupEl, { height: `${height}px` });
 			};
 			if (sideLeft) {
-				sideLeft.style.height = `${height}px`;
-				sideLeft.style.paddingTop = `${hh}px`;
+				U.Dom.css(sideLeft, { height: `${height}px`, paddingTop: `${hh}px` });
 			};
 		} else
 		if (sideLeft) {
-			sideLeft.style.height = `${height}px`;
+			U.Dom.css(sideLeft, { height: `${height}px` });
 		};
 
 		if (editorWrapper) {
-			editorWrapper.style.width = !isSetOrCollection() ? `${getWrapperWidth()}px` : '';
+			U.Dom.css(editorWrapper, { width: !isSetOrCollection() ? `${getWrapperWidth()}px` : '' });
 		};
 	};
 

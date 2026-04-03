@@ -165,8 +165,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		const left = rect.left + window.scrollX;
 		const top = rect.top + window.scrollY;
 
-		drag.style.left = `${left}px`;
-		drag.style.top = `${top - height - 4 - 72 - window.scrollY}px`;
+		U.Dom.css(drag, {
+			left: `${left}px`,
+			top: `${top - height - 4 - 72 - window.scrollY}px`,
+		});
 	};
 
 	const onVolumeEnter = () => {
@@ -176,7 +178,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			return;
 		};
 
-		drag.style.display = '';
+		U.Dom.css(drag, { display: '' });
 		positionDrag();
 		clearTimeout(timeoutRef.current);
 
@@ -191,7 +193,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 				if (scrollAudioHandler.current) {
 					container.removeEventListener('scroll', scrollAudioHandler.current);
 				};
-				scrollAudioHandler.current = () => { drag.style.display = 'none'; };
+				scrollAudioHandler.current = () => { U.Dom.css(drag, { display: 'none' }); };
 				container.addEventListener('scroll', scrollAudioHandler.current);
 			};
 		});
@@ -205,7 +207,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		};
 
 		U.Dom.removeClass(drag, 'active');
-		timeoutRef.current = window.setTimeout(() => { drag.style.display = 'none'; }, 200);
+		timeoutRef.current = window.setTimeout(() => { U.Dom.css(drag, { display: 'none' }); }, 200);
 
 		if (container && scrollAudioHandler.current) {
 			container.removeEventListener('scroll', scrollAudioHandler.current);

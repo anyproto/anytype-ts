@@ -72,11 +72,10 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if (v) {
-			loader.style.display = '';
-			loader.style.opacity = '1';
+			U.Dom.css(loader, { display: '', opacity: '1' });
 		} else {
-			loader.style.opacity = '0';
-			window.setTimeout(() => { loader.style.display = 'none'; }, 200);
+			U.Dom.css(loader, { opacity: '0' });
+			window.setTimeout(() => { U.Dom.css(loader, { display: 'none' }); }, 200);
 		};
 	};
 
@@ -89,14 +88,13 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
 		if (wrapper) {
-			wrapper.style.height = `${height}px`;
+			U.Dom.css(wrapper, { height: `${height}px` });
 		};
 
 		if (isPopup) {
 			const element = U.Dom.select('#popupPage .content');
 			if (element) {
-				element.style.minHeight = 'unset';
-				element.style.height = '100%';
+				U.Dom.css(element, { minHeight: 'unset', height: '100%' });
 			};
 		};
 

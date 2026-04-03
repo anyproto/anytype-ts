@@ -1017,8 +1017,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			onViewDrop: onViewDrop,
 		});
 
-		if (con) con.style.display = '';
-		if (sel) sel.style.display = 'none';
+		if (con) U.Dom.css(con, { display: '' });
+		if (sel) U.Dom.css(sel, { display: 'none' });
 	};
 
 	const onRecordDrop = (targetId: string, ids: string[], position: I.BlockPosition) => {
@@ -1409,8 +1409,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		if (con) con.style.display = length ? 'none' : '';
-		if (sel) sel.style.display = length ? '' : 'none';
+		if (con) U.Dom.css(con, { display: length ? 'none' : '' });
+		if (sel) U.Dom.css(sel, { display: length ? '' : 'none' });
 	};
 
 	const onSelectEnd = () => {
@@ -1740,7 +1740,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			const dragOverlay = blockNode ? U.Dom.select('.dragOverlay', blockNode) : null;
 			if (dragOverlay) {
-				dragOverlay.style.height = height + 'px';
+				U.Dom.css(dragOverlay, { height: height + 'px' });
 			};
 		};
 

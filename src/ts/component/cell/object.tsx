@@ -57,10 +57,10 @@ const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		const ph = placeholderRef.current;
 
 		if (list) {
-			list.style.display = value.existing.length ? '' : 'none';
+			U.Dom.css(list, { display: value.existing.length ? '' : 'none' });
 		};
 		if (ph) {
-			ph.style.display = (value.new || value.existing.length) ? 'none' : '';
+			U.Dom.css(ph, { display: (value.new || value.existing.length) ? 'none' : '' });
 		};
 	};
 

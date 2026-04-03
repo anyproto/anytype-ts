@@ -368,12 +368,14 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 
 		if (allowRect.current) {
-			el.style.display = '';
-			el.style.transform = `translate3d(${rect.x}px, ${rect.y}px, 0px)`;
-			el.style.width = `${rect.width}px`;
-			el.style.height = `${rect.height}px`;
+			U.Dom.css(el, {
+				display: '',
+				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
+				width: `${rect.width}px`,
+				height: `${rect.height}px`,
+			});
 		} else {
-			el.style.display = 'none';
+			U.Dom.css(el, { display: 'none' });
 		};
 	};
 	
@@ -528,7 +530,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 	const hide = () => {
 		if (rectRef.current) {
-			rectRef.current.style.display = 'none';
+			U.Dom.css(rectRef.current, { display: 'none' });
 		};
 		unbindMouse();
 	};

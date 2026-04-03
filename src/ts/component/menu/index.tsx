@@ -255,7 +255,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 			};
 
 			if (isSub && polyRef.current) {
-				polyRef.current.style.display = 'none';
+				U.Dom.css(polyRef.current, { display: 'none' });
 				window.clearTimeout(timeoutPoly.current);
 			};
 
@@ -574,7 +574,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 				};
 
 				if (polyRef.current) {
-					polyRef.current.style.display = 'block';
+					U.Dom.css(polyRef.current, { display: 'block' });
 					U.Dom.css(polyRef.current, {
 						width: `${w}px`,
 						height: `${h}px`,
@@ -590,7 +590,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 				window.clearTimeout(timeoutPoly.current);
 				timeoutPoly.current = window.setTimeout(() => {
 					if (polyRef.current) {
-						polyRef.current.style.display = 'none';
+						U.Dom.css(polyRef.current, { display: 'none' });
 					};
 				}, 500);
 			};
@@ -670,7 +670,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	
 	const onMouseLeave = (e: any) => {
 		if (isSub && polyRef.current) {
-			polyRef.current.style.display = 'none';
+			U.Dom.css(polyRef.current, { display: 'none' });
 		};
 	};
 

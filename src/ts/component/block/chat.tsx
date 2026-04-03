@@ -631,10 +631,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
 			dates.forEach((item: HTMLElement) => {
-				item.style.position = 'static';
-				item.style.left = '';
-				item.style.top = '';
-				item.style.width = '';
+				U.Dom.css(item, { position: 'static', left: '', top: '', width: '' });
 			});
 
 			let last: HTMLElement = null;
@@ -654,10 +651,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				const width = last.offsetWidth;
 				const rect = last.getBoundingClientRect();
 
-				last.style.position = 'fixed';
-				last.style.width = width + 'px';
-				last.style.left = rect.left + 'px';
-				last.style.top = (top + offset) + 'px';
+				U.Dom.css(last, { position: 'fixed', width: width + 'px', left: rect.left + 'px', top: (top + offset) + 'px' });
 			};
 		});
 	};

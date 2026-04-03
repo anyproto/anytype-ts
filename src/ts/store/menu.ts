@@ -180,7 +180,7 @@ class MenuStore {
 
 		if (el) {
 			U.Dom.toggleClass(el, 'noAnimation', noAnimation);
-			el.style.transform = '';
+			U.Dom.css(el, { transform: '' });
 			U.Dom.removeClass(el, 'show');
 		};
 

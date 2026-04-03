@@ -54,8 +54,10 @@ const ListNotification = forwardRef(() => {
 
 		window.setTimeout(() => {
 			items.forEach((item, i) => {
-				item.style.width = isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`;
-				item.style.right = isExpanded.current ? '0px' : `${4 * i}px`;
+				U.Dom.css(item, {
+					width: isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`,
+					right: isExpanded.current ? '0px' : `${4 * i}px`,
+				});
 
 				const h = item.offsetHeight;
 
@@ -74,7 +76,7 @@ const ListNotification = forwardRef(() => {
 					listHeight += h + o;
 				};
 
-				item.style.bottom = `${bottom}px`;
+				U.Dom.css(item, { bottom: `${bottom}px` });
 				height = h;
 			});
 
@@ -85,7 +87,7 @@ const ListNotification = forwardRef(() => {
 				listHeight += 38;
 			};
 
-			node.style.height = `${listHeight}px`;
+			U.Dom.css(node, { height: `${listHeight}px` });
 		}, 50);
 	};
 

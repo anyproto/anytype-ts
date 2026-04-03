@@ -139,7 +139,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 						img.src = image;
 					};
 					if (blur) {
-						blur.style.backgroundImage = `url(${image})`;
+						U.Dom.css(blur, { backgroundImage: `url(${image})` });
 					};
 				});
 

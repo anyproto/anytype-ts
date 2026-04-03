@@ -29,7 +29,7 @@ const PageMainMembership = forwardRef<I.PageRef, I.PageComponent>((props, ref) =
 		const h = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
 		if (nodeRef.current) {
-			nodeRef.current.style.height = `${h}px`;
+			U.Dom.css(nodeRef.current, { height: `${h}px` });
 		};
 	};
 

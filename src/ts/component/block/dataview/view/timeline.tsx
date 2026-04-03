@@ -138,8 +138,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
 				if ((dy >= 0) && (dy != item.index) && (dy != item.index + 1)) {
 					if (line) {
-						line.style.top = `${dy * HEIGHT + 1}px`;
-						line.style.display = '';
+						U.Dom.css(line, { top: `${dy * HEIGHT + 1}px`, display: '' });
 					};
 				};
 			};
@@ -161,7 +160,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 			unbind();
 			keyboard.setDragging(false);
 			if (line) {
-				line.style.display = 'none';
+				U.Dom.css(line, { display: 'none' });
 			};
 		};
 		window.addEventListener('dragend', timelineDragEndHandlerRef.current);
@@ -247,14 +246,13 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				if (dir < 0) {
 					const nodeRect = node?.getBoundingClientRect();
 					const nodeLeft = (nodeRect?.left ?? 0) + window.scrollX;
-					el.style.left = `${left - nodeLeft + sl + d * WIDTH}px`;
-					el.style.width = `${width - d * WIDTH}px`;
+					U.Dom.css(el, { left: `${left - nodeLeft + sl + d * WIDTH}px`, width: `${width - d * WIDTH}px` });
 
 					start += d * J.Constant.day;
 				};
 
 				if (dir > 0) {
-					el.style.width = `${width + d * WIDTH}px`;
+					U.Dom.css(el, { width: `${width + d * WIDTH}px` });
 
 					end += d * J.Constant.day;
 				};
@@ -442,25 +440,22 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const left = nodeRect.left + window.scrollX;
 
 		if (!isInline) {
-			node.style.width = '0';
-			node.style.marginLeft = '0';
+			U.Dom.css(node, { width: '0', marginLeft: '0' });
 
 			const cw = pageContainer?.clientWidth ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
 
-			node.style.width = `${cw}px`;
-			node.style.marginLeft = `${-margin - 2}px`;
+			U.Dom.css(node, { width: `${cw}px`, marginLeft: `${-margin - 2}px` });
 		};
 
 		const width = U.Dom.contentWidth(node);
 
 		if (list) {
-			list.style.height = `${Math.max(20, items.length) * HEIGHT}px`;
+			U.Dom.css(list, { height: `${Math.max(20, items.length) * HEIGHT}px` });
 		};
 		if (tooltips) {
-			tooltips.style.transform = `translate3d(${left}px, ${top}px, 0)`;
-			tooltips.style.width = `${width}px`;
+			U.Dom.css(tooltips, { transform: `translate3d(${left}px, ${top}px, 0)`, width: `${width}px` });
 		};
 	};
 
@@ -598,7 +593,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 			let el = U.Dom.get(`tooltipItem-${id}`);
 
 			if (el) {
-				el.style.top = `${itemEl.offsetTop}px`;
+				U.Dom.css(el, { top: `${itemEl.offsetTop}px` });
 			};
 
 			if (isLeft || isRight) {

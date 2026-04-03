@@ -119,10 +119,7 @@ const SidebarProgress: FC = () => {
 
 		const coords = clampCoords(x, bottom);
 
-		node.style.position = 'fixed';
-		node.style.left = `${coords.x}px`;
-		node.style.bottom = `${coords.bottom}px`;
-		node.style.top = 'auto';
+		U.Dom.css(node, { position: 'fixed', left: `${coords.x}px`, bottom: `${coords.bottom}px`, top: 'auto' });
 	}, [ clampCoords ]);
 
 
@@ -187,10 +184,7 @@ const SidebarProgress: FC = () => {
 			const node = nodeRef.current;
 
 			if (node) {
-				node.style.position = '';
-				node.style.left = '';
-				node.style.bottom = '';
-				node.style.top = '';
+				U.Dom.css(node, { position: '', left: '', bottom: '', top: '' });
 			};
 
 			if (AUTO_EXPAND) {

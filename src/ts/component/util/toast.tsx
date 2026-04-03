@@ -187,7 +187,7 @@ const Toast: FC = () => {
 		const sw = sidebar.getDummyWidth();
 		const x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
 
-		node.style.display = 'block';
+		U.Dom.css(node, { display: 'block' });
 		U.Dom.css(node, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
 
 		raf(() => {

@@ -162,7 +162,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
 			if (preview) {
-				preview.style.display = isOnline ? 'none' : '';
+				U.Dom.css(preview, { display: isOnline ? 'none' : '' });
 			};
 		};
 
@@ -479,7 +479,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (error) {
 			error.textContent = '';
-			error.style.display = 'none';
+			U.Dom.css(error, { display: 'none' });
 		};
 
 		if (isUnsupported) {
@@ -610,7 +610,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						switch (type) {
 							case 'resize': {
 								if (allowIframeResize) {
-									(iframe as HTMLElement).style.height = height + 'px';
+									U.Dom.css(iframe as HTMLElement, { height: height + 'px' });
 								};
 								break;
 							};
@@ -734,7 +734,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						console.error(e);
 						if (error) {
 							error.textContent = e.toString();
-							error.style.display = '';
+							U.Dom.css(error, { display: '' });
 						};
 					};
 				});
@@ -848,7 +848,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const rect = U.Dom.getElementRect(wrap);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrap.style.width = (w * 100) + '%';
+		U.Dom.css(wrap, { width: (w * 100) + '%' });
 
 		if (isExcalidraw) {
 			const start = resizeStartRef.current;
@@ -857,7 +857,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			const valueEl = node ? U.Dom.select('#value', node) : null;
 
 			if (valueEl) {
-				valueEl.style.height = newHeight + 'px';
+				U.Dom.css(valueEl, { height: newHeight + 'px' });
 			};
 		};
 	};
@@ -872,7 +872,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		const iframe = node ? U.Dom.select('#receiver', node) : null;
 		if (iframe) {
-			iframe.style.height = 'auto';
+			U.Dom.css(iframe, { height: 'auto' });
 		};
 
 		const rect = U.Dom.getElementRect(wrap);

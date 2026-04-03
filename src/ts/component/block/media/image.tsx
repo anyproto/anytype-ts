@@ -70,7 +70,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrapRef.current.style.width = (w * 100) + '%';
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 	};
 
 	const handleResizeEnd = (e: any, checkMax: boolean) => {

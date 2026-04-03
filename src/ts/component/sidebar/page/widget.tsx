@@ -100,11 +100,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const obj = U.Dom.select(`#widget-${U.Common.esc(block.id)}`, body);
 		const clone = document.createElement('div');
 		clone.className = 'widget isClone';
-		clone.style.zIndex = '10000';
-		clone.style.position = 'fixed';
-		clone.style.left = '-10000px';
-		clone.style.top = '-10000px';
-		clone.style.width = `${obj?.offsetWidth ?? 0}px`;
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px', width: `${obj?.offsetWidth ?? 0}px` });
 
 		const headEl = obj ? U.Dom.select('.head', obj) : null;
 		if (headEl) {
@@ -362,8 +358,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		U.Dom.toggleClass(section, 'isOpen', !isClosed);
 		if (list) {
 			U.Dom.toggleClass(list, 'isOpen', !isClosed);
-			list.style.height = isClosed ? '0' : 'auto';
-			list.style.overflow = isClosed ? 'hidden' : 'visible';
+			U.Dom.css(list, { height: isClosed ? '0' : 'auto', overflow: isClosed ? 'hidden' : 'visible' });
 		};
 	};
 

@@ -346,11 +346,11 @@ const App: FC = () => {
 			const t = 300;
 
 			if (bubbleLoader) {
-				bubbleLoader.style.transitionDuration = `${t}ms`;
+				U.Dom.css(bubbleLoader, { transitionDuration: `${t}ms` });
 				U.Dom.addClass(bubbleLoader, 'inflate');
 			};
 			if (anim) {
-				anim.style.transitionDuration = `${t}ms`;
+				U.Dom.css(anim, { transitionDuration: `${t}ms` });
 			};
 
 			window.setTimeout(() => {
@@ -359,7 +359,7 @@ const App: FC = () => {
 					U.Dom.addClass(anim, 'to');
 
 					window.setTimeout(() => {
-						if (rootLoader) rootLoader.style.opacity = '0';
+						if (rootLoader) U.Dom.css(rootLoader, { opacity: '0' });
 						window.setTimeout(() => hide(), t);
 					}, 0);
 				}, t * 5);

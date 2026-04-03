@@ -225,7 +225,7 @@ const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const hh = isPopup ? (header?.clientHeight ?? 0) : J.Size.header;
 
 			if (cover) {
-				cover.style.top = `${hh}px`;
+				U.Dom.css(cover, { top: `${hh}px` });
 			};
 		});
 	};

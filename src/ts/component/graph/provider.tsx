@@ -492,7 +492,7 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 				layout: subject.current.layout,
 			});
 		} else {
-			item.style.display = '';
+			U.Dom.css(item, { display: '' });
 		};
 
 		previewPosition(data);
@@ -514,14 +514,16 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 		const top = nodeRect.top + window.scrollY;
 		const st = window.scrollY;
 
-		item.style.left = `${data.x + left - item.offsetWidth / 2}px`;
-		item.style.top = `${data.y + top + 20 - st}px`;
+		U.Dom.css(item, {
+			left: `${data.x + left - item.offsetWidth / 2}px`,
+			top: `${data.y + top + 20 - st}px`,
+		});
 	};
 
 	const onPreviewHide = () => {
 		const item = U.Dom.get('graphPreviewItem');
 		if (item) {
-			item.style.display = 'none';
+			U.Dom.css(item, { display: 'none' });
 		};
 
 		previewId.current = null;

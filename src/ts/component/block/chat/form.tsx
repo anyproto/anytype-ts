@@ -83,7 +83,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const checkSendButton = () => {
 		if (sendRef.current) {
-			sendRef.current.style.display = (canSend() || isSending.current) ? '' : 'none';
+			U.Dom.css(sendRef.current, { display: (canSend() || isSending.current) ? '' : 'none' });
 		};
 	};
 
@@ -687,7 +687,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		window.clearTimeout(timeoutDrag.current);
 		if (nodeRef.current) {
 			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
-			nodeRef.current.style.height = (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px';
+			U.Dom.css(nodeRef.current, { height: (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px' });
 		};
 	};
 	
@@ -723,7 +723,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const clearDragState = () => {
 		if (nodeRef.current) {
 			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
-			nodeRef.current.style.height = '';
+			U.Dom.css(nodeRef.current, { height: '' });
 		};
 	};
 

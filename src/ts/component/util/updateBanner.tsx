@@ -41,9 +41,7 @@ const UpdateBanner = forwardRef<{}, {}>((props, ref) => {
 			return;
 		};
 
-		node.style.left = `${coords.x}px`;
-		node.style.top = `${coords.y}px`;
-		node.style.bottom = 'auto';
+		U.Dom.css(node, { left: `${coords.x}px`, top: `${coords.y}px`, bottom: 'auto' });
 	}, [ checkCoords ]);
 
 	const resize = useCallback(() => {

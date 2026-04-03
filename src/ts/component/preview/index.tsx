@@ -88,7 +88,7 @@ const PreviewIndex = forwardRef(() => {
 		if (e.button === 2) {
 			const el = U.Dom.get('preview');
 			if (el) {
-				el.style.display = 'none';
+				U.Dom.css(el, { display: 'none' });
 			};
 			Preview.previewHide(true);
 		};
@@ -99,7 +99,7 @@ const PreviewIndex = forwardRef(() => {
 			if (e.button === 2) {
 				const previewEl = U.Dom.get('preview');
 				if (previewEl && previewEl.contains(e.target)) {
-					previewEl.style.display = 'none';
+					U.Dom.css(previewEl, { display: 'none' });
 					Preview.previewHide(true);
 				};
 			};
@@ -186,18 +186,14 @@ const PreviewIndex = forwardRef(() => {
 		cssLeft = Math.max(BORDER, cssLeft);
 		cssLeft = Math.min(ww - ow - BORDER, cssLeft);
 
-		node.style.display = '';
-		node.style.opacity = '0';
-		node.style.left = `${cssLeft}px`;
-		node.style.top = `${cssTop}px`;
-		node.style.transform = cssTransform;
+		U.Dom.css(node, { display: '', opacity: '0', left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
 
 		if (!preview.noAnimation) {
 			U.Dom.addClass(node, 'anim');
 		};
 
 		U.Dom.css(poly, pcss);
-		window.setTimeout(() => { node.style.opacity = '1'; node.style.transform = 'translateY(0%)'; }, 15);
+		window.setTimeout(() => { U.Dom.css(node, { opacity: '1', transform: 'translateY(0%)' }); }, 15);
 	};
 
 	let head = null;

@@ -320,7 +320,7 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
 		if (obj) {
-			obj.style.height = `${height}px`;
+			U.Dom.css(obj, { height: `${height}px` });
 		};
 		position();
 	};

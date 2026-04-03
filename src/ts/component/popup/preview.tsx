@@ -126,8 +126,7 @@ const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 		const h = height * scale;
 
 		if (wrap) {
-			wrap.style.width = `${w}px`;
-			wrap.style.height = `${h}px`;
+			U.Dom.css(wrap, { width: `${w}px`, height: `${h}px` });
 		};
 	};
 
@@ -191,13 +190,11 @@ const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 
 					galleryMapRef.current.set(idx, obj);
 					resizeMedia(idx, w, h);
-					videoEl.style.width = '100%';
-					videoEl.style.height = '100%';
+					U.Dom.css(videoEl, { width: '100%', height: '100%' });
 				};
 				videoEl.onerror = () => onError(idx);
 
-				videoEl.style.width = `${w}px`;
-				videoEl.style.height = `${h}px`;
+				U.Dom.css(videoEl, { width: `${w}px`, height: `${h}px` });
 				break;
 			};
 		};

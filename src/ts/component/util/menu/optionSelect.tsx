@@ -628,7 +628,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
 		if (obj) {
-			obj.style.height = `${height}px`;
+			U.Dom.css(obj, { height: `${height}px` });
 		};
 		position?.();
 	};

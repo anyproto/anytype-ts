@@ -91,7 +91,7 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 			U.Dom.removeClass(el, 'left');
 			U.Dom.removeClass(el, 'right');
 		});
-		clone.style.transform = `translate3d(${x}px,${y}px,0px)`;
+		U.Dom.css(clone, { transform: `translate3d(${x}px,${y}px,0px)` });
 
 		for (let i = 0; i < items.length; ++i) {
 			const el = items[i];

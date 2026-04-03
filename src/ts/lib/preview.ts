@@ -244,9 +244,9 @@ class Preview {
 		const obj = U.Dom.get('preview');
 		const cb = () => {
 			if (obj) {
-				obj.style.display = 'none';
+				U.Dom.css(obj, { display: 'none' });
 				U.Dom.removeClass(obj, 'anim', 'top', 'bottom', 'withImage');
-				obj.style.transform = '';
+				U.Dom.css(obj, { transform: '' });
 			};
 
 			S.Common.previewClear();
@@ -258,7 +258,7 @@ class Preview {
 			cb();
 		} else {
 			if (obj) {
-				Object.assign(obj.style, { opacity: '0', transform: 'translateY(0%)' });
+				U.Dom.css(obj, { opacity: '0', transform: 'translateY(0%)' });
 			};
 			this.timeout.preview = window.setTimeout(() => cb(), DELAY_PREVIEW);
 		};
@@ -298,13 +298,13 @@ class Preview {
 		const obj = U.Dom.get('toast');
 
 		if (obj) {
-			Object.assign(obj.style, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
+			U.Dom.css(obj, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
 		};
 
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
 			if (obj) {
-				obj.style.display = 'none';
+				U.Dom.css(obj, { display: 'none' });
 			};
 			S.Common.toastClear();
 		}, force ? 0 : 250);

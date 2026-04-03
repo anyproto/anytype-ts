@@ -392,8 +392,7 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			const cellContent = U.Dom.select('.cellContent', cell);
 			if (cellContent) {
-				cellContent.style.left = '';
-				cellContent.style.right = '';
+				U.Dom.css(cellContent, { left: '', right: '' });
 			};
 		};
 

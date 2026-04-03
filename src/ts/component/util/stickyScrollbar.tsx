@@ -25,7 +25,7 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 			paddingLeft: config.paddingLeft,
 			display: config.display,
 		});
-		trackRef.current.style.width = config.trackWidth;
+		U.Dom.css(trackRef.current, { width: config.trackWidth });
 	};
 
 	const bind = (scrollElement, status) => {
