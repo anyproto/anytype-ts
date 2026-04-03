@@ -600,7 +600,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 							// Auto-open BlockFile upload dialog
 							if (param.type == I.BlockType.File) {
-								U.Dom.select('.fileWrap', element)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+								U.Dom.select('.fileWrap .border', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-focus bookmark input field
