@@ -2689,6 +2689,10 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
+	"popupConfirmSharedSpaceLimitTitle": "Shared space limit reached",
+	"popupConfirmSharedSpaceLimitText": "Your plan allows %s shared spaces. Upgrade your membership to create more.",
+	"popupConfirmSharedSpaceLimitButton": "Upgrade",
+
 	"errorPublishingCreate103": "Looks like some files are over %s. Please remove or slim them down and try again.",
 	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 

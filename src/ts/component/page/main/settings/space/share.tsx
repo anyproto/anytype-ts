@@ -163,6 +163,22 @@ const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent
 						created = true;
 
 						C.SpaceMakeShareable(S.Common.space, (message: any) => {
+							if (message.error.code == 104) {
+								setIsLoading(false);
+
+								S.Popup.open('confirm', {
+									data: {
+										iconParam: { name: 'popup/header/warning', color: 'grey' },
+										title: translate('popupConfirmSharedSpaceLimitTitle'),
+										text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+										textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+										canCancel: false,
+										onConfirm: () => Action.membershipUpgrade(),
+									},
+								});
+								return;
+							};
+
 							if (!setErrorHandler(message.error)) {
 								callBack();
 							};
