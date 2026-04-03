@@ -35,6 +35,11 @@ const TYPE_KEYS = {
 	]
 };
 
+export interface TreeNode {
+	id: string;
+	children: TreeNode[];
+}
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -1384,6 +1389,37 @@ class UtilData {
 		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);
 
 		Renderer.send('setTabsDimmer', popups || menus);
+	};
+
+	treeFromRecords (ids: string[], getParent: (id: string) => string): TreeNode[] {
+		const idSet = new Set(ids);
+		const childrenMap = new Map<string, string[]>();
+
+		for (const id of ids) {
+			const parent = getParent(id);
+			if (parent && idSet.has(parent)) {
+				if (!childrenMap.has(parent)) {
+					childrenMap.set(parent, []);
+				};
+				childrenMap.get(parent).push(id);
+			};
+		};
+
+		const buildNode = (id: string): TreeNode => {
+			const children = (childrenMap.get(id) || []).map(buildNode);
+			return { id, children };
+		};
+
+		return ids
+			.filter(id => {
+				const parent = getParent(id);
+				return !parent || !idSet.has(parent);
+			})
+			.map(buildNode);
+	};
+
+	flattenIds (node: TreeNode): string[] {
+		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
 	};
 
 };
