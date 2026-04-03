@@ -88,7 +88,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
-		let size = 20;
+		let size = 24;
 		let iconSize = 20;
 
 		if ((cardStyle != I.LinkCardStyle.Text) && (content.iconSize == I.LinkIconSize.Medium)) {
