@@ -190,10 +190,17 @@ const Toast: FC = () => {
 
 		const isPopup = keyboard.isPopup();
 		const container = U.Dom.getScrollContainer(isPopup);
-		const ww = container.clientWidth;
-		const y = container.getBoundingClientRect().top + 32;
-		const sw = sidebar.getDummyWidth();
-		const x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
+		const rect = container.getBoundingClientRect();
+		const y = rect.top + 32;
+		let x = 0;
+
+		if (isPopup) {
+			x = rect.left + rect.width / 2 - node.offsetWidth / 2;
+		} else {
+			const { ww } = U.Dom.getWindowDimensions();
+			const sw = sidebar.getDummyWidth();
+			x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
+		};
 
 		raf(() => {
 			U.Dom.css(node, { 
