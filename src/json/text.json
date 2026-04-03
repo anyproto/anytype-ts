@@ -1256,6 +1256,7 @@
 	"popupSpaceCreateStep1Title": "Select members",
 	"popupSpaceCreateStep1Placeholder": "Search by name or handle",
 	"popupSpaceCreateStep2Create": "Create",
+	"popupSpaceCreateOptionalMembers": "Optional — you can add members later",
 
 	"settingsSpaceHomeTitle": "Create Home",
 	"settingsSpaceHomeDescription": "Select what you and channel member see when they open the channel. You can always change it in settings.",

@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
+import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
@@ -384,12 +384,12 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				<div className="wrapper">
 					<div className="buttons">
 						<Button 
-							className={!selectedMembers.length ? 'disabled' : ''} 
 							text={translate('popupSpaceCreateNext')} 
 							color="accent" 
 							onClick={onNext}
 						/>
 					</div>
+					<Label className="small" text={translate('popupSpaceCreateOptionalMembers')} />
 				</div>
 			</div>
 		);
