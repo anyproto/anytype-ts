@@ -556,7 +556,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			iconParam: { name: `widget-${id}` },
+			iconParam: { name: `menu/widget/${String(I.WidgetLayout[id] || '').toLowerCase()}` },
 			withDescription: true,
 		}));
 	};

@@ -208,6 +208,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const timeoutPoly = useRef(0);
 	const polyRef = useRef(null);
 	const isAnimating = useRef(false);
+	const isMounted = useRef(false);
 	const framePosition = useRef(0);
 
 	const getContext = () => ({
@@ -266,14 +267,18 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (noAnimation) {
-			U.Dom.addClass(containerRef.current, 'noAnimation');
+		if (isMounted.current) {
+			if (noAnimation) {
+				U.Dom.addClass(containerRef.current, 'noAnimation');
+			};
+
+			setClass();
+
+			U.Dom.addClass(containerRef.current, 'show');
+			position();
+		} else {
+			isMounted.current = true;
 		};
-
-		setClass();
-
-		U.Dom.addClass(containerRef.current, 'show');
-		position();
 	});
 
 	useEffect(() => {
