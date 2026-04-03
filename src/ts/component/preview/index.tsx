@@ -186,7 +186,7 @@ const PreviewIndex = forwardRef(() => {
 		cssLeft = Math.max(BORDER, cssLeft);
 		cssLeft = Math.min(ww - ow - BORDER, cssLeft);
 
-		U.Dom.css(node, { display: '', opacity: '0', left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
+		U.Dom.css(node, { display: 'block', opacity: '0', left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
 
 		if (!preview.noAnimation) {
 			U.Dom.addClass(node, 'anim');
