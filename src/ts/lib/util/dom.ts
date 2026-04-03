@@ -77,12 +77,24 @@ class UtilDom {
 		};
 	};
 
+	addEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject) {
+		target.addEventListener(name, handler);
+	};
+
+	removeEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject) {
+		target.removeEventListener(name, handler);
+	};
+
 	addEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
-		events.forEach(([ name, handler ]) => target.addEventListener(name, handler));
+		events.forEach(([ name, handler ]) => this.addEvent(target, name, handler));
 	};
 
 	removeEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
-		events.forEach(([ name, handler ]) => target.removeEventListener(name, handler));
+		events.forEach(([ name, handler ]) => this.removeEvent(target, name, handler));
+	};
+
+	eventDispatch (target: EventTarget, name: string, detail?: any) {
+		target.dispatchEvent(detail !== undefined ? new CustomEvent(name, { detail }) : new CustomEvent(name));
 	};
 
 	/**
@@ -203,7 +215,7 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		window.dispatchEvent(new CustomEvent(`resize.editor${this.getEventNamespace(isPopup)}`));
+		this.eventDispatch(window, `resize.editor${this.getEventNamespace(isPopup)}`);
 	};
 
 	getWindowDimensions (): { ww: number; wh: number } {
@@ -324,8 +336,8 @@ class UtilDom {
 		const links = root.querySelectorAll('a');
 
 		links.forEach((link: HTMLElement) => {
-			link.removeEventListener('click', link['_rl_click']);
-			link.removeEventListener('auxclick', link['_rl_aux']);
+			this.removeEvent(link, 'click', link['_rl_click']);
+			this.removeEvent(link, 'auxclick', link['_rl_aux']);
 
 			const onClick = (e: MouseEvent) => {
 				const href = link.getAttribute('href') || link.getAttribute('xlink:href');
@@ -339,8 +351,8 @@ class UtilDom {
 			link['_rl_click'] = onClick;
 			link['_rl_aux'] = onAux;
 
-			link.addEventListener('click', onClick);
-			link.addEventListener('auxclick', onAux);
+			this.addEvent(link, 'click', onClick);
+			this.addEvent(link, 'auxclick', onAux);
 		});
 	};
 

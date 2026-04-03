@@ -415,7 +415,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 		>
 			{content}
-			<Icon name="chat/buttons/remove" size={8} onClick={onRemoveHandler} />
+			<Icon name="chat/buttons/remove" className="remove" size={8} onClick={onRemoveHandler} />
 		</div>
 	);
 
