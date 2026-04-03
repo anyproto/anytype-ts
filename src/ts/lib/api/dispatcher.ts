@@ -870,7 +870,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewGroupOrderUpdate': {
+				case 'BlockDataViewGroupOrderUpdate': {
 					const { id, groupOrder } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -883,7 +883,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewObjectOrderUpdate': {
+				case 'BlockDataViewObjectOrderUpdate': {
 					const { id, viewId, groupId, changes } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 

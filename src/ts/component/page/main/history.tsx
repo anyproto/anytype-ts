@@ -211,8 +211,8 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			case 'BlockDataviewIsCollectionSet':
 			case 'BlockDataviewTargetObjectIdSet':
-			case 'BlockDataviewGroupOrderUpdate':
-			case 'BlockDataviewObjectOrderUpdate': {
+			case 'BlockDataViewGroupOrderUpdate':
+			case 'BlockDataViewObjectOrderUpdate': {
 				break;
 			};
 
