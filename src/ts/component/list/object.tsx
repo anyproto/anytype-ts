@@ -37,6 +37,7 @@ interface Props {
 	rowHeight?: number;
 	onSelect?: (id: string, e: MouseEvent) => void;
 	onSelectAll?: () => void;
+	onSort?: (id: string, type: I.SortType) => void;
 	isAllSelected?: boolean;
 };
 
@@ -188,6 +189,7 @@ const ListObject = forwardRef<ListObjectRefProps, Props>(({
 	rowHeight = 38,
 	onSelect,
 	onSelectAll,
+	onSort: onSortCallback,
 	isAllSelected = false,
 }, ref) => {
 
@@ -307,6 +309,10 @@ const ListObject = forwardRef<ListObjectRefProps, Props>(({
 
 		setSortId(relationKey);
 		setSortType(type);
+
+		if (onSortCallback) {
+			onSortCallback(relationKey, type);
+		};
 
 		analytics.event('ObjectListSort', { relationKey, route, type });
 	};

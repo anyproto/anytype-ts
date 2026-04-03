@@ -18,6 +18,8 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const [ viewMode, setViewMode ] = useState<ViewMode>(() => {
 		return (Storage.get('binViewMode') as ViewMode) || 'tree';
 	});
+	const [ sortId, setSortId ] = useState('lastModifiedDate');
+	const [ sortType, setSortType ] = useState(I.SortType.Desc);
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
 	const spaceview = U.Space.getSpaceview();
@@ -113,6 +115,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
+	};
+
+	const onSortChange = (id: string, type: I.SortType) => {
+		setSortId(id);
+		setSortType(type);
 	};
 
 	const nextViewMode: Record<ViewMode, ViewMode> = { tree: 'compact', compact: 'detailed', detailed: 'tree' };
@@ -316,6 +323,9 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						isShared={isShared}
 						selectedIds={selectedIds}
 						filterText={filterText}
+						sortId={sortId}
+						sortType={sortType}
+						onSort={onSortChange}
 						onSelectChange={onSelectTree}
 						onSelectAll={onSelectAll}
 						isAllSelected={isAllSelected}
@@ -336,8 +346,9 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						iconSize={isDetailed ? 32 : null}
 						rowHeight={isDetailed ? 64 : 40}
 						emptyText={translate('pageMainArchiveEmpty')}
-						defaultSortId="lastModifiedDate"
-						defaultSortType={I.SortType.Desc}
+						defaultSortId={sortId}
+						defaultSortType={sortType}
+						onSort={onSortChange}
 						selectable={canWrite}
 						selectedIds={selectedIds}
 						isAllSelected={isAllSelected}

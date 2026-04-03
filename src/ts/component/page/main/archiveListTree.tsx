@@ -9,16 +9,17 @@ interface Props {
 	isShared: boolean;
 	selectedIds: string[];
 	filterText: string;
+	sortId: string;
+	sortType: I.SortType;
 	onSelectChange: (ids: string[], e: MouseEvent) => void;
 	onSelectAll: () => void;
+	onSort: (id: string, type: I.SortType) => void;
 	isAllSelected: boolean;
 }
 
-const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, onSelectChange, onSelectAll, isAllSelected }: Props) => {
+const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
-	const [ sortId, setSortId ] = useState('lastModifiedDate');
-	const [ sortType, setSortType ] = useState(I.SortType.Desc);
 	const { dateFormat } = S.Common;
 
 	useEffect(() => {
@@ -58,12 +59,11 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 		return node.children.some(c => matchesFilter(c, text));
 	};
 
-	const onSort = (key: string) => {
+	const handleSort = (key: string) => {
 		if (sortId === key) {
-			setSortType(sortType === I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc);
+			onSort(key, sortType === I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc);
 		} else {
-			setSortId(key);
-			setSortType(I.SortType.Asc);
+			onSort(key, I.SortType.Asc);
 		};
 	};
 
@@ -211,7 +211,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, o
 						const cn = [ 'cell', 'isHead', ...(isSorted ? [ 'isSorted' ] : []) ];
 						const arrow = isSorted ? <Icon name="common/sortArrow" className={`sortArrow c${sortType}`} /> : null;
 						return (
-							<div key={col.key} className={cn.join(' ')} onClick={() => onSort(col.key)}>
+							<div key={col.key} className={cn.join(' ')} onClick={() => handleSort(col.key)}>
 								<div className="name">{col.label}{arrow}</div>
 							</div>
 						);
