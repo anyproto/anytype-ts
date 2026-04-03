@@ -216,7 +216,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 
 	const placeholderShow = () => {
 		if (placeholderRef.current) {
-			U.Dom.css(placeholderRef.current, { display: '' });
+			U.Dom.css(placeholderRef.current, { display: 'block' });
 		};
 	};
 

@@ -492,7 +492,7 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 				layout: subject.current.layout,
 			});
 		} else {
-			U.Dom.css(item, { display: '' });
+			U.Dom.css(item, { display: 'block' });
 		};
 
 		previewPosition(data);

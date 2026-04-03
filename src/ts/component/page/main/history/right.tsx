@@ -118,7 +118,7 @@ const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 		U.Dom.addClass(section, 'isExpanded');
 		const items = U.Dom.select('.items', section);
 		if (items) {
-			U.Dom.css(items, { display: '' });
+			U.Dom.css(items, { display: 'block' });
 		};
 
 		const parent = list.find(it => it.id == version.parentId);
@@ -138,7 +138,7 @@ const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		if (children) {
-			U.Dom.css(children, { display: '' });
+			U.Dom.css(children, { display: 'block' });
 		};
 
 		if (groupItem) {
@@ -186,7 +186,7 @@ const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 		} else {
 			U.Dom.addClass(item, 'isExpanded');
 
-			U.Dom.css(children, { display: '' });
+			U.Dom.css(children, { display: 'block' });
 			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
 			height = U.Dom.contentHeight(children);
 

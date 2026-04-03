@@ -369,7 +369,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 		if (allowRect.current) {
 			U.Dom.css(el, {
-				display: '',
+				display: 'block',
 				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
 				width: `${rect.width}px`,
 				height: `${rect.height}px`,

@@ -329,7 +329,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		const minHeight = getMinHeight();
 
 		if (innerWrap) {
-			U.Dom.css(innerWrap, { display: '', height: '', opacity: '0' });
+			U.Dom.css(innerWrap, { display: 'block', height: '', opacity: '0' });
 		};
 
 		if (wrapper) {

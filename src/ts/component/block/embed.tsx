@@ -734,7 +734,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						console.error(e);
 						if (error) {
 							error.textContent = e.toString();
-							U.Dom.css(error, { display: '' });
+							U.Dom.css(error, { display: 'block' });
 						};
 					};
 				});

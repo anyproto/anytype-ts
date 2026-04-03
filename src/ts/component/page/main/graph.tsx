@@ -72,7 +72,7 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if (v) {
-			U.Dom.css(loader, { display: '', opacity: '1' });
+			U.Dom.css(loader, { display: 'block', opacity: '1' });
 		} else {
 			U.Dom.css(loader, { opacity: '0' });
 			window.setTimeout(() => { U.Dom.css(loader, { display: 'none' }); }, 200);

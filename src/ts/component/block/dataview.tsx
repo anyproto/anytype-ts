@@ -1017,7 +1017,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			onViewDrop: onViewDrop,
 		});
 
-		if (con) U.Dom.css(con, { display: '' });
+		if (con) U.Dom.css(con, { display: 'block' });
 		if (sel) U.Dom.css(sel, { display: 'none' });
 	};
 

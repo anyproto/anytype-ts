@@ -138,7 +138,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
 				if ((dy >= 0) && (dy != item.index) && (dy != item.index + 1)) {
 					if (line) {
-						U.Dom.css(line, { top: `${dy * HEIGHT + 1}px`, display: '' });
+						U.Dom.css(line, { top: `${dy * HEIGHT + 1}px`, display: 'block' });
 					};
 				};
 			};

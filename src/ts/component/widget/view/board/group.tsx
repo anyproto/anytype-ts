@@ -85,7 +85,7 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 
 		U.Dom.addClass(item, 'isExpanded');
 		if (children) {
-			U.Dom.css(children, { display: '' });
+			U.Dom.css(children, { display: 'block' });
 		};
 	};
 
@@ -113,7 +113,7 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 		} else {
 			U.Dom.addClass(item, 'isExpanded');
 
-			U.Dom.css(children, { display: '' });
+			U.Dom.css(children, { display: 'block' });
 			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
 			height = children.offsetHeight;
 

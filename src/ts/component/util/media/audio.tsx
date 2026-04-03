@@ -178,7 +178,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			return;
 		};
 
-		U.Dom.css(drag, { display: '' });
+		U.Dom.css(drag, { display: 'block' });
 		positionDrag();
 		clearTimeout(timeoutRef.current);
 
