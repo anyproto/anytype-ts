@@ -34,22 +34,28 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 		const obj = getContainer();
-		obj?.addEventListener('click', clickMousedownHandler.current);
-		obj?.addEventListener('mousedown', clickMousedownHandler.current);
+		if (obj) {
+			U.Dom.addEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+		};
 
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		const obj = getContainer();
-		if (clickMousedownHandler.current) {
-			obj?.removeEventListener('click', clickMousedownHandler.current);
-			obj?.removeEventListener('mousedown', clickMousedownHandler.current);
+		if (clickMousedownHandler.current && obj) {
+			U.Dom.removeEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
 			clickMousedownHandler.current = null;
 		};
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};

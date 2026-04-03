@@ -23,12 +23,12 @@ const Frame = forwardRef<FrameRefProps, Props>(({
 	const resizeHandler = useRef(() => resize());
 
 	const unbind = () => {
-		window.removeEventListener('resize', resizeHandler.current);
+		U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('resize', resizeHandler.current);
+		U.Dom.addEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const resize = () => {

@@ -25,12 +25,12 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => {};
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};

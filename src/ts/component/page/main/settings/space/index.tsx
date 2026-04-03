@@ -42,7 +42,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 		};
 
 		if (keydownHandlerRef.current) {
-			window.removeEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 			keydownHandlerRef.current = null;
 		};
 
@@ -51,7 +51,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 				keyboard.shortcut('enter', e, () => onSave());
 				keyboard.shortcut('escape', e, () => onCancel());
 			};
-			window.addEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.addEvent(window, 'keydown', keydownHandlerRef.current);
 		};
 
 		modeRef.current?.setValue(String(spaceview.notificationMode));
@@ -228,7 +228,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 
 		return () => {
 			if (keydownHandlerRef.current) {
-				window.removeEventListener('keydown', keydownHandlerRef.current);
+				U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 				keydownHandlerRef.current = null;
 			};
 			S.Menu.closeAll([ 'select', 'searchObject' ]);

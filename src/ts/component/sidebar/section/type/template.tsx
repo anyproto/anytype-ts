@@ -35,7 +35,7 @@ const SidebarSectionTypeTemplate = forwardRef<I.SidebarSectionRef, I.SidebarSect
 
 	const onClick = (e: any, item: any) => {
 		U.Object.openPopup(item, {
-			onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${item.id}`))
+			onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${item.id}`)
 		});
 	};
 

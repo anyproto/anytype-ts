@@ -44,12 +44,12 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -426,7 +426,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
 						U.Object.openConfig(null, { id: message.ids[0], layout: object.layout }, {
-							onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${message.ids[0]}`))
+							onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${message.ids[0]}`)
 						});
 
 						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });

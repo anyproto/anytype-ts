@@ -109,7 +109,7 @@ class PopupStore {
 			this.update(id, item.param);
 
 			window.setTimeout(() => {
-				window.dispatchEvent(new Event('resize'));
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		};
 	};
@@ -196,7 +196,7 @@ class PopupStore {
 
 				callBack?.();
 				U.Data.updateTabsDimmer();
-				window.dispatchEvent(new Event('resize'));
+				U.Dom.eventDispatch(window, 'resize');
 			}, J.Constant.delay.popup);
 		};
 	};
@@ -286,7 +286,7 @@ class PopupStore {
 		this.close(oldId, () => {
 			window.setTimeout(() => {
 				this.open(newId, param);
-				window.dispatchEvent(new Event('resize'));
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		});
 	};

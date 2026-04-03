@@ -18,11 +18,11 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const unbind = () => {
 		if (keydownHandlerRef.current) {
-			window.removeEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 			keydownHandlerRef.current = null;
 		};
 		if (scrollToMessageHandlerRef.current) {
-			window.removeEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
+			U.Dom.removeEvent(window, 'scrollToMessage', scrollToMessageHandlerRef.current);
 			scrollToMessageHandlerRef.current = null;
 		};
 	};
@@ -34,8 +34,10 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const { id } = e.detail;
 			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
 		};
-		window.addEventListener('keydown', keydownHandlerRef.current);
-		window.addEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandlerRef.current],
+			['scrollToMessage', scrollToMessageHandlerRef.current],
+		]);
 	};
 
 	const open = () => {

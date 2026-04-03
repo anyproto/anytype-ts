@@ -330,8 +330,10 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 		resizeHandler.current = handler;
 		sidebarResizeHandler.current = handler;
 
-		window.addEventListener('resize', handler);
-		window.addEventListener('sidebarResize', handler);
+		U.Dom.addEvents(window, [
+			[ 'resize', handler ],
+			[ 'sidebarResize', handler ],
+		]);
 
 		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
 		if (containerEl) {
@@ -341,21 +343,21 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 				framePosition.current = raf(() => position());
 			};
 			scrollHandler.current = onScroll;
-			containerEl.addEventListener('scroll', onScroll);
+			U.Dom.addEvent(containerEl, 'scroll', onScroll);
 		};
 	};
 
 	const unbind = () => {
 		if (resizeHandler.current) {
-			window.removeEventListener('resize', resizeHandler.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 			resizeHandler.current = null;
 		};
 		if (sidebarResizeHandler.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
 			sidebarResizeHandler.current = null;
 		};
 		if (scrollHandler.current && scrollContainerRef.current) {
-			scrollContainerRef.current.removeEventListener('scroll', scrollHandler.current);
+			U.Dom.removeEvent(scrollContainerRef.current, 'scroll', scrollHandler.current);
 			scrollHandler.current = null;
 			scrollContainerRef.current = null;
 		};

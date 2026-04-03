@@ -75,9 +75,13 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		unbind();
 
 		scrollHorizontalHandlerRef.current = () => onScrollHorizontal();
-		scroll?.addEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scroll) {
+			U.Dom.addEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+		};
 		scrollVerticalHandlerRef.current = () => raf(() => onScrollVertical());
-		container?.addEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollVerticalHandlerRef.current);
+		};
 
 		if (!isInline) {
 			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
@@ -88,12 +92,12 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const scroll = scrollRef.current;
 		const container = U.Dom.getScrollContainer(isPopup);
 
-		if (scrollHorizontalHandlerRef.current) {
-			scroll?.removeEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scrollHorizontalHandlerRef.current && scroll) {
+			U.Dom.removeEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
 			scrollHorizontalHandlerRef.current = null;
 		};
-		if (scrollVerticalHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (scrollVerticalHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollVerticalHandlerRef.current);
 			scrollVerticalHandlerRef.current = null;
 		};
 		stickyScrollbarRef.current?.unbind();
@@ -262,17 +266,19 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		U.Dom.addClass(document.body, 'colResize');
 
 		if (resizeMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 		};
 		if (resizeEndHandlerRef.current) {
-			window.removeEventListener('mouseup', resizeEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
 		};
 
 		resizeMoveHandlerRef.current = (e: MouseEvent) => onResizeMove(e, relationKey, left);
 		resizeEndHandlerRef.current = (e: MouseEvent) => onResizeEnd(e, relationKey, left);
 
-		window.addEventListener('mousemove', resizeMoveHandlerRef.current);
-		window.addEventListener('mouseup', resizeEndHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', resizeMoveHandlerRef.current],
+			['mouseup', resizeEndHandlerRef.current],
+		]);
 
 		if (el) {
 			U.Dom.addClass(el, 'isResizing');
@@ -292,14 +298,14 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		const width = checkWidth(e.pageX - ox);
 
 		if (resizeMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 			resizeMoveHandlerRef.current = null;
 		};
 		if (resizeEndHandlerRef.current) {
-			window.removeEventListener('mouseup', resizeEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
 			resizeEndHandlerRef.current = null;
 		};
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 		U.Dom.removeClass(document.body, 'colResize');
 		U.Dom.selectAll('.cellHead.isResizing', node).forEach(el => U.Dom.removeClass(el, 'isResizing'));
 		U.Dom.selectAll('.cellKeyHover', node).forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));

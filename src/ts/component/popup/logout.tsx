@@ -114,11 +114,11 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		init();
 		keyHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keyHandler.current);
+		U.Dom.addEvent(window, 'keydown', keyHandler.current);
 
 		return () => {
 			if (keyHandler.current) {
-				window.removeEventListener('keydown', keyHandler.current);
+				U.Dom.removeEvent(window, 'keydown', keyHandler.current);
 			};
 		};
 	}, []);

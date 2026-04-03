@@ -733,17 +733,19 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		U.Dom.addClass(document.body, 'colResize');
 
 		if (tableResizeMoveRef.current) {
-			window.removeEventListener('mousemove', tableResizeMoveRef.current);
+			U.Dom.removeEvent(window, 'mousemove', tableResizeMoveRef.current);
 		};
 		if (tableResizeEndRef.current) {
-			window.removeEventListener('mouseup', tableResizeEndRef.current);
+			U.Dom.removeEvent(window, 'mouseup', tableResizeEndRef.current);
 		};
 
 		tableResizeMoveRef.current = throttle((e: MouseEvent) => onResizeMove(e, id), 40);
 		tableResizeEndRef.current = (e: MouseEvent) => onResizeEnd(e, id);
 
-		window.addEventListener('mousemove', tableResizeMoveRef.current);
-		window.addEventListener('mouseup', tableResizeEndRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', tableResizeMoveRef.current],
+			['mouseup', tableResizeEndRef.current],
+		]);
 
 		keyboard.setResize(true);
 	};
@@ -769,11 +771,11 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		]);
 
 		if (tableResizeMoveRef.current) {
-			window.removeEventListener('mousemove', tableResizeMoveRef.current);
+			U.Dom.removeEvent(window, 'mousemove', tableResizeMoveRef.current);
 			tableResizeMoveRef.current = null;
 		};
 		if (tableResizeEndRef.current) {
-			window.removeEventListener('mouseup', tableResizeEndRef.current);
+			U.Dom.removeEvent(window, 'mouseup', tableResizeEndRef.current);
 			tableResizeEndRef.current = null;
 		};
 		U.Dom.removeClass(document.body, 'colResize');
@@ -832,16 +834,18 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		node?.appendChild(table);
 
 		if (tableDragOverRef.current) {
-			document.removeEventListener('dragover', tableDragOverRef.current);
+			U.Dom.removeEvent(document, 'dragover', tableDragOverRef.current);
 		};
 		tableDragOverRef.current = (e: Event) => e.preventDefault();
-		document.addEventListener('dragover', tableDragOverRef.current);
+		U.Dom.addEvent(document, 'dragover', tableDragOverRef.current);
 		e.dataTransfer.setDragImage(table, table.offsetWidth, 0);
 
 		tableDragColumnMoveRef.current = throttle((e: Event) => onDragMoveColumn(e, id), 40);
 		tableDragColumnEndRef.current = (e: Event) => onDragEndColumn(e, id);
-		window.addEventListener('drag', tableDragColumnMoveRef.current);
-		window.addEventListener('dragend', tableDragColumnEndRef.current);
+		U.Dom.addEvents(window, [
+			['drag', tableDragColumnMoveRef.current],
+			['dragend', tableDragColumnEndRef.current],
+		]);
 
 		onSortStart();
 		initCache(I.BlockType.TableColumn);
@@ -906,11 +910,11 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(false);
 
 		if (tableDragColumnMoveRef.current) {
-			window.removeEventListener('drag', tableDragColumnMoveRef.current);
+			U.Dom.removeEvent(window, 'drag', tableDragColumnMoveRef.current);
 			tableDragColumnMoveRef.current = null;
 		};
 		if (tableDragColumnEndRef.current) {
-			window.removeEventListener('dragend', tableDragColumnEndRef.current);
+			U.Dom.removeEvent(window, 'dragend', tableDragColumnEndRef.current);
 			tableDragColumnEndRef.current = null;
 		};
 		U.Dom.selectAll('.table.isClone', node).forEach(el => el.remove());
@@ -939,16 +943,18 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 
 		if (tableDragOverRef.current) {
-			document.removeEventListener('dragover', tableDragOverRef.current);
+			U.Dom.removeEvent(document, 'dragover', tableDragOverRef.current);
 		};
 		tableDragOverRef.current = (e: Event) => e.preventDefault();
-		document.addEventListener('dragover', tableDragOverRef.current);
+		U.Dom.addEvent(document, 'dragover', tableDragOverRef.current);
 		e.dataTransfer.setDragImage(layer, 0, table.offsetHeight);
 
 		tableDragRowMoveRef.current = throttle((e: Event) => onDragMoveRow(e, id), 40);
 		tableDragRowEndRef.current = (e: Event) => onDragEndRow(e, id);
-		window.addEventListener('drag', tableDragRowMoveRef.current);
-		window.addEventListener('dragend', tableDragRowEndRef.current);
+		U.Dom.addEvents(window, [
+			['drag', tableDragRowMoveRef.current],
+			['dragend', tableDragRowEndRef.current],
+		]);
 
 		onSortStart();
 		initCache(I.BlockType.TableRow);
@@ -1018,11 +1024,11 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(false);
 
 		if (tableDragRowMoveRef.current) {
-			window.removeEventListener('drag', tableDragRowMoveRef.current);
+			U.Dom.removeEvent(window, 'drag', tableDragRowMoveRef.current);
 			tableDragRowMoveRef.current = null;
 		};
 		if (tableDragRowEndRef.current) {
-			window.removeEventListener('dragend', tableDragRowEndRef.current);
+			U.Dom.removeEvent(window, 'dragend', tableDragRowEndRef.current);
 			tableDragRowEndRef.current = null;
 		};
 		U.Dom.selectAll('.table.isClone', node).forEach(el => el.remove());

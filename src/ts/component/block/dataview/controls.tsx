@@ -382,7 +382,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -390,14 +390,18 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
 
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 		filterKeydownHandler.current = (e: any) => {
 			e.stopPropagation();
@@ -405,11 +409,11 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			if (!isPopup && !keyboard.isPopup()) {
 				keyboard.shortcut('escape', e, () => {
 					onFilterHide();
-					window.removeEventListener('keydown', filterKeydownHandler.current);
+					U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 				});
 			};
 		};
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -535,10 +539,10 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			const container = U.Dom.getPageFlexContainer(isPopup);
 
 			if (filterMouseDownHandler.current && container) {
-				container.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 			};
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			};
 		};
 

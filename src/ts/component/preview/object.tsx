@@ -277,12 +277,12 @@ const PreviewObject = forwardRef<{}, Props>(({
 	const rebind = () => {
 		unbind();
 		updateHandler.current = () => update();
-		window.addEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
+		U.Dom.addEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
 	};
 
 	const unbind = () => {
 		if (updateHandler.current) {
-			window.removeEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
+			U.Dom.removeEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
 			updateHandler.current = null;
 		};
 	};

@@ -79,10 +79,14 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
 		};
 
-		container?.addEventListener('scroll', scrollHandler);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandler);
+		};
 
 		return () => {
-			container?.removeEventListener('scroll', scrollHandler);
+			if (container) {
+				U.Dom.removeEvent(container, 'scroll', scrollHandler);
+			};
 			window.clearTimeout(scrollTimerRef.current);
 
 			if (discussionId) {
@@ -107,12 +111,16 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			setHidden(false);
 		};
 
-		window.addEventListener('keydown', onKeyDown);
-		window.addEventListener('mousemove', onMouseMove);
+		U.Dom.addEvents(window, [
+			['keydown', onKeyDown],
+			['mousemove', onMouseMove],
+		]);
 
 		return () => {
-			window.removeEventListener('keydown', onKeyDown);
-			window.removeEventListener('mousemove', onMouseMove);
+			U.Dom.removeEvents(window, [
+				['keydown', onKeyDown],
+				['mousemove', onMouseMove],
+			]);
 		};
 	}, [ setHidden ]);
 
@@ -166,12 +174,16 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, [ subId, loadDeps ]);
 
 	useEffect(() => {
-		window.addEventListener('messageAdd', onMessageAdd);
-		window.addEventListener('messageUpdate', onMessageAdd);
+		U.Dom.addEvents(window, [
+			['messageAdd', onMessageAdd],
+			['messageUpdate', onMessageAdd],
+		]);
 
 		return () => {
-			window.removeEventListener('messageAdd', onMessageAdd);
-			window.removeEventListener('messageUpdate', onMessageAdd);
+			U.Dom.removeEvents(window, [
+				['messageAdd', onMessageAdd],
+				['messageUpdate', onMessageAdd],
+			]);
 		};
 	}, [ onMessageAdd ]);
 

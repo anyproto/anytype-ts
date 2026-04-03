@@ -23,7 +23,7 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -31,7 +31,7 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = e => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -388,7 +388,7 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			leftRef.current.getHeadRef()?.forceUpdate();
 		};
 
-		window.dispatchEvent(new CustomEvent('updateDataviewData'));
+		U.Dom.eventDispatch(window, 'updateDataviewData');
 	};
 
 	useEffect(() => {

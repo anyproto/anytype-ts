@@ -103,8 +103,8 @@ const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 		};
 
-		img.removeEventListener('load', onLoad);
-		img.addEventListener('load', onLoad);
+		U.Dom.removeEvent(img, 'load', onLoad);
+		U.Dom.addEvent(img, 'load', onLoad);
 	};
 
 	const getBlock = (): I.Block => {

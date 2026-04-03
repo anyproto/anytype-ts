@@ -98,14 +98,18 @@ const GraphTimeline = forwardRef<{}, Props>(({
 			setDummy(v => v + 1);
 		};
 
-		window.addEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
-		window.addEventListener(`timelineComplete.${id}`, onTimelineComplete);
-		window.addEventListener('updateGraphSettings', onSettingsUpdate);
+		U.Dom.addEvents(window, [
+			[`timelineUpdate.${id}`, onTimelineUpdate],
+			[`timelineComplete.${id}`, onTimelineComplete],
+			['updateGraphSettings', onSettingsUpdate],
+		]);
 
 		return () => {
-			window.removeEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
-			window.removeEventListener(`timelineComplete.${id}`, onTimelineComplete);
-			window.removeEventListener('updateGraphSettings', onSettingsUpdate);
+			U.Dom.removeEvents(window, [
+				[`timelineUpdate.${id}`, onTimelineUpdate],
+				[`timelineComplete.${id}`, onTimelineComplete],
+				['updateGraphSettings', onSettingsUpdate],
+			]);
 			graphRef.current?.timelineReset();
 		};
 	}, []);

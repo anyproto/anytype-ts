@@ -63,16 +63,20 @@ const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 
 		const onImageLoad = () => setIsLoaded(true);
 
-		img.addEventListener('load', onImageLoad);
-		img.addEventListener('error', onImageLoad);
+		U.Dom.addEvents(img, [
+			[ 'load', onImageLoad ],
+			[ 'error', onImageLoad ],
+		]);
 
 		if (img.complete) {
 			setIsLoaded(true);
 		};
 
 		return () => {
-			img.removeEventListener('load', onImageLoad);
-			img.removeEventListener('error', onImageLoad);
+			U.Dom.removeEvents(img, [
+				[ 'load', onImageLoad ],
+				[ 'error', onImageLoad ],
+			]);
 		};
 	});
 

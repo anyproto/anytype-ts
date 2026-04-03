@@ -80,13 +80,13 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (!param.preventResize) {
 			resizeHandler.current = () => position();
-			window.addEventListener('resize', resizeHandler.current);
+			U.Dom.addEvent(window, 'resize', resizeHandler.current);
 		};
 	};
 
 	const unbind = () => {
 		if (resizeHandler.current) {
-			window.removeEventListener('resize', resizeHandler.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 			resizeHandler.current = null;
 		};
 	};

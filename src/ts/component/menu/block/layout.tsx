@@ -11,12 +11,12 @@ const MenuBlockLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getSections = () => {
@@ -151,10 +151,14 @@ const MenuBlockLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const onMouseDown = (e: any) => {
 			if (!(e.target as HTMLElement).closest('#editorSize')) {
 				U.Dom.removeClass(wrapper, 'isResizing');
-				containerEl?.removeEventListener('mousedown', onMouseDown);
+				if (containerEl) {
+					U.Dom.removeEvent(containerEl, 'mousedown', onMouseDown);
+				};
 			};
 		};
-		containerEl?.addEventListener('mousedown', onMouseDown);
+		if (containerEl) {
+			U.Dom.addEvent(containerEl, 'mousedown', onMouseDown);
+		};
 
 		analytics.event('SetLayoutWidth');
 	};

@@ -153,31 +153,31 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const unbind = () => {
 		if (resizeHandlerRef.current) {
-			window.removeEventListener('resize', resizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			resizeHandlerRef.current = null;
 		};
 		if (sidebarResizeHandlerRef.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
 			sidebarResizeHandlerRef.current = null;
 		};
 		if (updateDataviewDataHandlerRef.current) {
-			window.removeEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
+			U.Dom.removeEvent(window, 'updateDataviewData', updateDataviewDataHandlerRef.current);
 			updateDataviewDataHandlerRef.current = null;
 		};
 		if (setDataviewSourceHandlerRef.current) {
-			window.removeEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
+			U.Dom.removeEvent(window, 'setDataviewSource', setDataviewSourceHandlerRef.current);
 			setDataviewSourceHandlerRef.current = null;
 		};
 		if (selectionEndHandlerRef.current) {
-			window.removeEventListener('selectionEnd', selectionEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionEnd', selectionEndHandlerRef.current);
 			selectionEndHandlerRef.current = null;
 		};
 		if (selectionClearHandlerRef.current) {
-			window.removeEventListener('selectionClear', selectionClearHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionClear', selectionClearHandlerRef.current);
 			selectionClearHandlerRef.current = null;
 		};
 		if (selectionSetHandlerRef.current) {
-			window.removeEventListener('selectionSet', selectionSetHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionSet', selectionSetHandlerRef.current);
 			selectionSetHandlerRef.current = null;
 		};
 	};
@@ -193,13 +193,15 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		selectionClearHandlerRef.current = () => onSelectEnd();
 		selectionSetHandlerRef.current = () => onSelectEnd();
 
-		window.addEventListener('resize', resizeHandlerRef.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandlerRef.current);
-		window.addEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
-		window.addEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
-		window.addEventListener('selectionEnd', selectionEndHandlerRef.current);
-		window.addEventListener('selectionClear', selectionClearHandlerRef.current);
-		window.addEventListener('selectionSet', selectionSetHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['resize', resizeHandlerRef.current],
+			['sidebarResize', sidebarResizeHandlerRef.current],
+			['updateDataviewData', updateDataviewDataHandlerRef.current],
+			['setDataviewSource', setDataviewSourceHandlerRef.current],
+			['selectionEnd', selectionEndHandlerRef.current],
+			['selectionClear', selectionClearHandlerRef.current],
+			['selectionSet', selectionSetHandlerRef.current],
+		]);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -543,7 +545,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: object.id } }));
+						U.Dom.eventDispatch(window, 'updateGraphRoot', { id: object.id });
 					});
 				};
 			};
@@ -1483,10 +1485,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		nameRef?.onClick(e);
 
 		if (recordMouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
 		};
 		if (recordKeyDownHandlerRef.current) {
-			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
 		};
 
 		recordMouseDownHandlerRef.current = (e: globalThis.MouseEvent) => {
@@ -1501,19 +1503,21 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
 		};
 
-		window.addEventListener('mousedown', recordMouseDownHandlerRef.current);
-		window.addEventListener('keydown', recordKeyDownHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousedown', recordMouseDownHandlerRef.current],
+			['keydown', recordKeyDownHandlerRef.current],
+		]);
 	};
 
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
 
 		if (recordMouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
 			recordMouseDownHandlerRef.current = null;
 		};
 		if (recordKeyDownHandlerRef.current) {
-			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
 			recordKeyDownHandlerRef.current = null;
 		};
 
@@ -1802,16 +1806,20 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const wrapper = getEditorWrapper();
 
 		if (wrapper) {
-			wrapper.addEventListener('dragover', onFileDragOver);
-			wrapper.addEventListener('dragleave', onFileDragLeave);
-			wrapper.addEventListener('drop', onFileDrop);
+			U.Dom.addEvents(wrapper, [
+				['dragover', onFileDragOver],
+				['dragleave', onFileDragLeave],
+				['drop', onFileDrop],
+			]);
 		};
 
 		return () => {
 			if (wrapper) {
-				wrapper.removeEventListener('dragover', onFileDragOver);
-				wrapper.removeEventListener('dragleave', onFileDragLeave);
-				wrapper.removeEventListener('drop', onFileDrop);
+				U.Dom.removeEvents(wrapper, [
+					['dragover', onFileDragOver],
+					['dragleave', onFileDragLeave],
+					['drop', onFileDrop],
+				]);
 			};
 			window.clearTimeout(timeoutDrag.current);
 		};

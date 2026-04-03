@@ -258,7 +258,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 					initIds();
 					renderSelection();
 
-					window.dispatchEvent(new CustomEvent('selectionClear'));
+					U.Dom.eventDispatch(window, 'selectionClear');
 				};
 			} else {
 				if (keyboard.isCmd(e)) {
@@ -300,7 +300,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 				};
 			};
 		} else {
-			window.dispatchEvent(new CustomEvent('selectionEnd'));
+			U.Dom.eventDispatch(window, 'selectionEnd');
 		};
 		
 		scrollOnMove.onMouseUp();
@@ -516,7 +516,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		renderSelection();
 		clearState();
 
-		window.dispatchEvent(new CustomEvent('selectionClear'));
+		U.Dom.eventDispatch(window, 'selectionClear');
 	};
 
 	const clearState = () => {

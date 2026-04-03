@@ -42,12 +42,12 @@ const PageMainNavigation = forwardRef<I.PageRef, I.PageComponent>((props, ref) =
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};

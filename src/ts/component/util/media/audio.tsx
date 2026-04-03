@@ -63,9 +63,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			pause: () => onPauseHandler(),
 		};
 
-		for (const [event, handler] of Object.entries(audioHandlers.current)) {
-			audio.addEventListener(event, handler);
-		};
+		U.Dom.addEvents(audio, Object.entries(audioHandlers.current));
 	};
 
 	const unbind = () => {
@@ -74,9 +72,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			return;
 		};
 
-		for (const [event, handler] of Object.entries(audioHandlers.current)) {
-			audio.removeEventListener(event, handler);
-		};
+		U.Dom.removeEvents(audio, Object.entries(audioHandlers.current));
 		audioHandlers.current = {};
 	};
 
@@ -191,10 +187,10 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 			if (container) {
 				if (scrollAudioHandler.current) {
-					container.removeEventListener('scroll', scrollAudioHandler.current);
+					U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
 				};
 				scrollAudioHandler.current = () => { U.Dom.css(drag, { display: 'none' }); };
-				container.addEventListener('scroll', scrollAudioHandler.current);
+				U.Dom.addEvent(container, 'scroll', scrollAudioHandler.current);
 			};
 		});
 	};
@@ -210,7 +206,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		timeoutRef.current = window.setTimeout(() => { U.Dom.css(drag, { display: 'none' }); }, 200);
 
 		if (container && scrollAudioHandler.current) {
-			container.removeEventListener('scroll', scrollAudioHandler.current);
+			U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
 			scrollAudioHandler.current = null;
 		};
 	};
@@ -260,7 +256,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 			const container = getScrollContainer?.() as HTMLElement;
 			if (container && scrollAudioHandler.current) {
-				container.removeEventListener('scroll', scrollAudioHandler.current);
+				U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
 			};
 
 			if (frameRef.current) {

@@ -47,16 +47,18 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		U.Dom.addClass(nodeRef.current, 'isResizing');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => handleResize(e, checkMax);
 		mouseUpHandler.current = e => handleResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const handleResize = (e: any, checkMax: boolean) => {
@@ -82,11 +84,11 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 

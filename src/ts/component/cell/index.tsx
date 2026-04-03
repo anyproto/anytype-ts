@@ -129,7 +129,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			keyboard.disableSelection(true);
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 		};
 
 		const setOff = () => {
@@ -404,12 +404,12 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
-					window.removeEventListener('mousedown', handler);
+					U.Dom.removeEvent(window, 'mousedown', handler);
 				};
 			};
 
-			window.removeEventListener('mousedown', handler);
-			window.addEventListener('mousedown', handler);
+			U.Dom.removeEvent(window, 'mousedown', handler);
+			U.Dom.addEvent(window, 'mousedown', handler);
 		};
 
 		if (menuId) {
@@ -429,7 +429,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				bindContainerClick();
 
 				if (!config.debug.ui) {
-					window.addEventListener('blur', () => S.Menu.closeAll(J.Menu.cell), { once: true });
+					U.Dom.addEvent(window, 'blur', () => S.Menu.closeAll(J.Menu.cell), { once: true });
 				};
 			} else 
 			if (closeIfOpen) {

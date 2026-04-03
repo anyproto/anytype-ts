@@ -67,10 +67,10 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const unbind = () => {
 		if (pasteHandler.current) {
-			window.removeEventListener('paste', pasteHandler.current);
+			U.Dom.removeEvent(window, 'paste', pasteHandler.current);
 		};
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 		};
 	};
 
@@ -78,8 +78,10 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 		pasteHandler.current = e => onPaste(e);
 		keydownHandler.current = e => onKeyDown(e);
-		window.addEventListener('paste', pasteHandler.current);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvents(window, [
+			[ 'paste', pasteHandler.current ],
+			[ 'keydown', keydownHandler.current ],
+		]);
 	};
 
 	const load = () => {

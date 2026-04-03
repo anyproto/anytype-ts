@@ -50,10 +50,10 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	useEffect(() => {
 		const handler = () => resize();
 
-		window.addEventListener('resize', handler);
+		U.Dom.addEvent(window, 'resize', handler);
 		resize();
 
-		return () => window.removeEventListener('resize', handler);
+		return () => U.Dom.removeEvent(window, 'resize', handler);
 	});
 
 	useLayoutEffect(() => resize());

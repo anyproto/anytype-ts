@@ -127,10 +127,10 @@ const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 		filterRef.current?.focus();
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -138,19 +138,23 @@ const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filterWrapper')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
 		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			});
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -491,10 +495,10 @@ const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 			window.clearTimeout(timeout.current);
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
 			if (filterMouseDownHandler.current && cleanupEl) {
-				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(cleanupEl, 'mousedown', filterMouseDownHandler.current);
 			};
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			};
 			checkboxRef.current.clear();
 		};

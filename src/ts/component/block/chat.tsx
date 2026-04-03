@@ -87,25 +87,25 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const unbind = () => {
 		if (messageAddHandlerRef.current) {
-			window.removeEventListener('messageAdd', messageAddHandlerRef.current);
+			U.Dom.removeEvent(window, 'messageAdd', messageAddHandlerRef.current);
 			messageAddHandlerRef.current = null;
 		};
 		if (messageUpdateHandlerRef.current) {
-			window.removeEventListener('messageUpdate', messageUpdateHandlerRef.current);
+			U.Dom.removeEvent(window, 'messageUpdate', messageUpdateHandlerRef.current);
 			messageUpdateHandlerRef.current = null;
 		};
 		if (reactionUpdateHandlerRef.current) {
-			window.removeEventListener('reactionUpdate', reactionUpdateHandlerRef.current);
+			U.Dom.removeEvent(window, 'reactionUpdate', reactionUpdateHandlerRef.current);
 			reactionUpdateHandlerRef.current = null;
 		};
 		if (focusHandlerRef.current) {
-			window.removeEventListener('focus', focusHandlerRef.current);
+			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
 			focusHandlerRef.current = null;
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -124,15 +124,17 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
 		focusHandlerRef.current = () => readScrolledMessages();
 
-		window.addEventListener('messageAdd', messageAddHandlerRef.current);
-		window.addEventListener('messageUpdate', messageUpdateHandlerRef.current);
-		window.addEventListener('reactionUpdate', reactionUpdateHandlerRef.current);
-		window.addEventListener('focus', focusHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['messageAdd', messageAddHandlerRef.current],
+			['messageUpdate', messageUpdateHandlerRef.current],
+			['reactionUpdate', reactionUpdateHandlerRef.current],
+			['focus', focusHandlerRef.current],
+		]);
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container) {
 			scrollHandlerRef.current = (e: Event) => onScroll(e);
-			container.addEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 	};
 
@@ -1174,14 +1176,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 
 		window.clearTimeout(timeoutResize.current);
 		timeoutResize.current = window.setTimeout(() => {
 			if (container) {
 				scrollHandlerRef.current = (e: Event) => onScroll(e);
-				container.addEventListener('scroll', scrollHandlerRef.current);
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
 		}, 50);
 	};

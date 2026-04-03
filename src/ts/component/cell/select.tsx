@@ -214,7 +214,7 @@ const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const resize = () => {
-		window.dispatchEvent(new CustomEvent('resize.menuDataviewOptionList'));
+		U.Dom.eventDispatch(window, 'resize.menuDataviewOptionList');
 	};
 
 	let value = getItems();

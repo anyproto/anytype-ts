@@ -114,9 +114,9 @@ const BlockTableCell = forwardRef<{}, Props>((props, ref) => {
 		keyboard.disableSelection(true);
 		const handler = () => {
 			keyboard.disableSelection(false);
-			window.removeEventListener('mousedown', handler);
+			U.Dom.removeEvent(window, 'mousedown', handler);
 		};
-		window.addEventListener('mousedown', handler);
+		U.Dom.addEvent(window, 'mousedown', handler);
 	};
 
 	return (

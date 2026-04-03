@@ -256,16 +256,16 @@ class UtilCommon {
 			};
 
 			removed = true;
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 			callBack?.();
 		};
 
-		document.addEventListener('copy', handler, true);
+		U.Dom.addEvent(document, 'copy', handler, true);
 		document.execCommand('copy');
 
 		// Safety cleanup in case execCommand did not trigger the copy event
 		if (!removed) {
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 		};
 	};
 

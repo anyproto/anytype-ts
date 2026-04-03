@@ -45,13 +45,13 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDownHandler(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -545,7 +545,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => window.dispatchEvent(new CustomEvent('updateDataviewData')), 50);
+					window.setTimeout(() => U.Dom.eventDispatch(window, 'updateDataviewData'), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {

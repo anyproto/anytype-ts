@@ -37,12 +37,12 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 	
 	const onKeyDownHandler = (e: any) => {
@@ -93,11 +93,11 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, () => {
 					onSave?.();
-					window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
+					U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
 				});
 			} else {
 				onSave?.();
-				window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
+				U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
 			};
 		});
 

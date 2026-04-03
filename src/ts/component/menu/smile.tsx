@@ -106,11 +106,11 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', keydownHandler.current);
+		U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const load = () => {
@@ -626,7 +626,7 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (hasSkins(item)) {
 				timeoutMenu.current = window.setTimeout(() => {
 					if (mouseUpHandler.current) {
-						window.removeEventListener('mouseup', mouseUpHandler.current);
+						U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 						mouseUpHandler.current = null;
 					};
 					onSkin(e, item);
@@ -634,7 +634,7 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			if (mouseUpHandler.current) {
-				window.removeEventListener('mouseup', mouseUpHandler.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			};
 
 			mouseUpHandler.current = () => {
@@ -649,12 +649,12 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				window.clearTimeout(timeoutMenu.current);
 				if (mouseUpHandler.current) {
-					window.removeEventListener('mouseup', mouseUpHandler.current);
+					U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 					mouseUpHandler.current = null;
 				};
 			};
 
-			window.addEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.addEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		switch (tab) {

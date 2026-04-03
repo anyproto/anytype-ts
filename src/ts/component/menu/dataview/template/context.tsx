@@ -12,12 +12,12 @@ const MenuDataviewTemplateContext = forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -58,7 +58,7 @@ const MenuDataviewTemplateContext = forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 			case 'edit': {
 				U.Object.openPopup(template, {
-					onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${template.id}`))
+					onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${template.id}`)
 				});
 
 				analytics.event('EditTemplate', { route });

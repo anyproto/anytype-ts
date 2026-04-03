@@ -77,17 +77,19 @@ const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 		U.Dom.addClass(document.body, 'colResize');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = (e: any) => onResizeMove(e);
 		mouseUpHandler.current = (e: any) => onResizeEnd(e);
 
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any) => {
@@ -125,11 +127,11 @@ const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 		U.Dom.removeClass(document.body, 'colResize');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 	};

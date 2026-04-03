@@ -48,13 +48,15 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 		unbind();
 		const container = U.Dom.getScrollContainer(isPopup);
 		scrollHandlerRef.current = (e: Event) => onScrollVertical(e);
-		container?.addEventListener('scroll', scrollHandlerRef.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const unbind = () => {
 		const container = U.Dom.getScrollContainer(isPopup);
-		if (scrollHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollHandlerRef.current);
+		if (scrollHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -94,11 +96,11 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const unbind = () => {
 			if (timelineDragHandlerRef.current) {
-				window.removeEventListener('drag', timelineDragHandlerRef.current);
+				U.Dom.removeEvent(window, 'drag', timelineDragHandlerRef.current);
 				timelineDragHandlerRef.current = null;
 			};
 			if (timelineDragEndHandlerRef.current) {
-				window.removeEventListener('dragend', timelineDragEndHandlerRef.current);
+				U.Dom.removeEvent(window, 'dragend', timelineDragEndHandlerRef.current);
 				timelineDragEndHandlerRef.current = null;
 			};
 		};
@@ -143,7 +145,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				};
 			};
 		};
-		window.addEventListener('drag', timelineDragHandlerRef.current);
+		U.Dom.addEvent(window, 'drag', timelineDragHandlerRef.current);
 
 		timelineDragEndHandlerRef.current = (e: any) => {
 			e.stopPropagation();
@@ -163,7 +165,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				U.Dom.css(line, { display: 'none' });
 			};
 		};
-		window.addEventListener('dragend', timelineDragEndHandlerRef.current);
+		U.Dom.addEvent(window, 'dragend', timelineDragEndHandlerRef.current);
 	};
 
 	const resizeMoveHandlerRef = useRef<((e: Event) => void) | null>(null);
@@ -175,11 +177,11 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const unbind = () => {
 			if (resizeMoveHandlerRef.current) {
-				window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 				resizeMoveHandlerRef.current = null;
 			};
 			if (resizeUpHandlerRef.current) {
-				window.removeEventListener('mouseup', resizeUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', resizeUpHandlerRef.current);
 				resizeUpHandlerRef.current = null;
 			};
 		};
@@ -264,7 +266,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				setHover(start, end);
 			};
 		};
-		window.addEventListener('mousemove', resizeMoveHandlerRef.current);
+		U.Dom.addEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 
 		resizeUpHandlerRef.current = (e: any) => {
 			e.stopPropagation();
@@ -275,7 +277,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 			U.Dom.removeClass(document.body, 'eResize');
 			U.Dom.removeClass(document.body, 'wResize');
 		};
-		window.addEventListener('mouseup', resizeUpHandlerRef.current);
+		U.Dom.addEvent(window, 'mouseup', resizeUpHandlerRef.current);
 	};
 
 	const setHover = (start: number, end: number) => {
@@ -580,7 +582,7 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 				const root = createRoot(el);
 				root.render(<Tooltip {...object} />);
 
-				el.addEventListener('click', (e: any) => {
+				U.Dom.addEvent(el, 'click', (e: any) => {
 					e.stopPropagation();
 					e.preventDefault();
 

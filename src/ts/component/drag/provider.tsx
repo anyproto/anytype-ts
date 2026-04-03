@@ -328,17 +328,19 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 			};
 		};
 
-		window.addEventListener('drag', dragHandler.current);
-		window.addEventListener('dragend', dragEndHandler.current);
-		window.addEventListener('dragover', dragOverHandler.current);
+		U.Dom.addEvents(window, [
+			['drag', dragHandler.current],
+			['dragend', dragEndHandler.current],
+			['dragover', dragOverHandler.current],
+		]);
 
 		const scrollDragHandler = (e: any) => onScroll(e);
 		if (containerEl) {
-			containerEl.addEventListener('scroll', scrollDragHandler);
+			U.Dom.addEvent(containerEl, 'scroll', scrollDragHandler);
 			(containerEl as any)._scrollDragHandler = scrollDragHandler;
 		};
 		if (sidebarEl) {
-			sidebarEl.addEventListener('scroll', scrollDragHandler);
+			U.Dom.addEvent(sidebarEl, 'scroll', scrollDragHandler);
 			(sidebarEl as any)._scrollDragHandler = scrollDragHandler;
 		};
 
@@ -525,11 +527,11 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		U.Dom.removeClass(document.body, 'isDragging');
 
 		if (endContainerEl && (endContainerEl as any)._scrollDragHandler) {
-			endContainerEl.removeEventListener('scroll', (endContainerEl as any)._scrollDragHandler);
+			U.Dom.removeEvent(endContainerEl, 'scroll', (endContainerEl as any)._scrollDragHandler);
 			delete (endContainerEl as any)._scrollDragHandler;
 		};
 		if (sidebarEl && (sidebarEl as any)._scrollDragHandler) {
-			sidebarEl.removeEventListener('scroll', (sidebarEl as any)._scrollDragHandler);
+			U.Dom.removeEvent(sidebarEl, 'scroll', (sidebarEl as any)._scrollDragHandler);
 			delete (sidebarEl as any)._scrollDragHandler;
 		};
 
@@ -564,7 +566,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 				selection?.renderSelection();
 				raf(() => {
-					window.dispatchEvent(new Event('resize'));
+					U.Dom.eventDispatch(window, 'resize');
 				});
 			};
 
@@ -1146,15 +1148,15 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 	const unbind = () => {
 		if (dragHandler.current) {
-			window.removeEventListener('drag', dragHandler.current);
+			U.Dom.removeEvent(window, 'drag', dragHandler.current);
 			dragHandler.current = null;
 		};
 		if (dragEndHandler.current) {
-			window.removeEventListener('dragend', dragEndHandler.current);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandler.current);
 			dragEndHandler.current = null;
 		};
 		if (dragOverHandler.current) {
-			window.removeEventListener('dragover', dragOverHandler.current);
+			U.Dom.removeEvent(window, 'dragover', dragOverHandler.current);
 			dragOverHandler.current = null;
 		};
 	};

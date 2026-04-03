@@ -77,12 +77,12 @@ class UtilDom {
 		};
 	};
 
-	addEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject) {
-		target.addEventListener(name, handler);
+	addEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+		target.addEventListener(name, handler, options);
 	};
 
-	removeEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject) {
-		target.removeEventListener(name, handler);
+	removeEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
+		target.removeEventListener(name, handler, options);
 	};
 
 	addEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {

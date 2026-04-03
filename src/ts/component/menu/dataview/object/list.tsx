@@ -61,12 +61,12 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {

@@ -150,7 +150,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					S.Menu.close('previewLatex');
 				});
 			};
-			window.addEventListener('mousedown', mouseDownHandlerRef.current);
+			U.Dom.addEvent(window, 'mousedown', mouseDownHandlerRef.current);
 		};
 
 		if (node) {
@@ -173,7 +173,9 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		if (!U.Embed.allowAutoRender(processor)) {
 			const container = U.Dom.getScrollContainer(isPopup);
 			scrollHandlerRef.current = () => onScroll();
-			container?.addEventListener('scroll', scrollHandlerRef.current);
+			if (container) {
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
+			};
 		};
 	};
 
@@ -181,24 +183,24 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (mouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', mouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
 			mouseDownHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 		if (messageHandlerRef.current) {
-			window.removeEventListener('message', messageHandlerRef.current);
+			U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
 			messageHandlerRef.current = null;
 		};
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 
-		if (scrollHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollHandlerRef.current);
+		if (scrollHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -598,7 +600,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					iw.postMessage(data, '*');
 
 					if (messageHandlerRef.current) {
-						window.removeEventListener('message', messageHandlerRef.current);
+						U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
 					};
 					messageHandlerRef.current = (e: MessageEvent) => {
 						const { type, height, blockId, url } = e.data || {};
@@ -621,7 +623,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							};
 						};
 					};
-					window.addEventListener('message', messageHandlerRef.current);
+					U.Dom.addEvent(window, 'message', messageHandlerRef.current);
 				};
 
 				if (!iframe) {
@@ -788,14 +790,14 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		rangeRef.current = getRange();
 
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 		mouseUpHandlerRef.current = () => {
 			keyboard.disableSelection(false);
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvent(window, 'mouseup', mouseUpHandlerRef.current);
 	};
 
 	const onResizeStart = (e: any, checkMax: boolean) => {
@@ -805,10 +807,10 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const node = nodeRef.current;
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 
 		selection?.clear();
@@ -830,8 +832,10 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		U.Dom.addClass(node, 'isResizing');
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResizeMove(e, checkMax);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -882,11 +886,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(false);
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 		U.Dom.removeClass(node, 'isResizing');
@@ -1004,11 +1008,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			setRange({ from: length, to: length });
 		} else {
 			if (mouseUpHandlerRef.current) {
-				window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 				mouseUpHandlerRef.current = null;
 			};
 			if (mouseDownHandlerRef.current) {
-				window.removeEventListener('mousedown', mouseDownHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
 				mouseDownHandlerRef.current = null;
 			};
 			keyboard.disableSelection(false);
@@ -1032,11 +1036,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 
 		if (isFullScreen) {
-			window.addEventListener('keydown', onEscape, true);
+			U.Dom.addEvent(window, 'keydown', onEscape, true);
 		};
 
 		return () => {
-			window.removeEventListener('keydown', onEscape, true);
+			U.Dom.removeEvent(window, 'keydown', onEscape, true);
 
 			if (isFullScreen && container) {
 				container.scrollTop = scrollTopRef.current;

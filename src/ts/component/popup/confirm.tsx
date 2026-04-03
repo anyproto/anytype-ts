@@ -53,12 +53,12 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keyHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keyHandler.current);
+		U.Dom.addEvent(window, 'keydown', keyHandler.current);
 	};
 
 	const unbind = () => {
 		if (keyHandler.current) {
-			window.removeEventListener('keydown', keyHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keyHandler.current);
 			keyHandler.current = null;
 		};
 	};

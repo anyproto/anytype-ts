@@ -235,7 +235,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -1102,7 +1102,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		checkSpeedLimit();
 		historyClearState();
 
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onEditClear = () => {
@@ -1266,7 +1266,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {

@@ -823,7 +823,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						window.dispatchEvent(new CustomEvent('updateDataviewData'));
+						U.Dom.eventDispatch(window, 'updateDataviewData');
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -1151,7 +1151,7 @@ class Dispatcher {
 						};
 					};
 
-					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
+					U.Dom.eventDispatch(window, 'messageAdd', { message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1178,7 +1178,7 @@ class Dispatcher {
 						};
 					});
 
-					window.dispatchEvent(new CustomEvent('messageUpdate', { detail: { message: mapped.message, subIds: mapped.subIds } }));
+					U.Dom.eventDispatch(window, 'messageUpdate', { message: mapped.message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1334,7 +1334,7 @@ class Dispatcher {
 						};
 					};
 
-					window.dispatchEvent(new CustomEvent('reactionUpdate', { detail: notificationMessage }));
+					U.Dom.eventDispatch(window, 'reactionUpdate', notificationMessage);
 					break;
 				};
 
@@ -1510,7 +1510,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			window.dispatchEvent(new CustomEvent('updateDataviewData'));
+			U.Dom.eventDispatch(window, 'updateDataviewData');
 		};
 	};
 
@@ -1641,7 +1641,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		window.dispatchEvent(new CustomEvent('objectView'));
+		U.Dom.eventDispatch(window, 'objectView');
 	};
 
 	/**

@@ -122,10 +122,10 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		const dragEndHandler = () => {
 			onDragEnd();
-			window.removeEventListener('dragend', dragEndHandler);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandler);
 		};
-		window.removeEventListener('dragend', dragEndHandler);
-		window.addEventListener('dragend', dragEndHandler);
+		U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+		U.Dom.addEvent(window, 'dragend', dragEndHandler);
 
 		scrollOnMove.onMouseDown({ container: body, speed: 300, step: 1 });
 	};

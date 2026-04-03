@@ -137,11 +137,11 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', keydownHandler.current);
+		U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const event = () => {

@@ -561,7 +561,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		window.dispatchEvent(new CustomEvent('updateGraphSettings'));
+		U.Dom.eventDispatch(window, 'updateGraphSettings');
 	};
 
 	/**

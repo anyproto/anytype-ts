@@ -35,7 +35,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const unbind = () => {
 		if (onKeyDownRef.current) {
-			window.removeEventListener('keydown', onKeyDownRef.current);
+			U.Dom.removeEvent(window, 'keydown', onKeyDownRef.current);
 			onKeyDownRef.current = null;
 		};
 	};
@@ -51,7 +51,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		onKeyDownRef.current = handler;
-		window.addEventListener('keydown', handler);
+		U.Dom.addEvent(window, 'keydown', handler);
 	};
 
 	// Guard to prevent illegal state change

@@ -29,12 +29,12 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -428,7 +428,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'archive': {
 				Action.archiveCheckType(subId, objectIds, route);
-				window.dispatchEvent(new CustomEvent('archiveObject', { detail: { ids: objectIds } }));
+				U.Dom.eventDispatch(window, 'archiveObject', { ids: objectIds });
 				break;
 			};
 

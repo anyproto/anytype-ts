@@ -20,12 +20,18 @@ const PopupPage = forwardRef<{}, Props>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		scrollHandlerRef.current = () => S.Menu.resizeAll();
-		getInnerWrap()?.addEventListener('scroll', scrollHandlerRef.current);
+		const wrap = getInnerWrap();
+		if (wrap) {
+			U.Dom.addEvent(wrap, 'scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const unbind = () => {
 		if (scrollHandlerRef.current) {
-			getInnerWrap()?.removeEventListener('scroll', scrollHandlerRef.current);
+			const wrap = getInnerWrap();
+			if (wrap) {
+				U.Dom.removeEvent(wrap, 'scroll', scrollHandlerRef.current);
+			};
 			scrollHandlerRef.current = null;
 		};
 	};

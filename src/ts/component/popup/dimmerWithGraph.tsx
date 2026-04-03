@@ -66,7 +66,7 @@ const DimmerWithGraph = ({ onClick }: DimmerWithGraphProps) => {
 		};
 		
 		// Add resize listener
-		window.addEventListener('resize', handleResize);
+		U.Dom.addEvent(window, 'resize', handleResize);
 		
 		// Cleanup
 		return () => {
@@ -74,7 +74,7 @@ const DimmerWithGraph = ({ onClick }: DimmerWithGraphProps) => {
 				raf.cancel(animationFrame);
 			};
 
-			window.removeEventListener('resize', handleResize);
+			U.Dom.removeEvent(window, 'resize', handleResize);
 		};
 	}, []);
 	

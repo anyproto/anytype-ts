@@ -44,11 +44,11 @@ const ControlButtons = forwardRef<ControlButtonsRef, Props>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('resize', resizeHandler.current);
+		U.Dom.addEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('resize', resizeHandler.current);
+		U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const onIconHandler = (e: any) => {

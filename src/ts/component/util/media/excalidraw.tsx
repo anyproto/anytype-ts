@@ -26,9 +26,9 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 			};
 		};
 
-		window.addEventListener('mousedown', onMouseDown);
+		U.Dom.addEvent(window, 'mousedown', onMouseDown);
 		return () => {
-			window.removeEventListener('mousedown', onMouseDown);
+			U.Dom.removeEvent(window, 'mousedown', onMouseDown);
 			keyboard.setFocus(false);
 		};
 	}, []);

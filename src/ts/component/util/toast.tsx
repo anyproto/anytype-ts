@@ -260,12 +260,16 @@ const Toast: FC = () => {
 		const onEnter = () => Preview.toastPauseHide();
 		const onLeave = () => Preview.toastResumeHide();
 
-		node.addEventListener('mouseenter', onEnter);
-		node.addEventListener('mouseleave', onLeave);
+		U.Dom.addEvents(node, [
+			['mouseenter', onEnter],
+			['mouseleave', onLeave],
+		]);
 
 		return () => {
-			node.removeEventListener('mouseenter', onEnter);
-			node.removeEventListener('mouseleave', onLeave);
+			U.Dom.removeEvents(node, [
+				['mouseenter', onEnter],
+				['mouseleave', onLeave],
+			]);
 		};
 	});
 

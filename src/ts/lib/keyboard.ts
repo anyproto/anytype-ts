@@ -84,19 +84,21 @@ class Keyboard {
 			U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver'));
 		};
 
-		window.addEventListener('keydown', this._handlers.keydown);
-		window.addEventListener('keyup', this._handlers.keyup);
-		window.addEventListener('mousedown', this._handlers.mousedown);
-		window.addEventListener('scroll', this._handlers.scroll);
-		window.addEventListener('mousemove', this._handlers.mousemove);
-		window.addEventListener('resize', this._handlers.resize);
-		window.addEventListener('online', this._handlers.online);
-		window.addEventListener('offline', this._handlers.offline);
-		window.addEventListener('focus', this._handlers.focus);
-		window.addEventListener('blur', this._handlers.blur);
+		U.Dom.addEvents(window, [
+			[ 'keydown', this._handlers.keydown ],
+			[ 'keyup', this._handlers.keyup ],
+			[ 'mousedown', this._handlers.mousedown ],
+			[ 'scroll', this._handlers.scroll ],
+			[ 'mousemove', this._handlers.mousemove ],
+			[ 'resize', this._handlers.resize ],
+			[ 'online', this._handlers.online ],
+			[ 'offline', this._handlers.offline ],
+			[ 'focus', this._handlers.focus ],
+			[ 'blur', this._handlers.blur ],
+		]);
 
-		document.removeEventListener('copy', this.onCopyEvent);
-		document.addEventListener('copy', this.onCopyEvent);
+		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
+		U.Dom.addEvent(document, 'copy', this.onCopyEvent);
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
@@ -163,7 +165,7 @@ class Keyboard {
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		const events = [
+		const events: [string, EventListenerOrEventListenerObject][] = [
 			'keyup',
 			'keydown',
 			'mousedown',
@@ -174,15 +176,11 @@ class Keyboard {
 			'online',
 			'offline',
 			'resize',
-		];
+		].filter(event => this._handlers[event]).map(event => [ event, this._handlers[event] ]);
 
-		for (const event of events) {
-			if (this._handlers[event]) {
-				window.removeEventListener(event, this._handlers[event]);
-			};
-		};
+		U.Dom.removeEvents(window, events);
 		this._handlers = {};
-		document.removeEventListener('copy', this.onCopyEvent);
+		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
 	};
 
 	/**
@@ -1236,7 +1234,7 @@ class Keyboard {
 			row.removeAttribute('data-print-columns');
 		});
 
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	/**
@@ -1338,7 +1336,7 @@ class Keyboard {
 				chatId,
 				route,
 				scrollToMessage: (id: string) => {
-					window.dispatchEvent(new CustomEvent('scrollToMessage', { detail: { id } }));
+					U.Dom.eventDispatch(window, 'scrollToMessage', { id });
 				},
 			});
 		} else {

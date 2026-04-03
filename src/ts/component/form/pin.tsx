@@ -41,12 +41,12 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const rebind = () => {
 		unbind();
 		handler.current = (e: MouseEvent) => e.preventDefault();
-		window.addEventListener('mousedown', handler.current);
+		U.Dom.addEvent(window, 'mousedown', handler.current);
 	};
 
 	const unbind = () => {
 		if (handler.current) {
-			window.removeEventListener('mousedown', handler.current);
+			U.Dom.removeEvent(window, 'mousedown', handler.current);
 			handler.current = null;
 		};
 	};

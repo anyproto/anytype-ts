@@ -487,12 +487,16 @@ const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 		const onLoad = () => unsetErrorIcon();
 		const onError = () => setErrorIcon();
 
-		img.addEventListener('load', onLoad);
-		img.addEventListener('error', onError);
+		U.Dom.addEvents(img, [
+			['load', onLoad],
+			['error', onError],
+		]);
 
 		return () => {
-			img.removeEventListener('load', onLoad);
-			img.removeEventListener('error', onError);
+			U.Dom.removeEvents(img, [
+				['load', onLoad],
+				['error', onError],
+			]);
 		};
 	}, []);
 

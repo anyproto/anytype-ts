@@ -96,8 +96,8 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const updateViewsHandler = useRef<() => void>(() => childRef.current?.updateViews?.());
 
 	const unbind = () => {
-		window.removeEventListener('updateWidgetData', updateDataHandler.current);
-		window.removeEventListener('updateWidgetViews', updateViewsHandler.current);
+		U.Dom.removeEvent(window, 'updateWidgetData', updateDataHandler.current);
+		U.Dom.removeEvent(window, 'updateWidgetViews', updateViewsHandler.current);
 	};
 
 	const rebind = () => {
@@ -106,8 +106,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 		updateDataHandler.current = () => childRef.current?.updateData?.();
 		updateViewsHandler.current = () => childRef.current?.updateViews?.();
 
-		window.addEventListener('updateWidgetData', updateDataHandler.current);
-		window.addEventListener('updateWidgetViews', updateViewsHandler.current);
+		U.Dom.addEvents(window, [
+			['updateWidgetData', updateDataHandler.current],
+			['updateWidgetViews', updateViewsHandler.current],
+		]);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {

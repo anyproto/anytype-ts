@@ -136,12 +136,12 @@ const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		resizeHandlerRef.current = () => resize();
-		window.addEventListener('resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 	};
 
 	const unbind = () => {
 		if (resizeHandlerRef.current) {
-			window.removeEventListener('resize', resizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			resizeHandlerRef.current = null;
 		};
 	};

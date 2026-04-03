@@ -273,8 +273,10 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResize(e, index, offset);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, index, offset);
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onResize = (e: any, index: number, offset: number) => {
@@ -409,11 +411,11 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 	
 	const unbind = () => {
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 	};

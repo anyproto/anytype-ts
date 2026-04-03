@@ -259,11 +259,11 @@ const PopupUpload = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		window.addEventListener('paste', onPaste);
+		U.Dom.addEvent(window, 'paste', onPaste);
 		analytics.event('ScreenUploadFile', { route });
 
 		return () => {
-			window.removeEventListener('paste', onPaste);
+			U.Dom.removeEvent(window, 'paste', onPaste);
 		};
 	}, []);
 

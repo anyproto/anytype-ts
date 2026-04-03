@@ -120,8 +120,12 @@ const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props
 	const sidebarResizeHandler = useRef<() => void>(() => resize());
 
 	const unbind = () => {
-		window.removeEventListener('resize', resizeHandler.current);
-		window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+		if (resizeHandler.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
+		};
+		if (sidebarResizeHandler.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
+		};
 		resizeHandler.current = null;
 		sidebarResizeHandler.current = null;
 	};
@@ -130,8 +134,10 @@ const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props
 		unbind();
 		resizeHandler.current = () => resize();
 		sidebarResizeHandler.current = () => resize();
-		window.addEventListener('resize', resizeHandler.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandler.current);
+		U.Dom.addEvents(window, [
+			['resize', resizeHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	useEffect(() => {

@@ -29,29 +29,35 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 
 		const obj = getContainer();
 		mouseenterHandler.current = () => S.Common.clearTimeout('tableOfContents');
 		mouseleaveHandler.current = () => S.Common.setTimeout('tableOfContents', 100, () => close());
-		obj?.addEventListener('mouseenter', mouseenterHandler.current);
-		obj?.addEventListener('mouseleave', mouseleaveHandler.current);
+		if (obj) {
+			U.Dom.addEvents(obj, [
+				[ 'mouseenter', mouseenterHandler.current ],
+				[ 'mouseleave', mouseleaveHandler.current ],
+			]);
+		};
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 
 		const obj = getContainer();
-		if (mouseenterHandler.current) {
-			obj?.removeEventListener('mouseenter', mouseenterHandler.current);
-			mouseenterHandler.current = null;
-		};
-		if (mouseleaveHandler.current) {
-			obj?.removeEventListener('mouseleave', mouseleaveHandler.current);
-			mouseleaveHandler.current = null;
+		if (obj) {
+			if (mouseenterHandler.current) {
+				U.Dom.removeEvent(obj, 'mouseenter', mouseenterHandler.current);
+				mouseenterHandler.current = null;
+			};
+			if (mouseleaveHandler.current) {
+				U.Dom.removeEvent(obj, 'mouseleave', mouseleaveHandler.current);
+				mouseleaveHandler.current = null;
+			};
 		};
 	};
 

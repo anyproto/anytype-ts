@@ -245,7 +245,7 @@ const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 				props.setVersion(message.version);
 			};
 
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 			analytics.event('ScreenHistoryVersion');
 		});
 	};

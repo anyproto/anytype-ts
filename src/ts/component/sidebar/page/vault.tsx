@@ -45,11 +45,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (keyupHandler.current) {
-			window.removeEventListener('keyup', keyupHandler.current);
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
 			keyupHandler.current = null;
 		};
 	};
@@ -58,8 +58,10 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
 		keyupHandler.current = (e: any) => onKeyUp(e);
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('keyup', keyupHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['keyup', keyupHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {

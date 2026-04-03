@@ -60,17 +60,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			setDummy(dummy + 1);
 		};
 
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('archiveObject', archiveHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['archiveObject', archiveHandler.current],
+		]);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (archiveHandler.current) {
-			window.removeEventListener('archiveObject', archiveHandler.current);
+			U.Dom.removeEvent(window, 'archiveObject', archiveHandler.current);
 			archiveHandler.current = null;
 		};
 	};

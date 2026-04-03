@@ -145,8 +145,8 @@ const SidebarProgress: FC = () => {
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
 
-		window.removeEventListener('mousemove', onDragMove);
-		window.removeEventListener('mouseup', onDragEnd);
+		U.Dom.removeEvent(window, 'mousemove', onDragMove);
+		U.Dom.removeEvent(window, 'mouseup', onDragEnd);
 	}, [ onDragMove ]);
 
 	const onDragStart = useCallback((e: React.MouseEvent) => {
@@ -167,8 +167,10 @@ const SidebarProgress: FC = () => {
 		keyboard.disableSelection(true);
 		keyboard.setDragging(true);
 
-		window.addEventListener('mousemove', onDragMove);
-		window.addEventListener('mouseup', onDragEnd);
+		U.Dom.addEvents(window, [
+			['mousemove', onDragMove],
+			['mouseup', onDragEnd],
+		]);
 	}, [ onDragMove, onDragEnd ]);
 
 	const onHeadClick = useCallback(() => {

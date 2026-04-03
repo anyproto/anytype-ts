@@ -238,7 +238,7 @@ const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const resize = () => {
-		window.dispatchEvent(new CustomEvent('resize.menuDataviewObjectList'));
+		U.Dom.eventDispatch(window, 'resize.menuDataviewObjectList');
 	};
 
 	let value = getItems();

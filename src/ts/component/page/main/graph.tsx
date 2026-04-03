@@ -18,15 +18,15 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (graphRootHandler.current) {
-			window.removeEventListener('updateGraphRoot', graphRootHandler.current);
+			U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
 			graphRootHandler.current = null;
 		};
 		if (sidebarResizeHandler.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
 			sidebarResizeHandler.current = null;
 		};
 	};
@@ -41,9 +41,11 @@ const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 		sidebarResizeHandler.current = () => resize();
 
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('updateGraphRoot', graphRootHandler.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['updateGraphRoot', graphRootHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {

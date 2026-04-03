@@ -102,16 +102,18 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(true);
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => onResizeMove(e, checkMax);
 		mouseUpHandler.current = e => onResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -140,11 +142,11 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		U.Dom.removeClass(nodeRef.current, 'isResizing');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 

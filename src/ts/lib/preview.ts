@@ -125,16 +125,16 @@ class Preview {
 			this.delayTooltip = 100;
 
 			if (this.clickTooltipHandler) {
-				window.removeEventListener('click', this.clickTooltipHandler);
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
 			};
 
 			this.clickTooltipHandler = () => {
 				this.tooltipHide(true);
-				window.removeEventListener('click', this.clickTooltipHandler);
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
 				this.clickTooltipHandler = null;
 			};
 
-			window.addEventListener('click', this.clickTooltipHandler);
+			U.Dom.addEvent(window, 'click', this.clickTooltipHandler);
 
 		}, this.delayTooltip);
 
@@ -208,7 +208,7 @@ class Preview {
 
 		if (el) {
 			if (this.previewLeaveHandler) {
-				el.removeEventListener('mouseleave', this.previewLeaveHandler);
+				U.Dom.removeEvent(el, 'mouseleave', this.previewLeaveHandler);
 			};
 
 			this.previewLeaveHandler = () => {
@@ -218,7 +218,7 @@ class Preview {
 				};
 			};
 
-			el.addEventListener('mouseleave', this.previewLeaveHandler);
+			U.Dom.addEvent(el, 'mouseleave', this.previewLeaveHandler);
 		};
 
 		U.Dom.toggleClass(obj, 'passThrough', Boolean(passThrough));

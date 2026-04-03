@@ -234,14 +234,14 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		events.forEach(it => {
 			const handler = (window as any)[`_editorHandler_${it}_${ns}`];
 			if (handler) {
-				window.removeEventListener(it, handler);
+				U.Dom.removeEvent(window, it, handler);
 				delete (window as any)[`_editorHandler_${it}_${ns}`];
 			};
 		});
 
 		const sc = U.Dom.getScrollContainer(isPopup);
 		if (sc && scrollHandlerRef.current) {
-			sc.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(sc, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 
@@ -259,7 +259,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const storeHandler = (event: string, handler: (e: any) => void) => {
 			(window as any)[`_editorHandler_${event}_${ns}`] = handler;
-			window.addEventListener(event, handler);
+			U.Dom.addEvent(window, event, handler);
 		};
 
 		if (!readonly) {
@@ -298,7 +298,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (sc) {
 			scrollHandlerRef.current = () => onScroll();
-			sc.addEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.addEvent(sc, 'scroll', scrollHandlerRef.current);
 		};
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => onCommand(cmd, arg));

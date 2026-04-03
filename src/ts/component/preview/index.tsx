@@ -105,8 +105,8 @@ const PreviewIndex = forwardRef(() => {
 			};
 		};
 
-		document.addEventListener('mousedown', handler, true);
-		return () => document.removeEventListener('mousedown', handler, true);
+		U.Dom.addEvent(document, 'mousedown', handler, true);
+		return () => U.Dom.removeEvent(document, 'mousedown', handler, true);
 	}, []);
 
 	const position = () => {

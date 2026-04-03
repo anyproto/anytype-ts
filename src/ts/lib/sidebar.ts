@@ -676,7 +676,7 @@ class Sidebar {
 			this.setAnimating(true);
 			window.setTimeout(() => {
 				this.setAnimating(false);
-				window.dispatchEvent(new CustomEvent('sidebarResize'));
+				U.Dom.eventDispatch(window, 'sidebarResize');
 			}, J.Constant.delay.sidebar);
 		};
 
@@ -788,7 +788,7 @@ class Sidebar {
 			};
 		};
 
-		window.dispatchEvent(new CustomEvent('sidebarResize'));
+		U.Dom.eventDispatch(window, 'sidebarResize');
 	};
 
 	/**

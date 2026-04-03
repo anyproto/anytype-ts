@@ -156,10 +156,10 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const container = U.Dom.getPageFlexContainer(isPopup);
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -167,19 +167,23 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
 		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			});
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -235,12 +239,12 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
 			
 			if (filterMouseDownHandler.current && cleanupEl) {
-				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(cleanupEl, 'mousedown', filterMouseDownHandler.current);
 				filterMouseDownHandler.current = null;
 			};
 
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 				filterKeydownHandler.current = null;
 			};
 		};
@@ -248,10 +252,10 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		archiveKeydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', archiveKeydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', archiveKeydownHandler.current);
 		return () => {
 			if (archiveKeydownHandler.current) {
-				window.removeEventListener('keydown', archiveKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', archiveKeydownHandler.current);
 			};
 		};
 	}, []);

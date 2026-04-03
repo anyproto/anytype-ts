@@ -34,11 +34,13 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 			return;
 		};
 
-		video.addEventListener('play', onPlayHandler);
-		video.addEventListener('pause', onPause);
-		video.addEventListener('ended', onEnded);
-		video.addEventListener('canplay', onLoad);
-		video.addEventListener('loadedmetadata', onMetaData);
+		U.Dom.addEvents(video, [
+			['play', onPlayHandler],
+			['pause', onPause],
+			['ended', onEnded],
+			['canplay', onLoad],
+			['loadedmetadata', onMetaData],
+		]);
 	};
 
 	const unbind = () => {
@@ -47,11 +49,13 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 			return;
 		};
 
-		video.removeEventListener('play', onPlayHandler);
-		video.removeEventListener('pause', onPause);
-		video.removeEventListener('ended', onEnded);
-		video.removeEventListener('canplay', onLoad);
-		video.removeEventListener('loadedmetadata', onMetaData);
+		U.Dom.removeEvents(video, [
+			['play', onPlayHandler],
+			['pause', onPause],
+			['ended', onEnded],
+			['canplay', onLoad],
+			['loadedmetadata', onMetaData],
+		]);
 	};
 
 	const onPlayHandler = (e: any) => {

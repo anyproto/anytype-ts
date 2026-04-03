@@ -12,7 +12,7 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const unbind = () => {
 		if (focusHandler.current) {
-			window.removeEventListener('focus', focusHandler.current);
+			U.Dom.removeEvent(window, 'focus', focusHandler.current);
 			focusHandler.current = null;
 		};
 	};
@@ -20,7 +20,7 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 	const rebind = () => {
 		unbind();
 		focusHandler.current = () => pinRef.current?.focus();
-		window.addEventListener('focus', focusHandler.current);
+		U.Dom.addEvent(window, 'focus', focusHandler.current);
 	};
 
 	const onError = () => {

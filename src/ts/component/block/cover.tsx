@@ -38,17 +38,17 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 
 		resizeHandlerRef.current = () => resize();
-		window.addEventListener('resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 
 		return () => {
 			if (resizeHandlerRef.current) {
-				window.removeEventListener('resize', resizeHandlerRef.current);
+				U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			};
 			if (mouseMoveHandlerRef.current) {
-				window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			};
 			if (mouseUpHandlerRef.current) {
-				window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			};
 		};
 	}, []);
@@ -224,17 +224,19 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		U.Dom.addClass(node, 'isDragging');
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onDragMove(e.pageX, e.pageY);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onDragEnd(e.pageX, e.pageY);
 
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onDragMove = (pageX: number, pageY: number) => {
@@ -254,11 +256,11 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(false);
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 

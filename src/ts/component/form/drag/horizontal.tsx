@@ -95,12 +95,12 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		};
 
 		if (moveHandler.current) {
-			window.removeEventListener('mousemove', moveHandler.current);
-			window.removeEventListener('touchmove', moveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', moveHandler.current);
+			U.Dom.removeEvent(window, 'touchmove', moveHandler.current);
 		};
 		if (upHandler.current) {
-			window.removeEventListener('mouseup', upHandler.current);
-			window.removeEventListener('touchend', upHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', upHandler.current);
+			U.Dom.removeEvent(window, 'touchend', upHandler.current);
 		};
 
 		moveHandler.current = (e: any) => {
@@ -112,10 +112,12 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 			onEnd?.(e, value);
 		};
 
-		window.addEventListener('mousemove', moveHandler.current);
-		window.addEventListener('touchmove', moveHandler.current);
-		window.addEventListener('mouseup', upHandler.current);
-		window.addEventListener('touchend', upHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', moveHandler.current],
+			['touchmove', moveHandler.current],
+			['mouseup', upHandler.current],
+			['touchend', upHandler.current],
+		]);
 	};
 
 	const move = (x: number) => {
@@ -166,13 +168,13 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		e.stopPropagation();
 
 		if (moveHandler.current) {
-			window.removeEventListener('mousemove', moveHandler.current);
-			window.removeEventListener('touchmove', moveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', moveHandler.current);
+			U.Dom.removeEvent(window, 'touchmove', moveHandler.current);
 			moveHandler.current = null;
 		};
 		if (upHandler.current) {
-			window.removeEventListener('mouseup', upHandler.current);
-			window.removeEventListener('touchend', upHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', upHandler.current);
+			U.Dom.removeEvent(window, 'touchend', upHandler.current);
 			upHandler.current = null;
 		};
 

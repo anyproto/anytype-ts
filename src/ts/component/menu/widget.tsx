@@ -24,7 +24,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.widget);
 
 			if (needUpdate.current) {
-				window.dispatchEvent(new CustomEvent(`updateWidgetData.${blockId}`));
+				U.Dom.eventDispatch(window, `updateWidgetData.${blockId}`);
 			};
 		};
 	}, []);
@@ -36,12 +36,12 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getSections = () => {

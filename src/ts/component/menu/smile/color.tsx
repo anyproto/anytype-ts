@@ -13,11 +13,11 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const onClick = (e: any, id: number) => {

@@ -1174,8 +1174,8 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, onSubmit ]);
 
@@ -1250,8 +1250,8 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, editorId ]);
 
@@ -2635,8 +2635,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown, true);
-			return () => root.removeEventListener('keydown', onKeyDown, true);
+			U.Dom.addEvent(root, 'keydown', onKeyDown, true);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown, true);
 		};
 	}, [ editor ]);
 
@@ -2722,8 +2722,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keyup', onKeyUp);
-			return () => root.removeEventListener('keyup', onKeyUp);
+			U.Dom.addEvent(root, 'keyup', onKeyUp);
+			return () => U.Dom.removeEvent(root, 'keyup', onKeyUp);
 		};
 	}, [ editor, editorId, closeEmojiMenu ]);
 

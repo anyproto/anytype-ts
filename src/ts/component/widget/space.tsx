@@ -131,10 +131,10 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	useEffect(() => {
 		const handler = () => setDummy(dummy => dummy + 1);
 
-		window.addEventListener('objectView', handler);
+		U.Dom.addEvent(window, 'objectView', handler);
 
 		return () => {
-			window.removeEventListener('objectView', handler);
+			U.Dom.removeEvent(window, 'objectView', handler);
 		};
 	}, []);
 

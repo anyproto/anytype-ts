@@ -54,16 +54,18 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 		U.Dom.addClass(element, 'isDragging');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => onDragMove(e);
 		mouseUpHandler.current = e => onDragEndHandler(e);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onDragMove = (e: any) => {
@@ -122,11 +124,11 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 		});
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 

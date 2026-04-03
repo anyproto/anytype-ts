@@ -1406,11 +1406,15 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				window.setTimeout(() => {
 					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
 					const onMouseDown = () => {
-						pageContainer?.removeEventListener('mousedown', onMouseDown);
+						if (pageContainer) {
+							U.Dom.removeEvent(pageContainer, 'mousedown', onMouseDown);
+						};
 						S.Menu.close('blockContext');
 					};
 
-					pageContainer?.addEventListener('mousedown', onMouseDown);
+					if (pageContainer) {
+						U.Dom.addEvent(pageContainer, 'mousedown', onMouseDown);
+					};
 				}, S.Menu.getTimeout());
 			});
 		});

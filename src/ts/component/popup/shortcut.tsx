@@ -288,8 +288,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			clear();
-			window.removeEventListener('keyup', keyupHandler.current);
-			window.removeEventListener('keydown', keydownHandler.current);
+			if (keyupHandler.current) {
+				U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
+			};
+			if (keydownHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			};
 		};
 	}, []);
 
@@ -375,10 +379,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		let pressed = [];
 
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 		};
 		if (keyupHandler.current) {
-			window.removeEventListener('keyup', keyupHandler.current);
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
 		};
 		keyboard.setShortcutEditing(!!editingId);
 
@@ -439,7 +443,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			setEditingKeys(pressed);
 			setTimeout();
 		};
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 
 	}, [ editingId ]);
 
