@@ -633,7 +633,7 @@ class Action {
 		const tree = S.Block.wrapTree(rootId, rootId);
 
 		let next = null;
-		let blocks = S.Block.unwrapTree([ tree ]).filter(it => ids.includes(it.id));
+		let blocks = S.Block.unwrapTree([ tree ]).filter(it => ids.includes(it.id) && !it.isFeatured());
 
 		ids.forEach((id: string) => {
 			const block = S.Block.getLeaf(rootId, id);
