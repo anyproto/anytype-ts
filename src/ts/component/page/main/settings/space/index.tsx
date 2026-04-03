@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
+import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
 

@@ -6,7 +6,6 @@ import React, { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
-import item from 'Component/block/dataview/view/calendar/item';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;

@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics, translate } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, translate } from 'Lib';
 
 const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
