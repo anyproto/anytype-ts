@@ -99,7 +99,10 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const onScrollHorizontal = () => {
 		S.Menu.resizeAll();
-		resizeColumns('', 0);
+
+		if (!keyboard.isResizing) {
+			resizeColumns('', 0);
+		};
 
 		if (isInline) {
 			return;
