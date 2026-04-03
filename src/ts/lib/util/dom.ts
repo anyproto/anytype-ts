@@ -352,29 +352,29 @@ class UtilDom {
 		if (isOpen) {
 			const height = el.offsetHeight;
 
-			Object.assign(el.style, { height: `${height}px`, overflow: 'hidden' });
+			this.css(el, { height: `${height}px`, overflow: 'hidden' });
 
 			raf(() => {
 				this.addClass(el, 'anim');
-				el.style.height = '0px';
+				this.css(el, { height: '0px' });
 			});
 			window.setTimeout(() => {
 				this.removeClass(el, 'isOpen', 'anim');
 				callBack?.();
 			}, delay);
 		} else {
-			el.style.height = 'auto';
+			this.css(el, { height: 'auto' });
 
 			const height = el.offsetHeight;
 
-			el.style.height = '0px';
+			this.css(el, { height: '0px' });
 			this.addClass(el, 'anim');
 
-			raf(() => { el.style.height = `${height}px`; });
+			raf(() => { this.css(el, { height: `${height}px` }); });
 			window.setTimeout(() => {
 				this.removeClass(el, 'anim');
 				this.addClass(el, 'isOpen');
-				Object.assign(el.style, { height: 'auto', overflow: 'visible' });
+				this.css(el, { height: 'auto', overflow: 'visible' });
 				callBack?.();
 			}, delay);
 		};
