@@ -31,20 +31,27 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const cnb = [];
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
+	const onKeyDownRef = useRef<((e: any) => void) | null>(null);
+
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		if (onKeyDownRef.current) {
+			window.removeEventListener('keydown', onKeyDownRef.current);
+			onKeyDownRef.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
-	};
 
-	const onKeyDown = e => {
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-			onForward();
-		});
+		const handler = e => {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
+				onForward();
+			});
+		};
+
+		onKeyDownRef.current = handler;
+		window.addEventListener('keydown', handler);
 	};
 
 	// Guard to prevent illegal state change
