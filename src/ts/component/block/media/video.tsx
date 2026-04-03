@@ -153,7 +153,7 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="video" 
+							iconParam={{ name: 'menu/block/media/video' }}
 							textFile={translate('blockVideoUpload')} 
 							accept={J.Constant.fileExtension.video} 
 							onChangeUrl={onChangeUrl} 

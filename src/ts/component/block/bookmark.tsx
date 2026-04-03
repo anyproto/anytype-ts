@@ -119,7 +119,7 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
 						<InputWithFile 
 							block={block} 	
-							icon="bookmark" 
+							iconParam={{ name: 'menu/block/common/bookmark' }}
 							textFile={translate('inputWithFileTextUrl')} 
 							withFile={false} 
 							onChangeUrl={onChangeUrl} 

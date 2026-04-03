@@ -200,7 +200,7 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="pdf" 
+							iconParam={{ name: 'menu/block/media/pdf' }}
 							textFile={translate('blockPdfUpload')}
 							accept={J.Constant.fileExtension.pdf} 
 							onChangeUrl={onChangeUrl} 

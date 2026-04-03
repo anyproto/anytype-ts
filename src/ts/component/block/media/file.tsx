@@ -59,7 +59,7 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="file" 
+							iconParam={{ name: 'menu/block/media/file' }}
 							textFile={translate('blockFileUpload')} 
 							onChangeUrl={onChangeUrl} 
 							onChangeFile={onChangeFile} 

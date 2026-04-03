@@ -112,7 +112,7 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="audio" 
+							iconParam={{ name: 'menu/block/media/audio' }}
 							textFile={translate('blockAudioUpload')} 
 							accept={J.Constant.fileExtension.audio} 
 							onChangeUrl={onChangeUrl} 

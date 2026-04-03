@@ -188,7 +188,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="image" 
+							iconParam={{ name: 'menu/block/media/image' }}
 							textFile={translate('blockImageUpload')} 
 							accept={J.Constant.fileExtension.image} 
 							onChangeUrl={handleChangeUrl} 
