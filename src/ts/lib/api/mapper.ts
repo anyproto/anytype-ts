@@ -202,7 +202,7 @@ export const Mapper = {
 				networkId: obj.networkId,
 				workspaceObjectId: obj.workspaceObjectId,
 				ethereumAddress: obj.ethereumAddress,
-				metadataKey: obj.metadataKey,
+				metadataKey: obj.metaDataKey,
 			};
 		},
 
