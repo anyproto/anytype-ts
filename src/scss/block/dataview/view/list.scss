@@ -99,6 +99,7 @@
 					.name { width: unset; max-width: 100%; }
 				}
 				.icon.edit { width: 20px; height: 20px; display: inline-block; display: none; }
+				.icon.edit:hover { color: var(--color-control-accent); }
 			}
 
 			.cellWrapper:not(.isName) {
