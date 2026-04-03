@@ -1,4 +1,5 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { IconObject, ObjectName, Checkbox, Icon } from 'Component';
 import { TreeNode } from 'Lib/util/data';
 import * as I from 'Interface';
@@ -7,6 +8,7 @@ interface Props {
 	subId: string;
 	canWrite: boolean;
 	isShared: boolean;
+	isPopup: boolean;
 	selectedIds: string[];
 	filterText: string;
 	sortId: string;
@@ -17,21 +19,41 @@ interface Props {
 	isAllSelected: boolean;
 }
 
-const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
+const LIMIT = 10000;
+const ROW_HEIGHT = 42;
+
+const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
+	const listRef = useRef(null);
 	const { dateFormat } = S.Common;
+	const { total } = S.Record.getMeta(subId, '');
 
-	useEffect(() => {
+	const loadData = (limit: number, callBack?: (message: any) => void) => {
 		U.Subscription.subscribe({
 			subId,
 			spaceId: S.Common.space,
 			keys: [ 'name', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type', 'lastModifiedDate', 'creator', 'createdInContext' ],
 			filters: [ { relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true } ],
 			sorts: [ { relationKey: 'lastModifiedDate', type: I.SortType.Desc } ],
-			limit: J.Constant.limit.listObject,
+			offset: 0,
+			limit,
 			ignoreArchived: false,
+		}, callBack);
+	};
+
+	const loadMoreRows = () => {
+		const { offset } = S.Record.getMeta(subId, '');
+		const newLimit = offset + J.Constant.limit.listObject + LIMIT;
+
+		return new Promise<void>((resolve) => {
+			S.Record.metaSet(subId, '', { offset: offset + LIMIT });
+			loadData(newLimit, () => resolve());
 		});
+	};
+
+	useEffect(() => {
+		loadData(LIMIT);
 
 		return () => {
 			U.Subscription.destroyList([ subId ]);
@@ -109,7 +131,29 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, s
 		);
 	};
 
-	const renderRow = (node: TreeNode, depth: number): React.ReactNode => {
+	interface FlatRow {
+		node: TreeNode;
+		depth: number;
+	};
+
+	const flattenVisible = (roots: TreeNode[]): FlatRow[] => {
+		const result: FlatRow[] = [];
+		const walk = (nodes: TreeNode[], depth: number) => {
+			for (const node of nodes) {
+				result.push({ node, depth });
+				if ((node.children.length > 0) && isExpanded(node.id)) {
+					walk(node.children, depth + 1);
+				};
+			};
+		};
+		walk(roots, 0);
+		return result;
+	};
+
+	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleRoots, expandedIds ]);
+
+	const renderRow = (row: FlatRow, style: React.CSSProperties): React.ReactNode => {
+		const { node, depth } = row;
 		const obj = S.Detail.get(subId, node.id, [
 			'name', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type',
 			'lastModifiedDate', 'creator',
@@ -151,7 +195,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, s
 		const nameIndent = depth > 0 ? { paddingLeft: `${depth * 14}px` } : undefined;
 
 		return (
-			<React.Fragment key={node.id}>
+			<div style={style}>
 				<div className={cn.join(' ')} style={css} onClick={handleRowClick}>
 					{canWrite && (
 						<div className={[ 'cell', 'cellCheck', (isChecked ? 'isChecked' : '') ].join(' ')}>
@@ -191,9 +235,54 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, s
 						</div>
 					)}
 				</div>
+			</div>
+		);
+	};
 
-				{canExpand && expanded && node.children.map(child => renderRow(child, depth + 1))}
-			</React.Fragment>
+	const scrollContainer = U.Dom.getScrollContainer(isPopup);
+
+	let body = null;
+
+	if (!flatRows.length) {
+		body = (
+			<div className="row" style={css}><div className="cell empty">{translate('pageMainArchiveEmpty')}</div></div>
+		);
+	} else {
+		body = (
+			<InfiniteLoader
+				isRowLoaded={({ index }) => !!flatRows[index]}
+				loadMoreRows={loadMoreRows}
+				rowCount={total}
+				threshold={10}
+			>
+				{({ onRowsRendered }) => (
+					<WindowScroller scrollElement={scrollContainer}>
+						{({ height, isScrolling, scrollTop }) => (
+							<AutoSizer disableHeight={true}>
+								{({ width }) => (
+									<List
+										ref={listRef}
+										autoHeight={true}
+										height={Number(height) || 0}
+										width={Number(width) || 0}
+										isScrolling={isScrolling}
+										rowCount={flatRows.length}
+										rowHeight={ROW_HEIGHT}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollTop={scrollTop}
+										rowRenderer={({ key, index, style }) => (
+											<div key={key}>
+												{renderRow(flatRows[index], style)}
+											</div>
+										)}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</WindowScroller>
+				)}
+			</InfiniteLoader>
 		);
 	};
 
@@ -218,11 +307,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, selectedIds, filterText, s
 					})}
 				</div>
 
-				{!visibleRoots.length ? (
-					<div className="row" style={css}><div className="cell empty">{translate('pageMainArchiveEmpty')}</div></div>
-				) : (
-					visibleRoots.map(node => renderRow(node, 0))
-				)}
+				{body}
 			</div>
 		</div>
 	);

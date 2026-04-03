@@ -115,6 +115,9 @@
 		}
 
 		.archiveTree {
+			.ReactVirtualized__List { overflow: visible !important; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
 			.table {
 				.cellContent.isName {
 					.name { width: auto; min-width: 0; }
