@@ -39,7 +39,7 @@ const HeadCell = forwardRef<{}, Props>((props, ref) => {
 
 	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			const blockEl = U.Dom.get(`block-${block.id}`);
 			U.Dom.selectAll(`.cell-key-${U.Common.esc(relationKey)}`, blockEl).forEach(el => U.Dom.addClass(el, 'cellKeyHover'));
 		};
 	};
@@ -61,7 +61,7 @@ const HeadCell = forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const blockEl =	`#block-${U.Common.esc(block.id)}`;
-		const blockNode = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockNode = U.Dom.get(`block-${block.id}`);
 		const rowHead = U.Dom.select('#rowHead', blockNode);
 		const isFixed = U.Dom.hasClass(rowHead, 'fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;

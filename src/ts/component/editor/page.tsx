@@ -400,7 +400,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		for (const block of blocks) {
-			const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			const obj = U.Dom.get(`block-${block.id}`);
 			if (!obj || U.Dom.hasClass(obj, 'noPlus')) {
 				continue;
 			};
@@ -418,7 +418,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				hovered = obj;
 				hoveredRect = rect;
 
-				if (block.isLayout() && (pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu)) {
+				if (block.isLayout() && ((pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu))) {
 					continue;
 				};
 			};
@@ -434,7 +434,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			out();
 			
 			if (hovered) {
-				hovered.addClass('showMenu');
+				U.Dom.addClass(hovered, 'showMenu');
 			};
 			return;
 		};
@@ -466,7 +466,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			
 			clear();
 			U.Dom.addClass(buttonAdd.current, 'show');
-			buttonAdd.current.style.transform = `translate3d(${buttonX}px,${buttonY}px,0px)`;
+			U.Dom.css(buttonAdd.current, { transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
 			U.Dom.addClass(hovered, 'showMenu');
 
 			if (pageX <= x + 20) {
@@ -1345,7 +1345,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const st = window.scrollY;
-		const element = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const element = U.Dom.get(`block-${block.id}`);
 		const value = element ? U.Dom.select('#value', element) : null;
 
 		let sRect = U.Dom.getSelectionRect();
@@ -2309,7 +2309,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 							if (processor !== null) {
 								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
-									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${U.Common.esc(blockId)}`));
+									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${blockId}`));
 									if (previewEl) {
 										previewEl.click();
 									};

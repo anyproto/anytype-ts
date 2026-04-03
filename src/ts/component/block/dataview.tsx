@@ -1564,7 +1564,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		frame.current = raf(() => {
 			if (getWrapperWidth) {
 				const node = nodeRef.current;
-				const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+				const obj = U.Dom.get(`block-${block.id}`);
 
 				if (obj && node) {
 					U.Dom.toggleClass(obj, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);

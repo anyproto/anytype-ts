@@ -466,7 +466,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 
 		if ((length == 1) && !keyboard.isCmd(e)) {
-			const selected = U.Dom.get(`block-${U.Common.esc(list[I.SelectType.Block][0])}`);
+			const selected = U.Dom.get(`block-${list[I.SelectType.Block][0]}`);
 			const value = selected ? U.Dom.select('#value', selected) : null;
 
 			if (!value) {

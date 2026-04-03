@@ -101,7 +101,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 		// Add block's paddings to height
 		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-			const block = U.Dom.get(`block-${U.Common.esc(data.id)}`);
+			const block = U.Dom.get(`block-${data.id}`);
 			if (block) {
 				const top = parseInt(getComputedStyle(block).paddingTop);
 				const bot = parseInt(getComputedStyle(block).paddingBottom);
@@ -1066,7 +1066,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		U.Dom.selectAll('.block.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
 
 		for (const id of ids) {
-			U.Dom.addClass(U.Dom.get(`block-${U.Common.esc(id)}`), 'isDragging');
+			U.Dom.addClass(U.Dom.get(`block-${id}`), 'isDragging');
 		};
 	};
 

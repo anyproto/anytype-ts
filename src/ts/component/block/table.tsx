@@ -1446,7 +1446,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const node = nodeRef.current;
 		const wrap = scrollRef.current;
 		const row = U.Dom.select(`#row-${U.Common.esc(rows[0].id)}`, node);
-		const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const obj = U.Dom.get(`block-${block.id}`);
 
 		if (frameResize.current) {
 			raf.cancel(frameResize.current);
@@ -1478,7 +1478,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					obj.style.marginLeft = (width >= wrapperWidth) ? `${Math.min(0, (wrapperWidth - width) / 2)}px` : '';
 				};
 			} else {
-				const parentObj = U.Dom.get(`block-${U.Common.esc(parent.id)}`);
+				const parentObj = U.Dom.get(`block-${parent.id}`);
 				if (parentObj) {
 					maxWidth = U.Dom.contentWidth(parentObj) - J.Size.blockMenu;
 				};

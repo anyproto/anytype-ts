@@ -321,7 +321,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	};
 
 	const onCellAdd = (e: any) => {
-		const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockEl = U.Dom.get(`block-${block.id}`);
 		const rowHead = U.Dom.select('#rowHead', blockEl);
 		const isFixed = rowHead ? U.Dom.hasClass(rowHead, 'fixed') : false;
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
@@ -415,7 +415,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 						wrap.style.paddingRight = `${offset * 2}px`;
 					};
 				} else {
-					const parentObj = U.Dom.get(`block-${U.Common.esc(parent.id)}`);
+					const parentObj = U.Dom.get(`block-${parent.id}`);
 					const vw = parentObj ? (U.Dom.contentWidth(parentObj) - J.Size.blockMenu) : 0;
 
 					if (wrap) {

@@ -426,7 +426,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const toggleHoverArea = (v: boolean) => {
-		const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockEl = U.Dom.get(`block-${block.id}`);
 		const hoverArea = U.Dom.select('.hoverArea', blockEl);
 		U.Dom.toggleClass(hoverArea, 'active', v);
 	};
