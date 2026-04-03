@@ -133,7 +133,12 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						id="vaultMessages"
 						value={String(Number(vaultMessages))}
 						options={vaultStyles}
-						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
+						onChange={v => {
+							const value = Boolean(Number(v));
+
+							S.Common.vaultMessagesSet(value);
+							analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
+						}}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
