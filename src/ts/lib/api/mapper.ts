@@ -95,6 +95,8 @@ const EVENT_PROP_MAP: [string, string][] = [
 	[ 'objectRelationsAmend', 'ObjectRelationsAmend' ],
 	[ 'objectRelationsRemove', 'ObjectRelationsRemove' ],
 	[ 'objectRestrictionsSet', 'ObjectRestrictionsSet' ],
+	[ 'objectAutoArchive', 'ObjectAutoArchive' ],
+	[ 'objectAutoRestore', 'ObjectAutoRestore' ],
 	[ 'objectClose', 'objectClose' ],
 
 	[ 'fileSpaceUsage', 'FileSpaceUsage' ],
@@ -1733,6 +1735,18 @@ export const Mapper = {
 				id: obj.id,
 				subIds: obj.subIds || [],
 				keys: obj.keys || [],
+			};
+		},
+
+		ObjectAutoArchive: (obj: any) => {
+			return {
+				objectIds: obj.objectIds || [],
+			};
+		},
+
+		ObjectAutoRestore: (obj: any) => {
+			return {
+				objectIds: obj.objectIds || [],
 			};
 		},
 
