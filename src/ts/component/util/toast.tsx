@@ -182,16 +182,26 @@ const Toast: FC = () => {
 			return;
 		};
 
-		const { ww } = U.Dom.getWindowDimensions();
-		const y = 32;
+		U.Dom.css(node, { 
+			display: 'block', 
+			opacity: '0', 
+			transform: 'scale3d(0.7,0.7,1)',
+		});
+
+		const isPopup = keyboard.isPopup();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const ww = container.clientWidth;
+		const y = container.getBoundingClientRect().top + 32;
 		const sw = sidebar.getDummyWidth();
 		const x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
 
-		U.Dom.css(node, { display: 'block' });
-		U.Dom.css(node, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
-
 		raf(() => {
-			U.Dom.css(node, { left: `${x}px`, top: `${y}px`, opacity: '1', transform: 'scale3d(1,1,1)' });
+			U.Dom.css(node, { 
+				left: `${x}px`, 
+				top: `${y}px`, 
+				opacity: '1', 
+				transform: 'scale3d(1,1,1)',
+			});
 		});
 	});
 

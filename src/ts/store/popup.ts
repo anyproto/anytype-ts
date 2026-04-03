@@ -169,7 +169,9 @@ class PopupStore {
 			callBack?.();
 			return;
 		};
-		
+
+		Preview.toastHide(true);
+
 		if (item.param.onClose) {
 			item.param.onClose();
 		};

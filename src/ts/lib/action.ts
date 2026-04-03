@@ -533,6 +533,10 @@ class Action {
 				return;
 			};
 
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: false } }, false);
+			});
+
 			Preview.toastShow({ action: I.ToastAction.Restore, ids });
 			callBack?.();
 			analytics.event('RestoreFromBin', { route, count: ids.length });
