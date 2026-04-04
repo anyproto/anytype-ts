@@ -317,7 +317,99 @@ Excellent consistency: 451/497 namespace imports use the `import * as I from 'In
 
 ---
 
-## 9. Refactoring Plan
+## 9. Code Duplication
+
+### 9.1 Comment Mark Rendering (reply.tsx ↔ post.tsx) -- 100% duplicate
+
+`comment/reply.tsx` (lines 40-102) and `comment/post.tsx` (lines 60-123) have **line-for-line identical** mark binding logic for mentions, links, objects, and emoji. Both use `U.Dom.selectAll()` with `Mark.getTag()` in a `useEffect`.
+
+`block/index.tsx` has related but architecturally different render methods (renderMentions, renderLinks, etc.) -- more complex, with React component rendering and routing. `chat/message/index.tsx` imports and reuses the block methods.
+
+**Fix:** Extract shared `bindMarkHandlers(node, isEditing, parts, subId)` utility in `component/comment/markBindings.ts`. Both reply.tsx and post.tsx call it in their useEffect. ~60 lines eliminated.
+
+### 9.2 Tooltip Setup Boilerplate (27 files, 64 occurrences)
+
+Every interactive component repeats the same 5-line pattern:
+
+```typescript
+const onMouseEnter = (e) => {
+    const t = Preview.tooltipCaption(text, caption);
+    if (t) Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
+};
+const onMouseLeave = () => Preview.tooltipHide(false);
+useEffect(() => () => Preview.tooltipHide(false), []);
+```
+
+Found in: `icon.tsx`, `button.tsx`, `label.tsx`, `iconObject.tsx`, `select.tsx`, `objectName.tsx`, and 21 more.
+
+**Fix:** Create `useTooltip(tooltipParam, nodeRef)` hook returning `{ onMouseEnter, onMouseLeave }`. Eliminates ~5 lines per component across 27 files.
+
+### 9.3 Event Rebind/Unbind Lifecycle (~6 components, 600-800 lines)
+
+Components manage multiple event handlers through identical `rebind()`/`unbind()` function pairs with `useRef` storage:
+
+```typescript
+const scrollHandlerRef = useRef(null);
+const rebind = () => { unbind(); scrollHandlerRef.current = () => onScroll(); U.Dom.addEvent(sc, 'scroll', scrollHandlerRef.current); };
+const unbind = () => { if (scrollHandlerRef.current) { U.Dom.removeEvent(sc, 'scroll', scrollHandlerRef.current); scrollHandlerRef.current = null; } };
+```
+
+Worst offenders:
+- `block/dataview.tsx` -- 9 HandlerRef instances, ~200 lines of bind/unbind
+- `editor/page.tsx` -- multiple events bound in rebind, ~230 lines
+- `block/dataview/view/board.tsx` -- 5 HandlerRef instances, ~120 lines
+- `drag/provider.tsx`, `popup/page.tsx`, `view/grid.tsx` -- similar patterns
+
+**Fix:** Create `useEventBinder(bindings)` hook that accepts an array of `{ target, event, handler }` and manages refs + cleanup automatically. ~200 lines saved across 4-6 files.
+
+### 9.4 Dataview Menu Parameter Construction (~20 sites, 8+ files)
+
+Dataview menus repeat near-identical parameter objects:
+
+```typescript
+S.Menu.open('menuId', {
+    element: `#${getId()} #item-${U.Common.esc(item.id)}`,
+    classNameWrap: 'fromBlock',
+    horizontal: I.MenuDirection.Left,
+    offsetY: 4,
+    noFlipY: true,
+    data: { rootId, blockId, isInline, getView, getTarget, readonly, loadData, ... }
+});
+```
+
+Also: 5 sites use `onOpen`/`onClose` hover state callbacks (`U.Dom.addClass(el, 'hover')` / `U.Dom.removeClass(el, 'hover')`), and 8+ sites use menu close-then-open chains.
+
+**Fix:** Create `createDataviewMenuParam()` factory and `createHoverCallbacks()` helper in `lib/util/menuFactory.ts`. ~50 duplication points consolidated.
+
+### 9.5 Subscription Setup in useEffect (22 components)
+
+Components repeat the same subscription lifecycle:
+
+```typescript
+useEffect(() => {
+    U.Subscription.subscribe({ subId, filters, sorts, keys, noDeps: true }, (message) => { ... });
+    return () => U.Subscription.destroyList([subId], true);
+}, [dependencies]);
+```
+
+Dataview views (9 files) are especially consistent -- all build the same base filters, apply `Dataview.filterMapper`/`sortMapper`, and set records on callback.
+
+**Fix:** Create `useDataSubscription(config)` hook for generic subscriptions and `useDataviewSubscription(config)` for dataview-specific ones. Consolidates ~30 files.
+
+### 9.6 Summary
+
+| Pattern | Sites | Files | Lines Saved | Effort |
+|---------|-------|-------|-------------|--------|
+| Comment mark bindings | 2 | 2 | ~60 | S |
+| Tooltip setup | 64 | 27 | ~135 | S |
+| Event rebind/unbind | 30+ | 6 | ~200 | M |
+| Dataview menu params | 20+ | 8 | ~100 | S |
+| Subscription lifecycle | 22+ | 22 | ~200 | M |
+| **Total** | **~138** | **~65** | **~695** | |
+
+---
+
+## 10. Refactoring Plan
 
 ### Phase 1: React Performance (High Impact)
 
@@ -370,13 +462,23 @@ Excellent consistency: 451/497 namespace imports use the `import * as I from 'In
 | Add logging to silent catch blocks in drag/provider.tsx | component/drag/provider.tsx | S |
 | Replace prop drilling with context for BlockComponent (19 props) | interface/block/index.ts + component tree | L |
 
+### Phase 7: Code Deduplication
+
+| Task | Sites | Effort |
+|------|-------|--------|
+| Extract comment mark bindings into shared utility | 2 files | S |
+| Create `useTooltip()` hook | 27 files | S |
+| Create dataview menu param factory + hover callbacks helper | 8+ files | S |
+| Create `useEventBinder()` hook for rebind/unbind lifecycle | 6 files | M |
+| Create `useDataSubscription()` / `useDataviewSubscription()` hooks | 22 files | M |
+
 ### Effort Key
 
 - **S** = Small (< 1 day) | **M** = Medium (1-3 days) | **L** = Large (3-5 days) | **XL** = Extra Large (1-2 weeks)
 
 ---
 
-## 10. Suggested Execution Order
+## 11. Suggested Execution Order
 
 ```
 Quick wins (S effort):
@@ -387,12 +489,17 @@ Quick wins (S effort):
   - Fix reverse imports in lib/util/graph.ts, object.ts
   - Add logging to silent catch blocks
   - Replace verbose if (cb) { cb() } with cb?.() (~357 sites, 124 files)
+  - Extract comment mark bindings (reply.tsx + post.tsx)
+  - Create useTooltip() hook (27 files)
+  - Create dataview menu param factory (8+ files)
 
 Next (M effort):
   - Investigate and fix forceUpdate patterns
   - Add useCallback/useMemo to large components
   - Migrate stores to makeAutoObservable
   - Create typed event bus
+  - Create useEventBinder() hook (6 files, ~200 lines saved)
+  - Create useDataSubscription() hooks (22 files)
 
 Then (L effort):
   - God file splits: commentEditor, keyboard, chat/form, menu
