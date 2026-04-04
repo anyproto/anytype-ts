@@ -69,7 +69,9 @@
 	
 	.menu.vertical { width: var(--menu-width-common); }
 	.menu.vertical {
-		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content { 
+			overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; 
+		}
 		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.filter { padding: 0px 16px; }

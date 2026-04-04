@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
+		.content { overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
 		.items { overflow: auto; flex-grow: 1; }
 
 		.filter { flex-shrink: 0; }

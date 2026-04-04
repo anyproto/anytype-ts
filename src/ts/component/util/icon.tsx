@@ -105,7 +105,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		});
 	};
 
-	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
+	const nameCn = name ? U.String.toCamelCase(name) : '';
 	const colorCn = color ? `iconColor iconColor-${color}` : '';
 	const cn = [ 'icon', nameCn, colorCn, className ];
 	const w = width || size;

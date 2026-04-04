@@ -3,6 +3,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
+import raf from 'raf';
 
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
@@ -12,7 +13,7 @@ const HEIGHT_DIV = 16;
 
 const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId, position } = props;
+	const { param, onKeyDown, setActive, getId } = props;
 	const { data, menuKey } = param;
 	const { 
 		filter, value, label, noFilter, noIcon, onMore, withPlural, canAdd, addParam,
@@ -40,18 +41,12 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
 			window.clearTimeout(timeout.current);
 		};
 	}, []);
-
-	useEffect(() => {
-		resize();
-		rebind();
-	});
 
 	useEffect(() => {
 		n.current = 0;
@@ -204,6 +199,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			setDummy(dummy + 1);
+			beforePosition();
 		});
 	};
 
@@ -342,7 +338,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
@@ -354,7 +350,6 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const rowRenderer = (param: any) => {
@@ -435,6 +430,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
+		beforePosition,
 	}), []);
 
 	return (

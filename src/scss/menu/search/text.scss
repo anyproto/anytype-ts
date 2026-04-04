@@ -7,7 +7,7 @@
 	}
 	.menu.menuSearchText * { -webkit-app-region: no-drag; }
 	.menu.menuSearchText {
-		.content { transition: none; padding: 0px; overflow: visible; }
+		.content { padding: 0px; overflow: visible; }
 		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
 
 		.filterWrapper {
