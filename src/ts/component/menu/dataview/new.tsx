@@ -41,7 +41,7 @@ const MenuNew = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (isAllowedObject && isCollection) {
-			itemsAdd.push({ id: 'existing', iconParam: { name: 'existingObject' }, name: translate('menuDataviewNewExistingObject'), arrow: true });
+			itemsAdd.push({ id: 'existing', iconParam: { name: 'menu/action/existing' }, name: translate('menuDataviewNewExistingObject'), arrow: true });
 		};
 
 		if (withTypeSelect) {
