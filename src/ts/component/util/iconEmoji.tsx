@@ -23,29 +23,22 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 		cn.push('canEdit');
 	};
 
-	let element = null;
 	if (!icon) {
 		return null;
 	};
 
 	const code = icon.match(':') ? icon : U.Smile.getCode(icon);
-	if (code) {
-		element = (
-			<img
-				src={U.Smile.srcFromColons(code)}
-				className={[ 'smileImage', `c${size}` ].join(' ')}
-				onDragStart={e => e.preventDefault()}
-			/>
-		);
-	};
-
-	if (!element) {
+	if (!code) {
 		return null;
 	};
 
 	return (
 		<div id={id} style={css} className={cn.join(' ')}>
-			{element}
+			<img
+				src={U.Smile.srcFromColons(code)}
+				className={[ 'smileImage', `c${size}` ].join(' ')}
+				onDragStart={e => e.preventDefault()}
+			/>
 		</div>
 	);
 
