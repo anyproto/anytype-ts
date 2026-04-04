@@ -291,6 +291,7 @@ export interface RouteParam {
 	replace: boolean;
 	updateTabRoute: boolean;
 	onRouteChange?: () => void;
+	onAuthComplete?: () => void;
 };
 
 export interface SearchSubscribeParam {

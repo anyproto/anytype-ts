@@ -265,6 +265,8 @@ class UtilRouter {
 							if (!S.Common.hideSidebar && !((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
+
+							routeParam?.onAuthComplete?.();
 						});
 					};
 
