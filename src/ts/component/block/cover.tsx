@@ -284,19 +284,27 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const { coverX, coverY } = object;
 		const value = node ? U.Dom.select('#dragValue', node) : null;
 
-		v = (v + 1) * 100;
-		if (value) {
-			value.textContent = Math.ceil(v) + '%';
-		};
-		if (cover) {
-			U.Dom.css(cover, { height: 'auto', width: v + '%' });
-		};
-
 		if (!cover) {
 			return;
 		};
 
-		const rect = U.Dom.getElementRect(cover);
+		v = (v + 1) * 100;
+
+		U.Dom.css(cover, { height: 'auto', width: v + '%' });
+
+		let rect = U.Dom.getElementRect(cover);
+
+		// Ensure image covers container height
+		if (rectRef.current && (rect.height < rectRef.current.height)) {
+			const ratio = rectRef.current.height / rect.height;
+			v = v * ratio;
+			U.Dom.css(cover, { width: v + '%' });
+			rect = U.Dom.getElementRect(cover);
+		};
+
+		if (value) {
+			value.textContent = Math.ceil(v) + '%';
+		};
 
 		rectRef.current.cw = rect.width;
 		rectRef.current.ch = rect.height;
@@ -360,19 +368,17 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const my = rect.ch - rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
-		y = Math.max(-my, Math.min(0, y));
 
-		const px = Math.min(0, x / rect.cw * 100);
-		const py = Math.min(0, y / rect.ch * 100);
-		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
-
-		if (rect.ch < rect.height) {
-			css.transform = 'translate3d(0px,0px,0px)';
-			css.height = rect.height;
-			css.width = 'auto';
+		if (rect.ch <= rect.height) {
+			y = 0;
+		} else {
+			y = Math.max(-my, Math.min(0, y));
 		};
 
-		U.Dom.css(coverRef.current, css);
+		const px = rect.cw > 0 ? Math.min(0, x / rect.cw * 100) : 0;
+		const py = rect.ch > 0 ? Math.min(0, y / rect.ch * 100) : 0;
+
+		U.Dom.css(coverRef.current, { transform: `translate3d(${px}%,${py}%,0px)` });
 
 		return { x, y };
 	};
