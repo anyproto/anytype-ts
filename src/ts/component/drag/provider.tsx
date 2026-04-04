@@ -344,7 +344,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 			(sidebarEl as any)._scrollDragHandler = scrollDragHandler;
 		};
 
-		U.Dom.selectAll('.colResize.active').forEach(el => U.Dom.removeClass(el, 'active'));
+		U.Dom.selectAll('.colResize.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 		scrollOnMove.onMouseDown({
 			container: containerEl || undefined,
 			onMouseUp: () => onDragEnd(e),
@@ -535,7 +535,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 			delete (sidebarEl as any)._scrollDragHandler;
 		};
 
-		U.Dom.selectAll('.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.isDragging', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isDragging'));
 		scrollOnMove.onMouseUp(true);
 
 		window.clearTimeout(timeoutDragOver.current);
@@ -1065,7 +1065,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	};
 
 	const setClass = (ids: string[]) => {
-		U.Dom.selectAll('.block.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.block.isDragging', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isDragging'));
 
 		for (const id of ids) {
 			U.Dom.addClass(U.Dom.get(`block-${id}`), 'isDragging');
@@ -1112,7 +1112,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	};
 
 	const clearStyle = () => {
-		U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver top bottom left right middle'));
+		U.Dom.selectAll('.dropTarget.isOver', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isOver top bottom left right middle'));
 	};
 
 	const clearState = () => {

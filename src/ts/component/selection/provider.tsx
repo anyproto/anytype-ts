@@ -640,11 +640,12 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 
 		frame.current = raf(() => {
-			U.Dom.selectAll('.isSelectionSelected').forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
-
 			if (!container) {
+				U.Dom.selectAll('.isSelectionSelected').forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
 				return;
 			};
+
+			U.Dom.selectAll('.isSelectionSelected', container).forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
 
 			for (const i in I.SelectType) {
 				const type = I.SelectType[i];

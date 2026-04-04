@@ -207,10 +207,11 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		const data = param?.data || {};
 
 		// Hide block menus and plus button
+		const pageContainer = U.Dom.getPageFlexContainer(keyboard.isPopup());
 		const addBtn = U.Dom.get('button-block-add');
 		if (addBtn) U.Dom.removeClass(addBtn, 'show');
-		U.Dom.selectAll('.block.showMenu').forEach(el => U.Dom.removeClass(el, 'showMenu'));
-		U.Dom.selectAll('.block.isAdding').forEach(el => {
+		U.Dom.selectAll('.block.showMenu', pageContainer).forEach(el => U.Dom.removeClass(el, 'showMenu'));
+		U.Dom.selectAll('.block.isAdding', pageContainer).forEach(el => {
 			U.Dom.removeClass(el, 'isAdding');
 			U.Dom.removeClass(el, 'top');
 			U.Dom.removeClass(el, 'bottom');
@@ -405,7 +406,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 	
 	const onMouseLeaveHandler = (e: any) => {
 		if (!keyboard.isResizing) {
-			U.Dom.selectAll('.colResize.active').forEach(el => U.Dom.removeClass(el, 'active'));
+			U.Dom.selectAll('.colResize.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 		};
 	};
 	
