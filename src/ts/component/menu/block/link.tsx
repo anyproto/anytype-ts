@@ -45,6 +45,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(top.current);
 		};
 
+		beforePosition();
 		setActive();
 	});
 

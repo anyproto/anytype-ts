@@ -181,8 +181,6 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), 16);
 
-		console.log(items, height);
-
 		listRef.current?.recomputeRowHeights(0);
 		U.Dom.css(obj, { height: `${height}px` });
 	};
@@ -290,6 +288,7 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
+		beforePosition();
 		setActive(null, true);
 	});
 

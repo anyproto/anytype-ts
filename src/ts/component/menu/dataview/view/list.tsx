@@ -236,6 +236,7 @@ const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
+		beforePosition();
 		setActive(null, true);
 	});
 

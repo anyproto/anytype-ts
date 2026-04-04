@@ -33,6 +33,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
+		beforePosition();
 	});
 
 	useEffect(() => {
