@@ -586,7 +586,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			head = (
 				<>
 					<div className="side left">
-						<Icon name="common/back" withBackground={true} onClick={e => {
+						<Icon name="common/back" className="back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');

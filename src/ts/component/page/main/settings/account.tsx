@@ -84,7 +84,7 @@ const PageMainSettingsAccount = forwardRef<I.PageRef, I.PageSettingsComponent>((
 				globalName ? (
 					<div className="section">
 						<div className="anyNameWrapper">
-							<Icon name="membership/badge" color="default" />
+							<Icon name="membership/badge" className="badge" color="default" />
 							<Title text={translate('popupSettingsAccountAnyIdTitle')} />
 						</div>
 

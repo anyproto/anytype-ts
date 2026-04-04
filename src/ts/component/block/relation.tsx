@@ -102,7 +102,7 @@ const BlockRelation = forwardRef<{}, I.BlockComponent>((props, ref) => {
 				<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={onMenu}>
 					{relation ? (
 						<>
-							<Icon name="common/ghost" />
+							<Icon name="common/ghost" className="ghost" />
 							{translate('commonDeletedRelation')}
 						</>
 					) : translate('menuBlockAddNewRelation')} 

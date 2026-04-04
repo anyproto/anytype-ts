@@ -52,9 +52,10 @@ const HeaderAuthIndex = forwardRef<{}, Props>((props, ref) => {
 					menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 				/>
 
-				<Icon 
-					name="header/settings" 
-					withBackground={true} 
+				<Icon
+					name="header/settings"
+					className="settings"
+					withBackground={true}
 					onClick={() => S.Popup.open('settingsOnboarding', {})} 
 				/>
 			</div>

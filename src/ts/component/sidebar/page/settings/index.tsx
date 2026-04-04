@@ -303,7 +303,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		<>
 			<div className="head">
 				<div className="side left">
-					<Icon name="common/back" withBackground={true} onClick={onBack} />
+					<Icon name="common/back" className="back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center" />
 			</div>

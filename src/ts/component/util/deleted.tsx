@@ -65,7 +65,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			className={[ 'deleteWrapper', className ].join(' ')}
 		>
 			<div className="mid">
-				<Icon name="common/ghost" />
+				<Icon name="common/ghost" className="ghost" />
 				<Label text={translate('utilDeletedObjectNotExist')} />
 				<Button color="blank" text={textButton} onClick={onClick} />
 			</div>

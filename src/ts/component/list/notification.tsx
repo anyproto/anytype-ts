@@ -102,8 +102,8 @@ const ListNotification = forwardRef(() => {
 		>
 			{list.length ? (
 				<div className="head">
-					<Icon name="notification/hide" width={12} height={8} onClick={onHide} />
-					<Icon name="notification/delete" size={10} onClick={onClear} />
+					<Icon name="notification/hide" className="hide" width={12} height={8} onClick={onHide} />
+					<Icon name="notification/delete" className="clear" size={10} onClick={onClear} />
 				</div>
 			) : ''}
 

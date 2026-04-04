@@ -365,7 +365,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div ref={nodeRef} className="wrap">
 			<div className="filterWrapper">
 				<div className="filterContainer">
-					<Icon name="common/search" />
+					<Icon name="common/search" className="search" />
 					<Input
 						ref={inputRef}
 						placeholder={translate('commonSearch')}

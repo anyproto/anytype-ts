@@ -189,7 +189,7 @@ const MenuPublish = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<>
 			<div className="menuHeader">
 				<Title text={translate('menuPublishTitle')} />
-				<Icon name="common/info" onClick={showInfo} />
+				<Icon name="common/info" className="info" onClick={showInfo} />
 			</div>
 
 			<Input size={36} value={domain} readonly={true} />

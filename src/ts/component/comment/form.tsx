@@ -705,7 +705,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						<div className="div" />
 						<Icon name="comment/slash" className="slash" withBackground={true} onClick={onSlashClick} />
 						<Icon name="chat/buttons/emoji" className="emoji" withBackground={true} onClick={onEmojiClick} />
-						<Icon name="common/mention" withBackground={true} onClick={onMentionClick} />
+						<Icon name="common/mention" className="mention" withBackground={true} onClick={onMentionClick} />
 					</div>
 
 					<div className="side right">

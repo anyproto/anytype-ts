@@ -61,7 +61,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon name="membership/badge" size={18} color="accent100" />
+				<Icon name="membership/badge" className="badge" size={18} color="accent100" />
 				<Label text={globalName} />
 			</div>
 		);
