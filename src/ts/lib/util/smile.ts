@@ -16,8 +16,12 @@ class UtilSmile {
 		for (const id in J.Emoji.emojis) {
 			const item = J.Emoji.emojis[id];
 
-			for (const skin of item.skins) {
-				this.cache[skin.native] = skin.shortcodes;
+			for (let i = 0; i < item.skins.length; i++) {
+				const skin = item.skins[i];
+				const code = i > 0 ? `:${id}::skin-tone-${i + 1}:` : `:${id}:`;
+
+				this.cache[skin.native] = code;
+				skin.shortcodes = code;
 			};
 		};
 
