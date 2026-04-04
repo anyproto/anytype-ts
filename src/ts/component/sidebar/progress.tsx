@@ -2,7 +2,6 @@ import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react
 import Icon from 'Component/util/icon';
 import Label from 'Component/util/label';
 import * as I from 'Interface';
-import Storage from 'Lib/storage';
 
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
@@ -84,114 +83,19 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 	);
 });
 
-const STORAGE_KEY = 'sidebarProgress';
-
 const SidebarProgress: FC = () => {
 
 	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
 	const [ isExpanded, setIsExpanded ] = useState(false);
-	const nodeRef = useRef<HTMLDivElement>(null);
 	const prevCount = useRef(0);
-	const hasDragged = useRef(false);
-	const startX = useRef(0);
-	const startY = useRef(0);
-	const dx = useRef(0);
-	const dy = useRef(0);
-
-	const clampCoords = useCallback((x: number, bottom: number): { x: number; bottom: number } => {
-		const { ww, wh } = U.Dom.getWindowDimensions();
-		const node = nodeRef.current;
-		const w = node ? node.offsetWidth : 0;
-		const h = node ? node.offsetHeight : 0;
-
-		x = Math.max(0, Math.min(ww - w, x));
-		bottom = Math.max(0, Math.min(wh - h - J.Size.header, bottom));
-
-		return { x, bottom };
-	}, []);
-
-	const setPosition = useCallback((x: number, bottom: number) => {
-		const node = nodeRef.current;
-
-		if (!node) {
-			return;
-		};
-
-		const coords = clampCoords(x, bottom);
-
-		U.Dom.css(node, { position: 'fixed', left: `${coords.x}px`, bottom: `${coords.bottom}px`, top: 'auto' });
-	}, [ clampCoords ]);
-
-
-	const onDragMove = useCallback((e: MouseEvent) => {
-		const movedX = Math.abs(e.pageX - startX.current);
-		const movedY = Math.abs(e.pageY - startY.current);
-
-		if ((movedX > 3) || (movedY > 3)) {
-			hasDragged.current = true;
-		};
-
-		const node = nodeRef.current;
-		const { wh } = U.Dom.getWindowDimensions();
-		const h = node ? node.offsetHeight : 0;
-		const x = e.pageX - dx.current;
-		const bottom = wh - (e.pageY - dy.current) - h;
-
-		setPosition(x, bottom);
-		Storage.set(STORAGE_KEY, { x, bottom }, Storage.isLocal(STORAGE_KEY));
-	}, [ setPosition ]);
-
-	const onDragEnd = useCallback(() => {
-		keyboard.disableSelection(false);
-		keyboard.setDragging(false);
-
-		U.Dom.removeEvent(window, 'mousemove', onDragMove);
-		U.Dom.removeEvent(window, 'mouseup', onDragEnd);
-	}, [ onDragMove ]);
-
-	const onDragStart = useCallback((e: React.MouseEvent) => {
-		const node = nodeRef.current;
-
-		if (!node) {
-			return;
-		};
-
-		const rect = node.getBoundingClientRect();
-
-		dx.current = e.pageX - rect.left;
-		dy.current = e.pageY - rect.top;
-		startX.current = e.pageX;
-		startY.current = e.pageY;
-		hasDragged.current = false;
-
-		keyboard.disableSelection(true);
-		keyboard.setDragging(true);
-
-		U.Dom.addEvents(window, [
-			['mousemove', onDragMove],
-			['mouseup', onDragEnd],
-		]);
-	}, [ onDragMove, onDragEnd ]);
 
 	const onHeadClick = useCallback(() => {
-		if (!hasDragged.current) {
-			setIsExpanded(v => !v);
-		};
+		setIsExpanded(v => !v);
 	}, []);
 
 	useEffect(() => {
-		if ((list.length > 0) && (prevCount.current === 0)) {
-			Storage.delete(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
-
-			const node = nodeRef.current;
-
-			if (node) {
-				U.Dom.css(node, { position: '', left: '', bottom: '', top: '' });
-			};
-
-			if (AUTO_EXPAND) {
-				setIsExpanded(true);
-			};
+		if ((list.length > 0) && (prevCount.current === 0) && AUTO_EXPAND) {
+			setIsExpanded(true);
 		};
 
 		if (!list.length) {
@@ -201,7 +105,6 @@ const SidebarProgress: FC = () => {
 		prevCount.current = list.length;
 	}, [ list.length ]);
 
-
 	if (!list.length) {
 		return null;
 	};
@@ -209,8 +112,8 @@ const SidebarProgress: FC = () => {
 	const headerText = U.String.sprintf(translate('progressProcessing'), list.length);
 
 	return (
-		<div ref={nodeRef} className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
-			<div className="head" onMouseDown={onDragStart} onClick={onHeadClick}>
+		<div className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
+			<div className="head" onClick={onHeadClick}>
 				<Label text={headerText} />
 				<Icon name="arrow/button" size={8} className="arrow" />
 			</div>

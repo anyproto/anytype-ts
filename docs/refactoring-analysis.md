@@ -381,22 +381,7 @@ Also: 5 sites use `onOpen`/`onClose` hover state callbacks (`U.Dom.addClass(el, 
 
 **Fix:** Create `createDataviewMenuParam()` factory and `createHoverCallbacks()` helper in `lib/util/menuFactory.ts`. ~50 duplication points consolidated.
 
-### 9.5 Subscription Setup in useEffect (22 components)
-
-Components repeat the same subscription lifecycle:
-
-```typescript
-useEffect(() => {
-    U.Subscription.subscribe({ subId, filters, sorts, keys, noDeps: true }, (message) => { ... });
-    return () => U.Subscription.destroyList([subId], true);
-}, [dependencies]);
-```
-
-Dataview views (9 files) are especially consistent -- all build the same base filters, apply `Dataview.filterMapper`/`sortMapper`, and set records on callback.
-
-**Fix:** Create `useDataSubscription(config)` hook for generic subscriptions and `useDataviewSubscription(config)` for dataview-specific ones. Consolidates ~30 files.
-
-### 9.6 Summary
+### 9.5 Summary
 
 | Pattern | Sites | Files | Lines Saved | Effort |
 |---------|-------|-------|-------------|--------|
@@ -404,8 +389,7 @@ Dataview views (9 files) are especially consistent -- all build the same base fi
 | Tooltip setup | 64 | 27 | ~135 | S |
 | Event rebind/unbind | 30+ | 6 | ~200 | M |
 | Dataview menu params | 20+ | 8 | ~100 | S |
-| Subscription lifecycle | 22+ | 22 | ~200 | M |
-| **Total** | **~138** | **~65** | **~695** | |
+| **Total** | **~116** | **~43** | **~495** | |
 
 ---
 
@@ -470,7 +454,6 @@ Dataview views (9 files) are especially consistent -- all build the same base fi
 | Create `useTooltip()` hook | 27 files | S |
 | Create dataview menu param factory + hover callbacks helper | 8+ files | S |
 | Create `useEventBinder()` hook for rebind/unbind lifecycle | 6 files | M |
-| Create `useDataSubscription()` / `useDataviewSubscription()` hooks | 22 files | M |
 
 ### Effort Key
 
@@ -499,7 +482,6 @@ Next (M effort):
   - Migrate stores to makeAutoObservable
   - Create typed event bus
   - Create useEventBinder() hook (6 files, ~200 lines saved)
-  - Create useDataSubscription() hooks (22 files)
 
 Then (L effort):
   - God file splits: commentEditor, keyboard, chat/form, menu
