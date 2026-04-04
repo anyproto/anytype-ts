@@ -310,7 +310,7 @@ class UtilData {
 	 * @param {any} [param] - Optional parameters for authentication.
 	 * @param {() => void} [callBack] - Optional callback after authentication.
 	 */
-	onAuth(param?: any, callBack?: () => void) {
+	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
 
 		const { widgets } = S.Block;
@@ -327,36 +327,17 @@ class UtilData {
 
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
-				S.Common.pinInit(() => {
-					const { pin } = S.Common;
+				const rp = route ? U.Router.getParam(route) : {};
+				const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
 
-					// Notify main process whether a PIN is set
-					Renderer.send('setHasPinSet', Boolean(pin));
+				if (isRestorable) {
+					U.Router.go(route, routeParam);
+				} else {
+					U.Space.openDashboard(routeParam);
+				};
 
-					// If no PIN, user is considered checked
-					if (!pin) {
-						keyboard.setPinChecked(true);
-					};
-
-					keyboard.initPinCheck();
-
-					// Redirect
-					if (pin && !keyboard.isPinChecked) {
-						U.Router.go('/auth/pin-check', routeParam);
-					} else {
-						const rp = route ? U.Router.getParam(route) : {};
-						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
-
-						if (isRestorable) {
-							U.Router.go(route, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
-					};
-
-					S.Common.redirectSet('');
-					callBack?.();
-				});
+				S.Common.redirectSet('');
+				callBack?.();
 			});
 		});
 	};
@@ -364,7 +345,32 @@ class UtilData {
 	/**
 	 * Handles one-time authentication tasks after login.
 	 */
-	onAuthOnce() {
+	onAuthOnce (callBack?: () => void) {
+		S.Common.pinInit(() => {
+			const { pin } = S.Common;
+
+			Renderer.send('setHasPinSet', Boolean(pin));
+
+			if (!pin) {
+				keyboard.setPinChecked(true);
+			};
+
+			keyboard.initPinCheck();
+
+			U.Subscription.createGlobal(() => {
+				if (S.Record.spaceMap.size) {
+					Storage.clearDeletedSpaces(false);
+					Storage.clearDeletedSpaces(true);
+				};
+
+				if (pin && !keyboard.isPinChecked) {
+					U.Router.go('/auth/pin-check', {});
+				} else {
+					callBack?.();
+				};
+			});
+		});
+		
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -402,13 +408,6 @@ class UtilData {
 		U.Common.applyAutoDownload(S.Common.autoDownload);
 
 		this.getMembershipData();
-
-		U.Subscription.createGlobal(() => {
-			if (S.Record.spaceMap.size) {
-				Storage.clearDeletedSpaces(false);
-				Storage.clearDeletedSpaces(true);
-			};
-		});
 	};
 
 	/**

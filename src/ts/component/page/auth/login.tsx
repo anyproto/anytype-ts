@@ -86,17 +86,17 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 				onRouteChange: () => Action.checkDiskSpace(),
 			};
 
-			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, routeParam, true);
-			} else {
-				Animation.from(() => {
-					U.Data.onAuthWithoutSpace(routeParam);
-					isSelecting.current = false;
-				});
-			};
-
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce();
+			U.Data.onAuthOnce(() => {
+				if (spaceId) {
+					U.Router.switchSpace(spaceId, '', false, routeParam, true);
+				} else {
+					Animation.from(() => {
+						U.Data.onAuthWithoutSpace(routeParam);
+						isSelecting.current = false;
+					});
+				};
+			});
 
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});

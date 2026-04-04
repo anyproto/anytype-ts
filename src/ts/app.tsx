@@ -397,16 +397,16 @@ const App: FC = () => {
 
 				U.Data.onInfo(account.info);
 				S.Common.spaceSet('');
-				U.Data.onAuthOnce();
+				U.Data.onAuthOnce(() => {
+					const param = route ? U.Router.getParam(route) : {};
+					const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
-				const param = route ? U.Router.getParam(route) : {};
-				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
-
-				if (spaceId) {
-					U.Router.switchSpace(spaceId, '', false, routeParam, true);
-				} else {
-					U.Data.onAuthWithoutSpace(routeParam);
-				};
+					if (spaceId) {
+						U.Router.switchSpace(spaceId, '', false, routeParam, true);
+					} else {
+						U.Data.onAuthWithoutSpace(routeParam);
+					};
+				});
 			});
 		};
 

@@ -29,16 +29,14 @@ const PageAuthSelect = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce();
+			U.Data.onAuthOnce(() => {
+				Storage.set('spaceId', account.info.accountSpaceId);
+				S.Common.showRelativeDatesSet(true);
+				
+				Storage.set('multichatsOnboarding', true);
+				Storage.setOnboarding('objectDescriptionButton');
+				Storage.setOnboarding('typeResetLayout');
 
-			Storage.set('spaceId', account.info.accountSpaceId);
-			S.Common.showRelativeDatesSet(true);
-			
-			Storage.set('multichatsOnboarding', true);
-			Storage.setOnboarding('objectDescriptionButton');
-			Storage.setOnboarding('typeResetLayout');
-
-			U.Subscription.createGlobal(() => {
 				inflate(() => U.Router.go('/auth/onboard', {}));
 			});
 		};

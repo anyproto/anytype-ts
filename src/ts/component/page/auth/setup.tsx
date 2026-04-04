@@ -105,14 +105,14 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce();
+			U.Data.onAuthOnce(() => {
+				if (spaceId) {
+					U.Router.switchSpace(spaceId, '', false, routeParam, true);
+				} else {
+					U.Router.go('/main/void/select', { replace: true, onRouteChange: onAuthComplete });
+				};
+			});
 
-			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, routeParam, true);
-			} else {
-				U.Router.go('/main/void/select', { replace: true, onRouteChange: onAuthComplete });
-			};
-			
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
