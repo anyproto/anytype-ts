@@ -188,11 +188,30 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			phantomNewlineRef.current = true;
 		};
 
+		// For code blocks, save scroll position before replacing innerHTML.
+		// Syntax highlighting replaces the entire DOM content, which causes
+		// the browser to scroll the page container when restoring the cursor.
+		let savedScrollTop: number | null = null;
+		if (block.isTextCode()) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
+				savedScrollTop = container.scrollTop;
+			};
+		};
+
 		editableRef.current?.setValue(html);
 
 		// Restore cursor position if provided
 		if (restoreRange) {
 			editableRef.current?.setRange(restoreRange);
+		};
+
+		// Restore scroll position for code blocks
+		if (savedScrollTop !== null) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
+				container.scrollTop = savedScrollTop;
+			};
 		};
 
 		if (!block.isTextCode() && (html != text) && marksRef.current.length) {
@@ -1465,9 +1484,20 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : getTextValue();
 		const r = range !== undefined ? range : getRange();
-		
-		// Populate marks before setValue to prevent formatting issue
-		marksRef.current = getMarksFromHtml().marks;
+
+		if (block.canHaveMarks() && r) {
+			const diff = v.length - textRef.current.length;
+
+			if (diff !== 0) {
+				// Adjust marks based on text length change at insertion point.
+				// We avoid re-reading marks from DOM HTML because during IME composition
+				// the browser may insert text inside mark elements (e.g., <markupcode>),
+				// causing marks to incorrectly expand and shift their visual position.
+				const insertStart = r.from - Math.max(0, diff);
+				marksRef.current = Mark.adjust(marksRef.current, insertStart, diff);
+			};
+		};
+
 		setValue(v, r);
 	};
 
