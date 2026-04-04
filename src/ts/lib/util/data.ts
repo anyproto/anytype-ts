@@ -325,26 +325,25 @@ class UtilData {
 			return;
 		};
 
-		C.ObjectOpen(widgets, '', space);
-
-		U.Subscription.createSpace(() => {
-			this.initPin(() => {
-				// Redirect
-				if (S.Common.pin && !keyboard.isPinChecked) {
-					U.Router.go('/auth/pin-check', routeParam);
-				} else {
-					const rp = route ? U.Router.getParam(route) : {};
-					const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
-
-					if (isRestorable) {
-						U.Router.go(route, routeParam);
+		C.ObjectOpen(widgets, '', space, () => {
+			U.Subscription.createSpace(() => {
+				this.initPin(() => {
+					if (S.Common.pin && !keyboard.isPinChecked) {
+						U.Router.go('/auth/pin-check', routeParam);
 					} else {
-						U.Space.openDashboard(routeParam);
-					};
-				};
+						const rp = route ? U.Router.getParam(route) : {};
+						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
 
-				S.Common.redirectSet('');
-				callBack?.();
+						if (isRestorable) {
+							U.Router.go(route, routeParam);
+						} else {
+							U.Space.openDashboard(routeParam);
+						};
+					};
+
+					S.Common.redirectSet('');
+					callBack?.();
+				});
 			});
 		});
 	};
