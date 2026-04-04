@@ -1,5 +1,3 @@
-import { init } from 'emoji-mart';
-
 const DIV = 65039;
 const CAP = 8419;
 
@@ -13,12 +11,6 @@ class UtilSmile {
 	 * Initializes the emoji data, icons, cache, and aliases.
 	 */
 	init () {
-		// Preserve categories before emoji-mart init, which strips unrecognized emoji IDs
-		const categories = J.Emoji.categories.map(c => ({ ...c, emojis: [ ...c.emojis ] }));
-
-		init({ data: J.Emoji });
-
-		J.Emoji.categories = categories;
 		this.icons = Object.keys(J.Emoji.emojis);
 
 		for (const id in J.Emoji.emojis) {

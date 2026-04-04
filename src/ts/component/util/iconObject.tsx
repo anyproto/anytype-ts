@@ -12,7 +12,6 @@ interface Props {
 	color?: string;
 	canEdit?: boolean;
 	native?: boolean;
-	asImage?: boolean;
 	size?: number;
 	iconSize?: number;
 	menuId?: string;
