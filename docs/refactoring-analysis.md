@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Updated: 2026-04-02 | Scope: `src/ts/` full codebase audit
+> Generated: 2026-03-15 | Updated: 2026-04-04 | Scope: `src/ts/` full codebase audit
 
 ---
 
@@ -15,6 +15,7 @@
 | 2026-03-28 | Code dedup: extracted `parseSubId()` in dispatcher (3 call sites unified) |
 | 2026-03-28 | God file split: extracted 24 DOM helpers from `common.ts` (1,678->1,310) into new `dom.ts` (404 lines), updated 103 callers |
 | 2026-04-02 | **jQuery removal complete**: removed `jquery` and `@types/jquery` from dependencies; converted all 199 files (~3,000 call sites) to native DOM + `U.Dom` helpers; sidebar panel methods return `HTMLElement`; `scrollOnMove` and `U.StickyScrollbar` accept `HTMLElement`; `JQuery` types removed from interfaces; ~70KB gzip saved from bundle |
+| 2026-04-04 | **Scoped broadcast selectAll queries**: 9 unscoped `U.Dom.selectAll()` calls across 4 files (`block/index.tsx`, `grid/head/cell.tsx`, `selection/provider.tsx`, `drag/provider.tsx`) scoped to nearest container (`pageContainer`, `blockEl`, `nodeRef.current`, `container`) instead of scanning entire document |
 
 ---
 
@@ -77,17 +78,15 @@ Many components use `U.Dom.get('block-xxx')` or `U.Dom.select('#block-xxx')` to 
 - Cross-component queries (e.g. finding a block by ID from selection provider): consider a ref registry (`Map<string, HTMLElement>`) managed by the block tree, avoiding DOM queries entirely
 - `U.Dom.get('sidebarDummyLeft')` etc: replace with refs stored on a layout context
 
-#### 2.2 Reduce global `selectAll` broadcasts (S-M)
+#### ~~2.2 Reduce global `selectAll` broadcasts~~ ✅ DONE
 
-Some patterns query the entire document for classes to toggle:
-```typescript
-U.Dom.selectAll('.block.showMenu').forEach(el => U.Dom.removeClass(el, 'showMenu'));
-U.Dom.selectAll('.cellKeyHover').removeClass('cellKeyHover');
-```
+Scoped 9 unscoped `selectAll` calls across 4 files to nearest container:
+- `block/index.tsx` — `.block.showMenu`, `.block.isAdding` scoped to `pageContainer`; `.colResize.active` scoped to `nodeRef.current`
+- `grid/head/cell.tsx` — `.cell.isEditing`, `.cellKeyHover` scoped to `blockEl`
+- `selection/provider.tsx` — `.isSelectionSelected` scoped to `container`
+- `drag/provider.tsx` — `.colResize.active`, `.isDragging`, `.block.isDragging`, `.dropTarget.isOver` scoped to `nodeRef.current`
 
-These can be replaced with:
-- Scoped queries within the relevant container (e.g. `U.Dom.selectAll('.block.showMenu', pageContainer)`)
-- State-driven class toggling via React (add/remove classes via component state instead of DOM queries)
+Remaining unscoped calls are in `focus.ts` (global focus state), `keyboard.ts` (global drag/print state), `animation.ts` (page-level animations), and `onboarding.tsx` (overlay elements) — these legitimately need document-wide scope.
 
 #### 2.3 Event handler namespace pattern (M)
 
@@ -260,14 +259,14 @@ Triaged items found to be false positives on inspection:
 
 ## 12. Refactoring Plan -- Remaining Tasks
 
-### Phase 1: DOM Optimization -- 4 tasks (NEW)
+### Phase 1: DOM Optimization -- 3 remaining tasks (1 done)
 
-| Task | Impact | Effort |
-|------|--------|--------|
-| Replace string-based ID lookups with React refs in hot components | Fewer DOM queries, better perf | L |
-| Scope broadcast `selectAll` queries to nearest container | Fewer full-document scans | S |
-| Create `EventNamespace` utility for window events | Cleaner event cleanup, less boilerplate | M |
-| Create typed event bus to replace `CustomEvent` dispatch | Type safety, no DOM overhead | M |
+| Task | Impact | Effort | Status |
+|------|--------|--------|--------|
+| Replace string-based ID lookups with React refs in hot components | Fewer DOM queries, better perf | L | |
+| ~~Scope broadcast `selectAll` queries to nearest container~~ | Fewer full-document scans | S | ✅ Done |
+| Create `EventNamespace` utility for window events | Cleaner event cleanup, less boilerplate | M | |
+| Create typed event bus to replace `CustomEvent` dispatch | Type safety, no DOM overhead | M | |
 
 ### Phase 2: Type Safety -- 1 remaining task
 
@@ -323,7 +322,8 @@ Triaged items found to be false positives on inspection:
 ```
 Done:  Phase 5.1 (mobx-react-lite swap) ✅
 Done:  Phase 5.2 (auto-observer plugin) ✅
-Next:  Phase 1 (DOM optimization) -- scoped queries + EventNamespace
+Done:  Phase 1.2 (scoped selectAll queries) ✅
+Next:  Phase 1 (DOM optimization) -- EventNamespace + typed event bus
 Then:  Phase 5.3 (makeAutoObservable) + Phase 4 (god file splits)
 Later: Phase 2 + 7 (type safety + architecture)
 ```
