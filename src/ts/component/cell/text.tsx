@@ -404,7 +404,7 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		if (S.Common.cellId) {
 			U.Dom.addClass(U.Dom.get(S.Common.cellId), 'isEditing');
 		};
-	});
+	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
