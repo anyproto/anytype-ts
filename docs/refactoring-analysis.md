@@ -274,11 +274,44 @@ No clear convention. Loose equality is 3x more common than strict.
 
 `.forEach()` dominates (1.8x more than `for...of`). Mixed but not problematic.
 
-### 8.3 Optional Chaining
+### 8.3 Optional Chaining for Property Access
 
 1,315 occurrences across 250 files -- well-adopted. A few verbose `x && x.y && x.y.z` chains remain (e.g., `chat/form.tsx:561`).
 
-### 8.4 Import Style
+### 8.4 Verbose Optional Method/Callback Calls (~357 occurrences, 124 files)
+
+Pattern: `if (callback) { callback(...) }` can be simplified to `callback?.()`.
+
+```typescript
+// Before
+if (item.onSwitch) {
+    item.onSwitch(e, !item.switchValue);
+};
+
+// After
+item.onSwitch?.(e, !item.switchValue);
+```
+
+**Top files:**
+
+| File | Count | Pattern |
+|------|-------|---------|
+| `lib/keyboard.ts` | 29 | Event handler checks |
+| `lib/relation.ts` | 14 | Callback checks |
+| `component/util/iconObject.tsx` | 13 | Props callback checks |
+| `component/page/main/date.tsx` | 9 | Props callback checks |
+| `component/form/editable.tsx` | 9 | onChange/onKeyDown/onBlur checks |
+| `component/form/textarea.tsx` | 8 | Form event handler checks |
+| `lib/util/graph.ts` | 7 | Callback checks |
+| `lib/dataview.ts` | 7 | Callback checks |
+| `component/menu/index.tsx` | 7 | onOpen/onClose checks |
+| `lib/api/dispatcher.ts` | 7 | Subscription callback checks |
+| `component/block/featured.tsx` | 7 | Props callback checks |
+| `component/form/select.tsx` | 6 | onChange/onOpen checks |
+
+**Categories:** form components (54), menu/popup (89), utility/lib (108), block/editor (67), store/state (39).
+
+### 8.5 Import Style
 
 Excellent consistency: 451/497 namespace imports use the `import * as I from 'Interface'` single-letter convention.
 
@@ -319,6 +352,7 @@ Excellent consistency: 451/497 namespace imports use the `import * as I from 'In
 | Type store methods in detail.ts, block.ts, record.ts | 3 store files (~48 `any`) | L |
 | Convert 14 small enums to union types | interface/ files | S |
 | Replace `(el as any)._handler` patterns with WeakMap | drag/provider.tsx, graph/provider.tsx | S |
+| Replace verbose `if (cb) { cb() }` with `cb?.()` | 124 files (~357 occurrences) | S-M |
 
 ### Phase 5: DOM Optimization
 
@@ -352,6 +386,7 @@ Quick wins (S effort):
   - Remove @dnd-kit/sortable from dispatcher
   - Fix reverse imports in lib/util/graph.ts, object.ts
   - Add logging to silent catch blocks
+  - Replace verbose if (cb) { cb() } with cb?.() (~357 sites, 124 files)
 
 Next (M effort):
   - Investigate and fix forceUpdate patterns
