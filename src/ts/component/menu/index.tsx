@@ -262,6 +262,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 
 			rebindPrevious();
 			raf.cancel(framePosition.current);
+			window.clearTimeout(scrollTimeout.current);
 			isAnimating.current = false;
 		};
 	}, []);
@@ -327,6 +328,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const sidebarResizeHandler = useRef<(() => void) | null>(null);
 	const scrollHandler = useRef<(() => void) | null>(null);
 	const scrollContainerRef = useRef<HTMLElement | null>(null);
+	const scrollTimeout = useRef(0);
 
 	const rebind = () => {
 		unbind();
@@ -344,8 +346,15 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 		if (containerEl) {
 			scrollContainerRef.current = containerEl;
 			const onScroll = () => {
+				U.Dom.addClass(containerRef.current, 'noAnimation');
+				window.clearTimeout(scrollTimeout.current);
+
 				raf.cancel(framePosition.current);
 				framePosition.current = raf(() => position());
+
+				scrollTimeout.current = window.setTimeout(() => {
+					U.Dom.removeClass(containerRef.current, 'noAnimation');
+				}, 50);
 			};
 			scrollHandler.current = onScroll;
 			U.Dom.addEvent(containerEl, 'scroll', onScroll);

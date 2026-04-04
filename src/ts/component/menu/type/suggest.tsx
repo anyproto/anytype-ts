@@ -232,7 +232,7 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const { data } = param;
 		const { noFilter } = data;
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
@@ -244,7 +244,6 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const Item = (item: any) => {
@@ -295,7 +294,6 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
@@ -309,11 +307,11 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filter ]);
 
-	useEffect(() => resize());
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

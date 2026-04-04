@@ -153,13 +153,12 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const offset = 100;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: items.length ? `${height}px` : '' });
-		position();
 	};
 
 	const items = getItems();
@@ -196,7 +195,6 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -210,7 +208,6 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		resize();
 		setActive();
 	});
 
@@ -222,6 +219,7 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

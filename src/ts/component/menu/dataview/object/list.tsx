@@ -31,7 +31,6 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 		focus();
 		load(true);
 	}, []);
@@ -50,7 +49,6 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		resize();
 		focus();
 		setActive(items[n.current], false);
 	});
@@ -268,7 +266,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
@@ -285,7 +283,6 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -340,6 +337,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

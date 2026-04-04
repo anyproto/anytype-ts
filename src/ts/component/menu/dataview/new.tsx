@@ -177,9 +177,8 @@ const MenuNew = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: 'auto' });
-		position();
 	};
 
 	const sections = getSections();
@@ -204,7 +203,7 @@ const MenuNew = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		loadTemplate();
-		window.setTimeout(() => resize(), 5);
+		window.setTimeout(() => position(), 5);
 
 		return () => {
 			unbind();
@@ -223,7 +222,7 @@ const MenuNew = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		onOver,
 		onMouseEnter,
 		onMouseLeave,
-		resize,
+		beforePosition,
 		Section,
 	}), []);
 

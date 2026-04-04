@@ -313,7 +313,7 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16;
@@ -322,7 +322,6 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (obj) {
 			U.Dom.css(obj, { height: `${height}px` });
 		};
-		position();
 	};
 
 	const isReadonly = () => {
@@ -443,7 +442,6 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -456,10 +454,8 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.cell);
 		};
 	}, []);
-	
-	useEffect(() => {
-		resize();
 
+	useEffect(() => {
 		if (listRef.current && topRef.current) {
 			listRef.current.scrollToPosition(topRef.current);
 		};
@@ -470,6 +466,7 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

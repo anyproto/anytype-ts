@@ -119,13 +119,12 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const Item = (item: any) => {
@@ -211,7 +210,6 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -226,7 +224,6 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		resize();
 		rebind();
 		setActive(null, true);
 		position();
@@ -239,6 +236,7 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

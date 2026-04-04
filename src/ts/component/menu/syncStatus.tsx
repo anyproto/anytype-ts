@@ -24,17 +24,12 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		load();
 		rebind();
-		resize();
 
 		return () => {
 			unbind();
 			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
-
-	useEffect(() => {
-		resize();	
-	});
 
 	const rebind = () => {
 		unbind();
@@ -53,6 +48,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
+
 		if (clickHandler.current) {
 			const obj = getContainer();
 			if (obj) {
@@ -168,6 +164,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: 50,
 		}, () => {
 			setIsLoading(false);
+			beforePosition();
 			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
 		});
 	};
@@ -344,13 +341,12 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return { id, label, iconName, iconColor, title, message, buttons };
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const content = U.Dom.select('.content', getContainer());
 		const height = items.length ? items.length * HEIGHT + 64 : 160;
 
 		U.Dom.css(content, { height: `${height}px` });
-		position();
 	};
 
 	const scrollToRow = (items: any[], index: number) => {
@@ -462,6 +458,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

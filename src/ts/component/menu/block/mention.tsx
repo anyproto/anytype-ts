@@ -24,7 +24,6 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -34,7 +33,6 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 	});
 
 	useEffect(() => {
@@ -248,7 +246,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 
 		let height = 16;
@@ -259,7 +257,6 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -310,6 +307,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

@@ -104,12 +104,11 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return U.Menu.prepareForSelect(sections);
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const obj = U.Dom.select('.itemsWrapper', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT - 8));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -169,7 +168,6 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	useEffect(() => {
 		rebind();
-		resize();
 
 		return () => {
 			unbind();
@@ -178,7 +176,6 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 	
 	useEffect(() => {
-		resize();
 		rebind();
 		setActive(null, true);
 		position();
@@ -187,6 +184,7 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

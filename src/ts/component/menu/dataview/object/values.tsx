@@ -176,7 +176,7 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16;
@@ -185,7 +185,6 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		listRef.current?.recomputeRowHeights(0);
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -274,7 +273,6 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -288,8 +286,6 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		resize();
-
 		if (listRef.current && topRef.current) {
 			listRef.current.scrollToPosition(topRef.current);
 		};
@@ -300,6 +296,7 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems: () => items,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

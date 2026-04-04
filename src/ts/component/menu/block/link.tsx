@@ -32,7 +32,6 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -46,7 +45,6 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(top.current);
 		};
 
-		resize();
 		setActive();
 	});
 
@@ -228,7 +226,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const contentEl = U.Dom.select('.content', getContainer());
 		const offset = 12;
@@ -245,8 +243,6 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			U.Dom.removeClass(contentEl, 'initial');
 		};
-
-		position();
 	};
 
 	const items = getItems();
@@ -344,6 +340,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

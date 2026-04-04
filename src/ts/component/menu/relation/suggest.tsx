@@ -26,7 +26,6 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -37,7 +36,6 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		resize();
 		rebind();
 	});
 
@@ -250,7 +248,7 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
@@ -263,7 +261,6 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		height = Math.min(height, 376);
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -316,6 +313,7 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

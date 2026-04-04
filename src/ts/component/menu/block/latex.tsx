@@ -166,7 +166,7 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const offset = 16;
 		const ih = isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 
@@ -183,7 +183,6 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
-		position();
 	};
 
 	const rowRenderer = (param: any) => {
@@ -240,7 +239,6 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 	}, []);
 
 	useEffect(() => {
@@ -255,7 +253,6 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		resize();
 		rebind();
 		position();
 		setActive();
@@ -271,6 +268,7 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

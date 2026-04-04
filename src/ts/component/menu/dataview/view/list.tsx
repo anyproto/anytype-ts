@@ -147,14 +147,13 @@ const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = isAllowed() ? 58 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const isAllowed = () => {	
@@ -227,16 +226,12 @@ const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		resize();
-
 		return () => {
 			S.Menu.closeAll([ 'select' ]);
 		};
 	}, []);
 
 	useEffect(() => {
-		resize();
-
 		if (listRef.current && topRef.current) {
 			listRef.current.scrollToPosition(topRef.current);
 		};
@@ -247,6 +242,7 @@ const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems: () => items,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

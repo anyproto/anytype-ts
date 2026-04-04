@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import raf from 'raf';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
 import * as I from 'Interface';
 
@@ -35,8 +34,6 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			inputRef.current.placeholderCheck?.();
 			inputRef.current.setFocus();
 		};
-
-		resize();
 
 		window.setTimeout(() => {
 			setActive();
@@ -92,14 +89,14 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onInput = (e: any, v: string) => {
 		valueRef.current = isSingleLine ? String(v || '').trim() : getValue();
-		resize();
+		position();
 	};
 
 	const save = () => {
 		onChange?.(valueRef.current);
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		if (noResize) {
 			return;
 		};
@@ -111,15 +108,11 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const cell = U.Dom.get(cellId);
 		const nameEl = U.Dom.select('.name', cell) as HTMLElement;
 		const lh = nameEl ? parseInt(window.getComputedStyle(nameEl).lineHeight, 10) || 20 : 20;
+		const sh = input?.scrollHeight || 0;
+		const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell?.offsetHeight || 0, sh)));
 
-		raf(() => {
-			const sh = input?.scrollHeight || 0;
-			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell?.offsetHeight || 0, sh)));
-
-			U.Dom.css(obj, { height: `${height}px` });
-			U.Dom.css(input, { lineHeight: `${lh}px` });
-			position();
-		});
+		U.Dom.css(obj, { height: `${height}px` });
+		U.Dom.css(input, { lineHeight: `${lh}px` });
 	};
 
 	const onClick = (e: any, action: any) => {
@@ -176,6 +169,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	useImperativeHandle(ref, () => ({
+		beforePosition,
 		getItems: () => actions,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,

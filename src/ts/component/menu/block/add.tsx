@@ -28,7 +28,6 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		checkFilter();
-		resize();
 
 		return () => {
 			S.Menu.closeAll(J.Menu.add);
@@ -55,7 +54,6 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		checkFilter();
-		resize();
 		setActive();
 	});
 
@@ -640,7 +638,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Data.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const content = U.Dom.select('.content', getContainer());
 
@@ -651,7 +649,6 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		height = Math.max(HEIGHT_ITEM + 18, height);
 
 		U.Dom.css(content, { height: `${height}px` });
-		position();
 	};
 
 	const getRowHeight = (item: any, index: number) => {
@@ -798,6 +795,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
