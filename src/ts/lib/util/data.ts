@@ -306,11 +306,11 @@ class UtilData {
 	};
 
 	/**
-	 * Handles authentication and routing after login.
+	 * Handles routing after space switch.
 	 * @param {any} [param] - Optional parameters for authentication.
 	 * @param {() => void} [callBack] - Optional callback after authentication.
 	 */
-	onAuth(param?: any, callBack?: () => void) {
+	onSpaceSwitch (param?: any, callBack?: () => void) {
 		param = param || {};
 
 		const { widgets } = S.Block;
@@ -325,39 +325,43 @@ class UtilData {
 			return;
 		};
 
-		C.ObjectOpen(widgets, '', space, () => {
-			U.Subscription.createSpace(() => {
-				S.Common.pinInit(() => {
-					const { pin } = S.Common;
+		C.ObjectOpen(widgets, '', space);
 
-					// Notify main process whether a PIN is set
-					Renderer.send('setHasPinSet', Boolean(pin));
+		U.Subscription.createSpace(() => {
+			this.initPin(() => {
+				// Redirect
+				if (S.Common.pin && !keyboard.isPinChecked) {
+					U.Router.go('/auth/pin-check', routeParam);
+				} else {
+					const rp = route ? U.Router.getParam(route) : {};
+					const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
 
-					// If no PIN, user is considered checked
-					if (!pin) {
-						keyboard.setPinChecked(true);
-					};
-
-					keyboard.initPinCheck();
-
-					// Redirect
-					if (pin && !keyboard.isPinChecked) {
-						U.Router.go('/auth/pin-check', routeParam);
+					if (isRestorable) {
+						U.Router.go(route, routeParam);
 					} else {
-						const rp = route ? U.Router.getParam(route) : {};
-						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
-
-						if (isRestorable) {
-							U.Router.go(route, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
+						U.Space.openDashboard(routeParam);
 					};
+				};
 
-					S.Common.redirectSet('');
-					callBack?.();
-				});
+				S.Common.redirectSet('');
+				callBack?.();
 			});
+		});
+	};
+
+	initPin (callBack?: () => void) {
+		S.Common.pinInit(() => {
+			// Notify main process whether a PIN is set
+			Renderer.send('setHasPinSet', !!S.Common.pin);
+
+			// If no PIN, user is considered checked
+			if (!S.Common.pin) {
+				keyboard.setPinChecked(true);
+			} else {
+				keyboard.initPinCheck();
+			};
+			
+			callBack?.();
 		});
 	};
 

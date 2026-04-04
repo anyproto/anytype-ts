@@ -57,6 +57,7 @@ class Keyboard {
 				U.Data.getMembershipData();
 			};
 		};
+		
 		this._handlers.offline = this._handlers.online;
 		this._handlers.focus = () => {
 			S.Common.windowIsFocusedSet(true);
@@ -75,6 +76,7 @@ class Keyboard {
 
 			this.initPinCheck();
 		};
+
 		this._handlers.blur = () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
@@ -1736,11 +1738,7 @@ class Keyboard {
 		const { account } = S.Auth;
 		const { pin, windowIsFocused } = S.Common;
 
-		if (!account || !pin) {
-			return;
-		};
-
-		if (!windowIsFocused) {
+		if (!account || !pin || !windowIsFocused) {
 			return;
 		};
 

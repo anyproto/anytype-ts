@@ -255,7 +255,7 @@ class UtilRouter {
 					this.rightSidebarCheck(false);
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam }, () => {
+						U.Data.onSpaceSwitch({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
 
