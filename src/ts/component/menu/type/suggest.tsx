@@ -153,6 +153,7 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
 
+			beforePosition();
 			callBack?.(message);
 		});
 	};
@@ -235,6 +236,7 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const beforePosition = () => {
 		const { data } = param;
 		const { noFilter } = data;
+		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;

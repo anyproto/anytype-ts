@@ -92,6 +92,7 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setIsLoading(false);
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
+			beforePosition();
 			callBack?.(message);
 		});
 	};
