@@ -1,6 +1,6 @@
 # Anytype-TS Codebase Refactoring Analysis
 
-> Generated: 2026-03-15 | Updated: 2026-04-04 | Scope: `src/ts/` full codebase audit
+> Generated: 2026-04-04 | Scope: `src/ts/` full codebase audit
 
 ---
 
@@ -14,8 +14,9 @@
 | 2026-03-28 | Tier 1 type fixes: typed dispatcher comment casts, translate fallback, sparkOnboarding messages, DetailStore makeObservable |
 | 2026-03-28 | Code dedup: extracted `parseSubId()` in dispatcher (3 call sites unified) |
 | 2026-03-28 | God file split: extracted 24 DOM helpers from `common.ts` (1,678->1,310) into new `dom.ts` (404 lines), updated 103 callers |
-| 2026-04-02 | **jQuery removal complete**: removed `jquery` and `@types/jquery` from dependencies; converted all 199 files (~3,000 call sites) to native DOM + `U.Dom` helpers; sidebar panel methods return `HTMLElement`; `scrollOnMove` and `U.StickyScrollbar` accept `HTMLElement`; `JQuery` types removed from interfaces; ~70KB gzip saved from bundle |
-| 2026-04-04 | **Scoped broadcast selectAll queries**: 9 unscoped `U.Dom.selectAll()` calls across 4 files (`block/index.tsx`, `grid/head/cell.tsx`, `selection/provider.tsx`, `drag/provider.tsx`) scoped to nearest container (`pageContainer`, `blockEl`, `nodeRef.current`, `container`) instead of scanning entire document |
+| 2026-04-02 | **jQuery removal complete**: removed `jquery` and `@types/jquery` from dependencies; converted all 199 files (~3,000 call sites) to native DOM + `U.Dom` helpers; ~70KB gzip saved from bundle |
+| 2026-04-02 | **MobX modernization**: switched `mobx-react` to `mobx-react-lite`; added auto-observer Vite plugin (wraps exported function components automatically); removed manual `observer()` wraps from ~260 files |
+| 2026-04-04 | **Scoped broadcast selectAll**: 9 unscoped `U.Dom.selectAll()` calls across 4 files scoped to nearest container |
 
 ---
 
@@ -24,292 +25,316 @@
 | File | Lines | Responsibilities |
 |------|-------|-----------------|
 | `docs/help/whatsNew.ts` | 3,701 | Hardcoded changelog data (should be JSON) |
-| `component/editor/page.tsx` | 2,827 | Editor state, drag/drop, keyboard, focus, rendering, TOC |
-| `lib/keyboard.ts` | 2,212 | Keyboard, mouse, shortcuts, menus, focus -- all in one |
-| `lib/util/menu.ts` | 2,064 | Menu positioning, filtering, keyboard nav, styling |
-| `lib/api/command.ts` | 1,990 | 100+ gRPC command exports |
-| `component/block/chat/form.tsx` | 1,954 | Chat form, attachments, editing, mention handling |
-| `lib/api/mapper.ts` | 1,931 | Protobuf mapping with long if-chains |
-| `component/block/dataview.tsx` | 1,867 | All dataview types (grid, board, calendar, gallery) |
-| `lib/api/dispatcher.ts` | 1,772 | gRPC lifecycle, event buffering, command queueing |
-| `component/block/text.tsx` | 1,656 | Text block with marks, latex, code, mentions |
-| `component/block/table.tsx` | 1,566 | Table block with editing, selection, drag |
-| `component/block/chat.tsx` | 1,328 | Chat block manager |
-| `lib/util/common.ts` | 1,304 | Catch-all utility (DOM extracted to `dom.ts`) |
-| `lib/dataview.ts` | 1,267 | Dataview handler |
-| `component/menu/smile.tsx` | 1,247 | Emoji menu with library and upload |
-| `component/drag/provider.tsx` | 1,188 | Drag provider with complex state |
-| `component/block/index.tsx` | 1,187 | Block factory/dispatcher |
-| `lib/action.ts` | 1,170 | Action dispatcher |
-| `component/menu/index.tsx` | 1,167 | Menu dispatcher |
-| `lib/relation.ts` | 1,140 | Relation handler |
+| `component/form/commentEditor.tsx` | 3,566 | Lexical-based rich text editor: formatting, lists, code blocks, attachments, embeds, mentions, 60+ handlers |
+| `component/editor/page.tsx` | 2,825 | Editor layout, children rendering, TOC, drag-drop, focus, throttled scroll/resize, block navigation |
+| `lib/keyboard.ts` | 2,210 | Keyboard shortcuts, mouse tracking, drag/resize state, touch events, window focus/blur, sidebar auto-hide, ~80 methods |
+| `lib/util/menu.ts` | 2,069 | Menu item generation for blocks, turn/transform menus, actions, colors, alignment, widgets, ~50 builder methods |
+| `lib/api/command.ts` | 1,990 | ~100+ gRPC command wrapper functions across 30+ domains |
+| `component/block/chat/form.tsx` | 1,953 | Lexical chat input with attachments, mentions, emoji, drag-drop, reply/edit state, ~50 handlers |
+| `component/block/dataview.tsx` | 1,874 | View types (Grid, Board, Gallery, List, Calendar, Graph, Timeline), selection, filters, controls |
+| `lib/api/mapper.ts` | 1,868 | Bidirectional protobuf ↔ TypeScript conversion for Block, Object, Event types |
+| `lib/api/dispatcher.ts` | 1,807 | gRPC connection, streaming events, request/response handling, event batching, reconnection |
+| `component/block/text.tsx` | 1,659 | Text block with marks, Prism syntax highlighting, selection, paste handling |
+| `component/block/table.tsx` | 1,562 | Table block with cell selection, drag-drop reordering, scrolling, resize, keyboard nav |
+| `lib/util/data.ts` | 1,427 | Block styling, sorting, tree navigation, content formatting, auth checks, ~50+ methods |
+| `component/block/chat.tsx` | 1,323 | Chat message rendering, auto-loading, scroll position, pagination, date grouping |
+| `lib/util/common.ts` | 1,304 | Catch-all utility: mouse/Electron access, object copying, KaTeX, clipboard, date formatting, ~60+ methods |
 
 ---
 
-## 2. DOM Selector Optimization
+## 2. DOM & Event Patterns
 
 ### Current State
 
-After jQuery removal, the codebase uses `U.Dom` helpers for all DOM access:
+All production DOM queries go through `U.Dom` helpers. jQuery fully removed. No raw `document.querySelector` in source.
 
 | Pattern | Occurrences | Files |
 |---------|-------------|-------|
-| `U.Dom.select/selectAll/get()` | ~524 | 126 |
-| `U.Dom.get()` with template literal IDs | ~44 | 31 |
-| `window.addEventListener/removeEventListener` | ~430 | 122 |
-| `window.dispatchEvent(new CustomEvent(...))` | ~49 | 32 |
+| `U.Dom.selectAll()` (scoped, with container) | ~111 | 54 |
+| `U.Dom.selectAll()` (unscoped, document-wide) | ~18 | 8 |
+| `U.Dom.get()` with template literal IDs | ~52 | 31 |
+| `document.getElementById` | 6 | 5 (all bootstrap/entry code) |
 
-### Optimization Opportunities
+### 2.1 Replace string-based ID lookups with React refs (L)
 
-#### 2.1 Replace string-based ID lookups with React refs (M)
-
-Many components use `U.Dom.get('block-xxx')` or `U.Dom.select('#block-xxx')` to find elements that are rendered in the same React tree. These can be replaced with `useRef` for direct element access without DOM traversal.
-
-**Hot spots** (most `U.Dom.get` calls with dynamic IDs):
-- `block/index.tsx` (20 selectors) -- block menu, selection targets, column resize
+52 `U.Dom.get()` calls with template literal IDs across 31 files. Hot spots:
+- `block/table.tsx` (46 selectors) -- cell selection, row/column operations
 - `editor/page.tsx` (17 selectors) -- header, footer, cover positioning
-- `block/table.tsx` (46 selectors!) -- cell selection, row/column operations
+- `block/index.tsx` (20 selectors) -- block menu, selection targets
 - `drag/layer.tsx` (16 selectors) -- cloning block elements for drag preview
-- `block/embed.tsx` (13 selectors) -- iframe management, value/error elements
 - `sidebar.ts` (15 selectors) -- panel wrappers, dummy elements
 
-**Approach:**
-- Components that query their own children: pass refs down or use `useRef` + callback refs
-- Cross-component queries (e.g. finding a block by ID from selection provider): consider a ref registry (`Map<string, HTMLElement>`) managed by the block tree, avoiding DOM queries entirely
-- `U.Dom.get('sidebarDummyLeft')` etc: replace with refs stored on a layout context
+**Approach:** Components querying their own children use `useRef`; cross-component lookups use a ref registry (`Map<string, HTMLElement>`) on context.
 
-#### ~~2.2 Reduce global `selectAll` broadcasts~~ ✅ DONE
+### ~~2.2 Scope broadcast selectAll queries~~ -- DONE
 
-Scoped 9 unscoped `selectAll` calls across 4 files to nearest container:
-- `block/index.tsx` — `.block.showMenu`, `.block.isAdding` scoped to `pageContainer`; `.colResize.active` scoped to `nodeRef.current`
-- `grid/head/cell.tsx` — `.cell.isEditing`, `.cellKeyHover` scoped to `blockEl`
-- `selection/provider.tsx` — `.isSelectionSelected` scoped to `container`
-- `drag/provider.tsx` — `.colResize.active`, `.isDragging`, `.block.isDragging`, `.dropTarget.isOver` scoped to `nodeRef.current`
+Remaining ~18 unscoped calls are legitimately document-wide: `focus.ts` (global focus state), `keyboard.ts` (global drag/print), `animation.ts` (page animations), `onboarding.tsx` (overlays).
 
-Remaining unscoped calls are in `focus.ts` (global focus state), `keyboard.ts` (global drag/print state), `animation.ts` (page-level animations), and `onboarding.tsx` (overlay elements) — these legitimately need document-wide scope.
+### 2.3 Event system
 
-#### 2.3 Event handler namespace pattern (M)
-
-The jQuery removal replaced `$(window).on('event.namespace')` with `window.addEventListener` + stored handler refs. This works but is verbose. Consider a lightweight `EventNamespace` utility:
-
-```typescript
-// Proposed: lib/eventNamespace.ts
-class EventNamespace {
-    private handlers = new Map<string, { event: string; handler: EventListener }>();
-
-    on(target: EventTarget, eventNs: string, handler: EventListener) { ... }
-    off(target: EventTarget, eventNs: string) { ... }
-    offAll(target: EventTarget) { ... }
-}
-```
-
-This would reduce ~430 manual `addEventListener`/`removeEventListener` pairs to a cleaner pattern with automatic cleanup.
-
-#### 2.4 Custom event bus to replace `dispatchEvent` (M)
-
-49 places use `window.dispatchEvent(new CustomEvent(...))` as a global event bus. A typed event emitter would provide:
-- Type safety for event names and payloads
-- No DOM overhead (pure JS)
-- Easier to trace event flow
+The codebase uses `U.Dom.addEvent`/`U.Dom.removeEvent` wrappers and `U.Dom.eventDispatch()` for custom events. Current state is functional but could benefit from:
+- **Typed event bus** -- replace remaining `window.dispatchEvent(new CustomEvent(...))` calls with type-safe emitter (no DOM overhead)
+- **EventNamespace utility** -- reduce verbose addEventListener/removeEventListener pairs with automatic cleanup
 
 ---
 
-## 3. Type Safety -- Remaining
+## 3. Type Safety
 
-### 3.1 `as any` Casts (~18 remaining in lib/ + store/, excl. tests)
+### 3.1 `as any` Casts (95 remaining)
 
-- **`lib/api/service.ts`** -- gRPC Object/decode casts (7 instances) -- low-level, hard to fix
+| Location | Count | Notes |
+|----------|-------|-------|
+| `component/` | 51 | drag/provider.tsx (8), graph/provider.tsx (9), comment/post.tsx (5), comment/reply.tsx (3), popup/search.tsx (3), editor/page.tsx (3), 17 more files (1-2 each) |
+| `lib/` (tests) | 32 | comment.test.ts (25), 5 other test files (1-2 each) -- test mocking, acceptable |
+| `lib/` (production) | 12 | api/service.ts (7, gRPC constraints), web/electronMock.ts (5, window globals) |
+| `store/` | 0 | Clean |
 
-### 3.2 `any` in Interfaces (78 occurrences in `src/ts/interface/`)
+**Worst patterns:** DOM element property storage (`(el as any)._handler`), canvas touch handlers, gRPC type casts.
 
-- `interface/common.ts` -- Toast `object`, `target`, `origin` all `any`; Option `id` as `any`; `tabs?: any[]`
-- `interface/menu.ts` -- MenuParam `rect` as `any`; `offsetX/Y` as `any`; `data?: any`; MenuRef `getItems?.(): any[]`
-- `interface/sparkOnboarding.ts` -- `[key: string]: any` index signatures
+### 3.2 `any` in Interfaces (~241 occurrences in 16 files)
 
-### 3.3 `any` in Stores
+| File | Count | Key issues |
+|------|-------|------------|
+| `interface/menuData.ts` | ~91 | `(...args: any[]) => void` callbacks, `[key: string]: any` catch-alls |
+| `interface/block/dataview.ts` | ~44 | Untyped getters, `customOrder?: any[]`, generic message callbacks |
+| `interface/common.ts` | ~20 | Toast `object`, `target`, `origin` all `any`; Option `id` as `any` |
+| `interface/block/index.ts` | ~17 | Mixed typed/untyped event handler params |
+| `interface/block/table.ts` | ~16 | Event handler params |
+| `interface/menu.ts` | ~8 | MenuParam `rect`, `offsetX/Y`, `data` all `any` |
+| Others (10 files) | ~45 | 1-7 each |
 
-- `store/detail.ts:5-8` -- Detail interface uses `any` for value
-- `store/block.ts:35` -- `Map<string, Map<string, any>>` restriction map
+**menuData.ts is the worst offender** -- makes it impossible to know what callback arguments expect.
 
-### 3.4 Enum Overuse (113 enums in `interface/`)
+### 3.3 `any` in Stores (~30 occurrences)
 
-Many simple enums could be union types.
+- `detail.ts` (~13) -- entire object store untyped, generic value sanitization
+- `block.ts` (~20) -- untyped updates, generic tree operations, filter predicates
+- `record.ts` (~15) -- untyped view/relation list operations
+
+### 3.4 Enums vs Union Types (44 enums in interface/)
+
+14 enums with < 5 members could be union types for better tree-shaking:
+`AnimType` (2), `AnimDirection` (2), `MenuType` (2), `TimeFormat` (2), `LinkCardStyle` (3), `LinkDefaultStyle` (3), `LinkIconSize` (3), `LinkDescription` (3), `SortType` (3), `EmptyType` (3), `FilterOperator` (3), `MarkerType` (4), and 2 others.
+
+### 3.5 Non-null Assertions (4 instances)
+
+- `lib/service/sparkOnboarding.ts:19` -- `this.listeners.get(event)!.push(fn)` -- Map get without registration check
+- `lib/web/electronMock.ts:508` -- `this.eventListeners.get(event)!.add(callback)` -- same pattern
+- `component/util/icons/registry.ts:39` -- `folders.get(folder)!.push(name)` -- same pattern
+- `lib/mark.test.ts:369` -- test assertion, acceptable
 
 ---
 
-## 4. Unsafe Access Patterns -- Remaining
+## 4. React Anti-Patterns
 
-All fixable items resolved. Remaining items audited as safe:
-- `lib/relation.ts:55` -- guarded by `includes()` check
-- `lib/util/embed.ts:360` -- `split()` always returns >= 1 element
-- `component/block/text.tsx:897` -- used with `||` fallback chain
-- `lib/mark.ts:638` -- has null check before access
-- `lib/util/string.ts:303,333,344,365-370` -- all have `m && m.length` guards
-
----
-
-## 5. Error Handling -- Remaining
-
-- `lib/web/electronMock.ts:83,476` -- `console.warn`/`console.error` then continues
-- Create consistent error handling patterns (new error utility) -- M effort
-
----
-
-## 6. React Anti-Patterns
-
-### 6.1 `forceUpdate()` Abuse (~63 files, ~165 occurrences) -- CRITICAL
+### 4.1 `forceUpdate()` Abuse (58 files, ~135 occurrences) -- CRITICAL
 
 ```typescript
 const [ dummy, setDummy ] = useState(0);
 const forceUpdate = () => setDummy(dummy + 1);
 ```
 
-Key locations: `editor/page.tsx`, `controlButtons.tsx`, `set.tsx`, `popup/relation.tsx`, `sidebar/section/index.tsx`, `cell/index.tsx`, `sidebar/right.tsx`, `header/index.tsx`, 55+ more.
+Key locations: `editor/page.tsx`, `dataview.tsx`, `board.tsx`, `chat.tsx`, `sidebar/section/index.tsx`, `controlButtons.tsx`, `set.tsx`, `relation.tsx`, `settings/index.tsx`, 49+ more.
 
-**Root cause:** Child components missing `observer()` wrappers.
+**Root cause:** Components not properly observing MobX state. Auto-observer plugin wraps exports but doesn't fix internal observation patterns where stores are accessed in callbacks/effects rather than render.
 
-### 6.2 Massive Components Without Memoization
+### 4.2 Zero Memoization in Largest Components -- CRITICAL
 
-- `editor/page.tsx` (2,827 lines) -- no `useCallback`/`useMemo`
-- `chat/form.tsx` (1,954 lines) -- no callback memoization
-- `dataview.tsx` (1,867 lines) -- many unmemoized callbacks
+| Component | Lines | useCallback | useMemo | React.memo |
+|-----------|-------|-------------|---------|------------|
+| `editor/page.tsx` | 2,825 | 0 | 0 | No |
+| `block/dataview.tsx` | 1,874 | 0 | 0 | No |
+| `block/chat/form.tsx` | 1,953 | 0 | 0 | Export only |
+| `block/text.tsx` | 1,659 | 0 | 0 | No |
+| `block/table.tsx` | 1,562 | 0 | 0 | No |
 
-### 6.3 Excessive Prop Drilling
+9,873 combined lines with no callback/computation memoization. Note: `useCallback`/`useMemo` are used in newer code (comment/form.tsx: 25 uses, comment/section.tsx: 23 uses, commentEditor.tsx: 13 uses).
 
-- `chat/form.tsx:13-26` -- 13+ callback props drilled down instead of using stores
+### 4.3 Excessive Prop Drilling
 
-### 6.4 Ref Mutation for Non-UI State
+| Interface | Props | File |
+|-----------|-------|------|
+| `BlockComponent` | 19+ | `interface/block/index.ts` |
+| `WidgetComponent` | 14 | `interface/block/widget.ts` |
+| `SidebarSectionComponent` | 13 | `interface/sidebar.ts` |
+| `PageSettingsComponent` | 10+ | `interface/common.ts` |
 
-- `dataview.tsx:47-48` -- Large `Map` stored in refs, bypassing reactivity
+`BlockComponent` is passed through dozens of component hierarchies. Deeply nested components receive props they don't use.
+
+### 4.4 Class Components
+
+Only 1 remaining: `component/util/errorBoundary.tsx` -- required by React (Error Boundaries must be class components).
 
 ---
 
-## 7. MobX Modernization
+## 5. MobX Modernization
 
-### 7.1 ~~Switch `mobx-react` to `mobx-react-lite`~~ ✅ DONE
+### ~~5.1 Switch `mobx-react` to `mobx-react-lite`~~ -- DONE
+### ~~5.2 Auto-observer Vite plugin~~ -- DONE
 
-Completed in PR #2109 (`dc32de04`). All imports switched from `mobx-react` to `mobx-react-lite`, `mobx-react` removed from dependencies.
+### 5.3 Migrate stores to `makeAutoObservable` (M)
 
-### 7.2 ~~Auto-observer Vite plugin~~ ✅ DONE
+All 14 stores use verbose `makeObservable(this, { prop: observable, method: action, ... })`. `makeAutoObservable` infers annotations automatically.
 
-Completed in PR #2109 (`dc32de04`). Auto-observer Vite plugin added that automatically wraps exported function components with `observer()`. Class components are skipped (`5036031849`). Manual `observer()` wraps removed from ~260 files.
+Most complex stores by annotation volume:
+- `common.ts` -- 30+ observable properties
+- `record.ts` -- 7 properties + 17 actions
+- `sparkOnboarding.ts` -- 12 properties + 11 actions
 
-### 7.3 Migrate stores to `makeAutoObservable` (M)
+Needs care: audit each store for subclassing or private property patterns that `makeAutoObservable` can't handle.
 
-All 15 stores use verbose `makeObservable(this, { prop: observable, method: action, ... })` with explicit annotations. `makeAutoObservable` infers them automatically, cutting ~200 lines of boilerplate. Already used in anytype-bun.
+### 5.4 Direct Mutations Outside Actions
 
-Needs care: `makeAutoObservable` can't handle subclassing or certain private property patterns -- audit each store individually.
-
-### 7.4 Direct Mutation
-
+- `store/block.ts:738,745,785,807,810` -- `item.childBlocks = ...` in `getTree`/`wrapTree` methods not marked as actions (operates on copies via `U.Common.objectCopy()`, low risk but bypasses MobX action wrapping)
 - `store/detail.ts:287` -- `object[item.relationKey] = item.value` (direct assignment)
-- `store/block.ts:737,744,783` -- `item.childBlocks = ...` (direct mutation of tree items)
 
 ---
 
-## 8. Global State & Window Pollution
+## 6. Error Handling
 
-- `app.tsx:55` -- `window.Anytype = { ... }`
-- `window.Electron` -- `lib/util/common.ts:40`
-- `window.AnytypeGlobalConfig` -- `lib/util/common.ts:47`, `lib/web/electronMock.ts:381-382,427-428`
-- `window.isExtension` -- `lib/keyboard.ts`
+### Current State
 
-**Removed:**
-- ~~`window.$ = jQuery`~~ (removed with jQuery)
+65 total catch blocks: 54 (83%) include logging, 11 (17%) are silent.
 
----
+**Silent catch blocks (7 empty, 4 comment-only):**
 
-## 9. Architecture & Coupling -- Remaining
-
-### 9.1 High Coupling in Dispatcher
-
-`dispatcher.ts` imports 14 modules -- gRPC handler triggers business logic directly.
-
-### 9.2 Action Module Couples Everything
-
-`action.ts` imports 15 dependencies.
-
-### 9.3 Event System
-
-After jQuery removal, events use `window.addEventListener` / `window.dispatchEvent(new CustomEvent(...))`. This is functional but:
-- No type safety on event names/payloads
-- No automatic cleanup (must manually store and remove handlers)
-- Verbose boilerplate (~430 addEventListener/removeEventListener pairs across 122 files)
-- See section 2.3-2.4 for proposed improvements
+| File | Context | Risk |
+|------|---------|------|
+| `drag/provider.tsx:548` | JSON.parse of drag data | Medium -- data loss risk |
+| `drag/provider.tsx:826` | Drag event handling | Medium -- silenced errors |
+| `graph/provider.tsx:62,341,354,356` | Canvas/image operations | Low -- rendering fallback |
+| `lib/util/embed.ts:60` | URL parsing | Low -- validation fallback |
+| `lib/util/string.ts:274,314` | URL encoding, slug generation | Low -- string fallback |
+| `component/block/text.tsx:16` | Prism dynamic import | Low -- syntax highlighting optional |
+| `component/popup/usecase.tsx:37` | URL parsing | Low -- validation fallback |
 
 ---
 
-## 10. Code Duplication -- Remaining
+## 7. Architecture & Coupling
 
-Triaged items found to be false positives on inspection:
-- `embed.ts` -- each processor does fundamentally different URL transforms; not extractable
-- `menu.ts` -- two consecutive checks within one callback, not separate duplicated functions
-- `storage.ts` -- standard delegation pattern, not duplication
+### 7.1 Import Coupling
+
+| File | Distinct Imports | Assessment |
+|------|-----------------|------------|
+| `component/editor/page.tsx` | 10 | High -- multiple nested Component imports |
+| `lib/api/dispatcher.ts` | 9 | Moderate -- includes `@dnd-kit/sortable` (questionable in gRPC client) |
+| `lib/action.ts` | 4 | Low -- well-focused |
+| `lib/keyboard.ts` | 4 | Low -- well-contained |
+
+**Issue:** `dispatcher.ts` imports `@dnd-kit/sortable` -- a UI library has no place in the gRPC communication layer.
+
+### 7.2 Reverse Imports (lib importing from component)
+
+- `lib/util/graph.ts` imports `Component/util/icons` -- utility depending on component
+- `lib/util/object.ts` imports `Component/util/icons` -- same pattern
+
+These break the clean `Component → Lib → Store` dependency hierarchy.
+
+### 7.3 Window Globals
+
+| Global | Usage | Risk |
+|--------|-------|------|
+| `window.Anytype` | `app.tsx:53` -- dev-only debug interface | Low |
+| `window.AnytypeGlobalConfig` | Read in `common.ts`, `menu/index.tsx` -- config from host environment | Low |
+| `window.isExtension` | Read in `keyboard.ts`, `survey.ts`, `popup.ts` -- feature flag | Low |
+| `window.isWebVersion` | Read in `app.tsx` -- platform detection | Low |
+
+All are read-only or dev-only. `window.Electron` and `window.AnytypeGlobalConfig` assignments now only in test setup.
+
+### 7.4 Store Isolation
+
+Stores are well-isolated -- no inter-store imports detected. All stores import only from `Interface` and `Model`. Cross-store access is through the global `S` namespace (standard MobX pattern).
 
 ---
 
-## 11. Inconsistent Patterns
+## 8. Inconsistent Patterns
 
-- **Null checks:** Mix of `!value`, `value == null`, `value === undefined`, `undefined !== value`
-- **Optional chaining:** Used inconsistently
-- **State updates:** MobX `.set()` vs direct assignment vs computed getters
-- **Data fetching:** gRPC through dispatcher vs direct command calls vs event streaming
+### 8.1 Null/Undefined Checks (biggest inconsistency)
+
+| Pattern | Count |
+|---------|-------|
+| `== null` (loose) | 90 |
+| `=== null` (strict) | 30 |
+| `== undefined` (loose) | 69 |
+| `=== undefined` (strict) | 17 |
+| `!== undefined` | 52 |
+| `undefined !== value` (reversed) | 40 |
+| `!value` (ambiguous negation) | 839 |
+
+No clear convention. Loose equality is 3x more common than strict.
+
+### 8.2 Array Iteration (in component/)
+
+| Pattern | Count | Files |
+|---------|-------|-------|
+| `.forEach()` | 213 | 71 |
+| `for...of` | 118 | 60 |
+| `for (let i=0...)` | 34 | 25 |
+| `for...in` | 23 | 16 |
+
+`.forEach()` dominates (1.8x more than `for...of`). Mixed but not problematic.
+
+### 8.3 Optional Chaining
+
+1,315 occurrences across 250 files -- well-adopted. A few verbose `x && x.y && x.y.z` chains remain (e.g., `chat/form.tsx:561`).
+
+### 8.4 Import Style
+
+Excellent consistency: 451/497 namespace imports use the `import * as I from 'Interface'` single-letter convention.
 
 ---
 
-## 12. Refactoring Plan -- Remaining Tasks
+## 9. Refactoring Plan
 
-### Phase 1: DOM Optimization -- 3 remaining tasks (1 done)
+### Phase 1: React Performance (High Impact)
 
-| Task | Impact | Effort | Status |
+| Task | Impact | Effort |
+|------|--------|--------|
+| Investigate forceUpdate patterns -- determine which are needed vs. which are MobX observation gaps | Reduces unnecessary re-renders | M |
+| Add `useCallback`/`useMemo` to editor/page.tsx, dataview.tsx, text.tsx, table.tsx | Prevents child re-render cascades | M |
+
+### Phase 2: God File Decomposition
+
+| Task | Source | Target | Effort |
 |------|--------|--------|--------|
-| Replace string-based ID lookups with React refs in hot components | Fewer DOM queries, better perf | L | |
-| ~~Scope broadcast `selectAll` queries to nearest container~~ | Fewer full-document scans | S | ✅ Done |
-| Create `EventNamespace` utility for window events | Cleaner event cleanup, less boilerplate | M | |
-| Create typed event bus to replace `CustomEvent` dispatch | Type safety, no DOM overhead | M | |
+| Split commentEditor.tsx (3,566 lines) | `component/form/commentEditor.tsx` | Extract form logic, state management, toolbar into separate modules | L |
+| Split keyboard.ts (2,210 lines) | `lib/keyboard.ts` | KeyboardHandler, MouseHandler, MenuKeyboard, FocusManager | L |
+| Split editor/page.tsx (2,825 lines) | `component/editor/page.tsx` | Extract hooks: useEditorFocus, useEditorDrag, useEditorScroll | XL |
+| Split chat/form.tsx (1,953 lines) | `component/block/chat/form.tsx` | ChatComposer, AttachmentPanel, MentionHandler | L |
+| Split menu.ts (2,069 lines) | `lib/util/menu.ts` | Group builders by domain (block types, turn actions, etc.) | L |
 
-### Phase 2: Type Safety -- 1 remaining task
-
-| Task | Files | Effort |
-|------|-------|--------|
-| Type `data?: any` in MenuParam interface | interface/menu.ts + all menu consumers | L |
-
-### Phase 3: Error Handling -- 1 remaining task
+### Phase 3: MobX Modernization
 
 | Task | Files | Effort |
 |------|-------|--------|
-| Create consistent error handling patterns | New error utility | M |
+| Migrate stores to `makeAutoObservable` | 14 store files | M |
+| Wrap direct mutations in `block.ts` tree methods with `action()` | store/block.ts | S |
 
-### Phase 4: God File Decomposition -- 3 remaining tasks
-
-| Task | Source File | Target Modules | Effort |
-|------|-----------|----------------|--------|
-| Split keyboard.ts | `lib/keyboard.ts` (2,212 lines) | KeyboardHandler, MouseHandler, MenuKeyboard, FocusManager | L |
-| Split editor/page.tsx | `component/editor/page.tsx` (2,827 lines) | Extract hooks: useEditorFocus, useEditorDrag, useEditorKeyboard | XL |
-| Split chat/form.tsx | `component/block/chat/form.tsx` (1,954 lines) | ChatComposer, AttachmentPanel, MentionHandler | L |
-
-### Phase 5: MobX Modernization -- 1 remaining task (2 done)
-
-| Task | Files | Effort | Status |
-|------|-------|--------|--------|
-| ~~Switch `mobx-react` to `mobx-react-lite`~~ | ~260 component files | S | ✅ Done |
-| ~~Add auto-observer Vite plugin~~ | vite.config.ts + remove manual `observer()` wraps | M | ✅ Done |
-| Migrate stores to `makeAutoObservable` | 15 store files | M | |
-
-### Phase 6: React Cleanup -- 3 remaining tasks
+### Phase 4: Type Safety
 
 | Task | Files | Effort |
 |------|-------|--------|
-| ~~Audit `forceUpdate()` -- add missing `observer()`~~ (resolved by auto-observer plugin) | ~63 component files | L | ✅ Done |
-| Add `useCallback`/`useMemo` to large components | editor/page.tsx, dataview.tsx, chat/form.tsx | M |
-| Replace prop drilling with direct store access | chat/form.tsx (13 props) | M |
+| Type `menuData.ts` callback signatures | interface/menuData.ts (~91 `any`) + consumers | XL |
+| Type `dataview.ts` interfaces | interface/block/dataview.ts (~44 `any`) | L |
+| Type store methods in detail.ts, block.ts, record.ts | 3 store files (~48 `any`) | L |
+| Convert 14 small enums to union types | interface/ files | S |
+| Replace `(el as any)._handler` patterns with WeakMap | drag/provider.tsx, graph/provider.tsx | S |
 
-### Phase 7: Architecture -- 2 remaining tasks
+### Phase 5: DOM Optimization
+
+| Task | Impact | Effort |
+|------|--------|--------|
+| Replace string-based ID lookups with React refs in hot components (table.tsx, editor/page.tsx) | O(1) element access, fewer DOM traversals | L |
+| Create typed event bus to replace CustomEvent dispatch | Type safety, no DOM overhead | M |
+
+### Phase 6: Architecture Cleanup
 
 | Task | Files | Effort |
 |------|-------|--------|
-| Replace window globals with DI/module imports | app.tsx, common.ts, electronMock.ts | L |
-| Reduce dispatcher coupling (extract event handlers) | dispatcher.ts, action.ts | XL |
+| Remove `@dnd-kit/sortable` from dispatcher.ts | lib/api/dispatcher.ts | S |
+| Extract icon utilities from lib/util to avoid reverse imports | lib/util/graph.ts, lib/util/object.ts | S |
+| Add logging to silent catch blocks in drag/provider.tsx | component/drag/provider.tsx | S |
+| Replace prop drilling with context for BlockComponent (19 props) | interface/block/index.ts + component tree | L |
 
 ### Effort Key
 
@@ -317,13 +342,30 @@ Triaged items found to be false positives on inspection:
 
 ---
 
-## 13. Suggested Execution Order
+## 10. Suggested Execution Order
 
 ```
-Done:  Phase 5.1 (mobx-react-lite swap) ✅
-Done:  Phase 5.2 (auto-observer plugin) ✅
-Done:  Phase 1.2 (scoped selectAll queries) ✅
-Next:  Phase 1 (DOM optimization) -- EventNamespace + typed event bus
-Then:  Phase 5.3 (makeAutoObservable) + Phase 4 (god file splits)
-Later: Phase 2 + 7 (type safety + architecture)
+Quick wins (S effort):
+  - Wrap block.ts tree mutations with action()
+  - Convert 14 small enums to union types
+  - Replace (el as any)._handler with WeakMap
+  - Remove @dnd-kit/sortable from dispatcher
+  - Fix reverse imports in lib/util/graph.ts, object.ts
+  - Add logging to silent catch blocks
+
+Next (M effort):
+  - Investigate and fix forceUpdate patterns
+  - Add useCallback/useMemo to large components
+  - Migrate stores to makeAutoObservable
+  - Create typed event bus
+
+Then (L effort):
+  - God file splits: commentEditor, keyboard, chat/form, menu
+  - Type safety: dataview interfaces, store methods
+  - Replace string ID lookups with React refs
+
+Later (XL effort):
+  - Type menuData.ts callback signatures
+  - Split editor/page.tsx
+  - Replace prop drilling with context
 ```
