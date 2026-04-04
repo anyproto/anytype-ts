@@ -14,6 +14,9 @@
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
+		.iconWrapper {
+			.iconPreview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; }
+		}
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.label.small { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 8px 0px 0px 0px; }
 

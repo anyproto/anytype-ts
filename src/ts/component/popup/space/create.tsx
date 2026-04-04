@@ -11,10 +11,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const iconRef = useRef(null);
 	const filterRef = useRef(null);
 	const joinInputRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
+	const iconImagePathRef = useRef('');
+	const [ iconPreviewUrl, setIconPreviewUrl ] = useState('');
 	const [ step, setStep ] = useState(0);
 	const [ search, setSearch ] = useState('');
 	const [ name, setName ] = useState('');
@@ -168,13 +171,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				return;
 			};
 
-			C.WorkspaceSetInfo(message.objectId, details, () => {
+			const spaceId = message.objectId;
+
+			const afterUpload = () => {
+				C.WorkspaceSetInfo(spaceId, details, () => {
 				if (message.error.code) {
 					setError(message.error.description);
 					return;
 				};
 
-				U.Router.switchSpace(message.objectId, '', true, {
+				U.Router.switchSpace(spaceId, '', true, {
 					onRouteChange: () => {
 						if (isGroup) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
@@ -202,6 +208,19 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
 				analytics.event('SelectUsecase', { type: usecase });
 			});
+			};
+
+			if (iconImagePathRef.current) {
+				C.FileUpload(spaceId, '', iconImagePathRef.current, I.FileType.Image, {}, false, '', I.ImageKind.Icon, '', '', (msg: any) => {
+					if (!msg.error.code) {
+						details.iconImage = msg.objectId;
+						details.iconOption = 0;
+					};
+					afterUpload();
+				});
+			} else {
+				afterUpload();
+			};
 		});
 	};
 
@@ -245,14 +264,28 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	};
 
 	const onIcon = () => {
-		let icon = iconOption;
+		fileInputRef.current?.click();
+	};
 
-		icon++;
-		if (icon > J.Constant.count.icon) {
-			icon = 1;
+	const onFileInputChange = (e: any) => {
+		const file = e.target.files?.[0];
+
+		if (!file) {
+			return;
 		};
 
-		setIconOption(icon);
+		const electron = U.Common.getElectron();
+		const path = electron.webFilePath(file);
+
+		iconImagePathRef.current = path;
+
+		U.File.loadPreviewBase64(file, { type: 'image/png', quality: 0.95, maxWidth: 256 }, (image: string) => {
+			setIconPreviewUrl(image);
+		});
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		};
 	};
 
 	const object = getObject();
@@ -399,15 +432,18 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				<div className="wrapper">
 					<div className="stepTitle">{title}</div>
 
-					<div className="iconWrapper">
-						<IconObject
-							ref={iconRef}
-							size={96}
-							object={object}
-							canEdit={false}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onClick={onIcon}
-						/>
+					<div className="iconWrapper" onClick={onIcon}>
+						{iconPreviewUrl ? (
+							<img src={iconPreviewUrl} className="iconPreview" />
+						) : (
+							<IconObject
+								ref={iconRef}
+								size={96}
+								object={object}
+								canEdit={false}
+								menuParam={{ horizontal: I.MenuDirection.Center }}
+							/>
+						)}
 					</div>
 
 					<Input
@@ -453,6 +489,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			<Icon name="common/close" className="close" onClick={() => close()} />
 			{stepContent}
 			<Error text={error} />
+			<input ref={fileInputRef} type="file" accept="image/*" className="dn" onChange={onFileInputChange} />
 		</>
 	);
 
