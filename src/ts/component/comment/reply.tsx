@@ -81,6 +81,8 @@ const CommentReply = (props: Props) => {
 		});
 
 		// Emoji marks — render as cross-platform images
+		const roots: Root[] = [];
+
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
 			const smile = U.Dom.select('smile', item);
@@ -97,9 +99,14 @@ const CommentReply = (props: Props) => {
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
+				roots.push(root);
 				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
+
+		return () => {
+			roots.forEach(root => root.unmount());
+		};
 	}, [ isEditing, parts, subId ]);
 
 	const onEdit = useCallback(() => {

@@ -3,8 +3,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
-import raf from 'raf';
-
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_SMALL = 28;

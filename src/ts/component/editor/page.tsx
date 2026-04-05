@@ -228,7 +228,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const unbind = () => {
 		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
+		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus', 'sidebarResize' ];
 		const selection = S.Common.getRef('selectionProvider');
 
 		events.forEach(it => {
@@ -2043,7 +2043,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			e.preventDefault();
 			onPaste(data);
 		} else {
-			const cb = e.clipboardData || e.originalEvent?.clipboardData;
+			const cb = e.clipboardData;
 			const clipboardItems = cb?.items;
 			const files = clipboardItems ? U.Common.getDataTransferFiles(clipboardItems) : [];
 
@@ -2331,7 +2331,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const getClipboardData = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),

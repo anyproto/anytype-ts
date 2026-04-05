@@ -8,7 +8,7 @@
 	.label.description { @include text-paragraph; color: var(--color-text-secondary); margin: 0px 0px 16px 0px; text-align: center; }
 
 	.errorDetails {
-		width: 100%; padding: 12px; border-radius: 8px; background: var(--color-bg-secondary); max-height: 200px;
+		width: 100%; padding: 12px; border-radius: 8px; background: var(--color-shape-highlight-light); max-height: 200px;
 		overflow-y: auto; word-break: break-word; user-select: text !important;
 
 		.message { @include text-small; color: var(--color-red); font-weight: 500; }

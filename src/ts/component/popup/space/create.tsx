@@ -174,9 +174,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			const spaceId = message.objectId;
 
 			const afterUpload = () => {
-				C.WorkspaceSetInfo(spaceId, details, () => {
-				if (message.error.code) {
-					setError(message.error.description);
+				C.WorkspaceSetInfo(spaceId, details, (infoMessage: any) => {
+				if (infoMessage.error.code) {
+					setError(infoMessage.error.description);
 					return;
 				};
 

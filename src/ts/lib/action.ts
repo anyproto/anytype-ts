@@ -469,6 +469,10 @@ class Action {
 				return;
 			};
 
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: true } }, false);
+			});
+
 			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();

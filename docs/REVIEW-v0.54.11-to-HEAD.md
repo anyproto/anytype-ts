@@ -1,156 +1,281 @@
 # Code Review: v0.54.11 to HEAD
 
-**Date:** 2026-04-01
-**Scope:** 1046 commits, 3279 files changed, +59,369 / -46,065 lines
-**Status:** Typecheck and lint pass after fixes applied below
+**Date:** 2026-04-05
+**Scope:** 1202 commits, 3353 files changed, +65,320 / -50,006 lines
+**Status:** Typecheck passes. Lint passes with 3 warnings (2 unused imports, 1 Biome suppression).
 
 ---
 
-## Fixed Issues (applied in this review)
+## Executive Summary
 
-### 1. Electron preload missing indentation
-**File:** `electron/js/preload.cjs:39`
-`defaultPath` property was missing its tab, breaking object literal formatting in `contextBridge.exposeInMainWorld`.
+This is a major release cycle with transformational infrastructure and architecture changes alongside significant new features. The codebase has undergone:
 
-### 2. ProgressState.InProgress does not exist
-**File:** `src/ts/component/util/progressText.stories.tsx:19`
-Used `I.ProgressState.InProgress` but enum only has `None`, `Running`, `Done`, `Canceled`, `Error`. Fixed to `Running`.
+1. **Build system migration** — rspack + npm → Vite + bun
+2. **Electron TypeScript rewrite** — electron.js → electron/ts/ with esbuild bundling
+3. **jQuery complete removal** — replaced with native DOM and U.Dom helpers
+4. **MobX modernization** — mobx-react → mobx-react-lite with auto-observer Vite plugin
+5. **gRPC event batching** — requestAnimationFrame + MobX runInAction for reduced re-renders
+6. **Inactive tab optimization** — MobX reactionScheduler pauses reactions in background tabs
+7. **New comment system** — threaded discussions with Lexical editor (~2,800 lines)
+8. **Protobuf migration** — generated classes → plain objects with ts-proto
 
-### 3. syncStatusUpdate wrong call signature
-**File:** `src/ts/component/util/sync.stories.tsx:25`
-Called `S.Auth.syncStatusUpdate(spaceId, {...})` with 2 args but method only accepts 1 (the status object with `id` inside). Removed extra `spaceId` arg.
-
-### 4. Unused import: useImperativeHandle
-**File:** `src/ts/component/page/main/archive.tsx:1`
-`useImperativeHandle` imported but never used.
-
-### 5. Unused import: Checkbox
-**File:** `src/ts/component/sidebar/preview.tsx:5`
-`Checkbox` imported from Component but never used.
-
-### 6. Missing semicolon
-**File:** `src/ts/component/sidebar/preview.tsx:104`
-Missing semicolon after JSX expression.
-
-### 7. Missing React import in 10 story files
-Files using JSX in decorators without importing React (required by project's tsconfig `jsx: "react"` setting):
-- `src/ts/component/cell/item/object.stories.tsx`
-- `src/ts/component/footer/auth/disclaimer.stories.tsx`
-- `src/ts/component/footer/auth/email.stories.tsx`
-- `src/ts/component/footer/auth/index.stories.tsx`
-- `src/ts/component/form/phrase.stories.tsx`
-- `src/ts/component/menu/item/vertical.stories.tsx`
-- `src/ts/component/preview/default.stories.tsx`
-- `src/ts/component/util/cover.stories.tsx`
-- `src/ts/component/util/deleted.stories.tsx`
-- `src/ts/component/util/object/type.stories.tsx`
+The overall quality is good. The architecture changes are well-executed with proper fallbacks. The main areas of concern are: security hardening in the Electron layer, some dead jQuery artifacts, comment system edge cases, and a few SCSS dark mode gaps.
 
 ---
 
-## Items to Review (not auto-fixed)
+## Lint Warnings (not blocking)
+
+### 1. Unused import: `Onboarding`
+**File:** `src/ts/component/page/main/chat.tsx:3`
+
+### 2. Unused import: `MenuItem`
+**File:** `src/ts/component/menu/search/object.tsx:6`
+
+### 3. Biome suppression no-op
+**File:** `src/ts/auto-imports.d.ts:6`
+`// biome-ignore lint: disable` has no effect. Generated file — non-critical.
+
+---
+
+## Items to Review
 
 ### HIGH PRIORITY
 
-#### H1. jQuery removal is incomplete (47+ files still import jQuery)
-The jQuery removal effort has been done incrementally. ~47 component files still `import $ from 'jquery'`. Files that were migrated use `U.Dom.*` helpers and native DOM. This mixed state is functional but should be completed to fully remove the dependency.
+#### H1. Space create popup silently ignores `WorkspaceSetInfo` errors
+**File:** `src/ts/component/popup/space/create.tsx:176-210`
+Inside `afterUpload()`, the `C.WorkspaceSetInfo` callback checks `message.error.code`, but `message` refers to the outer `C.WorkspaceCreate` callback's parameter, not the `WorkspaceSetInfo` response. The inner callback parameter is unnamed, so the error check always passes (it re-checks the already-verified outer response). `WorkspaceSetInfo` failures are silently ignored.
 
-**Key files still using jQuery:**
-- `component/editor/page.tsx`
-- `component/block/text.tsx`, `component/block/index.tsx`, `component/block/table.tsx`
-- `component/block/dataview/view/grid.tsx`, `board.tsx`, `timeline.tsx`
-- `component/cell/index.tsx`, `component/cell/select.tsx`, `component/cell/object.tsx`
-- `component/widget/index.tsx`, `component/sidebar/left.tsx`, `component/sidebar/preview.tsx`
-- `component/drag/provider.tsx`, `component/selection/provider.tsx`
-- `component/graph/provider.tsx`
+#### H2. `sidebarResize` event handler leaks on every editor rebind
+**File:** `src/ts/component/editor/page.tsx:297`
+`storeHandler('sidebarResize', resizeHandler)` registers a handler for the custom `sidebarResize` event, but `unbind()` only iterates over `['keydown', 'mousemove', 'paste', 'resize', 'focus']` (line 231). The `sidebarResize` handler is stored on window but never removed, causing handler accumulation on every rebind.
 
-#### H2. `.get(0)` calls on jQuery-wrapped elements
-Some dataview files use `.get(0)` which is a jQuery method. If these objects have been converted to native HTMLElement (from `U.Dom.*`), `.get(0)` would throw a runtime error. Currently these files still import jQuery so it works, but this is fragile during the ongoing migration.
-- `src/ts/component/block/dataview/view/timeline.tsx:529`
-- `src/ts/component/block/dataview/view/grid.tsx:139`
-- `src/ts/component/block/dataview/view/board.tsx:192`
+#### ~~H3. Orphaned dark theme widget styles never loaded~~ — RESOLVED
+**File:** `src/scss/theme/dark/widget.scss` — deleted. The remaining overrides were stale after the SVG icon migration.
 
-#### H3. Cell mousedown handler scope changed from pageContainer to window
-**File:** `src/ts/component/cell/index.tsx`
-Changed from listening on `pageContainer` (scoped) to `window` (global). This means ALL mousedown events globally trigger the handler, which has performance implications and could cause unexpected behavior with nested editors or popups.
+#### H4. `--color-bg-secondary` undefined in light mode
+**Defined only in:** `src/scss/theme/dark/common.scss:35`
+**Used outside dark scope:**
+- `src/scss/page/auth.scss:18,21,24` — notification icon backgrounds
+- `src/scss/component/errorBoundary.scss:11` — **new file** — error details background
+- `src/scss/page/main/graph.scss:22` — graph timeline background (overridden, see M9)
 
-#### H4. Graph event system mixed jQuery/CustomEvent
-**File:** `src/ts/component/graph/provider.tsx`
-Custom events dispatched via `new CustomEvent()` but some listeners may still expect jQuery event format. Defensive `data || e.originalEvent?.detail` fallback is in place but indicates incomplete migration.
+In light mode, `var(--color-bg-secondary)` resolves to nothing (transparent/initial). The `errorBoundary.scss` will have an invisible background for `.errorDetails` in light mode.
 
-#### H5. Major architectural change: Protobuf to plain objects
-**File:** `src/ts/lib/api/dispatcher.ts` and related
-Changed from Protocol Buffer generated classes (`hasX()`, `getX()`) to plain JavaScript objects (`x !== undefined`, `x`). This is a sweeping change across the API layer. All request/response handlers should be manually verified to ensure none were missed.
+#### ~~H5. No URL validation before `shell.openExternal()`~~ — ACCEPTED
+**File:** `electron/ts/api.ts:431-433`
+Users rely on arbitrary deeplink schemes (e.g., `obsidian://`, custom app protocols), so allowlisting is not feasible. A blocklist for `javascript:` could be added but the risk is marginal since the URL originates from user content, not untrusted external input.
 
-#### H6. Build system migration: rspack to Vite
-Major build tool change. Verify:
-- `scripts/build-electron.js` exists and works
-- `scripts/wait-for-localhost.js` exists
-- `scripts/analyze-deps.js` exists
-- Extension build (`vite.extension.config.ts`) works correctly
-- SCSS `api: 'legacy'` is compatible with all SCSS features used
+#### ~~H6. `openPath` uses `exec` with shell on Windows~~ — ACCEPTED
+**File:** `electron/ts/api.ts:451`
+Uses `exec` with `shell: 'cmd.exe'` instead of `shell.openPath()` as a workaround for an Electron bug where `shell.openPath()` fails on folders with non-Unicode characters. The path is validated with `fs.existsSync` and `path.normalize` before use.
+
+#### H7. Dead `e.originalEvent` references after jQuery removal
+**Files:** Multiple clipboard/drag handlers
+After jQuery removal, `e.originalEvent` is always `undefined` on native events. Most usages are guarded by `||` so they work, but some lack optional chaining and would throw if the left side were ever falsy:
+
+- `src/ts/component/block/embed.tsx:349` — `e.originalEvent.clipboardData` (no `?.`)
+- `src/ts/component/editor/page.tsx:2334` — `e.originalEvent.clipboardData` (no `?.`)
+- `src/ts/component/block/chat/form.tsx:473-474` — `e.originalEvent.clipboardData` (no `?.`)
+- `src/ts/component/menu/block/cover.tsx:479` — `e.originalEvent.clipboardData` (no `?.`)
+- `src/ts/component/form/phrase.tsx:121` — `e.originalEvent.clipboardData` (no `?.`)
+- `src/ts/component/drag/provider.tsx:814` — `e.originalEvent.dataTransfer` (no `?.`)
+
+**Risk:** Low (native events always have `clipboardData`/`dataTransfer`), but dead code that should be cleaned up.
+
+#### H8. Comment system `fetchAllMessages` loads entire history
+**File:** `src/ts/component/comment/section.tsx:344-372`
+Recursively fetches all messages in pages of 100 before building the tree. For discussions with thousands of messages: high memory usage, slow initial load, potential UI freeze during tree building. Consider virtual pagination.
+
+#### H9. Comment form `isLoading` never reset in edit mode
+**File:** `src/ts/component/comment/form.tsx:113-195`
+`handleSubmit` sets `setIsLoading(true)` at line 118, but `setIsLoading(false)` at line 184 is only called when `!isEdit`. In edit mode, if the API call fails, the form remains mounted with `isLoading=true` and the user cannot submit again.
 
 ### MEDIUM PRIORITY
 
-#### M1. Icon background-image removals in dark theme
-**File:** `src/scss/theme/dark/common.scss`
-50+ icon `background-image` references removed from dark theme SCSS. These icons should now be rendered via the component system (Icon component with `S.Common.getThemePath()`). Verify all affected icons render correctly in dark mode.
+#### M1. `renderLinks` duplicate handler execution
+**File:** `src/ts/lib/util/dom.ts:326-357`
+Stores event handlers as properties on DOM elements (`link['_rl_click']`). If `renderLinks` is called multiple times on the same DOM tree, old `addEventListener` calls remain active because only the stored reference is updated — the previous listeners are never removed. This causes duplicate click handlers on links.
 
-#### M4. Chat reaction button lost its icon
-**File:** `src/scss/block/chat.scss`
-`.icon.reactionAdd` had its `background-image` CSS removed. The icon should now be rendered via the Icon component. Verify the reaction add button is visible.
-
-#### M5. `scrollbar-gutter: stable` removed
-**File:** `src/scss/common/common.scss`
-This property prevents layout shift when scrollbars appear/disappear. Its removal may cause content to jump when overflow changes.
-
-#### M6. Animation removed from gallery cards
-**File:** `src/ts/component/block/dataview/view/gallery/card.tsx`
-`<AnimatePresence>` and `<motion.div>` wrapper removed. Cards no longer animate. Verify this was intentional (performance optimization) vs accidental.
-
-#### M7. CellMeasurerCache initialization in gallery
-**File:** `src/ts/component/block/dataview/view/gallery.tsx`
-```tsx
-const cache = useRef(null);
-if (!cache.current) {
-    cache.current = new CellMeasurerCache({...});
-};
+#### M2. `renderLinks` and `toggle` still have jQuery `.get(0)` fallback
+**File:** `src/ts/lib/util/dom.ts:331,367`
+```ts
+const root = obj instanceof HTMLElement ? obj : (obj.get ? obj.get(0) : obj);
 ```
-This conditional check runs every render. While functionally correct (useRef persists), this is an unusual pattern. Consider initializing in `useRef(new CellMeasurerCache({...}))` or `useMemo`.
+The `obj.get` branch is a jQuery fallback. Since jQuery is fully removed, this is dead code.
 
-#### M8. Deferred update sets in block store could grow unbounded
-**File:** `src/ts/store/block.ts`
-New `deferredParentUpdates`, `deferredNumberUpdates`, `deferredMarkupUpdates` Sets added. Verify `flushDeferredUpdates()` is called reliably to prevent memory accumulation.
+#### M3. Comment emoji React roots never unmounted
+**Files:** `src/ts/component/comment/post.tsx:105-123`, `reply.tsx:84-101`
+`useEffect` creates React roots via `createRoot()` on `<smile>` elements and stores them as `_reactRoot`. When `parts` change, old roots are never unmounted. The effect should return a cleanup that calls `root.unmount()`.
 
-#### M9. Date format cases share identical mask
+#### M4. `ensureDiscussion` silently drops second call
+**File:** `src/ts/component/comment/section.tsx:495-526`
+Uses `isCreating.current` as a mutex. If a second call arrives while creating, it silently returns without calling `callBack`. The user's comment is silently lost.
+
+#### M5. `reactionScheduler` queue grows unboundedly while paused
+**File:** `src/ts/lib/reactionScheduler.ts`
+When the tab is inactive, all MobX reaction callbacks are queued. A long-idle tab with active subscriptions accumulates an unbounded queue. On resume, all queued reactions fire at once, potentially causing a UI freeze.
+
+#### M6. Subscription record removal leaks details
+**File:** `src/ts/lib/api/dispatcher.ts:983-990`
+When a subscription removes a record, `S.Detail.delete` is intentionally NOT called (to preserve dependencies). However, this means details for non-dependency records also accumulate indefinitely. Over long sessions with frequently changing subscriptions, this is a slow memory leak.
+
+#### M7. Cell mousedown handler on window scope
+**File:** `src/ts/component/cell/index.tsx`
+Listens on `window` (global) instead of a scoped container. Every global mousedown triggers the handler — performance concern with many cells.
+
+#### M8. `sandbox: false` on all renderer windows
+**File:** `electron/ts/window.ts:770`
+Disables Chromium's sandbox. Combined with `@electron/remote` being enabled (deprecated), this creates a broader attack surface. `contextIsolation: true` and `nodeIntegration: false` are properly set, but the disabled sandbox and remote access partially negate those protections. Plan migration to `ipcMain.handle`/`ipcRenderer.invoke`.
+
+#### M9. Conflicting background declarations in graph timeline
+**File:** `src/scss/page/main/graph.scss:22-23`
+`background: var(--color-bg-secondary)` is immediately overridden by `background-color: var(--color-bg-primary)`. The first is dead code (merge artifact).
+
+#### M10. Date format masks are identical
 **File:** `src/ts/component/cell/text.tsx`
-`ShortUS`, `MonthAbbrBeforeDay`, `Long`, `Default` all map to the same mask `99.99.9999`. If these formats should have different display (e.g., "Mar 5, 2026" vs "03/05/2026"), the masks need differentiation.
+`ShortUS`, `MonthAbbrBeforeDay`, `Long`, `Default` all map to the same mask `99.99.9999`. Different date formats should have different masks.
 
-#### M10. Graph drag state tracking
-**File:** `src/ts/component/graph/provider.tsx`
-`wasDragging` ref is set on drag end but only cleared on next click. Rapid clicks after drag could be silently dropped. No timeout to auto-clear.
+#### M11. `fetchAllMessages` has stale reference to `buildTree`
+**File:** `src/ts/component/comment/section.tsx:344-373`
+`fetchAllMessages` calls `buildTree` internally but `buildTree` is not in `fetchAllMessages`'s dependency array `[ loadDeps ]`. This is a React hooks stale closure violation.
+
+#### M12. `dist:win` script missing `build:deps`
+**File:** `package.json:35`
+`dist:win` does not include `bun run build:deps`, while `dist:mac` and `dist:linux` do. Could lead to missing runtime dependencies in Windows builds.
 
 ### LOW PRIORITY
 
-#### L1. Enter key processing guard uses fixed 30ms timeout
+#### L1. Toast `useEffect` runs on every render
+**File:** `src/ts/component/util/toast.tsx:220`
+The `useEffect` has no dependency array — adds/removes `mouseenter`/`mouseleave` listeners and repositions on every render cycle. Should depend on `[ toast ]`.
+
+#### L2. Enter key processing guard uses fixed 30ms timeout
 **File:** `src/ts/component/editor/page.tsx`
-`isEnterProcessing` guard uses a 30ms timeout to prevent duplicate Enter processing. On slow systems this buffer may be insufficient. Consider using a callback-based guard instead of a fixed timer.
+On slow systems this buffer may be insufficient.
 
-#### L2. Throttle changed from 50ms to 40ms
-**File:** `src/ts/component/editor/page.tsx:16`
-`THROTTLE` constant changed from 50 to 40. Minor performance tuning - more frequent scroll handler invocations.
+#### L3. `addBodyClass` creates regex on every call
+**File:** `src/ts/lib/util/dom.ts:246`
+`new RegExp(\`^${prefix}\`)` created per call.
 
-#### L3. Biome lint suppression warning
-**File:** `src/ts/auto-imports.d.ts:6`
-`// biome-ignore lint: disable` has no effect. This is a generated file so not critical.
+#### L4. Auto-observer plugin edge cases
+**File:** `vite.auto-observer.ts`
+Not matched: `React.memo(Component)`, inline `export default function`, `export { X as default }`. These patterns don't appear in the codebase currently.
 
-### POSITIVE CHANGES NOTED
+#### L5. Hardcoded light-mode gradient in new spaceCreate popup
+**File:** `src/scss/popup/spaceCreate.scss:53`
+Uses `rgba(242, 242, 242, 0)` as gradient start — no dark mode override. CSS gradient interpolation goes through this color, creating a subtle light-grey haze in dark mode.
 
-- **Performance:** `Array.includes()` replaced with `Set.has()` in chat store for O(n) -> O(1) lookups
-- **Performance:** `records.indexOf(id)` replaced with `Map` lookup in gallery view for O(n^2) -> O(n)
-- **Type safety:** `MenuParam<D = any>` generic added, `MenuItem` interface improved with proper React types
-- **New `menuData.ts`:** Typed menu data interfaces for better type safety
-- **Mark range validation:** `Mark.checkRanges()` added after text insertions in chat form
-- **URL detection:** Internal object URLs from different spaces now properly converted to attachments
-- **Block sorting:** Explicit array separation (layout vs non-layout) instead of sort comparator
-- **Error boundary:** Added to app entry point wrapping `<App />`
-- **useEffect dependencies:** Corrected in gallery and card components to prevent stale closures
+#### L6. `$teal-accent` variable is orange
+**File:** `src/scss/popup/aiOnboarding.scss:11`
+`$teal-accent: #fe9a00;` — variable named teal but value is orange. Used 8 times.
+
+#### L7. Empty rule block
+**File:** `src/scss/block/dataview/view/list.scss:179-180`
+Empty `.regularContent {}` nesting block.
+
+#### L8. Unused CSS variable `--color-bg-grey`
+**File:** `src/scss/theme/dark/common.scss:37`
+Defined but never referenced.
+
+#### L9. `'unsafe-eval'` in CSP default-src
+**File:** `electron/json/cors.json:3`
+Allows `eval()` and `new Function()` in all contexts. Required by some libraries but weakens CSP significantly.
+
+#### L10. Pervasive `as any` / `any` typing in comment system
+**Files:** All comment component files
+Nearly all callback parameters, message objects, and refs are typed as `any`. The comment system is brand new code (~2,800 lines) and should have proper typing.
+
+---
+
+## Resolved Issues (from previous review)
+
+| Previous | Status | Resolution |
+|----------|--------|------------|
+| H1. jQuery incomplete (47+ files) | **Resolved** | jQuery fully removed, 0 imports remain |
+| H2. `.get(0)` calls | **Resolved** | No `.get(0)` calls remain in components |
+| H4. Graph mixed jQuery/CustomEvent | **Resolved** | All events use native CustomEvent via U.Dom helpers |
+| H6. Build system migration | **Resolved** | Vite configs stable, CI passing |
+| M5. `scrollbar-gutter: stable` removed | **Not an issue** | Still present in `src/scss/page/common.scss:1` |
+| M8. Deferred update sets unbounded | **Addressed** | `flushDeferredUpdates()` called reliably in `isActiveTabSet(true)` |
+
+---
+
+## Security Summary
+
+| Finding | Severity | Location |
+|---------|----------|----------|
+| No URL validation before `shell.openExternal()` | Accepted | `electron/ts/api.ts:432` |
+| `exec()` with shell on Windows for `openPath` | Medium | `electron/ts/api.ts:451` |
+| `sandbox: false` on all renderer windows | Medium | `electron/ts/window.ts:770` |
+| `@electron/remote` enabled (deprecated) | Medium | `electron/ts/window.ts:47,414` |
+| `'unsafe-eval'` in CSP default-src | Low | `electron/json/cors.json:3` |
+| Broad filesystem API exposed via preload | Low | `electron/js/preload.cjs:64-75` |
+
+---
+
+## Architecture Highlights
+
+### Build System (Vite + bun)
+- **4 Vite configs:** app, extension, web, worker
+- **Code splitting:** Granular vendor chunks (react, d3, mermaid, sentry, excalidraw, protobuf)
+- **Auto-imports:** `unplugin-auto-import` for `S`, `U`, `J`, `C`, etc.
+- **Electron build:** esbuild for main process bundling
+- **Testing:** Vitest configured with 371+ unit tests
+- **SafeStorage:** Excellent atomic write pattern with crash recovery in `electron/ts/safeStorage.ts`
+
+### MobX Architecture
+- **Auto-observer plugin** (`vite.auto-observer.ts`) wraps all functional component exports with `observer()` at build time — no manual imports needed
+- **Reaction scheduler** (`lib/reactionScheduler.ts`) pauses MobX reactions in inactive tabs, flushes on activation
+- **Event batching** (`dispatcher.ts`) buffers gRPC stream events per animation frame, processes in single `runInAction`
+- **Deferred updates** in BlockStore skip expensive structural updates in inactive tabs
+
+### Comment System
+- **8 components** in `src/ts/component/comment/` (~2,800 lines total)
+- **Lexical editor** for rich text editing (`component/form/commentEditor.tsx`)
+- **MobX store** (`store/comment.ts`) with posts/replies maps, pagination state
+- **Features:** Threading, mentions, emoji, attachments, reactions, markdown, code blocks, embeds
+
+### U.Dom Helpers
+- Complete replacement for jQuery DOM operations
+- Error handling in `select`/`selectAll` with try-catch for invalid selectors
+- Space-splitting in `addClass`/`removeClass` for multi-class strings
+
+### Electron TypeScript
+- Main process fully typed in `electron/ts/`
+- CSP enforcement via `session.defaultSession.webRequest.onHeadersReceived`
+- `activeTabOnly` Set prevents duplicate IPC for broadcast events
+- Multi-tab system with lazy loading, persistence, and crash recovery
+- Power monitor with hibernation recovery
+
+---
+
+## SCSS Highlights
+
+### Positive
+- **Comment system SCSS** (`component/comment.scss`): 490 lines, exclusively CSS variables, no hardcoded colors, proper native nesting
+- **Easing variables** (`_mixins.scss`): `$easeDecelerate`, `$easeSpring`, `$easeSmooth` standardize animations
+- **Net `!important` reduction**: 131 removed vs 115 added = net -16
+- **SVG icon migration**: Massive cleanup of `background-image: url()` patterns replaced with `.icon.hasSvg` color-based approach
+
+### Issues
+- Orphaned dark widget styles (H3)
+- Undefined `--color-bg-secondary` in light mode (H4)
+- Dead background declaration in graph (M9)
+- Hardcoded gradient color in spaceCreate (L5)
+
+---
+
+## Positive Changes
+
+- **jQuery fully removed** — eliminates 87KB dependency, aligns with modern DOM APIs
+- **MobX auto-observer** — eliminates manual `observer()` imports across 400+ components
+- **Reaction scheduler** — measurable perf win for multi-tab by pausing background reactions
+- **gRPC event batching** — reduces MobX reaction cascades from per-event to per-frame
+- **ErrorBoundary** — catches rendering crashes globally with copy-error and reload UX
+- **Set/Map lookups** — O(1) replacements for O(n) Array.includes/indexOf in hot paths
+- **DetailStore sanitizeValue** — filters `_missing_object` IDs at store level
+- **Dependency detail preservation** — subscription removal no longer deletes shared details
+- **Type safety** — MenuDataMap generics, typed MenuItem, Detail with `unknown` value
+- **Vitest** — 371+ unit tests
+- **SafeStorage** — atomic writes with crash recovery
+- **Tab system** — lazy loading, persistence, crash recovery

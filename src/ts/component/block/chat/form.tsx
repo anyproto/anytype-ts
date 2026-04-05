@@ -470,8 +470,8 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
-		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
+		const clipboard = e.clipboardData;
+		const list = U.Common.getDataTransferFiles(clipboard.items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 

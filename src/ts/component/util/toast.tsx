@@ -271,7 +271,7 @@ const Toast: FC = () => {
 				['mouseleave', onLeave],
 			]);
 		};
-	});
+	}, [ toast ]);
 
 	return toast ? (
 		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>

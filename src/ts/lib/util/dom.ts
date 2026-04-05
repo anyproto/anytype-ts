@@ -241,9 +241,17 @@ class UtilDom {
 	 * @param {string} prefix - The class prefix.
 	 * @param {string} v - The value to append.
 	 */
+	private bodyClassRegexCache: Map<string, RegExp> = new Map();
+
 	addBodyClass (prefix: string, v: string) {
 		const el = document.documentElement;
-		const reg = new RegExp(`^${prefix}`);
+		let reg = this.bodyClassRegexCache.get(prefix);
+
+		if (!reg) {
+			reg = new RegExp(`^${prefix}`);
+			this.bodyClassRegexCache.set(prefix, reg);
+		};
+
 		const c = String(el.className || '').split(' ').filter(it => !it.match(reg));
 
 		if (v) {
@@ -328,7 +336,7 @@ class UtilDom {
 			return;
 		};
 
-		const root = obj instanceof HTMLElement ? obj : (obj.get ? obj.get(0) : obj);
+		const root = obj instanceof HTMLElement ? obj : obj;
 		if (!root) {
 			return;
 		};
@@ -358,13 +366,13 @@ class UtilDom {
 
 	/**
 	 * Toggles the open/closed state of an element with animation.
-	 * @param {any} obj - The jQuery object to toggle.
+	 * @param {any} obj - The element to toggle.
 	 * @param {number} delay - The animation delay in ms.
 	 * @param {boolean} isOpen - Whether the element is currently open.
 	 * @param {function} [callBack] - Optional callback after toggle.
 	 */
 	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
-		const el: HTMLElement = obj instanceof HTMLElement ? obj : (obj?.get ? obj.get(0) : obj);
+		const el: HTMLElement = obj instanceof HTMLElement ? obj : obj;
 		if (!el) {
 			return;
 		};

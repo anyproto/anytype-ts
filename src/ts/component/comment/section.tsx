@@ -341,37 +341,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		});
 	}, [ loadDeps ]);
 
-	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
-		const PAGE_SIZE = 100;
-
-		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
-			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
-				if (message.error.code) {
-					buildTree(accumulated, sid, callBack);
-					return;
-				};
-
-				const batch = (message.messages || []).map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-				}));
-
-				const all = [ ...accumulated, ...batch ];
-
-				if (batch.length >= PAGE_SIZE) {
-					fetchPage(batch[batch.length - 1].orderId, all);
-				} else {
-					buildTree(all, sid, callBack);
-				};
-			});
-		};
-
-		fetchPage('', []);
-	}, [ loadDeps ]);
-
 	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
 		const posts = messages.filter((it: any) => !it.replyToMessageId);
 		const replies = messages.filter((it: any) => it.replyToMessageId);
@@ -405,6 +374,37 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			callBack?.();
 		});
 	}, [ loadDeps ]);
+
+	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+		const PAGE_SIZE = 100;
+
+		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
+				if (message.error.code) {
+					buildTree(accumulated, sid, callBack);
+					return;
+				};
+
+				const batch = (message.messages || []).map((it: any) => ({
+					...it,
+					content: {
+						...it.content,
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
+					},
+				}));
+
+				const all = [ ...accumulated, ...batch ];
+
+				if (batch.length >= PAGE_SIZE) {
+					fetchPage(batch[batch.length - 1].orderId, all);
+				} else {
+					buildTree(all, sid, callBack);
+				};
+			});
+		};
+
+		fetchPage('', []);
+	}, [ loadDeps, buildTree ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);

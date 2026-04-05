@@ -476,7 +476,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPaste = (e: any) => {
 		const { data } = param;
 		const { rootId } = data;
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
+		const files = U.Common.getDataTransferFiles(e.clipboardData.items);
 
 		if (!files.length) {
 			return;

@@ -108,7 +108,7 @@ const PopupUpload = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onPaste = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		if (!cb) {
 			return;
 		};

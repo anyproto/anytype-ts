@@ -346,7 +346,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		const data = e.clipboardData || e.originalEvent.clipboardData;
+		const data = e.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
 		const value = U.String.insert(getValue(), text, range.from, range.to);

@@ -181,10 +181,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
-				setIsLoading(false);
 				setIsMultiline(false);
 				clearDraft();
 			};
+
+			setIsLoading(false);
 		};
 
 		if (tmpFiles.length) {
