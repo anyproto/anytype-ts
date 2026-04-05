@@ -1142,7 +1142,10 @@ class UtilCommon {
 	showWhatsNew (param?: Partial<I.PopupParam>) {
 		param = param || {};
 		param.data = param.data || {};
-		param.data.document = 'whatsNew';	
+		param.data.document = 'whatsNew';
+		param.onClose = () => {
+			Survey.checkCommon();
+		};
 
 		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);

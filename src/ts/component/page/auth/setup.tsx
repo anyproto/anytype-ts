@@ -68,12 +68,6 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const onAuthComplete = () => {
 				const whatsNew = Storage.get('whatsNew');
 
-				[
-					I.SurveyType.Register,
-					I.SurveyType.Object,
-					I.SurveyType.Pmf,
-				].forEach(it => Survey.check(it));
-
 				const cb1 = () => {
 					const { data } = S.Membership;
 					const purchased = data?.getTopPurchasedProduct();
@@ -93,6 +87,8 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				const cb2 = () => {
 					if (whatsNew) {
 						U.Common.showWhatsNew();
+					} else {
+						Survey.checkCommon();
 					};
 				};
 
