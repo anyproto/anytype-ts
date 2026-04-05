@@ -14,10 +14,12 @@ This is a major release cycle with transformational infrastructure and architect
 2. **Electron TypeScript rewrite** — electron.js → electron/ts/ with esbuild bundling
 3. **jQuery complete removal** — replaced with native DOM and U.Dom helpers
 4. **MobX modernization** — mobx-react → mobx-react-lite with auto-observer Vite plugin
-5. **gRPC event batching** — requestAnimationFrame + MobX runInAction for reduced re-renders
-6. **Inactive tab optimization** — MobX reactionScheduler pauses reactions in background tabs
-7. **New comment system** — threaded discussions with Lexical editor (~2,800 lines)
-8. **Protobuf migration** — generated classes → plain objects with ts-proto
+5. **Icon system overhaul** — ~965 icons migrated from CSS `background-image` SVGs to TSX component registry (`src/ts/component/util/icons/`), organized into 37 packs with `Icon` component rendering via inline SVG. Eliminates dark theme icon overrides, enables color props, and removes hundreds of static SVG files.
+6. **Emoji system rewrite** — Removed `emoji-mart` dependency, replaced with custom PNG-based emoji rendering. Added 60 missing Emoji 15.0/15.1 entries, inline `:colon` search popup, and shortcode generation at init time.
+7. **gRPC event batching** — requestAnimationFrame + MobX runInAction for reduced re-renders
+8. **Inactive tab optimization** — MobX reactionScheduler pauses reactions in background tabs
+9. **New comment system** — threaded discussions with Lexical editor (~2,800 lines)
+10. **Protobuf migration** — generated classes → plain objects with ts-proto
 
 The overall quality is good. The architecture changes are well-executed with proper fallbacks. Two rounds of review fixes have been applied (see Fixed Issues below).
 
@@ -131,6 +133,21 @@ Nearly all callback parameters, message objects, and refs are typed as `any`. On
 - **Testing:** Vitest configured with 371+ unit tests
 - **SafeStorage:** Excellent atomic write pattern with crash recovery in `electron/ts/safeStorage.ts`
 
+### Icon System
+- **Registry-based** — `src/ts/component/util/icons/registry.ts` stores TSX SVG components in a `Map<string, FC>`
+- **37 icon packs** — organized by domain: `header/`, `control/`, `menu/`, `dataview/`, `type/`, `layout/`, etc.
+- **~965 registered icons** — all converted from static SVG files + CSS `background-image` to inline TSX components
+- **`Icon` component** renders via `dangerouslySetInnerHTML` from `getIconSvg()`, with props: `name`, `size`, `color`, `className`, `withBackground`, `iconWidth`/`iconHeight`
+- **Dark mode** — eliminates ~50+ dark theme CSS icon overrides; color is now a prop/CSS `currentColor`
+- **Storybook gallery** — `icons/gallery.stories.tsx` for browsing all registered icons
+
+### Emoji System
+- **emoji-mart removed** — eliminates a heavy dependency; all emoji rendering now uses PNG images from `dist/img/emoji/`
+- **Shortcode generation** — `U.Smile.init()` generates shortcodes at startup, replacing emoji-mart's data
+- **Emoji 15.0/15.1** — 60 new emojis added (including phoenix, lime, head-shaking, etc.)
+- **Inline `:colon` picker** — typing `:` in editor/chat/comments triggers emoji search popup
+- **Cross-platform rendering** — `<smile>` elements rendered as PNG images via React roots for consistent display
+
 ### MobX Architecture
 - **Auto-observer plugin** (`vite.auto-observer.ts`) wraps all functional component exports with `observer()` at build time — no manual imports needed
 - **Reaction scheduler** (`lib/reactionScheduler.ts`) pauses MobX reactions in inactive tabs, flushes on activation
@@ -161,6 +178,8 @@ Nearly all callback parameters, message objects, and refs are typed as `any`. On
 ## Positive Changes
 
 - **jQuery fully removed** — eliminates 87KB dependency, aligns with modern DOM APIs
+- **Icon system overhaul** — ~965 icons as TSX components, eliminates dark theme CSS overrides, enables color/size props
+- **Emoji-mart removed** — replaced with lightweight PNG rendering + custom shortcode generation
 - **MobX auto-observer** — eliminates manual `observer()` imports across 400+ components
 - **Reaction scheduler** — measurable perf win for multi-tab by pausing background reactions
 - **gRPC event batching** — reduces MobX reaction cascades from per-event to per-frame
