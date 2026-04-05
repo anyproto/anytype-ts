@@ -164,7 +164,7 @@ bun run build:pixi
 
 ### Key Development Notes
 - Uses Vite for bundling (esbuild dev, Rollup production) with bun as package manager
-- TypeScript with React 17
+- TypeScript with React 18
 - MobX for state management
 - Custom block-based editor system
 - gRPC for backend communication
@@ -172,7 +172,7 @@ bun run build:pixi
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
 - **Do not change any style or design properties (colors, spacing, sizes, etc.) unless explicitly asked.** Design decisions are intentional — never "fix" or "improve" visual values on your own
-- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
+- For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values
 
 ### Code Style
 - **The project uses tabs for indentation, not spaces.** All TypeScript, TSX, and SCSS files use tab characters.
@@ -204,6 +204,7 @@ bun run build:pixi
   // Bad — inline class list arrays hurt readability
   return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
+- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
 
 ### Storybook
 - All new components should be added to Storybook automatically
@@ -341,17 +342,13 @@ Use the Figma MCP tools to fetch design context and screenshots from Figma files
 - URL format: `https://www.figma.com/design/:fileKey/:fileName?node-id=:nodeId`
 - `fileKey` is the ID after `/design/`
 - `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
-
-**Extract parameters from Figma URLs:**
-For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
-- `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
-- `nodeId`: `12769:19003`
+- Example: `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003` → `fileKey`: `uWka9aJ7IOdvHch60rIRlb`, `nodeId`: `12769:19003`
 
 **Important - Icons and Images:**
 - All icons and images must be stored locally in `src/img/` - do NOT use remote Figma asset URLs
 - When implementing designs from Figma, recreate icons as SVG files in the appropriate `src/img/icon/` subdirectory
 - Follow existing icon patterns (e.g., `src/img/icon/add/` for editor control button icons)
-- Icons typically have two variants: `name0.svg` (default state, #B6B6B6) and `name1.svg` (hover state, #252525)
+- Icons use semantic naming (e.g., `arrow.svg`, `swiper.svg`); hover color is handled via CSS, not separate SVG files
 
 ## Update Docs
 
@@ -380,10 +377,3 @@ The QA Engineer skill:
 
 **Test suite repo:** `../anytype-desktop-suite` — Playwright E2E tests with Page Object Model, translation-aware selectors, and gRPC server lifecycle management. See its `CLAUDE.md` for test architecture details.
 
-## Code Quality
-
-This is a TypeScript project. Always run typecheck and lint after making changes. Fix any lint issues (unused imports, formatting) before committing.
-
-## UI / CSS
-
-For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values.
