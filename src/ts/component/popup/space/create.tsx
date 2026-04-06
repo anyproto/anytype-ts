@@ -198,6 +198,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 												onConfirm: () => Action.membershipUpgrade(),
 											},
 										});
+										analytics.event('ScreenHitShareSpaceLimit');
 									};
 									return;
 								};

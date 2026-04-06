@@ -176,6 +176,7 @@ const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent
 										onConfirm: () => Action.membershipUpgrade(),
 									},
 								});
+								analytics.event('ScreenHitShareSpaceLimit');
 								return;
 							};
 
