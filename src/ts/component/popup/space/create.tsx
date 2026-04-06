@@ -95,6 +95,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			ignoreHidden: false,
 			noDeps: true,
 			crossSpace: true,
+		}, () => {
+			position();
 		});
 	}, []);
 
