@@ -81,7 +81,10 @@ const SidebarSectionObjectRelation = forwardRef<I.SidebarSectionRef, I.SidebarSe
 					readonly={!canEdit}
 					idPrefix={PREFIX}
 					onCellChange={onCellChange}
-					menuParam={{ className: 'fromSidebar fixed', classNameWrap: 'fromSidebar' }}
+					menuParam={{ 
+						className: 'fromSidebar fixed', 
+						classNameWrap: 'fromSidebar',
+					}}
 				/>
 			</div>
 

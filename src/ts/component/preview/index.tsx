@@ -265,6 +265,7 @@ const PreviewIndex = forwardRef(() => {
 			ref={nodeRef}
 			id="preview"
 			className={cn.join(' ')}
+			onMouseEnter={() => Preview.previewCancelHide()}
 			onMouseLeave={() => Preview.previewHide(true)}
 			onMouseDown={onMouseDown}
 		>

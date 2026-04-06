@@ -96,6 +96,10 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			className.push('isInline');
 		};
 
+		if (noInplace) {
+			className.push('withTitle');
+		};
+
 		let width = Math.max(J.Size.dataview.cell.edit, cell?.offsetWidth ?? 0);
 		let closeIfOpen = true;
 		let menuId = '';
@@ -159,6 +163,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			noAnimation: true,
 			passThrough: true,
 			...menuParam,
+			className: className.join(' '),
 			onOpen: () => {
 				U.Dom.addClass(U.Dom.select(element), 'withMenu');
 				setOn();

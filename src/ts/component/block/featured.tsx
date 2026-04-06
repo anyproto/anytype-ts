@@ -489,7 +489,7 @@ const BlockFeatured = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let menuParam = {
 			element: elementId,
-			className: 'fromBlockFeatured',
+			className: 'withTitle',
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,
@@ -726,7 +726,10 @@ const BlockFeatured = forwardRef<I.BlockRef, Props>((props, ref) => {
 									withName={true}
 									noInplace={true}
 									onCellChange={onCellChange}
-									menuParam={{ className: 'fromBlockFeatured', classNameWrap: 'fromBlock' }}
+									menuParam={{ 
+										className: 'withTitle', 
+										classNameWrap: 'fromBlock',
+									}}
 								/>
 								<div className="bullet" />
 							</span>

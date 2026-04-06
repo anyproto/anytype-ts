@@ -421,10 +421,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: to, to });
 		};
 
-		/*
-		keyboard.shortcut('space', e, () => checkUrls());
-		*/
-
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
