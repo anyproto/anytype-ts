@@ -17,13 +17,14 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 	const { rootId, block, className, isInline, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget, closeFilters } = props;
 	const blockId = block.id;
 	const view = getView();
-	const filters = view?.filters;
 	const nodeRef = useRef(null);
 
 	if (!view) {
 		return null;
 	};
-	
+
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
 	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewFilters' ];
 	const items = U.Common.objectCopy(filters).map((it: any) => {
@@ -129,7 +130,7 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onClear = () => {
-		const sorts = view.sorts || [];
+		const sorts = Dataview.getFilteredSorts(view.sorts);
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => {
 			if (sorts.length) {
@@ -195,7 +196,6 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 		openFilterMenu,
 	}));
 
-	const sorts = view.sorts || [];
 	const sortTitle = sorts.length === 1
 		? (S.Record.getRelationByKey(sorts[0].relationKey)?.name || '')
 		: U.String.sprintf(translate('commonCountSorts'), sorts.length, U.Common.plural(sorts.length, translate('pluralSort')));

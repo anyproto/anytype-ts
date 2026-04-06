@@ -1153,8 +1153,14 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const closeFilters = () => {
 		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+
+		if (sorts.length || filters.length) {
 			return;
 		};
 
@@ -1596,9 +1602,11 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 	const filtersToggleId = U.String.toCamelCase(`view-${view.id}-filters`);
-	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
-		&& (view.sorts.length > 0 || U.Common.getViewFilters(view).length > 0);
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
 
+	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
+		&& ((sorts.length > 0) || (filters.length > 0));
 	let ViewComponent: any = null;
 	let body = null;
 

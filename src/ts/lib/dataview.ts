@@ -1162,6 +1162,19 @@ class Dataview {
 		};
 	};
 
+	checkDeletedRelation (relationKey: string): boolean {
+		const relation = S.Record.getRelationByKey(relationKey);
+		return relation && !relation.isDeleted && !relation.isArchived;
+	};
+
+	getFilteredFilters (filters: I.Filter[]): I.Filter[] {
+		return (filters || []).filter(it => it.relationKey ? this.checkDeletedRelation(it.relationKey) : true);	
+	};
+
+	getFilteredSorts (sorts: I.Sort[]): I.Sort[] {
+		return (sorts || []).filter(it => this.checkDeletedRelation(it.relationKey));	
+	};
+
 	/**
 	 * Clears a filter to its default values.
 	 * @param {string} rootId - The root object ID.

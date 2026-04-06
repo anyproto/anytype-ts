@@ -161,7 +161,7 @@
 		.item.sizeSmall { @include text-small; }
 		.item.weightMedium { font-weight: 500; }
 
-		.item.empty { cursor: default; }
+		.item.empty { display: flex; align-items: center; }
 
 		.item.withDescription { padding: 8px 16px; height: 56px; }
 		.item.withDescription {

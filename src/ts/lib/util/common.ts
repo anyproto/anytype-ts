@@ -1279,12 +1279,6 @@ class UtilCommon {
 		Preview.previewHide(true);
 	};
 
-	getViewFilters (view: any): any[] {
-		return (view.filters || []).filter(it => {
-			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
-		});
-	};
-
 	applyAutoDownload (value: number) {
 		C.FileSetAutoDownload(value > 0, false);
 		

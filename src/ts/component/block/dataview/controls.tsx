@@ -125,7 +125,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && isFilter) {
-			const items = U.Common.getViewFilters(view);
+			const items = Dataview.getFilteredFilters(view.filters);
 
 			if (items.length) {
 				toggleFilters();
