@@ -31,7 +31,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
-	const sortCnt = view.sorts.length;
+	const sortCnt = Dataview.getFilteredSorts(view.sorts).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -142,7 +142,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (!readonly && isSort) {
-			if (view.sorts.length) {
+			if (Dataview.getFilteredSorts(view.sorts).length) {
 				toggleFilters();
 			} else {
 				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {

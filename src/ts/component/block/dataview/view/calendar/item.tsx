@@ -58,7 +58,7 @@ const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(Dataview.getActiveFilters(view) as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		const sorts: I.Sort[] = [].concat(Dataview.getFilteredSorts(view.sorts));
 		const searchIds = getSearchIds();
 
 		filters.push({ 

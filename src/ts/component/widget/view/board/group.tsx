@@ -39,7 +39,7 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters)).map(it => Dataview.filterMapper(it, { rootId }));
-		const sorts: I.Sort[] = Dataview.getFilteredSorts(view.sorts).map(it => Dataview.sortMapper(it, { rootId }));
+		const sorts: I.Sort[] = Dataview.getFilteredSorts(view.sorts).map(it => Dataview.sortMapper(it));
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
