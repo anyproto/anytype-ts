@@ -265,7 +265,8 @@ const PreviewIndex = forwardRef(() => {
 			ref={nodeRef}
 			id="preview"
 			className={cn.join(' ')}
-			onMouseLeave={() => Preview.previewHide(true)}
+			onMouseEnter={() => Preview.previewCancelHide()}
+			onMouseLeave={() => Preview.previewHide(false)}
 			onMouseDown={onMouseDown}
 		>
 			<div ref={polygonRef} className="polygon" onClick={onClick} onMouseDown={onMouseDown} />
