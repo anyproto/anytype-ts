@@ -185,6 +185,20 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						if (isGroup) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {
+									if (message.error.code == 104) {
+										const { sharedSpacesLimit } = U.Space.getProfile();
+
+										S.Popup.open('confirm', {
+											data: {
+												iconParam: { name: 'popup/header/warning', color: 'grey' },
+												title: translate('popupConfirmSharedSpaceLimitTitle'),
+												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+												canCancel: false,
+												onConfirm: () => Action.membershipUpgrade(),
+											},
+										});
+									};
 									return;
 								};
 
