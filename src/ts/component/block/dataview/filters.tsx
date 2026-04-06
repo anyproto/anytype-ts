@@ -249,23 +249,10 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 						</>
 					) : ''}
 					{items.map((item: any) => {
-						if (Dataview.isAdvancedFilter(item)) {
-							return (
-								<AdvancedItem
-									{...props}
-									key={item.id}
-									filter={item}
-									subId={rootId}
-									onRemove={e => onRemove(e, item)}
-									onClick={e => onAdvancedClick(e, item)}
-									onContextMenu={e => onContextMenu(e, item)}
-									readonly={isReadonly}
-								/>
-							);
-						};
+						const Component = Dataview.isAdvancedFilter(item) ? AdvancedItem : Item;
 
 						return (
-							<Item
+							<Component
 								{...props}
 								key={item.id}
 								filter={item}
