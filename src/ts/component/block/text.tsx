@@ -50,7 +50,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = U.String.checkRtl(text) || fields.isRtlDetected;
+	const isRtlFromText = U.String.checkRtl(text);
+	const checkRtl = isRtlFromText || fields.isRtlDetected;
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
@@ -1142,14 +1143,15 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		const isRtl = U.String.checkRtl(value);
-		const cb = () => {
-			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
-		};
 
-		if (value && (isRtl != checkRtl)) {
-			U.Data.setRtl(rootId, block, isRtl, cb);
+		if (isRtl != checkRtl) {
+			// Save text first so intermediate re-renders from setRtl have the correct text in store,
+			// preventing character loss and stale CSS direction
+			U.Data.blockSetText(rootId, block.id, value, marks, update, () => {
+				U.Data.setRtl(rootId, block, isRtl, callBack);
+			});
 		} else {
-			cb();
+			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 		};
 	};
 	
@@ -1513,7 +1515,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		cv.push(`textColor textColor-${color}`);
 	};
 
-	if (checkRtl) {
+	if (isRtlFromText) {
 		cn.push('isRtl');
 	};
 
