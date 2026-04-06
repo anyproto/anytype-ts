@@ -54,7 +54,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
-	const loaderRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -943,7 +942,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const send = sendRef.current;
-		const loader = loaderRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -951,7 +949,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const bookmark = S.Record.getBookmarkType();
 
 		U.Dom.addClass(send, 'isLoading');
-		U.Dom.addClass(loader, 'active');
 		isSending.current = true;
 
 		raf(() => {
@@ -1094,8 +1091,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const clear = () => {
 		isSending.current = false;
 		U.Dom.removeClass(sendRef.current, 'isLoading');
-		U.Dom.removeClass(sendRef.current, 'anim');
-		U.Dom.removeClass(loaderRef.current, 'active');
 
 		onEditClear();
 		onReplyClear();
@@ -1801,8 +1796,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" ref={loaderRef} />
-
 					{title ? (
 						<div className="head">
 							<div className="side left">
