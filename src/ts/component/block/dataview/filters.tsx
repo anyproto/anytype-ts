@@ -55,10 +55,11 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onClick = (e: any, item: any) => {
-		S.Menu.open('dataviewFilterValues', {
+		const isAdvanced = Dataview.isAdvancedFilter(item);
+		const menuId = isAdvanced ? 'dataviewFilterAdvanced' : 'dataviewFilterValues';
+		const menuParam: I.MenuParam = {
 			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipY: true,
 			data: {
@@ -68,6 +69,17 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 				getView,
 				getTarget,
 				readonly: isReadonly,
+			},
+		};
+
+		if (isAdvanced) {
+			menuParam.noFlipX = true;
+			menuParam.data = Object.assign(menuParam.data, {
+				loadData,
+			});
+		} else {
+			menuParam.data = Object.assign(menuParam.data, {
+				itemId: item.id,
 				save: () => {
 					const currentFilter = view.getFilter(item.id);
 					if (currentFilter) {
@@ -76,9 +88,10 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 						});
 					};
 				},
-				itemId: item.id,
-			}
-		});
+			});	
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	const onAdd = () => {
@@ -169,37 +182,13 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const onAdvancedClick = (e: any, item: any) => {
-		S.Menu.open('dataviewFilterAdvanced', {
-			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
-			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Left,
-			offsetY: 4,
-			noFlipY: true,
-			noFlipX: true,
-			data: {
-				rootId,
-				blockId,
-				isInline,
-				getView,
-				getTarget,
-				readonly: isReadonly,
-				loadData,
-			}
-		});
-	};
-
 	const openFilterMenu = (filterId: string) => {
 		const item = items.find(it => it.id == filterId);
 		if (!item) {
 			return;
 		};
 
-		if (Dataview.isAdvancedFilter(item)) {
-			onAdvancedClick(null, item);
-		} else {
-			onClick(null, item);
-		};
+		onClick(null, item);
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -259,7 +248,7 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 								filter={item}
 								subId={rootId}
 								onRemove={e => onRemove(e, item)}
-								onClick={e => isAdvanced ? onAdvancedClick(e, item) : onClick(e, item)}
+								onClick={e => onClick(e, item)}
 								onContextMenu={e => onContextMenu(e, item)}
 								readonly={isReadonly}
 							/>
