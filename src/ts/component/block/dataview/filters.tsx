@@ -24,10 +24,13 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 		return null;
 	};
 	
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const cn = [ 'dataviewFilters' ];
 	const items = U.Common.objectCopy(filters).map((it: any) => {
+		const relation = S.Record.getRelationByKey(it.relationKey);
 		return {
 			...it,
-			relation: S.Record.getRelationByKey(it.relationKey),
+			relation: (relation && !relation.isArchived && !relation.isDeleted) ? relation : null,
 		};
 	}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
 		const aAdvanced = Dataview.isAdvancedFilter(a);
@@ -43,9 +46,6 @@ const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 		if (aActive === bActive) return 0;
 		return aActive ? -1 : 1;
 	});
-	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
-	const cn = [ 'dataviewFilters' ];
 
 	if (className) {
 		cn.push(className);
