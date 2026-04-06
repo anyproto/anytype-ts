@@ -17,7 +17,6 @@ class Preview {
 	isTooltipOpen = false;
 
 	private clickTooltipHandler: ((e: Event) => void) | null = null;
-	private previewLeaveHandler: ((e: Event) => void) | null = null;
 
 	tooltipShow (param: Partial<I.TooltipParam>) {
 		const el = param.element instanceof HTMLElement ? param.element : null;
@@ -206,21 +205,9 @@ class Preview {
 			});
 		};
 
-		if (el) {
-			if (this.previewLeaveHandler) {
-				U.Dom.removeEvent(el, 'mouseleave', this.previewLeaveHandler);
-			};
-
-			this.previewLeaveHandler = () => {
-				window.clearTimeout(this.timeout.preview);
-				this.previewHide(false);
-			};
-
-			U.Dom.addEvent(el, 'mouseleave', this.previewLeaveHandler);
-		};
 
 		U.Dom.toggleClass(obj, 'passThrough', Boolean(passThrough));
-		this.previewHide(true);
+		window.clearTimeout(this.timeout.preview);
 
 		if (param.delay) {
 			window.clearTimeout(this.timeout.preview);

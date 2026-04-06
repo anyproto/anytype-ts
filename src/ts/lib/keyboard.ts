@@ -80,10 +80,10 @@ class Keyboard {
 		this._handlers.blur = () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
+
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
-
-			U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver'));
+			S.Common.getRef('dragProvider')?.clearStyle();
 		};
 
 		U.Dom.addEvents(window, [
