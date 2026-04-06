@@ -10,11 +10,11 @@
 		#input.input { border: 0px; padding: 0px; }
 
 		&.fromBlockRelation {
-			#input, #placeholder { padding: 5px 8px; }
+			#input, #placeholder { padding: 5px 8px !important; }
 		}
 
 		&.fromSidebar {
-			#input { min-height: 48px; }
+			#input { min-height: 48px !important; }
 		}
 
 		&.withTitle {

@@ -287,6 +287,39 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			};
 		};
 
+		// Paste without formatting
+		keyboard.shortcut(`${cmd}+shift+v`, e, () => {
+			e.preventDefault();
+
+			(async () => {
+				const text = await navigator.clipboard.readText();
+				if (!text) {
+					return;
+				};
+
+				const { from, to } = range.current;
+				const limit = J.Constant.limit.chat.text;
+				const current = getTextValue();
+
+				let newText = U.String.normalizeLineEndings(text);
+				if (newText.length >= limit) {
+					newText = newText.substring(0, limit);
+				};
+
+				const res = U.String.insert(current, newText, from, to);
+
+				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.checkRanges(res, marks.current);
+				setMarks(marks.current);
+
+				const rt = from + newText.length;
+				range.current = { from: rt, to: rt };
+				updateMarkup(res, range.current);
+				checkUrls();
+				updateCounter();
+			})();
+		});
+
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
