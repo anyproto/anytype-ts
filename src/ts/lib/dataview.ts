@@ -160,10 +160,11 @@ class Dataview {
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
 		const viewFilters = this.getActiveFilters(view);
-		const filters = viewFilters.concat(param.filters || []);
-		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
-
-		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
+		
+		let filters = viewFilters.concat(param.filters || []).concat([
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		]);
+		let sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -188,12 +189,15 @@ class Dataview {
 			};
 		};
 
+		filters = this.getFilteredFilters(filters).map(it => this.filterMapper({ ...it, includeTime: false }, { rootId }));
+		sorts = this.getFilteredSorts(sorts).map(it => this.sortMapper(it));
+
 		const cb = () => {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(it => this.filterMapper({ ...it, includeTime: false }, { rootId })),
-				sorts: sorts.map(it => this.sortMapper(it)),
+				filters,
+				sorts,
 				keys,
 				limit,
 				offset,
@@ -214,18 +218,12 @@ class Dataview {
 	 * @returns {I.Filter[]} Array of filter objects.
 	 */
 	getActiveFilters (view: I.View): I.Filter[] {
-		return U.Common.objectCopy(view.filters).filter(it => {
-			if (!Relation.isFilterActive(it)) {
-				return false;
-			};
+		if (!view) {
+			return [];
+		};
 
-			if (it.operator != I.FilterOperator.None) {
-				return true;
-			};
-
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && !relation.isArchived && !relation.isDeleted;
-		});
+		const filters = this.getFilteredFilters(view.filters);
+		return filters.filter(it => Relation.isFilterActive(it));
 	};
 
 	/**
@@ -402,10 +400,7 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const filters = view.filters.filter(it => {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && !relation.isArchived && !relation.isDeleted;
-		}).map(it => this.filterMapper(it, { rootId }));
+		const filters = this.getFilteredFilters(view.filters).map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);

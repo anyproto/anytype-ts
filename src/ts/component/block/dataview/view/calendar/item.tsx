@@ -85,7 +85,7 @@ const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 			subId,
 			limit,
 			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(Dataview.filterMapper),
+			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),

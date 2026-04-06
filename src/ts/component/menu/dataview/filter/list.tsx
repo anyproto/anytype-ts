@@ -43,23 +43,19 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getFilterItems = () => {
 		const view = getView();
-
 		if (!view) {
 			return [];
 		};
 
-		return U.Common.objectCopy(view.filters).map((it: any) => {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		
+		return U.Common.objectCopy(filters).map((it: any) => {
 			return {
 				...it,
 				relation: S.Record.getRelationByKey(it.relationKey),
 				isFilter: true,
 			};
-		}).filter(it => {
-		if (Dataview.isAdvancedFilter(it)) {
-			return true;
-		};
-		return it.relation && !it.relation.isArchived && !it.relation.isDeleted;
-	}).sort((a, b) => {
+		}).sort((a, b) => {
 			const aAdvanced = Dataview.isAdvancedFilter(a);
 			const bAdvanced = Dataview.isAdvancedFilter(b);
 
