@@ -213,7 +213,9 @@ class Preview {
 
 			this.previewLeaveHandler = () => {
 				window.clearTimeout(this.timeout.preview);
-				this.previewHide(false);
+				if (rect) {
+					this.previewHide(true);
+				};
 			};
 
 			U.Dom.addEvent(el, 'mouseleave', this.previewLeaveHandler);
@@ -229,11 +231,6 @@ class Preview {
 			S.Common.previewSet(param);
 		};
 
-		this.isPreviewOpen = true;
-	};
-
-	previewCancelHide () {
-		window.clearTimeout(this.timeout.preview);
 		this.isPreviewOpen = true;
 	};
 

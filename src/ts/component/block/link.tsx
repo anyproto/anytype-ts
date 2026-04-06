@@ -80,7 +80,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const onMouseLeave = () => {
-		Preview.previewHide(false);
+		Preview.previewHide(true);
 	};
 
 	const getIconSize = () => {
