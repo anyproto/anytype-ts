@@ -195,7 +195,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
 												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
 												canCancel: false,
-												onConfirm: () => Action.membershipUpgrade(),
+												onConfirm: () => Action.openSettings('membership', ''),
 											},
 										});
 										analytics.event('ScreenHitShareSpaceLimit');
