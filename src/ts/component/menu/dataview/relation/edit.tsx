@@ -147,7 +147,7 @@ const MenuDataviewRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					children: [
 						canFilter ? { id: 'filter', iconParam: { name: 'control/dataview/filter' }, name: translate('menuDataviewRelationEditAddFilter') } : null,
 						canSort ? { id: 'sort0', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
-						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
+						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow', className: 'c1' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
 						{ id: 'insert-left', iconParam: { name: 'menu/relation/insert' }, name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', iconParam: { name: 'menu/relation/insert' }, className: 'rotated', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', iconParam: { name: 'common/eye1' }, name: translate('menuDataviewRelationEditHideRelation') } : null,
