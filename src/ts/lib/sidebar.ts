@@ -305,16 +305,21 @@ class Sidebar {
 		if (this.isAnimating) {
 			return;
 		};
-		
+
 		const { width, isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
+		const currentState = S.Common.getRightSidebarState(isPopup);
+		const isSamePage = !isClosed && (currentState.page == state?.page);
 
 		if (isClosed) {
 			this.rightPanelOpen(isPopup, state, width, true);
-		} else {
+		} else
+		if (isSamePage) {
 			this.rightPanelClose(isPopup, true);
+		} else {
+			S.Common.setRightSidebarState(isPopup, state);
 		};
 
-		if (isClosed && (state?.page == 'object/tableOfContents')) {
+		if ((isClosed || !isSamePage) && (state?.page == 'object/tableOfContents')) {
 			analytics.event('ScreenTableOfContents');
 		} else {
 			analytics.event(isClosed ? 'ExpandSidebar' : 'CollapseSidebar');
