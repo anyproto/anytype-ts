@@ -35,10 +35,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getItems = () => {
 		return [
 			{ 
-				id: 'whatsNew', iconParam: { name: 'bell' }, document: 'whatsNew',
+				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
 				caption: <Button size={16} text={U.Common.getElectron().version.app} />
 			},
-			{ id: 'shortcut', iconParam: { name: 'keyboard' }, caption: keyboard.getCaption('shortcut') },
+			{ id: 'shortcut', iconParam: { name: 'menu/help/keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'share' },
 			{ id: 'community' },
@@ -59,7 +59,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				],
 			},
 		].map((it: any) => {
-			it.iconParam = { name: `menu/help/${it.icon || it.id}` };
+			it.iconParam = it.iconParam || { name: `menu/help/${it.icon || it.id}` };
 			return optionMapper(it);
 		});
 	};

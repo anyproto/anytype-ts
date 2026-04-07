@@ -105,7 +105,6 @@ const Components: any = {
 	select:					 MenuSelect,
 
 	smile:					 MenuSmile,
-	smileSkin:				 MenuSmileSkin,
 	smileColor:				 MenuSmileColor,
 
 	calendar:				 MenuCalendar,
