@@ -2806,7 +2806,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{S.Common.config.experimental && !isTemplate ? (
+				{!isTemplate ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}
