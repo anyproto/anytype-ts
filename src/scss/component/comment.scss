@@ -233,8 +233,14 @@
 	.commentEditor-h3 { padding: 12px 0px 0px 0px; @include text-header3; }
 
 	.commentEditor-quote {
-		padding: 4px 0px 4px 12px;
-		border-left: 4px solid var(--color-shape-secondary);
+		display: flex; align-items: center; min-height: 28px;
+		padding: 4px 0px 4px 12px; position: relative;
+	}
+	.commentEditor-quote {
+		&::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 4px; height: 100%;
+			background: var(--color-control-inactive); border-radius: 100px;
+		}
 	}
 
 	.commentEditor-codeBlock {
@@ -384,8 +390,14 @@
 	.commentParagraph + .commentParagraph { padding-top: 8px; }
 
 	.commentBlockquote {
-		padding: 4px 0px 4px 12px; line-height: 20px;
-		border-left: 4px solid var(--color-shape-secondary);
+		display: flex; align-items: center; min-height: 28px;
+		padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
+	}
+	.commentBlockquote {
+		&::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 4px; height: 100%;
+			background: var(--color-control-inactive); border-radius: 100px;
+		}
 	}
 
 	.commentCodeBlock {
