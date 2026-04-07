@@ -447,7 +447,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const lang = U.Embed.getLang(processor);
 		const range = getRange();
 
-		if (value && lang) {
+		if (value && lang && Prism.languages[lang]) {
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
