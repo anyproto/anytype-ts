@@ -82,7 +82,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (!readonly && keyboard.isCmd(e)) {
 			const cellIds = getCellIdsForColumn(columnId);
-			applyTableSelection(cellIds, 'toggle');
+			applyTableSelection(cellIds, 'groupToggle');
 			selectionAnchor.current = { rowId: rows[0]?.id || '', columnId };
 			return;
 		};
@@ -104,7 +104,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (!readonly && keyboard.isCmd(e)) {
 			const cellIds = getCellIdsForRow(rowId);
-			applyTableSelection(cellIds, 'toggle');
+			applyTableSelection(cellIds, 'groupToggle');
 			selectionAnchor.current = { rowId, columnId: columns[0]?.id || '' };
 			return;
 		};
@@ -256,8 +256,9 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				});
 
 				if (isMultiSelect) {
+					const snapshot = [ ...selectedCells.current ];
 					fill = (callBack: () => void) => {
-						blockIds = [ ...selectedCells.current ];
+						blockIds = snapshot;
 						const selectedRowIds = [ ...new Set(blockIds.map(id => id.split('-')[0])) ];
 						C.BlockTableRowListFill(rootId, selectedRowIds, callBack);
 					};
@@ -603,6 +604,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const clearTableSelection = () => {
 		selectedCells.current.clear();
 		selectionMode.current = 'none';
+		keyboard.disableSelection(false);
 		removeTableSelectionFrames();
 
 		if (outsideClickRef.current) {
@@ -611,13 +613,22 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 	};
 
-	const applyTableSelection = (cellIds: string[], mode: 'set' | 'toggle') => {
+	const applyTableSelection = (cellIds: string[], mode: 'set' | 'toggle' | 'groupToggle') => {
 		const node = nodeRef.current;
 		const isNew = !selectedCells.current.size;
 
 		if (mode == 'set') {
 			selectedCells.current.clear();
 			cellIds.forEach(id => selectedCells.current.add(id));
+		} else
+		if (mode == 'groupToggle') {
+			const allSelected = cellIds.every(id => selectedCells.current.has(id));
+
+			if (allSelected) {
+				cellIds.forEach(id => selectedCells.current.delete(id));
+			} else {
+				cellIds.forEach(id => selectedCells.current.add(id));
+			};
 		} else {
 			cellIds.forEach(id => {
 				if (selectedCells.current.has(id)) {
@@ -637,7 +648,11 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		focus.clear(true);
 		keyboard.disableSelection(true);
 		detectSelectionMode();
-		renderTableSelectionFrame();
+
+		const selectedRowIds = [ ...new Set([ ...selectedCells.current ].map(id => id.split('-')[0])) ];
+		C.BlockTableRowListFill(rootId, selectedRowIds, () => {
+			renderTableSelectionFrame();
+		});
 
 		if (isNew || !outsideClickRef.current) {
 			if (outsideClickRef.current) {
@@ -645,9 +660,13 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			};
 
 			outsideClickRef.current = (e: MouseEvent) => {
-				if (node && !node.contains(e.target as Node)) {
-					clearTableSelection();
+				const target = e.target as HTMLElement;
+
+				if (target.closest('.menus') || target.closest('.cell')) {
+					return;
 				};
+
+				clearTableSelection();
 			};
 			U.Dom.addEvent(window, 'mousedown', outsideClickRef.current);
 		};
