@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import { Icon, Button } from 'Component';
+import { Icon, Button, Label } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import { T } from 'vitest/dist/chunks/traces.d.402V_yFI';
 
 interface Props {
 	rootId: string;
@@ -269,6 +268,51 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			remaining--;
 		};
 	}, []);
+
+	const timeoutDrag = useRef<number>(0);
+	const [ isDraggingOver, setIsDraggingOver ] = useState(false);
+
+	const canDrop = useCallback((e: any): boolean => {
+		return !readonly && U.File.checkDropFiles(e);
+	}, [ readonly ]);
+
+	const onDragOver = useCallback((e: any) => {
+		if (!canDrop(e)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		setIsDraggingOver(true);
+	}, [ canDrop ]);
+
+	const onDragLeave = useCallback((e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(() => setIsDraggingOver(false), 100);
+	}, []);
+
+	const onDrop = useCallback((e: any) => {
+		if (!canDrop(e)) {
+			setIsDraggingOver(false);
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const files = Array.from(e.dataTransfer.files) as File[];
+
+		keyboard.disableCommonDrop(true);
+		addAttachmentFiles(files);
+		keyboard.disableCommonDrop(false);
+
+		setIsDraggingOver(false);
+	}, [ canDrop, addAttachmentFiles ]);
 
 	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
@@ -680,9 +724,22 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	if (isFocused) cn.push('isFocused');
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
+	if (isDraggingOver) cn.push('isDraggingOver');
 
 	return (
-		<div ref={formRef} className={cn.join(' ')}>
+		<div
+			ref={formRef}
+			className={cn.join(' ')}
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={onDrop}
+		>
+			<div className="dragOverlay">
+				<div className="inner">
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
+
 			<div className="contentArea">
 				<CommentEditor
 					ref={editorRef}
