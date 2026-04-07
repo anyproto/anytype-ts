@@ -178,9 +178,8 @@
 				}
 
 				&.archiveTree .row:not(.isHead) {
+					.info { display: flex; flex-direction: column; overflow: hidden; }
 					.info {
-						display: flex; flex-direction: column; overflow: hidden;
-
 						.nameRow { display: flex; align-items: center; gap: 0px 8px; }
 						.nameRow {
 							.name { @include text-overflow-nw; }
