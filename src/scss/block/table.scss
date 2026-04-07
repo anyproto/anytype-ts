@@ -132,9 +132,13 @@
 		}
 
 		.cell.isHighlightedCell {
-			.icon.menu { 
+			.icon.menu {
 				.inner { border-color: var(--color-system-accent-50); box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 			}
+		}
+
+		#selectionFrameContainer {
+			.selectionFrame.tableSelection { background-color: var(--color-system-selection); }
 		}
 
 		.cell:hover {
