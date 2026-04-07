@@ -931,7 +931,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			let hasContent = false;
-			if (!object.isDeleted && (content.state == I.FileState.Done)) {
+			if (!object.isDeleted && !object.isArchived && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
 				hasContent = true;
 			};

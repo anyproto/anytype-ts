@@ -175,27 +175,52 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	let element = null;
+	let overlay = null;
+	const typeName = translate('blockNameImage');
+
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		overlay = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+			</div>
+		);
+		if (state == I.FileState.Done) {
+			element = (
+				<div ref={wrapRef} className="wrap" style={css}>
+					<img
+						className="mediaImage"
+						src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+						onDragStart={e => e.preventDefault()}
+						onError={handleError}
+					/>
+					{overlay}
+				</div>
+			);
+		} else {
+			element = overlay;
+		};
 	} else {
 		switch (state) {
 			default: {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/image' }}
-							textFile={translate('blockImageUpload')} 
-							accept={J.Constant.fileExtension.image} 
-							onChangeUrl={handleChangeUrl} 
-							onChangeFile={handleChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockImageUpload')}
+							accept={J.Constant.fileExtension.image}
+							onChangeUrl={handleChangeUrl}
+							onChangeFile={handleChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
@@ -205,12 +230,12 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={handleClick} 
-							onError={handleError} 
+						<img
+							className="mediaImage"
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+							onDragStart={e => e.preventDefault()}
+							onClick={handleClick}
+							onError={handleError}
 						/>
 						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
 						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />

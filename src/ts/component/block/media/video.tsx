@@ -138,13 +138,37 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	useImperativeHandle(ref, () => ({}));
 
 	let element = null;
+	let overlay = null;
+	const typeName = translate('blockNameVideo');
+
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		overlay = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+			</div>
+		);
+		if (state == I.FileState.Done) {
+			element = (
+				<div ref={wrapRef} className="wrap" style={css}>
+					<MediaVideo
+						src={S.Common.fileUrl(targetObjectId)}
+						onPlay={onPlay}
+						onPause={onPause}
+					/>
+					{overlay}
+				</div>
+			);
+		} else {
+			element = overlay;
+		};
 	} else {
 		switch (state) {
 			default:
@@ -153,20 +177,20 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/video' }}
-							textFile={translate('blockVideoUpload')} 
-							accept={J.Constant.fileExtension.video} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockVideoUpload')}
+							accept={J.Constant.fileExtension.video}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>
