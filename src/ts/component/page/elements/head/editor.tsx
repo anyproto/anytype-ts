@@ -49,6 +49,7 @@ const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 	
 	const onScaleEnd = (e: any, v: number) => {
 		keyboard.disableSelection(false);
+		setLayoutWidth(v);
 		setPercent(v);
 
 		const root = S.Block.getLeaf(rootId, rootId);
