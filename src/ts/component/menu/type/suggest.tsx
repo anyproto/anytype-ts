@@ -152,8 +152,7 @@ const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
-
-			beforePosition();
+			position();
 			callBack?.(message);
 		});
 	};
