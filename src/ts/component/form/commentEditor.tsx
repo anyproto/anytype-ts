@@ -43,6 +43,7 @@ import {
 	ElementNode,
 	DecoratorNode,
 	TextNode,
+	$splitNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 
@@ -2397,6 +2398,85 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	});
 };
 
+/**
+ * Splits a paragraph at selection boundaries so that a block transform
+ * only affects the selected portion, not the entire paragraph.
+ */
+const splitSelectionFromParagraph = (selection: any) => {
+	if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+		return;
+	};
+
+	const anchor = selection.anchor;
+	const focus = selection.focus;
+	const anchorNode = anchor.getNode();
+	const focusNode = focus.getNode();
+	const anchorTopLevel = anchorNode.getTopLevelElementOrThrow();
+	const focusTopLevel = focusNode.getTopLevelElementOrThrow();
+
+	// Only split when selection is within a single paragraph
+	if (anchorTopLevel !== focusTopLevel) {
+		return;
+	};
+
+	if (anchorTopLevel.getType() !== 'paragraph') {
+		return;
+	};
+
+	const paragraph = anchorTopLevel;
+	const children = paragraph.getChildren();
+
+	if (children.length <= 1) {
+		return;
+	};
+
+	// Find child indices for anchor and focus
+	const anchorChild = $isElementNode(anchorNode) ? anchorNode : anchorNode.getParent();
+	const focusChild = $isElementNode(focusNode) ? focusNode : focusNode.getParent();
+
+	if (!anchorChild || !focusChild) {
+		return;
+	};
+
+	const anchorIdx = children.indexOf(anchorChild === paragraph ? anchorNode : anchorChild);
+	const focusIdx = children.indexOf(focusChild === paragraph ? focusNode : focusChild);
+
+	if (anchorIdx === -1 || focusIdx === -1) {
+		return;
+	};
+
+	const startIdx = Math.min(anchorIdx, focusIdx);
+	const endIdx = Math.max(anchorIdx, focusIdx);
+
+	// Don't split if the entire paragraph is selected
+	if ((startIdx === 0) && (endIdx === children.length - 1)) {
+		return;
+	};
+
+	// Split after the end of selection (if not at the last child)
+	if (endIdx < children.length - 1) {
+		$splitNode(paragraph, endIdx + 1);
+	};
+
+	// Split before the start of selection (if not at the first child)
+	if (startIdx > 0) {
+		const [ , afterNode ] = $splitNode(paragraph, startIdx);
+		// Move selection into the new split node
+		afterNode.selectStart();
+		const sel = $getSelection();
+		if ($isRangeSelection(sel)) {
+			const lastChild = afterNode.getLastChild();
+			if (lastChild) {
+				if ($isTextNode(lastChild)) {
+					sel.focus.set(lastChild.getKey(), lastChild.getTextContentSize(), 'text');
+				} else {
+					sel.focus.set(afterNode.getKey(), afterNode.getChildrenSize(), 'element');
+				};
+			};
+		};
+	};
+};
+
 const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 	if (!item) {
 		return;
@@ -2408,22 +2488,33 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 			return;
 		};
 
+		// Split paragraph at selection boundaries so transform only affects selected text
+		if (item.style !== I.TextStyle.Paragraph) {
+			splitSelectionFromParagraph(selection);
+		};
+
+		// Re-read selection after potential split
+		const sel = $getSelection();
+		if (!$isRangeSelection(sel)) {
+			return;
+		};
+
 		switch (item.style) {
 			case I.TextStyle.Header1:
 			case I.TextStyle.Header2:
 			case I.TextStyle.Header3: {
 				const tag = styleToHeadingTag(item.style) as 'h1' | 'h2' | 'h3';
-				$setBlocksType(selection, () => $createHeadingNode(tag));
+				$setBlocksType(sel, () => $createHeadingNode(tag));
 				break;
 			};
 
 			case I.TextStyle.Quote: {
-				$setBlocksType(selection, () => new QuoteNode());
+				$setBlocksType(sel, () => new QuoteNode());
 				break;
 			};
 
 			case I.TextStyle.Code: {
-				$setBlocksType(selection, () => $createCodeNode());
+				$setBlocksType(sel, () => $createCodeNode());
 				break;
 			};
 
@@ -2446,7 +2537,7 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 				if (item.type === I.BlockType.Div) {
 					editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
 				} else {
-					$setBlocksType(selection, () => $createParagraphNode());
+					$setBlocksType(sel, () => $createParagraphNode());
 				};
 				break;
 			};
