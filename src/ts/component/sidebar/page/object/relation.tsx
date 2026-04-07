@@ -79,7 +79,7 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
-					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'destructive' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {

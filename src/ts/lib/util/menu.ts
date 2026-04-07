@@ -791,7 +791,7 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner();
 		const options: I.Option[] = [
 			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'destructive' }
 		];
 
 		S.Menu.open('select', {
@@ -1018,10 +1018,10 @@ class UtilMenu {
 				};
 
 				if (withDelete) {
-					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'darkRed' };
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'destructive' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', iconParam, name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'destructive' });
 				};
 			};
 
@@ -1433,7 +1433,7 @@ class UtilMenu {
 			if (canDelete) {
 				options = options.concat([
 					{ isDiv: true },
-					{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+					{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 				]);
 			};
 

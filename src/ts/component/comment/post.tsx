@@ -404,7 +404,7 @@ const CommentPost = (props: Props) => {
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
 		};
 
 		setHover(true);

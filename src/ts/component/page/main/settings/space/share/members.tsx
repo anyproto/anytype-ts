@@ -56,7 +56,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 			items.push({ isDiv: true });
 		};
 
-		items.push({ id: 'remove', name: removeLabel, color: 'red' });
+		items.push({ id: 'remove', name: removeLabel, color: 'destructive' });
 
 		return items;
 	};

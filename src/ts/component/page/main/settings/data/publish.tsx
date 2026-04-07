@@ -28,7 +28,7 @@ const PageMainSettingsDataPublish = forwardRef<I.PageRef, I.PageSettingsComponen
 			{ isDiv: true },
 			{ id: 'view', name: translate('menuPublishButtonView') },
 			{ id: 'copy', name: translate('menuPublishButtonCopy') },
-			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'red' },
+			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'destructive' },
 		];
 
 		S.Menu.open('select', {

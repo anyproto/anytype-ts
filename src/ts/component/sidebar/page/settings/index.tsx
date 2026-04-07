@@ -52,9 +52,9 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			iconParam: isOwner ? { name: 'menu/action/remove', color: 'darkRed' } : { name: 'menu/action/leave', color: 'darkRed' },
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'destructive' } : { name: 'menu/action/leave', color: 'destructive' },
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
-			color: 'red',
+			color: 'destructive',
 		} : null;
 
 		return [
