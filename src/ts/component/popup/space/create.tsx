@@ -122,8 +122,15 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			return true;
 		});
 
-		// Sort by number of shared spaces (desc), then by name (asc)
+		// Sort by: globalName presence (desc), shared spaces count (desc), then name (asc)
 		unique.sort((a, b) => {
+			const ga = a.globalName ? 1 : 0;
+			const gb = b.globalName ? 1 : 0;
+
+			if (ga != gb) {
+				return gb - ga;
+			};
+
 			const ca = spaceCounts.get(a.identity) || 0;
 			const cb = spaceCounts.get(b.identity) || 0;
 
@@ -358,7 +365,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				onClick={() => onToggleMember(item.id)}
 			>
 				<IconObject size={32} object={item} />
-				<ObjectName object={item} />
+				<ObjectName object={item} withBadge={true} />
 				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
 			</div>
 		);
@@ -486,7 +493,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 							{selectedMemberObjects.map(item => (
 								<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
 									<IconObject size={32} object={item} />
-									<ObjectName object={item} />
+									<ObjectName object={item} withBadge={true} />
 								</div>
 							))}
 						</div>

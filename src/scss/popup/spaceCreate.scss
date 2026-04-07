@@ -32,7 +32,7 @@
 
 			&:hover::before { background: var(--color-shape-highlight-light); }
 
-			.name { flex: 1; }
+			.name { flex: 1; display: flex; align-items: center; gap: 0px 4px; }
 			.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
 			.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
 		}
