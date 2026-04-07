@@ -1952,6 +1952,12 @@ const PasteUrlPlugin = () => {
 					return false;
 				};
 
+				// If clipboard has HTML content, let Lexical handle rich paste natively
+				const html = clipboardData.getData('text/html') || '';
+				if (html) {
+					return false;
+				};
+
 				const text = clipboardData.getData('text/plain') || '';
 				if (!text) {
 					return false;
