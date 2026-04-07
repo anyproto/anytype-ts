@@ -11,7 +11,6 @@ import MenuTableOfContents from './tableOfContents';
 import MenuSelect from './select';
 
 import MenuSmile from './smile';
-import MenuSmileSkin from './smile/skin';
 import MenuSmileColor from './smile/color';
 
 import MenuCalendar from './calendar';
