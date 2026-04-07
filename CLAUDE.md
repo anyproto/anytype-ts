@@ -361,6 +361,7 @@ After completing any task that edits SCSS files (`src/scss/`), SVG/image files (
 - Missing dark icon variants in `src/img/theme/dark/`
 - Inline `html.themeDark` overrides that belong in `src/scss/theme/dark/`
 - Dynamic icon paths missing `S.Common.getThemePath()`
+- **Never duplicate unchanged values from light theme into dark theme** — only override CSS vars when the value actually differs
 
 ## QA Engineer
 

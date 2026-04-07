@@ -324,22 +324,7 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					</div>
 				</div>
 
-				{viewMode === 'tree' ? (
-					<ArchiveListTree
-						subId={subId}
-						canWrite={canWrite}
-						isShared={isShared}
-						isPopup={isPopup}
-						selectedIds={selectedIds}
-						filterText={filterText}
-						sortId={sortId}
-						sortType={sortType}
-						onSort={onSortChange}
-						onSelectChange={onSelectTree}
-						onSelectAll={onSelectAll}
-						isAllSelected={isAllSelected}
-					/>
-				) : (
+				{viewMode === 'compact' ? (
 					<ListObject
 						ref={listRef}
 						subId={subId}
@@ -351,9 +336,6 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						relationKeys={relationKeys}
 						ignoreArchived={false}
 						skipLayoutFilter={true}
-						withDescription={isDetailed}
-						iconSize={isDetailed ? 32 : null}
-						rowHeight={isDetailed ? 64 : 40}
 						emptyText={translate('pageMainArchiveEmpty')}
 						defaultSortId={sortId}
 						defaultSortType={sortType}
@@ -365,6 +347,22 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						onSelectAll={onSelectAll}
 						useInfiniteScroll={true}
 						isPopup={isPopup}
+					/>
+				) : (
+					<ArchiveListTree
+						subId={subId}
+						canWrite={canWrite}
+						isShared={isShared}
+						isPopup={isPopup}
+						isDetailed={isDetailed}
+						selectedIds={selectedIds}
+						filterText={filterText}
+						sortId={sortId}
+						sortType={sortType}
+						onSort={onSortChange}
+						onSelectChange={onSelectTree}
+						onSelectAll={onSelectAll}
+						isAllSelected={isAllSelected}
 					/>
 				)}
 			</div>

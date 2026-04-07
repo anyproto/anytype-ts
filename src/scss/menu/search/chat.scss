@@ -16,8 +16,8 @@
 			background-color: var(--color-shape-highlight-medium); border-radius: 16px; align-items: center;
 		}
 		.arrowWrapper {
-			.icon { width: 20px; height: 20px; }
-			.icon.arrow.down { transform: rotate(180deg); }
+			.icon { width: 20px !important; height: 20px !important; }
+			.icon.arrow.up { transform: rotate(180deg); }
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
 
