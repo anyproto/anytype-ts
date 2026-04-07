@@ -12,7 +12,7 @@ const BlockLoader = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	let icon = 'loading';
 
-	if (object.isDeleted) {
+	if (object.isDeleted || object.isArchived) {
 		icon = 'ghost';
 		cn.push('deleted');
 	};

@@ -12,11 +12,11 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
 	const { state, targetObjectId } = content;
-	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'isArchived', 'fileExt' ], true);
 	const { name } = object;
 
 	const getPlaylist = () => {
-		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'isArchived', 'fileExt' ], true);
 
 		return [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
@@ -94,12 +94,20 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	useImperativeHandle(ref, () => ({}));
 	
 	let element = null;
+	const typeName = translate('blockNameAudio');
 
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			</div>
+		);
+	} else if (object.isArchived) {
+		element = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
 			</div>
 		);
 	} else {
@@ -110,20 +118,20 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/audio' }}
-							textFile={translate('blockAudioUpload')} 
-							accept={J.Constant.fileExtension.audio} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockAudioUpload')}
+							accept={J.Constant.fileExtension.audio}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<MediaAudio

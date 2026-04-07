@@ -101,12 +101,20 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	let element = null;
+	const typeName = translate('blockNameBookmark');
 
 	if (isDeleted) {
 		element = (
-			<div className="deleted">
-				<Icon name="common/ghost" className="ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div className="mediaState isRemoved">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			</div>
+		);
+	} else if (isArchived) {
+		element = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
 			</div>
 		);
 	} else {
@@ -117,44 +125,34 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
-						<InputWithFile 
-							block={block} 	
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/common/bookmark' }}
-							textFile={translate('inputWithFileTextUrl')} 
-							withFile={false} 
-							onChangeUrl={onChangeUrl} 
-							readonly={readonly} 
+							textFile={translate('inputWithFileTextUrl')}
+							withFile={false}
+							onChangeUrl={onChangeUrl}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.BookmarkState.Fetching: {
 				element = <Loader />;
 				break;
 			};
-				
+
 			case I.BookmarkState.Done: {
 				const cni = [ 'inner' ];
 				const cnl = [ 'side', 'left' ];
-				
-				let archive = null;
-					
+
 				if (picture) {
 					cni.push('withImage');
 				};
 
-				if (isArchived) {
-					cni.push('isArchived');
-				};
-
 				if (block.bgColor) {
 					cni.push(`bgColor bgColor-${block.bgColor}`);
-				};
-
-				if (isArchived) {
-					archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 				};
 
 				element = (
@@ -175,8 +173,6 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							</div>
 							<ObjectName object={object} />
 							<ObjectDescription object={object} />
-
-							{archive}
 						</div>
 						<div className="side right">
 							{picture ? <img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" /> : ''}

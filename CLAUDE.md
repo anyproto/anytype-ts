@@ -204,7 +204,23 @@ bun run build:pixi
   // Bad — inline class list arrays hurt readability
   return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
-- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
+- Never combine a selector's own properties and its nested children in the same braces. Instead, write two separate blocks: a one-liner for the selector's own properties, then a second block with the same selector containing only nested children. Leaf selectors (no nested children) can be one-liners.
+  ```scss
+  // Good
+  .mediaState { display: flex; gap: 12px 0px; align-items: center; }
+  .mediaState {
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+
+  // Bad — mixing own properties and children in one block
+  .mediaState {
+      display: flex; gap: 12px 0px; align-items: center;
+
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+  ```
 
 ### Storybook
 - All new components should be added to Storybook automatically

@@ -184,14 +184,45 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	let element = null;
 	let pager = null;
+	const typeName = translate('blockNamePdf');
 
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		if (state == I.FileState.Done) {
+			const cn = [ 'wrap', 'pdfWrapper' ];
+
+			element = (
+				<div ref={wrapRef} className={cn.join(' ')} style={css}>
+					<Suspense fallback={<Loader />}>
+						<MediaPdf
+							ref={mediaRef}
+							src={S.Common.fileUrl(targetObjectId)}
+							page={1}
+							onDocumentLoad={onDocumentLoad}
+							onPageRender={onPageRender}
+							onClick={() => {}}
+						/>
+					</Suspense>
+					<div className="mediaState isInBin">
+						<Icon name="common/ghost" />
+						<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+					</div>
+				</div>
+			);
+		} else {
+			element = (
+				<div className="mediaState isInBin">
+					<Icon name="common/ghost" />
+					<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+				</div>
+			);
+		};
 	} else {
 		switch (state) {
 			default:
@@ -200,30 +231,30 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/pdf' }}
 							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							accept={J.Constant.fileExtension.pdf}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				if (pages > 1) {
 					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
+						<Pager
+							offset={page - 1}
+							limit={1}
+							total={pages}
 							pageLimit={1}
 							isShort={true}
-							onChange={setPage} 
+							onChange={setPage}
 						/>
 					);
 				};
