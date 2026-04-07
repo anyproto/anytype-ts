@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Prism from 'prismjs';
+import { Icon } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from './embedPreview';
 import * as I from 'Interface';
@@ -86,7 +87,7 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 			};
 			return (
 				<div key={key} className={cn.join(' ')}>
-					<div className="checkboxMark" />
+					<Icon name={part.checked ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkboxMark" />
 					<span dangerouslySetInnerHTML={{ __html: html }} />
 				</div>
 			);
