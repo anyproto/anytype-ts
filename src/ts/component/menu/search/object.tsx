@@ -11,7 +11,7 @@ const HEIGHT_DIV = 16;
 
 const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId } = props;
+	const { param, onKeyDown, setActive, getId, position } = props;
 	const { data, menuKey } = param;
 	const { 
 		filter, value, label, noFilter, noIcon, onMore, withPlural, canAdd, addParam,
