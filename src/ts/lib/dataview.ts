@@ -665,9 +665,9 @@ class Dataview {
 			};
 		};
 
-		const flatFilters = this.flattenFilters(view.filters);
+		const filters = this.flattenFilters(view.filters);
 
-		for (const filter of flatFilters) {
+		for (const filter of filters) {
 			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
@@ -704,6 +704,8 @@ class Dataview {
 	};
 
 	flattenFilters (filters: I.Filter[]): I.Filter[] {
+		filters = this.getFilteredFilters(filters || []);
+
 		const result: I.Filter[] = [];
 
 		for (const filter of filters) {

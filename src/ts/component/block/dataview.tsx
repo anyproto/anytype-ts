@@ -1078,8 +1078,16 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const view = getView(targetId);
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
+		const removeConditions = [
+			I.FilterCondition.NotIn,
+			I.FilterCondition.NotEqual,
+			I.FilterCondition.NotAllIn,
+			I.FilterCondition.NotExactIn,
+		];
+		const filters = Dataview.flattenFilters(view.filters);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1097,8 +1105,27 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations);
+		for (const filter of filters) {
+			if (!removeConditions.includes(filter.condition)) {
+				continue;
+			};
 
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation || relation.isReadonlyValue) {
+				continue;
+			};
+
+			const value = Relation.formatValue(relation, filter.value, true);
+			if (!value) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				operations.push({ relationKey: filter.relationKey, remove: value });
+			};
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
 		S.Common.getRef('selectionProvider')?.clear();
 		selectionCheck();
 	};
