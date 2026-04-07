@@ -1,15 +1,11 @@
 # service/ - Singleton Services
 
-Singleton service modules that provide app-wide functionality. These are instantiated once and shared across the application.
+Singleton service modules that provide app-wide functionality.
 
-## Key Services
+## Files
 
-- Sidebar management
-- Analytics event tracking
-- Focus/cursor management
-- Preview tooltip management
-- Keyboard shortcut registration
-- Storage abstraction
-- Translation (i18n)
-- Action dispatching (delete, archive, duplicate, etc.)
-- Mark/rich-text handling
+| File | Export | Purpose |
+|------|--------|---------|
+| `sparkOnboarding.ts` | `SparkOnboardingService`, `getSparkOnboardingService` | Event bus for the spark onboarding flow. Provides `on()`, `off()`, `emit()`, `removeAllListeners()` methods. Accessed via the `getSparkOnboardingService()` factory (lazy singleton). |
+
+Note: Most singleton services that were historically in this directory (sidebar, analytics, focus, keyboard, storage, etc.) now live as individual files in the `lib/` root. See `lib/sidebar.ts`, `lib/analytics.ts`, `lib/focus.ts`, `lib/keyboard.ts`, `lib/storage.ts`, etc.

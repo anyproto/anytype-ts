@@ -4,7 +4,11 @@ The main document editor component.
 
 ## Files
 
-- `page.tsx` (~2,600 lines) - Complete editor implementation
+- `page.tsx` (~2,825 lines) - Complete editor implementation
+
+## Architecture
+
+Functional component using `forwardRef` with hooks (`useRef`, `useEffect`, `useState`). No MobX `observer` — relies on imperative updates and event-driven re-renders.
 
 ## Responsibilities
 
@@ -13,7 +17,9 @@ The main document editor component.
 - Keyboard shortcuts (copy, undo/redo, indent, navigation)
 - Paste handling (HTML, plain text, files, URLs)
 - Block selection and focus management
-- Toolbar button management
+- Toolbar button management (add button positioning)
+- Scroll handling with throttled updates
+- Hover detection for drag/drop block insertion
 
 ## Key Handlers
 
@@ -28,3 +34,5 @@ The main document editor component.
 - Commands via `C.*` gRPC calls for all mutations
 - Focus management via `focus.set()` / `focus.clear()`
 - Selection via `selectionProvider` ref
+- Renders `PageHeadEditor`, `Children`, `TableOfContents`, `EditorControls`, `CommentSection` sub-components
+- `DropTarget` for drag-and-drop block reordering
