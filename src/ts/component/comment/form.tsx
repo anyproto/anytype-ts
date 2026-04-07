@@ -276,6 +276,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		return !readonly && U.File.checkDropFiles(e);
 	}, [ readonly ]);
 
+	const clearDragState = useCallback(() => {
+		setIsDraggingOver(false);
+		keyboard.disableCommonDrop(false);
+	}, []);
+
 	const onDragOver = useCallback((e: any) => {
 		if (!canDrop(e)) {
 			return;
@@ -285,6 +290,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
+		keyboard.disableCommonDrop(true);
 		setIsDraggingOver(true);
 	}, [ canDrop ]);
 
@@ -293,26 +299,20 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		timeoutDrag.current = window.setTimeout(() => setIsDraggingOver(false), 100);
-	}, []);
+		timeoutDrag.current = window.setTimeout(clearDragState, 100);
+	}, [ clearDragState ]);
 
 	const onDrop = useCallback((e: any) => {
-		if (!canDrop(e)) {
-			setIsDraggingOver(false);
-			return;
-		};
-
 		e.preventDefault();
 		e.stopPropagation();
 
-		const files = Array.from(e.dataTransfer.files) as File[];
+		if (canDrop(e)) {
+			const files = Array.from(e.dataTransfer.files) as File[];
+			addAttachmentFiles(files);
+		};
 
-		keyboard.disableCommonDrop(true);
-		addAttachmentFiles(files);
-		keyboard.disableCommonDrop(false);
-
-		setIsDraggingOver(false);
-	}, [ canDrop, addAttachmentFiles ]);
+		clearDragState();
+	}, [ canDrop, addAttachmentFiles, clearDragState ]);
 
 	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
@@ -646,6 +646,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			handleSubmit(parts);
 		};
 	}, [ isEmpty, isLoading, handleSubmit ]);
+
+	// Reset common drop flag on unmount
+	useEffect(() => {
+		return () => keyboard.disableCommonDrop(false);
+	}, []);
 
 	// Auto-focus editor when entering edit or reply mode
 	useEffect(() => {
