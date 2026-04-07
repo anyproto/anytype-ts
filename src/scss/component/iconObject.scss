@@ -76,38 +76,62 @@
 
 .iconObject.c14,
 .iconObject.c16,
-.iconObject.c18,
-.iconObject.c20 {
+.iconObject.c18 {
 	border-radius: 2px;
 }
 
-.iconObject.c22,
 .iconObject.c24,
 .iconObject.c25 {
 	border-radius: 3px;
 }
 
+.iconObject.c20,
+.iconObject.c22,
+.iconObject.c26,
 .iconObject.c28,
-.iconObject.c30,
-.iconObject.c32,
 .iconObject.c36 {
 	border-radius: 4px;
 }
 
-.iconObject.c40,
 .iconObject.c42 {
 	border-radius: 5px;
 }
 
-.iconObject.c44,
-.iconObject.c48 {
+.iconObject.c30,
+.iconObject.c44 {
 	border-radius: 6px;
 }
 
-.iconObject.c56,
-.iconObject.c64,
-.iconObject.c80 {
+.iconObject.c32,
+.iconObject.c56 {
 	border-radius: 8px;
+}
+
+.iconObject.c80 {
+	border-radius: 16px;
+}
+
+.iconObject.c40,
+.iconObject.c48 {
+	border-radius: 10px;
+}
+
+.iconObject.c64 {
+	border-radius: 16px;
+}
+
+.iconObject.c108,
+.iconObject.c112,
+.iconObject.c160 {
+	border-radius: 12px;
+}
+
+.iconObject.c96 {
+	border-radius: 20px;
+}
+
+.iconObject.c128 {
+	border-radius: 24px;
 }
 
 .iconObject.c96,
@@ -115,7 +139,6 @@
 .iconObject.c112,
 .iconObject.c128,
 .iconObject.c160 {
-	border-radius: 12px;
 
 	&.isChat { border-radius: 100% !important; }	
 }
