@@ -7,6 +7,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $trimTextContentFromAnchor } from '@lexical/selection';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
@@ -514,6 +515,7 @@ interface Props {
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	readonly?: boolean;
+	maxLength?: number;
 	onSubmit?: (parts: I.CommentContentPart[]) => void;
 	onCancel?: () => void;
 	onEmpty?: (isEmpty: boolean) => void;
@@ -3144,6 +3146,34 @@ const CodeExitPlugin = () => {
 	return null;
 };
 
+const MaxLengthPlugin = ({ maxLength }: { maxLength: number }) => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerNodeTransform(TextNode, () => {
+			const root = $getRoot();
+			const text = root.getTextContent();
+			const length = text.length;
+
+			if (length <= maxLength) {
+				return;
+			};
+
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const overflow = length - maxLength;
+			const { anchor } = selection;
+
+			$trimTextContentFromAnchor(editor, anchor, overflow);
+		});
+	}, [ editor, maxLength ]);
+
+	return null;
+};
+
 const CodeBlockPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 	const [ codeBlocks, setCodeBlocks ] = React.useState<{ key: string; lang: string }[]>([]);
@@ -3250,7 +3280,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
+	const { subId, placeholder, initialParts, readonly, maxLength, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -3557,6 +3587,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<CodeHighlightPlugin />
 				<CodeExitPlugin />
 				<CodeBlockPlugin />
+				{maxLength ? <MaxLengthPlugin maxLength={maxLength} /> : null}
 			</div>
 		</LexicalComposer>
 		</CommentSubIdContext.Provider>

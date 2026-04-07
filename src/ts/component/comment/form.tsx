@@ -688,6 +688,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					subId={subId}
 					placeholder={placeholder || translate('commentPlaceholder')}
 					initialParts={initialParts}
+					maxLength={J.Constant.limit.comment.text}
 					onSubmit={handleSubmit}
 					onCancel={onCancel}
 					onEmpty={handleEmpty}
