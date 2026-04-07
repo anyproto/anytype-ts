@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: visible; }
+		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: hidden; max-height: calc(100vh - 104px); }
 
 		#loader { border-radius: 32px; }
 
@@ -22,6 +22,7 @@
 
 		.step { padding: 0px 0px 16px 0px; }
 		.wrapper { padding: 0px 16px; }
+		.wrapper.buttons { padding: 16px 16px; }
 
 		.item { display: flex; align-items: center; gap: 12px; padding: 6px 8px; position: relative; }
 		.item {
@@ -39,18 +40,22 @@
 
 		/* Step 0 — Select Members */
 		.step.step0 {
+			> .wrapper { padding-bottom: 8px; }
+
 			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
-				.memberList { position: relative; height: 340px; }
+				.memberList { position: relative; }
 				.memberList {
 					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 				}
 
 				.grad {
-					position: absolute; left: 0px; bottom: 0px; width: 100%; height: 36px; pointer-events: none; z-index: 1;
-					background: linear-gradient(180deg, transparent 3.62%, var(--color-bg-primary) 100%);
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
 				}
 			}
 		}

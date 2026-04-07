@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon, Label } from 'Component';
+import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
@@ -22,6 +22,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const [ search, setSearch ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
+	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
+	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -63,10 +65,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	};
 
 	const onNext = () => {
-		if (!selectedMembers.length) {
-			return;
-		};
-
 		const next = step + 1;
 
 		setStep(next);
@@ -146,6 +144,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		};
 
 		return unique;
+	};
+
+	const onMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+		setIsScrolledTop(scrollTop > 0);
+		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
 	const onSubmit = () => {
@@ -334,6 +337,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		if (step == 0) {
 			setSearch('');
 			filterRef.current?.setValue('');
+			setIsScrolledTop(false);
+			setIsScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
@@ -343,12 +348,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
-	const LIST_HEIGHT = 340;
+	const SAFE_AREA = 120;
+	const STEP0_OVERHEAD = 172;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
-	const listHeight = Math.min(members.length * ROW_HEIGHT, LIST_HEIGHT) + 16;
-	const showGrad = (members.length * ROW_HEIGHT) > LIST_HEIGHT;
+	const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+	const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -417,6 +423,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				<div className="memberListWrapper">
 					{members.length ? (
 						<>
+							{isScrolledTop ? <div className="grad top" /> : ''}
 							<div className="memberList" style={{ height: listHeight }}>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
@@ -427,26 +434,24 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 											rowHeight={ROW_HEIGHT}
 											rowRenderer={rowRenderer}
 											overscanRowCount={10}
+											onScroll={onMemberListScroll}
 										/>
 									)}
 								</AutoSizer>
 							</div>
-							{showGrad ? <div className="grad" /> : ''}
+							{isScrolledBottom ? <div className="grad bottom" /> : ''}
 						</>
 					) : (
 						<div className="emptyState">{search ? translate('commonFilterEmpty') : translate('commonEmpty')}</div>
 					)}
 				</div>
 
-				<div className="wrapper">
-					<div className="buttons">
-						<Button 
-							text={translate('popupSpaceCreateNext')} 
-							color="accent" 
-							onClick={onNext}
-						/>
-					</div>
-					<Label className="small" text={translate('popupSpaceCreateOptionalMembers')} />
+				<div className="wrapper buttons">
+					<Button
+						text={translate(selectedMembers.length ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
+						color="accent"
+						onClick={onNext}
+					/>
 				</div>
 			</div>
 		);
