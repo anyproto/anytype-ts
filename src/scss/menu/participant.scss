@@ -22,6 +22,7 @@
 		.head {
 			.label { 
 				color: var(--color-text-secondary); @include text-overflow-nw; @include text-small; max-width: 100%; font-weight: 500;
+				text-align: center;
 			}
 		}
 
