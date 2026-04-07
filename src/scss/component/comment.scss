@@ -167,18 +167,16 @@
 
 			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); margin: 0px 4px; }
 
-			.btn.send {
-				width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-				border-radius: 50%; background: var(--color-system-accent-100); user-select: none;
+			.icon.send { 
+				width: 24px !important; height: 24px !important; background-color: var(--color-system-accent-100); 
+				border-radius: 50%;
 			}
-			.btn.send {
-				&.isDisabled { opacity: 0; pointer-events: none; }
-				.icon.send { width: 20px; height: 20px; }
+			.icon.send { 
+				&.disabled { opacity: 0; pointer-events: none; }
+				&:hover { background-color: var(--color-system-accent-125); }
 			}
 
-			.btn.save { user-select: none; }
-			.btn.cancel { @include text-small; color: var(--color-text-secondary); user-select: none; }
-			.btn.cancel:hover { color: var(--color-text-primary); }
+			.button.blank { color: var(--color-text-secondary); border: 0px; }
 		}
 	}
 

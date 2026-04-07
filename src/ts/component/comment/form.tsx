@@ -3,6 +3,7 @@ import { Icon, Button } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import { T } from 'vitest/dist/chunks/traces.d.402V_yFI';
 
 interface Props {
 	rootId: string;
@@ -714,24 +715,28 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						{isEdit ? (
 						<>
 							{onCancel ? (
-								<div className="btn cancel" onClick={onCancel}>
-									{translate('commonCancel')}
-								</div>
+								<Button 
+									size={28} 
+									color="blank" 
+									onClick={onCancel} 
+									text={translate('commonCancel')} 
+								/>
 							) : ''}
 							<Button
-								className={[ 'btn', 'save', 'c28', (isDisabled ? 'disabled' : '') ].join(' ')}
+								className={[ (isDisabled ? 'disabled' : '') ].join(' ')}
 								color="accent"
+								size={28}
 								text={translate('commonSave')}
 								onClick={onSendClick}
 							/>
 						</>
 					) : (
-						<div
-							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+						<Icon 
+							name="comment/send" 
+							className={[ 'send', (isDisabled ? 'disabled' : '') ].join(' ')} 
+							color="white" 
 							onClick={onSendClick}
-						>
-							<Icon name="comment/send" className="send" color="white" />
-						</div>
+						/>
 					)}
 					</div>
 				</div>
