@@ -94,6 +94,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			noDeps: true,
 			crossSpace: true,
 		}, () => {
+			if (!S.Record.getRecords(SUB_ID).length) {
+				setStep(1);
+			};
 			position();
 		});
 	}, []);
@@ -487,7 +490,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						size={52}
 					/>
 
-					{isGroup ? (
+					{(isGroup && (members.length || selectedMemberObjects.length)) ? (
 						<div className="membersSection">
 							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
 							<div className="item add" onClick={() => setStep(0)}>
