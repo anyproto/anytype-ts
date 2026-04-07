@@ -2034,7 +2034,7 @@ class Keyboard {
 	 * @returns {string[]} The keys.
 	 */
 	getKeys (id: string) {
-		return this.shortcuts[id].keys || [];
+		return this.shortcuts[id]?.keys || [];
 	};
 
 	/**
