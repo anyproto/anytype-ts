@@ -26,7 +26,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const timeoutRef = useRef(0);
 	const rebindTimeoutRef = useRef(0);
 	const delayRef = useRef(0);
-	const cacheRef = useRef({});
+	const cacheRef = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION }));
 	const itemsRef = useRef([]);
 	const nRef = useRef(0);
 	const [ activeIndex, setActiveIndex ] = useState(0);
@@ -36,8 +36,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const storage = storageGet();
 	const filter = String(storage.filter || '');
 	const filterValueRef = useRef(filter);
-
-	cacheRef.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION });
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -666,10 +664,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		setActive(items[nRef.current]);
 
 		if (listRef.current) {
+			cacheRef.current.clearAll();
 			listRef.current.recomputeRowHeights(0);
-			listRef.current.scrollToPosition(topRef.current);
 		};
-	});
+	}, [ isLoading, dummy ]);
 
 	const items = getItems();
 	const shift = keyboard.shiftSymbol();
