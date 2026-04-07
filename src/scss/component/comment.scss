@@ -290,15 +290,12 @@
 			.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; display: block; }
 
 			.mediaWrapper {
-				position: relative; max-height: 200px; overflow: hidden;
+				position: relative; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
-				border-radius: 12px; width: 100%; height: 100%;
+				border-radius: 12px; width: auto; height: auto;
 			}
 			.mediaWrapper {
-				.blur {
-					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px;
-					background-size: cover; filter: blur(64px);
-				}
+				.blur { display: none; }
 			}
 
 			.icon.remove {
@@ -315,7 +312,9 @@
 			}
 
 			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; background: unset; border: none; box-shadow: none; }
-			&.withBlur { .image { position: relative; z-index: 1; } }
+			&.isImage {
+				.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+			}
 
 			&.isBookmark {
 				.inner { display: flex; flex-direction: row; gap: 0px 16px; padding: 12px; width: 100%; }
@@ -444,15 +443,12 @@
 			.icon.remove { display: none; }
 
 			.mediaWrapper {
-				position: relative; max-height: 360px; overflow: hidden;
+				position: relative; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
-				border-radius: 12px; width: 100%; height: 100%;
+				border-radius: 12px; width: auto; height: auto;
 			}
 			.mediaWrapper {
-				.blur {
-					width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px;
-					background-size: cover; filter: blur(64px);
-				}
+				.blur { display: none; }
 			}
 
 			&.isFile {
@@ -462,10 +458,9 @@
 				.descr { .bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); } }
 			}
 
-			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; .image { display: block; } }
-
-			&.withBlur {
-				.image { position: relative; z-index: 1; }
+			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; }
+			&.isImage {
+				.image { display: block; max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
 			}
 
 			&.isVideo {
