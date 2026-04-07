@@ -122,20 +122,20 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			return true;
 		});
 
-		// Sort by: globalName presence (desc), shared spaces count (desc), then name (asc)
+		// Sort by: shared spaces count (desc), has name (desc), then name (asc)
 		unique.sort((a, b) => {
-			const ga = a.globalName ? 1 : 0;
-			const gb = b.globalName ? 1 : 0;
-
-			if (ga != gb) {
-				return gb - ga;
-			};
-
 			const ca = spaceCounts.get(a.identity) || 0;
 			const cb = spaceCounts.get(b.identity) || 0;
 
 			if (ca != cb) {
 				return cb - ca;
+			};
+
+			const na = a.name ? 1 : 0;
+			const nb = b.name ? 1 : 0;
+
+			if (na != nb) {
+				return nb - na;
 			};
 
 			return U.Data.sortByName(a, b);
