@@ -21,10 +21,8 @@
 			}
 		}
 
+		.mediaState { @include text-paragraph; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px; align-items: center; justify-content: center; }
 		.mediaState {
-			@include text-paragraph; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px;
-			align-items: center; justify-content: center;
-
 			.icon.ghost { width: 48px; height: 48px; }
 			.name { text-align: center; color: var(--color-text-secondary); font-weight: 500; }
 		}
@@ -115,9 +113,8 @@
 	.block.blockMedia.isAudio {
 		.mediaBlockLoader { height: 80px; }
 
+		.mediaState { height: 73px; border: 0px; border-radius: 8px; flex-direction: row; gap: 0px 8px; }
 		.mediaState {
-			height: 73px; border: 0px; border-radius: 8px; flex-direction: row; gap: 0px 8px;
-
 			.icon.ghost { width: 24px; height: 24px; }
 		}
 		.mediaState.isRemoved { background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); }
