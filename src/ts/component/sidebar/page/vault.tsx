@@ -624,6 +624,8 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 	}, []);
 
+	const itemIds = items.map(it => it.id).join(',');
+
 	useEffect(() => {
 		const prev = prevItemsRef.current;
 		const currentIds = new Set(items.map(it => it.id));
@@ -642,16 +644,12 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			if (removedHeightAbove > 0) {
 				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
 				scrollTopRef.current = newTop;
-
-				const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
-				if (grid) {
-					grid.scrollTop = newTop;
-				};
+				listRef.current?.scrollToPosition(newTop);
 			};
 		};
 
 		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
-	});
+	}, [ itemIds ]);
 
 	return (
 		<>
