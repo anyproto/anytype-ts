@@ -2861,21 +2861,18 @@ const MarkdownPlugin = () => {
 					};
 
 					const remaining = (style === I.TextStyle.Code) ? '' : text.replace(pattern, '');
+					const nodeKey = node.getKey();
 
 					editor.update(() => {
-						// Remove the markdown prefix
-						node.setTextContent(remaining);
+						const current = $getNodeByKey(nodeKey);
 
-						const sel = $getSelection();
-						if (!$isRangeSelection(sel)) {
-							return;
+						if ($isTextNode(current)) {
+							current.setTextContent(remaining);
+							current.select(0, 0);
 						};
-
-						// Place cursor at start
-						node.select(0, 0);
-
+					}, { onUpdate: () => {
 						applyBlockTransform(editor, { style });
-					});
+					}});
 
 					prevText.current = '';
 					return;
