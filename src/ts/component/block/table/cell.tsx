@@ -11,8 +11,8 @@ interface Props extends I.BlockComponentTable {
 
 const BlockTableCell = forwardRef<{}, Props>((props, ref) => {
 
-	const { 
-		readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+	const {
+		readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellMouseDown, onCellEnter,
 		onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 	} = props;
 
@@ -110,7 +110,16 @@ const BlockTableCell = forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	const onMouseDown = () => {
+	const onMouseDown = (e: any) => {
+		const target = e.target as HTMLElement;
+		if (target.closest('.handle') || target.closest('.icon.menu')) {
+			return;
+		};
+
+		if (onCellMouseDown(e, row.id, column.id, cellId)) {
+			return;
+		};
+
 		keyboard.disableSelection(true);
 		const handler = () => {
 			keyboard.disableSelection(false);
