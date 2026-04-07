@@ -334,8 +334,8 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" size={8} className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" size={8} className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 
