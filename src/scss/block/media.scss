@@ -32,7 +32,7 @@
 		.mediaState.isRemoved { height: 264px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
 
 		.mediaState.isInBin {
-			position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 2;
 			background: var(--color-bg-primary-90); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px;
 		}
 
@@ -109,14 +109,15 @@
 	}
 
 	.block.blockMedia.isImage, .block.blockMedia.isVideo {
-		.mediaState.isInBin { border: 0; }
+		.mediaState.isInBin { border: 0px; }
 	}
 
 	.block.blockMedia.isAudio {
 		.mediaBlockLoader { height: 80px; }
 
-		.mediaState { height: 73px; border: 0; border-radius: 8px; flex-direction: row; gap: 0px 8px; }
 		.mediaState {
+			height: 73px; border: 0px; border-radius: 8px; flex-direction: row; gap: 0px 8px;
+
 			.icon.ghost { width: 24px; height: 24px; }
 		}
 		.mediaState.isRemoved { background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); }

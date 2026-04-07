@@ -81,7 +81,6 @@
 	"commonUnlinkFromCollection": "Remove from Collection",
 	"commonDeletedObject": "Non-existent object",
 	"commonObjectInBin": "%s %s is in the Bin",
-	"commonObjectRemoved": "%s %s was removed",
 	"commonObjectInBinShort": "%s is in the Bin",
 	"commonObjectRemovedShort": "%s was removed",
 	"commonDeletedType": "Deleted type",
