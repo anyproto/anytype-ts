@@ -170,6 +170,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		if (depth > 0) {
 			cn.push('isChild');
 		};
+		if (canExpand) {
+			cn.push('canExpand');
+		};
+		if (expanded) {
+			cn.push('isExpanded');
+		};
 
 		const handleRowClick = () => {
 			if (canExpand) {
@@ -185,6 +191,10 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		const handleCheck = (e: any) => {
 			e.stopPropagation();
 			onSelectChange(subtreeIds, e);
+
+			if (canExpand && !isChecked && !expanded) {
+				toggleExpand(node.id);
+			};
 		};
 
 		const arrowCn = [ 'expandArrow' ];
@@ -206,13 +216,22 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 					<div className="cell">
 						<div className="cellContent isName">
 							<div className="flex" style={nameIndent}>
-								<IconObject object={obj} onClick={handleOpen} />
+								<div className="iconWrap">
+									<IconObject object={obj} onClick={handleOpen} />
+									{canExpand && (
+										<Icon
+											name="arrow/selectBig"
+											className={arrowCn.join(' ')}
+											onClick={(e: MouseEvent) => {
+												e.stopPropagation();
+												toggleExpand(node.id);
+											}}
+										/>
+									)}
+								</div>
 								<span onClick={handleOpen} onAuxClick={handleOpen}><ObjectName object={obj} /></span>
 								{canExpand && (
 									<span className="stackBadge">{translate('binStackCount').replace('%d', String(childCount))}</span>
-								)}
-								{canExpand && (
-									<Icon name="arrow/select" className={arrowCn.join(' ')} />
 								)}
 							</div>
 						</div>

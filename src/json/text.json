@@ -50,7 +50,7 @@
 	"binSwitchToTree": "Switch to tree view",
 	"binSwitchToCompact": "Switch to compact view",
 	"binSwitchToDetailed": "Switch to detailed view",
-	"binStackCount": "+%d objects",
+	"binStackCount": "+%d",
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
 	"commonYesterday": "Yesterday",
