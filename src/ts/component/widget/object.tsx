@@ -122,6 +122,8 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 		};
 
+		console.log(realId, items);
+
 		return items;
 	};
 
