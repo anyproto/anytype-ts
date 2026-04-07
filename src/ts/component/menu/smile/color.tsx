@@ -100,6 +100,7 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		setActive();
+		return () => unbind();
 	}, []);
 
 	return (
