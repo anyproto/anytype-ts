@@ -45,7 +45,7 @@ const MenuSelect = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			window.setTimeout(() => setActive(active, true), 15);
 		};
 
-		beforePosition();
+		position();
 	}, []);
 
 	useEffect(() => {
@@ -69,7 +69,6 @@ const MenuSelect = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
-		beforePosition();
 		position();
 	});
 

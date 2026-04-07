@@ -164,7 +164,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: 50,
 		}, () => {
 			setIsLoading(false);
-			beforePosition();
+			position();
 			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
 		});
 	};

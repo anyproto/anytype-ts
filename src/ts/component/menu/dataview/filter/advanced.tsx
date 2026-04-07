@@ -63,9 +63,6 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const beforePosition = () => {
-	};
-
 	const filter = getAdvancedFilter();
 
 	useEffect(() => {
@@ -78,7 +75,7 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 
@@ -88,7 +85,6 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getItems: () => [],
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
-		beforePosition,
 	}), []);
 
 	if (!filter) {

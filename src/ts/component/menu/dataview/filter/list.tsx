@@ -10,7 +10,7 @@ const LIMIT = 20;
 
 const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, onKeyDown, setActive } = props;
+	const { param, getId, onKeyDown, setActive, position } = props;
 	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly, closeFilters } = data;
 	const nodeRef = useRef(null);
@@ -27,7 +27,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 

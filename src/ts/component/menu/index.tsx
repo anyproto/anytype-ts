@@ -411,9 +411,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const position = () => {
-		if (childRef.current && childRef.current.beforePosition) {
-			childRef.current.beforePosition();
-		};
+		childRef.current?.beforePosition?.();
 
 		raf(() => {
 			const menuEl = containerRef.current;

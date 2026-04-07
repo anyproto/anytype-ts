@@ -21,11 +21,11 @@ const MenuChangeOwner = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		beforePosition();
+		position();
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 
 		if (n.current == -1) {
 			focus();

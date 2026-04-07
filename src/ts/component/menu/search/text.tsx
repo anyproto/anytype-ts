@@ -22,7 +22,7 @@ interface ActiveMatch {
 
 const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer } = props;
+	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer, position } = props;
 	const { data } = param;
 	const { route, isPopup } = data;
 
@@ -342,7 +342,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}), []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
+		
 		const initTimeout = window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 			inputRef.current?.setValue(value);

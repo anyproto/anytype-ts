@@ -18,7 +18,7 @@ interface ChatSearchResult {
 
 const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId, getContainer, close } = props;
+	const { param, onKeyDown, setActive, getId, getContainer, close, position } = props;
 	const { data } = param;
 	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
@@ -40,7 +40,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		focus();
-		beforePosition();
+		position();
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
@@ -49,8 +49,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-		beforePosition();
+		position();
 	});
 
 	const focus = () => {

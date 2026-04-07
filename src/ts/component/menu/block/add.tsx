@@ -54,7 +54,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		checkFilter();
-		beforePosition();
+		position();
 		setActive();
 	});
 

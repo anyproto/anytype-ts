@@ -197,7 +197,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			setDummy(dummy + 1);
-			beforePosition();
+			position();
 		});
 	};
 
