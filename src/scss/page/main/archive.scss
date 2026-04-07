@@ -159,7 +159,7 @@
 
 					&.isPage {
 						.iconEmoji { line-height: 20px; }
-						.iconCommon, 
+						.iconCommon,
 						.smileImage { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 					}
 					&.isBookmark {
@@ -174,6 +174,17 @@
 					&.isArchive,
 					&.isTask {
 						background-color: unset;
+					}
+				}
+
+				&.archiveTree .row:not(.isHead) {
+					.info { display: flex; flex-direction: column; overflow: hidden; }
+					.info {
+						.nameRow { display: flex; align-items: center; gap: 0px 8px; }
+						.nameRow {
+							.name { @include text-overflow-nw; }
+						}
+						.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 					}
 				}
 			}
