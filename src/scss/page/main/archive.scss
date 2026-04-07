@@ -126,14 +126,25 @@
 				.row:not(.isHead) {
 					.stackBadge {
 						@include text-small; color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
-						border-radius: 4px; padding: 1px 5px; flex-shrink: 0; white-space: nowrap;
+						border-radius: 15px; padding: 0px 6px; flex-shrink: 0; white-space: nowrap;
 					}
 
-					.icon.expandArrow {
-						width: 16px; height: 16px; flex-shrink: 0; transform: rotate(-90deg); transition: transform 0.15s ease;
-						color: var(--color-text-secondary);
+					.iconWrap {
+						position: relative; flex-shrink: 0;
+
+						.icon.expandArrow {
+							position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg);
+							width: 16px; height: 16px; transition: transform 0.15s ease, opacity 0.15s ease;
+							color: var(--color-text-primary); opacity: 0; z-index: 1;
+						}
+						.icon.expandArrow.isExpanded { transform: translate(-50%, -50%) rotate(0deg); }
 					}
-					.icon.expandArrow.isExpanded { transform: rotate(0deg); }
+
+					&.canExpand:hover .iconWrap,
+					&.isExpanded .iconWrap {
+						.iconObject { opacity: 0; }
+						.icon.expandArrow { opacity: 1; }
+					}
 				}
 			}
 		}

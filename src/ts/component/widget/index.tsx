@@ -175,6 +175,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
+		if ((layout == I.WidgetLayout.Tree) && !U.Object.isSetLayout(object.layout)) {
+			details.createdInContext = object.id;
+		};
+
 		if (!typeKey) {
 			return;
 		};
