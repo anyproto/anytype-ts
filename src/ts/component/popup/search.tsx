@@ -763,7 +763,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					<Icon
 						name="arrow/forward" 
 						className="advanced"
-						tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
+						size={28}
+						tooltipParam={{ 
+							text: translate('popupSearchTooltipSearchByBacklinks'), 
+							caption: `${shift} + Enter`
+						}}
 						onClick={e => onBacklink(e, item)}
 					/>
 				);

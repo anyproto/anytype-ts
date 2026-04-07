@@ -49,8 +49,7 @@
 
 			.item {
 				.icon { width: 20px; height: 20px; }
-
-				.icon.advanced { width: 28px; height: 28px; opacity: 0; }
+				.icon.advanced { opacity: 0; }
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
