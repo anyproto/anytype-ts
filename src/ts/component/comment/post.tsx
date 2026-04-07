@@ -559,8 +559,9 @@ const CommentPost = (props: Props) => {
 						<IconObject
 							object={{ ...author, layout: I.ObjectLayout.Participant }}
 							size={20}
+							onClick={e => U.Object.openConfig(e, author)}
 						/>
-						<div className="author">
+						<div className="author" onClick={e => U.Object.openConfig(e, author)}>
 							<ObjectName object={author} withBadge={true} />
 						</div>
 						<div className="date">
