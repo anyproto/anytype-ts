@@ -129,9 +129,8 @@
 						border-radius: 15px; padding: 0px 6px; flex-shrink: 0; white-space: nowrap;
 					}
 
+					.iconWrap { position: relative; flex-shrink: 0; }
 					.iconWrap {
-						position: relative; flex-shrink: 0;
-
 						.icon.expandArrow {
 							position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg);
 							width: 16px; height: 16px; transition: transform 0.15s ease, opacity 0.15s ease;
