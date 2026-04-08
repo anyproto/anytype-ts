@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
@@ -12,6 +12,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const filterRef = useRef(null);
 	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
+	const listRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -97,7 +98,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			if (!S.Record.getRecords(SUB_ID).length) {
 				setStep(1);
 			};
-			position();
+			resize();
 		});
 	}, []);
 
@@ -326,11 +327,20 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		};
 
 		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
+		resize();
 
 		return () => {
 			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
+
+	const resize = () => {
+		const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+		const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
+
+		U.Dom.css(listRef.current, { height: `${listHeight}px` });
+		position();
+	};
 
 	useEffect(() => {
 		iconRef.current?.setObject(getObject());
@@ -347,7 +357,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				analytics.event('ScreenAddMember');
 			};
 		};
-		position?.();
+
+		resize();
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
@@ -427,7 +438,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					{members.length ? (
 						<>
 							{isScrolledTop ? <div className="grad top" /> : ''}
-							<div className="memberList" style={{ height: listHeight }}>
+							<div ref={listRef} className="memberList">
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
@@ -514,6 +525,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			</div>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
 
 	return (
 		<>

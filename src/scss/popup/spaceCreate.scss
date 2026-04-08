@@ -22,7 +22,6 @@
 
 		.step { padding: 0px 0px 16px 0px; }
 		.wrapper { padding: 0px 16px; }
-		.wrapper.buttons { padding: 16px 16px; }
 
 		.item { display: flex; align-items: center; gap: 12px; padding: 6px 8px; position: relative; }
 		.item {
@@ -40,8 +39,6 @@
 
 		/* Step 0 — Select Members */
 		.step.step0 {
-			> .wrapper { padding-bottom: 8px; }
-
 			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
