@@ -129,7 +129,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			</div>
 
-			<div className="section">
+			<div className="section last">
 				{markActions.map((action) => {
 					const isActive = activeFormats[action.type];
 
@@ -145,9 +145,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						/>
 					);
 				})}
-			</div>
-
-			<div className="section">
 				{extraActions.map((action) => (
 					<Icon
 						id={`button-${action.id}`}
@@ -159,17 +156,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onMouseDown={action.onClick}
 					/>
 				))}
-			</div>
-
-			<div className="section last">
-				<Icon
-					id="button-list"
-					name="menu/block/text/bulleted"
-					className="blockStyle" withBackground={true}
-					arrow={true}
-					tooltipParam={{ text: translate('blockNameBulleted') }}
-					onMouseDown={onListClick}
-				/>
 			</div>
 		</div>
 	);
