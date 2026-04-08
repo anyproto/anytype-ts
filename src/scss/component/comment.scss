@@ -316,6 +316,7 @@
 			.descr { @include text-small; @include clamp1; color: var(--color-text-secondary); }
 			.icon.syncStatus {
 				display: none; position: absolute; z-index: 2; inset: 0; margin: auto;
+				width: 48px !important; height: 48px !important;
 				animation: rotate 1.2s infinite linear; color: var(--color-shape-highlight-medium);
 			}
 			.icon.syncStatus {
@@ -326,6 +327,9 @@
 			&.isQueued .icon.syncStatus,
 			&.isError .icon.syncStatus { display: block; }
 			&.isError .icon.syncStatus { animation: none; }
+
+			&.isSyncing,
+			&.isQueued { .image { opacity: 0.5; } }
 			.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; display: block; }
 
 			.mediaWrapper {
